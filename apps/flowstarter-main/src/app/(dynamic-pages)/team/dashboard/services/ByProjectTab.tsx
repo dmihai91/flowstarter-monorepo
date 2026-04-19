@@ -45,7 +45,7 @@ export function ByProjectTab({
           <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
         </div>
       ) : projects?.length === 0 ? (
-        <GlassCard className="p-8 text-center text-gray-500 dark:text-white/50">
+        <GlassCard className="p-8 text-center text-[var(--fs-ink-faint)]">
           <Settings className="w-8 h-8 mx-auto mb-2 opacity-40" />
           <p>No client projects yet.</p>
           <Link
@@ -71,7 +71,7 @@ export function ByProjectTab({
                 {/* Project header */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                    <h3 className="font-semibold text-[var(--fs-ink)]">
                       {project.name || t('app.untitledProject')}
                     </h3>
                     <p className="text-xs text-gray-400 dark:text-white/40 mt-0.5">
@@ -106,7 +106,7 @@ export function ByProjectTab({
                               <Icon className={`w-4 h-4 ${meta.color}`} />
                             </div>
                             <div>
-                              <p className="font-medium text-sm text-gray-900 dark:text-white">
+                              <p className="font-medium text-sm text-[var(--fs-ink)]">
                                 {integration.name}
                               </p>
                               <p className="text-xs text-gray-400 dark:text-white/40">

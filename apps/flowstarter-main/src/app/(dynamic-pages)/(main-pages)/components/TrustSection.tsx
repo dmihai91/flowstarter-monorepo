@@ -57,7 +57,7 @@ export function TrustSection() {
         }`}
       >
         <div className="text-center mb-12 lg:mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--fs-ink)] mb-3">
             {t('landing.trust.title')}
           </h2>
           <p className="text-base text-gray-500 dark:text-white/40 max-w-lg mx-auto">
@@ -87,7 +87,7 @@ export function TrustSection() {
                   strokeWidth={1.5}
                 />
               </div>
-              <div className="text-sm font-semibold text-gray-800 dark:text-white/80 mb-1">
+              <div className="text-sm font-semibold text-[var(--fs-ink)]/80 mb-1">
                 {label}
               </div>
               <div className="text-xs text-gray-400 dark:text-white/35 leading-relaxed">

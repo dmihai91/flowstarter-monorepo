@@ -27,7 +27,7 @@ export function AppHeader() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsMobileOpen(true)}
-            className="md:hidden p-1.5 -ml-1 rounded-lg text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors"
+            className="md:hidden p-1.5 -ml-1 rounded-lg text-gray-500 hover:text-[var(--fs-ink)]/50 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors"
             aria-label="Open menu"
           >
             <Menu className="w-5 h-5" />
@@ -50,7 +50,7 @@ export function AppHeader() {
             href="https://library.flowstarter.dev"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors no-underline"
+            className="hidden sm:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-[var(--fs-ink)]/50 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors no-underline"
           >
             <svg
               width="13"

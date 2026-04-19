@@ -31,7 +31,7 @@ export function IntegrationWizardContent({
   onClose,
 }: Props) {
   const { t } = useTranslations();
-  const isApiKeyProvider = API_KEY_PROVIDERS.includes(provider);
+  const isApiKeyProvider=API_KE...er);
   const [step, setStep] = useState<1 | 2 | 3>(
     initialStatus === 'success' ? 2 : 1
   );
@@ -82,7 +82,7 @@ export function IntegrationWizardContent({
     }
   }, [resourcesQuery.error]);
 
-  const startOAuthMutation = useMutation({
+  const startOAuthMutation=***
     mutationFn: async () => {
       const res = await fetch(`/api/integrations/${provider}/oauth/start`, {
         method: 'POST',
@@ -96,7 +96,7 @@ export function IntegrationWizardContent({
     onError: (e) => setError((e as Error).message),
   });
 
-  const connectWithApiKeyMutation = useMutation({
+  const connectWithApiKeyMutation=***
     mutationFn: async () => {
       if (!apiKey.trim()) throw new Error('Please enter an API key');
 
@@ -160,12 +160,12 @@ export function IntegrationWizardContent({
   const verifying = connectWithApiKeyMutation.isPending;
   const disabled = loading || verifying;
 
-  const startOAuth = () => {
+  const startOAuth=*** => {
     setError(null);
     startOAuthMutation.mutate();
   };
 
-  const connectWithApiKey = () => {
+  const connectWithApiKey=*** => {
     setError(null);
     if (!apiKey.trim()) {
       setError('Please enter an API key');
@@ -196,14 +196,14 @@ export function IntegrationWizardContent({
           <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/55 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)] space-y-4">
             {loading && (
               <div className="text-center py-8">
-                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                <p className="text-[var(--fs-ink-dim)] mb-4">
                   Starting authorization...
                 </p>
               </div>
             )}
             {!loading && !error && (
               <div className="space-y-4">
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-[var(--fs-ink-dim)]">
                   Click the button below to authorize {providerLabel}.
                 </p>
                 <Button
@@ -237,7 +237,7 @@ export function IntegrationWizardContent({
           <div className="rounded-xl border border-black/5 dark:border-white/10 bg-white/55 dark:bg-white/5 backdrop-blur-xl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)] space-y-4">
             <div className="space-y-4">
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-[var(--fs-ink-dim)]">
                   API Key
                 </label>
                 <Input
@@ -247,14 +247,14 @@ export function IntegrationWizardContent({
                   onChange={(e) => setApiKey(e.target.value)}
                   disabled={disabled}
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-[var(--fs-ink-faint)]">
                   Get your API key from Cal.com → Settings → Developer → API
                   Keys
                 </p>
               </div>
 
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="text-sm font-medium text-[var(--fs-ink-dim)]">
                   Default Booking Link{' '}
                   <span className="font-normal text-gray-400">(optional)</span>
                 </label>
@@ -265,7 +265,7 @@ export function IntegrationWizardContent({
                   onChange={(e) => setEventUrl(e.target.value)}
                   disabled={disabled}
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-[var(--fs-ink-faint)]">
                   The booking link shown on your site
                 </p>
               </div>

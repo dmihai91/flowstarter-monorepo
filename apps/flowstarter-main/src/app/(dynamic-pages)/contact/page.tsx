@@ -68,10 +68,10 @@ export default function ContactPage() {
             <MessageCircle className="w-4 h-4" />
             {t('contact.badge')}
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--fs-ink)] mb-4">
             {t('contact.title')}
           </h1>
-          <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--fs-ink-faint)] max-w-2xl mx-auto">
             {t('contact.description')}
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function ContactPage() {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Form */}
           <GlassPanel padding="lg">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            <h2 className="text-2xl font-bold text-[var(--fs-ink)] mb-6">
               {t('contact.form.title')}
             </h2>
 
@@ -88,10 +88,10 @@ export default function ContactPage() {
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
                   <Check className="w-8 h-8 text-emerald-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-xl font-semibold text-[var(--fs-ink)] mb-2">
                   {t('contact.form.successTitle')}
                 </h3>
-                <p className="text-gray-500 dark:text-white/50 mb-6">
+                <p className="text-[var(--fs-ink-faint)] mb-6">
                   {t('contact.form.successDesc')}
                 </p>
                 <Button
@@ -116,7 +116,7 @@ export default function ContactPage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     placeholder={t('contact.form.namePlaceholder')}
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-[var(--fs-rule)] text-[var(--fs-ink)] placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
                   />
                 </div>
 
@@ -132,7 +132,7 @@ export default function ContactPage() {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     placeholder={t('contact.form.emailPlaceholder')}
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-[var(--fs-rule)] text-[var(--fs-ink)] placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
                   />
                 </div>
 
@@ -146,7 +146,7 @@ export default function ContactPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, subject: e.target.value })
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
                   >
                     <option value="">{t('contact.form.subjectDefault')}</option>
                     <option value="general">
@@ -182,7 +182,7 @@ export default function ContactPage() {
                       setFormData({ ...formData, message: e.target.value })
                     }
                     placeholder={t('contact.form.messagePlaceholder')}
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all resize-none"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-[var(--fs-rule)] text-[var(--fs-ink)] placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all resize-none"
                   />
                 </div>
 
@@ -217,10 +217,10 @@ export default function ContactPage() {
           <div className="space-y-6">
             {/* Quick Contact */}
             <div className="p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6">
                 {t('contact.talk.title')}
               </h2>
-              <p className="text-gray-500 dark:text-white/50 mb-6">
+              <p className="text-[var(--fs-ink-faint)] mb-6">
                 {t('contact.talk.description')}
               </p>
               <Button
@@ -235,7 +235,7 @@ export default function ContactPage() {
 
             {/* Contact Methods */}
             <GlassPanel padding="lg">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6">
                 {t('contact.other.title')}
               </h2>
               <div className="space-y-4">
@@ -247,10 +247,10 @@ export default function ContactPage() {
                     <Mail className="w-5 h-5 text-[var(--purple)]" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
+                    <p className="font-medium text-[var(--fs-ink)] group-hover:text-[var(--purple)] transition-colors">
                       {t('contact.other.emailLabel')}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-white/50">
+                    <p className="text-sm text-[var(--fs-ink-faint)]">
                       {t('contact.other.emailValue')}
                     </p>
                   </div>
@@ -265,10 +265,10 @@ export default function ContactPage() {
                     <Twitter className="w-5 h-5 text-[var(--purple)]" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
+                    <p className="font-medium text-[var(--fs-ink)] group-hover:text-[var(--purple)] transition-colors">
                       {t('contact.other.twitterLabel')}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-white/50">
+                    <p className="text-sm text-[var(--fs-ink-faint)]">
                       {t('contact.other.twitterValue')}
                     </p>
                   </div>
@@ -283,10 +283,10 @@ export default function ContactPage() {
                     <Linkedin className="w-5 h-5 text-[var(--purple)]" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white group-hover:text-[var(--purple)] transition-colors">
+                    <p className="font-medium text-[var(--fs-ink)] group-hover:text-[var(--purple)] transition-colors">
                       {t('contact.other.linkedinLabel')}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-white/50">
+                    <p className="text-sm text-[var(--fs-ink-faint)]">
                       {t('contact.other.linkedinValue')}
                     </p>
                   </div>
@@ -300,10 +300,10 @@ export default function ContactPage() {
                 <Clock className="w-5 h-5 text-emerald-500" />
               </div>
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">
+                <p className="font-medium text-[var(--fs-ink)]">
                   {t('contact.response.title')}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-white/50">
+                <p className="text-sm text-[var(--fs-ink-faint)]">
                   {t('contact.response.description')}
                 </p>
               </div>

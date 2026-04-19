@@ -108,7 +108,7 @@ export function AiRewriteMenu({
             disabled={isButtonDisabled}
             className={cn(
               // Premium glass-style button
-              'h-10 px-4 rounded-lg bg-white/30 dark:bg-[var(--surface-2)]/30 backdrop-blur-sm border border-gray-300 dark:border-[var(--border-subtle)] text-gray-900 dark:text-white shadow-none',
+              'h-10 px-4 rounded-lg bg-white/30 dark:bg-[var(--surface-2)]/30 backdrop-blur-sm border border-gray-300 dark:border-[var(--border-subtle)] text-[var(--fs-ink)] shadow-none',
               // Premium hover
               'hover:bg-white/40 dark:hover:bg-[var(--surface-2)]/40 hover:border-gray-400 dark:hover:border-white/40',
               // Subtle focus ring
@@ -120,7 +120,7 @@ export function AiRewriteMenu({
             )}
           >
             {showLoadingSpinner ? (
-              <Loader2 className="h-4 w-4 animate-spin text-gray-700 dark:text-gray-300" />
+              <Loader2 className="h-4 w-4 animate-spin text-[var(--fs-ink-dim)]" />
             ) : (
               <MagicWandIcon className="h-4 w-4 text-gray-900 dark:text-gray-100" />
             )}
@@ -206,7 +206,7 @@ export function AiRewriteMenu({
               placeholder={
                 customPlaceholder || t('ai.customPrompt.placeholder')
               }
-              className="min-h-[120px] text-base border-2 focus:ring-2 resize-none transition-all duration-200 bg-white dark:bg-[var(--surface-1)] border-gray-300 dark:border-slate-600 focus:border-primary focus:ring-primary/20 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-400 rounded-xl"
+              className="min-h-[120px] text-base border-2 focus:ring-2 resize-none transition-all duration-200 bg-white dark:bg-[var(--surface-1)] border-gray-300 dark:border-slate-600 focus:border-primary focus:ring-primary/20 text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-slate-400 rounded-xl"
             />
             {(() => {
               const hasText = customPrompt.trim();
@@ -232,7 +232,7 @@ export function AiRewriteMenu({
                 );
               }
               return (
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-medium text-[var(--fs-ink-faint)]">
                   {t('ai.customPrompt.lengthHint')}
                 </p>
               );

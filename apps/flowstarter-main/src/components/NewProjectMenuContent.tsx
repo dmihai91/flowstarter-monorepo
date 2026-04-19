@@ -52,7 +52,7 @@ export function NewProjectMenuContent() {
         <div className="font-semibold text-sm mb-1">
           {t('newProject.dropdown.interactive.title')}
         </div>
-        <div className="text-xs text-gray-600 dark:text-gray-400">
+        <div className="text-xs text-[var(--fs-ink-dim)]">
           {t('newProject.dropdown.interactive.description')}
         </div>
       </div>

@@ -186,11 +186,11 @@ export default function IntegrationsIndexPage() {
         >
           <div className="relative z-10">
             <div className="mb-2">
-              <p className="text-gray-500 dark:text-white/50">
+              <p className="text-[var(--fs-ink-faint)]">
                 Connect your favorite tools
               </p>
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4 text-gray-900 dark:text-white">
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4 text-[var(--fs-ink)]">
               Integrations
             </h1>
           </div>
@@ -200,14 +200,14 @@ export default function IntegrationsIndexPage() {
         <div className="mt-10">
           <GlassCard className="text-center py-16 max-w-2xl mx-auto">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-white/5 border border-[var(--fs-rule)] flex items-center justify-center">
                 <Lock className="w-8 h-8 text-gray-400 dark:text-white/30" />
               </div>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+            <h2 className="text-xl font-semibold text-[var(--fs-ink)] mb-3">
               Integrations unlock after your site is live
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
+            <p className="text-sm text-[var(--fs-ink-faint)] mb-8 max-w-md mx-auto">
               Once we build and launch your website, you'll be able to connect
               analytics, email marketing, scheduling tools, and more.
             </p>
@@ -255,17 +255,17 @@ export default function IntegrationsIndexPage() {
         <div className="relative z-10">
           {/* Header */}
           <div className="mb-2">
-            <p className="text-gray-500 dark:text-white/50">
+            <p className="text-[var(--fs-ink-faint)]">
               Connect your favorite tools
             </p>
           </div>
-          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4 text-gray-900 dark:text-white">
+          <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4 text-[var(--fs-ink)]">
             Integrations
           </h1>
 
           {/* Status badges */}
           <div className="flex items-center gap-6 mb-8">
-            <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <div className="flex items-center gap-2 text-sm text-[var(--fs-ink-dim)]">
               <div className="w-8 h-8 rounded-xl bg-[var(--green)]/10 flex items-center justify-center">
                 <Zap className="h-4 w-4 text-[var(--green)]" />
               </div>
@@ -273,7 +273,7 @@ export default function IntegrationsIndexPage() {
                 {activeCount} {t('integrations.active')}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2 text-sm text-[var(--fs-ink-dim)]">
               <div className="w-8 h-8 rounded-xl bg-gray-500/10 flex items-center justify-center">
                 <Plug className="h-4 w-4 text-gray-500" />
               </div>
@@ -338,10 +338,10 @@ export default function IntegrationsIndexPage() {
               <MessageSquare className="h-6 w-6 text-white dark:text-gray-900" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+              <h3 className="text-lg font-semibold text-[var(--fs-ink)] mb-1">
                 {t('integrations.custom.title')}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-[var(--fs-ink-faint)]">
                 {t('integrations.custom.description')}
               </p>
             </div>

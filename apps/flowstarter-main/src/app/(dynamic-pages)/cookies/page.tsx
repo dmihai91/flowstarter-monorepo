@@ -80,24 +80,24 @@ export default function CookiePolicyPage() {
             <Cookie className="w-4 h-4" />
             {t('cookies.badge')}
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--fs-ink)] mb-4">
             {t('cookies.title')}
           </h1>
-          <p className="text-base sm:text-lg text-gray-500 dark:text-white/50 max-w-lg mx-auto mb-4 px-2">
+          <p className="text-base sm:text-lg text-[var(--fs-ink-faint)] max-w-lg mx-auto mb-4 px-2">
             {t('cookies.description')}
           </p>
-          <p className="text-sm text-gray-400 dark:text-white/30">
+          <p className="text-sm text-[var(--fs-ink-faint)]">
             {t('cookies.lastUpdated', { date: lastUpdated })}
           </p>
         </div>
 
         {/* Quick Summary */}
         <div className="mb-12 p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-[var(--purple)]/5 via-white to-blue-500/5 dark:from-[var(--purple)]/10 dark:via-[#0f0f12] dark:to-blue-500/10 border border-[var(--purple)]/20">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-[var(--fs-ink)] mb-4 flex items-center gap-2">
             <Cookie className="w-5 h-5 text-[var(--purple)]" />
             {t('cookies.shortVersion.title')}
           </h2>
-          <ul className="space-y-2 text-sm text-gray-600 dark:text-white/60">
+          <ul className="space-y-2 text-sm text-[var(--fs-ink-dim)]">
             <li className="flex items-start gap-2">
               <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
               <span>
@@ -130,14 +130,14 @@ export default function CookiePolicyPage() {
         </div>
 
         {/* What Are Cookies */}
-        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-4">
             {t('cookies.whatAreCookies.title')}
           </h2>
-          <p className="text-gray-600 dark:text-white/60 leading-relaxed mb-4">
+          <p className="text-[var(--fs-ink-dim)] leading-relaxed mb-4">
             {t('cookies.whatAreCookies.p1')}
           </p>
-          <p className="text-gray-600 dark:text-white/60 leading-relaxed">
+          <p className="text-[var(--fs-ink-dim)] leading-relaxed">
             {t('cookies.whatAreCookies.p2')}
           </p>
         </section>
@@ -147,7 +147,7 @@ export default function CookiePolicyPage() {
           {cookieTypes.map((type, index) => (
             <section
               key={index}
-              className="p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+              className="p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]"
             >
               <div className="flex items-start gap-4 mb-6">
                 <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
@@ -155,11 +155,11 @@ export default function CookiePolicyPage() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                    <h2 className="text-xl font-bold text-[var(--fs-ink)]">
                       {type.name}
                     </h2>
                     {type.required ? (
-                      <span className="px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-white/60 rounded">
+                      <span className="px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-white/10 text-[var(--fs-ink-dim)] rounded">
                         {t('cookies.label.required')}
                       </span>
                     ) : (
@@ -168,7 +168,7 @@ export default function CookiePolicyPage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-600 dark:text-white/60 leading-relaxed">
+                  <p className="text-[var(--fs-ink-dim)] leading-relaxed">
                     {type.description}
                   </p>
                 </div>
@@ -179,15 +179,15 @@ export default function CookiePolicyPage() {
                 {type.examples.map((cookie, i) => (
                   <div
                     key={i}
-                    className="rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5 p-3"
+                    className="rounded-xl bg-gray-50 dark:bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] p-3"
                   >
                     <p className="font-mono text-xs text-[var(--purple)] mb-1">
                       {cookie.name}
                     </p>
-                    <p className="text-xs text-gray-600 dark:text-white/60 mb-1">
+                    <p className="text-xs text-[var(--fs-ink-dim)] mb-1">
                       {cookie.purpose}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-white/30">
+                    <p className="text-xs text-[var(--fs-ink-faint)]">
                       {t('cookies.table.duration')}: {cookie.duration}
                     </p>
                   </div>
@@ -196,14 +196,14 @@ export default function CookiePolicyPage() {
               <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 dark:border-white/10">
-                      <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                    <tr className="border-b border-[var(--fs-rule)]">
+                      <th className="text-left py-3 px-4 font-semibold text-[var(--fs-ink)]">
                         {t('cookies.table.cookie')}
                       </th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                      <th className="text-left py-3 px-4 font-semibold text-[var(--fs-ink)]">
                         {t('cookies.table.purpose')}
                       </th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                      <th className="text-left py-3 px-4 font-semibold text-[var(--fs-ink)]">
                         {t('cookies.table.duration')}
                       </th>
                     </tr>
@@ -217,10 +217,10 @@ export default function CookiePolicyPage() {
                         <td className="py-3 px-4 font-mono text-xs text-[var(--purple)]">
                           {cookie.name}
                         </td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-white/60">
+                        <td className="py-3 px-4 text-[var(--fs-ink-dim)]">
                           {cookie.purpose}
                         </td>
-                        <td className="py-3 px-4 text-gray-500 dark:text-white/40">
+                        <td className="py-3 px-4 text-[var(--fs-ink-faint)]">
                           {cookie.duration}
                         </td>
                       </tr>
@@ -233,14 +233,14 @@ export default function CookiePolicyPage() {
         </div>
 
         {/* Third-Party Cookies */}
-        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-4">
             {t('cookies.thirdParty.title')}
           </h2>
-          <p className="text-gray-600 dark:text-white/60 leading-relaxed mb-4">
+          <p className="text-[var(--fs-ink-dim)] leading-relaxed mb-4">
             {t('cookies.thirdParty.description')}
           </p>
-          <ul className="space-y-3 text-sm text-gray-600 dark:text-white/60">
+          <ul className="space-y-3 text-sm text-[var(--fs-ink-dim)]">
             <li className="flex items-start gap-2">
               <span className="text-[var(--purple)]">•</span>
               <span>
@@ -263,20 +263,20 @@ export default function CookiePolicyPage() {
               </span>
             </li>
           </ul>
-          <p className="text-gray-500 dark:text-white/40 text-sm mt-4">
+          <p className="text-[var(--fs-ink-faint)] text-sm mt-4">
             {t('cookies.thirdParty.footer')}
           </p>
         </section>
 
         {/* Managing Cookies */}
-        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-4">
             {t('cookies.managing.title')}
           </h2>
-          <p className="text-gray-600 dark:text-white/60 leading-relaxed mb-4">
+          <p className="text-[var(--fs-ink-dim)] leading-relaxed mb-4">
             {t('cookies.managing.description')}
           </p>
-          <ul className="space-y-2 text-sm text-gray-600 dark:text-white/60 mb-4">
+          <ul className="space-y-2 text-sm text-[var(--fs-ink-dim)] mb-4">
             <li>
               • <strong>{t('cookies.managing.chrome')}</strong>
               {t('cookies.managing.chromeDesc')}
@@ -300,21 +300,21 @@ export default function CookiePolicyPage() {
         </section>
 
         {/* Updates */}
-        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-4">
             {t('cookies.changes.title')}
           </h2>
-          <p className="text-gray-600 dark:text-white/60 leading-relaxed">
+          <p className="text-[var(--fs-ink-dim)] leading-relaxed">
             {t('cookies.changes.description')}
           </p>
         </section>
 
         {/* Contact */}
         <div className="p-5 sm:p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-2">
             {t('cookies.contact.title')}
           </h2>
-          <p className="text-gray-500 dark:text-white/50 mb-4">
+          <p className="text-[var(--fs-ink-faint)] mb-4">
             {t('cookies.contact.description', { link: '' })}
             <a href="/privacy" className="text-[var(--purple)] hover:underline">
               {t('cookies.contact.privacyLink')}

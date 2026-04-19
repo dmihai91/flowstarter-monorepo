@@ -10,9 +10,9 @@ interface Props {
 export function EditorContextDrawer({ context, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/30 backdrop-blur-sm">
-      <div className="w-full max-w-lg h-full bg-white dark:bg-[rgba(18,12,42,0.98)] border-l border-gray-200/80 dark:border-white/[0.06] flex flex-col shadow-2xl">
+      <div className="w-full max-w-lg h-full bg-white dark:bg-[rgba(18,12,42,0.98)] border-l border-[var(--fs-rule)] flex flex-col shadow-2xl">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/[0.06]">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-sm font-semibold text-[var(--fs-ink)]">
             Editor Context
           </h3>
           <button
@@ -39,7 +39,7 @@ export function EditorContextDrawer({ context, onClose }: Props) {
               <p className="text-xs font-medium text-gray-500 dark:text-white/40 mb-1">
                 Active File
               </p>
-              <code className="text-sm text-gray-800 dark:text-white/80 bg-gray-50 dark:bg-white/[0.06] px-2 py-1 rounded-lg">
+              <code className="text-sm text-[var(--fs-ink)]/80 bg-gray-50 dark:bg-white/[0.06] px-2 py-1 rounded-lg">
                 {context.activeFile}
               </code>
             </div>

@@ -50,7 +50,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
                 href="https://library.flowstarter.dev"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+                className="text-sm text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 {LANDING_COPY.nav.templatesLabel}
               </a>
@@ -62,7 +62,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
                     .getElementById('process')
                     ?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+                className="text-sm text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 {t('nav.process')}
               </a>
@@ -74,7 +74,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
                     .getElementById('pricing')
                     ?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+                className="text-sm text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 {t('nav.pricing')}
               </a>
@@ -86,7 +86,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
                     .getElementById('faq')
                     ?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+                className="text-sm text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 {t('nav.faq')}
               </a>
@@ -98,7 +98,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
               </div>
               <Link
                 href="/login"
-                className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden lg:block"
+                className="text-sm text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white transition-colors hidden lg:block"
               >
                 {t('nav.signIn')}
               </Link>
@@ -158,7 +158,7 @@ export function LandingHeader({ onOpenModal }: { onOpenModal?: () => void }) {
             <nav
               id="mobile-menu"
               aria-label="Mobile navigation"
-              className="ls-mobile-nav flex flex-col gap-0.5 pt-4 mt-3 border-t border-gray-200/50 dark:border-white/10"
+              className="ls-mobile-nav flex flex-col gap-0.5 pt-4 mt-3 border-t border-[var(--fs-rule)]/50"
             >
               <div className="flex items-center justify-between px-3 py-2">
                 <span className="text-base font-medium text-gray-700 dark:text-white/80">

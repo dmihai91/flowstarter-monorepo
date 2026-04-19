@@ -57,11 +57,11 @@ export function SupportHeader() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <div className="px-3 py-2 border-b border-gray-100 dark:border-white/10">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  <div className="px-3 py-2 border-b border-[var(--fs-rule)]">
+                    <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                       {user.firstName} {user.lastName}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-white/50 truncate">
+                    <p className="text-xs text-[var(--fs-ink-faint)] truncate">
                       {user.primaryEmailAddress?.emailAddress}
                     </p>
                   </div>

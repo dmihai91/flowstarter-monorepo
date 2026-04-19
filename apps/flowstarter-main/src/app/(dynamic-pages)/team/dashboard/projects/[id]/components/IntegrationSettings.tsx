@@ -115,11 +115,11 @@ export function IntegrationSettings({ projectId }: { projectId: string }) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+      <h2 className="text-lg font-semibold text-[var(--fs-ink)] flex items-center gap-2">
         <Shield className="w-5 h-5 text-[var(--purple)]" />
         Integrations
       </h2>
-      <p className="text-sm text-gray-500 dark:text-white/50">
+      <p className="text-sm text-[var(--fs-ink-faint)]">
         API keys are encrypted at rest via Supabase Vault. We never store
         plaintext secrets.
       </p>
@@ -132,10 +132,10 @@ export function IntegrationSettings({ projectId }: { projectId: string }) {
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 dark:text-white">
+              <h3 className="font-medium text-[var(--fs-ink)]">
                 Calendly
               </h3>
-              <p className="text-xs text-gray-500 dark:text-white/50">
+              <p className="text-xs text-[var(--fs-ink-faint)]">
                 Online booking for your clients
               </p>
             </div>
@@ -252,10 +252,10 @@ export function IntegrationSettings({ projectId }: { projectId: string }) {
               <BarChart3 className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 dark:text-white">
+              <h3 className="font-medium text-[var(--fs-ink)]">
                 Google Analytics
               </h3>
-              <p className="text-xs text-gray-500 dark:text-white/50">
+              <p className="text-xs text-[var(--fs-ink-faint)]">
                 Track visitors and performance
               </p>
             </div>

@@ -77,7 +77,7 @@ export function AssistantInput({
         {/* Animated Placeholder */}
         {!value.trim() && !isFocused && !isStreaming && placeholderText && (
           <div className="pointer-events-none absolute left-0 top-2 px-2 text-sm z-20">
-            <span className="text-gray-400 dark:text-gray-500">
+            <span className="text-[var(--fs-ink-faint)]">
               {t('common.eg')}{' '}
             </span>
             <ResponseStream
@@ -85,14 +85,14 @@ export function AssistantInput({
               textStream={placeholderText}
               {...RESPONSE_STREAM_CONFIGS.placeholder}
               as="span"
-              className="text-gray-400 dark:text-gray-500"
+              className="text-[var(--fs-ink-faint)]"
             />
           </div>
         )}
 
         {/* Final Result Streaming */}
         {!isGenerating && isStreaming && streamingText && (
-          <div className="pointer-events-none absolute left-0 top-2 px-2 text-sm text-gray-700 dark:text-gray-300 z-20">
+          <div className="pointer-events-none absolute left-0 top-2 px-2 text-sm text-[var(--fs-ink-dim)] z-20">
             <ResponseStream
               textStream={streamingText}
               {...RESPONSE_STREAM_CONFIGS.finalResult}
@@ -118,7 +118,7 @@ export function AssistantInput({
             'w-full text-base min-h-[50px] max-h-[100px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent! px-2 py-2 shadow-none outline-none wrap-break-word overflow-wrap-anywhere',
             isStreaming && streamingText && !isGenerating
               ? 'text-transparent'
-              : 'text-gray-900 dark:text-white',
+              : 'text-[var(--fs-ink)]',
             'placeholder:text-gray-400 dark:placeholder:text-gray-300'
           )}
           disabled={disabled}

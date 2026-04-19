@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 const TRANSPARENT = 'bg-transparent border-b border-transparent';
 
 const SCROLLED =
-  'bg-white/72 dark:bg-[#0a0a0c]/72 backdrop-blur-2xl backdrop-saturate-[1.8] border-b border-gray-200/30 dark:border-white/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.04)]';
+  'bg-white/72 dark:bg-[var(--fs-bg-base)]/72 backdrop-blur-2xl backdrop-saturate-[1.8] border-b border-gray-200/30 dark:border-white/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.04)]';
 
 const maxWidthMap = {
   full: '',

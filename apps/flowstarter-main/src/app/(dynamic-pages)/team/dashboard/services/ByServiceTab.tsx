@@ -59,10 +59,10 @@ export function ByServiceTab({
                   <Icon className={`w-5 h-5 ${meta.color}`} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                  <h3 className="font-semibold text-[var(--fs-ink)]">
                     {meta.name}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-white/50">
+                  <p className="text-sm text-[var(--fs-ink-faint)]">
                     {meta.description}
                   </p>
                 </div>
@@ -101,11 +101,11 @@ export function ByServiceTab({
                 {typeIntegrations.map((integration) => (
                   <div
                     key={integration.id}
-                    className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+                    className="flex items-center justify-between p-3 rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)]"
                   >
                     <div className="flex items-center gap-3">
                       <div>
-                        <p className="font-medium text-sm text-gray-900 dark:text-white">
+                        <p className="font-medium text-sm text-[var(--fs-ink)]">
                           {integration.name}
                         </p>
                         <p className="text-xs text-gray-400 dark:text-white/40 flex items-center gap-1">
@@ -164,10 +164,10 @@ export function ByServiceTab({
             <BarChart3 className="w-5 h-5 text-orange-500" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-[var(--fs-ink)]">
               Google Analytics
             </h3>
-            <p className="text-sm text-gray-500 dark:text-white/50">
+            <p className="text-sm text-[var(--fs-ink-faint)]">
               Configured per-project via the Analytics section in each project's
               settings.
             </p>

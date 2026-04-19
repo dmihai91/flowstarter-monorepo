@@ -12,7 +12,7 @@ export function QuickModePill() {
           className="relative h-3 w-3"
           style={{ color: 'var(--purple)' }}
         />
-        <span className="relative text-gray-900 dark:text-white font-medium text-md">
+        <span className="relative text-[var(--fs-ink)] font-medium text-md">
           {t('assistant.button.quickMode')}
         </span>
       </div>

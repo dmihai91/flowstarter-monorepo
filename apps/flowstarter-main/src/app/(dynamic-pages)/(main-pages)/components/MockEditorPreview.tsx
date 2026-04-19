@@ -59,10 +59,10 @@ export function MockEditorPreview({
       >
         {/* Title above editor */}
         <div className="text-center mb-6">
-          <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-5">
+          <h3 className="text-3xl sm:text-4xl font-bold text-[var(--fs-ink)] mb-5">
             {t('landing.editor.title')}
           </h3>
-          <p className="text-lg text-gray-500 dark:text-white/50">
+          <p className="text-lg text-[var(--fs-ink-faint)]">
             {t('landing.editor.subtitle')}
           </p>
         </div>
@@ -203,7 +203,7 @@ export function MockEditorPreview({
                   <input
                     type="text"
                     placeholder={t('mockEditor.inputPlaceholder')}
-                    className="flex-1 bg-transparent text-sm outline-none border-none focus:outline-none focus:ring-0 px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-gray-900 dark:text-white"
+                    className="flex-1 bg-transparent text-sm outline-none border-none focus:outline-none focus:ring-0 px-2 placeholder:text-gray-400 dark:placeholder:text-white/30 text-[var(--fs-ink)]"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -275,11 +275,11 @@ export function MockEditorPreview({
                   >
                     {t('mockEditor.site.brandInitial')}
                   </div>
-                  <span className="text-[0.8125rem] font-semibold text-gray-800 dark:text-white">
+                  <span className="text-[0.8125rem] font-semibold text-[var(--fs-ink)]">
                     {t('mockEditor.site.brand')}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-[0.6875rem] text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-3 text-[0.6875rem] text-[var(--fs-ink-faint)]">
                   <span className="hover:text-gray-900 dark:hover:text-white cursor-default">
                     {t('mockEditor.site.nav.home')}
                   </span>
@@ -338,7 +338,7 @@ export function MockEditorPreview({
                 }`}
               >
                 <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
-                  <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="text-xs font-semibold text-[var(--fs-ink-dim)] mb-2">
                     {t('mockEditor.site.getInTouch')}
                   </div>
                   <div className="grid grid-cols-2 gap-1.5 mb-1.5">
@@ -372,7 +372,7 @@ export function MockEditorPreview({
 
               {/* Products/Features section */}
               <div className="px-4 py-3">
-                <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <div className="text-xs font-semibold text-[var(--fs-ink-dim)] mb-2">
                   {t('mockEditor.site.blends')}
                 </div>
                 <div className="grid grid-cols-3 gap-2">
@@ -404,7 +404,7 @@ export function MockEditorPreview({
                 }`}
               >
                 <div className="px-4 py-3">
-                  <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="text-xs font-semibold text-[var(--fs-ink-dim)] mb-2">
                     {t('mockEditor.site.testimonials')}
                   </div>
                   <div className="flex gap-2">
@@ -448,12 +448,12 @@ export function MockEditorPreview({
                 }`}
               >
                 <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
-                  <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="text-xs font-semibold text-[var(--fs-ink-dim)] mb-2">
                     {t('mockEditor.site.pricing')}
                   </div>
                   <div className="flex gap-2">
                     <div className="flex-1 p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                      <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
+                      <div className="text-[0.6875rem] font-medium text-[var(--fs-ink-dim)]">
                         {t('mockEditor.site.basicPlan')}
                       </div>
                       <div
@@ -476,7 +476,7 @@ export function MockEditorPreview({
                       }`}
                     >
                       <div className="flex items-center gap-1">
-                        <div className="text-[0.6875rem] font-medium text-gray-600 dark:text-gray-400">
+                        <div className="text-[0.6875rem] font-medium text-[var(--fs-ink-dim)]">
                           {t('mockEditor.site.proPlan')}
                         </div>
                         <div
@@ -514,7 +514,7 @@ export function MockEditorPreview({
                 }`}
               >
                 <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900/30">
-                  <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  <div className="text-xs font-semibold text-[var(--fs-ink-dim)] mb-2">
                     Frequently Asked Questions
                   </div>
                   <div className="space-y-1.5">
@@ -527,7 +527,7 @@ export function MockEditorPreview({
                         key={i}
                         className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
                       >
-                        <span className="text-[0.625rem] text-gray-600 dark:text-gray-400">
+                        <span className="text-[0.625rem] text-[var(--fs-ink-dim)]">
                           {q}
                         </span>
                         <svg
@@ -559,7 +559,7 @@ export function MockEditorPreview({
               >
                 <div className="px-4 py-3">
                   <div className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border border-gray-200 dark:border-gray-700">
-                    <div className="text-[0.6875rem] font-semibold text-gray-700 dark:text-gray-300 mb-0.5">
+                    <div className="text-[0.6875rem] font-semibold text-[var(--fs-ink-dim)] mb-0.5">
                       Stay in the loop ✉️
                     </div>
                     <div className="text-[0.5625rem] text-gray-400 mb-2">

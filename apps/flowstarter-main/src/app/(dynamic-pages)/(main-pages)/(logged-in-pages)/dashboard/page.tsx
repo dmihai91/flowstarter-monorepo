@@ -141,13 +141,13 @@ export default function DashboardPage() {
           <DashboardInit>
             {/* Greeting */}
             <div className="mt-1 sm:mt-2 mb-6">
-              <p className="text-sm sm:text-base text-gray-500 dark:text-white/50 mb-1">
+              <p className="text-sm sm:text-base text-[var(--fs-ink-faint)] mb-1">
                 {greeting},{' '}
-                <span className="text-gray-700 dark:text-white/70 font-medium">
+                <span className="text-[var(--fs-ink-dim)] font-medium">
                   {firstName}
                 </span>
               </p>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--fs-ink)]">
                 {t('dashboard.title')}
               </h1>
               {isAdmin && (

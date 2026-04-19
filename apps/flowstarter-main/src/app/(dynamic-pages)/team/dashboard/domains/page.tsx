@@ -90,16 +90,16 @@ export default function DomainsPage() {
         {/* Setup Steps */}
         <div className="space-y-6">
           {/* Step 1: Add to Cloudflare */}
-          <div className="p-5 rounded-xl bg-white dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10">
+          <div className="p-5 rounded-xl bg-white dark:bg-white/[0.02] border border-[var(--fs-rule)]">
             <div className="flex items-center gap-3 mb-4">
               <span className="w-7 h-7 rounded-full bg-[var(--purple)] text-white text-sm flex items-center justify-center font-semibold">
                 1
               </span>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
+              <h3 className="font-semibold text-[var(--fs-ink)]">
                 Add Domain to Cloudflare
               </h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-white/60 mb-4">
+            <p className="text-sm text-[var(--fs-ink-dim)] mb-4">
               Add the client's domain to their Cloudflare account (or our shared
               account for managed clients).
             </p>
@@ -116,23 +116,23 @@ export default function DomainsPage() {
           </div>
 
           {/* Step 2: Update Nameservers */}
-          <div className="p-5 rounded-xl bg-white dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10">
+          <div className="p-5 rounded-xl bg-white dark:bg-white/[0.02] border border-[var(--fs-rule)]">
             <div className="flex items-center gap-3 mb-4">
               <span className="w-7 h-7 rounded-full bg-[var(--purple)] text-white text-sm flex items-center justify-center font-semibold">
                 2
               </span>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
+              <h3 className="font-semibold text-[var(--fs-ink)]">
                 Update Nameservers at Registrar
               </h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-white/60 mb-4">
+            <p className="text-sm text-[var(--fs-ink-dim)] mb-4">
               At the domain registrar, replace existing nameservers with
               Cloudflare's (shown after adding domain):
             </p>
-            <div className="bg-gray-50 dark:bg-white/5 rounded-lg p-4 space-y-2">
+            <div className="bg-[var(--fs-bg-elevated)] rounded-lg p-4 space-y-2">
               {nameservers.map((ns, i) => (
                 <div key={i} className="flex items-center justify-between">
-                  <code className="text-sm font-mono text-gray-900 dark:text-white">
+                  <code className="text-sm font-mono text-[var(--fs-ink)]">
                     {ns}
                   </code>
                   <button
@@ -148,49 +148,49 @@ export default function DomainsPage() {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-gray-500 dark:text-white/40 mt-3">
+            <p className="text-xs text-[var(--fs-ink-faint)] mt-3">
               Note: Actual nameservers are shown in Cloudflare after adding the
               domain.
             </p>
           </div>
 
           {/* Step 3: DNS Records */}
-          <div className="p-5 rounded-xl bg-white dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10">
+          <div className="p-5 rounded-xl bg-white dark:bg-white/[0.02] border border-[var(--fs-rule)]">
             <div className="flex items-center gap-3 mb-4">
               <span className="w-7 h-7 rounded-full bg-[var(--purple)] text-white text-sm flex items-center justify-center font-semibold">
                 3
               </span>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
+              <h3 className="font-semibold text-[var(--fs-ink)]">
                 Add DNS Records for Vercel
               </h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-white/60 mb-4">
+            <p className="text-sm text-[var(--fs-ink-dim)] mb-4">
               Add these DNS records in Cloudflare (set proxy to{' '}
               <strong>DNS only</strong> - gray cloud):
             </p>
-            <div className="bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden">
+            <div className="bg-[var(--fs-bg-elevated)] rounded-xl border border-[var(--fs-rule)] overflow-hidden">
               <table className="w-full text-sm">
                 <thead className="bg-gray-100 dark:bg-white/5">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                       Type
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                       Name
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                       Content
                     </th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                    <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                       Proxy
                     </th>
                     <th className="px-4 py-3"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-white/10">
+                <tbody className="divide-y divide-[var(--fs-rule)]">
                   {dnsRecords.map((record, i) => (
                     <tr key={i}>
-                      <td className="px-4 py-3 font-mono text-gray-900 dark:text-white">
+                      <td className="px-4 py-3 font-mono text-[var(--fs-ink)]">
                         {record.type}
                       </td>
                       <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70">
@@ -200,7 +200,7 @@ export default function DomainsPage() {
                         {record.value}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 text-xs rounded bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-white/60">
+                        <span className="px-2 py-0.5 text-xs rounded bg-gray-200 dark:bg-white/10 text-[var(--fs-ink-dim)]">
                           {record.proxy}
                         </span>
                       </td>
@@ -232,16 +232,16 @@ export default function DomainsPage() {
           </div>
 
           {/* Step 4: SSL Settings */}
-          <div className="p-5 rounded-xl bg-white dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10">
+          <div className="p-5 rounded-xl bg-white dark:bg-white/[0.02] border border-[var(--fs-rule)]">
             <div className="flex items-center gap-3 mb-4">
               <span className="w-7 h-7 rounded-full bg-[var(--purple)] text-white text-sm flex items-center justify-center font-semibold">
                 4
               </span>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
+              <h3 className="font-semibold text-[var(--fs-ink)]">
                 Configure SSL/TLS Settings
               </h3>
             </div>
-            <p className="text-sm text-gray-600 dark:text-white/60 mb-4">
+            <p className="text-sm text-[var(--fs-ink-dim)] mb-4">
               Go to <strong>SSL/TLS</strong> in Cloudflare and verify these
               settings:
             </p>
@@ -249,16 +249,16 @@ export default function DomainsPage() {
               {sslSettings.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-white/5"
+                  className="flex items-center justify-between p-3 rounded-lg bg-[var(--fs-bg-elevated)]"
                 >
-                  <span className="text-sm text-gray-600 dark:text-white/60">
+                  <span className="text-sm text-[var(--fs-ink-dim)]">
                     {item.setting}
                   </span>
                   <span
                     className={`text-sm font-medium ${
                       item.important
                         ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-gray-900 dark:text-white'
+                        : 'text-[var(--fs-ink)]'
                     }`}
                   >
                     {item.value}
@@ -286,13 +286,13 @@ export default function DomainsPage() {
           ].map((benefit, i) => (
             <div
               key={i}
-              className="p-4 rounded-xl bg-gray-50 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+              className="p-4 rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)]"
             >
               <benefit.icon className="w-5 h-5 text-[var(--purple)] mb-2" />
-              <h4 className="font-medium text-gray-900 dark:text-white text-sm">
+              <h4 className="font-medium text-[var(--fs-ink)] text-sm">
                 {benefit.title}
               </h4>
-              <p className="text-xs text-gray-500 dark:text-white/50">
+              <p className="text-xs text-[var(--fs-ink-faint)]">
                 {benefit.desc}
               </p>
             </div>

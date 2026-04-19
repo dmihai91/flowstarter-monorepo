@@ -415,13 +415,13 @@ export default function PrivacyPage() {
             <Shield className="w-4 h-4" />
             {t('privacy.badge')}
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--fs-ink)] mb-4">
             {t('privacy.title')}
           </h1>
-          <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-6">
+          <p className="text-lg text-[var(--fs-ink-faint)] max-w-2xl mx-auto mb-6">
             {t('privacy.description')}
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-base text-gray-400 dark:text-white/30">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-base text-[var(--fs-ink-faint)]">
             <span>{t('privacy.effective', { date: effectiveDate })}</span>
             <span className="hidden sm:inline">•</span>
             <span>{t('privacy.lastUpdated', { date: lastUpdated })}</span>
@@ -430,7 +430,7 @@ export default function PrivacyPage() {
 
         {/* Privacy at a Glance */}
         <div className="mb-16 p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/5 via-white to-blue-500/5 dark:from-[var(--purple)]/10 dark:via-[#0f0f12] dark:to-blue-500/10 border border-[var(--purple)]/20">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 text-center flex items-center justify-center gap-2">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6 text-center flex items-center justify-center gap-2">
             <Lock className="w-5 h-5 text-[var(--purple)]" />
             {t('privacy.glance.title')}
           </h2>
@@ -438,17 +438,17 @@ export default function PrivacyPage() {
             {glanceSummary.map((item, i) => (
               <div
                 key={i}
-                className="p-4 rounded-xl bg-white/55 dark:bg-white/[0.03] border border-gray-200/50 dark:border-white/5"
+                className="p-4 rounded-xl bg-white/55 dark:bg-white/[0.03] border border-[var(--fs-rule)]"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-4 h-4 text-[var(--purple)]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-base mb-1">
+                    <h3 className="font-semibold text-[var(--fs-ink)] text-base mb-1">
                       {item.title}
                     </h3>
-                    <p className="text-lg text-gray-500 dark:text-white/50">
+                    <p className="text-lg text-[var(--fs-ink-faint)]">
                       {item.desc}
                     </p>
                   </div>
@@ -459,8 +459,8 @@ export default function PrivacyPage() {
         </div>
 
         {/* Table of Contents */}
-        <div className="mb-12 p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-12 p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
+          <h2 className="text-lg font-bold text-[var(--fs-ink)] mb-4">
             {t('privacy.contents')}
           </h2>
           <div className="grid sm:grid-cols-2 gap-2 text-base">
@@ -468,7 +468,7 @@ export default function PrivacyPage() {
               <a
                 key={section.id}
                 href={`#${section.id}`}
-                className="text-gray-600 dark:text-white/60 hover:text-[var(--purple)] dark:hover:text-[var(--purple)] transition-colors"
+                className="text-[var(--fs-ink-dim)] hover:text-[var(--purple)] dark:hover:text-[var(--purple)] transition-colors"
               >
                 {section.title}
               </a>
@@ -511,19 +511,19 @@ export default function PrivacyPage() {
               className={`p-8 rounded-2xl border ${
                 section.highlight
                   ? 'bg-[var(--purple)]/5 dark:bg-[var(--purple)]/10 border-[var(--purple)]/20'
-                  : 'bg-white/55 dark:bg-white/[0.02] border-gray-200/50 dark:border-white/5'
+                  : 'bg-white/55 dark:bg-white/[0.02] border-[var(--fs-rule)]'
               }`}
             >
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6">
                 {section.title}
               </h2>
               <div className="space-y-5">
                 {section.content.map((item, itemIndex) => (
                   <div key={itemIndex}>
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-base font-semibold text-[var(--fs-ink)] mb-2">
                       {item.subtitle}
                     </h3>
-                    <p className="text-gray-600 dark:text-white/60 leading-relaxed text-base">
+                    <p className="text-[var(--fs-ink-dim)] leading-relaxed text-base">
                       {item.text}
                     </p>
                   </div>
@@ -534,8 +534,8 @@ export default function PrivacyPage() {
         </div>
 
         {/* Terms of Service Reference */}
-        <div className="mt-12 p-6 rounded-2xl bg-gray-100 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center">
-          <p className="text-lg text-gray-500 dark:text-white/50">
+        <div className="mt-12 p-6 rounded-2xl bg-gray-100 dark:bg-white/[0.02] border border-[var(--fs-rule)] text-center">
+          <p className="text-lg text-[var(--fs-ink-faint)]">
             {t('privacy.termsRef', { link: '' })}
             <a href="/terms" className="text-[var(--purple)] hover:underline">
               {t('privacy.termsRefLink')}
@@ -546,10 +546,10 @@ export default function PrivacyPage() {
         {/* Contact CTA */}
         <div className="mt-12 p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
           <Mail className="w-10 h-10 text-[var(--purple)] mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-2">
             {t('privacy.contact.title')}
           </h2>
-          <p className="text-gray-500 dark:text-white/50 mb-4">
+          <p className="text-[var(--fs-ink-faint)] mb-4">
             {t('privacy.contact.description')}
           </p>
           <a

@@ -73,10 +73,10 @@ export function HelpContent({
             <HelpCircle className="w-4 h-4" />
             {t('help.badge')}
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--fs-ink)] mb-4">
             {t('help.title')}
           </h1>
-          <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--fs-ink-faint)] max-w-2xl mx-auto">
             {t('help.description')}
           </p>
         </div>
@@ -84,10 +84,10 @@ export function HelpContent({
 
       {!showHero && (
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+          <h1 className="text-2xl font-bold text-[var(--fs-ink)] mb-1">
             {t('help.loggedInTitle')}
           </h1>
-          <p className="text-sm text-gray-500 dark:text-white/50">
+          <p className="text-sm text-[var(--fs-ink-faint)]">
             {t('help.loggedInDescription')}
           </p>
         </div>
@@ -102,10 +102,10 @@ export function HelpContent({
           <div className="w-11 h-11 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/20 transition-colors">
             <Phone className="w-5 h-5 text-[var(--purple)]" />
           </div>
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[var(--purple)] transition-colors">
+          <h3 className="font-semibold text-[var(--fs-ink)] mb-1 group-hover:text-[var(--purple)] transition-colors">
             {t('help.quickAction.discovery.title')}
           </h3>
-          <p className="text-sm text-gray-500 dark:text-white/50">
+          <p className="text-sm text-[var(--fs-ink-faint)]">
             {t('help.quickAction.discovery.desc')}
           </p>
         </button>
@@ -116,10 +116,10 @@ export function HelpContent({
           <div className="w-11 h-11 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/20 transition-colors">
             <Mail className="w-5 h-5 text-[var(--purple)]" />
           </div>
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-[var(--purple)] transition-colors">
+          <h3 className="font-semibold text-[var(--fs-ink)] mb-1 group-hover:text-[var(--purple)] transition-colors">
             {t('help.quickAction.email.title')}
           </h3>
-          <p className="text-sm text-gray-500 dark:text-white/50">
+          <p className="text-sm text-[var(--fs-ink-faint)]">
             {t('help.quickAction.email.desc')}
           </p>
         </a>
@@ -127,7 +127,7 @@ export function HelpContent({
 
       {/* How It Works */}
       <section className="mb-12 sm:mb-16">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 sm:mb-8 text-center">
+        <h2 className="text-xl sm:text-2xl font-bold text-[var(--fs-ink)] mb-6 sm:mb-8 text-center">
           {t('help.howItWorks')}
         </h2>
         <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
@@ -144,10 +144,10 @@ export function HelpContent({
                   {step.number}
                 </span>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1.5">
+              <h3 className="font-semibold text-[var(--fs-ink)] mb-1.5">
                 {step.title}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-white/50">
+              <p className="text-sm text-[var(--fs-ink-faint)]">
                 {step.description}
               </p>
             </div>
@@ -157,7 +157,7 @@ export function HelpContent({
 
       {/* FAQs */}
       <section className="mb-12 sm:mb-16">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 sm:mb-8 text-center">
+        <h2 className="text-xl sm:text-2xl font-bold text-[var(--fs-ink)] mb-6 sm:mb-8 text-center">
           {t('help.faqTitle')}
         </h2>
         <div className="space-y-3">
@@ -170,7 +170,7 @@ export function HelpContent({
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full px-5 sm:px-6 py-4 text-left flex items-center justify-between gap-4"
               >
-                <span className="font-medium text-gray-900 dark:text-white">
+                <span className="font-medium text-[var(--fs-ink)]">
                   {faq.question}
                 </span>
                 <ChevronDown
@@ -181,7 +181,7 @@ export function HelpContent({
               </button>
               {openFaq === i && (
                 <div className="px-5 sm:px-6 pb-4">
-                  <p className="text-sm sm:text-base text-gray-500 dark:text-white/50 leading-relaxed">
+                  <p className="text-sm sm:text-base text-[var(--fs-ink-faint)] leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>
@@ -194,10 +194,10 @@ export function HelpContent({
       {/* CTA */}
       {showCta && (
         <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-2">
             {t('help.cta.title')}
           </h2>
-          <p className="text-gray-500 dark:text-white/50 mb-6">
+          <p className="text-[var(--fs-ink-faint)] mb-6">
             {t('help.cta.description')}
           </p>
           <Button

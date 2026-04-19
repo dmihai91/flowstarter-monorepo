@@ -76,7 +76,7 @@ export function TeamDashboardShell({
                 </div>
               )}
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-[var(--fs-ink)]">
                   {title}
                 </h1>
                 {subtitle && (
@@ -120,7 +120,7 @@ export function ShellSection({
   return (
     <div>
       {title && (
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-sm font-semibold text-[var(--fs-ink)] mb-4">
           {title}
         </h2>
       )}

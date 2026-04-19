@@ -127,7 +127,7 @@ export function TagsInput({
         <div
           ref={containerRef}
           className={cn(
-            'min-h-[46px] w-full rounded-[8px] border-[1.5px] border-solid !bg-transparent border-gray-300 dark:border-[var(--border-subtle)] text-gray-900 dark:text-white outline-none transition-all duration-200 px-[12px] py-[8px] sm:px-[16px] sm:py-[10px] flex flex-wrap items-center gap-[6px] focus-within:ring-0 focus-within:outline-none focus-within:border-gray-400 dark:focus-within:border-white/40',
+            'min-h-[46px] w-full rounded-[8px] border-[1.5px] border-solid !bg-transparent border-gray-300 dark:border-[var(--border-subtle)] text-[var(--fs-ink)] outline-none transition-all duration-200 px-[12px] py-[8px] sm:px-[16px] sm:py-[10px] flex flex-wrap items-center gap-[6px] focus-within:ring-0 focus-within:outline-none focus-within:border-gray-400 dark:focus-within:border-white/40',
             disabled && 'opacity-60 cursor-not-allowed',
             className
           )}
@@ -165,7 +165,7 @@ export function TagsInput({
             onPaste={handlePaste}
             placeholder={tags.length === 0 ? placeholder : undefined}
             disabled={disabled}
-            className="flex-1 min-w-32 !bg-transparent outline-none text-base font-normal leading-normal placeholder:text-gray-400 dark:placeholder:text-[var(--ui-text-placeholder)] border-0 focus:border-0 appearance-none text-gray-900 dark:text-white"
+            className="flex-1 min-w-32 !bg-transparent outline-none text-base font-normal leading-normal placeholder:text-gray-400 dark:placeholder:text-[var(--ui-text-placeholder)] border-0 focus:border-0 appearance-none text-[var(--fs-ink)]"
           />
         </div>
       </PopoverTrigger>
@@ -178,7 +178,7 @@ export function TagsInput({
         onCloseAutoFocus={(e) => e.preventDefault()}
       >
         {filteredSuggestions.length === 0 ? (
-          <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="px-3 py-2 text-sm text-[var(--fs-ink-faint)]">
             {t('tagsInput.noSuggestions')}
           </div>
         ) : (
@@ -188,7 +188,7 @@ export function TagsInput({
                 <button
                   type="button"
                   onClick={() => commitTag(s)}
-                  className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                  className="w-full text-left px-3 py-2 rounded-md text-sm text-[var(--fs-ink)] hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
                 >
                   {s}
                 </button>

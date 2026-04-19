@@ -83,13 +83,13 @@ export default function TermsPage() {
             <FileText className="w-4 h-4" />
             {t('terms.badge')}
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--fs-ink)] mb-4">
             {t('terms.title')}
           </h1>
-          <p className="text-lg text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-4">
+          <p className="text-lg text-[var(--fs-ink-faint)] max-w-2xl mx-auto mb-4">
             {t('terms.description')}
           </p>
-          <p className="text-sm text-gray-400 dark:text-white/30">
+          <p className="text-sm text-[var(--fs-ink-faint)]">
             {t('terms.lastUpdated', { date: lastUpdated })}
           </p>
         </div>
@@ -115,15 +115,15 @@ export default function TermsPage() {
           ].map((item, i) => (
             <div
               key={i}
-              className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 text-center"
+              className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)] text-center"
             >
               <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-3">
                 <item.Icon className="w-6 h-6 text-[var(--purple)]" />
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+              <h3 className="font-semibold text-[var(--fs-ink)] mb-1">
                 {item.title}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-white/50">
+              <p className="text-sm text-[var(--fs-ink-faint)]">
                 {item.desc}
               </p>
             </div>
@@ -135,9 +135,9 @@ export default function TermsPage() {
           {sections.map((section, index) => (
             <section
               key={index}
-              className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5"
+              className="p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]"
             >
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-[var(--fs-ink)] mb-6 flex items-center gap-3">
                 <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center text-sm font-bold text-[var(--purple)]">
                   {index + 1}
                 </span>
@@ -146,10 +146,10 @@ export default function TermsPage() {
               <div className="space-y-6">
                 {section.items.map((item, itemIndex) => (
                   <div key={itemIndex}>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-lg font-semibold text-[var(--fs-ink)] mb-2">
                       {item.subtitle}
                     </h3>
-                    <p className="text-gray-600 dark:text-white/60 leading-relaxed">
+                    <p className="text-[var(--fs-ink-dim)] leading-relaxed">
                       {item.text}
                     </p>
                   </div>
@@ -161,10 +161,10 @@ export default function TermsPage() {
 
         {/* Contact */}
         <div className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-2">
             {t('terms.contact.title')}
           </h2>
-          <p className="text-gray-500 dark:text-white/50 mb-4">
+          <p className="text-[var(--fs-ink-faint)] mb-4">
             {t('terms.contact.description')}
           </p>
           <a

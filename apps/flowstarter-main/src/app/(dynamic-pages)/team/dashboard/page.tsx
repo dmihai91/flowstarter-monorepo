@@ -98,10 +98,10 @@ export default function TeamDashboardPage() {
             <div className="mx-auto mb-1 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]">
               <FolderOpen className="w-8 h-8 text-gray-400 dark:text-white/30" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-semibold text-[var(--fs-ink)] mb-2">
               No projects yet
             </h3>
-            <p className="text-sm text-gray-500 dark:text-white/50 mb-6 max-w-sm mx-auto">
+            <p className="text-sm text-[var(--fs-ink-faint)] mb-6 max-w-sm mx-auto">
               Click "New Project" to set up your first client project.
             </p>
             <Button variant="accent" onClick={createNewInEditor}>

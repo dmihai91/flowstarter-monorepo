@@ -59,7 +59,7 @@ export function SectionHeading({
 }) {
   return (
     <h2
-      className={`font-display text-3xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-4xl lg:text-5xl ${className}`}
+      className={`font-display text-3xl font-semibold tracking-tight text-[var(--fs-ink)] sm:text-4xl lg:text-5xl ${className}`}
     >
       {children}
     </h2>

@@ -119,7 +119,7 @@ export function TeamProjectCard({
           >
             {getStatusLabel(status, t)}
           </span>
-          <p className="font-semibold text-gray-900 dark:text-white text-base truncate">
+          <p className="font-semibold text-[var(--fs-ink)] text-base truncate">
             {project.name || t('team.dashboard.untitledProject')}
           </p>
         </div>
@@ -143,11 +143,11 @@ export function TeamProjectCard({
         project.setup_fee !== undefined &&
         Number(project.setup_fee) > 0 && (
           <div className="mb-4 flex items-center gap-3 rounded-2xl border border-gray-200/60 bg-white/80 px-3 py-2 text-sm backdrop-blur-md dark:border-white/[0.06] dark:bg-white/[0.04]">
-            <span className="text-gray-600 dark:text-white/60">
+            <span className="text-[var(--fs-ink-dim)]">
               &euro;{project.setup_fee} {t('team.dashboard.setup')}
             </span>
             <span className="text-gray-300 dark:text-white/20">&bull;</span>
-            <span className="text-gray-600 dark:text-white/60">
+            <span className="text-[var(--fs-ink-dim)]">
               &euro;{project.monthly_fee || 0}
               {t('team.dashboard.perMonth')}
             </span>
@@ -169,7 +169,7 @@ export function TeamProjectCard({
               {project.ai_credits_used || 0} {t('team.dashboard.aiCredits')}
             </span>
             <span className="text-gray-300 dark:text-white/20">&bull;</span>
-            <span className="text-gray-500 dark:text-white/50">
+            <span className="text-[var(--fs-ink-faint)]">
               &euro;{(project.generation_cost_usd * 0.92).toFixed(2)}{' '}
               {t('team.dashboard.cost')}
             </span>

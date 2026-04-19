@@ -81,7 +81,7 @@ function StepCard({
           ? 'bg-white dark:bg-white/[0.07] border border-[var(--purple)]/25 dark:border-[var(--purple)]/30 shadow-[0_4px_24px_rgba(77,93,217,0.12)] ring-1 ring-[var(--purple)]/15'
           : status === 'completed'
           ? 'bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-200 dark:border-emerald-500/20'
-          : 'bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.07]'
+          : 'bg-[var(--fs-bg-elevated)] border border-gray-200 dark:border-white/[0.07]'
       )}
     >
       <StepLabel index={index} status={status} />
@@ -90,7 +90,7 @@ function StepCard({
           'text-sm font-semibold mt-0.5',
           status === 'locked'
             ? 'text-gray-400 dark:text-white/30'
-            : 'text-gray-900 dark:text-white'
+            : 'text-[var(--fs-ink)]'
         )}
       >
         {title}
@@ -101,7 +101,7 @@ function StepCard({
             'text-xs leading-snug mt-1',
             status === 'locked'
               ? 'text-gray-300 dark:text-white/20'
-              : 'text-gray-500 dark:text-white/50'
+              : 'text-[var(--fs-ink-faint)]'
           )}
         >
           {desc}
@@ -191,7 +191,7 @@ export function MilestonesTimeline({
                 ? 'bg-white dark:bg-white/[0.07] border border-[var(--purple)]/25 dark:border-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.12)]'
                 : m.status === 'completed'
                 ? 'bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-200 dark:border-emerald-500/20'
-                : 'bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.07]'
+                : 'bg-[var(--fs-bg-elevated)] border border-gray-200 dark:border-white/[0.07]'
             )}
           >
             <StepCircle index={i} status={m.status} />
@@ -202,13 +202,13 @@ export function MilestonesTimeline({
                   'text-sm font-semibold',
                   m.status === 'locked'
                     ? 'text-gray-400 dark:text-white/30'
-                    : 'text-gray-900 dark:text-white'
+                    : 'text-[var(--fs-ink)]'
                 )}
               >
                 {m.title}
               </h3>
               {m.status === 'active' && (
-                <p className="text-xs text-gray-500 dark:text-white/50 leading-snug mt-0.5">
+                <p className="text-xs text-[var(--fs-ink-faint)] leading-snug mt-0.5">
                   {m.desc}
                 </p>
               )}

@@ -142,7 +142,7 @@ export default function LeadsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+          <h1 className="text-xl font-semibold text-[var(--fs-ink)] flex items-center gap-2">
             <Users className="w-5 h-5 text-[var(--purple)]" />
             Leads
             {totalNew > 0 && (
@@ -151,7 +151,7 @@ export default function LeadsPage() {
               </span>
             )}
           </h1>
-          <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+          <p className="text-sm text-[var(--fs-ink-faint)] mt-1">
             {totalAll} total leads from your website
           </p>
         </div>
@@ -240,7 +240,7 @@ export default function LeadsPage() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                      <span className="font-medium text-[var(--fs-ink)] text-sm truncate">
                         {lead.name || lead.email || 'Anonymous'}
                       </span>
                       {lead.source && (
@@ -276,7 +276,7 @@ export default function LeadsPage() {
                       {lead.email && (
                         <a
                           href={`mailto:${lead.email}`}
-                          className="flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-[var(--purple)]"
+                          className="flex items-center gap-2 text-[var(--fs-ink-dim)] hover:text-[var(--purple)]"
                         >
                           <Mail className="w-3.5 h-3.5" /> {lead.email}
                         </a>
@@ -284,7 +284,7 @@ export default function LeadsPage() {
                       {lead.phone && (
                         <a
                           href={`tel:${lead.phone}`}
-                          className="flex items-center gap-2 text-gray-600 dark:text-white/60 hover:text-[var(--purple)]"
+                          className="flex items-center gap-2 text-[var(--fs-ink-dim)] hover:text-[var(--purple)]"
                         >
                           <Phone className="w-3.5 h-3.5" /> {lead.phone}
                         </a>
@@ -292,7 +292,7 @@ export default function LeadsPage() {
                     </div>
 
                     {lead.message && (
-                      <div className="p-3 rounded-lg bg-gray-50 dark:bg-white/[0.03]">
+                      <div className="p-3 rounded-lg bg-[var(--fs-bg-elevated)]">
                         <p className="text-sm text-gray-700 dark:text-white/70 flex items-start gap-2">
                           <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0 text-gray-400" />
                           {lead.message}

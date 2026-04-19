@@ -78,7 +78,7 @@ export function InputArea({
           </>
         )}
         <QuickModePill />
-        <div className="text-sm font-normal leading-normal text-gray-600 dark:text-gray-400 mb-3 px-1 space-y-0.5">
+        <div className="text-sm font-normal leading-normal text-[var(--fs-ink-dim)] mb-3 px-1 space-y-0.5">
           <p>{t('assistant.input.description')}</p>
           <p>{t('assistant.input.description.details')}</p>
         </div>

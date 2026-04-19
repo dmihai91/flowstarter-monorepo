@@ -40,9 +40,9 @@ export function ImageUploadButton({
         }
       >
         {isUploading ? (
-          <Loader2 className="h-5 w-5 animate-spin text-gray-600 dark:text-gray-400" />
+          <Loader2 className="h-5 w-5 animate-spin text-[var(--fs-ink-dim)]" />
         ) : (
-          <ImageIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+          <ImageIcon className="h-5 w-5 text-[var(--fs-ink-dim)]" />
         )}
       </button>
     </>

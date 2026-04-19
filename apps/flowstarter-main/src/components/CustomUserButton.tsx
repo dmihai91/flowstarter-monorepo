@@ -104,20 +104,20 @@ export const CustomUserButton = ({ className }: CustomUserButtonProps) => {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                 {user.fullName || t('app.userFallback')}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              <p className="text-xs text-[var(--fs-ink-faint)] truncate">
                 {user.emailAddresses?.[0]?.emailAddress}
               </p>
             </div>
           </div>
           {/* Profile Header - Desktop */}
           <div className="hidden sm:block px-2 py-3 border-b border-gray-200 dark:border-white/40">
-            <p className="text-sm font-medium text-gray-900 dark:text-white">
+            <p className="text-sm font-medium text-[var(--fs-ink)]">
               {user.fullName || t('app.userFallback')}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            <p className="text-xs text-[var(--fs-ink-faint)] truncate">
               {user.emailAddresses?.[0]?.emailAddress}
             </p>
           </div>

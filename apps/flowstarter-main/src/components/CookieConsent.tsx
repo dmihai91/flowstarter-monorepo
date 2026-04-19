@@ -71,7 +71,7 @@ export function CookieConsent() {
 
               {/* Content */}
               <div className="flex-1 min-w-0 pr-6">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                <h3 className="text-sm font-semibold text-[var(--fs-ink)] mb-1">
                   {t('cookie.title')}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-white/60 leading-relaxed mb-4">

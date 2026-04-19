@@ -109,7 +109,7 @@ function Section({
         >
           {icon}
         </div>
-        <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-base font-semibold text-[var(--fs-ink)]">
           {title}
         </h2>
       </div>
@@ -244,7 +244,7 @@ export default function ProjectDetailPage() {
           <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="w-6 h-6 text-red-500" />
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-lg font-semibold text-[var(--fs-ink)] mb-2">
             Project not found
           </h2>
           <p className="text-sm text-gray-500 dark:text-white/40 mb-6">
@@ -291,7 +291,7 @@ export default function ProjectDetailPage() {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-xl font-bold text-[var(--fs-ink)]">
                   {project.name}
                 </h1>
                 {parsedChat?.generatedByAI && (
@@ -338,7 +338,7 @@ export default function ProjectDetailPage() {
           </div>
         </div>
         {project.description && (
-          <p className="text-sm text-gray-600 dark:text-white/60 mt-4 leading-relaxed">
+          <p className="text-sm text-[var(--fs-ink-dim)] mt-4 leading-relaxed">
             {project.description}
           </p>
         )}
@@ -517,7 +517,7 @@ export default function ProjectDetailPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <StatusIcon status={p.deposit_status} />
-                  <span className="text-xs text-gray-600 dark:text-white/60">
+                  <span className="text-xs text-[var(--fs-ink-dim)]">
                     Deposit
                   </span>
                 </div>
@@ -534,7 +534,7 @@ export default function ProjectDetailPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <StatusIcon status={p.final_status} />
-                  <span className="text-xs text-gray-600 dark:text-white/60">
+                  <span className="text-xs text-[var(--fs-ink-dim)]">
                     Final payment
                   </span>
                 </div>
@@ -551,7 +551,7 @@ export default function ProjectDetailPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <StatusIcon status={p.subscription_status} />
-                  <span className="text-xs text-gray-600 dark:text-white/60">
+                  <span className="text-xs text-[var(--fs-ink-dim)]">
                     Subscription
                   </span>
                 </div>

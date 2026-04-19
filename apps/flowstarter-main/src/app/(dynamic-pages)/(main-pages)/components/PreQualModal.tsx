@@ -170,11 +170,11 @@ export function PreQualModal({
                 </p>
                 <h2
                   id="prequal-title"
-                  className="text-2xl font-bold text-gray-900 dark:text-white"
+                  className="text-2xl font-bold text-[var(--fs-ink)]"
                 >
                   Which best describes your situation?
                 </h2>
-                <p className="mt-1 text-base text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-base text-[var(--fs-ink-faint)]">
                   We'll tailor the call based on your answer.
                 </p>
               </div>
@@ -192,7 +192,7 @@ export function PreQualModal({
                         'w-full flex items-center justify-between gap-4 rounded-xl border px-4 py-4 text-left transition-all duration-150',
                         isSelected
                           ? 'border-[var(--purple-primary)] bg-[var(--purple-primary)]/8 ring-1 ring-[var(--purple-primary)]'
-                          : 'border-gray-200 dark:border-white/10 hover:border-[var(--purple-primary)]/50 dark:hover:border-white/20 bg-transparent',
+                          : 'border-[var(--fs-rule)] hover:border-[var(--purple-primary)]/50 dark:hover:border-white/20 bg-transparent',
                       ].join(' ')}
                     >
                       <span className="flex items-center gap-3 min-w-0">
@@ -210,10 +210,10 @@ export function PreQualModal({
                           )}
                         </span>
                         <span className="min-w-0">
-                          <span className="block text-base font-semibold text-gray-900 dark:text-white">
+                          <span className="block text-base font-semibold text-[var(--fs-ink)]">
                             {opt.name}
                           </span>
-                          <span className="block text-sm text-gray-500 dark:text-gray-400 truncate">
+                          <span className="block text-sm text-[var(--fs-ink-faint)] truncate">
                             {opt.desc}
                           </span>
                         </span>
@@ -238,7 +238,7 @@ export function PreQualModal({
                   'flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 text-base font-semibold transition-all duration-200',
                   selected
                     ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-[var(--purple-primary)]/25 hover:opacity-90 cursor-pointer'
-                    : 'bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-white/30 cursor-not-allowed',
+                    : 'bg-[var(--fs-bg-elevated)] text-gray-400 dark:text-white/30 cursor-not-allowed',
                 ].join(' ')}
               >
                 Book my discovery call
@@ -271,7 +271,7 @@ export function PreQualModal({
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white transition-colors"
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-[var(--fs-ink)]/50 dark:hover:text-white transition-colors"
                 >
                   <svg
                     className="h-4 w-4"
@@ -289,7 +289,7 @@ export function PreQualModal({
                   Back
                 </button>
                 <div className="h-4 w-px bg-gray-200 dark:bg-white/10" />
-                <p className="text-sm text-gray-500 dark:text-white/50">
+                <p className="text-sm text-[var(--fs-ink-faint)]">
                   <span className="font-medium text-[var(--purple-primary)]">
                     {OPTIONS.find((o) => o.id === selected)?.name}
                   </span>{' '}
@@ -300,11 +300,11 @@ export function PreQualModal({
               <div className="mb-2">
                 <h2
                   id="prequal-title"
-                  className="text-xl font-bold text-gray-900 dark:text-white"
+                  className="text-xl font-bold text-[var(--fs-ink)]"
                 >
                   Pick a time that works for you
                 </h2>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-[var(--fs-ink-faint)]">
                   Choose a 45-minute slot below. We'll confirm via email.
                 </p>
               </div>
@@ -342,10 +342,10 @@ export function PreQualModal({
                 </svg>
               </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              <h2 className="text-2xl font-bold text-[var(--fs-ink)] mb-2">
                 You're all set!
               </h2>
-              <p className="text-base text-gray-500 dark:text-gray-400 max-w-sm">
+              <p className="text-base text-[var(--fs-ink-faint)] max-w-sm">
                 Your discovery call is booked. Check your email for the
                 confirmation and calendar invite.
               </p>

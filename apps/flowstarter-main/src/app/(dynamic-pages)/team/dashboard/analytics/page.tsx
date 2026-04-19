@@ -56,12 +56,12 @@ function StatCard({
       >
         {icon}
       </div>
-      <p className="text-xs text-gray-500 dark:text-white/40 mb-1">{label}</p>
-      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+      <p className="text-xs text-[var(--fs-ink-faint)] mb-1">{label}</p>
+      <p className="text-2xl font-bold text-[var(--fs-ink)]">
         {value}
       </p>
       {sub && (
-        <p className="text-xs text-gray-400 dark:text-white/30 mt-0.5">{sub}</p>
+        <p className="text-xs text-[var(--fs-ink-faint)] mt-0.5">{sub}</p>
       )}
     </ShellCard>
   );
@@ -70,9 +70,9 @@ function StatCard({
 function StatCardSkeleton() {
   return (
     <ShellCard className="!p-5 animate-pulse">
-      <div className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-white/[0.06] mb-3" />
-      <div className="h-2.5 w-20 rounded bg-gray-100 dark:bg-white/[0.06] mb-2" />
-      <div className="h-7 w-14 rounded bg-gray-100 dark:bg-white/[0.06]" />
+      <div className="w-9 h-9 rounded-xl bg-[var(--fs-bg-elevated)] mb-3" />
+      <div className="h-2.5 w-20 rounded bg-[var(--fs-bg-elevated)] mb-2" />
+      <div className="h-7 w-14 rounded bg-[var(--fs-bg-elevated)]" />
     </ShellCard>
   );
 }
@@ -225,7 +225,7 @@ export default function AnalyticsPage() {
             />
             <StatCard
               icon={<Clock className="w-4 h-4 text-gray-500" />}
-              iconBg="bg-gray-100 dark:bg-white/[0.06]"
+              iconBg="bg-[var(--fs-bg-elevated)]"
               label="This month"
               value={
                 projects.filter(
@@ -241,11 +241,11 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
         {/* Activity chart */}
         <ShellCard className="lg:col-span-2 !p-5">
-          <p className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+          <p className="text-sm font-semibold text-[var(--fs-ink)] mb-4">
             Projects created — last 30 days
           </p>
           {isLoading ? (
-            <div className="h-24 animate-pulse rounded-lg bg-gray-100 dark:bg-white/[0.06]" />
+            <div className="h-24 animate-pulse rounded-lg bg-[var(--fs-bg-elevated)]" />
           ) : (
             <div className="flex items-end gap-1 h-24">
               {last30.map((day, i) => (
@@ -261,7 +261,7 @@ export default function AnalyticsPage() {
                     }}
                   />
                   {day.count > 0 && (
-                    <span className="absolute -top-5 text-[0.6rem] text-gray-500 dark:text-white/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="absolute -top-5 text-[0.6rem] text-[var(--fs-ink-faint)] opacity-0 group-hover:opacity-100 transition-opacity">
                       {day.count}
                     </span>
                   )}
@@ -271,10 +271,10 @@ export default function AnalyticsPage() {
           )}
           {!isLoading && (
             <div className="flex justify-between mt-2">
-              <span className="text-[0.6rem] text-gray-400 dark:text-white/25">
+              <span className="text-[0.6rem] text-[var(--fs-ink-faint)]">
                 {last30[0].label}
               </span>
-              <span className="text-[0.6rem] text-gray-400 dark:text-white/25">
+              <span className="text-[0.6rem] text-[var(--fs-ink-faint)]">
                 {last30[29].label}
               </span>
             </div>
@@ -283,21 +283,21 @@ export default function AnalyticsPage() {
 
         {/* Status breakdown */}
         <ShellCard className="!p-5">
-          <p className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+          <p className="text-sm font-semibold text-[var(--fs-ink)] mb-4">
             Status breakdown
           </p>
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="flex items-center gap-2 animate-pulse">
-                  <div className="w-2 h-2 rounded-full bg-gray-100 dark:bg-white/[0.06]" />
-                  <div className="flex-1 h-2.5 rounded bg-gray-100 dark:bg-white/[0.06]" />
-                  <div className="w-6 h-2.5 rounded bg-gray-100 dark:bg-white/[0.06]" />
+                  <div className="w-2 h-2 rounded-full bg-[var(--fs-bg-elevated)]" />
+                  <div className="flex-1 h-2.5 rounded bg-[var(--fs-bg-elevated)]" />
+                  <div className="w-6 h-2.5 rounded bg-[var(--fs-bg-elevated)]" />
                 </div>
               ))}
             </div>
           ) : total === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-white/30 text-center py-6">
+            <p className="text-sm text-[var(--fs-ink-faint)] text-center py-6">
               No projects yet
             </p>
           ) : (
@@ -311,13 +311,13 @@ export default function AnalyticsPage() {
                         statusColors[status] ?? 'bg-gray-300'
                       }`}
                     />
-                    <span className="flex-1 text-sm text-gray-600 dark:text-white/60 capitalize">
+                    <span className="flex-1 text-sm text-[var(--fs-ink-dim)] capitalize">
                       {status.replace('_', ' ')}
                     </span>
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <span className="text-sm font-semibold text-[var(--fs-ink)]">
                       {count}
                     </span>
-                    <span className="text-xs text-gray-400 dark:text-white/30 w-8 text-right">
+                    <span className="text-xs text-[var(--fs-ink-faint)] w-8 text-right">
                       {Math.round((count / total) * 100)}%
                     </span>
                   </div>
@@ -329,36 +329,36 @@ export default function AnalyticsPage() {
 
       {/* Recent projects */}
       <ShellCard className="!p-0 overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 dark:border-white/[0.06]">
-          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+        <div className="px-5 py-4 border-b border-[var(--fs-rule)]">
+          <p className="text-sm font-semibold text-[var(--fs-ink)]">
             Recent projects
           </p>
         </div>
         {isLoading ? (
-          <div className="divide-y divide-gray-100 dark:divide-white/[0.06]">
+          <div className="divide-y divide-[var(--fs-rule)]">
             {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
                 className="flex items-center gap-4 px-5 py-3 animate-pulse"
               >
-                <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/[0.06] shrink-0" />
+                <div className="w-8 h-8 rounded-lg bg-[var(--fs-bg-elevated)] shrink-0" />
                 <div className="flex-1 space-y-1.5">
-                  <div className="h-3 w-32 rounded bg-gray-100 dark:bg-white/[0.06]" />
-                  <div className="h-2.5 w-20 rounded bg-gray-100 dark:bg-white/[0.06]" />
+                  <div className="h-3 w-32 rounded bg-[var(--fs-bg-elevated)]" />
+                  <div className="h-2.5 w-20 rounded bg-[var(--fs-bg-elevated)]" />
                 </div>
-                <div className="h-5 w-14 rounded-full bg-gray-100 dark:bg-white/[0.06]" />
+                <div className="h-5 w-14 rounded-full bg-[var(--fs-bg-elevated)]" />
               </div>
             ))}
           </div>
         ) : recent.length === 0 ? (
           <div className="px-5 py-12 text-center">
-            <FileText className="w-8 h-8 text-gray-300 dark:text-white/20 mx-auto mb-2" />
-            <p className="text-sm text-gray-400 dark:text-white/30">
+            <FileText className="w-8 h-8 text-[var(--fs-ink-faint)] mx-auto mb-2" />
+            <p className="text-sm text-[var(--fs-ink-faint)]">
               No projects yet
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-white/[0.06]">
+          <div className="divide-y divide-[var(--fs-rule)]">
             {recent.map((p) => {
               const statusColor = statusColors[p.status] ?? 'bg-gray-300';
               const ago = formatDistanceToNow(new Date(p.created_at), {
@@ -367,16 +367,16 @@ export default function AnalyticsPage() {
               return (
                 <div
                   key={p.id}
-                  className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors"
+                  className="flex items-center gap-4 px-5 py-3 hover:bg-[var(--fs-bg-elevated)]/50 transition-colors"
                 >
                   <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center shrink-0">
                     <FileText className="w-4 h-4 text-[var(--purple)]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                       {p.name}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-white/30">
+                    <p className="text-xs text-[var(--fs-ink-faint)]">
                       {p.client_name ? `${p.client_name} · ` : ''}
                       {ago}
                     </p>

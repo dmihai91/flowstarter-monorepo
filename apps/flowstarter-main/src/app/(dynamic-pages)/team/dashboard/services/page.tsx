@@ -75,7 +75,7 @@ export default function ServicesPage() {
           <GlassCard className="p-6 sm:p-8">
             <Link
               href="/team/dashboard"
-              className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white mb-6 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Dashboard
@@ -87,10 +87,10 @@ export default function ServicesPage() {
                   <Plug className="w-6 h-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <h1 className="text-2xl font-bold text-[var(--fs-ink)]">
                     Services &amp; Integrations
                   </h1>
-                  <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">
+                  <p className="text-sm text-[var(--fs-ink-faint)] mt-0.5">
                     Configure third-party services per client project
                   </p>
                 </div>

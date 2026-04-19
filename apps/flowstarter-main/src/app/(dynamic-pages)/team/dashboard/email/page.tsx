@@ -68,26 +68,26 @@ export default function EmailPage() {
 
         {/* MX Records */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-900 dark:text-white">
+          <h3 className="font-semibold text-[var(--fs-ink)]">
             MX Records
           </h3>
-          <div className="bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden">
+          <div className="bg-[var(--fs-bg-elevated)] rounded-xl border border-[var(--fs-rule)] overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 dark:bg-white/5">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                  <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                     Priority
                   </th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                  <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                     Value
                   </th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-white/10">
+              <tbody className="divide-y divide-[var(--fs-rule)]">
                 {mxRecords.map((record, i) => (
                   <tr key={i}>
-                    <td className="px-4 py-3 font-mono text-gray-900 dark:text-white">
+                    <td className="px-4 py-3 font-mono text-[var(--fs-ink)]">
                       {record.priority}
                     </td>
                     <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70">
@@ -116,29 +116,29 @@ export default function EmailPage() {
 
         {/* TXT Records */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-gray-900 dark:text-white">
+          <h3 className="font-semibold text-[var(--fs-ink)]">
             TXT Records (SPF & DKIM)
           </h3>
-          <div className="bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden">
+          <div className="bg-[var(--fs-bg-elevated)] rounded-xl border border-[var(--fs-rule)] overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 dark:bg-white/5">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                  <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                     Purpose
                   </th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                  <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                     Name
                   </th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-600 dark:text-white/60">
+                  <th className="px-4 py-3 text-left font-medium text-[var(--fs-ink-dim)]">
                     Value
                   </th>
                   <th className="px-4 py-3"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-white/10">
+              <tbody className="divide-y divide-[var(--fs-rule)]">
                 {txtRecords.map((record, i) => (
                   <tr key={i}>
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                    <td className="px-4 py-3 font-medium text-[var(--fs-ink)]">
                       {record.purpose}
                     </td>
                     <td className="px-4 py-3 font-mono text-gray-600 dark:text-white/70">

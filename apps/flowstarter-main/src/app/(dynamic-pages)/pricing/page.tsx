@@ -87,14 +87,14 @@ export default function PricingPage() {
               {t('pricing.badge')}
             </Badge>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[var(--fs-ink)] mb-6">
               {t('pricing.title1')}
               <span className="bg-gradient-to-r from-[var(--purple)] to-cyan-500 bg-clip-text text-transparent">
                 {t('pricing.title2')}
               </span>
             </h1>
 
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-4">
+            <p className="text-xl text-[var(--fs-ink-dim)] max-w-2xl mx-auto mb-4">
               {t('pricing.description')}
             </p>
 
@@ -121,10 +121,10 @@ export default function PricingPage() {
                       <Rocket className="w-6 h-6 text-[var(--purple)]" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                      <h3 className="text-xl font-bold text-[var(--fs-ink)]">
                         {t('pricing.starter.name')}
                       </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-[var(--fs-ink-faint)]">
                         {t('pricing.starter.subtitle')}
                       </p>
                     </div>
@@ -146,7 +146,7 @@ export default function PricingPage() {
                         <span className="text-lg text-gray-400 line-through">
                           {t('pricing.starter.setupOriginal')}
                         </span>
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                        <span className="text-3xl font-bold text-[var(--fs-ink)]">
                           {t('pricing.starter.setupPrice')}
                         </span>
                       </div>
@@ -161,7 +161,7 @@ export default function PricingPage() {
                         <span className="text-lg text-gray-400 line-through">
                           {t('pricing.starter.monthlyOriginal')}
                         </span>
-                        <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                        <span className="text-3xl font-bold text-[var(--fs-ink)]">
                           {t('pricing.starter.monthlyPrice')}
                         </span>
                         <span className="text-gray-500">
@@ -182,7 +182,7 @@ export default function PricingPage() {
                       <div className="w-5 h-5 rounded-full bg-[var(--green)]/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 text-[var(--green)]" />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                      <span className="text-sm text-[var(--fs-ink-dim)]">
                         {feature}
                       </span>
                     </div>
@@ -217,37 +217,37 @@ export default function PricingPage() {
       <section className="relative z-10 py-16 bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--fs-ink)] mb-4">
               {t('pricing.details.heading')}
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="text-lg text-[var(--fs-ink-dim)] max-w-2xl mx-auto">
               {t('pricing.details.description')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Setup Column */}
-            <Card className="bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-white/10">
+            <Card className="bg-white/80 dark:bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)]">
               <CardContent className="p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center">
                     <Rocket className="w-5 h-5 text-[var(--purple)]" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    <h3 className="text-lg font-bold text-[var(--fs-ink)]">
                       {t('pricing.setup.title')}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-[var(--fs-ink-faint)]">
                       {t('pricing.setup.subtitle')}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
+                <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-[var(--fs-rule)]">
                   <span className="text-lg text-gray-400 line-through">
                     {t('pricing.setup.originalPrice')}
                   </span>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-2xl font-bold text-[var(--fs-ink)]">
                     {t('pricing.setup.price')}
                   </span>
                   <span className="text-sm text-[var(--purple)]">
@@ -261,7 +261,7 @@ export default function PricingPage() {
                       <div className="w-5 h-5 rounded-full bg-[var(--green)]/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 text-[var(--green)]" />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                      <span className="text-sm text-[var(--fs-ink-dim)]">
                         {feature}
                       </span>
                     </div>
@@ -271,27 +271,27 @@ export default function PricingPage() {
             </Card>
 
             {/* Monthly Column */}
-            <Card className="bg-white/80 dark:bg-gray-800/80 border border-gray-200/50 dark:border-white/10">
+            <Card className="bg-white/80 dark:bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)]">
               <CardContent className="p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-cyan-500" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                    <h3 className="text-lg font-bold text-[var(--fs-ink)]">
                       {t('pricing.monthly.title')}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-[var(--fs-ink-faint)]">
                       {t('pricing.monthly.subtitle')}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
+                <div className="flex items-baseline gap-2 mb-6 pb-6 border-b border-[var(--fs-rule)]">
                   <span className="text-lg text-gray-400 line-through">
                     {t('pricing.monthly.originalPrice')}
                   </span>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-2xl font-bold text-[var(--fs-ink)]">
                     {t('pricing.monthly.price')}
                   </span>
                   <span className="text-sm text-gray-500">
@@ -308,14 +308,14 @@ export default function PricingPage() {
                       <div className="w-5 h-5 rounded-full bg-[var(--green)]/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-3 h-3 text-[var(--green)]" />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                      <span className="text-sm text-[var(--fs-ink-dim)]">
                         {feature}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                <p className="text-xs text-gray-400 dark:text-white/30 mt-6 pt-4 border-t border-gray-200 dark:border-white/10">
+                <p className="text-xs text-[var(--fs-ink-faint)] mt-6 pt-4 border-t border-[var(--fs-rule)]">
                   {t('pricing.monthly.note')}
                 </p>
               </CardContent>
@@ -328,17 +328,17 @@ export default function PricingPage() {
       <section className="relative z-10 py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-2xl font-bold text-[var(--fs-ink)] mb-2">
               {t('pricing.comingSoon.heading')}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[var(--fs-ink-dim)]">
               {t('pricing.comingSoon.description')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {/* Pro */}
-            <Card className="relative bg-gray-50/50 dark:bg-gray-800/30 border border-gray-200/50 dark:border-white/5 overflow-hidden">
+            <Card className="relative bg-gray-50/50 dark:bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/50 dark:to-gray-900/30 pointer-events-none" />
 
               <CardContent className="p-6 relative">
@@ -347,7 +347,7 @@ export default function PricingPage() {
                     <div className="w-9 h-9 rounded-xl bg-gray-200/50 dark:bg-white/5 flex items-center justify-center">
                       <Star className="w-4 h-4 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500">
+                    <h3 className="text-lg font-bold text-[var(--fs-ink-faint)]">
                       {t('pricing.pro.name')}
                     </h3>
                   </div>
@@ -360,7 +360,7 @@ export default function PricingPage() {
                   </Badge>
                 </div>
 
-                <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
+                <p className="text-xs text-[var(--fs-ink-faint)] mb-4">
                   {t('pricing.pro.price')}
                 </p>
 
@@ -370,7 +370,7 @@ export default function PricingPage() {
                       <div className="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-2.5 h-2.5 text-gray-400" />
                       </div>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                      <span className="text-xs text-[var(--fs-ink-faint)]">
                         {feature}
                       </span>
                     </div>
@@ -387,7 +387,7 @@ export default function PricingPage() {
             </Card>
 
             {/* Business */}
-            <Card className="relative bg-gray-50/50 dark:bg-gray-800/30 border border-gray-200/50 dark:border-white/5 overflow-hidden">
+            <Card className="relative bg-gray-50/50 dark:bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-100/50 dark:to-gray-900/30 pointer-events-none" />
 
               <CardContent className="p-6 relative">
@@ -396,7 +396,7 @@ export default function PricingPage() {
                     <div className="w-9 h-9 rounded-xl bg-gray-200/50 dark:bg-white/5 flex items-center justify-center">
                       <Crown className="w-4 h-4 text-gray-400" />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-400 dark:text-gray-500">
+                    <h3 className="text-lg font-bold text-[var(--fs-ink-faint)]">
                       {t('pricing.business.name')}
                     </h3>
                   </div>
@@ -409,7 +409,7 @@ export default function PricingPage() {
                   </Badge>
                 </div>
 
-                <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
+                <p className="text-xs text-[var(--fs-ink-faint)] mb-4">
                   {t('pricing.business.price')}
                 </p>
 
@@ -419,7 +419,7 @@ export default function PricingPage() {
                       <div className="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="w-2.5 h-2.5 text-gray-400" />
                       </div>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                      <span className="text-xs text-[var(--fs-ink-faint)]">
                         {feature}
                       </span>
                     </div>
@@ -448,10 +448,10 @@ export default function PricingPage() {
                 {t('pricing.earlyAccess.badge')}
               </Badge>
 
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[var(--fs-ink)] mb-4">
                 {t('pricing.earlyAccess.title')}
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto mb-6">
+              <p className="text-[var(--fs-ink-dim)] max-w-xl mx-auto mb-6">
                 {t('pricing.earlyAccess.description')}
               </p>
 
@@ -469,7 +469,7 @@ export default function PricingPage() {
                 {t('pricing.earlyAccess.cta')}
               </a>
 
-              <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-500 dark:text-gray-400 flex-wrap">
+              <div className="flex items-center justify-center gap-6 mt-6 text-sm text-[var(--fs-ink-faint)] flex-wrap">
                 <span className="flex items-center gap-1.5">
                   <Check className="w-4 h-4 text-[var(--green)]" />
                   {t('pricing.earlyAccess.noCreditCard')}

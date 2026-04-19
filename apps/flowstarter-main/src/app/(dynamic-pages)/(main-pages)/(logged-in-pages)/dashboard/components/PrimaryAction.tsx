@@ -77,7 +77,7 @@ export function PrimaryAction({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--fs-bg-elevated)] text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/[0.10] transition-all border border-gray-200 dark:border-white/[0.06]">
+            <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--fs-bg-elevated)] text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/[0.10] transition-all border border-[var(--fs-rule)]">
               <Upload className="w-4 h-4" />
               {t('dashboard.action.uploadAssets')}
             </button>
@@ -118,7 +118,7 @@ export function PrimaryAction({
             href={EXTERNAL_URLS.calendly.checkIn}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--fs-bg-elevated)] text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/[0.10] transition-all border border-gray-200 dark:border-white/[0.06] whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--fs-bg-elevated)] text-gray-700 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/[0.10] transition-all border border-[var(--fs-rule)] whitespace-nowrap"
           >
             {t('sidebar.scheduleCheckin')}
           </a>

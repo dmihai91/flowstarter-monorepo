@@ -111,7 +111,7 @@ export default function TeamInvitePage() {
           <div className="space-y-2">
             <Label
               htmlFor="email"
-              className="text-sm text-gray-600 dark:text-white/60"
+              className="text-sm text-[var(--fs-ink-dim)]"
             >
               Email address
             </Label>
@@ -123,7 +123,7 @@ export default function TeamInvitePage() {
                 placeholder="colleague@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 pl-12 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
+                className="h-11 pl-12 rounded-lg bg-white dark:bg-white/5 border border-[var(--fs-rule)]"
                 autoComplete="off"
                 data-form-type="other"
                 required
@@ -174,10 +174,10 @@ export default function TeamInvitePage() {
       </ShellCard>
 
       <div className="mt-4 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+        <h3 className="text-sm font-medium text-[var(--fs-ink)] mb-2">
           How it works
         </h3>
-        <ul className="text-xs text-gray-500 dark:text-white/50 space-y-1">
+        <ul className="text-xs text-[var(--fs-ink-faint)] space-y-1">
           <li>• The invitee receives an email to create their account</li>
           <li>• They're automatically granted team member access</li>
           <li>• Invitations expire after 30 days</li>

@@ -14,11 +14,11 @@ export default function FooterCompact() {
       <div className="bg-[rgba(243,243,243,0.30)] dark:bg-[rgba(58,58,74,0.30)] backdrop-blur-xl">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex flex-col lg:flex-row items-center lg:items-center justify-center lg:justify-between gap-3 lg:gap-2">
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-xs text-[var(--fs-ink-faint)]">
               {t('footer.copyright', { year: new Date().getFullYear() })}
             </div>
 
-            <nav className="flex items-center flex-wrap justify-center gap-x-3 gap-y-1 text-xs text-gray-600 dark:text-gray-400 text-center">
+            <nav className="flex items-center flex-wrap justify-center gap-x-3 gap-y-1 text-xs text-[var(--fs-ink-dim)] text-center">
               <CustomNavLink
                 href="/help"
                 className="hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
@@ -58,7 +58,7 @@ export default function FooterCompact() {
               </a>
             </nav>
 
-            <div className="flex items-center justify-center lg:justify-end gap-4 text-xs text-gray-500 dark:text-gray-400 w-full lg:w-auto flex-wrap">
+            <div className="flex items-center justify-center lg:justify-end gap-4 text-xs text-[var(--fs-ink-faint)] w-full lg:w-auto flex-wrap">
               <div className="flex items-center gap-2">
                 {/* Twitter */}
                 <a
@@ -69,7 +69,7 @@ export default function FooterCompact() {
                   aria-label={t('footer.social.twitterAria')}
                 >
                   <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-[var(--purple)] transition-colors duration-200"
+                    className="w-4 h-4 text-[var(--fs-ink-faint)] group-hover:text-[var(--purple)] transition-colors duration-200"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
@@ -86,7 +86,7 @@ export default function FooterCompact() {
                   aria-label={t('footer.social.githubAria')}
                 >
                   <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-[var(--purple)] transition-colors duration-200"
+                    className="w-4 h-4 text-[var(--fs-ink-faint)] group-hover:text-[var(--purple)] transition-colors duration-200"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
@@ -107,7 +107,7 @@ export default function FooterCompact() {
                   aria-label={t('footer.social.linkedinAria')}
                 >
                   <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-[var(--purple)] transition-colors duration-200"
+                    className="w-4 h-4 text-[var(--fs-ink-faint)] group-hover:text-[var(--purple)] transition-colors duration-200"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
@@ -124,7 +124,7 @@ export default function FooterCompact() {
                   aria-label={t('footer.social.discordAria')}
                 >
                   <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-[var(--purple)] transition-colors duration-200"
+                    className="w-4 h-4 text-[var(--fs-ink-faint)] group-hover:text-[var(--purple)] transition-colors duration-200"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                     aria-hidden="true"

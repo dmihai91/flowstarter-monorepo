@@ -64,7 +64,7 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
         <h1 className="text-2xl font-bold text-red-600">
           {t('profile.userNotFound')}
         </h1>
-        <p className="text-gray-500 dark:text-white/50 mt-2">
+        <p className="text-[var(--fs-ink-faint)] mt-2">
           {t('profile.userNotFound.description')}
         </p>
       </div>
@@ -188,7 +188,7 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
                 onChange={(e) =>
                   setEditValues({ ...editValues, [field!]: e.target.value })
                 }
-                className="h-8 text-sm bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10"
+                className="h-8 text-sm bg-white/50 dark:bg-white/5 border-[var(--fs-rule)]"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') saveField(field!);
@@ -215,7 +215,7 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
             </div>
           ) : (
             <div className="flex items-center gap-2 group">
-              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                 {value}
               </p>
               {editable && (
@@ -250,10 +250,10 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
               alt={user.fullName || t('app.userFallback')}
               width={48}
               height={48}
-              className="h-12 w-12 rounded-full border-2 border-gray-200/50 dark:border-white/10 object-cover"
+              className="h-12 w-12 rounded-full border-2 border-[var(--fs-rule)]/50 object-cover"
             />
           ) : (
-            <div className="h-12 w-12 rounded-full border-2 border-gray-200/50 dark:border-white/10 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-sm font-bold">
+            <div className="h-12 w-12 rounded-full border-2 border-[var(--fs-rule)]/50 bg-gradient-to-br from-[var(--purple)] to-blue-500 flex items-center justify-center text-white text-sm font-bold">
               {getUserInitials()}
             </div>
           )}
@@ -265,10 +265,10 @@ export function ProfileContent({ embedded = false }: { embedded?: boolean }) {
           </button>
         </div>
         <div>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h1 className="text-lg font-semibold text-[var(--fs-ink)]">
             {user.fullName || t('app.yourProfile')}
           </h1>
-          <p className="text-xs text-gray-500 dark:text-white/50">
+          <p className="text-xs text-[var(--fs-ink-faint)]">
             {user.emailAddresses?.[0]?.emailAddress}
           </p>
         </div>

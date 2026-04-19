@@ -35,10 +35,10 @@ export function GenerationProgress({
           textStream={step.label}
           {...RESPONSE_STREAM_CONFIGS.generationStatus}
           as="div"
-          className="text-gray-700 dark:text-gray-300 break-words leading-tight"
+          className="text-[var(--fs-ink-dim)] break-words leading-tight"
         />
         {step.message && (
-          <div className="text-xs text-gray-600 dark:text-gray-400">
+          <div className="text-xs text-[var(--fs-ink-dim)]">
             <ResponseStream
               key={`${currentStep}-message`}
               textStream={step.message}

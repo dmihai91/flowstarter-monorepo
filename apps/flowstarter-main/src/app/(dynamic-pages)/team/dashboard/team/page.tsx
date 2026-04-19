@@ -62,18 +62,18 @@ function MemberRow({ member }: { member: Member }) {
           <RoleBadge role={member.role} />
         </div>
         <div className="flex items-center gap-1 mt-0.5">
-          <Mail className="w-3.5 h-3.5 text-gray-400 dark:text-white/30 shrink-0" />
-          <span className="text-sm text-gray-500 dark:text-white/40 truncate">
+          <Mail className="w-3.5 h-3.5 text-[var(--fs-ink-faint)] shrink-0" />
+          <span className="text-sm text-[var(--fs-ink-faint)] truncate">
             {member.email}
           </span>
         </div>
       </div>
       <div className="hidden sm:flex flex-col items-end gap-0.5 shrink-0">
-        <div className="flex items-center gap-1 text-sm text-gray-400 dark:text-white/30">
+        <div className="flex items-center gap-1 text-sm text-[var(--fs-ink-faint)]">
           <Clock className="w-3.5 h-3.5" />
           <span>{lastSeenAgo}</span>
         </div>
-        <span className="text-xs text-gray-400 dark:text-white/25">
+        <span className="text-xs text-[var(--fs-ink-faint)]">
           Joined {joinedAgo}
         </span>
       </div>
@@ -135,7 +135,7 @@ export default function TeamPage() {
                 <Crown className="w-4 h-4" />
                 Admins
               </p>
-              <div className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+              <div className="divide-y divide-[var(--fs-rule)]">
                 {admins.map((m) => (
                   <MemberRow key={m.id} member={m} />
                 ))}
@@ -148,7 +148,7 @@ export default function TeamPage() {
                 <Users className="w-4 h-4" />
                 Team members
               </p>
-              <div className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+              <div className="divide-y divide-[var(--fs-rule)]">
                 {team.map((m) => (
                   <MemberRow key={m.id} member={m} />
                 ))}
@@ -157,8 +157,8 @@ export default function TeamPage() {
           )}
           {members.length === 0 && (
             <div className="text-center py-20">
-              <Users className="w-10 h-10 text-gray-300 dark:text-white/20 mx-auto mb-3" />
-              <p className="text-sm text-gray-500 dark:text-white/40">
+              <Users className="w-10 h-10 text-[var(--fs-ink-faint)] mx-auto mb-3" />
+              <p className="text-sm text-[var(--fs-ink-faint)]">
                 No team members found
               </p>
             </div>

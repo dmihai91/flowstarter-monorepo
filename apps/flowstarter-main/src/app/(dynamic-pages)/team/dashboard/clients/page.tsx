@@ -61,15 +61,15 @@ function ClientCard({ client }: { client: Client }) {
             )}
           </div>
           <div className="flex items-center gap-1 mt-0.5">
-            <Mail className="w-3 h-3 text-gray-400 dark:text-white/30 shrink-0" />
-            <span className="text-xs text-gray-500 dark:text-white/40 truncate">
+            <Mail className="w-3 h-3 text-[var(--fs-ink-faint)] shrink-0" />
+            <span className="text-xs text-[var(--fs-ink-faint)] truncate">
               {client.email}
             </span>
           </div>
           {client.phone && (
             <div className="flex items-center gap-1 mt-0.5">
-              <Phone className="w-3 h-3 text-gray-400 dark:text-white/30 shrink-0" />
-              <span className="text-xs text-gray-500 dark:text-white/40">
+              <Phone className="w-3 h-3 text-[var(--fs-ink-faint)] shrink-0" />
+              <span className="text-xs text-[var(--fs-ink-faint)]">
                 {client.phone}
               </span>
             </div>
@@ -79,34 +79,34 @@ function ClientCard({ client }: { client: Client }) {
       <div className="mt-4 pt-3 border-t border-[var(--fs-rule)] grid grid-cols-3 gap-3">
         <div className="text-center">
           <div className="flex items-center justify-center mb-0.5">
-            <FolderOpen className="w-3 h-3 text-gray-400 dark:text-white/30" />
+            <FolderOpen className="w-3 h-3 text-[var(--fs-ink-faint)]" />
           </div>
           <p className="text-sm font-bold text-[var(--fs-ink)]">
             {client.projectCount}
           </p>
-          <p className="text-[0.6rem] text-gray-400 dark:text-white/30">
+          <p className="text-[0.6rem] text-[var(--fs-ink-faint)]">
             Projects
           </p>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center mb-0.5">
-            <TrendingUp className="w-3 h-3 text-gray-400 dark:text-white/30" />
+            <TrendingUp className="w-3 h-3 text-[var(--fs-ink-faint)]" />
           </div>
           <p className="text-sm font-bold text-[var(--fs-ink)]">
             €{client.totalFee.toLocaleString()}
           </p>
-          <p className="text-[0.6rem] text-gray-400 dark:text-white/30">
+          <p className="text-[0.6rem] text-[var(--fs-ink-faint)]">
             Total fees
           </p>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center mb-0.5">
-            <Clock className="w-3 h-3 text-gray-400 dark:text-white/30" />
+            <Clock className="w-3 h-3 text-[var(--fs-ink-faint)]" />
           </div>
-          <p className="text-[0.65rem] font-medium text-gray-700 dark:text-white/60 leading-tight">
+          <p className="text-[0.65rem] font-medium text-[var(--fs-ink-dim)] leading-tight">
             {ago}
           </p>
-          <p className="text-[0.6rem] text-gray-400 dark:text-white/30">
+          <p className="text-[0.6rem] text-[var(--fs-ink-faint)]">
             Last active
           </p>
         </div>
@@ -158,7 +158,7 @@ export default function ClientsPage() {
       {!isLoading && !error && clients.length === 0 && (
         <div className="rounded-[var(--fs-radius-2xl)] border p-12 text-center backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]">
-            <Users className="w-8 h-8 text-gray-400 dark:text-white/30" />
+            <Users className="w-8 h-8 text-[var(--fs-ink-faint)]" />
           </div>
           <h3 className="text-lg font-semibold text-[var(--fs-ink)] mb-2">
             No clients yet

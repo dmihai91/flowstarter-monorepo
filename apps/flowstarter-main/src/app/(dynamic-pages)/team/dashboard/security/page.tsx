@@ -207,7 +207,7 @@ export default function TeamSecurityPage() {
     >
       <ShellCard>
         {/* 2FA Card */}
-        <div className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5">
+        <div className="p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
           <div className="flex items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-3 min-w-0">
               <div
@@ -224,10 +224,10 @@ export default function TeamSecurityPage() {
                 )}
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">
+                <h3 className="font-semibold text-[var(--fs-ink)]">
                   Two-Factor Authentication
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-white/50">
+                <p className="text-sm text-[var(--fs-ink-faint)]">
                   {totpEnabled
                     ? 'Your account is protected with 2FA'
                     : 'Add an extra layer of security'}
@@ -256,7 +256,7 @@ export default function TeamSecurityPage() {
           {/* Re-verification required */}
           {needsReverification && (
             <div className="mt-5 space-y-3">
-              <p className="text-sm text-gray-500 dark:text-white/50 flex items-center gap-2">
+              <p className="text-sm text-[var(--fs-ink-faint)] flex items-center gap-2">
                 <Shield className="w-4 h-4 shrink-0" />
                 Confirm your password to continue
               </p>
@@ -289,7 +289,7 @@ export default function TeamSecurityPage() {
               )}
               <button
                 onClick={() => setNeedsReverification(false)}
-                className="text-xs text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60 transition-colors"
+                className="text-xs text-[var(--fs-ink-faint)] hover:text-gray-600 dark:hover:text-white/60 transition-colors"
               >
                 Cancel
               </button>
@@ -303,10 +303,10 @@ export default function TeamSecurityPage() {
                 <div className="flex items-start gap-3">
                   <Smartphone className="w-5 h-5 text-blue-500 mt-0.5" />
                   <div className="text-sm">
-                    <p className="font-medium text-gray-900 dark:text-white mb-1">
+                    <p className="font-medium text-[var(--fs-ink)] mb-1">
                       Scan with your authenticator app
                     </p>
-                    <p className="text-gray-500 dark:text-white/50">
+                    <p className="text-[var(--fs-ink-faint)]">
                       Use Google Authenticator, Authy, 1Password, or any TOTP
                       app
                     </p>
@@ -328,12 +328,12 @@ export default function TeamSecurityPage() {
               </div>
 
               {secret && (
-                <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/5">
-                  <p className="text-xs text-gray-500 dark:text-white/50 mb-2">
+                <div className="p-4 rounded-xl bg-[var(--fs-bg-elevated)]">
+                  <p className="text-xs text-[var(--fs-ink-faint)] mb-2">
                     Or enter this code manually:
                   </p>
                   <div className="flex items-center gap-2">
-                    <code className="flex-1 px-3 py-2 bg-white dark:bg-white/10 rounded-lg text-sm font-mono text-gray-900 dark:text-white">
+                    <code className="flex-1 px-3 py-2 bg-white dark:bg-white/10 rounded-lg text-sm font-mono text-[var(--fs-ink)]">
                       {secret}
                     </code>
                     <Button
@@ -354,7 +354,7 @@ export default function TeamSecurityPage() {
               )}
 
               <div className="space-y-2">
-                <Label className="text-sm text-gray-600 dark:text-white/60">
+                <Label className="text-sm text-[var(--fs-ink-dim)]">
                   Enter the 6-digit code from your app
                 </Label>
                 <Input
@@ -413,7 +413,7 @@ export default function TeamSecurityPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm text-gray-600 dark:text-white/60">
+                <Label className="text-sm text-[var(--fs-ink-dim)]">
                   Authentication code
                 </Label>
                 <Input
@@ -489,10 +489,10 @@ export default function TeamSecurityPage() {
 
         {/* Info */}
         <div className="mt-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+          <h3 className="text-sm font-medium text-[var(--fs-ink)] mb-2">
             Why use two-factor authentication?
           </h3>
-          <ul className="text-xs text-gray-500 dark:text-white/50 space-y-1">
+          <ul className="text-xs text-[var(--fs-ink-faint)] space-y-1">
             <li>
               • Protects your account even if your password is compromised
             </li>

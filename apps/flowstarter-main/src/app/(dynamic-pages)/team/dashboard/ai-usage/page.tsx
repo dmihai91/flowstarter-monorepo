@@ -38,12 +38,12 @@ function StatCard({
       >
         {icon}
       </div>
-      <p className="text-xs text-gray-500 dark:text-white/40 mb-1">{label}</p>
-      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+      <p className="text-xs text-[var(--fs-ink-faint)] mb-1">{label}</p>
+      <p className="text-2xl font-bold text-[var(--fs-ink)]">
         {value}
       </p>
       {sub && (
-        <p className="text-xs text-gray-400 dark:text-white/30 mt-0.5">{sub}</p>
+        <p className="text-xs text-[var(--fs-ink-faint)] mt-0.5">{sub}</p>
       )}
     </ShellCard>
   );
@@ -89,9 +89,9 @@ export default function AiUsagePage() {
         {isLoading ? (
           [1, 2, 3, 4].map((i) => (
             <ShellCard key={i} className="!p-5 animate-pulse">
-              <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/[0.06] mb-3" />
-              <div className="h-3 w-20 rounded bg-gray-100 dark:bg-white/[0.06] mb-2" />
-              <div className="h-6 w-16 rounded bg-gray-100 dark:bg-white/[0.06]" />
+              <div className="w-8 h-8 rounded-lg bg-[var(--fs-bg-elevated)] mb-3" />
+              <div className="h-3 w-20 rounded bg-[var(--fs-bg-elevated)] mb-2" />
+              <div className="h-6 w-16 rounded bg-[var(--fs-bg-elevated)]" />
             </ShellCard>
           ))
         ) : (
@@ -127,22 +127,22 @@ export default function AiUsagePage() {
 
       {/* Per-project table */}
       <ShellCard className="!p-0 overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 dark:border-white/[0.06]">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+        <div className="px-5 py-4 border-b border-[var(--fs-rule)]">
+          <h2 className="text-sm font-semibold text-[var(--fs-ink)]">
             Breakdown by project
           </h2>
         </div>
 
         {isLoading && (
-          <div className="divide-y divide-gray-100 dark:divide-white/[0.06]">
+          <div className="divide-y divide-[var(--fs-rule)]">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
                 className="px-5 py-4 flex items-center gap-4 animate-pulse"
               >
-                <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/[0.06]" />
-                <div className="flex-1 h-4 rounded bg-gray-100 dark:bg-white/[0.06]" />
-                <div className="w-20 h-4 rounded bg-gray-100 dark:bg-white/[0.06]" />
+                <div className="w-8 h-8 rounded-lg bg-[var(--fs-bg-elevated)]" />
+                <div className="flex-1 h-4 rounded bg-[var(--fs-bg-elevated)]" />
+                <div className="w-20 h-4 rounded bg-[var(--fs-bg-elevated)]" />
               </div>
             ))}
           </div>
@@ -150,16 +150,16 @@ export default function AiUsagePage() {
 
         {!isLoading && projects.length === 0 && (
           <div className="px-5 py-16 text-center">
-            <Sparkles className="w-8 h-8 text-gray-300 dark:text-white/20 mx-auto mb-2" />
-            <p className="text-sm text-gray-400 dark:text-white/30">
+            <Sparkles className="w-8 h-8 text-[var(--fs-ink-faint)] mx-auto mb-2" />
+            <p className="text-sm text-[var(--fs-ink-faint)]">
               No AI usage recorded yet
             </p>
           </div>
         )}
 
         {!isLoading && projects.length > 0 && (
-          <div className="divide-y divide-gray-100 dark:divide-white/[0.06]">
-            <div className="hidden sm:grid grid-cols-[1fr_100px_100px_120px_80px] gap-4 px-5 py-2 text-[0.65rem] font-semibold uppercase tracking-wider text-gray-400 dark:text-white/25">
+          <div className="divide-y divide-[var(--fs-rule)]">
+            <div className="hidden sm:grid grid-cols-[1fr_100px_100px_120px_80px] gap-4 px-5 py-2 text-[0.65rem] font-semibold uppercase tracking-wider text-[var(--fs-ink-faint)]">
               <span>Project</span>
               <span className="text-right">Credits</span>
               <span className="text-right">Cost (USD)</span>
@@ -180,14 +180,14 @@ export default function AiUsagePage() {
               return (
                 <div
                   key={p.id}
-                  className="px-5 py-3 hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors"
+                  className="px-5 py-3 hover:bg-[var(--fs-bg-elevated)]/50 transition-colors"
                 >
                   <div className="sm:hidden flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                         {p.name}
                       </p>
-                      <p className="text-xs text-gray-400 dark:text-white/30">
+                      <p className="text-xs text-[var(--fs-ink-faint)]">
                         {credits} credits · €{costEur.toFixed(2)}
                       </p>
                     </div>
@@ -197,24 +197,24 @@ export default function AiUsagePage() {
                   </div>
                   <div className="hidden sm:grid grid-cols-[1fr_100px_100px_120px_80px] gap-4 items-center">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                         {p.name}
                       </p>
-                      <p className="text-xs text-gray-400 dark:text-white/30">
+                      <p className="text-xs text-[var(--fs-ink-faint)]">
                         {ago}
                       </p>
                     </div>
-                    <p className="text-sm text-gray-700 dark:text-white/70 text-right">
+                    <p className="text-sm text-[var(--fs-ink-dim)] text-right">
                       {credits.toLocaleString()}
                     </p>
-                    <p className="text-sm text-gray-700 dark:text-white/70 text-right">
+                    <p className="text-sm text-[var(--fs-ink-dim)] text-right">
                       ${costUsd.toFixed(4)}
                     </p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white text-right">
+                    <p className="text-sm font-semibold text-[var(--fs-ink)] text-right">
                       €{costEur.toFixed(2)}
                     </p>
                     <div className="flex items-center justify-end gap-2">
-                      <div className="w-10 h-1.5 rounded-full bg-gray-100 dark:bg-white/[0.08] overflow-hidden">
+                      <div className="w-10 h-1.5 rounded-full bg-[var(--fs-bg-elevated)] overflow-hidden">
                         <div
                           className="h-full rounded-full bg-[var(--purple)]"
                           style={{ width: `${Math.min(pct, 100)}%` }}
@@ -229,20 +229,20 @@ export default function AiUsagePage() {
               );
             })}
 
-            <div className="hidden sm:grid grid-cols-[1fr_100px_100px_120px_80px] gap-4 px-5 py-3 bg-gray-50/50 dark:bg-white/[0.02] items-center border-t border-gray-200 dark:border-white/[0.08]">
+            <div className="hidden sm:grid grid-cols-[1fr_100px_100px_120px_80px] gap-4 px-5 py-3 bg-[var(--fs-bg-elevated)] items-center border-t border-[var(--fs-rule)]">
               <p className="text-xs font-bold text-gray-600 dark:text-white/50 uppercase tracking-wider">
                 Total
               </p>
-              <p className="text-sm font-bold text-gray-900 dark:text-white text-right">
+              <p className="text-sm font-bold text-[var(--fs-ink)] text-right">
                 {totalCredits.toLocaleString()}
               </p>
-              <p className="text-sm font-bold text-gray-900 dark:text-white text-right">
+              <p className="text-sm font-bold text-[var(--fs-ink)] text-right">
                 ${totalCostUsd.toFixed(4)}
               </p>
-              <p className="text-sm font-bold text-gray-900 dark:text-white text-right">
+              <p className="text-sm font-bold text-[var(--fs-ink)] text-right">
                 €{totalCostEur.toFixed(2)}
               </p>
-              <p className="text-xs text-gray-400 dark:text-white/30 text-right">
+              <p className="text-xs text-[var(--fs-ink-faint)] text-right">
                 100%
               </p>
             </div>

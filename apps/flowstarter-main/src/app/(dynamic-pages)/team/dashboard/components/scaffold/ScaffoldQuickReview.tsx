@@ -64,7 +64,7 @@ export function ScaffoldQuickReview({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-sm font-semibold text-[var(--fs-ink)]">
             AI brief ready
           </h3>
           <p className="text-xs text-gray-500 dark:text-white/40 mt-0.5">
@@ -102,7 +102,7 @@ export function ScaffoldQuickReview({
               className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-colors ${
                 missing
                   ? 'bg-amber-50 dark:bg-amber-500/[0.07] border border-amber-200 dark:border-amber-500/20'
-                  : 'bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.05]'
+                  : 'bg-[var(--fs-bg-elevated)] border border-gray-100 dark:border-white/[0.05]'
               }`}
             >
               <span
@@ -136,7 +136,7 @@ export function ScaffoldQuickReview({
               ) : (
                 <TypewriterText
                   value={displayValue}
-                  className="flex-1 text-gray-800 dark:text-white/80 truncate"
+                  className="flex-1 text-[var(--fs-ink)]/80 truncate"
                 />
               )}
               {!missing && (
@@ -151,7 +151,7 @@ export function ScaffoldQuickReview({
       <div className="flex gap-2">
         <button
           onClick={onReset}
-          className="px-3 py-2 rounded-xl text-xs font-medium text-gray-500 dark:text-white/50 bg-gray-100 dark:bg-white/[0.05] hover:bg-gray-200 dark:hover:bg-white/[0.08] transition-all"
+          className="px-3 py-2 rounded-xl text-xs font-medium text-[var(--fs-ink-faint)] bg-gray-100 dark:bg-white/[0.05] hover:bg-gray-200 dark:hover:bg-white/[0.08] transition-all"
         >
           Start over
         </button>

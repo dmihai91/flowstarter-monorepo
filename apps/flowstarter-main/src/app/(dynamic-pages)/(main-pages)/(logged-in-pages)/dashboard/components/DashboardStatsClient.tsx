@@ -384,7 +384,7 @@ export function DashboardStatsClient({
                 ].map((cap) => (
                   <span
                     key={cap}
-                    className="text-[0.6875rem] sm:text-xs sm:text-sm text-gray-500 dark:text-white/40 flex items-center gap-1"
+                    className="text-[0.6875rem] sm:text-xs sm:text-sm text-[var(--fs-ink-faint)] flex items-center gap-1"
                   >
                     <span className="w-1 h-1 rounded-full bg-[var(--purple)]/40" />
                     {cap}
@@ -415,7 +415,7 @@ export function DashboardStatsClient({
               <button
                 disabled
                 title="Available once your site is live"
-                className="mt-3 w-full py-2 rounded-lg text-xs font-medium text-[var(--fs-ink-disabled)] bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] cursor-not-allowed"
+                className="mt-3 w-full py-2 rounded-lg text-xs font-medium text-[var(--fs-ink-disabled)] bg-gray-100 dark:bg-white/[0.04] border border-[var(--fs-rule)] cursor-not-allowed"
               >
                 Locked until launch
               </button>

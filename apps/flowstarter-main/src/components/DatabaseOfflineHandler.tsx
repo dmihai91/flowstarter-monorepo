@@ -52,7 +52,7 @@ export function DatabaseOfflineHandler({
     }
 
     return (
-      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0c] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+      <div className="min-h-screen bg-[var(--fs-bg-base)] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
         {/* Flow lines background */}
         <div className="fixed inset-0 pointer-events-none">
           <svg
@@ -92,10 +92,10 @@ export function DatabaseOfflineHandler({
 
           {/* Main message */}
           <div className="text-center space-y-3">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--fs-ink)]">
               {t('database.offline.title')}
             </h1>
-            <p className="text-base text-gray-500 dark:text-white/50 max-w-md mx-auto leading-relaxed">
+            <p className="text-base text-[var(--fs-ink-faint)] max-w-md mx-auto leading-relaxed">
               {t('database.offline.subtitle')}
             </p>
           </div>
@@ -107,10 +107,10 @@ export function DatabaseOfflineHandler({
                 <AlertTriangle className="h-5 w-5 text-amber-500" />
               </div>
               <div>
-                <p className="font-medium text-gray-900 dark:text-white text-sm">
+                <p className="font-medium text-[var(--fs-ink)] text-sm">
                   {t('database.offline.connectionStatus')}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-white/50 mt-0.5">
+                <p className="text-sm text-[var(--fs-ink-faint)] mt-0.5">
                   {t('database.offline.offlineSince', {
                     time: lastChecked.toLocaleTimeString(),
                   })}
@@ -141,10 +141,10 @@ export function DatabaseOfflineHandler({
 
           {/* What you can do */}
           <div className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-sm font-semibold text-[var(--fs-ink)] mb-4">
               {t('database.offline.whatYouCanDo')}
             </h3>
-            <ul className="space-y-3 text-sm text-gray-500 dark:text-white/50">
+            <ul className="space-y-3 text-sm text-[var(--fs-ink-faint)]">
               <li className="flex items-start gap-3">
                 <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-[var(--purple)]" />
                 <span className="leading-relaxed">

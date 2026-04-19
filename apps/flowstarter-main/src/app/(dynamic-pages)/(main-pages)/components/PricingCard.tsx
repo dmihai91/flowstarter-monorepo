@@ -40,17 +40,17 @@ export function PricingCard({
       )}
 
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-lg font-semibold text-[var(--fs-ink)]">
           {name}
         </h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{label}</p>
+        <p className="mt-1 text-sm text-[var(--fs-ink-faint)]">{label}</p>
       </div>
 
       <div className="mb-6">
-        <span className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <span className="text-4xl font-bold tracking-tight text-[var(--fs-ink)]">
           {price}
         </span>
-        <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+        <span className="ml-2 text-sm text-[var(--fs-ink-faint)]">
           + {monthly}
         </span>
       </div>

@@ -133,14 +133,14 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
           {events.slice(0, 5).map((event) => (
             <div
               key={event.uri}
-              className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/5 hover:border-[var(--purple)]/20 transition-colors group"
+              className="flex items-center gap-3 p-3 rounded-xl bg-[var(--fs-bg-elevated)] border border-gray-100 dark:border-white/5 hover:border-[var(--purple)]/20 transition-colors group"
             >
               {/* Date badge */}
               <div className="flex flex-col items-center min-w-[48px]">
                 <span className="text-[0.65rem] font-medium text-[var(--purple)] uppercase">
                   {formatDate(event.startTime)}
                 </span>
-                <span className="text-lg font-semibold text-gray-900 dark:text-white leading-tight">
+                <span className="text-lg font-semibold text-[var(--fs-ink)] leading-tight">
                   {formatTime(event.startTime)}
                 </span>
               </div>
@@ -150,7 +150,7 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
 
               {/* Details */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                   {event.name}
                 </p>
                 <div className="flex items-center gap-3 mt-0.5">

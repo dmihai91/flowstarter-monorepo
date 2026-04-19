@@ -74,7 +74,7 @@ export function AutoComplete({
             'w-full h-[48px] justify-between text-base font-normal leading-[normal] rounded-[8px]',
             '!bg-white/15 dark:!bg-[var(--surface-2)]/15 backdrop-blur-sm',
             'border-[1.5px] border-solid border-gray-300 dark:border-[var(--border-subtle)]',
-            'text-gray-900 dark:text-white',
+            'text-[var(--fs-ink)]',
             'hover:border-gray-400 dark:hover:border-white/40',
             'focus-visible:ring-0 focus-visible:outline-none',
             'transition-all duration-200 px-[16px]',
@@ -99,7 +99,7 @@ export function AutoComplete({
           <div className="px-3 py-2">
             <CommandInput
               placeholder={searchPlaceholder}
-              className="flex-1 text-sm border-0 bg-transparent focus:outline-none focus:ring-0 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[var(--ui-text-placeholder)]"
+              className="flex-1 text-sm border-0 bg-transparent focus:outline-none focus:ring-0 text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-[var(--ui-text-placeholder)]"
             />
           </div>
           <CommandList
@@ -121,7 +121,7 @@ export function AutoComplete({
                       setOpen(false);
                     }}
                     className={cn(
-                      'text-base py-2.5 px-3 rounded-xl cursor-pointer text-gray-900 dark:text-white transition-all duration-200',
+                      'text-base py-2.5 px-3 rounded-xl cursor-pointer text-[var(--fs-ink)] transition-all duration-200',
                       'hover:bg-white/30 dark:hover:bg-[var(--surface-2)]/30',
                       isSelected && 'bg-white/40 dark:bg-[var(--surface-2)]/40'
                     )}

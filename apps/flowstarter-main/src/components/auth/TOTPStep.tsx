@@ -31,10 +31,10 @@ export function TOTPStep({
         <div className="w-12 h-12 rounded-full bg-[var(--purple)]/10 flex items-center justify-center mx-auto mb-4">
           <ShieldCheck className="w-6 h-6 text-[var(--purple)]" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-xl font-semibold text-[var(--fs-ink)]">
           {t('team.login.twoFactorTitle')}
         </h2>
-        <p className="text-sm text-gray-500 dark:text-white/50 mt-1">
+        <p className="text-sm text-[var(--fs-ink-faint)] mt-1">
           {t('team.login.twoFactorSubtitle')}
         </p>
       </div>
@@ -70,7 +70,7 @@ export function TOTPStep({
         <button
           type="button"
           onClick={onBack}
-          className="w-full text-sm text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70 transition-colors"
+          className="w-full text-sm text-[var(--fs-ink-faint)] hover:text-gray-700 dark:hover:text-white/70 transition-colors"
         >
           &larr; {t('team.login.back')}
         </button>

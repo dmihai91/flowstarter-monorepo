@@ -20,7 +20,7 @@ export function ScaffoldProgress({ steps }: ScaffoldProgressProps) {
           <Sparkles className="w-5 h-5 text-[var(--purple)] animate-pulse" />
         </div>
         <div>
-          <h3 className="font-medium text-gray-900 dark:text-white text-sm">
+          <h3 className="font-medium text-[var(--fs-ink)] text-sm">
             {t('scaffold.progress.title')}
           </h3>
           <p className="text-xs text-gray-500 dark:text-white/40">
@@ -49,7 +49,7 @@ export function ScaffoldProgress({ steps }: ScaffoldProgressProps) {
               className={cn(
                 'text-sm transition-colors',
                 step.done
-                  ? 'text-gray-900 dark:text-white'
+                  ? 'text-[var(--fs-ink)]'
                   : 'text-gray-400 dark:text-white/30'
               )}
             >

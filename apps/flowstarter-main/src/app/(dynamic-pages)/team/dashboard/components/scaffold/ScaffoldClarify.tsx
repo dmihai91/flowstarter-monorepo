@@ -32,7 +32,7 @@ export function ScaffoldClarify({
             <HelpCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
           </div>
           <div>
-            <h3 className="font-medium text-gray-900 dark:text-white text-sm">
+            <h3 className="font-medium text-[var(--fs-ink)] text-sm">
               {t('scaffold.clarify.title')}
             </h3>
             <p className="text-xs text-gray-500 dark:text-white/40">
@@ -60,7 +60,7 @@ export function ScaffoldClarify({
               value={answers[i] || ''}
               onChange={(e) => onUpdateAnswer(i, e.target.value)}
               placeholder={t('scaffold.clarify.placeholder')}
-              className="w-full px-3 py-2.5 text-sm bg-white/80 dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] rounded-lg text-gray-900 dark:text-white placeholder:text-gray-300 dark:placeholder:text-white/20 focus:outline-none focus:border-[var(--purple)]/30 ring-0 focus:ring-0 transition-colors"
+              className="w-full px-3 py-2.5 text-sm bg-white/80 dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.08] rounded-lg text-[var(--fs-ink)] placeholder:text-gray-300 dark:placeholder:text-white/20 focus:outline-none focus:border-[var(--purple)]/30 ring-0 focus:ring-0 transition-colors"
             />
           </div>
         ))}

@@ -78,7 +78,7 @@ export function UserMenu() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" sideOffset={8} className="min-w-56">
           {/* Profile Header */}
-          <div className="px-3 py-3 border-b border-gray-200 dark:border-white/10">
+          <div className="px-3 py-3 border-b border-[var(--fs-rule)]">
             <div className="flex items-center gap-3">
               {user.imageUrl ? (
                 <Image
@@ -94,10 +94,10 @@ export function UserMenu() {
                 </div>
               )}
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                <p className="text-sm font-medium text-[var(--fs-ink)] truncate">
                   {user.fullName || (isTeam ? 'Team Member' : 'User')}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                <p className="text-xs text-[var(--fs-ink-faint)] truncate">
                   {user.emailAddresses?.[0]?.emailAddress}
                 </p>
               </div>
@@ -147,7 +147,7 @@ export function UserMenu() {
       </DropdownMenu>
 
       <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
-        <AlertDialogContent className="bg-white dark:bg-[var(--glass-surface)] border-gray-200 dark:border-white/10">
+        <AlertDialogContent className="bg-white dark:bg-[var(--glass-surface)] border-[var(--fs-rule)]">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('app.sigOutTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -155,7 +155,7 @@ export function UserMenu() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-gray-200 dark:border-white/10">
+            <AlertDialogCancel className="border-[var(--fs-rule)]">
               {t('app.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleSignOut} variant="destructive">

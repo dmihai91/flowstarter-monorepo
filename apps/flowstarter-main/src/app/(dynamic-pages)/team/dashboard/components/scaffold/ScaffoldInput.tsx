@@ -114,7 +114,7 @@ export function ScaffoldInput({
             <Wand2 className="w-5 h-5 text-[var(--purple)]" />
           </div>
           <div>
-            <h3 className="font-medium text-gray-900 dark:text-white text-sm">
+            <h3 className="font-medium text-[var(--fs-ink)] text-sm">
               {t('scaffold.input.title')}
             </h3>
             <p className="text-xs text-gray-500 dark:text-white/40">
@@ -160,7 +160,7 @@ export function ScaffoldInput({
                   className="w-12 h-12 object-cover rounded-lg border border-black/[0.08] dark:border-white/[0.08]"
                 />
               ) : (
-                <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-black/[0.08] dark:border-white/[0.08] bg-gray-50 dark:bg-white/5">
+                <div className="w-12 h-12 flex items-center justify-center rounded-lg border border-black/[0.08] dark:border-white/[0.08] bg-[var(--fs-bg-elevated)]">
                   <span className="text-[0.5625rem] text-gray-500 uppercase">
                     {file.name.split('.').pop()}
                   </span>
@@ -197,7 +197,7 @@ export function ScaffoldInput({
             input ? '' : placeholderText || t('scaffold.input.placeholder')
           }
           rows={3}
-          className="w-full px-4 pt-4 pb-3 bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/40 text-sm leading-relaxed resize-none focus:outline-none outline-none ring-0 focus:ring-0 border-0 shadow-none select-text"
+          className="w-full px-4 pt-4 pb-3 bg-transparent text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/40 text-sm leading-relaxed resize-none focus:outline-none outline-none ring-0 focus:ring-0 border-0 shadow-none select-text"
           style={{ minHeight: '80px', maxHeight: '200px' }}
         />
 

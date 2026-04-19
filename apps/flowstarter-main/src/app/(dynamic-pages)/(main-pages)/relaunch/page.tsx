@@ -131,12 +131,12 @@ export default function RelaunchPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-gray-900 dark:text-white font-display relative transition-colors duration-300">
+      <div className="min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface)] text-[var(--fs-ink)] font-display relative transition-colors duration-300">
         {/* ── Header ─────────────────────────────────────────────── */}
         <header
           className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
             scrolled
-              ? 'bg-white/72 dark:bg-[#0a0a0c]/72 backdrop-blur-2xl backdrop-saturate-[1.8] border-b border-white/50 dark:border-white/10 shadow-[0_8px_40px_rgba(15,23,42,0.08)]'
+              ? 'bg-white/72 dark:bg-[var(--fs-bg-base)]/72 backdrop-blur-2xl backdrop-saturate-[1.8] border-b border-white/50 dark:border-white/10 shadow-[0_8px_40px_rgba(15,23,42,0.08)]'
               : 'bg-transparent border-b border-transparent'
           }`}
         >
@@ -149,7 +149,7 @@ export default function RelaunchPage() {
                 <ThemeToggle />
                 <Link
                   href="/#pricing"
-                  className="text-sm text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white transition-colors hidden sm:block"
+                  className="text-sm text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white transition-colors hidden sm:block"
                 >
                   See all plans
                 </Link>
@@ -171,7 +171,7 @@ export default function RelaunchPage() {
                 But it&apos;s not getting you customers.
               </span>
             </h1>
-            <p className="text-lg text-gray-500 dark:text-white/50 max-w-xl mx-auto leading-relaxed [text-wrap:balance]">
+            <p className="text-lg text-[var(--fs-ink-faint)] max-w-xl mx-auto leading-relaxed [text-wrap:balance]">
               We audit what&apos;s not working, migrate your content, and
               rebuild your site around converting visitors — quickly, not
               months. You keep your Google rankings.
@@ -195,10 +195,10 @@ export default function RelaunchPage() {
                     {p.icon}
                   </div>
                   <div>
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1.5">
+                    <h3 className="text-base font-semibold text-[var(--fs-ink)] mb-1.5">
                       {p.title}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-white/50 leading-relaxed">
+                    <p className="text-sm text-[var(--fs-ink-faint)] leading-relaxed">
                       {p.body}
                     </p>
                   </div>
@@ -217,10 +217,10 @@ export default function RelaunchPage() {
                 <span className="editorial-dot" />
                 What&apos;s included
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white [text-wrap:balance]">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[var(--fs-ink)] [text-wrap:balance]">
                 Everything rebuilt to convert — starting at €699
               </h2>
-              <p className="mt-3 text-base text-gray-500 dark:text-white/50">
+              <p className="mt-3 text-base text-[var(--fs-ink-faint)]">
                 Price depends on complexity. We&apos;ll assess it together on
                 the call.
               </p>
@@ -229,7 +229,7 @@ export default function RelaunchPage() {
               {WHAT_YOU_GET.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-3 text-sm text-gray-700 dark:text-white/60"
+                  className="flex items-start gap-3 text-sm text-[var(--fs-ink-dim)]"
                 >
                   <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 shrink-0">
                     <svg
@@ -258,12 +258,12 @@ export default function RelaunchPage() {
           <div className="max-w-lg mx-auto px-6">
             <div className="refined-panel rounded-[28px] p-7 sm:p-9">
               <div className="text-center mb-7">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-[var(--fs-ink)] mb-2">
                   {submitted
                     ? "Great — let's talk."
                     : 'Tell us about your site'}
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-white/50">
+                <p className="text-sm text-[var(--fs-ink-faint)]">
                   {submitted
                     ? "Book a free discovery call and we'll review your site together."
                     : "Share your URL and we'll come prepared to your discovery call."}
@@ -275,7 +275,7 @@ export default function RelaunchPage() {
                   <div>
                     <label
                       htmlFor="site-url"
-                      className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-1.5"
+                      className="block text-sm font-medium text-[var(--fs-ink-dim)] mb-1.5"
                     >
                       Your current website URL
                     </label>
@@ -286,17 +286,17 @@ export default function RelaunchPage() {
                       placeholder="https://yoursite.com"
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
-                      className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.04] px-4 py-3 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/40 focus:border-[var(--purple-primary)]/40 transition-all"
+                      className="w-full rounded-xl border border-[var(--fs-rule)] bg-white dark:bg-white/[0.04] px-4 py-3 text-sm text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/40 focus:border-[var(--purple-primary)]/40 transition-all"
                     />
                   </div>
 
                   <div>
                     <label
                       htmlFor="site-problems"
-                      className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-1.5"
+                      className="block text-sm font-medium text-[var(--fs-ink-dim)] mb-1.5"
                     >
                       What&apos;s not working?{' '}
-                      <span className="text-gray-400 dark:text-white/30 font-normal">
+                      <span className="text-[var(--fs-ink-faint)] font-normal">
                         (optional)
                       </span>
                     </label>
@@ -306,7 +306,7 @@ export default function RelaunchPage() {
                       placeholder="E.g. visitors don't contact me, the design looks dated, I can't update anything myself..."
                       value={problems}
                       onChange={(e) => setProblems(e.target.value)}
-                      className="w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/[0.04] px-4 py-3 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/40 focus:border-[var(--purple-primary)]/40 transition-all resize-none"
+                      className="w-full rounded-xl border border-[var(--fs-rule)] bg-white dark:bg-white/[0.04] px-4 py-3 text-sm text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/40 focus:border-[var(--purple-primary)]/40 transition-all resize-none"
                     />
                   </div>
 
@@ -332,7 +332,7 @@ export default function RelaunchPage() {
                     </svg>
                   </Button>
 
-                  <p className="text-center text-xs text-gray-400 dark:text-white/30">
+                  <p className="text-center text-xs text-[var(--fs-ink-faint)]">
                     Free, no commitment. 45-minute call. We come prepared.
                   </p>
                 </form>
@@ -353,9 +353,9 @@ export default function RelaunchPage() {
                       />
                     </svg>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-white/50 mb-5">
+                  <p className="text-sm text-[var(--fs-ink-faint)] mb-5">
                     We&apos;ll review{' '}
-                    <span className="font-medium text-gray-700 dark:text-white/70">
+                    <span className="font-medium text-[var(--fs-ink-dim)]">
                       {url}
                     </span>{' '}
                     before the call.

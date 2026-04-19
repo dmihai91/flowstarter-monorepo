@@ -76,10 +76,10 @@ function JoinPageContent() {
           <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-bold text-[var(--fs-ink)] mb-2">
             Invalid Invitation
           </h1>
-          <p className="text-gray-500 dark:text-white/50 mb-6">
+          <p className="text-[var(--fs-ink-faint)] mb-6">
             Invalid invitation link
           </p>
           <Link href="/">
@@ -96,7 +96,7 @@ function JoinPageContent() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)] mx-auto mb-4" />
-          <p className="text-gray-500 dark:text-white/50">
+          <p className="text-[var(--fs-ink-faint)]">
             Validating invitation...
           </p>
         </div>
@@ -117,10 +117,10 @@ function JoinPageContent() {
           <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
             <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-bold text-[var(--fs-ink)] mb-2">
             Invalid Invitation
           </h1>
-          <p className="text-gray-500 dark:text-white/50 mb-6">
+          <p className="text-[var(--fs-ink-faint)] mb-6">
             {errorMessage}
           </p>
           <Link href="/">
@@ -139,10 +139,10 @@ function JoinPageContent() {
           <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-8 h-8 text-emerald-500" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-bold text-[var(--fs-ink)] mb-2">
             Account Created!
           </h1>
-          <p className="text-gray-500 dark:text-white/50 mb-6">
+          <p className="text-[var(--fs-ink-faint)] mb-6">
             Redirecting you to sign in...
           </p>
           <Loader2 className="w-5 h-5 animate-spin text-[var(--purple)] mx-auto" />
@@ -176,19 +176,19 @@ function JoinPageContent() {
         <main className="flex-1 flex items-center justify-center px-4 pb-12">
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-2xl font-bold text-[var(--fs-ink)] mb-2">
                 Join the team
               </h1>
-              <p className="text-gray-500 dark:text-white/50">
+              <p className="text-[var(--fs-ink-faint)]">
                 {inviterName} has invited you to join Flowstarter
               </p>
             </div>
 
-            <div className="p-8 rounded-2xl bg-white dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-xl shadow-gray-200/20 dark:shadow-none">
+            <div className="p-8 rounded-2xl bg-white dark:bg-white/[0.02] border border-[var(--fs-rule)] shadow-xl shadow-gray-200/20 dark:shadow-none">
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Email (readonly) */}
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-600 dark:text-white/60">
+                  <Label className="text-sm text-[var(--fs-ink-dim)]">
                     Email
                   </Label>
                   <div className="relative">
@@ -197,14 +197,14 @@ function JoinPageContent() {
                       type="email"
                       value={email}
                       disabled
-                      className="h-12 pl-11 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-500"
+                      className="h-12 pl-11 rounded-lg bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-gray-500"
                     />
                   </div>
                 </div>
 
                 {/* Password */}
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-600 dark:text-white/60">
+                  <Label className="text-sm text-[var(--fs-ink-dim)]">
                     Create password
                   </Label>
                   <div className="relative">
@@ -214,7 +214,7 @@ function JoinPageContent() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder={t('team.join.passwordPlaceholder')}
-                      className="h-12 pl-11 pr-11 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
+                      className="h-12 pl-11 pr-11 rounded-lg bg-white dark:bg-white/5 border border-[var(--fs-rule)]"
                       required
                       minLength={8}
                     />
@@ -234,7 +234,7 @@ function JoinPageContent() {
 
                 {/* Confirm Password */}
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-600 dark:text-white/60">
+                  <Label className="text-sm text-[var(--fs-ink-dim)]">
                     Confirm password
                   </Label>
                   <div className="relative">
@@ -244,7 +244,7 @@ function JoinPageContent() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder={t('team.join.repeatPassword')}
-                      className="h-12 pl-11 rounded-lg bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10"
+                      className="h-12 pl-11 rounded-lg bg-white dark:bg-white/5 border border-[var(--fs-rule)]"
                       required
                     />
                   </div>
@@ -278,7 +278,7 @@ function JoinPageContent() {
               </form>
             </div>
 
-            <p className="text-center text-sm text-gray-400 dark:text-white/30 mt-6">
+            <p className="text-center text-sm text-[var(--fs-ink-faint)] mt-6">
               By joining, you agree to our{' '}
               <Link
                 href="/terms"

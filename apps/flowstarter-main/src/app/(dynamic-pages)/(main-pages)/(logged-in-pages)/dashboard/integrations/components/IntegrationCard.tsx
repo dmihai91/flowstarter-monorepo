@@ -64,7 +64,7 @@ export function IntegrationCard({
                 'h-6 w-6 sm:h-7 sm:w-7',
                 connected
                   ? 'text-white'
-                  : integration.iconColor || 'text-gray-700 dark:text-gray-300'
+                  : integration.iconColor || 'text-[var(--fs-ink-dim)]'
               )}
             />
           </div>

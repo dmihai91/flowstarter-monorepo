@@ -22,7 +22,7 @@ export function AuthCheck({ children }: { children: React.ReactNode }) {
         style={{ background: 'var(--gradient-background, #f8f8fc)' }}
       >
         <div className="relative w-10 h-10">
-          <div className="absolute inset-0 rounded-full border-2 border-gray-200 dark:border-white/10" />
+          <div className="absolute inset-0 rounded-full border-2 border-[var(--fs-rule)]" />
           <div
             className="absolute inset-0 rounded-full border-2 border-transparent border-t-[var(--purple)] animate-spin"
             style={{ animationDuration: '0.8s' }}
@@ -40,7 +40,7 @@ export function AuthCheck({ children }: { children: React.ReactNode }) {
         style={{ background: 'var(--gradient-background, #f8f8fc)' }}
       >
         <div className="relative w-10 h-10">
-          <div className="absolute inset-0 rounded-full border-2 border-gray-200 dark:border-white/10" />
+          <div className="absolute inset-0 rounded-full border-2 border-[var(--fs-rule)]" />
           <div
             className="absolute inset-0 rounded-full border-2 border-transparent border-t-[var(--purple)] animate-spin"
             style={{ animationDuration: '0.8s' }}

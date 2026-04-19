@@ -149,7 +149,7 @@ export function MilestonesTimeline({
     <div className="mb-8">
       {/* ── Mobile: vertical timeline ── */}
       <div className="sm:hidden">
-        <div className="relative pl-10">
+        <div className="relative pl-16">
           {/* Track */}
           <div className="absolute left-[19px] top-5 bottom-5 w-[2px] bg-gray-200 dark:bg-white/[0.06] rounded-full" />
           {/* Progress fill */}
@@ -164,7 +164,7 @@ export function MilestonesTimeline({
           <div className="space-y-3">
             {milestones.map((m, i) => (
               <div key={i} className="relative flex items-center gap-3">
-                <div className="absolute -left-10 z-10">
+                <div className="absolute -left-16 z-10">
                   <StepCircle index={i} status={m.status} />
                 </div>
                 <StepCard

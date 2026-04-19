@@ -116,7 +116,7 @@ export function ListShell({
 
         {/* Filter bar */}
         {filters && (
-          <div className="flex flex-wrap items-center gap-2 mb-5">
+          <div className="flex flex-wrap items-center gap-2 mb-5 min-w-0">
             {filters}
           </div>
         )}
@@ -174,12 +174,12 @@ export function FilterTabs({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex items-center gap-1 bg-[var(--fs-rule)]/40 rounded-xl p-1">
+    <div className="flex items-center gap-1 bg-[var(--fs-rule)]/40 rounded-xl p-1 overflow-x-auto max-w-full scrollbar-none">
       {tabs.map((tab) => (
         <button
           key={tab.value}
           onClick={() => onChange(tab.value)}
-          className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+          className={`whitespace-nowrap shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
             value === tab.value
               ? 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink)] shadow-sm'
               : 'text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink-dim)]'
@@ -239,14 +239,14 @@ export function SearchInput({
   placeholder?: string;
 }) {
   return (
-    <div className="relative ml-auto">
+    <div className="relative flex-1 min-w-0">
       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--fs-ink-faint)]" />
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="pl-8 pr-3 py-1.5 text-xs rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)] placeholder:text-[var(--fs-ink-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--fs-accent-ring)] w-48"
+        className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)] placeholder:text-[var(--fs-ink-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--fs-accent-ring)]"
       />
     </div>
   );

@@ -48,13 +48,19 @@ export function ClientRequestsList() {
       emptyDescription={emptyDescription}
       filters={
         <>
-          <FilterTabs tabs={STATUS_TABS} value={status} onChange={setStatus} />
-          <SortSelect options={SORT_OPTIONS} value={sort} onChange={setSort} />
-          <SearchInput
-            value={search}
-            onChange={setSearch}
-            placeholder="Search requests…"
-          />
+          {/* Tabs — full width on mobile, scrollable */}
+          <div className="w-full">
+            <FilterTabs tabs={STATUS_TABS} value={status} onChange={setStatus} />
+          </div>
+          {/* Sort + search on same row below */}
+          <div className="flex items-center gap-2 w-full">
+            <SortSelect options={SORT_OPTIONS} value={sort} onChange={setSort} />
+            <SearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder="Search requests…"
+            />
+          </div>
         </>
       }
     >

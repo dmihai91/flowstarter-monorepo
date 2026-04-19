@@ -57,7 +57,7 @@ export function RequestCard({ request }: Props) {
 
   return (
     <>
-      <div className="rounded-2xl border border-gray-200/80 dark:border-white/[0.06] bg-white/95 dark:bg-white/[0.03] p-4 transition-shadow hover:shadow-md">
+      <div className="rounded-[var(--fs-radius-2xl)] border p-4 backdrop-blur-xl transition-all hover:-translate-y-0.5" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
         <div className="flex items-start gap-3">
           {/* Priority dot */}
           <span

@@ -74,67 +74,6 @@ export function ProcessSection() {
           ))}
         </div>
       </div>
-
-      <style jsx global>{`
-        .ls-process-card {
-          padding: 1.75rem 1.75rem 2rem;
-          position: relative;
-          transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
-            box-shadow 320ms ease;
-        }
-        .ls-process-card:hover {
-          transform: translateY(-3px);
-        }
-        .ls-process-num {
-          font-family: var(--ls-mono);
-          font-size: 0.8rem;
-          font-weight: 500;
-          letter-spacing: 0.22em;
-          color: var(--ls-accent);
-          margin-bottom: 1rem;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.6rem;
-        }
-        .ls-process-num::before {
-          content: '';
-          display: inline-block;
-          width: 24px;
-          height: 1px;
-          background: var(--ls-accent);
-          opacity: 0.6;
-        }
-        .ls-process-title {
-          font-family: var(--ls-sans);
-          font-size: 1.35rem;
-          font-weight: 600;
-          letter-spacing: -0.02em;
-          line-height: 1.15;
-          color: var(--ls-ink);
-          margin-bottom: 0.7rem;
-        }
-        .ls-process-body {
-          font-family: var(--ls-sans);
-          font-size: 0.95rem;
-          line-height: 1.55;
-          color: var(--ls-ink-dim);
-          max-width: 40ch;
-        }
-        .ls-process-rule {
-          position: absolute;
-          left: 1.75rem;
-          right: 1.75rem;
-          bottom: 1.1rem;
-          height: 1px;
-          background: linear-gradient(
-            90deg,
-            transparent 0%,
-            var(--ls-rule) 40%,
-            var(--ls-rule) 60%,
-            transparent 100%
-          );
-        }
-      `}</style>
     </section>
   );
 }

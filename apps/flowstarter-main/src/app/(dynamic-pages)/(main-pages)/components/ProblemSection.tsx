@@ -79,53 +79,6 @@ export function ProblemSection() {
           {problem.closing}
         </p>
       </div>
-
-      <style jsx global>{`
-        .ls-problem-card {
-          padding: 1.75rem 1.6rem 1.75rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        .ls-problem-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 40px;
-          height: 40px;
-          border-radius: 12px;
-          background: color-mix(
-            in oklab,
-            var(--ls-accent-warm) 14%,
-            transparent
-          );
-          color: var(--ls-accent-warm);
-          border: 1px solid
-            color-mix(in oklab, var(--ls-accent-warm) 28%, transparent);
-        }
-        .ls-problem-title {
-          font-family: var(--ls-sans);
-          font-size: 1.12rem;
-          font-weight: 600;
-          letter-spacing: -0.015em;
-          line-height: 1.25;
-          color: var(--ls-ink);
-        }
-        .ls-problem-body {
-          font-family: var(--ls-sans);
-          font-size: 0.92rem;
-          line-height: 1.55;
-          color: var(--ls-ink-dim);
-        }
-        .ls-problem-closing {
-          font-family: var(--ls-sans);
-          font-size: clamp(1.05rem, 1.3vw, 1.25rem);
-          line-height: 1.5;
-          color: var(--ls-ink-dim);
-          padding-top: 2rem;
-          border-top: 1px solid var(--ls-rule);
-        }
-      `}</style>
     </section>
   );
 }

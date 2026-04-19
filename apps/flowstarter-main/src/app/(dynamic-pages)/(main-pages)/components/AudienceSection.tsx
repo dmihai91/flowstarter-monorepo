@@ -75,51 +75,6 @@ export function AudienceSection() {
           ))}
         </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes ls-reveal {
-          from {
-            opacity: 0;
-            transform: translateY(16px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .ls-audience-card {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 0.9rem;
-          transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
-            border-color 320ms ease, box-shadow 320ms ease;
-        }
-        .ls-audience-card:hover {
-          transform: translateY(-2px);
-          border-color: color-mix(in oklab, var(--ls-accent) 45%, transparent);
-        }
-        .ls-audience-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 36px;
-          height: 36px;
-          border-radius: 10px;
-          background: color-mix(in oklab, var(--ls-accent) 12%, transparent);
-          color: var(--ls-accent);
-          border: 1px solid
-            color-mix(in oklab, var(--ls-accent) 24%, transparent);
-        }
-        .ls-audience-label {
-          font-family: var(--ls-sans);
-          font-size: 0.92rem;
-          font-weight: 500;
-          line-height: 1.45;
-          color: var(--ls-ink);
-          letter-spacing: -0.005em;
-        }
-      `}</style>
     </section>
   );
 }

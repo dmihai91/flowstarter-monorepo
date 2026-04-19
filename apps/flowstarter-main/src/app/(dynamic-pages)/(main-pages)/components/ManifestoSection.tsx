@@ -67,38 +67,6 @@ export function ManifestoSection() {
           <p>{t('landing.manifesto.closing')}</p>
         </div>
       </div>
-
-      <style jsx global>{`
-        .ls-manifesto-body {
-          display: flex;
-          flex-direction: column;
-          gap: 1.4rem;
-          text-align: center;
-        }
-        .ls-manifesto-body p {
-          font-family: var(--ls-sans);
-          font-size: clamp(1rem, 1.2vw, 1.15rem);
-          line-height: 1.7;
-          color: var(--ls-ink-dim);
-          margin: 0;
-        }
-        .ls-manifesto-pull {
-          text-align: center;
-          padding: 2rem 1.5rem 0;
-          border-top: 1px solid var(--ls-rule);
-          margin-top: 3rem;
-          position: relative;
-        }
-        .ls-manifesto-pull p {
-          font-family: var(--ls-sans);
-          font-size: clamp(1.35rem, 2.3vw, 1.85rem);
-          font-weight: 600;
-          letter-spacing: -0.02em;
-          line-height: 1.3;
-          color: var(--ls-ink);
-          margin: 0;
-        }
-      `}</style>
     </section>
   );
 }

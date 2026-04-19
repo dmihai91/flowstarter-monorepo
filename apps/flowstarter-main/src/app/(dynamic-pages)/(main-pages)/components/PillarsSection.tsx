@@ -73,55 +73,6 @@ export function PillarsSection() {
           ))}
         </div>
       </div>
-
-      <style jsx global>{`
-        .ls-pillar-card {
-          padding: 2rem 1.75rem 2rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.7rem;
-          transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
-            border-color 320ms ease;
-        }
-        .ls-pillar-card:hover {
-          transform: translateY(-3px);
-          border-color: color-mix(in oklab, var(--ls-accent) 45%, transparent);
-        }
-        .ls-pillar-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 44px;
-          height: 44px;
-          border-radius: 12px;
-          background: color-mix(in oklab, var(--ls-accent) 14%, transparent);
-          color: var(--ls-accent);
-          border: 1px solid
-            color-mix(in oklab, var(--ls-accent) 28%, transparent);
-          margin-bottom: 0.4rem;
-        }
-        .ls-pillar-sub {
-          font-family: var(--ls-mono);
-          font-size: 10.5px;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--ls-ink-faint);
-        }
-        .ls-pillar-title {
-          font-family: var(--ls-sans);
-          font-size: 1.3rem;
-          font-weight: 600;
-          letter-spacing: -0.02em;
-          line-height: 1.2;
-          color: var(--ls-ink);
-        }
-        .ls-pillar-body {
-          font-family: var(--ls-sans);
-          font-size: 0.93rem;
-          line-height: 1.6;
-          color: var(--ls-ink-dim);
-        }
-      `}</style>
     </section>
   );
 }

@@ -712,15 +712,17 @@
 }
 @media (max-width: 900px) {
   .ls-hero-bloom {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140%;
-    height: 60%;
-    opacity: 0.22;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    width: auto;
+    height: 70%;
+    transform: none;
+    opacity: 0.20;
+    clip-path: inset(0);
   }
   .dark .ls-hero-bloom {
-    opacity: 0.35;
+    opacity: 0.32;
   }
 }
 
@@ -749,4 +751,1233 @@
     from { opacity: 1; transform: none; }
     to   { opacity: 1; transform: none; }
   }
+}
+
+
+/* ═══════════════════════════════════════════════
+   SECTION-LEVEL CSS — moved from styled-jsx
+   Extracted to eliminate client-side injection reflow
+   ═══════════════════════════════════════════════ */
+
+/* ── AudienceSection.tsx ── */
+@keyframes ls-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ls-audience-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 320ms ease, box-shadow 320ms ease;
+}
+.ls-audience-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--ls-accent) 45%, transparent);
+}
+.ls-audience-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--ls-accent) 12%, transparent);
+  color: var(--ls-accent);
+  border: 1px solid
+    color-mix(in oklab, var(--ls-accent) 24%, transparent);
+}
+.ls-audience-label {
+  font-family: var(--ls-sans);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ls-ink);
+  letter-spacing: -0.005em;
+}
+
+/* ── DifferentiationSection.tsx ── */
+.ls-diff-card {
+  padding: 1.75rem 1.6rem 1.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 320ms ease;
+}
+.ls-diff-card:hover {
+  transform: translateY(-3px);
+}
+.ls-diff-card--hi {
+  border-color: color-mix(in oklab, var(--ls-accent) 55%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--ls-accent) 14%, var(--ls-glass-bg)),
+    var(--ls-glass-bg) 60%
+  );
+}
+.ls-diff-label {
+  font-family: var(--ls-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ls-ink-faint);
+}
+.ls-diff-card--hi .ls-diff-label {
+  color: var(--ls-accent);
+}
+.ls-diff-body {
+  font-family: var(--ls-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ls-ink);
+  letter-spacing: -0.01em;
+}
+.ls-diff-bullets {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--ls-rule);
+  padding-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.ls-diff-bullets li {
+  font-family: var(--ls-sans);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--ls-ink-dim);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+.ls-diff-check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ls-accent);
+  background: color-mix(in oklab, var(--ls-accent) 18%, transparent);
+}
+
+/* ── EditorShowcase.tsx ── */
+.ls-editor-stage {
+  position: relative;
+  padding: clamp(2rem, 5vw, 4rem) clamp(0.5rem, 2vw, 1.5rem);
+}
+.ls-editor-halo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+      58% 55% at 50% 50%,
+      color-mix(in oklab, var(--ls-accent) 12%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      30% 40% at 85% 20%,
+      color-mix(in oklab, var(--ls-accent-warm) 8%, transparent) 0%,
+      transparent 80%
+    );
+  filter: blur(40px);
+  z-index: 0;
+}
+.dark .ls-editor-halo {
+  background: radial-gradient(
+      58% 55% at 50% 50%,
+      color-mix(in oklab, var(--ls-accent) 20%, transparent) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      30% 40% at 85% 20%,
+      color-mix(in oklab, var(--ls-accent-warm) 14%, transparent) 0%,
+      transparent 80%
+    );
+}
+
+/* Blueprint L-shape marks at the four corners of the stage */
+.ls-editor-mark {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--ls-accent);
+  opacity: 0.55;
+  z-index: 3;
+  pointer-events: none;
+}
+.ls-editor-mark--tl {
+  top: 12px;
+  left: 12px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.ls-editor-mark--tr {
+  top: 12px;
+  right: 12px;
+  border-left: 0;
+  border-bottom: 0;
+}
+.ls-editor-mark--bl {
+  bottom: 12px;
+  left: 12px;
+  border-right: 0;
+  border-top: 0;
+}
+.ls-editor-mark--br {
+  bottom: 12px;
+  right: 12px;
+  border-left: 0;
+  border-top: 0;
+}
+@media (max-width: 640px) {
+  .ls-editor-mark {
+    width: 12px;
+    height: 12px;
+  }
+  .ls-editor-mark--tl,
+  .ls-editor-mark--tr {
+    top: 6px;
+  }
+  .ls-editor-mark--bl,
+  .ls-editor-mark--br {
+    bottom: 6px;
+  }
+  .ls-editor-mark--tl,
+  .ls-editor-mark--bl {
+    left: 6px;
+  }
+  .ls-editor-mark--tr,
+  .ls-editor-mark--br {
+    right: 6px;
+  }
+}
+
+/* Technical caption above the surface */
+.ls-editor-caption {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ls-ink-faint);
+  z-index: 3;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.ls-editor-caption-rule {
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  background: var(--ls-ink-faint);
+}
+@media (max-width: 640px) {
+  .ls-editor-caption {
+    display: none;
+  }
+}
+
+/* The floating editor surface itself */
+.ls-editor-surface {
+  position: relative;
+  z-index: 2;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--ls-bg);
+  border: 1px solid var(--ls-glass-edge);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.08),
+    0 32px 80px rgba(0, 0, 0, 0.1),
+    0 0 0 1px color-mix(in oklab, var(--ls-ink) 5%, transparent);
+}
+.dark .ls-editor-surface {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.4),
+    0 40px 120px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* Suppress the MockEditorPreview's own title + opening wrapper spacing —
+   our editorial header already sets context. */
+.ls-editor-surface > div:first-child > div.text-center {
+  display: none;
+}
+.ls-editor-surface > div:first-child {
+  margin-bottom: 0 !important;
+}
+
+/* Tighten mobile sizing */
+@media (max-width: 640px) {
+  .ls-editor-stage {
+    padding: 1.25rem 0.25rem;
+  }
+  .ls-editor-surface [class*='h-[900px]'],
+  .ls-editor-surface [class*='sm:h-[760px]'],
+  .ls-editor-surface [class*='lg:h-[860px]'] {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .ls-editor-surface [class*='h-[420px]'] {
+    height: 300px !important;
+  }
+}
+
+/* ── FAQSection.tsx ── */
+.ls-faq-item {
+  border-top: 1px solid var(--ls-rule);
+}
+.ls-faq-item:last-child {
+  border-bottom: 1px solid var(--ls-rule);
+}
+.ls-faq-trigger {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.3rem 0;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ls-ink);
+  transition: padding 320ms ease;
+}
+.ls-faq-trigger:hover .ls-faq-q {
+  color: var(--ls-accent);
+}
+.ls-faq-idx {
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: var(--ls-ink-faint);
+  flex-shrink: 0;
+  min-width: 28px;
+}
+.ls-faq-q {
+  flex: 1;
+  font-family: var(--ls-sans);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ls-ink);
+  transition: color 280ms ease;
+}
+.ls-faq-chev {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  color: var(--ls-ink-faint);
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    color 280ms ease;
+  flex-shrink: 0;
+}
+.ls-faq-item.open .ls-faq-chev {
+  transform: rotate(180deg);
+  color: var(--ls-accent);
+}
+.ls-faq-body {
+  max-height: 0;
+  overflow: hidden;
+  padding-left: calc(28px + 1rem);
+  transition: max-height 420ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+.ls-faq-item.open .ls-faq-body {
+  max-height: 520px;
+  padding-bottom: 1.3rem;
+}
+.ls-faq-body p {
+  font-family: var(--ls-sans);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ls-ink-dim);
+  margin: 0;
+  padding-right: 2rem;
+}
+
+/* ── IncludedSection.tsx ── */
+.ls-included-card {
+  padding: 1.5rem 1.5rem 1.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 320ms ease;
+}
+.ls-included-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--ls-accent) 42%, transparent);
+}
+.ls-included-card--featured {
+  border-color: color-mix(in oklab, var(--ls-accent) 45%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--ls-accent) 10%, var(--ls-glass-bg)),
+    var(--ls-glass-bg) 60%
+  );
+}
+.ls-included-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--ls-accent) 12%, transparent);
+  color: var(--ls-accent);
+  border: 1px solid
+    color-mix(in oklab, var(--ls-accent) 24%, transparent);
+}
+.ls-included-icon--accent {
+  background: color-mix(in oklab, var(--ls-accent) 22%, transparent);
+}
+.ls-included-title {
+  font-family: var(--ls-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--ls-ink);
+}
+.ls-included-body {
+  font-family: var(--ls-sans);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ls-ink-dim);
+}
+.ls-included-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+.ls-included-chip {
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  background: color-mix(in oklab, var(--ls-accent) 8%, transparent);
+  color: var(--ls-ink-dim);
+  border: 1px solid var(--ls-rule);
+}
+.ls-included-chip b {
+  color: var(--ls-ink);
+  font-weight: 600;
+  margin-left: 0.2rem;
+}
+
+/* ── LandingHero.tsx ── */
+.ls-hero-trust {
+  border-color: var(--ls-rule);
+  padding-top: 1.6rem;
+}
+.ls-hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0 1.4rem;
+  border-left: 1px solid var(--ls-rule);
+}
+.ls-hero-stat:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.ls-hero-stat .val {
+  font-family: var(--ls-mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ls-ink);
+  letter-spacing: -0.01em;
+}
+.ls-hero-stat .lbl {
+  font-family: var(--ls-sans);
+  font-size: 0.72rem;
+  color: var(--ls-ink-faint);
+  letter-spacing: 0.03em;
+}
+
+.ls-brief-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid var(--ls-rule);
+}
+.ls-brief-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ls-ink-dim);
+}
+.ls-brief-live .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: ls-pulse 2s ease-in-out infinite;
+}
+.dark .ls-brief-live .dot {
+  background: #6cf2a0;
+}
+@keyframes ls-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+}
+.ls-brief-serial {
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: var(--ls-ink-faint);
+}
+.ls-brief-title {
+  font-family: var(--ls-sans);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  color: var(--ls-ink);
+  margin-bottom: 0.35rem;
+}
+.ls-brief-subtitle {
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ls-ink-faint);
+  margin-bottom: 1.3rem;
+}
+.ls-brief-delivery {
+  margin-top: 1.2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--ls-rule);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.ls-brief-delivery .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ls-brief-delivery .lbl {
+  font-family: var(--ls-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ls-ink-faint);
+}
+.ls-brief-delivery .val {
+  font-family: var(--ls-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--ls-ink-dim);
+}
+.ls-brief-finish {
+  margin-top: 1.3rem;
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid var(--ls-rule);
+  color: var(--ls-ink);
+  font-family: var(--ls-sans);
+  font-size: 0.88rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background 220ms ease, border-color 220ms ease,
+    transform 220ms ease;
+}
+.ls-brief-finish:hover {
+  background: var(--ls-rule);
+  border-color: var(--ls-ink-faint);
+  transform: translateY(-1px);
+}
+.ls-brief-finish.ready {
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--ls-accent) 14%, transparent),
+    color-mix(in oklab, var(--ls-accent-warm) 12%, transparent)
+  );
+  border-color: var(--ls-accent);
+}
+
+/* ── LandingPricing.tsx ── */
+.ls-price-card {
+  padding: 1.75rem 1.6rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 320ms ease;
+  position: relative;
+}
+.ls-price-card:hover {
+  transform: translateY(-3px);
+}
+.ls-price-card--hi {
+  border-color: color-mix(in oklab, var(--ls-accent) 60%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--ls-accent) 12%, var(--ls-glass-bg)),
+    var(--ls-glass-bg) 60%
+  );
+}
+.ls-price-card--soon {
+  opacity: 0.55;
+  filter: saturate(60%);
+  pointer-events: none;
+}
+.ls-price-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--ls-ink) 8%, transparent);
+  color: var(--ls-ink-dim);
+  border: 1px solid var(--ls-rule);
+}
+.ls-price-badge--hi {
+  background: var(--ls-accent-hot);
+  color: #fff;
+  border-color: var(--ls-accent-hot);
+  box-shadow: 0 4px 12px color-mix(in oklab, var(--ls-accent) 40%, transparent);
+  font-weight: 700;
+}
+.ls-price-badge .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #fff;
+  animation: ls-pulse 2s ease-in-out infinite;
+}
+.ls-price-name {
+  font-family: var(--ls-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ls-accent);
+}
+.ls-price-label {
+  font-family: var(--ls-sans);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ls-ink);
+  line-height: 1.25;
+}
+.ls-price-cost {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--ls-rule);
+  margin-top: 0.3rem;
+}
+.ls-price-cost .setup {
+  font-family: var(--ls-sans);
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ls-ink);
+}
+.ls-price-cost .setup-label {
+  font-family: var(--ls-sans);
+  font-size: 0.88rem;
+  color: var(--ls-ink-faint);
+}
+.ls-price-monthly {
+  font-family: var(--ls-sans);
+  font-size: 0.92rem;
+  color: var(--ls-ink-dim);
+  margin: 0;
+}
+.ls-price-storage {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  align-self: flex-start;
+  padding: 0.45rem 0.8rem;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--ls-accent) 10%, transparent);
+  border: 1px solid
+    color-mix(in oklab, var(--ls-accent) 24%, transparent);
+  font-family: var(--ls-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.1rem;
+}
+.ls-price-storage .lbl {
+  color: var(--ls-ink-faint);
+}
+.ls-price-storage .val {
+  color: var(--ls-ink);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.ls-price-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  flex: 1;
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--ls-rule);
+}
+.ls-price-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-family: var(--ls-sans);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--ls-ink-dim);
+}
+.ls-price-features .check {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ls-accent);
+  margin-top: 1px;
+}
+.ls-price-cta {
+  margin-top: auto;
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid var(--ls-accent);
+  background: transparent;
+  color: var(--ls-accent);
+  font-family: var(--ls-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 260ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+.ls-price-cta--ghost:hover {
+  background: var(--ls-accent);
+  color: #fff;
+}
+.ls-price-cta--disabled {
+  border-color: var(--ls-rule);
+  color: var(--ls-ink-faint);
+  cursor: not-allowed;
+}
+.ls-price-cta-primary {
+  margin-top: auto;
+  width: 100%;
+  justify-content: center;
+}
+.ls-price-note {
+  font-family: var(--ls-sans);
+  font-size: 0.95rem;
+  color: var(--ls-ink-dim);
+}
+.ls-price-relaunch {
+  font-family: var(--ls-sans);
+  font-size: 0.85rem;
+  color: var(--ls-ink-faint);
+}
+
+/* ── ManifestoSection.tsx ── */
+.ls-manifesto-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  text-align: center;
+}
+.ls-manifesto-body p {
+  font-family: var(--ls-sans);
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ls-ink-dim);
+  margin: 0;
+}
+.ls-manifesto-pull {
+  text-align: center;
+  padding: 2rem 1.5rem 0;
+  border-top: 1px solid var(--ls-rule);
+  margin-top: 3rem;
+  position: relative;
+}
+.ls-manifesto-pull p {
+  font-family: var(--ls-sans);
+  font-size: clamp(1.35rem, 2.3vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--ls-ink);
+  margin: 0;
+}
+
+/* ── PillarsSection.tsx ── */
+.ls-pillar-card {
+  padding: 2rem 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 320ms ease;
+}
+.ls-pillar-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--ls-accent) 45%, transparent);
+}
+.ls-pillar-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--ls-accent) 14%, transparent);
+  color: var(--ls-accent);
+  border: 1px solid
+    color-mix(in oklab, var(--ls-accent) 28%, transparent);
+  margin-bottom: 0.4rem;
+}
+.ls-pillar-sub {
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ls-ink-faint);
+}
+.ls-pillar-title {
+  font-family: var(--ls-sans);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--ls-ink);
+}
+.ls-pillar-body {
+  font-family: var(--ls-sans);
+  font-size: 0.93rem;
+  line-height: 1.6;
+  color: var(--ls-ink-dim);
+}
+
+/* ── ProblemSection.tsx ── */
+.ls-problem-card {
+  padding: 1.75rem 1.6rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.ls-problem-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: color-mix(
+    in oklab,
+    var(--ls-accent-warm) 14%,
+    transparent
+  );
+  color: var(--ls-accent-warm);
+  border: 1px solid
+    color-mix(in oklab, var(--ls-accent-warm) 28%, transparent);
+}
+.ls-problem-title {
+  font-family: var(--ls-sans);
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  color: var(--ls-ink);
+}
+.ls-problem-body {
+  font-family: var(--ls-sans);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ls-ink-dim);
+}
+.ls-problem-closing {
+  font-family: var(--ls-sans);
+  font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--ls-ink-dim);
+  padding-top: 2rem;
+  border-top: 1px solid var(--ls-rule);
+}
+
+/* ── ProcessSection.tsx ── */
+.ls-process-card {
+  padding: 1.75rem 1.75rem 2rem;
+  position: relative;
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 320ms ease;
+}
+.ls-process-card:hover {
+  transform: translateY(-3px);
+}
+.ls-process-num {
+  font-family: var(--ls-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--ls-accent);
+  margin-bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.ls-process-num::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--ls-accent);
+  opacity: 0.6;
+}
+.ls-process-title {
+  font-family: var(--ls-sans);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ls-ink);
+  margin-bottom: 0.7rem;
+}
+.ls-process-body {
+  font-family: var(--ls-sans);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ls-ink-dim);
+  max-width: 40ch;
+}
+.ls-process-rule {
+  position: absolute;
+  left: 1.75rem;
+  right: 1.75rem;
+  bottom: 1.1rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--ls-rule) 40%,
+    var(--ls-rule) 60%,
+    transparent 100%
+  );
+}
+
+/* ── TeamSection.tsx ── */
+.ls-team-card {
+  padding: 2rem 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    border-color 320ms ease;
+}
+.ls-team-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--ls-accent) 40%, transparent);
+}
+.ls-team-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--ls-accent),
+    var(--ls-accent-warm)
+  );
+  padding: 2px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 8px 24px
+    color-mix(in oklab, var(--ls-accent) 20%, transparent);
+}
+.ls-team-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ls-bg-2);
+  color: var(--ls-ink);
+  font-family: var(--ls-sans);
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+.ls-team-name {
+  font-family: var(--ls-sans);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ls-ink);
+}
+.ls-team-role {
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ls-accent);
+  margin-bottom: 0.75rem;
+}
+.ls-team-bio {
+  font-family: var(--ls-sans);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ls-ink-dim);
+  max-width: 30ch;
+}
+.ls-team-quote {
+  font-family: var(--ls-sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ls-ink-faint);
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+.ls-team-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ls-ink-faint);
+  transition: color 240ms ease;
+}
+.ls-team-link:hover {
+  color: var(--ls-accent);
+}
+
+/* ── TemplateGallerySection.tsx ── */
+.ls-tpl-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--ls-rule);
+  background: var(--ls-glass-bg);
+  box-shadow: var(--ls-card-shadow);
+  transition: border-color 320ms ease,
+    transform 320ms cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 320ms ease;
+}
+.ls-tpl-card:hover {
+  border-color: color-mix(in oklab, var(--ls-accent) 50%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 24px 60px color-mix(in oklab, var(--ls-accent) 14%, transparent),
+    0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.dark .ls-tpl-card:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 30px 80px color-mix(in oklab, var(--ls-accent) 20%, transparent),
+    0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.ls-tpl-img {
+  transition: transform 700ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+.ls-tpl-card:hover .ls-tpl-img {
+  transform: scale(1.06);
+}
+.dark .ls-tpl-img {
+  filter: brightness(0.75) saturate(0.9) contrast(1.05);
+}
+.ls-tpl-dot {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.25);
+  z-index: 2;
+}
+.ls-tpl-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.35) 35%,
+    transparent 70%
+  );
+  z-index: 1;
+}
+.ls-tpl-meta {
+  width: 100%;
+  padding: 0.9rem 1rem 0.95rem;
+  transform: translateY(2px);
+  transition: transform 320ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+.ls-tpl-card:hover .ls-tpl-meta {
+  transform: translateY(0);
+}
+.ls-tpl-cat {
+  display: inline-block;
+  font-family: var(--ls-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.3rem;
+}
+.ls-tpl-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.ls-tpl-name {
+  font-family: var(--ls-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: #fff;
+  line-height: 1.15;
+}
+.ls-tpl-name--lg {
+  font-size: 1.05rem;
+}
+.ls-tpl-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  font-family: var(--ls-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 260ms ease,
+    transform 260ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+.ls-tpl-card:hover .ls-tpl-preview {
+  opacity: 1;
+  transform: translateX(0);
+}
+@media (hover: none) {
+  .ls-tpl-preview {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ── TestimonialsSection.tsx ── */
+.ls-testimonial-card {
+  padding: 2rem 1.75rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  position: relative;
+}
+.ls-testimonial-mark {
+  font-family: var(--ls-sans);
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 0.7;
+  color: var(--ls-accent);
+  opacity: 0.4;
+  margin-bottom: -0.5rem;
+}
+.ls-testimonial-quote {
+  font-family: var(--ls-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ls-ink);
+  margin: 0;
+  font-weight: 400;
+}
+.ls-testimonial-cap {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ls-rule);
+  margin-top: auto;
+}
+.ls-testimonial-initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--ls-accent) 14%, transparent);
+  color: var(--ls-accent);
+  font-family: var(--ls-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  border: 1px solid
+    color-mix(in oklab, var(--ls-accent) 24%, transparent);
+}
+.ls-testimonial-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.ls-testimonial-meta .name {
+  font-family: var(--ls-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ls-ink);
+}
+.ls-testimonial-meta .role {
+  font-family: var(--ls-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ls-ink-faint);
 }

@@ -51,12 +51,22 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
         <div
           style={{
           background: 'color-mix(in srgb, var(--fs-bg-elevated) 80%, transparent)',
-          borderColor: 'var(--fs-glass-edge)',
-          boxShadow: 'var(--fs-card-shadow), 0 0 80px rgba(88,106,240,0.12)',
-            borderRadius: 'var(--fs-radius-2xl)',
-            border: '1px solid',
-            backdropFilter: 'blur(40px) saturate(160%)',
-            WebkitBackdropFilter: 'blur(40px) saturate(160%)',
+          border: '1px solid',
+          borderColor: 'color-mix(in srgb, var(--fs-glass-edge) 50%, transparent)',
+          boxShadow: [
+            // 3D top highlight
+            'inset 0 1px 0 rgba(255,255,255,0.7)',
+            // 3D bottom depth
+            'inset 0 -1px 0 rgba(0,0,0,0.06)',
+            // Outer elevation
+            '0 24px 64px rgba(78,94,218,0.12)',
+            '0 8px 24px rgba(0,0,0,0.06)',
+            // Indigo ambient glow
+            '0 0 80px rgba(88,106,240,0.08)',
+          ].join(', '),
+          borderRadius: 'var(--fs-radius-2xl)',
+          backdropFilter: 'blur(40px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(40px) saturate(160%)',
             padding: 'clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem)',
             textAlign: 'center',
             position: 'relative',

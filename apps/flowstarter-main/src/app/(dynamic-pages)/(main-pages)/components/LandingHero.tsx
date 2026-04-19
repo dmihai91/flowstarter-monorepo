@@ -60,12 +60,9 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
   const rootRef = useRef<HTMLElement | null>(null);
-  const [revealed, setRevealed] = useState(false);
-
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setRevealed(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
+  // Always revealed — entrance animation via CSS, not JS state.
+  // JS-gated opacity caused hero flash/reflow on Android Chrome on first paint.
+  const revealed = true;
 
   useEffect(() => {
     const el = rootRef.current;
@@ -289,7 +286,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
       <div className="ls-container">
         <div className="grid items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-14 lg:gap-20">
-          <div>
+          <div className="ls-hero-content">
             <div
               style={reveal(0)}
               className="ls-eyebrow flex flex-wrap items-center gap-1"

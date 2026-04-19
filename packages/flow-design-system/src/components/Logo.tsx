@@ -26,11 +26,11 @@ export function LogoMark({ size = 'md', className }: { size?: LogoProps['size'];
         {/* Background */}
         <rect width="40" height="40" rx="11" fill={`url(#${id}-bg)`} />
         <rect x="1" y="1" width="38" height="38" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
-        {/* Stylized "F" — vertical stem + two horizontal arms with flowing curves */}
-        <path d="M14 10 L14 30" stroke="white" strokeWidth="3" strokeLinecap="round" />
-        <path d="M14 12 C18 12, 22 10, 27 12" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-        <path d="M14 20 C17 20, 20 18, 24 20" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-        <path d="M14 30 C18 30, 22 28, 28 26" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        {/* Stylized "F" — centered at x=13, arms balanced left/right of optical center */}
+        <path d="M13 10 L13 30" stroke="white" strokeWidth="3" strokeLinecap="round" />
+        <path d="M13 11 C17 10, 22 10, 27 11" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <path d="M13 20 C16 19, 20 19, 24 20" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <path d="M13 30 C16 30, 20 29, 25 28" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
       </svg>
     </div>
   );

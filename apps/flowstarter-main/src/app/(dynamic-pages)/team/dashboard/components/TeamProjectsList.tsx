@@ -57,8 +57,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   const { t } = useTranslations();
   const { formatTimeAgo } = useFormatDate();
   const { viewMode, setViewMode } = useTeamProjectsView();
-  const glassPanelClass =
-    'rounded-[28px] border border-gray-200/80 bg-white/95 shadow-[0_8px_32px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_8px_32px_rgba(0,0,0,0.25),0_1px_0_rgba(255,255,255,0.06)_inset]';
+  const glassPanelClass = 'rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150';
+  const glassPanelStyle = { background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' };
 
   const {
     deleteDialogOpen,
@@ -105,7 +105,7 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             </p>
           </div>
         </div>
-        <div className={`${glassPanelClass} p-12 text-center`}>
+        <div className={`${glassPanelClass} p-12 text-center`} style={glassPanelStyle}>
           <p className="text-gray-500 dark:text-white/50 text-sm">
             {t('team.dashboard.noProjects')}
           </p>
@@ -126,13 +126,13 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             {t('team.dashboard.allProjectsDescription')}
           </p>
         </div>
-        <div className="inline-flex items-center rounded-2xl border border-gray-200/80 bg-white/90 p-1 shadow-[0_4px_16px_rgba(0,0,0,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] backdrop-blur-xl dark:border-white/[0.06] dark:bg-white/[0.05] dark:shadow-[0_4px_16px_rgba(0,0,0,0.20),0_1px_0_rgba(255,255,255,0.06)_inset]">
+        <div className="inline-flex items-center rounded-[var(--fs-radius-md)] border p-1" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-shadow-xs)' }}>
           <button
             onClick={() => setViewMode('list')}
             className={`p-2 rounded-md transition-colors ${
               viewMode === 'list'
-                ? 'bg-white/80 dark:bg-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.06)] text-gray-900 dark:text-white'
-                : 'text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70'
+                ? 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink)] shadow-sm'
+                : 'text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink-dim)]'
             }`}
           >
             <List className="w-4 h-4" />
@@ -141,8 +141,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-md transition-colors ${
               viewMode === 'grid'
-                ? 'bg-white/80 dark:bg-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.06)] text-gray-900 dark:text-white'
-                : 'text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/70'
+                ? 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink)] shadow-sm'
+                : 'text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink-dim)]'
             }`}
           >
             <LayoutGrid className="w-4 h-4" />
@@ -163,7 +163,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
           </div>
 
           <div
-            className={`${glassPanelClass} overflow-hidden divide-y divide-white/50 dark:divide-white/10`}
+            className={`${glassPanelClass} overflow-hidden divide-y divide-[var(--fs-rule)]`}
+            style={glassPanelStyle}
           >
             {projects.map((project) => {
               const status =

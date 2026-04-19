@@ -39,7 +39,7 @@ export function LandingPageClient() {
   const open = () => setModalOpen(true);
 
   return (
-    <div className="min-h-screen text-[var(--fs-ink)] font-display relative">
+    <div className="min-h-screen text-[var(--fs-ink)] font-display relative overflow-x-hidden">
       <FlowBackground variant="landing" style={{ position: 'fixed', inset: 0, zIndex: 0 }} />
       <LandingHeader onOpenModal={open} />
       <main id="main-content">

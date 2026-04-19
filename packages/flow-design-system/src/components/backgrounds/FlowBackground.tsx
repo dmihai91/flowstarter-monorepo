@@ -144,7 +144,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           position: 'absolute',
           top: '-15%',
           left: '50%',
-          width: '120%',
+          width: '100%',
           height: '75%',
           borderRadius: '50%',
           opacity: cfg.bloomOpacity,

@@ -73,6 +73,11 @@ const animationCSS = `
     0%, 100% { transform: translateY(0px); }
     50%       { transform: translateY(6px); }
   }
+  @media (max-width: 768px) {
+    [data-fs-bloom], [data-fs-warm], [data-fs-lines] {
+      animation: none !important;
+    }
+  }
 `;
 
 export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
@@ -127,7 +132,6 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
           position: 'absolute',
           inset: 0,
           zIndex: -1,
-          overflow: 'hidden',
           ...style,
         }}
         {...props}
@@ -140,7 +144,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
         {/* ── Primary indigo bloom — top-center ──
             Large soft ellipse. The dominant color element.
             Gives every surface the editorial indigo identity. */}
-        <div style={{
+        <div data-fs-bloom style={{
           position: 'absolute',
           top: '-15%',
           left: '50%',
@@ -153,7 +157,6 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
             ${bloomCore} 0%,
             ${bloomMid} 45%,
             transparent 72%)`,
-          willChange: animated ? 'transform' : undefined,
         }} />
 
         {/* ── Secondary indigo — top-right ──
@@ -174,7 +177,7 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
         {/* ── Warm anchor — bottom-left ──
             Amber/sienna. Grounds the composition.
             Mirrors --fs-accent-warm in the landing orbs. */}
-        <div style={{
+        <div data-fs-warm style={{
           position: 'absolute',
           bottom: '-12%',
           left: '-5%',
@@ -187,7 +190,6 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
             ${warmCore} 0%,
             ${warmMid} 45%,
             transparent 72%)`,
-          willChange: animated ? 'transform' : undefined,
         }} />
 
         {/* ── Tertiary cool — bottom-right ──
@@ -240,11 +242,11 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
 
           {/* Group A — gentle, wide curves */}
           <g
+            data-fs-lines
             stroke="url(#fs-line-grad-a)"
             strokeWidth="1.0"
             style={animated ? {
               animation: 'fs-line-drift-1 20s ease-in-out infinite',
-              willChange: 'transform',
             } : undefined}
           >
             <path d="M-60,180 C200,140 420,220 720,175 S1100,135 1500,195" />
@@ -259,7 +261,6 @@ export const FlowBackground = forwardRef<HTMLDivElement, FlowBackgroundProps>(
             strokeWidth="0.7"
             style={animated ? {
               animation: 'fs-line-drift-2 26s ease-in-out infinite',
-              willChange: 'transform',
             } : undefined}
           >
             <path d="M-60,260 C240,220 460,300 720,255 S1080,215 1500,280" />

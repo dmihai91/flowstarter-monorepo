@@ -118,6 +118,48 @@ const isPublicRoute = createRouteMatcher([
   '/team', // Team index (redirects to login)
   '/team/login(.*)', // Team login page (public, auth handled by Clerk)
   '/team/join(.*)', // Team join/invitation page (public)
+
+  // Public static pages — landing sections, legal, support
+  '/about(.*)',
+  '/relaunch(.*)',
+  '/status(.*)',
+  '/faq(.*)',
+]);
+
+// Routes that only exist if they match a known app path prefix.
+// Everything else is a 404 — let Next.js render it instead of redirecting to login.
+const isKnownAppRoute = createRouteMatcher([
+  '/',
+  '/about(.*)',
+  '/login(.*)',
+  '/sign-up(.*)',
+  '/forgot-password(.*)',
+  '/reset-password(.*)',
+  '/verify(.*)',
+  '/sso-callback(.*)',
+  '/gdpr(.*)',
+  '/contact(.*)',
+  '/help(.*)',
+  '/privacy(.*)',
+  '/terms(.*)',
+  '/pricing(.*)',
+  '/cookies(.*)',
+  '/blog(.*)',
+  '/guides(.*)',
+  '/blogs(.*)',
+  '/cookie-policy(.*)',
+  '/term-of-service(.*)',
+  '/privacy-policy(.*)',
+  '/sitemap(.*)',
+  '/accessibility(.*)',
+  '/security(.*)',
+  '/status(.*)',
+  '/faq(.*)',
+  '/relaunch(.*)',
+  '/team(.*)',
+  '/dashboard(.*)',
+  '/new(.*)',
+  '/api(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -341,6 +383,12 @@ export default clerkMiddleware(async (auth, req) => {
     } catch {
       // User not authenticated, continue to landing page
     }
+  }
+
+  // Unknown route — not a known app path at all. Let Next.js serve the 404.
+  if (!isKnownAppRoute(req)) {
+    applySecurityHeaders(res, nonce);
+    return res;
   }
 
   if (isPublicRoute(req)) {

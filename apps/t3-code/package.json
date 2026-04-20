@@ -1,0 +1,18 @@
+{
+  "name": "@flowstarter/t3-code",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Forked T3 Code — web server + client (Electron stripped). Packages are members of the root pnpm workspace; see pnpm-workspace.yaml.",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter t3 --filter @t3tools/web --parallel run dev",
+    "dev:server": "pnpm --filter t3 run dev",
+    "dev:web": "pnpm --filter @t3tools/web run dev",
+    "build": "pnpm --filter t3 --filter @t3tools/web run build",
+    "typecheck": "pnpm --filter './server' --filter './web' --filter './packages/*' run typecheck",
+    "test": "pnpm --filter './server' --filter './web' --filter './packages/*' run test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

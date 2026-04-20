@@ -1,1 +1,0 @@
-export { useTemplateTheme } from './useTemplateTheme';

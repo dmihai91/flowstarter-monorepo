@@ -1,8 +1,24 @@
+/**
+ * PM2 ecosystem for the feature/concierge-pivot worktree.
+ *
+ * Manages:
+ *   - flowstarter-main (Next.js production)   -> 3000
+ *   - flowstarter-code (Next.js wrapper)      -> 3001
+ *   - t3-code-server   (Bun WebSocket)        -> 3774
+ *   - t3-code-web      (Vite)                 -> 5733
+ *
+ * t3-code-server + t3-code-web are tightly coupled to apps/t3-code and
+ * the effect@beta.50 overrides that live on this branch.
+ */
+
 const path = require('path');
 
 const ROOT = __dirname;
 const LOG_DIR = path.join(process.env.HOME || '', '.pm2', 'logs');
 
+// Shared auth seed. Must match the `T3CODE_AUTH_TOKEN` piped into T3 via its
+// bootstrap envelope (scripts/dev-flowstarter-code-host.sh). Production should
+// inject via pm2 ecosystem env_production or a .env shim at pm2 startup.
 const T3CODE_AUTH_TOKEN = process.env.FLOWSTARTER_CODE_AUTH_TOKEN || '';
 
 const commonRestart = {

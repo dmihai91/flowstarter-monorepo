@@ -2,14 +2,11 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# Source of truth for the T3 server is the in-tree workspace at
-# apps/flowstarter-editor/t3 (that is where it is committed in git on this
-# branch). A previous iteration moved it to apps/t3-code but that move was
-# reverted by an external git reset, so we point back at the committed path.
+# Source of truth for the T3 server is the in-tree workspace at apps/t3-code.
 # Override with FLOWSTARTER_CODE_UPSTREAM_DIR to fall back to a
 # `.local/flowstarter-code-upstream` clone created by
 # scripts/bootstrap-flowstarter-code-host.sh.
-T3_DIR="${FLOWSTARTER_CODE_UPSTREAM_DIR:-$ROOT_DIR/apps/flowstarter-editor/t3}"
+T3_DIR="${FLOWSTARTER_CODE_UPSTREAM_DIR:-$ROOT_DIR/apps/t3-code}"
 FLOWSTARTER_CODE_HOME="${FLOWSTARTER_CODE_HOME:-$ROOT_DIR/.local/flowstarter-code-home}"
 FLOWSTARTER_CODE_HOST="${FLOWSTARTER_CODE_HOST:-127.0.0.1}"
 BASE_SERVER_PORT=3774

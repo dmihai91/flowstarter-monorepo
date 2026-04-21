@@ -18,6 +18,8 @@ import type { Id } from './_generated/dataModel';
  *                                 exists. Used by send-to-client.
  *   - POST /costs/log           — Append an LLM cost entry for billing.
  *   - GET  /costs/totals        — Get rolled-up cost totals for a project.
+ *   - POST /reviewArtifacts/upsert — Store generation/review blobs for a Supabase project.
+ *   - GET  /reviewArtifacts     — Fetch generation/review blobs by supabaseProjectId.
  */
 
 const http = httpRouter();
@@ -340,5 +342,126 @@ const costsTotals = httpAction(async (ctx, request) => {
 
 http.route({ path: '/costs/totals', method: 'GET', handler: costsTotals });
 http.route({ path: '/costs/totals', method: 'OPTIONS', handler: costsTotals });
+
+// ─── /reviewArtifacts (GET + POST upsert) ─────────────────────────────────
+
+const reviewArtifactsUpsert = httpAction(async (ctx, request) => {
+  if (request.method === 'OPTIONS') return corsPreflight('POST');
+
+  const denied = requireHandoffSecret(request);
+  if (denied) return denied;
+
+  let body: {
+    supabaseProjectId: string;
+    generatedCode?: string;
+    previewHtml?: string;
+    generatedFiles?: Array<{ path: string; content: string }>;
+    qualityMetrics?: unknown;
+    generationCompletedAt?: number;
+  };
+
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse(400, { error: 'Invalid JSON' });
+  }
+
+  if (!body.supabaseProjectId) {
+    return jsonResponse(400, { error: 'supabaseProjectId is required' });
+  }
+
+  try {
+    let qualityMetricsJson: string | undefined;
+    if (body.qualityMetrics !== undefined) {
+      qualityMetricsJson =
+        typeof body.qualityMetrics === 'string'
+          ? body.qualityMetrics
+          : JSON.stringify(body.qualityMetrics);
+    }
+
+    const id = await ctx.runMutation(api.supabaseReviewArtifacts.upsert, {
+      supabaseProjectId: body.supabaseProjectId,
+      generatedCode: body.generatedCode,
+      previewHtml: body.previewHtml,
+      generatedFiles: body.generatedFiles,
+      qualityMetricsJson,
+      generationCompletedAt: body.generationCompletedAt,
+    });
+
+    return jsonResponse(200, { id });
+  } catch (err) {
+    console.error('[reviewArtifacts/upsert]', err);
+    return jsonResponse(500, {
+      error: err instanceof Error ? err.message : 'Internal error',
+    });
+  }
+});
+
+http.route({
+  path: '/reviewArtifacts/upsert',
+  method: 'POST',
+  handler: reviewArtifactsUpsert,
+});
+http.route({
+  path: '/reviewArtifacts/upsert',
+  method: 'OPTIONS',
+  handler: reviewArtifactsUpsert,
+});
+
+const reviewArtifactsGet = httpAction(async (ctx, request) => {
+  if (request.method === 'OPTIONS') return corsPreflight('GET');
+
+  const denied = requireHandoffSecret(request);
+  if (denied) return denied;
+
+  const url = new URL(request.url);
+  const supabaseProjectId = url.searchParams.get('supabaseProjectId');
+  if (!supabaseProjectId) {
+    return jsonResponse(400, { error: 'Missing supabaseProjectId' });
+  }
+
+  try {
+    const row = (await ctx.runQuery(api.supabaseReviewArtifacts.getBySupabaseId, {
+      supabaseProjectId,
+    })) as {
+      generatedCode?: string;
+      previewHtml?: string;
+      generatedFiles?: Array<{ path: string; content: string }>;
+      qualityMetricsJson?: string;
+      generationCompletedAt?: number;
+    } | null;
+
+    if (!row) {
+      return jsonResponse(200, { artifact: null });
+    }
+
+    let qualityMetrics: unknown = null;
+    if (row.qualityMetricsJson) {
+      try {
+        qualityMetrics = JSON.parse(row.qualityMetricsJson);
+      } catch {
+        qualityMetrics = row.qualityMetricsJson;
+      }
+    }
+
+    return jsonResponse(200, {
+      artifact: {
+        generated_code: row.generatedCode ?? null,
+        preview_html: row.previewHtml ?? null,
+        generated_files: row.generatedFiles ?? null,
+        quality_metrics: qualityMetrics,
+        generation_completed_at: row.generationCompletedAt ?? null,
+      },
+    });
+  } catch (err) {
+    console.error('[reviewArtifacts GET]', err);
+    return jsonResponse(500, {
+      error: err instanceof Error ? err.message : 'Internal error',
+    });
+  }
+});
+
+http.route({ path: '/reviewArtifacts', method: 'GET', handler: reviewArtifactsGet });
+http.route({ path: '/reviewArtifacts', method: 'OPTIONS', handler: reviewArtifactsGet });
 
 export default http;

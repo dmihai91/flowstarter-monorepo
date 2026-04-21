@@ -21,7 +21,14 @@ export function RejectRequestDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+      <div
+        className="w-full max-w-md rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150"
+        style={{
+          background: 'var(--fs-glass-bg)',
+          borderColor: 'var(--fs-glass-edge)',
+          boxShadow: 'var(--fs-card-shadow)',
+        }}
+      >
         <div className="flex items-start justify-between mb-4">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-[var(--fs-ink)]">

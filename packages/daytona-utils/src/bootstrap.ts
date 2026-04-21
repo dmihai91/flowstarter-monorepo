@@ -204,7 +204,7 @@ async function startDevServer(
 /** Poll for a working preview URL. */
 async function waitForPreview(
   sandbox: Sandbox,
-  timeoutMs: number = 60000,
+  timeoutMs = 60000,
 ): Promise<string | undefined> {
   const start = Date.now();
   const backoffMs = [2000, 3000, 5000, 5000, 10000];

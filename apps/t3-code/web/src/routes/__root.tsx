@@ -7,7 +7,7 @@ import {
   useLocation,
   useNavigate,
 } from "@tanstack/react-router";
-import { useEffect, useEffectEvent, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 import { APP_DISPLAY_NAME } from "../branding";
@@ -43,6 +43,7 @@ import {
   resolveInitialServerAuthGateState,
   updatePrimaryEnvironmentDescriptor,
 } from "../environments/primary";
+import { useEffectEvent } from "../hooks/useEffectEvent";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;

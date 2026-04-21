@@ -32,7 +32,8 @@ export function useServicesPage() {
 
   // Dialog state (UI only — not server state)
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingIntegration, setEditingIntegration] = useState<Integration | null>(null);
+  const [editingIntegration, setEditingIntegration] =
+    useState<Integration | null>(null);
   const [dialogType, setDialogType] = useState<IntegrationType>('calendly');
   const [dialogProject, setDialogProject] = useState('');
   const [apiKey, setApiKey] = useState('');
@@ -63,7 +64,8 @@ export function useServicesPage() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      if (!dialogProject || !apiKey) throw new Error('Project and API key are required');
+      if (!dialogProject || !apiKey)
+        throw new Error('Project and API key are required');
       const method = editingIntegration ? 'PATCH' : 'POST';
       const url = editingIntegration
         ? `/api/team/integrations/${editingIntegration.id}`
@@ -74,7 +76,9 @@ export function useServicesPage() {
         body: JSON.stringify({
           projectId: dialogProject,
           integrationType: dialogType,
-          name: integrationName || `${INTEGRATION_META[dialogType].name} Integration`,
+          name:
+            integrationName ||
+            `${INTEGRATION_META[dialogType].name} Integration`,
           apiKey,
           config: {},
         }),
@@ -86,18 +90,24 @@ export function useServicesPage() {
       return res.json();
     },
     onSuccess: () => {
-      toast.success(editingIntegration ? 'Integration updated' : 'Integration added');
+      toast.success(
+        editingIntegration ? 'Integration updated' : 'Integration added'
+      );
       setDialogOpen(false);
       qc.invalidateQueries({ queryKey: INTEGRATIONS_KEY });
     },
     onError: (err) => {
-      toast.error(err instanceof Error ? err.message : 'Failed to save integration');
+      toast.error(
+        err instanceof Error ? err.message : 'Failed to save integration'
+      );
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/team/integrations/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/team/integrations/${id}`, {
+        method: 'DELETE',
+      });
       if (!res.ok) throw new Error('Failed to delete');
       return id;
     },
@@ -110,12 +120,15 @@ export function useServicesPage() {
 
   // ── Derived data ─────────────────────────────────────────────────────────────
 
-  const filteredIntegrations = selectedProjectId === 'all'
-    ? integrations
-    : integrations.filter((i) => i.project_id === selectedProjectId);
+  const filteredIntegrations =
+    selectedProjectId === 'all'
+      ? integrations
+      : integrations.filter((i) => i.project_id === selectedProjectId);
 
   const byProject: Record<string, Integration[]> = {};
-  filteredIntegrations.forEach((i) => { (byProject[i.project_id] ||= []).push(i); });
+  filteredIntegrations.forEach((i) => {
+    (byProject[i.project_id] ||= []).push(i);
+  });
 
   const configuredTypes = (projectId: string): IntegrationType[] =>
     (byProject[projectId] || []).map((i) => i.integration_type);
@@ -151,36 +164,67 @@ export function useServicesPage() {
     setTesting(true);
     try {
       const typeToPath: Record<IntegrationType, string> = {
-        calendly: 'calendly', 'cal-com': 'cal-com', mailchimp: 'mailchimp',
+        calendly: 'calendly',
+        'cal-com': 'cal-com',
+        mailchimp: 'mailchimp',
       };
-      const res = await fetch(`/api/integrations/${typeToPath[integration.integration_type]}/resources`);
+      const res = await fetch(
+        `/api/integrations/${
+          typeToPath[integration.integration_type]
+        }/resources`
+      );
       if (res.ok) toast.success('Connection successful');
       else {
         const data = await res.json().catch(() => ({}));
         toast.error(`Connection failed: ${data.error || res.statusText}`);
       }
-    } catch { toast.error('Connection test failed'); }
-    finally { setTesting(false); }
+    } catch {
+      toast.error('Connection test failed');
+    } finally {
+      setTesting(false);
+    }
   };
 
   const getProjectName = (projectId: string) => {
-    const p = (projects as Project[] | undefined)?.find((p) => p.id === projectId);
+    const p = (projects as Project[] | undefined)?.find(
+      (p) => p.id === projectId
+    );
     return p?.name || t('app.unknownProject');
   };
 
   return {
-    t, projects, pageReady, userLoaded,
-    integrations, loadingIntegrations,
-    selectedProjectId, setSelectedProjectId,
-    dialogOpen, setDialogOpen,
-    editingIntegration, dialogType, dialogProject, setDialogProject,
-    apiKey, setApiKey, integrationName, setIntegrationName,
-    showApiKey, setShowApiKey,
-    saving: saveMutation.isPending, testing,
-    filteredIntegrations, byProject, configuredTypes,
-    openAddDialog, openEditDialog,
+    t,
+    projects,
+    pageReady,
+    userLoaded,
+    integrations,
+    loadingIntegrations,
+    selectedProjectId,
+    setSelectedProjectId,
+    dialogOpen,
+    setDialogOpen,
+    editingIntegration,
+    dialogType,
+    dialogProject,
+    setDialogProject,
+    apiKey,
+    setApiKey,
+    integrationName,
+    setIntegrationName,
+    showApiKey,
+    setShowApiKey,
+    saving: saveMutation.isPending,
+    testing,
+    filteredIntegrations,
+    byProject,
+    configuredTypes,
+    openAddDialog,
+    openEditDialog,
     handleSave: () => saveMutation.mutate(),
-    handleDelete, handleTestConnection, getProjectName,
-    fetchIntegrations: () => qc.invalidateQueries({ queryKey: INTEGRATIONS_KEY }),
+    handleDelete,
+    handleTestConnection,
+    getProjectName,
+    fetchIntegrations: () =>
+      qc.invalidateQueries({ queryKey: INTEGRATIONS_KEY }),
   };
 }

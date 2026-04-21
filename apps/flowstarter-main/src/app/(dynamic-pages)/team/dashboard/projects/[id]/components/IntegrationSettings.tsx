@@ -61,7 +61,8 @@ export function IntegrationSettings({ projectId }: { projectId: string }) {
   const [syncedFromServer, setSyncedFromServer] = useState(false);
   if (status && !syncedFromServer) {
     if (status.calendly.url) setCalendlyUrl(status.calendly.url);
-    if (status.analytics.propertyId) setGaPropertyId(status.analytics.propertyId);
+    if (status.analytics.propertyId)
+      setGaPropertyId(status.analytics.propertyId);
     setSyncedFromServer(true);
   }
 
@@ -132,9 +133,7 @@ export function IntegrationSettings({ projectId }: { projectId: string }) {
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="font-medium text-[var(--fs-ink)]">
-                Calendly
-              </h3>
+              <h3 className="font-medium text-[var(--fs-ink)]">Calendly</h3>
               <p className="text-xs text-[var(--fs-ink-faint)]">
                 Online booking for your clients
               </p>

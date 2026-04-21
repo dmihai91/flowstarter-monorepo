@@ -25,6 +25,7 @@ import type * as logos from "../logos.js";
 import type * as magicLinks from "../magicLinks.js";
 import type * as projects from "../projects.js";
 import type * as snapshots from "../snapshots.js";
+import type * as supabaseReviewArtifacts from "../supabaseReviewArtifacts.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -48,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   magicLinks: typeof magicLinks;
   projects: typeof projects;
   snapshots: typeof snapshots;
+  supabaseReviewArtifacts: typeof supabaseReviewArtifacts;
 }>;
 
 export declare const api: FilterApi<

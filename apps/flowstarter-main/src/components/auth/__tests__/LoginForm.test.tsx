@@ -100,7 +100,7 @@ describe('LoginForm', () => {
   });
 
   it('shows "forgot password" link', () => {
-    render(<LoginForm variant="team" />);
+    render(<LoginForm variant="client" />);
 
     const forgotBtn = screen.getByText('auth.forgotPassword');
     expect(forgotBtn).toBeInTheDocument();

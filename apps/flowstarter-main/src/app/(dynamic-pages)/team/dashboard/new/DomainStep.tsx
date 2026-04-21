@@ -171,7 +171,14 @@ export function DomainStep({
 
       {/* Confirmation */}
       {selected && (
-        <div className="rounded-[var(--fs-radius-2xl)] border p-4 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+        <div
+          className="rounded-[var(--fs-radius-2xl)] border p-4 backdrop-blur-2xl backdrop-saturate-150"
+          style={{
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          }}
+        >
           <p className="text-sm text-zinc-700 dark:text-zinc-300">
             <span className="font-semibold text-zinc-900 dark:text-white">
               {selected}

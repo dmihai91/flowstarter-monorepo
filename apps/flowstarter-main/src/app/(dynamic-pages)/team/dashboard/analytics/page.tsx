@@ -57,9 +57,7 @@ function StatCard({
         {icon}
       </div>
       <p className="text-xs text-[var(--fs-ink-faint)] mb-1">{label}</p>
-      <p className="text-2xl font-bold text-[var(--fs-ink)]">
-        {value}
-      </p>
+      <p className="text-2xl font-bold text-[var(--fs-ink)]">{value}</p>
       {sub && (
         <p className="text-xs text-[var(--fs-ink-faint)] mt-0.5">{sub}</p>
       )}
@@ -102,10 +100,7 @@ export default function AnalyticsPage() {
   ).length;
 
   // Revenue
-  const totalSetupFee = projects.reduce(
-    (s, p) => s + ((p as any).setup_fee ?? 0),
-    0
-  );
+  const totalSetupFee = projects.reduce((s, p) => s + (p.setup_fee ?? 0), 0);
   const totalMonthly = projects.reduce((s, p) => s + (p.monthly_fee ?? 0), 0);
   const paidCount = projects.filter((p) => p.is_paid).length;
 

@@ -74,7 +74,7 @@ export function PairingRouteSurface({
   );
 
   const handleSubmit = useCallback(
-    async (event?: React.SubmitEvent<HTMLFormElement>) => {
+    async (event?: React.FormEvent<HTMLFormElement>) => {
       event?.preventDefault();
       await submitCredential(credential);
     },

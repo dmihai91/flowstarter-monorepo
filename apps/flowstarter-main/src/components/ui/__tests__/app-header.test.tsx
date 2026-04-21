@@ -17,15 +17,23 @@ vi.mock('@/contexts/SidebarContext', () => ({
   }),
 }));
 
-vi.mock('@flowstarter/flow-design-system', () => ({
-  ScrollAwareHeader: ({
-    children,
-    className,
-  }: PropsWithChildren<{ className?: string }>) => (
-    <header className={className} data-testid="header">
-      {children}
-    </header>
-  ),
+vi.mock('@/components/SiteHeader', () => ({
+  SiteHeader: ({
+    onOpenAppMenu,
+  }: PropsWithChildren<{ onOpenAppMenu?: () => void }>) => {
+    const isTeam = mockPathname.startsWith('/team');
+    return (
+      <header className="z-[100]" data-testid="header">
+        <a href={isTeam ? '/team/dashboard' : '/dashboard'}>logo</a>
+        {isTeam ? <span>Team</span> : null}
+        <div data-testid="theme-toggle" />
+        <div data-testid="user-menu" />
+        <button aria-label="Open menu" onClick={onOpenAppMenu}>
+          Open menu
+        </button>
+      </header>
+    );
+  },
 }));
 
 vi.mock('@/components/ui/theme-toggle', () => ({

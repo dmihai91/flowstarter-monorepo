@@ -268,7 +268,15 @@ describe('Lead data extraction', () => {
       preferredDate: '2026-03-15',
     };
 
-    const { name, email, phone, message, source, projectId, ...extra } = body;
+    const {
+      name,
+      email,
+      phone: _phone,
+      message: _message,
+      source: _source,
+      projectId,
+      ...extra
+    } = body;
 
     expect(name).toBe('Elena');
     expect(email).toBe('elena@test.com');

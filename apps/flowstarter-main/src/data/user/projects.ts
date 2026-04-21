@@ -3,10 +3,15 @@ import {
   useServerSupabase,
   useServerSupabaseWithAuth,
 } from '@/hooks/useServerSupabase';
+import {
+  fetchReviewArtifacts,
+  upsertReviewArtifacts,
+} from '@/lib/convex-review-artifacts';
 import { authActionClient } from '@/lib/safe-action';
 import { Table } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { PROJECT_LIST_SELECT } from '@/lib/projects/project-list-columns';
 
 const insertProjectSchema = z.object({
   name: z
@@ -32,22 +37,49 @@ const insertProjectSchema = z.object({
   data: z.string().optional(),
 });
 
+function hasGenerationArtifactFields(input: {
+  generated_code?: string | null;
+  generated_files?: Array<{ path: string; content: string }> | null;
+  preview_html?: string | null;
+  quality_metrics?: unknown;
+}): boolean {
+  return Boolean(
+    (input.generated_code && input.generated_code.length > 0) ||
+      (input.preview_html && input.preview_html.length > 0) ||
+      (input.generated_files && input.generated_files.length > 0) ||
+      input.quality_metrics !== undefined
+  );
+}
+
 export const insertProjectAction = authActionClient
   .schema(insertProjectSchema)
   .action(async ({ parsedInput, ctx }) => {
     const supabaseClient = useServerSupabase();
+    const {
+      generated_code,
+      generated_files,
+      preview_html,
+      quality_metrics,
+      ...rowRest
+    } = parsedInput;
+
+    const completed = hasGenerationArtifactFields({
+      generated_code,
+      generated_files,
+      preview_html,
+      quality_metrics,
+    });
+
     const { data, error } = await supabaseClient
       .from('projects')
       .insert({
-        ...parsedInput,
+        ...rowRest,
         user_id: ctx.userId,
         status: 'active',
         is_draft: false,
         domain_type: parsedInput.domain_type || 'hosted',
         domain_provider: parsedInput.domain_provider || 'platform',
-        generation_completed_at: parsedInput.generated_code
-          ? new Date().toISOString()
-          : null,
+        generation_completed_at: completed ? new Date().toISOString() : null,
       })
       .select('*')
       .single();
@@ -55,6 +87,22 @@ export const insertProjectAction = authActionClient
     if (error) {
       throw new Error(error.message);
     }
+
+    await upsertReviewArtifacts(
+      data.id,
+      {
+        generated_code: generated_code ?? undefined,
+        generated_files: generated_files ?? undefined,
+        preview_html: preview_html ?? undefined,
+        quality_metrics,
+      },
+      completed ? data.generation_completed_at : null
+    ).catch((err) => {
+      console.error(
+        '[insertProjectAction] Convex review artifacts failed:',
+        err
+      );
+    });
 
     revalidatePath('/');
     return data.id;
@@ -86,7 +134,7 @@ export const getAllProjects = async (): Promise<Array<Table<'projects'>>> => {
     const supabaseClient = useServerSupabase();
     const { data, error } = await supabaseClient
       .from('projects')
-      .select('*')
+      .select(PROJECT_LIST_SELECT)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -103,7 +151,7 @@ export const getAllProjects = async (): Promise<Array<Table<'projects'>>> => {
       throw error;
     }
 
-    return data || [];
+    return (data ?? []) as unknown as Array<Table<'projects'>>;
   } catch (error) {
     // If it's our custom database offline error, re-throw it
     if (error instanceof Error && error.message === 'DATABASE_OFFLINE') {
@@ -138,7 +186,18 @@ export const getProject = async (
     throw error;
   }
 
-  return data;
+  const artifacts = await fetchReviewArtifacts(id);
+  const merged = {
+    ...data,
+    generated_code: artifacts.generated_code,
+    preview_html: artifacts.preview_html,
+    generated_files: artifacts.generated_files,
+    quality_metrics: artifacts.quality_metrics,
+    generation_completed_at:
+      data.generation_completed_at ?? artifacts.generation_completed_at,
+  } as Table<'projects'>;
+
+  return merged;
 };
 
 export const insertProject = async (project: {
@@ -155,17 +214,30 @@ export const insertProject = async (project: {
   quality_metrics?: unknown;
 }) => {
   const supabaseClient = useServerSupabase();
+  const {
+    generated_code,
+    generated_files,
+    preview_html,
+    quality_metrics,
+    ...rowRest
+  } = project;
+
+  const completed = hasGenerationArtifactFields({
+    generated_code,
+    generated_files,
+    preview_html,
+    quality_metrics,
+  });
+
   const { data, error } = await supabaseClient
     .from('projects')
     .insert({
-      ...project,
+      ...rowRest,
       status: 'active',
       is_draft: false,
       domain_type: project.domain_type || 'hosted',
       domain_provider: project.domain_provider || 'platform',
-      generation_completed_at: project.generated_code
-        ? new Date().toISOString()
-        : null,
+      generation_completed_at: completed ? new Date().toISOString() : null,
     })
     .select('*')
     .single();
@@ -174,5 +246,27 @@ export const insertProject = async (project: {
     throw error;
   }
 
-  return data;
+  await upsertReviewArtifacts(
+    data.id,
+    {
+      generated_code: generated_code ?? undefined,
+      generated_files: generated_files ?? undefined,
+      preview_html: preview_html ?? undefined,
+      quality_metrics,
+    },
+    completed ? data.generation_completed_at : null
+  ).catch((err) => {
+    console.error('[insertProject] Convex review artifacts failed:', err);
+  });
+
+  const artifacts = await fetchReviewArtifacts(data.id);
+  return {
+    ...data,
+    generated_code: artifacts.generated_code,
+    preview_html: artifacts.preview_html,
+    generated_files: artifacts.generated_files,
+    quality_metrics: artifacts.quality_metrics,
+    generation_completed_at:
+      data.generation_completed_at ?? artifacts.generation_completed_at,
+  } as typeof data;
 };

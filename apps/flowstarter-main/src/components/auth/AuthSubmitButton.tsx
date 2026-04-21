@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { UnifiedButton } from '@/components/ui/unified-button';
 
 interface AuthSubmitButtonProps {
   children: ReactNode;
@@ -20,29 +21,13 @@ export function AuthSubmitButton({
   className = '',
 }: AuthSubmitButtonProps) {
   return (
-    <button
+    <UnifiedButton
       type={type}
       disabled={disabled}
       onClick={onClick}
-      style={{
-        background: 'var(--fs-cta-bg)',
-        color: 'var(--fs-cta-fg)',
-        boxShadow: 'var(--fs-cta-shadow)',
-        height: 'var(--fs-btn-h)',
-        paddingInline: 'var(--fs-btn-px)',
-        fontSize: 'var(--fs-btn-fs)',
-        borderRadius: 'var(--fs-radius-md)',
-      }}
-      className={[
-        'w-full font-semibold',
-        'hover:translate-y-[-1px]',
-        'active:translate-y-0',
-        'transition-transform duration-[var(--fs-dur-micro)]',
-        'disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed',
-        className,
-      ].join(' ')}
+      className={['w-full !rounded-lg font-semibold', className].join(' ')}
     >
       {children}
-    </button>
+    </UnifiedButton>
   );
 }

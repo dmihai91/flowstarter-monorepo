@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { CheckCircle } from 'lucide-react';
 import { GlassCard } from '@flowstarter/flow-design-system';
 import { useClientRequestStats } from '@/lib/client-requests/useClientRequests';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function ClientRequestsKpiCard() {
   const { data: stats, isLoading } = useClientRequestStats();
@@ -10,11 +11,20 @@ export function ClientRequestsKpiCard() {
   if (isLoading) {
     return (
       <GlassCard noHover className="animate-pulse">
-        <div className="h-3.5 w-32 bg-[var(--fs-rule)] rounded mb-3" />
-        <div className="h-9 w-16 bg-[var(--fs-rule)] rounded mb-3" />
-        <div className="flex gap-3">
-          <div className="h-3 w-20 bg-[var(--fs-rule)] rounded" />
-          <div className="h-3 w-20 bg-[var(--fs-rule)] rounded" />
+        <div className="flex items-center justify-between mb-2">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-3 w-12" />
+        </div>
+        <Skeleton className="h-9 w-20 mb-3" />
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <Skeleton className="w-2 h-2 rounded-full" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Skeleton className="w-2 h-2 rounded-full" />
+            <Skeleton className="h-3 w-16" />
+          </div>
         </div>
       </GlassCard>
     );
@@ -78,11 +88,14 @@ export function ClientRequestsKpiCard() {
             </span>
           </span>
         )}
-        {allCaughtUp && urgent === 0 && inProgress === 0 && resolvedThisWeek === 0 && (
-          <span className="text-[var(--fs-ink-faint)] text-xs">
-            No pending requests
-          </span>
-        )}
+        {allCaughtUp &&
+          urgent === 0 &&
+          inProgress === 0 &&
+          resolvedThisWeek === 0 && (
+            <span className="text-[var(--fs-ink-faint)] text-xs">
+              No pending requests
+            </span>
+          )}
       </div>
     </GlassCard>
   );

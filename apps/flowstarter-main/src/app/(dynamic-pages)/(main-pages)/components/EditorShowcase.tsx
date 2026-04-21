@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { useMockEditor } from './useMockEditor';
 import { MockEditorPreview } from './MockEditorPreview';
@@ -8,9 +9,31 @@ export function EditorShowcase() {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
   const editor = useMockEditor();
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [mobileEditorExpanded, setMobileEditorExpanded] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setMobileEditorExpanded(entry.isIntersecting);
+      },
+      {
+        root: null,
+        threshold: 0.35,
+        rootMargin: '-10% 0px -25% 0px',
+      }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section
+      ref={sectionRef}
       id="editor-showcase"
       className="ls-scope ls-section ls-section--pad ls-fade-top"
     >
@@ -74,7 +97,13 @@ export function EditorShowcase() {
             <span>Smart editor, live demo</span>
           </div>
 
-          <div className="ls-editor-surface">
+          <div
+            className={`ls-editor-surface ${
+              mobileEditorExpanded
+                ? 'ls-editor-surface--mobile-expanded'
+                : 'ls-editor-surface--mobile-fixed'
+            }`}
+          >
             <MockEditorPreview {...editor} />
           </div>
         </div>

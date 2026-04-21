@@ -35,7 +35,7 @@ export function TeamDashboardShell({
   backHref = '/team/dashboard',
   backLabel = 'Dashboard',
   showBackButton = false,
-  maxWidth = '4xl',
+  maxWidth = '6xl',
   children,
   actions,
 }: TeamDashboardShellProps) {
@@ -106,7 +106,18 @@ export function ShellCard({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={`${card} p-5 sm:p-6 ${className}`} style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>{children}</div>;
+  return (
+    <div
+      className={`${card} p-5 sm:p-6 ${className}`}
+      style={{
+        background: 'var(--fs-glass-bg)',
+        borderColor: 'var(--fs-glass-edge)',
+        boxShadow: 'var(--fs-card-shadow)',
+      }}
+    >
+      {children}
+    </div>
+  );
 }
 
 // Section title inside a card

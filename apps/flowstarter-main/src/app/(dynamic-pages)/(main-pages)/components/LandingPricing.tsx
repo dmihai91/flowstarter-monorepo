@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/ui/unified-button';
 import { useI18n } from '@/lib/i18n';
 import { LANDING_COPY } from '../landing-copy';
 import { PreQualModal } from './PreQualModal';
@@ -153,28 +153,28 @@ export function LandingPricing() {
                 </ul>
 
                 {isComingSoon ? (
-                  <button
-                    type="button"
+                  <UnifiedButton
                     disabled
-                    className="ls-price-cta ls-price-cta--disabled"
+                    tone="secondary"
+                    className="mt-auto h-[46px] w-full text-[0.9rem] opacity-55"
                   >
                     {plan.cta}
-                  </button>
+                  </UnifiedButton>
                 ) : isHighlighted ? (
-                  <Button
+                  <UnifiedButton
                     onClick={() => handlePlanClick(plan.name.toLowerCase())}
-                    className="ls-cta ls-price-cta-primary"
+                    className="mt-auto h-[46px] w-full text-[0.9rem]"
                   >
                     {plan.cta}
-                  </Button>
+                  </UnifiedButton>
                 ) : (
-                  <button
-                    type="button"
+                  <UnifiedButton
+                    tone="secondary"
                     onClick={() => handlePlanClick(plan.name.toLowerCase())}
-                    className="ls-price-cta ls-price-cta--ghost"
+                    className="mt-auto h-[46px] w-full text-[0.9rem]"
                   >
                     {plan.cta}
-                  </button>
+                  </UnifiedButton>
                 )}
               </div>
             );

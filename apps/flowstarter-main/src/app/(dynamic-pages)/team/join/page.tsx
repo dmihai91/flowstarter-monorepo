@@ -96,9 +96,7 @@ function JoinPageContent() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[var(--purple)] mx-auto mb-4" />
-          <p className="text-[var(--fs-ink-faint)]">
-            Validating invitation...
-          </p>
+          <p className="text-[var(--fs-ink-faint)]">Validating invitation...</p>
         </div>
       </div>
     );
@@ -120,9 +118,7 @@ function JoinPageContent() {
           <h1 className="text-2xl font-bold text-[var(--fs-ink)] mb-2">
             Invalid Invitation
           </h1>
-          <p className="text-[var(--fs-ink-faint)] mb-6">
-            {errorMessage}
-          </p>
+          <p className="text-[var(--fs-ink-faint)] mb-6">{errorMessage}</p>
           <Link href="/">
             <Button variant="outline">Go to Homepage</Button>
           </Link>

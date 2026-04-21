@@ -1,5 +1,6 @@
 'use client';
 
+import { teamDashboardStatsQueryKey } from '@/hooks/useTeamDashboardStats';
 import type { Table } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -22,6 +23,8 @@ export function useTeamProjects() {
       const json = await res.json();
       return json.projects ?? [];
     },
+    staleTime: 20_000,
+    gcTime: 5 * 60_000,
   });
 }
 
@@ -63,6 +66,7 @@ export function useTeamDeleteProject() {
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ['team-projects'] });
+      qc.invalidateQueries({ queryKey: teamDashboardStatsQueryKey });
       qc.invalidateQueries({ queryKey: ['projects'] });
     },
   });
@@ -108,6 +112,7 @@ export function useTeamRenameProject() {
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ['team-projects'] });
+      qc.invalidateQueries({ queryKey: teamDashboardStatsQueryKey });
       qc.invalidateQueries({ queryKey: ['projects'] });
     },
   });
@@ -158,6 +163,7 @@ export function useTeamUpdateProjectPricing() {
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ['team-projects'] });
+      qc.invalidateQueries({ queryKey: teamDashboardStatsQueryKey });
     },
   });
 }

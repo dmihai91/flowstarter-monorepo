@@ -111,7 +111,9 @@ export function ListShell({
               </span>
             )}
           </h2>
-          {headerRight && <div className="flex items-center gap-2">{headerRight}</div>}
+          {headerRight && (
+            <div className="flex items-center gap-2">{headerRight}</div>
+          )}
         </div>
 
         {/* Filter bar */}

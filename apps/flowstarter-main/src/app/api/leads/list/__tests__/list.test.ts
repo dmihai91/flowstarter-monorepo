@@ -27,7 +27,44 @@ const storedLeads: Record<string, unknown>[] = [];
 let queryError: { message: string } | null = null;
 let updateError: { message: string } | null = null;
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+interface LeadsQuery {
+  eq: (
+    column: string,
+    value: string
+  ) => Promise<{
+    data: Record<string, unknown>[];
+    error: { message: string } | null;
+  }>;
+  neq: (
+    column: string,
+    value: string
+  ) => Promise<{
+    data: Record<string, unknown>[];
+    error: { message: string } | null;
+  }>;
+}
+
+interface LeadsUpdateQuery {
+  eq: (
+    column: string,
+    value: string
+  ) => Promise<{
+    error: { message: string } | null;
+    data: Record<string, unknown>[];
+  }>;
+}
+
+interface LeadsTable {
+  select: (...args: unknown[]) => {
+    eq: (...args: unknown[]) => {
+      order: (...args: unknown[]) => {
+        limit: (...args: unknown[]) => LeadsQuery;
+      };
+    };
+  };
+  update: (vals: Record<string, unknown>) => LeadsUpdateQuery;
+}
+
 const mockSupabase = {
   from: vi.fn((table: string) => {
     if (table === 'leads') {
@@ -58,12 +95,10 @@ const mockSupabase = {
     }
     return {};
   }),
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  rpc: vi.fn((_fn: string, _args?: any) =>
+  rpc: vi.fn((_fn: string, _args?: unknown) =>
     Promise.resolve({ data: [], error: null })
   ),
-} as any;
-/* eslint-enable @typescript-eslint/no-explicit-any */
+};
 
 vi.mock('@/supabase-clients/server', () => ({
   createSupabaseServiceRoleClient: () => mockSupabase,
@@ -78,20 +113,21 @@ async function simulateGet(params: Record<string, string>) {
 
   const { projectId, status, limit } = result.data;
 
-  const query = mockSupabase
-    .from('leads')
+  const leadsTable = mockSupabase.from('leads') as LeadsTable;
+  const query = leadsTable
     .select('*')
     .eq('project_id', projectId)
     .order('created_at', { ascending: false })
     .limit(limit);
 
+  const leadsQuery = query as LeadsQuery;
   if (status && status !== 'all') {
-    (query as any).eq('status', status);
+    await leadsQuery.eq('status', status);
   } else {
-    (query as any).neq('status', 'spam');
+    await leadsQuery.neq('status', 'spam');
   }
 
-  const { data, error } = await (query as any).neq('status', 'spam');
+  const { data, error } = await leadsQuery.neq('status', 'spam');
   if (error) return { status: 500, error: error.message };
 
   const { data: counts } = await mockSupabase.rpc('get_lead_counts', {
@@ -116,10 +152,9 @@ async function simulatePatch(body: unknown) {
     return { status: 400, error: 'Nothing to update' };
   }
 
-  const { error } = await mockSupabase
-    .from('leads')
-    .update(update)
-    .eq('id', leadId);
+  const leadsTable = mockSupabase.from('leads') as LeadsTable;
+  const updateQuery = leadsTable.update(update);
+  const { error } = await updateQuery.eq('id', leadId);
   if (error) return { status: 500, error: error.message };
   return { status: 200, success: true };
 }

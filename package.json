@@ -7,6 +7,10 @@
   "scripts": {
     "dev": "pnpm nx run-many -t dev --output-style=stream",
     "dev:main": "pnpm nx run flowstarter-main:dev --output-style=stream",
+    "docker:dev:main:up": "docker compose -f docker-compose.flowstarter-main-dev.yml up -d --build",
+    "docker:dev:main:down": "docker compose -f docker-compose.flowstarter-main-dev.yml down",
+    "docker:dev:main:logs": "docker compose -f docker-compose.flowstarter-main-dev.yml logs -f flowstarter-main-dev",
+    "docker:dev:main:restart": "docker compose -f docker-compose.flowstarter-main-dev.yml restart flowstarter-main-dev",
     "dev:library": "cross-env HTTP_PORT=3001 pnpm --dir apps/flowstarter-library/mcp-server dev:http",
     "dev:showcase": "pnpm nx run flowstarter-showcase:dev --output-style=stream",
     "build:all": "pnpm nx run-many -t build --output-style=stream",
@@ -56,12 +60,14 @@
     "@swc/helpers": "~0.5.11",
     "@types/node": "20.19.9",
     "concurrently": "^7.6.0",
+    "dotenv": "^17.3.0",
     "husky": "^9.1.7",
     "mprocs": "^0.8.3",
     "nx": "22.4.5",
     "prettier": "~3.6.2",
     "tslib": "^2.3.0",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.59.0"
   },
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.2.8",

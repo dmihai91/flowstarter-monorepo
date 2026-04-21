@@ -65,22 +65,32 @@ function LocationIcon({ type }: { type?: string }) {
 export function UpcomingMeetingsCard({ projectId }: Props) {
   const qc = useQueryClient();
 
-  const { data, isLoading: loading, error: queryError } = useQuery({
+  const {
+    data,
+    isLoading: loading,
+    error: queryError,
+  } = useQuery({
     queryKey: ['calendly-events', projectId],
     queryFn: async () => {
-      const res = await fetch(`/api/calendly/events?projectId=${projectId}&days=14`);
-      const data = await res.json() as { events?: CalendlyEvent[]; error?: string };
+      const res = await fetch(
+        `/api/calendly/events?projectId=${projectId}&days=14`
+      );
+      const data = (await res.json()) as {
+        events?: CalendlyEvent[];
+        error?: string;
+      };
       if (data.error) throw new Error(data.error);
       return data.events ?? [];
     },
-    staleTime: 5 * 60_000,   // Calendly data is slow to change — 5 min
+    staleTime: 5 * 60_000, // Calendly data is slow to change — 5 min
     gcTime: 10 * 60_000,
-    retry: false,             // Don't retry on "not configured" errors
+    retry: false, // Don't retry on "not configured" errors
   });
 
   const events = data ?? [];
   const error = queryError instanceof Error ? queryError.message : null;
-  const fetchEvents = () => qc.invalidateQueries({ queryKey: ['calendly-events', projectId] });
+  const fetchEvents = () =>
+    qc.invalidateQueries({ queryKey: ['calendly-events', projectId] });
 
   // Don't render if Calendly not configured
   if (error === 'Calendly not configured with API key') return null;

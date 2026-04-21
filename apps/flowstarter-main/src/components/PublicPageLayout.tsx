@@ -1,7 +1,7 @@
 'use client';
 
 import { FlowBackground } from '@flowstarter/flow-design-system';
-import { SupportHeader } from '@/components/SupportHeader';
+import { SiteHeader } from '@/components/SiteHeader';
 import Footer from '@/components/Footer';
 import type { ReactNode } from 'react';
 
@@ -20,7 +20,7 @@ export function PublicPageLayout({ children }: PublicPageLayoutProps) {
         variant="landing"
         style={{ position: 'fixed', inset: 0, zIndex: 0 }}
       />
-      <SupportHeader />
+      <SiteHeader mode="public" />
       {children}
       <Footer />
     </div>

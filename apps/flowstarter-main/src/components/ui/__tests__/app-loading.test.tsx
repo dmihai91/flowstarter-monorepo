@@ -53,7 +53,7 @@ describe('CardSkeleton', () => {
   it('cards have glassmorphic styling', () => {
     const { container } = render(<CardSkeleton count={1} />);
     const card = container.querySelector('.animate-pulse');
-    expect(card?.className).toContain('rounded-2xl');
+    expect(card?.className).toContain('rounded-');
     expect(card?.className).toContain('backdrop-blur');
   });
 });

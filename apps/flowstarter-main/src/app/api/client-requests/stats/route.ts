@@ -26,15 +26,30 @@ export async function GET() {
 
   const db = createSupabaseServiceRoleClient();
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const callStatsRpc = db.rpc as unknown as (
+    fn: string,
+    params: { week_ago: string }
+  ) => Promise<{
+    data: {
+      pending: number;
+      urgent: number;
+      in_progress: number;
+      resolved_this_week: number;
+    } | null;
+    error: { message: string } | null;
+  }>;
 
   // Single RPC call instead of 4 separate count queries
-  const { data, error } = await db.rpc('get_client_request_stats', {
+  const { data, error } = await callStatsRpc('get_client_request_stats', {
     week_ago: weekAgo,
   });
 
   if (error) {
     // Fallback to parallel queries if RPC doesn't exist yet
-    console.warn('[client-requests/stats] RPC not available, using fallback:', error.message);
+    console.warn(
+      '[client-requests/stats] RPC not available, using fallback:',
+      error.message
+    );
 
     const [pending, urgent, inProgress, resolvedThisWeek] = await Promise.all([
       db

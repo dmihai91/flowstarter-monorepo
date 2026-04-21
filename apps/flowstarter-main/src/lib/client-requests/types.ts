@@ -20,8 +20,10 @@ export interface ClientRequest {
   client_user_id: string;
   title: string;
   description: string;
-  original_prompt: string | null;
-  editor_context: EditorContext | null;
+  /** Present on detail fetch; omitted from list query for performance. */
+  original_prompt?: string | null;
+  /** Present on detail fetch; omitted from list query for performance. */
+  editor_context?: EditorContext | null;
   status: RequestStatus;
   priority: RequestPriority;
   assigned_to: string | null;

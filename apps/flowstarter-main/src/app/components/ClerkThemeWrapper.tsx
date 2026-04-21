@@ -59,10 +59,7 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
       ),
 
       // Text — fs ink tokens
-      colorText: resolveVar(
-        '--fs-ink',
-        isDarkMode ? '#f4eee4' : '#120a22'
-      ),
+      colorText: resolveVar('--fs-ink', isDarkMode ? '#f4eee4' : '#120a22'),
       colorTextSecondary: resolveVar(
         '--fs-ink-dim',
         isDarkMode ? 'rgba(244,238,228,0.58)' : 'rgba(18,10,34,0.62)'
@@ -80,8 +77,8 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
 
       // Semantic
       colorSuccess: isDarkMode ? 'hsl(142,69%,58%)' : 'hsl(142,71%,45%)',
-      colorError:   isDarkMode ? 'hsl(0,84%,68%)'   : 'hsl(0,84%,60%)',
-      colorWarning: isDarkMode ? 'hsl(38,92%,62%)'  : 'hsl(38,92%,50%)',
+      colorError: isDarkMode ? 'hsl(0,84%,68%)' : 'hsl(0,84%,60%)',
+      colorWarning: isDarkMode ? 'hsl(38,92%,62%)' : 'hsl(38,92%,50%)',
 
       // Radius — from --fs-radius-md
       borderRadius: '12px',
@@ -139,7 +136,9 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
       // User button popover
       userButtonPopoverCard: {
         backgroundColor: isDarkMode ? '#100e1c' : '#ffffff',
-        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
+        borderColor: isDarkMode
+          ? 'rgba(244,238,228,0.12)'
+          : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
         boxShadow: isDarkMode
           ? '0 30px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(78,94,218,0.16)'
@@ -149,7 +148,9 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
       // Form field wrapper
       formField: {
         backgroundColor: 'transparent',
-        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
+        borderColor: isDarkMode
+          ? 'rgba(244,238,228,0.12)'
+          : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
         boxShadow: 'none',
         borderRadius: '12px',
@@ -158,7 +159,9 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
       // Input fields
       formFieldInput: {
         backgroundColor: isDarkMode ? '#0a0714' : '#ffffff',
-        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
+        borderColor: isDarkMode
+          ? 'rgba(244,238,228,0.12)'
+          : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
         color: isDarkMode ? '#f4eee4' : '#120a22',
         boxShadow: 'none',
@@ -194,14 +197,18 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
 
       // Divider
       dividerLine: {
-        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
+        borderColor: isDarkMode
+          ? 'rgba(244,238,228,0.12)'
+          : 'rgba(18,10,34,0.10)',
       },
 
       // Social auth buttons
       socialButtonsBlockButton: {
         backgroundColor: isDarkMode ? '#0a0714' : '#ffffff',
         color: isDarkMode ? '#f4eee4' : '#120a22',
-        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
+        borderColor: isDarkMode
+          ? 'rgba(244,238,228,0.12)'
+          : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
         minHeight: '48px',
         borderRadius: '12px',
@@ -218,7 +225,9 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
       socialButtonsIconButton: {
         backgroundColor: isDarkMode ? '#0a0714' : '#ffffff',
         color: isDarkMode ? '#f4eee4' : '#120a22',
-        borderColor: isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)',
+        borderColor: isDarkMode
+          ? 'rgba(244,238,228,0.12)'
+          : 'rgba(18,10,34,0.10)',
         borderWidth: '1px',
         minHeight: '48px',
         borderRadius: '12px',

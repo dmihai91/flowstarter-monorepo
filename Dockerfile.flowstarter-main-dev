@@ -1,0 +1,27 @@
+FROM node:20-bookworm-slim
+
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN corepack enable \
+  && corepack prepare pnpm@10.29.2 --activate \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends bash git ca-certificates python3 make g++ \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/flowstarter-main/package.json ./apps/flowstarter-main/package.json
+COPY packages/editor-engine/package.json ./packages/editor-engine/package.json
+COPY packages/flow-design-system/package.json ./packages/flow-design-system/package.json
+COPY packages/platform-config/package.json ./packages/platform-config/package.json
+COPY packages/daytona-utils/package.json ./packages/daytona-utils/package.json
+COPY packages/supabase-utils/package.json ./packages/supabase-utils/package.json
+COPY scripts/run-flowstarter-main-docker-dev.sh /usr/local/bin/run-flowstarter-main-docker-dev.sh
+
+RUN chmod +x /usr/local/bin/run-flowstarter-main-docker-dev.sh \
+  && pnpm fetch || true
+
+CMD ["/usr/local/bin/run-flowstarter-main-docker-dev.sh"]

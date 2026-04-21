@@ -109,10 +109,7 @@ export default function TeamInvitePage() {
       <ShellCard>
         <form onSubmit={handleInvite} className="space-y-6">
           <div className="space-y-2">
-            <Label
-              htmlFor="email"
-              className="text-sm text-[var(--fs-ink-dim)]"
-            >
+            <Label htmlFor="email" className="text-sm text-[var(--fs-ink-dim)]">
               Email address
             </Label>
             <div className="relative">

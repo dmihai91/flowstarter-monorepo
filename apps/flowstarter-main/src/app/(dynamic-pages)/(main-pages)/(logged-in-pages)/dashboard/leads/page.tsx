@@ -95,7 +95,9 @@ export default function LeadsPage() {
   const { data, isLoading: loading } = useQuery({
     queryKey: leadsKey,
     queryFn: async () => {
-      const res = await fetch(`/api/leads/list?projectId=${projectId}&status=${filter}`);
+      const res = await fetch(
+        `/api/leads/list?projectId=${projectId}&status=${filter}`
+      );
       return res.json() as Promise<{ leads: Lead[]; counts: StatusCount[] }>;
     },
     enabled: !!projectId,
@@ -107,7 +109,13 @@ export default function LeadsPage() {
   const counts = data?.counts ?? [];
 
   const statusMutation = useMutation({
-    mutationFn: async ({ leadId, status }: { leadId: string; status: string }) => {
+    mutationFn: async ({
+      leadId,
+      status,
+    }: {
+      leadId: string;
+      status: string;
+    }) => {
       await fetch('/api/leads/list', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },

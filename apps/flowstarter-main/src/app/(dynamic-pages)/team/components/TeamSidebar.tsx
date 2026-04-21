@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useTranslations } from '@/lib/i18n';
-import { Logo } from '@/components/ui/logo';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useSidebar } from '@/contexts/SidebarContext';
 import {
@@ -17,13 +16,14 @@ import {
   Inbox,
   ChevronsLeft,
   ChevronsRight,
-  X,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useEffect } from 'react';
 
 export function TeamSidebar() {
+  const { resolvedTheme } = useTheme();
   const pathname = usePathname();
   const { user, isLoaded } = useUser();
   const { t } = useTranslations();
@@ -88,7 +88,7 @@ export function TeamSidebar() {
       onClick={() => setIsMobileOpen(false)}
       className={cn(
         'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
-          isActive(href, exact)
+        isActive(href, exact)
           ? 'bg-[var(--fs-accent)] text-white shadow-lg shadow-[var(--fs-accent)]/25'
           : 'text-[var(--fs-ink-dim)] hover:bg-white/55 dark:hover:bg-white/5 hover:text-[var(--fs-ink)]',
         !showLabel && 'justify-center !px-2'
@@ -98,6 +98,23 @@ export function TeamSidebar() {
       {showLabel && <span className="truncate">{label}</span>}
     </Link>
   );
+
+  const sidebarChromeStyle = {
+    background:
+      resolvedTheme === 'dark'
+        ? 'rgba(20, 22, 34, 0.9)'
+        : 'rgba(255, 255, 255, 0.97)',
+    borderRight:
+      resolvedTheme === 'dark'
+        ? '1px solid rgba(255, 255, 255, 0.1)'
+        : '1px solid rgba(18, 10, 34, 0.08)',
+    boxShadow:
+      resolvedTheme === 'dark'
+        ? '6px 0 18px rgba(2, 6, 23, 0.24)'
+        : '6px 0 18px rgba(15, 23, 42, 0.06)',
+    backdropFilter: 'blur(20px) saturate(160%)',
+    WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+  } as const;
 
   const SidebarContent = ({
     showLabel,
@@ -116,7 +133,7 @@ export function TeamSidebar() {
       {showCollapseToggle && (
         <div
           className={cn(
-            'w-full',
+            'w-full sticky top-2 z-20',
             !showLabel ? 'flex justify-center' : 'flex justify-end'
           )}
         >
@@ -124,8 +141,9 @@ export function TeamSidebar() {
             onClick={() => setCollapsed(!collapsed)}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             className={cn(
-              'p-2 rounded-lg text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink-dim)]',
-              'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
+              'p-2.5 rounded-xl border border-gray-300 dark:border-white/25',
+              'bg-white text-[var(--fs-ink)] dark:bg-[#22253a] dark:text-white',
+              'hover:bg-gray-100 dark:hover:bg-[#2a2e46] shadow-md transition-all'
             )}
           >
             {collapsed ? (
@@ -152,7 +170,7 @@ export function TeamSidebar() {
       {isAdmin && (
         <div className={cn(!showLabel && 'w-full')}>
           {showLabel && (
-              <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-[var(--fs-ink-faint)] uppercase tracking-wider">
+            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-[var(--fs-ink-faint)] uppercase tracking-wider">
               Admin
             </h3>
           )}
@@ -178,25 +196,16 @@ export function TeamSidebar() {
 
       {/* Mobile sidebar — starts below header (top-16 = 64px) */}
       <aside
-        style={{
-          background: 'var(--fs-bg-base)',
-          borderColor: 'var(--fs-glass-edge)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        }}
+        style={sidebarChromeStyle}
         className={cn(
           'md:hidden fixed top-16 bottom-0 left-0 z-[160] w-72 rounded-r-2xl',
-          'border',
-          'shadow-[8px_0_32px_rgba(0,0,0,0.12)] dark:shadow-[8px_0_32px_rgba(0,0,0,0.35)]',
           'transform transition-transform duration-300 ease-in-out',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* ThemeToggle with label */}
         <div className="px-4 py-3 border-b border-[var(--fs-rule)] flex items-center justify-between">
-          <span className="text-sm text-[var(--fs-ink-dim)]">
-            Theme
-          </span>
+          <span className="text-sm text-[var(--fs-ink-dim)]">Theme</span>
           <ThemeToggle />
         </div>
 
@@ -206,21 +215,32 @@ export function TeamSidebar() {
 
       {/* Desktop/Tablet sidebar */}
       <aside
-        style={{
-          background: 'color-mix(in srgb, var(--fs-bg-base) 70%, transparent)',
-          borderColor: 'var(--fs-glass-edge)',
-          backdropFilter: 'blur(24px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        }}
+        style={sidebarChromeStyle}
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 overflow-hidden transition-all duration-300',
-          'border-r',
-          'shadow-[4px_0_24px_rgba(0,0,0,0.06)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.2)]',
           collapsed ? 'w-[68px]' : 'w-48 lg:w-64'
         )}
       >
+        <div
+          className={cn(
+            'px-2 pt-2',
+            collapsed ? 'flex justify-center' : 'flex justify-end'
+          )}
+        >
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="h-8 w-8 rounded-lg border border-gray-300 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-white/25 dark:bg-[#22253a] dark:text-white dark:hover:bg-[#2a2e46]"
+          >
+            {collapsed ? (
+              <ChevronsRight className="mx-auto h-4 w-4" />
+            ) : (
+              <ChevronsLeft className="mx-auto h-4 w-4" />
+            )}
+          </button>
+        </div>
         <div className="h-full flex flex-col overflow-hidden">
-          <SidebarContent showLabel={!collapsed} showCollapseToggle />
+          <SidebarContent showLabel={!collapsed} />
         </div>
       </aside>
     </>

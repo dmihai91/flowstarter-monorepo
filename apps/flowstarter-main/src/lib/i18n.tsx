@@ -14,6 +14,10 @@ type ParamsFor<K extends TranslationKeys> = ExtractParams<En[K]>;
 export type VarsFor<K extends TranslationKeys> = [ParamsFor<K>] extends [never]
   ? undefined
   : Partial<Record<ParamsFor<K>, string | number>>;
+export type TranslationFn = <K extends TranslationKeys>(
+  key: K,
+  vars?: VarsFor<K>
+) => string;
 
 // Re-export server types and functions from the server-only module
 export type {
@@ -24,7 +28,7 @@ export type {
 interface I18nContextValue {
   locale: string;
   messages: Messages;
-  t: <K extends TranslationKeys>(key: K, vars?: VarsFor<K>) => string;
+  t: TranslationFn;
   setLocale: (locale: string) => void;
 }
 

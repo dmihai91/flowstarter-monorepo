@@ -1,7 +1,7 @@
 'use client';
 
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/ui/unified-button';
 import { setIsErrorPageFlag, useErrorPage } from '@/contexts/ErrorPageContext';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -19,19 +19,21 @@ export default function NotFound() {
   setIsErrorPageFlag(true);
 
   useEffect(() => {
-    return () => { setIsErrorPage(false); };
+    return () => {
+      setIsErrorPage(false);
+    };
   }, [setIsErrorPage]);
 
   return (
     <ErrorPageLayout>
       <div className="text-center">
-
         {/* Large gradient 404 */}
-        <div className="mb-2 select-none" aria-hidden="true">
+        <div className="mb-6 select-none" aria-hidden="true">
           <span
-            className="text-[10rem] sm:text-[12rem] font-bold leading-none tracking-tighter"
+            className="text-7xl sm:text-8xl font-bold leading-none tracking-tight"
             style={{
-              background: 'linear-gradient(135deg, var(--fs-accent) 0%, hsl(233,70%,72%) 55%, hsl(270,60%,68%) 100%)',
+              background:
+                'linear-gradient(135deg, var(--fs-accent) 0%, hsl(233,70%,72%) 55%, hsl(270,60%,68%) 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -46,7 +48,8 @@ export default function NotFound() {
           This page moved on.
         </h1>
         <p className="text-[var(--fs-ink-dim)] mb-8 leading-relaxed max-w-xs mx-auto text-sm">
-          Whatever you were looking for isn&apos;t here anymore — but we&apos;ve got you covered.
+          Whatever you were looking for isn&apos;t here anymore — but we&apos;ve
+          got you covered.
         </p>
 
         {/* Glass quick-nav card */}
@@ -80,18 +83,21 @@ export default function NotFound() {
 
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild className="gap-2">
+          <UnifiedButton asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
               Go Home
             </Link>
-          </Button>
-          <Button variant="outline" onClick={() => window.history.back()} className="gap-2">
+          </UnifiedButton>
+          <UnifiedButton
+            tone="secondary"
+            onClick={() => window.history.back()}
+            className="gap-2"
+          >
             <ArrowLeft className="w-4 h-4" />
             Go Back
-          </Button>
+          </UnifiedButton>
         </div>
-
       </div>
     </ErrorPageLayout>
   );

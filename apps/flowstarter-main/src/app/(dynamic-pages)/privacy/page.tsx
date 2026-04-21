@@ -3,13 +3,17 @@
 import { Shield, Bot, Download, Eye, Clock, Lock, Mail } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { PublicPageLayout } from '@/components/PublicPageLayout';
+import { UnifiedButton } from '@/components/ui/unified-button';
 
 export default function PrivacyPage() {
   const { t } = useTranslations();
   const effectiveDate = 'February 27, 2026';
   const lastUpdated = 'February 27, 2026';
-  const privacyEmail = 'privacy@flowstarter.dev';
+  const privacyEmail = 'privacy@flowstarter.app';
   const supportEmail = 'hello@flowstarter.app';
+  const termsRefText = t('privacy.termsRef', {
+    link: t('privacy.termsRefLink'),
+  });
 
   const glanceSummary = [
     {
@@ -429,7 +433,7 @@ export default function PrivacyPage() {
         </div>
 
         {/* Privacy at a Glance */}
-        <div className="mb-16 p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/5 via-white to-blue-500/5 dark:from-[var(--purple)]/10 dark:via-[#0f0f12] dark:to-blue-500/10 border border-[var(--purple)]/20">
+        <div className="mb-16">
           <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6 text-center flex items-center justify-center gap-2">
             <Lock className="w-5 h-5 text-[var(--purple)]" />
             {t('privacy.glance.title')}
@@ -438,17 +442,17 @@ export default function PrivacyPage() {
             {glanceSummary.map((item, i) => (
               <div
                 key={i}
-                className="p-4 rounded-xl bg-white/55 dark:bg-white/[0.03] border border-[var(--fs-rule)]"
+                className="p-5 rounded-xl bg-white/60 dark:bg-white/[0.03] border border-[var(--fs-rule)] shadow-[0_1px_4px_rgba(0,0,0,0.04)]"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
+                  <div className="w-9 h-9 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-4 h-4 text-[var(--purple)]" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-[var(--fs-ink)] text-base mb-1">
                       {item.title}
                     </h3>
-                    <p className="text-lg text-[var(--fs-ink-faint)]">
+                    <p className="text-sm text-[var(--fs-ink-dim)] leading-relaxed">
                       {item.desc}
                     </p>
                   </div>
@@ -534,17 +538,20 @@ export default function PrivacyPage() {
         </div>
 
         {/* Terms of Service Reference */}
-        <div className="mt-12 p-6 rounded-2xl bg-gray-100 dark:bg-white/[0.02] border border-[var(--fs-rule)] text-center">
-          <p className="text-lg text-[var(--fs-ink-faint)]">
-            {t('privacy.termsRef', { link: '' })}
-            <a href="/terms" className="text-[var(--purple)] hover:underline">
-              {t('privacy.termsRefLink')}
-            </a>
+        <div className="mt-12 p-5 sm:p-6 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)] text-center">
+          <p className="text-sm sm:text-base text-[var(--fs-ink-dim)] leading-relaxed">
+            {termsRefText}
           </p>
+          <a
+            href="/terms"
+            className="mt-3 inline-flex text-sm font-semibold text-[var(--purple)] hover:underline"
+          >
+            {t('privacy.termsRefLink')}
+          </a>
         </div>
 
         {/* Contact CTA */}
-        <div className="mt-12 p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
+        <div className="mt-8 p-6 sm:p-8 rounded-xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)] text-center">
           <Mail className="w-10 h-10 text-[var(--purple)] mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-2">
             {t('privacy.contact.title')}
@@ -552,12 +559,9 @@ export default function PrivacyPage() {
           <p className="text-[var(--fs-ink-faint)] mb-4">
             {t('privacy.contact.description')}
           </p>
-          <a
-            href={`mailto:${privacyEmail}`}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white font-semibold hover:shadow-lg transition-all duration-300"
-          >
-            {privacyEmail}
-          </a>
+          <UnifiedButton asChild className="min-w-[15rem]">
+            <a href={`mailto:${privacyEmail}`}>{privacyEmail}</a>
+          </UnifiedButton>
         </div>
       </main>
     </PublicPageLayout>

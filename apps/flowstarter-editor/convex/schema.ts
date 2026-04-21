@@ -353,4 +353,24 @@ export default defineSchema({
   })
     .index('by_type', ['requestType'])
     .index('by_created', ['createdAt']),
+
+  // ─── Supabase project review / generation blobs ─────────────────────────
+  // Keyed by Supabase `projects.id` (UUID string). Moved from Postgres to keep
+  // `projects` rows lightweight for dashboard list queries.
+  supabaseReviewArtifacts: defineTable({
+    supabaseProjectId: v.string(),
+    generatedCode: v.optional(v.string()),
+    previewHtml: v.optional(v.string()),
+    generatedFiles: v.optional(
+      v.array(
+        v.object({
+          path: v.string(),
+          content: v.string(),
+        }),
+      ),
+    ),
+    qualityMetricsJson: v.optional(v.string()),
+    generationCompletedAt: v.optional(v.number()),
+    updatedAt: v.number(),
+  }).index('by_supabaseProjectId', ['supabaseProjectId']),
 });

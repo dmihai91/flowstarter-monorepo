@@ -72,7 +72,9 @@ export function ActionCard({
             </span>
           )}
         </div>
-        <p className="text-xs text-[var(--fs-ink-faint)] leading-relaxed">{description}</p>
+        <p className="text-xs text-[var(--fs-ink-faint)] leading-relaxed">
+          {description}
+        </p>
         {elevated && (
           <p className="text-xs text-[var(--fs-ink-faint)] mt-1">
             First step to getting your site live

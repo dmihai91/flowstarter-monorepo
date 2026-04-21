@@ -124,9 +124,25 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search') || '';
 
   const db = createSupabaseServiceRoleClient();
-  let query = db
-    .from('client_requests')
-    .select('*, projects(name, client_name, client_email)');
+  // Omit original_prompt + editor_context — they can be large JSON; load via GET /api/client-requests/:id when needed.
+  let query = db.from('client_requests').select(
+    `
+      id,
+      project_id,
+      client_user_id,
+      title,
+      description,
+      status,
+      priority,
+      assigned_to,
+      rejection_reason,
+      created_at,
+      accepted_at,
+      resolved_at,
+      workspace_session_id,
+      projects(name, client_name, client_email)
+      `
+  );
 
   if (status !== 'all') {
     query = query.eq('status', status);

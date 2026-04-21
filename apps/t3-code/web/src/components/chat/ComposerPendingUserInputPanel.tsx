@@ -1,5 +1,5 @@
 import { type ApprovalRequestId } from "@t3tools/contracts";
-import { memo, useEffect, useEffectEvent, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { type PendingUserInput } from "../../session-logic";
 import {
   derivePendingUserInputProgress,
@@ -7,6 +7,7 @@ import {
 } from "../../pendingUserInput";
 import { CheckIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
+import { useEffectEvent } from "../../hooks/useEffectEvent";
 
 interface PendingUserInputPanelProps {
   pendingUserInputs: PendingUserInput[];

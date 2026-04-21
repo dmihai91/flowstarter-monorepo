@@ -1,5 +1,6 @@
 'use client';
 
+import { teamDashboardStatsQueryKey } from '@/hooks/useTeamDashboardStats';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { getSubdomainUrl } from '@flowstarter/platform-config';
@@ -111,6 +112,7 @@ export function useScaffoldHandoff(opts: UseScaffoldHandoffOptions) {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['team-projects'] });
+      queryClient.invalidateQueries({ queryKey: teamDashboardStatsQueryKey });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       reset();
       window.open(

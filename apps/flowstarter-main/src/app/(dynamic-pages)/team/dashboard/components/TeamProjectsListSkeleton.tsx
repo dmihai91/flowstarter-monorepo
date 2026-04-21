@@ -23,7 +23,12 @@ export function TeamProjectsListSkeleton({ count = 3 }: { count?: number }) {
           <div
             key={i}
             className="animate-pulse rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150 p-5"
-            style={{ animationDelay: `${i * 100}ms`, background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}
+            style={{
+              animationDelay: `${i * 100}ms`,
+              background: 'var(--fs-glass-bg)',
+              borderColor: 'var(--fs-glass-edge)',
+              boxShadow: 'var(--fs-card-shadow)',
+            }}
           >
             {/* Card Header */}
             <div className="flex items-start gap-3 mb-4">
@@ -45,7 +50,7 @@ export function TeamProjectsListSkeleton({ count = 3 }: { count?: number }) {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center gap-4 border-t border-white/50 pt-3 dark:border-white/10">
+            <div className="flex items-center gap-4 border-t border-[var(--fs-rule)] pt-3">
               <div className="flex items-center gap-1.5">
                 <Skeleton className="w-5 h-5 rounded-full" />
                 <Skeleton className="h-3 w-20" />

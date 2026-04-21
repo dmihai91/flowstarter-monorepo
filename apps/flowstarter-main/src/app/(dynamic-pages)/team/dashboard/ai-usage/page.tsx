@@ -39,9 +39,7 @@ function StatCard({
         {icon}
       </div>
       <p className="text-xs text-[var(--fs-ink-faint)] mb-1">{label}</p>
-      <p className="text-2xl font-bold text-[var(--fs-ink)]">
-        {value}
-      </p>
+      <p className="text-2xl font-bold text-[var(--fs-ink)]">{value}</p>
       {sub && (
         <p className="text-xs text-[var(--fs-ink-faint)] mt-0.5">{sub}</p>
       )}

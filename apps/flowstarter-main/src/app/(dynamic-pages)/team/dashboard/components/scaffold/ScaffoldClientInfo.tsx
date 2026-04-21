@@ -135,7 +135,14 @@ export function ScaffoldClientInfo({
       </div>
 
       <div className="space-y-6">
-        <section className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+        <section
+          className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150"
+          style={{
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          }}
+        >
           <div className="flex items-center gap-2 mb-4">
             <User className="w-4 h-4 text-zinc-400" />
             <p className="text-base font-semibold text-zinc-800 dark:text-zinc-200">
@@ -189,15 +196,20 @@ export function ScaffoldClientInfo({
               label={t('scaffold.client.field.businessName')}
               placeholder="e.g. Bright Smile Dental"
               value={clientInfo.businessName ?? ''}
-              onChange={(e) =>
-                onUpdate('businessName' as keyof ClientInfo, e.target.value)
-              }
+              onChange={(e) => onUpdate('businessName', e.target.value)}
               inputSize="lg"
             />
           </div>
         </section>
 
-        <section className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+        <section
+          className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150"
+          style={{
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          }}
+        >
           <p className="text-base font-medium text-zinc-900 dark:text-white mb-1">
             Industry
           </p>
@@ -234,7 +246,14 @@ export function ScaffoldClientInfo({
           </div>
         </section>
 
-        <section className="space-y-5 rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+        <section
+          className="space-y-5 rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150"
+          style={{
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          }}
+        >
           <div>
             <p className="text-base font-medium text-zinc-900 dark:text-white mb-1">
               How do you want to proceed?
@@ -316,7 +335,14 @@ export function ScaffoldClientInfo({
       </div>
 
       {mode === 'ai' && (
-        <section className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+        <section
+          className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150"
+          style={{
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          }}
+        >
           <div className="flex items-center gap-2 mb-1.5">
             <Sparkles className="w-4 h-4 text-[var(--purple)]" />
             <p className="text-base font-medium text-zinc-900 dark:text-white">

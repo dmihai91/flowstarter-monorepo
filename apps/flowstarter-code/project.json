@@ -23,7 +23,7 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit",
+        "command": "pnpm --dir ../../packages/daytona-utils exec tsc -p tsconfig.json && tsc --noEmit",
         "cwd": "apps/flowstarter-code"
       }
     }

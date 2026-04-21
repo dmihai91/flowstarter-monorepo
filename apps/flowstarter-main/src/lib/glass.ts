@@ -1,6 +1,6 @@
 /**
  * glass.ts — Shared glass card style utilities.
- * 
+ *
  * Use these instead of hand-rolling bg-white/95 backdrop-blur-2xl patterns.
  * All values come from --fs-* design tokens defined in brand.css.
  *

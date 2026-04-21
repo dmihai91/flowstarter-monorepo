@@ -180,6 +180,7 @@ describe('EMPTY_CLIENT', () => {
       name: '',
       email: '',
       phone: '',
+      businessName: '',
     });
   });
 });

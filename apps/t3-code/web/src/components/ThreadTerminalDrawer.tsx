@@ -12,7 +12,6 @@ import {
   type ReactNode,
   useCallback,
   useEffect,
-  useEffectEvent,
   useMemo,
   useRef,
   useState,
@@ -35,6 +34,7 @@ import {
 import { readEnvironmentApi } from "~/environmentApi";
 import { readLocalApi } from "~/localApi";
 import { selectTerminalEventEntries, useTerminalStateStore } from "../terminalStateStore";
+import { useEffectEvent } from "../hooks/useEffectEvent";
 
 const MIN_DRAWER_HEIGHT = 180;
 const MAX_DRAWER_HEIGHT_RATIO = 0.75;

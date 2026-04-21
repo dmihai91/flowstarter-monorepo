@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { MoreHorizontal, ExternalLink } from 'lucide-react';
 import type {
   ClientRequest,
+  EditorContext,
   RequestPriority,
 } from '@/lib/client-requests/types';
 import {
@@ -37,6 +38,10 @@ export function RequestCard({ request }: Props) {
   const [showReject, setShowReject] = useState(false);
   const [showContext, setShowContext] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [editorContext, setEditorContext] = useState<
+    EditorContext | null | undefined
+  >(undefined);
+  const [contextLoading, setContextLoading] = useState(false);
   const { mutate: accept, isPending: isAccepting } = useAcceptRequest();
   const { mutate: updatePriority } = useUpdateRequestPriority();
 
@@ -55,9 +60,36 @@ export function RequestCard({ request }: Props) {
   const projectName = request.projects?.name ?? request.project_id;
   const clientName = request.projects?.client_name ?? 'Client';
 
+  const openEditorContext = async () => {
+    setShowMenu(false);
+    setContextLoading(true);
+    try {
+      const res = await fetch(`/api/client-requests/${request.id}`, {
+        cache: 'no-store',
+      });
+      if (!res.ok) throw new Error('Failed to load context');
+      const json = (await res.json()) as {
+        request?: { editor_context?: EditorContext | null };
+      };
+      setEditorContext(json.request?.editor_context ?? null);
+    } catch {
+      setEditorContext(null);
+    } finally {
+      setContextLoading(false);
+      setShowContext(true);
+    }
+  };
+
   return (
     <>
-      <div className="rounded-[var(--fs-radius-2xl)] border p-4 backdrop-blur-xl transition-all hover:-translate-y-0.5" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+      <div
+        className="rounded-[var(--fs-radius-2xl)] border p-4 backdrop-blur-xl transition-all hover:-translate-y-0.5"
+        style={{
+          background: 'var(--fs-glass-bg)',
+          borderColor: 'var(--fs-glass-edge)',
+          boxShadow: 'var(--fs-card-shadow)',
+        }}
+      >
         <div className="flex items-start gap-3">
           {/* Priority dot */}
           <span
@@ -131,20 +163,19 @@ export function RequestCard({ request }: Props) {
                         Mark {p}
                       </button>
                     ))}
-                    {request.editor_context && (
-                      <>
-                        <div className="border-t border-gray-100 dark:border-white/[0.06] my-1" />
-                        <button
-                          onClick={() => {
-                            setShowContext(true);
-                            setShowMenu(false);
-                          }}
-                          className="w-full text-left px-3 py-1.5 text-xs text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/[0.06]"
-                        >
-                          View editor context
-                        </button>
-                      </>
-                    )}
+                    <>
+                      <div className="border-t border-gray-100 dark:border-white/[0.06] my-1" />
+                      <button
+                        type="button"
+                        onClick={() => void openEditorContext()}
+                        disabled={contextLoading}
+                        className="w-full text-left px-3 py-1.5 text-xs text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/[0.06] disabled:opacity-50"
+                      >
+                        {contextLoading
+                          ? 'Loading context…'
+                          : 'View editor context'}
+                      </button>
+                    </>
                   </div>
                 )}
               </div>
@@ -160,10 +191,13 @@ export function RequestCard({ request }: Props) {
           onClose={() => setShowReject(false)}
         />
       )}
-      {showContext && request.editor_context && (
+      {showContext && editorContext !== undefined && (
         <EditorContextDrawer
-          context={request.editor_context}
-          onClose={() => setShowContext(false)}
+          context={editorContext}
+          onClose={() => {
+            setShowContext(false);
+            setEditorContext(undefined);
+          }}
         />
       )}
     </>

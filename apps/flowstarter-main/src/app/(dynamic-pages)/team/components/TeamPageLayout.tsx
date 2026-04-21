@@ -74,9 +74,7 @@ export function TeamPageLayout({
             </div>
           )}
           <div>
-            <h1 className="text-2xl font-bold text-[var(--fs-ink)]">
-              {title}
-            </h1>
+            <h1 className="text-2xl font-bold text-[var(--fs-ink)]">{title}</h1>
             {subtitle && (
               <p className="text-sm text-[var(--fs-ink-faint)] mt-1">
                 {subtitle}

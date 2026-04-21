@@ -3,6 +3,7 @@
 import { Sparkles, Package, DoorOpen, FileText, Mail } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { PublicPageLayout } from '@/components/PublicPageLayout';
+import { UnifiedButton } from '@/components/ui/unified-button';
 
 export default function TermsPage() {
   const { t } = useTranslations();
@@ -123,9 +124,7 @@ export default function TermsPage() {
               <h3 className="font-semibold text-[var(--fs-ink)] mb-1">
                 {item.title}
               </h3>
-              <p className="text-sm text-[var(--fs-ink-faint)]">
-                {item.desc}
-              </p>
+              <p className="text-sm text-[var(--fs-ink-faint)]">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -167,13 +166,12 @@ export default function TermsPage() {
           <p className="text-[var(--fs-ink-faint)] mb-4">
             {t('terms.contact.description')}
           </p>
-          <a
-            href="mailto:hello@flowstarter.app"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white font-semibold hover:shadow-lg transition-all duration-300"
-          >
-            <Mail className="w-4 h-4" />
-            hello@flowstarter.app
-          </a>
+          <UnifiedButton asChild>
+            <a href="mailto:hello@flowstarter.app">
+              <Mail className="w-4 h-4" />
+              hello@flowstarter.app
+            </a>
+          </UnifiedButton>
         </div>
       </main>
     </PublicPageLayout>

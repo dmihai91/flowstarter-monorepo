@@ -238,7 +238,7 @@ export function PreQualModal({
                   'flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 text-base font-semibold transition-all duration-200',
                   selected
                     ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-[var(--purple-primary)]/25 hover:opacity-90 cursor-pointer'
-                    : 'bg-[var(--fs-bg-elevated)] text-gray-400 dark:text-white/30 cursor-not-allowed',
+                    : 'border border-[var(--fs-rule-strong)] bg-[color-mix(in_oklab,var(--fs-bg-elevated)_82%,var(--fs-ink)_18%)] text-[var(--fs-ink-faint)] opacity-70 cursor-not-allowed shadow-none',
                 ].join(' ')}
               >
                 Book my discovery call

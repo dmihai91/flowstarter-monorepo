@@ -1,5 +1,6 @@
 'use client';
 
+import { teamDashboardStatsQueryKey } from '@/hooks/useTeamDashboardStats';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useRef, useState } from 'react';
 import type { EngineArtifacts } from '@/lib/engine/contracts';
@@ -140,6 +141,7 @@ export interface ClientInfo {
   name: string;
   email: string;
   phone: string;
+  businessName?: string;
 }
 
 export interface AiStep {
@@ -153,7 +155,12 @@ type ConciergeResponse =
 
 // ── Defaults ──────────────────────────────────────────────────────────────────
 
-const EMPTY_CLIENT: ClientInfo = { name: '', email: '', phone: '' };
+const EMPTY_CLIENT: ClientInfo = {
+  name: '',
+  email: '',
+  phone: '',
+  businessName: '',
+};
 
 const EMPTY_BRIEF: ProjectBriefDraft = {
   projectName: '',
@@ -665,6 +672,7 @@ export function useScaffoldForm() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['team-projects'] });
+      queryClient.invalidateQueries({ queryKey: teamDashboardStatsQueryKey });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       reset();
       window.open(

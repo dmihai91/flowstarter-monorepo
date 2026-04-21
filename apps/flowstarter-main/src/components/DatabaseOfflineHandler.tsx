@@ -85,7 +85,14 @@ export function DatabaseOfflineHandler({
         <div className="max-w-lg w-full space-y-8 relative">
           {/* Icon */}
           <div className="text-center">
-            <div className="relative w-20 h-20 mx-auto mb-6 rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl flex items-center justify-center" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+            <div
+              className="relative w-20 h-20 mx-auto mb-6 rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl flex items-center justify-center"
+              style={{
+                background: 'var(--fs-glass-bg)',
+                borderColor: 'var(--fs-glass-edge)',
+                boxShadow: 'var(--fs-card-shadow)',
+              }}
+            >
               <WifiOff className="h-10 w-10 text-[var(--purple)]" />
             </div>
           </div>
@@ -101,7 +108,14 @@ export function DatabaseOfflineHandler({
           </div>
 
           {/* Status Card */}
-          <div className="rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl p-5" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+          <div
+            className="rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl p-5"
+            style={{
+              background: 'var(--fs-glass-bg)',
+              borderColor: 'var(--fs-glass-edge)',
+              boxShadow: 'var(--fs-card-shadow)',
+            }}
+          >
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
                 <AlertTriangle className="h-5 w-5 text-amber-500" />
@@ -140,7 +154,14 @@ export function DatabaseOfflineHandler({
           </Button>
 
           {/* What you can do */}
-          <div className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+          <div
+            className="rounded-[var(--fs-radius-2xl)] border p-6 backdrop-blur-2xl backdrop-saturate-150"
+            style={{
+              background: 'var(--fs-glass-bg)',
+              borderColor: 'var(--fs-glass-edge)',
+              boxShadow: 'var(--fs-card-shadow)',
+            }}
+          >
             <h3 className="text-sm font-semibold text-[var(--fs-ink)] mb-4">
               {t('database.offline.whatYouCanDo')}
             </h3>

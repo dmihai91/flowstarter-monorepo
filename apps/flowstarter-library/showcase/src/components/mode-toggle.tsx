@@ -1,7 +1,8 @@
 import { Moon, Sun, Monitor } from "lucide-react"
 import { useTheme } from "./theme-provider"
+import type { ReactElement } from "react"
 
-type IconComponent = (props: { className?: string; strokeWidth?: number }) => JSX.Element
+type IconComponent = (props: { className?: string; strokeWidth?: number }) => ReactElement
 
 const SunIcon = Sun as unknown as IconComponent
 const MoonIcon = Moon as unknown as IconComponent

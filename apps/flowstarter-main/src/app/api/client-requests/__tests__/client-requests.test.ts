@@ -41,6 +41,7 @@ function makeClientRequestsChain() {
   chain.eq = vi.fn(() => chain);
   chain.or = vi.fn(() => chain);
   chain.order = vi.fn(() => chain);
+  chain.limit = vi.fn(() => chain);
   chain.single = vi.fn(() => Promise.resolve(insertResult));
   // Terminal: awaiting the chain returns listResult for GET paths.
   chain.then = (
@@ -173,10 +174,10 @@ describe('GET /api/client-requests', () => {
     expect(body).toEqual({ requests: [] });
   });
 
-  it('returns 200 for admin users via publicMetadata fallback', async () => {
+  it('returns 403 when role is missing from sessionClaims', async () => {
     authMock.mockResolvedValue({ userId: 'user_123', sessionClaims: {} });
     currentUserMock.mockResolvedValue({ publicMetadata: { role: 'admin' } });
     const res = await GET(makeJsonRequest('GET'));
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(403);
   });
 });

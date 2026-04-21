@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/ui/unified-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
@@ -188,17 +189,15 @@ export function CustomSignUp() {
           )}
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-4">
-            <Button
+            <UnifiedButton
               type="submit"
-              variant="outline"
-              size="lg"
               disabled={isVerifyingCode}
-              className="w-full sm:w-auto"
+              className="w-full !rounded-lg sm:w-auto"
             >
               {isVerifyingCode
                 ? t('auth.signUp.verifying')
                 : t('auth.signUp.verifyEmail')}
-            </Button>
+            </UnifiedButton>
             <Button
               type="button"
               variant="ghost"
@@ -323,16 +322,15 @@ export function CustomSignUp() {
           </div>
         )}
 
-        <Button
+        <UnifiedButton
           type="submit"
-          size="xl"
           disabled={isLoading || !formik.isValid}
-          className="w-full font-semibold mt-4 shadow-md"
+          className="mt-4 w-full !rounded-lg"
         >
           {isLoading
             ? t('auth.signUp.creatingAccount')
             : t('auth.signUp.createFreeAccount')}
-        </Button>
+        </UnifiedButton>
       </form>
 
       <div className="text-center text-sm text-muted-foreground mt-6">

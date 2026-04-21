@@ -209,7 +209,6 @@ function AppContent(): React.ReactElement {
     <div className="relative min-h-screen text-gray-900 dark:text-white">
       {/* FlowBackground — page-level, behind all content.
           It renders with position:absolute inset:0 z-index:-1 and paints its own base bg color. */}
-      {/* @ts-expect-error FlowBackground props mismatch */}
       <FlowBackground variant="landing" animated style={{ position: 'fixed', zIndex: 0 }} />
 
       {/* All content above the background */}

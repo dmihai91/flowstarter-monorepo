@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { NextResponse } from 'next/server';
 import { apiError } from '../api-errors';
 
 describe('apiError', () => {
@@ -47,7 +48,6 @@ describe('apiError', () => {
   });
 
   it('returns a NextResponse instance', () => {
-    const { NextResponse } = require('next/server');
     const response = apiError('test', 'BAD_REQUEST');
     expect(response).toBeInstanceOf(NextResponse);
   });

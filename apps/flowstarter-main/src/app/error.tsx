@@ -1,7 +1,7 @@
 'use client';
 
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/ui/unified-button';
 import { setIsErrorPageFlag, useErrorPage } from '@/contexts/ErrorPageContext';
 import { Logo } from '@/components/ui/logo';
 import Link from 'next/link';
@@ -20,13 +20,14 @@ export default function Error({
 
   useEffect(() => {
     console.error('Application error:', error);
-    return () => { setIsErrorPage(false); };
+    return () => {
+      setIsErrorPage(false);
+    };
   }, [error, setIsErrorPage]);
 
   return (
     <ErrorPageLayout>
       <div className="text-center">
-
         {/* F logo mark as hero — with a soft error glow */}
         <div className="mb-8 flex justify-center">
           <div
@@ -34,7 +35,8 @@ export default function Error({
             style={{
               background: 'var(--fs-glass-bg)',
               border: '1px solid var(--fs-glass-edge)',
-              boxShadow: '0 0 0 1px var(--fs-glass-edge), 0 8px 40px rgba(78,94,218,0.18), var(--fs-card-shadow)',
+              boxShadow:
+                '0 0 0 1px var(--fs-glass-edge), 0 8px 40px rgba(78,94,218,0.18), var(--fs-card-shadow)',
             }}
           >
             {/* Subtle pulse ring */}
@@ -69,7 +71,8 @@ export default function Error({
           }}
         >
           <p className="text-sm text-[var(--fs-ink-dim)] leading-relaxed">
-            This is usually a temporary blip. Give it a moment and reload — or head home and come back.
+            This is usually a temporary blip. Give it a moment and reload — or
+            head home and come back.
           </p>
 
           {/* Error digest chip */}
@@ -92,18 +95,17 @@ export default function Error({
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button onClick={reset} className="gap-2">
+          <UnifiedButton onClick={reset} className="gap-2">
             <RefreshCw className="w-4 h-4" />
             Reload
-          </Button>
-          <Button variant="outline" asChild className="gap-2">
+          </UnifiedButton>
+          <UnifiedButton tone="secondary" asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
               Go Home
             </Link>
-          </Button>
+          </UnifiedButton>
         </div>
-
       </div>
     </ErrorPageLayout>
   );

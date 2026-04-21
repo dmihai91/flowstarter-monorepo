@@ -76,11 +76,14 @@ const baseHeaders = createSecureHeaders({
  */
 export function buildCSPHeader(nonce?: string): string {
   const isDev = process.env.NODE_ENV === 'development';
+  const nonceToken = nonce ? `'nonce-${nonce}'` : undefined;
 
   // In development, use relaxed CSP to allow Next.js hot reload and dev scripts
   // In production, use strict CSP with nonces
   const scriptSrc = isDev
     ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...ALLOWED_SCRIPT_DOMAINS]
+    : nonceToken
+    ? ["'self'", nonceToken, "'strict-dynamic'", ...ALLOWED_SCRIPT_DOMAINS]
     : ["'self'", "'unsafe-inline'", ...ALLOWED_SCRIPT_DOMAINS];
 
   const directives = [

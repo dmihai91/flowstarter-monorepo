@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useMemo, useState } from 'react';
+import { UnifiedButton } from '@/components/ui/unified-button';
 import { useI18n } from '@/lib/i18n';
 
 const PROGRESS_STEPS = 4;
@@ -59,26 +59,9 @@ function useBriefTypewriter(
 export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
-  const rootRef = useRef<HTMLElement | null>(null);
   // Always revealed — entrance animation via CSS, not JS state.
   // JS-gated opacity caused hero flash/reflow on Android Chrome on first paint.
   const revealed = true;
-
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const mq = window.matchMedia('(hover: none), (pointer: coarse)');
-    if (mq.matches) return;
-    const onMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      el.style.setProperty('--ls-mx', `${x}%`);
-      el.style.setProperty('--ls-my', `${y}%`);
-    };
-    el.addEventListener('mousemove', onMove);
-    return () => el.removeEventListener('mousemove', onMove);
-  }, []);
 
   const briefSequence = useMemo(
     () => [
@@ -125,16 +108,12 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
   return (
     <section
-      ref={rootRef}
       className="ls-scope ls-section ls-section--pad-lg ls-fade-bottom"
-      style={{ minHeight: '100svh' }}
+      style={{
+        minHeight: '100svh',
+        paddingTop: 'clamp(5.25rem, 10vh, 7.75rem)',
+      }}
     >
-
-      <div className="ls-hero-bloom" aria-hidden />
-      <div className="ls-mesh" aria-hidden />
-      <div className="ls-streak" aria-hidden />
-      <div className="ls-grain" aria-hidden />
-
       <div className="ls-container">
         <div className="grid items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-14 lg:gap-20">
           <div className="ls-hero-content">
@@ -149,7 +128,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               <span>{t('landing.hero.eyebrowTagline')}</span>
             </div>
 
-            <h1 className="ls-display mt-9">
+            <h1 className="ls-display ls-display--hero mt-9">
               <span className="line" style={reveal(1)}>
                 {t('landing.hero.displayPrefix')}
               </span>
@@ -164,9 +143,12 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
             <div
               style={reveal(4)}
-              className="mt-10 flex flex-wrap items-center gap-6"
+              className="mt-10 flex w-full flex-wrap items-center gap-3 sm:gap-6"
             >
-              <Button onClick={() => onOpenModal?.()} className="ls-cta">
+              <UnifiedButton
+                onClick={() => onOpenModal?.()}
+                className="ls-cta-hero w-full sm:w-auto h-14 px-8 text-[1.02rem] sm:text-[1.08rem]"
+              >
                 {t('landing.hero.primaryCta')}
                 <svg
                   className="arrow ml-2 h-4 w-4"
@@ -182,7 +164,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
                     d="M5 12h14m-5-6l6 6-6 6"
                   />
                 </svg>
-              </Button>
+              </UnifiedButton>
               <a
                 href="#pricing"
                 onClick={(e) => {
@@ -191,7 +173,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
                     .getElementById('pricing')
                     ?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="ls-link"
+                className="ls-link ls-link--hero w-full text-center sm:w-auto sm:text-left"
               >
                 {t('landing.hero.secondaryCta')}
               </a>

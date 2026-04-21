@@ -521,6 +521,8 @@ const en = {
   'team.dashboard.allProjectsDescription':
     'View and manage all client projects',
   'team.dashboard.noProjects': 'No projects yet',
+  'team.dashboard.statsLoadError':
+    'Could not load dashboard stats. Refresh the page or try again shortly.',
   'team.dashboard.lastEdit': 'Last edit: {time}',
   'team.dashboard.countLive': '{count} live',
   'team.dashboard.countBuilding': '{count} building',

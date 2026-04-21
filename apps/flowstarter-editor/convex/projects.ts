@@ -285,6 +285,16 @@ export const setStatus = mutation({
 export const deleteBySupabaseId = mutation({
   args: { supabaseProjectId: v.string() },
   handler: async (ctx, { supabaseProjectId }) => {
+    const artifact = await ctx.db
+      .query('supabaseReviewArtifacts')
+      .withIndex('by_supabaseProjectId', (q) =>
+        q.eq('supabaseProjectId', supabaseProjectId),
+      )
+      .first();
+    if (artifact) {
+      await ctx.db.delete(artifact._id);
+    }
+
     const project = await ctx.db
       .query('projects')
       .withIndex('by_supabaseProjectId', (q) =>

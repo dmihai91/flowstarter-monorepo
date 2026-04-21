@@ -2,31 +2,27 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { ProjectWithOwner } from '@/hooks/useTeamProjects';
+import { useTeamDashboardStats } from '@/hooks/useTeamDashboardStats';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { useTranslations } from '@/lib/i18n';
+import {
+  BUILDING_STATUSES,
+  LIVE_STATUSES,
+  STATUS_BADGE_CLASS,
+  isBuilding,
+  isLive,
+} from '@/lib/team-dashboard/team-project-status';
 import { GlassPanel } from '@flowstarter/flow-design-system';
 import { ClientRequestsKpiCard } from './ClientRequestsKpiCard';
+import { TeamProjectsStatsSkeleton } from './TeamProjectsStatsSkeleton';
 
-// Status groupings - single source of truth
-const LIVE_STATUSES = ['completed', 'live'] as const;
-const BUILDING_STATUSES = ['in_progress', 'building', 'generating'] as const;
-
-const isLive = (s: string | null) =>
-  LIVE_STATUSES.includes(s as (typeof LIVE_STATUSES)[number]);
-const isBuilding = (s: string | null) =>
-  BUILDING_STATUSES.includes(s as (typeof BUILDING_STATUSES)[number]);
-
-// Badge class by status group
-const STATUS_BADGE_CLASS = {
-  live: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400',
-  building: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400',
-  draft: 'bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-white/60',
-} as const;
-
-interface TeamProjectsStatsProps {
-  projects: ProjectWithOwner[];
-}
+export {
+  LIVE_STATUSES,
+  BUILDING_STATUSES,
+  isLive,
+  isBuilding,
+  STATUS_BADGE_CLASS,
+};
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('de-DE', {
@@ -37,57 +33,36 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export {
-  LIVE_STATUSES,
-  BUILDING_STATUSES,
-  isLive,
-  isBuilding,
-  STATUS_BADGE_CLASS,
-};
-
-export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
+export function TeamProjectsStats() {
   const { formatTimeAgo } = useFormatDate();
   const { t } = useTranslations();
+  const { data: stats, isLoading, isError } = useTeamDashboardStats();
 
-  const totalProjects = projects.length;
-  const draftCount = projects.filter(
-    (p) => !isLive(p.status) && !isBuilding(p.status)
-  ).length;
-  const inProgressCount = projects.filter((p) => isBuilding(p.status)).length;
-  const liveCount = projects.filter((p) => isLive(p.status)).length;
+  if (isLoading) {
+    return <TeamProjectsStatsSkeleton />;
+  }
 
-  // Revenue calculations
-  const totalSetupFees = projects.reduce(
-    (sum, p) => sum + (p.setup_fee || 0),
-    0
-  );
-  const monthlyRevenue = projects
-    .filter((p) => p.is_paid)
-    .reduce((sum, p) => sum + (p.monthly_fee || 0), 0);
-  const paidCount = projects.filter((p) => p.is_paid).length;
-  const totalCredits = projects.reduce(
-    (sum, p) => sum + (p.ai_credits_used || 0),
-    0
-  );
-  const totalCostEur = projects.reduce(
-    (sum, p) => sum + (p.generation_cost_usd || 0) * 0.92,
-    0
-  );
-  const sitesGenerated = projects.filter(
-    (p) => (p.generation_cost_usd || 0) > 0
-  ).length;
+  if (isError || !stats) {
+    return (
+      <div className="rounded-[var(--fs-radius-2xl)] border border-[var(--fs-rule)] p-4 text-sm text-[var(--fs-ink-dim)]">
+        {t('team.dashboard.statsLoadError')}
+      </div>
+    );
+  }
 
-  // Most recent project
-  const recentProject =
-    projects.length > 0
-      ? projects.reduce((latest, p) => {
-          const latestDate = new Date(
-            latest.updated_at || latest.created_at || 0
-          );
-          const pDate = new Date(p.updated_at || p.created_at || 0);
-          return pDate > latestDate ? p : latest;
-        })
-      : null;
+  const {
+    totalProjects,
+    draftCount,
+    inProgressCount,
+    liveCount,
+    totalSetupFees,
+    monthlyRevenue,
+    paidCount,
+    totalCredits,
+    totalCostEur,
+    sitesGenerated,
+    recentProject,
+  } = stats;
 
   const getStatusLabel = (status: string | null) => {
     if (isLive(status)) return t('status.live');
@@ -108,7 +83,13 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
         shadow="glass"
         padding="md"
         className="rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150"
-        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' } as React.CSSProperties}
+        style={
+          {
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          } as React.CSSProperties
+        }
       >
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-[var(--fs-ink-faint)]">
@@ -179,7 +160,13 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
         shadow="glass"
         padding="md"
         className="rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150"
-        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' } as React.CSSProperties}
+        style={
+          {
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          } as React.CSSProperties
+        }
       >
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-[var(--fs-ink-faint)]">
@@ -228,12 +215,16 @@ export function TeamProjectsStats({ projects }: TeamProjectsStatsProps) {
         shadow="glass"
         padding="md"
         className="rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150"
-        style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' } as React.CSSProperties}
+        style={
+          {
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          } as React.CSSProperties
+        }
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-[var(--fs-ink-faint)]">
-            AI Usage
-          </span>
+          <span className="text-sm text-[var(--fs-ink-faint)]">AI Usage</span>
           <Link
             href="/team/dashboard/ai-usage"
             className="text-xs text-[var(--purple)] hover:underline font-medium"

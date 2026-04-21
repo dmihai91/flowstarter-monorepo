@@ -68,9 +68,7 @@ export default function EmailPage() {
 
         {/* MX Records */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-[var(--fs-ink)]">
-            MX Records
-          </h3>
+          <h3 className="font-semibold text-[var(--fs-ink)]">MX Records</h3>
           <div className="bg-[var(--fs-bg-elevated)] rounded-xl border border-[var(--fs-rule)] overflow-hidden">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 dark:bg-white/5">

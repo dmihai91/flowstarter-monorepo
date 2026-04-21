@@ -16,7 +16,7 @@ import { FolderOpen } from 'lucide-react';
 import { ListShell, ViewToggle } from './ListShell';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { useTranslations } from '@/lib/i18n';
-import { isLive, isBuilding } from './TeamProjectsStats';
+import { isBuilding, isLive } from '@/lib/team-dashboard/team-project-status';
 import { TeamProjectActionMenu } from './TeamProjectActionMenu';
 import { TeamProjectCard } from './TeamProjectCard';
 import { useTeamProjectsView } from '../hooks/useTeamProjectsView';
@@ -59,7 +59,6 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
   const { formatTimeAgo } = useFormatDate();
   const { viewMode, setViewMode } = useTeamProjectsView();
 
-
   const {
     deleteDialogOpen,
     setDeleteDialogOpen,
@@ -91,6 +90,12 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
     isRenaming,
     isUpdatingPricing,
   } = useTeamProjectActions();
+  const glassPanelClass =
+    'rounded-[var(--fs-radius-2xl)] border bg-white/70 backdrop-blur-xl backdrop-saturate-150 dark:bg-white/[0.04]';
+  const glassPanelStyle = {
+    borderColor: 'var(--fs-glass-edge)',
+    boxShadow: 'var(--fs-card-shadow)',
+  } as const;
 
   return (
     <ListShell
@@ -100,11 +105,8 @@ export function TeamProjectsList({ projects }: TeamProjectsListProps) {
       emptyIcon={<FolderOpen className="w-8 h-8" />}
       emptyTitle={t('team.dashboard.noProjects')}
       emptyDescription={t('team.dashboard.allProjectsDescription')}
-      headerRight={
-        <ViewToggle value={viewMode} onChange={setViewMode} />
-      }
+      headerRight={<ViewToggle value={viewMode} onChange={setViewMode} />}
     >
-
       {/* List View */}
       {viewMode === 'list' && (
         <div className="space-y-2">

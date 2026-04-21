@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import Image from 'next/image';
 import { motion, useInView } from 'framer-motion';
 import { useI18n } from '@/lib/i18n';
+import { UnifiedButton } from '@/components/ui/unified-button';
 
 const TEMPLATES = [
   {
@@ -143,8 +144,8 @@ export function TemplateGallerySection() {
       ref={sectionRef as unknown as React.RefObject<HTMLElement>}
       className="ls-scope ls-section ls-section--pad"
     >
-      <div className="ls-mesh" aria-hidden />      <div className="ls-grain" aria-hidden />
-
+      <div className="ls-mesh" aria-hidden />{' '}
+      <div className="ls-grain" aria-hidden />
       <div className="ls-container">
         <div className="text-center max-w-3xl mx-auto">
           <div
@@ -292,27 +293,28 @@ export function TemplateGallerySection() {
         </div>
 
         <div className="mt-14 text-center">
-          <a
-            href="https://library.flowstarter.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ls-cta ls-cta--sm"
-          >
-            {t('landing.templates.ctaBrowse')}
-            <svg
-              className="arrow ml-1 h-3.5 w-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.4}
+          <UnifiedButton asChild>
+            <a
+              href="https://library.flowstarter.dev"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 12h14m-5-6l6 6-6 6"
-              />
-            </svg>
-          </a>
+              {t('landing.templates.ctaBrowse')}
+              <svg
+                className="arrow ml-1 h-3.5 w-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.4}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 12h14m-5-6l6 6-6 6"
+                />
+              </svg>
+            </a>
+          </UnifiedButton>
         </div>
       </div>
     </section>

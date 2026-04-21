@@ -49,6 +49,13 @@ export const convexApi = {
     listByThread: 'checkpoints:listByThread' as const,
     registerCheckpoint: 'checkpoints:registerCheckpoint' as const,
   },
+  files: {
+    getProjectFiles: 'files:getProjectFiles' as const,
+  },
+  editorSessions: {
+    createOrUpdate: 'editorSessions:createOrUpdate' as const,
+    updateWorkspaceInfo: 'editorSessions:updateWorkspaceInfo' as const,
+  },
   clientSessions: {
     getByToken: 'magicLinks:validateClientSessionToken' as const,
   },

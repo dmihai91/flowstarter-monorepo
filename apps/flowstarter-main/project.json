@@ -13,7 +13,7 @@
     },
     "lint": {
       "executor": "nx:run-commands",
-      "options": { "command": "pnpm eslint src e2e", "cwd": "apps/flowstarter-main" }
+      "options": { "command": "pnpm lint", "cwd": "apps/flowstarter-main" }
     },
     "typecheck": {
       "executor": "nx:run-commands",

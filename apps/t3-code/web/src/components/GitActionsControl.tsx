@@ -6,7 +6,7 @@ import type {
   GitStatusResult,
 } from "@t3tools/contracts";
 import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDownIcon, CloudUploadIcon, GitCommitIcon, InfoIcon } from "lucide-react";
 import { GitHubIcon } from "./Icons";
 import {
@@ -54,6 +54,7 @@ import { readEnvironmentApi } from "~/environmentApi";
 import { readLocalApi } from "~/localApi";
 import { useStore } from "~/store";
 import { createThreadSelectorByRef } from "~/storeSelectors";
+import { useEffectEvent } from "../hooks/useEffectEvent";
 
 interface GitActionsControlProps {
   gitCwd: string | null;

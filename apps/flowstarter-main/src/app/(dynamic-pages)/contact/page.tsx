@@ -1,9 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { UnifiedButton } from '@/components/ui/unified-button';
 import { useContactForm } from '@/hooks/useContactForm';
 import { useState } from 'react';
-import { GlassPanel } from '@flowstarter/flow-design-system';
 import {
   MessageCircle,
   Check,
@@ -14,6 +13,8 @@ import {
   Twitter,
   Linkedin,
   Clock,
+  Bot,
+  Headphones,
 } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { PublicPageLayout } from '@/components/PublicPageLayout';
@@ -29,6 +30,17 @@ export default function ContactPage() {
   });
 
   const [discoveryModalOpen, setDiscoveryModalOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [supportMode, setSupportMode] = useState<'ai' | 'operator'>('ai');
+  const [supportInput, setSupportInput] = useState('');
+  const [supportMessages, setSupportMessages] = useState<
+    { role: 'assistant' | 'user'; text: string }[]
+  >([
+    {
+      role: 'assistant',
+      text: "Hi, I'm Flowstarter AI support. I can answer quick questions or route you to a human operator.",
+    },
+  ]);
   const contactMutation = useContactForm();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,17 +70,46 @@ export default function ContactPage() {
   const errorMessage =
     contactMutation.error?.message || t('contact.form.defaultError');
 
+  const aiReplyFor = (text: string): string => {
+    const lower = text.toLowerCase();
+    if (lower.includes('price') || lower.includes('cost')) {
+      return 'Pricing depends on scope and timeline. I can help you pick a plan quickly, or switch you to an operator for a direct recommendation.';
+    }
+    if (lower.includes('time') || lower.includes('how long')) {
+      return 'Typical turnaround is fast for focused projects. If you share your goal, I can suggest the best path right now.';
+    }
+    if (lower.includes('operator') || lower.includes('human')) {
+      return 'Switch to Operator mode and leave your question. Our team usually replies within 1 business day.';
+    }
+    return 'Got it. I can help with pricing, timeline, integrations, and setup. If you prefer human support, switch to Operator mode.';
+  };
+
+  const submitSupportMessage = () => {
+    const message = supportInput.trim();
+    if (!message) return;
+    setSupportMessages((prev) => [...prev, { role: 'user', text: message }]);
+    setSupportInput('');
+    const response =
+      supportMode === 'ai'
+        ? aiReplyFor(message)
+        : 'Operator request received. We will follow up on hello@flowstarter.app. For urgent questions, include your project URL and deadline.';
+    window.setTimeout(() => {
+      setSupportMessages((prev) => [
+        ...prev,
+        { role: 'assistant', text: response },
+      ]);
+    }, 320);
+  };
+
   return (
     <PublicPageLayout>
-      {/* Content */}
-      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-28 pb-16">
-        {/* Hero */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
+      <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16">
+        <div className="text-center mb-12 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-5">
             <MessageCircle className="w-4 h-4" />
             {t('contact.badge')}
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--fs-ink)] mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--fs-ink)] mb-3">
             {t('contact.title')}
           </h1>
           <p className="text-lg text-[var(--fs-ink-faint)] max-w-2xl mx-auto">
@@ -76,15 +117,14 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <GlassPanel padding="lg">
+        <div className="grid lg:grid-cols-[1.12fr_0.88fr] gap-6 sm:gap-8 items-start">
+          <section className="p-5 sm:p-7 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
             <h2 className="text-2xl font-bold text-[var(--fs-ink)] mb-6">
               {t('contact.form.title')}
             </h2>
 
             {status === 'success' ? (
-              <div className="text-center py-12">
+              <div className="text-center py-10">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
                   <Check className="w-8 h-8 text-emerald-500" />
                 </div>
@@ -94,13 +134,12 @@ export default function ContactPage() {
                 <p className="text-[var(--fs-ink-faint)] mb-6">
                   {t('contact.form.successDesc')}
                 </p>
-                <Button
+                <UnifiedButton
+                  tone="secondary"
                   onClick={() => contactMutation.reset()}
-                  variant="outline"
-                  className="rounded-xl"
                 >
                   {t('contact.form.sendAnother')}
-                </Button>
+                </UnifiedButton>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -192,10 +231,10 @@ export default function ContactPage() {
                   </div>
                 )}
 
-                <Button
+                <UnifiedButton
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full bg-gradient-to-r from-[var(--landing-btn-from)] via-[var(--landing-btn-via)] to-[var(--landing-btn-from)] text-white hover:from-[var(--landing-btn-hover-from)] hover:via-[var(--landing-btn-hover-via)] hover:to-[var(--landing-btn-hover-from)] rounded-xl h-12 text-base font-semibold shadow-lg hover:shadow-[0_0_20px_rgba(124,58,237,0.2)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full"
                 >
                   {status === 'loading' ? (
                     <span className="flex items-center gap-2">
@@ -208,36 +247,123 @@ export default function ContactPage() {
                       <Send className="w-4 h-4" />
                     </span>
                   )}
-                </Button>
+                </UnifiedButton>
               </form>
             )}
-          </GlassPanel>
+          </section>
 
-          {/* Contact Info */}
           <div className="space-y-6">
-            {/* Quick Contact */}
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-[var(--purple)]/10 to-blue-500/10 border border-[var(--purple)]/20">
+            <section className="p-5 sm:p-6 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
               <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6">
                 {t('contact.talk.title')}
               </h2>
               <p className="text-[var(--fs-ink-faint)] mb-6">
                 {t('contact.talk.description')}
               </p>
-              <Button
-                variant="brand-gradient"
-                className="w-full rounded-xl h-12 shadow-lg"
+              <UnifiedButton
+                className="w-full"
                 onClick={() => setDiscoveryModalOpen(true)}
               >
                 <Calendar className="w-4 h-4 mr-2" />
                 {t('contact.talk.button')}
-              </Button>
-            </div>
+              </UnifiedButton>
+            </section>
 
-            {/* Contact Methods */}
-            <GlassPanel padding="lg">
+            <section className="p-5 sm:p-6 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
               <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6">
                 {t('contact.other.title')}
               </h2>
+              <div className="mb-5">
+                {!supportOpen ? (
+                  <div className="flex justify-end">
+                    <UnifiedButton
+                      type="button"
+                      onClick={() => setSupportOpen(true)}
+                      className="h-10 px-3 py-2 text-xs"
+                    >
+                      <Headphones className="h-4 w-4" />
+                      Open support chat
+                    </UnifiedButton>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-[var(--fs-rule)] bg-white/70 dark:bg-white/[0.03] p-3">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <p className="text-sm font-semibold text-[var(--fs-ink)]">
+                        Support chat
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setSupportOpen(false)}
+                        className="rounded-md px-2 py-1 text-xs text-[var(--fs-ink-faint)] hover:bg-black/5 dark:hover:bg-white/10"
+                      >
+                        Close
+                      </button>
+                    </div>
+                    <div className="mb-3 inline-flex rounded-lg border border-[var(--fs-rule)] bg-white/70 dark:bg-white/[0.04] p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setSupportMode('ai')}
+                        className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                          supportMode === 'ai'
+                            ? 'bg-[var(--purple)] text-white'
+                            : 'text-[var(--fs-ink-faint)]'
+                        }`}
+                      >
+                        <Bot className="h-3.5 w-3.5" />
+                        AI
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSupportMode('operator')}
+                        className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                          supportMode === 'operator'
+                            ? 'bg-[var(--purple)] text-white'
+                            : 'text-[var(--fs-ink-faint)]'
+                        }`}
+                      >
+                        <Headphones className="h-3.5 w-3.5" />
+                        Operator
+                      </button>
+                    </div>
+                    <div className="mb-3 max-h-40 space-y-2 overflow-y-auto rounded-lg border border-[var(--fs-rule)] bg-white/75 dark:bg-black/10 p-2.5">
+                      {supportMessages.slice(-5).map((msg, idx) => (
+                        <div
+                          key={idx}
+                          className={`max-w-[92%] rounded-lg px-2.5 py-2 text-xs leading-relaxed ${
+                            msg.role === 'user'
+                              ? 'ml-auto bg-[var(--purple)] text-white'
+                              : 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)]'
+                          }`}
+                        >
+                          {msg.text}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        value={supportInput}
+                        onChange={(e) => setSupportInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') submitSupportMessage();
+                        }}
+                        placeholder={
+                          supportMode === 'ai'
+                            ? 'Ask the AI support assistant...'
+                            : 'Leave a message for an operator...'
+                        }
+                        className="h-9 w-full rounded-lg border border-[var(--fs-rule)] bg-white dark:bg-white/[0.03] px-3 text-xs text-[var(--fs-ink)] outline-none focus:ring-2 focus:ring-[var(--purple)]/20"
+                      />
+                      <UnifiedButton
+                        type="button"
+                        onClick={submitSupportMessage}
+                        className="h-9 px-3 py-2 text-xs"
+                      >
+                        Send
+                      </UnifiedButton>
+                    </div>
+                  </div>
+                )}
+              </div>
               <div className="space-y-4">
                 <a
                   href="mailto:hello@flowstarter.app"
@@ -292,10 +418,9 @@ export default function ContactPage() {
                   </div>
                 </a>
               </div>
-            </GlassPanel>
+            </section>
 
-            {/* Response Time */}
-            <div className="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex items-center gap-4">
+            <section className="p-5 sm:p-6 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)] flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                 <Clock className="w-5 h-5 text-emerald-500" />
               </div>
@@ -307,7 +432,7 @@ export default function ContactPage() {
                   {t('contact.response.description')}
                 </p>
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </main>

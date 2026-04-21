@@ -60,7 +60,14 @@ export function ScaffoldQuickReview({
   const missingCount = rows.filter((r) => r.missing).length;
 
   return (
-    <div className="rounded-[var(--fs-radius-2xl)] border p-5 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+    <div
+      className="rounded-[var(--fs-radius-2xl)] border p-5 backdrop-blur-2xl backdrop-saturate-150"
+      style={{
+        background: 'var(--fs-glass-bg)',
+        borderColor: 'var(--fs-glass-edge)',
+        boxShadow: 'var(--fs-card-shadow)',
+      }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>

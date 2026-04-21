@@ -104,7 +104,14 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
   }, [description, client, router]);
 
   return (
-    <div className="rounded-[var(--fs-radius-2xl)] border p-5 backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+    <div
+      className="rounded-[var(--fs-radius-2xl)] border p-5 backdrop-blur-2xl backdrop-saturate-150"
+      style={{
+        background: 'var(--fs-glass-bg)',
+        borderColor: 'var(--fs-glass-edge)',
+        boxShadow: 'var(--fs-card-shadow)',
+      }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
@@ -139,19 +146,16 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
               <input
                 id="qs-name"
                 type="text"
-                placeholder=" "
+                placeholder={`${t('scaffold.client.field.name')} *`}
                 value={client.name}
                 onChange={(e) =>
                   setClient((p) => ({ ...p, name: e.target.value }))
                 }
                 onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
                 autoFocus
-                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+                className="w-full rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-3 py-3 text-sm text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
               />
-              <label
-                htmlFor="qs-name"
-                className="absolute left-3 top-1.5 text-[0.6rem] font-medium text-gray-400 dark:text-white/30 pointer-events-none transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-xs peer-focus:top-1.5 peer-focus:text-[0.6rem] peer-focus:text-[var(--purple)]"
-              >
+              <label htmlFor="qs-name" className="sr-only">
                 {t('scaffold.client.field.name')} *
               </label>
             </div>
@@ -159,18 +163,15 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
               <input
                 id="qs-email"
                 type="email"
-                placeholder=" "
+                placeholder={`${t('scaffold.client.field.email')} *`}
                 value={client.email}
                 onChange={(e) =>
                   setClient((p) => ({ ...p, email: e.target.value }))
                 }
                 onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+                className="w-full rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-3 py-3 text-sm text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
               />
-              <label
-                htmlFor="qs-email"
-                className="absolute left-3 top-1.5 text-[0.6rem] font-medium text-gray-400 dark:text-white/30 pointer-events-none transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-xs peer-focus:top-1.5 peer-focus:text-[0.6rem] peer-focus:text-[var(--purple)]"
-              >
+              <label htmlFor="qs-email" className="sr-only">
                 {t('scaffold.client.field.email')} *
               </label>
             </div>
@@ -181,18 +182,15 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
               <input
                 id="qs-phone"
                 type="tel"
-                placeholder=" "
+                placeholder={`${t('scaffold.client.field.phone')} *`}
                 value={client.phone}
                 onChange={(e) =>
                   setClient((p) => ({ ...p, phone: e.target.value }))
                 }
                 onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+                className="w-full rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-3 py-3 text-sm text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
               />
-              <label
-                htmlFor="qs-phone"
-                className="absolute left-3 top-1.5 text-[0.6rem] font-medium text-gray-400 dark:text-white/30 pointer-events-none transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-xs peer-focus:top-1.5 peer-focus:text-[0.6rem] peer-focus:text-[var(--purple)]"
-              >
+              <label htmlFor="qs-phone" className="sr-only">
                 {t('scaffold.client.field.phone')} *
               </label>
             </div>
@@ -200,18 +198,15 @@ function ExpandedForm({ onCollapse }: { onCollapse: () => void }) {
               <input
                 id="qs-business"
                 type="text"
-                placeholder=" "
+                placeholder={t('scaffold.client.field.businessName')}
                 value={client.businessName}
                 onChange={(e) =>
                   setClient((p) => ({ ...p, businessName: e.target.value }))
                 }
                 onKeyDown={(e) => e.key === 'Enter' && handleClientNext()}
-                className="peer w-full px-3 pt-5 pb-1.5 text-base rounded-xl bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
+                className="w-full rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-3 py-3 text-sm text-[var(--fs-ink)] placeholder:text-gray-400 dark:placeholder:text-white/30 focus:outline-none focus:border-[var(--purple)]/50 transition-colors"
               />
-              <label
-                htmlFor="qs-business"
-                className="absolute left-3 top-1.5 text-[0.6rem] font-medium text-gray-400 dark:text-white/30 pointer-events-none transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-xs peer-focus:top-1.5 peer-focus:text-[0.6rem] peer-focus:text-[var(--purple)]"
-              >
+              <label htmlFor="qs-business" className="sr-only">
                 {t('scaffold.client.field.businessName')}
               </label>
             </div>

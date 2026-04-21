@@ -2,11 +2,9 @@
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { useTranslations, type TranslationKeys } from '@/lib/i18n';
-import Link from 'next/link';
 import Footer from '@/components/Footer';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { FlowBackground } from '@flowstarter/flow-design-system';
-import { Logo } from '@/components/ui/logo';
+import { SiteHeader } from '@/components/SiteHeader';
 
 interface AuthLayoutProps {
   title?: string;
@@ -27,7 +25,10 @@ export default function AuthLayout({
   useTheme();
   const { t } = useTranslations();
   return (
-    <div className="min-h-screen w-full relative flex flex-col" data-density="comfortable">
+    <div
+      className="min-h-screen w-full relative flex flex-col"
+      data-density="comfortable"
+    >
       <FlowBackground
         variant="auth"
         style={{
@@ -40,20 +41,7 @@ export default function AuthLayout({
         }}
       />
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 shrink-0 border-b border-[var(--fs-rule)]/50 bg-white/85 dark:bg-[var(--fs-bg-base)]/80 backdrop-blur-xl backdrop-saturate-150">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <Logo size="md" />
-            {showTeamBadge && (
-              <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
-                Team
-              </span>
-            )}
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
+      <SiteHeader mode="auth" showTeamBadge={showTeamBadge} />
 
       {/* Content — fills remaining space, scrolls if needed */}
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 pt-8 pb-16 sm:pt-10 sm:pb-20">
@@ -80,9 +68,7 @@ export default function AuthLayout({
                 )}
               </h1>
               {subtitle && (
-                <p className="text-[var(--fs-ink-faint)] text-sm">
-                  {subtitle}
-                </p>
+                <p className="text-[var(--fs-ink-faint)] text-sm">{subtitle}</p>
               )}
             </div>
           )}

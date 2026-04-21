@@ -33,10 +33,6 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
     },
     ref,
   ) => {
-    // Opacity multiplier per variant — applied to the token values
-    const bgOpacity = variant === 'elevated' ? 0.06 : variant === 'subtle' ? 0.03 : 0.55;
-    const edgeOpacity = variant === 'subtle' ? 0.05 : 0.10;
-
     const tokenStyle: CSSProperties = {
       background: 'var(--fs-glass-bg)',
       borderColor: 'var(--fs-glass-edge)',
@@ -52,6 +48,11 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       // Glassmorphism
       'backdrop-blur-2xl backdrop-saturate-150',
       'border',
+      variant === 'elevated'
+        ? 'shadow-[var(--fs-shadow-xl)]'
+        : variant === 'subtle'
+          ? 'shadow-none'
+          : '',
       // Transitions
       'transition-all duration-300 ease-out',
       // Hover

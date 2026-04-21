@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Upload, Type, X } from 'lucide-react';
 import { Button } from '@flowstarter/flow-design-system';
 import type { SelectedLogo } from '../components/scaffold/useScaffoldForm';
+import Image from 'next/image';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -54,9 +55,12 @@ export function LogoStep({
 
       {preview ? (
         <div className="relative inline-block rounded-2xl border border-gray-200 dark:border-white/[0.06] p-4">
-          <img
+          <Image
             src={preview}
             alt="Logo preview"
+            width={160}
+            height={96}
+            unoptimized
             className="max-h-24 object-contain"
           />
           <button

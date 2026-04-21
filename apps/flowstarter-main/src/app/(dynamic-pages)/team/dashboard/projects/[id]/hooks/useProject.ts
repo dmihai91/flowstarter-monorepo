@@ -62,8 +62,11 @@ export function useProject() {
 
   const parsedChat = useMemo<ParsedChat | null>(() => {
     if (!project?.chat) return null;
-    try { return JSON.parse(project.chat); }
-    catch { return null; }
+    try {
+      return JSON.parse(project.chat);
+    } catch {
+      return null;
+    }
   }, [project?.chat]);
 
   const isComplete = !!(
@@ -83,7 +86,11 @@ export function useProject() {
     project,
     parsedChat,
     isLoading,
-    error: error ? (error instanceof Error ? error.message : 'Failed to load project') : null,
+    error: error
+      ? error instanceof Error
+        ? error.message
+        : 'Failed to load project'
+      : null,
     isComplete,
     handleEdit,
   };

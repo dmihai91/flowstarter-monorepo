@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -23,11 +23,11 @@ export function ScrollReveal({
   'data-section': dataSection,
   staggerChildren,
 }: ScrollRevealProps) {
-  const ref = useRef<HTMLElement>(null);
+  const [node, setNode] = useState<HTMLElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
+    const el = node;
     if (!el) return;
 
     const rect = el.getBoundingClientRect();
@@ -48,27 +48,42 @@ export function ScrollReveal({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [node]);
 
   useEffect(() => {
-    if (staggerChildren && isVisible && ref.current) {
-      ref.current
+    if (staggerChildren && isVisible && node) {
+      node
         .querySelectorAll<HTMLElement>('.reveal-card')
         .forEach((el) => el.classList.add('is-visible'));
     }
-  }, [staggerChildren, isVisible]);
+  }, [staggerChildren, isVisible, node]);
+
+  const sharedClassName = `${className} transition-all duration-1000 ease-out ${
+    isVisible ? 'opacity-100' : 'opacity-0'
+  }`;
+
+  if (Tag === 'div') {
+    return (
+      <div
+        ref={setNode}
+        id={id}
+        data-section={dataSection}
+        className={sharedClassName}
+      >
+        {children}
+      </div>
+    );
+  }
 
   return (
-    <Tag
-      ref={ref as any}
+    <section
+      ref={setNode}
       id={id}
       data-section={dataSection}
-      className={`${className} transition-all duration-1000 ease-out ${
-        isVisible ? 'opacity-100' : 'opacity-0'
-      }`}
+      className={sharedClassName}
     >
       {children}
-    </Tag>
+    </section>
   );
 }
 

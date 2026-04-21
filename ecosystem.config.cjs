@@ -39,8 +39,8 @@ module.exports = {
     {
       name: 'flowstarter-main',
       cwd: path.join(ROOT, 'apps/flowstarter-main'),
-      script: 'node_modules/.bin/next',
-      args: 'start -p 3000',
+      script: '/Users/darius91/.nvm/versions/node/v25.8.0/bin/pnpm',
+      args: 'start',
       interpreter: 'none',
       env: {
         NODE_ENV: 'production',
@@ -55,7 +55,7 @@ module.exports = {
       name: 'flowstarter-code',
       cwd: path.join(ROOT, 'apps/flowstarter-code'),
       script: 'node_modules/.bin/next',
-      args: 'dev -p 3001',
+      args: 'dev -p 3100',
       interpreter: 'none',
       env: {
         NODE_ENV: 'development',
@@ -64,6 +64,21 @@ module.exports = {
       ...commonRestart,
       out_file: path.join(LOG_DIR, 'flowstarter-code-out.log'),
       error_file: path.join(LOG_DIR, 'flowstarter-code-error.log'),
+      ...commonLog,
+    },
+    {
+      name: 'flowstarter-library',
+      cwd: path.join(ROOT, 'apps/flowstarter-library'),
+      script: 'preview-server.js',
+      interpreter: 'node',
+      env: {
+        NODE_ENV: 'production',
+        PREVIEW_PORT: '2000',
+      },
+      max_memory_restart: '512M',
+      ...commonRestart,
+      out_file: path.join(LOG_DIR, 'flowstarter-library-out.log'),
+      error_file: path.join(LOG_DIR, 'flowstarter-library-error.log'),
       ...commonLog,
     },
     {

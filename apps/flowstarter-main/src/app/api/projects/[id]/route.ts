@@ -1,4 +1,5 @@
 import { requireAuth, requireAuthWithSupabase } from '@/lib/api-auth';
+import { fetchReviewArtifacts } from '@/lib/convex-review-artifacts';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -157,7 +158,18 @@ export async function GET(
       projectName: data.name,
     });
 
-    return NextResponse.json({ project: data });
+    const artifacts = await fetchReviewArtifacts(data.id);
+    const project = {
+      ...data,
+      generated_code: artifacts.generated_code,
+      preview_html: artifacts.preview_html,
+      generated_files: artifacts.generated_files,
+      quality_metrics: artifacts.quality_metrics,
+      generation_completed_at:
+        data.generation_completed_at ?? artifacts.generation_completed_at,
+    };
+
+    return NextResponse.json({ project });
   } catch (error) {
     console.error('[Projects] GET by ID error:', error);
 

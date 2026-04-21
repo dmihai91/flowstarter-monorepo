@@ -1,6 +1,47 @@
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+function getUploadedFileUrl(file: unknown): string {
+  if (
+    typeof file === 'object' &&
+    file !== null &&
+    'serverData' in file &&
+    typeof (file as { serverData?: { url?: string } }).serverData?.url ===
+      'string'
+  ) {
+    return (file as { serverData: { url: string } }).serverData.url;
+  }
+  if (
+    typeof file === 'object' &&
+    file !== null &&
+    'ufsUrl' in file &&
+    typeof (file as { ufsUrl?: string }).ufsUrl === 'string'
+  ) {
+    return (file as { ufsUrl: string }).ufsUrl;
+  }
+  return '';
+}
+
+function getUploadedFileName(file: unknown): string {
+  if (
+    typeof file === 'object' &&
+    file !== null &&
+    'name' in file &&
+    typeof (file as { name?: string }).name === 'string'
+  ) {
+    return (file as { name: string }).name;
+  }
+  if (
+    typeof file === 'object' &&
+    file !== null &&
+    'fileName' in file &&
+    typeof (file as { fileName?: string }).fileName === 'string'
+  ) {
+    return (file as { fileName: string }).fileName;
+  }
+  return 'upload';
+}
+
 export function useImageUpload(
   uploadedImages: Array<{ url: string; name: string }>,
   setUploadedImages: (images: Array<{ url: string; name: string }>) => void
@@ -27,8 +68,8 @@ export function useImageUpload(
 
       if (res) {
         const newImages = res.map((file) => ({
-          url: file.url,
-          name: file.name,
+          url: getUploadedFileUrl(file),
+          name: getUploadedFileName(file),
         }));
         setUploadedImages([...uploadedImages, ...newImages]);
       }

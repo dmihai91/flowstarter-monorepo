@@ -69,7 +69,10 @@ export function useIntegrations() {
         const res = await fetch('/api/integrations/mailchimp/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ apiKey: config.apiKey, audienceId: config.audienceId }),
+          body: JSON.stringify({
+            apiKey: config.apiKey,
+            audienceId: config.audienceId,
+          }),
         });
         if (!res.ok) {
           const j = await res.json().catch(() => ({}));
@@ -79,7 +82,10 @@ export function useIntegrations() {
         const res = await fetch('/api/integrations/calendly/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ apiKey: config.apiKey, eventUrl: (config.eventUrl || '').trim() }),
+          body: JSON.stringify({
+            apiKey: config.apiKey,
+            eventUrl: (config.eventUrl || '').trim(),
+          }),
         });
         if (!res.ok) {
           const j = await res.json().catch(() => ({}));
@@ -101,10 +107,13 @@ export function useIntegrations() {
     },
     onMutate: ({ integrationId }) => setConnectingId(integrationId),
     onSuccess: ({ integrationId, config }) => {
-      qc.setQueryData(QUERY_KEY, (prev: Record<string, IntegrationConfig> = {}) => ({
-        ...prev,
-        [integrationId]: config,
-      }));
+      qc.setQueryData(
+        QUERY_KEY,
+        (prev: Record<string, IntegrationConfig> = {}) => ({
+          ...prev,
+          [integrationId]: config,
+        })
+      );
       setExpandedId(null);
     },
     onSettled: () => setConnectingId(null),
@@ -124,11 +133,14 @@ export function useIntegrations() {
     },
     onMutate: (integrationId) => setConnectingId(integrationId),
     onSuccess: (integrationId) => {
-      qc.setQueryData(QUERY_KEY, (prev: Record<string, IntegrationConfig> = {}) => {
-        const next = { ...prev };
-        delete next[integrationId];
-        return next;
-      });
+      qc.setQueryData(
+        QUERY_KEY,
+        (prev: Record<string, IntegrationConfig> = {}) => {
+          const next = { ...prev };
+          delete next[integrationId];
+          return next;
+        }
+      );
     },
     onSettled: () => setConnectingId(null),
   });
@@ -140,8 +152,10 @@ export function useIntegrations() {
       case 'mailchimp': {
         const apiKey = (config.apiKey || '').trim();
         const audienceId = (config.audienceId || '').trim();
-        if (!apiKey || !/^[a-z0-9-]{10,}$/i.test(apiKey)) return fail('Invalid Mailchimp API key');
-        if (!audienceId || audienceId.length < 5) return fail('Invalid audience/list ID');
+        if (!apiKey || !/^[a-z0-9-]{10,}$/i.test(apiKey))
+          return fail('Invalid Mailchimp API key');
+        if (!audienceId || audienceId.length < 5)
+          return fail('Invalid audience/list ID');
         return { ok: true as const };
       }
       case 'calendly': {
@@ -149,23 +163,33 @@ export function useIntegrations() {
         const apiKey = (config.apiKey || '').trim();
         try {
           const u = new URL(url);
-          if (!/calendly\.com$/i.test(u.hostname)) return fail('Calendly URL must be on calendly.com');
-        } catch { return fail('Invalid Calendly URL'); }
+          if (!/calendly\.com$/i.test(u.hostname))
+            return fail('Calendly URL must be on calendly.com');
+        } catch {
+          return fail('Invalid Calendly URL');
+        }
         if (!apiKey || apiKey.length < 10) return fail('Invalid API key');
         return { ok: true as const };
       }
-      default: return { ok: true as const };
+      default:
+        return { ok: true as const };
     }
   };
 
-  const handleConnect = async (integrationId: string, config: IntegrationConfig) => {
+  const handleConnect = async (
+    integrationId: string,
+    config: IntegrationConfig
+  ) => {
     const v = validate(integrationId, config);
     if (!v.ok) return { success: false as const, error: v.msg };
     try {
       await connectMutation.mutateAsync({ integrationId, config });
       return { success: true as const };
     } catch (e) {
-      return { success: false as const, error: e instanceof Error ? e.message : 'Connection failed' };
+      return {
+        success: false as const,
+        error: e instanceof Error ? e.message : 'Connection failed',
+      };
     }
   };
 
@@ -174,7 +198,10 @@ export function useIntegrations() {
       await disconnectMutation.mutateAsync(integrationId);
       return { success: true as const };
     } catch (e) {
-      return { success: false as const, error: e instanceof Error ? e.message : 'Disconnection failed' };
+      return {
+        success: false as const,
+        error: e instanceof Error ? e.message : 'Disconnection failed',
+      };
     }
   };
 
@@ -185,7 +212,8 @@ export function useIntegrations() {
     expandedId,
     handleConnect,
     handleDisconnect,
-    toggleExpanded: (id: string) => setExpandedId((prev) => (prev === id ? null : id)),
+    toggleExpanded: (id: string) =>
+      setExpandedId((prev) => (prev === id ? null : id)),
     isConnected: (id: string) => !!configs[id],
     isExpanded: (id: string) => expandedId === id,
     isConnecting: (id: string) => connectingId === id,

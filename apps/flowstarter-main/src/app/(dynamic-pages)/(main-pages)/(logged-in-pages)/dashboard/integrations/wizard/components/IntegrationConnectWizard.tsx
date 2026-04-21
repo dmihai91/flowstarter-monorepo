@@ -50,7 +50,7 @@ export default function IntegrationConnectWizard({
 
   const gaTree =
     provider === 'google-analytics'
-      ? (resourcesQuery.data?.accounts ?? null)
+      ? resourcesQuery.data?.accounts ?? null
       : null;
 
   // Advance step once resources load

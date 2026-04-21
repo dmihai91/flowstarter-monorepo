@@ -8,6 +8,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/ui/logo';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { useTheme } from '@/contexts/ThemeContext';
 import {
   Calendar,
   HelpCircle,
@@ -31,6 +32,7 @@ interface SidebarItem {
 }
 
 export function Sidebar() {
+  const { resolvedTheme } = useTheme();
   const pathname = usePathname();
   const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } =
     useSidebar();
@@ -161,6 +163,23 @@ export function Sidebar() {
     );
   };
 
+  const sidebarChromeStyle = {
+    background:
+      resolvedTheme === 'dark'
+        ? 'rgba(20, 22, 34, 0.9)'
+        : 'rgba(255, 255, 255, 0.97)',
+    borderRight:
+      resolvedTheme === 'dark'
+        ? '1px solid rgba(255, 255, 255, 0.1)'
+        : '1px solid rgba(18, 10, 34, 0.08)',
+    boxShadow:
+      resolvedTheme === 'dark'
+        ? '6px 0 18px rgba(2, 6, 23, 0.24)'
+        : '6px 0 18px rgba(15, 23, 42, 0.06)',
+    backdropFilter: 'blur(20px) saturate(160%)',
+    WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+  } as const;
+
   const SidebarContent = ({
     showToggle = false,
     forceExpanded = false,
@@ -181,7 +200,7 @@ export function Sidebar() {
         {showToggle && (
           <div
             className={cn(
-              'w-full',
+              'w-full sticky top-2 z-20',
               effectiveCollapsed ? 'flex justify-center' : 'flex justify-end'
             )}
           >
@@ -189,8 +208,9 @@ export function Sidebar() {
               onClick={() => setIsCollapsed(!isCollapsed)}
               title={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               className={cn(
-                'p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:text-white/40 dark:hover:text-white/60',
-                'hover:bg-white/55 dark:hover:bg-white/5 transition-all'
+                'p-2.5 rounded-xl border border-gray-300 dark:border-white/25',
+                'bg-white text-gray-800 dark:bg-[#22253a] dark:text-white',
+                'hover:bg-gray-100 dark:hover:bg-[#2a2e46] shadow-md transition-all'
               )}
             >
               {effectiveCollapsed ? (
@@ -267,11 +287,9 @@ export function Sidebar() {
 
       {/* Mobile sidebar */}
       <aside
+        style={sidebarChromeStyle}
         className={cn(
           'md:hidden fixed inset-y-0 left-0 z-[160] w-72 rounded-r-2xl',
-          'bg-white/75 dark:bg-black/40 backdrop-blur-2xl backdrop-saturate-150',
-          'border border-white/60 dark:border-white/10',
-          'shadow-[0_2px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.2)]',
           'transform transition-transform duration-300 ease-in-out',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
@@ -303,14 +321,31 @@ export function Sidebar() {
 
       {/* Desktop/Tablet sidebar - Glassmorphism */}
       <aside
+        style={sidebarChromeStyle}
         className={cn(
           'hidden md:flex flex-col flex-shrink-0 fixed left-0 top-16 bottom-0 transition-all duration-300 z-40',
-          'bg-white/75 dark:bg-[#101014]/70 backdrop-blur-2xl backdrop-saturate-150',
-          'border-r border-white/60 dark:border-white/10 shadow-[1px_0_3px_rgba(0,0,0,0.05)]',
           isCollapsed ? 'w-[68px]' : 'w-52 lg:w-60'
         )}
       >
-        <SidebarContent showToggle />
+        <div
+          className={cn(
+            'px-2 pt-2',
+            isCollapsed ? 'flex justify-center' : 'flex justify-end'
+          )}
+        >
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="h-8 w-8 rounded-lg border border-gray-300 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-white/25 dark:bg-[#22253a] dark:text-white dark:hover:bg-[#2a2e46]"
+          >
+            {isCollapsed ? (
+              <ChevronsRight className="mx-auto h-4 w-4" />
+            ) : (
+              <ChevronsLeft className="mx-auto h-4 w-4" />
+            )}
+          </button>
+        </div>
+        <SidebarContent />
       </aside>
 
       <FeedbackDialog open={isFeedbackOpen} onOpenChange={setIsFeedbackOpen} />

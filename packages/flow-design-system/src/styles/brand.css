@@ -122,8 +122,13 @@
   --fs-bg-overlay:  var(--fs-primitive-light-overlay);
 
   /* Glass surfaces */
-  --fs-glass-bg:    rgba(255, 255, 255, 0.55);
-  --fs-glass-edge:  rgba(18, 10, 34, 0.10);
+  --fs-glass-bg:      rgba(255, 255, 255, 0.55);
+  --fs-glass-edge:    rgba(18, 10, 34, 0.10);
+
+  /* Chrome surfaces — header & sidebar glass */
+  --fs-chrome-bg:     rgba(255, 255, 255, 0.92);
+  --fs-chrome-border: rgba(18, 10, 34, 0.07);
+  --fs-chrome-shadow: 1px 0 0 rgba(0, 0, 0, 0.05), 4px 0 16px rgba(0, 0, 0, 0.04);
 
   /* Ink / text */
   --fs-ink:          var(--fs-primitive-ink-dark);
@@ -184,8 +189,13 @@
   --fs-bg-overlay:  var(--fs-primitive-dark-overlay);
 
   /* Glass surfaces */
-  --fs-glass-bg:    rgba(255, 255, 255, 0.035);
-  --fs-glass-edge:  rgba(255, 255, 255, 0.08);
+  --fs-glass-bg:      rgba(255, 255, 255, 0.035);
+  --fs-glass-edge:    rgba(255, 255, 255, 0.08);
+
+  /* Chrome surfaces — header & sidebar glass */
+  --fs-chrome-bg:     rgba(16, 18, 36, 0.94);
+  --fs-chrome-border: rgba(255, 255, 255, 0.08);
+  --fs-chrome-shadow: 1px 0 0 rgba(255, 255, 255, 0.04), 4px 0 16px rgba(0, 0, 0, 0.3);
 
   /* Ink / text */
   --fs-ink:          var(--fs-primitive-ink-light);
@@ -465,11 +475,11 @@
 .fs-bg--landing   .fs-bg__tertiary { opacity: 0.05; }
 .fs-bg--landing   .fs-bg__lines { opacity: 0.06; }
 
-.fs-bg--dashboard .fs-bg__bloom { opacity: 0.14; }
-.fs-bg--dashboard .fs-bg__secondary { opacity: 0.06; }
-.fs-bg--dashboard .fs-bg__warm  { opacity: 0.07; }
-.fs-bg--dashboard .fs-bg__tertiary { opacity: 0.04; }
-.fs-bg--dashboard .fs-bg__lines { opacity: 0.05; }
+.fs-bg--dashboard .fs-bg__bloom { opacity: 0.20; }
+.fs-bg--dashboard .fs-bg__secondary { opacity: 0.09; }
+.fs-bg--dashboard .fs-bg__warm  { opacity: 0.11; }
+.fs-bg--dashboard .fs-bg__tertiary { opacity: 0.06; }
+.fs-bg--dashboard .fs-bg__lines { opacity: 0.08; }
 
 .fs-bg--wizard    .fs-bg__bloom { opacity: 0.14; }
 .fs-bg--wizard    .fs-bg__secondary { opacity: 0.06; }
@@ -496,11 +506,11 @@
 .dark .fs-bg--landing   .fs-bg__tertiary { opacity: 0.07; }
 .dark .fs-bg--landing   .fs-bg__lines { opacity: 0.08; }
 
-.dark .fs-bg--dashboard .fs-bg__bloom { opacity: 0.20; }
-.dark .fs-bg--dashboard .fs-bg__secondary { opacity: 0.09; }
-.dark .fs-bg--dashboard .fs-bg__warm  { opacity: 0.10; }
-.dark .fs-bg--dashboard .fs-bg__tertiary { opacity: 0.06; }
-.dark .fs-bg--dashboard .fs-bg__lines { opacity: 0.07; }
+.dark .fs-bg--dashboard .fs-bg__bloom { opacity: 0.28; }
+.dark .fs-bg--dashboard .fs-bg__secondary { opacity: 0.13; }
+.dark .fs-bg--dashboard .fs-bg__warm  { opacity: 0.14; }
+.dark .fs-bg--dashboard .fs-bg__tertiary { opacity: 0.09; }
+.dark .fs-bg--dashboard .fs-bg__lines { opacity: 0.10; }
 
 .dark .fs-bg--wizard    .fs-bg__bloom { opacity: 0.18; }
 .dark .fs-bg--wizard    .fs-bg__secondary { opacity: 0.08; }

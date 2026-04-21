@@ -1,6 +1,8 @@
 import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { PROJECT_LIST_SELECT } from '@/lib/projects/project-list-columns';
+import type { Table } from '@/types';
 
 /**
  * GET /api/team/projects
@@ -20,20 +22,16 @@ export async function GET() {
     let role = (
       sessionClaims?.metadata as { role?: string }
     )?.role?.toLowerCase();
-    console.log('[Team Projects] userId:', userId, 'sessionClaims role:', role);
 
     // Fallback to publicMetadata if not in session claims
     if (!role) {
       const user = await currentUser();
       role = (user?.publicMetadata as { role?: string })?.role?.toLowerCase();
-      console.log('[Team Projects] publicMetadata role:', role);
     }
 
     if (role !== 'team' && role !== 'admin') {
-      console.log('[Team Projects] REJECTED - role:', role);
       return NextResponse.json({ error: 'Not a team member' }, { status: 403 });
     }
-    console.log('[Team Projects] AUTHORIZED - role:', role);
 
     // Use service role client to bypass RLS and fetch all projects
     const supabaseAdmin = createClient(
@@ -44,34 +42,41 @@ export async function GET() {
 
     const { data: projects, error } = await supabaseAdmin
       .from('projects')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select(PROJECT_LIST_SELECT)
+      .order('created_at', { ascending: false })
+      .limit(150);
 
     if (error) {
       console.error('[Team Projects] Database error:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    const projectRows = (projects ?? []) as unknown as Array<Table<'projects'>>;
+
     // Get unique user IDs and fetch their info from Clerk
     const userIds = Array.from(
-      new Set(projects?.map((p) => p.user_id).filter(Boolean) || [])
+      new Set(projectRows.map((p) => p.user_id).filter(Boolean))
     );
     const userMap: Record<string, { email: string; name: string }> = {};
 
     if (userIds.length > 0) {
       try {
         const clerk = await clerkClient();
-        const users = await clerk.users.getUserList({
-          userId: userIds,
-          limit: 100,
-        });
-        for (const u of users.data) {
-          userMap[u.id] = {
-            email: u.emailAddresses?.[0]?.emailAddress || '',
-            name: u.firstName
-              ? `${u.firstName} ${u.lastName || ''}`.trim()
-              : '',
-          };
+        const chunkSize = 100;
+        for (let i = 0; i < userIds.length; i += chunkSize) {
+          const chunk = userIds.slice(i, i + chunkSize);
+          const users = await clerk.users.getUserList({
+            userId: chunk,
+            limit: chunkSize,
+          });
+          for (const u of users.data) {
+            userMap[u.id] = {
+              email: u.emailAddresses?.[0]?.emailAddress || '',
+              name: u.firstName
+                ? `${u.firstName} ${u.lastName || ''}`.trim()
+                : '',
+            };
+          }
         }
       } catch (e) {
         console.warn('[Team Projects] Failed to fetch user info:', e);
@@ -79,14 +84,20 @@ export async function GET() {
     }
 
     // Enrich projects with owner info
-    const enrichedProjects =
-      projects?.map((p) => ({
-        ...p,
-        owner_email: userMap[p.user_id]?.email || null,
-        owner_name: userMap[p.user_id]?.name || null,
-      })) || [];
+    const enrichedProjects = projectRows.map((p) => ({
+      ...p,
+      owner_email: userMap[p.user_id]?.email || null,
+      owner_name: userMap[p.user_id]?.name || null,
+    }));
 
-    return NextResponse.json({ projects: enrichedProjects });
+    return NextResponse.json(
+      { projects: enrichedProjects },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+        },
+      }
+    );
   } catch (error) {
     console.error('[Team Projects] Error:', error);
     return NextResponse.json(

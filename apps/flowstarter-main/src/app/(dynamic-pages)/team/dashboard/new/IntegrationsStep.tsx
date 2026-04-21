@@ -65,7 +65,11 @@ function SectionCard({
   return (
     <div
       className={`rounded-[var(--fs-radius-2xl)] border p-5 space-y-3 backdrop-blur-2xl backdrop-saturate-150 ${className}`}
-      style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}
+      style={{
+        background: 'var(--fs-glass-bg)',
+        borderColor: 'var(--fs-glass-edge)',
+        boxShadow: 'var(--fs-card-shadow)',
+      }}
     >
       {children}
     </div>

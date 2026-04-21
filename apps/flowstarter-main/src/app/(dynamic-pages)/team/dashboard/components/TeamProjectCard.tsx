@@ -1,7 +1,11 @@
 'use client';
 import { useRouter } from 'next/navigation';
 
-import { isLive, isBuilding, STATUS_BADGE_CLASS } from './TeamProjectsStats';
+import {
+  isBuilding,
+  isLive,
+  STATUS_BADGE_CLASS,
+} from '@/lib/team-dashboard/team-project-status';
 import { TeamProjectActionMenu } from './TeamProjectActionMenu';
 import { useTranslations } from '@/lib/i18n';
 
@@ -103,7 +107,12 @@ export function TeamProjectCard({
 
   return (
     <div
-      style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)', borderRadius: 'var(--fs-radius-2xl)' }}
+      style={{
+        background: 'var(--fs-glass-bg)',
+        borderColor: 'var(--fs-glass-edge)',
+        boxShadow: 'var(--fs-card-shadow)',
+        borderRadius: 'var(--fs-radius-2xl)',
+      }}
       className="group relative cursor-pointer border p-6 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-1"
       onClick={() => router.push(`/team/dashboard/projects/${project.id}`)}
     >

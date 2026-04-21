@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 
 // server-only is already mocked globally in test/setup.ts
 
@@ -28,8 +28,14 @@ vi.mock('../email-templates/invitation', () => ({
   })),
 }));
 
-// Must import after mocks are declared
-const { sendEmail, sendWelcomeEmail } = await import('../email');
+let sendEmail: typeof import('../email')['sendEmail'];
+let sendWelcomeEmail: typeof import('../email')['sendWelcomeEmail'];
+
+beforeAll(async () => {
+  const emailModule = await import('../email');
+  sendEmail = emailModule.sendEmail;
+  sendWelcomeEmail = emailModule.sendWelcomeEmail;
+});
 
 describe('sendEmail', () => {
   const originalEnv = process.env;
@@ -78,8 +84,8 @@ describe('sendEmail', () => {
     expect(body.to).toEqual(['user@example.com']);
     expect(body.subject).toBe('Hello');
     expect(body.html).toBe('<p>Body</p>');
-    expect(body.from).toBe('Flowstarter <hello@flowstarter.dev>');
-    expect(body.reply_to).toBe('hello@flowstarter.dev');
+    expect(body.from).toBe('Flowstarter <hello@flowstarter.app>');
+    expect(body.reply_to).toBe('hello@flowstarter.app');
   });
 
   it('returns { success: true } on 200 response', async () => {

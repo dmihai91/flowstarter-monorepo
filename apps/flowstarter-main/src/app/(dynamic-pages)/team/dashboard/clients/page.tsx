@@ -43,7 +43,11 @@ function ClientCard({ client }: { client: Client }) {
     <div
       onClick={() => router.push(`/team/dashboard?client=${client.userId}`)}
       className="group cursor-pointer rounded-[var(--fs-radius-2xl)] border p-5 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-200 hover:-translate-y-0.5"
-      style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}
+      style={{
+        background: 'var(--fs-glass-bg)',
+        borderColor: 'var(--fs-glass-edge)',
+        boxShadow: 'var(--fs-card-shadow)',
+      }}
     >
       <div className="flex items-start gap-4">
         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[var(--purple)]/20 to-blue-500/20 flex items-center justify-center shrink-0 text-sm font-bold text-[var(--purple)]">
@@ -84,9 +88,7 @@ function ClientCard({ client }: { client: Client }) {
           <p className="text-sm font-bold text-[var(--fs-ink)]">
             {client.projectCount}
           </p>
-          <p className="text-[0.6rem] text-[var(--fs-ink-faint)]">
-            Projects
-          </p>
+          <p className="text-[0.6rem] text-[var(--fs-ink-faint)]">Projects</p>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center mb-0.5">
@@ -95,9 +97,7 @@ function ClientCard({ client }: { client: Client }) {
           <p className="text-sm font-bold text-[var(--fs-ink)]">
             €{client.totalFee.toLocaleString()}
           </p>
-          <p className="text-[0.6rem] text-[var(--fs-ink-faint)]">
-            Total fees
-          </p>
+          <p className="text-[0.6rem] text-[var(--fs-ink-faint)]">Total fees</p>
         </div>
         <div className="text-center">
           <div className="flex items-center justify-center mb-0.5">
@@ -149,14 +149,24 @@ export default function ClientsPage() {
             <div
               key={i}
               className="rounded-[var(--fs-radius-2xl)] border h-48 animate-pulse"
-              style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)' }}
+              style={{
+                background: 'var(--fs-glass-bg)',
+                borderColor: 'var(--fs-glass-edge)',
+              }}
             />
           ))}
         </div>
       )}
       {error && <p className="text-sm text-red-500">Failed to load clients.</p>}
       {!isLoading && !error && clients.length === 0 && (
-        <div className="rounded-[var(--fs-radius-2xl)] border p-12 text-center backdrop-blur-2xl backdrop-saturate-150" style={{ background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' }}>
+        <div
+          className="rounded-[var(--fs-radius-2xl)] border p-12 text-center backdrop-blur-2xl backdrop-saturate-150"
+          style={{
+            background: 'var(--fs-glass-bg)',
+            borderColor: 'var(--fs-glass-edge)',
+            boxShadow: 'var(--fs-card-shadow)',
+          }}
+        >
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/50 bg-white/55 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]">
             <Users className="w-8 h-8 text-[var(--fs-ink-faint)]" />
           </div>

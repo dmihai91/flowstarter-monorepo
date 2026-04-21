@@ -13,6 +13,22 @@ import { getConvexClient, convexApi } from '@/lib/convex';
 import { createSupabaseServiceRoleClient } from '@flowstarter/supabase-utils';
 import { bootstrapWorkspace } from '@flowstarter/daytona-utils';
 
+type ConvexClientLike = {
+  query: (fn: string, args?: Record<string, unknown>) => Promise<unknown>;
+  mutation: (fn: string, args?: Record<string, unknown>) => Promise<unknown>;
+};
+
+interface ConvexProjectRecord {
+  _id: string;
+}
+
+interface ConvexFileRecord {
+  type: string;
+  isBinary?: boolean;
+  path: string;
+  content: string;
+}
+
 function unauthorized(status: number, message: string) {
   return NextResponse.json({ error: message }, { status });
 }
@@ -40,25 +56,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'projectId is required' }, { status: 400 });
   }
 
-  const convex = getConvexClient();
+  const convex = getConvexClient() as ConvexClientLike | null;
   if (!convex) {
     return NextResponse.json({ error: 'Convex not configured' }, { status: 500 });
   }
 
   try {
     // Verify project exists in Convex
-    const project = await convex.query(convexApi.projects.getByUrlId, {
+    const project = (await convex.query(convexApi.projects.getByUrlId, {
       urlId: projectId,
-    });
+    })) as ConvexProjectRecord | null;
 
     if (!project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
     // Read project files from Convex
-    const fileRecords = await convex.query(convexApi.files.getProjectFiles, {
+    const fileRecords = (await convex.query(convexApi.files.getProjectFiles, {
       projectId: project._id,
-    });
+    })) as ConvexFileRecord[];
 
     const files: Record<string, string> = {};
     for (const f of fileRecords) {
@@ -91,20 +107,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Create/update Convex editor session
-    const sessionId = await convex.mutation(
+    const sessionId = (await convex.mutation(
       convexApi.editorSessions.createOrUpdate,
       {
         projectId: project._id,
         conversationId: threadId || undefined,
         status: 'active' as const,
       },
-    );
+    )) as string | null;
 
     // Bootstrap the Daytona sandbox
     const result = await bootstrapWorkspace({
       projectId,
       files,
-      onProgress: (step, message) => {
+      onProgress: (step: number, message: string) => {
         console.log(`[Workspaces] Step ${step}: ${message}`);
       },
     });

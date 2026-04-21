@@ -30,7 +30,11 @@ import { IntegrationSettings } from './components/IntegrationSettings';
 
 const card =
   'rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150';
-const cardStyle = { background: 'var(--fs-glass-bg)', borderColor: 'var(--fs-glass-edge)', boxShadow: 'var(--fs-card-shadow)' };
+const cardStyle = {
+  background: 'var(--fs-glass-bg)',
+  borderColor: 'var(--fs-glass-edge)',
+  boxShadow: 'var(--fs-card-shadow)',
+};
 
 // ── Status pill ──────────────────────────────────────────────────────────────
 function StatusPill({ status }: { status: string | null | undefined }) {

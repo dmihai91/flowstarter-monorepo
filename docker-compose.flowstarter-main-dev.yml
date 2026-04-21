@@ -1,0 +1,42 @@
+services:
+  flowstarter-main-dev:
+    container_name: flowstarter-main-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.flowstarter-main-dev
+    working_dir: /workspace
+    env_file:
+      - ./apps/flowstarter-main/.env.local
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      CI: "true"
+      FLOWSTARTER_MAIN_PORT: "3000"
+    ports:
+      - "3002:3000"
+    volumes:
+      - .:/workspace:cached
+      - flowstarter_pnpm_store:/pnpm/store
+      - flowstarter_root_node_modules:/workspace/node_modules
+      - flowstarter_main_node_modules:/workspace/apps/flowstarter-main/node_modules
+      - flowstarter_editor_engine_node_modules:/workspace/packages/editor-engine/node_modules
+      - flowstarter_flow_design_system_node_modules:/workspace/packages/flow-design-system/node_modules
+      - flowstarter_platform_config_node_modules:/workspace/packages/platform-config/node_modules
+      - flowstarter_daytona_utils_node_modules:/workspace/packages/daytona-utils/node_modules
+      - flowstarter_supabase_utils_node_modules:/workspace/packages/supabase-utils/node_modules
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    command: ["/bin/bash", "/workspace/scripts/run-flowstarter-main-docker-dev.sh"]
+
+volumes:
+  flowstarter_pnpm_store:
+  flowstarter_root_node_modules:
+  flowstarter_main_node_modules:
+  flowstarter_editor_engine_node_modules:
+  flowstarter_flow_design_system_node_modules:
+  flowstarter_platform_config_node_modules:
+  flowstarter_daytona_utils_node_modules:
+  flowstarter_supabase_utils_node_modules:

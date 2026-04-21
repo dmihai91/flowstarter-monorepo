@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useEffectEvent, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { type SlowRpcAckRequest, useSlowRpcAckRequests } from "../rpc/requestLatencyState";
 import {
@@ -12,6 +12,7 @@ import {
 } from "../rpc/wsConnectionState";
 import { toastManager } from "./ui/toast";
 import { getPrimaryEnvironmentConnection } from "../environments/runtime";
+import { useEffectEvent } from "../hooks/useEffectEvent";
 
 const FORCED_WS_RECONNECT_DEBOUNCE_MS = 5_000;
 type WsAutoReconnectTrigger = "focus" | "online";

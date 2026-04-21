@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 import type { EditorContext } from '@/lib/client-requests/types';
 
 interface Props {
-  context: EditorContext;
+  context: EditorContext | null;
   onClose: () => void;
 }
 
@@ -24,7 +24,12 @@ export function EditorContextDrawer({ context, onClose }: Props) {
           </button>
         </div>
         <div className="flex-1 overflow-auto p-5">
-          {context.capabilityReason && (
+          {!context && (
+            <p className="text-sm text-[var(--fs-ink-dim)]">
+              No editor context was recorded for this request.
+            </p>
+          )}
+          {context?.capabilityReason && (
             <div className="mb-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
               <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">
                 Why editor escalated
@@ -34,7 +39,7 @@ export function EditorContextDrawer({ context, onClose }: Props) {
               </p>
             </div>
           )}
-          {context.activeFile && (
+          {context?.activeFile && (
             <div className="mb-3">
               <p className="text-xs font-medium text-gray-500 dark:text-white/40 mb-1">
                 Active File
@@ -44,14 +49,16 @@ export function EditorContextDrawer({ context, onClose }: Props) {
               </code>
             </div>
           )}
-          <div>
-            <p className="text-xs font-medium text-gray-500 dark:text-white/40 mb-1.5">
-              Full Context JSON
-            </p>
-            <pre className="text-xs text-gray-700 dark:text-white/70 bg-gray-50 dark:bg-white/[0.04] rounded-xl p-3 overflow-auto whitespace-pre-wrap border border-gray-100 dark:border-white/[0.06]">
-              {JSON.stringify(context, null, 2)}
-            </pre>
-          </div>
+          {context && (
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-white/40 mb-1.5">
+                Full Context JSON
+              </p>
+              <pre className="text-xs text-gray-700 dark:text-white/70 bg-gray-50 dark:bg-white/[0.04] rounded-xl p-3 overflow-auto whitespace-pre-wrap border border-gray-100 dark:border-white/[0.06]">
+                {JSON.stringify(context, null, 2)}
+              </pre>
+            </div>
+          )}
         </div>
       </div>
     </div>

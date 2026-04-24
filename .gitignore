@@ -4,6 +4,7 @@
 dist
 tmp
 out-tsc
+*.tsbuildinfo
 
 # dependencies
 node_modules
@@ -55,6 +56,12 @@ mprocs.log
 
 # E2E auth session data (contains tokens/cookies)
 **/.auth/
+
+# Playwright MCP / local agent logs
+.playwright-mcp/
+
+# Claude Code — machine-local overrides (paths, permissions)
+**/.claude/settings.local.json
 
 # M4 sync scripts
 m4-sync.sh

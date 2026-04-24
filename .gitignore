@@ -54,6 +54,9 @@ mprocs.log
 !.env.shared.example
 !.env.test.example
 
+# Cloudflare Wrangler — local-only secrets for `wrangler dev`
+**/.dev.vars
+
 # E2E auth session data (contains tokens/cookies)
 **/.auth/
 

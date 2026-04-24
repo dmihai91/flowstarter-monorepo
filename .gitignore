@@ -41,6 +41,11 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Private keys / keystores (never commit)
+*.pem
+*.p12
+*.pfx
+
 .nx/cache
 .nx/workspace-data
 mprocs.log
@@ -81,6 +86,9 @@ docs/screenshots/
 
 # Next.js build output
 .next/
+
+# flowstarter-editor (Vite / React Router) — production build; can embed env at compile time
+apps/flowstarter-editor/build/
 
 # Coverage reports (nested)
 **/coverage/

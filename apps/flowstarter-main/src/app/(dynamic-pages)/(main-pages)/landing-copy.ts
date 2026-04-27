@@ -85,7 +85,7 @@ export const LANDING_COPY = {
     ],
   },
   problem: {
-    title: 'Three frustrating choices for your website.',
+    title: 'Forget about frustrating choices like these.',
     pains: [
       {
         icon: 'puzzle',

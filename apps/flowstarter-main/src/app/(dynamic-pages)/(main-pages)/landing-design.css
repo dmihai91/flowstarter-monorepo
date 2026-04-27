@@ -1253,10 +1253,13 @@
 .ls-hero-trust {
   border-color: var(--ls-rule);
   padding-top: 1.6rem;
+  justify-content: center;
 }
 .ls-hero-stat {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 0.25rem;
   padding: 0 1.4rem;
   border-left: 1px solid var(--ls-rule);

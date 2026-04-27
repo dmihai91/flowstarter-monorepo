@@ -2255,7 +2255,7 @@ const en = {
   'landing.hero.displayPrefix': 'Premium websites,',
   'landing.hero.displayFlourish': 'hand-crafted for service professionals.',
   'landing.hero.subhead':
-    'Designed and built by hand, with a smart editor included so you can keep updating yours on demand. Live in two weeks. Hosting, domain, and ongoing support all in. From €799 + €49 a month. We take 8 new clients each month, by design.',
+    'Designed and built by hand, with a smart editor included so you can keep updating yours on demand. Live in two weeks. Hosting, domain, and ongoing support all in. From €799 + €49 a month.',
   'landing.hero.primaryCta': 'Build my site',
   'landing.hero.secondaryCta': 'See how it works',
   'landing.hero.eyebrowSerial': 'Built for you',
@@ -2315,8 +2315,8 @@ const en = {
 
   // Problem — editorial redesign
   'landing.problem.eyebrow': 'The choices you have today',
-  'landing.problem.headlinePrefix': 'Three frustrating choices',
-  'landing.problem.headlineFlourish': 'for your website.',
+  'landing.problem.headlinePrefix': 'Forget about',
+  'landing.problem.headlineFlourish': 'frustrating choices like these.',
   'landing.problem.sub':
     'Most service professionals end up with one of these. None of them work.',
 
@@ -2398,7 +2398,7 @@ const en = {
   'landing.solution.paragraph1':
     'We hand-craft your website using modern tools, not drag-and-drop builders or template marketplaces. Every site is built specifically for your business.',
   'landing.solution.paragraph2':
-    'Then we hand you a smart editor so you can update copy, swap images, and refresh content with natural language. No system to learn. No developer to call. Your website grows with you.',
+    'Then we hand you a smart editor so you can update copy, swap images, and refresh content with natural language. No system to learn. Your website grows with you.',
 
   // Support bot (floating widget on landing)
   'supportBot.openLabel': 'Open support chat',

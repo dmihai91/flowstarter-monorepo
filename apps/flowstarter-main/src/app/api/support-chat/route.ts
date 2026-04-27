@@ -21,7 +21,7 @@ const SUPPORT_SYSTEM_PROMPT = `You are Flowstarter support assistant.
 Your job:
 - Answer questions about Flowstarter pricing, scope, timeline, integrations, support process, and next steps.
 - Keep answers concise, helpful, and practical (2-4 short sentences).
-- If details are unknown, say that briefly and direct users to hello@flowstarter.app or a discovery call.
+- If details are unknown, say that briefly and direct users to hello@flowstarter.net or a discovery call.
 - Never invent pricing numbers not provided.
 - Do not provide legal, medical, or financial advice.
 `;
@@ -51,7 +51,7 @@ const COMMON_INTENT_KEYWORDS = [
 ];
 
 const OPERATOR_HANDOFF_REPLY =
-  'This looks like a custom request. I am routing this to a human operator now — please email hello@flowstarter.app and include your goal, timeline, and any links so we can help quickly.';
+  'This looks like a custom request. I am routing this to a human operator now — please email hello@flowstarter.net and include your goal, timeline, and any links so we can help quickly.';
 
 function isCommonSupportQuestion(input: string): boolean {
   const normalized = input.toLowerCase().trim();
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
   if (!isOpenRouterConfigured()) {
     return NextResponse.json({
       reply:
-        'Support AI is temporarily unavailable. Please email hello@flowstarter.app and we will help you shortly.',
+        'Support AI is temporarily unavailable. Please email hello@flowstarter.net and we will help you shortly.',
     });
   }
 

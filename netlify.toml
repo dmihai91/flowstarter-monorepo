@@ -1,0 +1,25 @@
+###############################################################################
+# Netlify config for the Flowstarter monorepo
+#
+# Builds `apps/flowstarter-main` with pnpm, deploys to Netlify with the
+# official Next.js Runtime plugin (handles SSR + ISR + middleware).
+###############################################################################
+
+[build]
+  # Run install + build from the monorepo root so pnpm workspace links resolve.
+  base = "."
+  command = "pnpm install --frozen-lockfile && pnpm --filter flowstarter build"
+  publish = "apps/flowstarter-main/.next"
+
+[build.environment]
+  # Use pnpm, not npm. NETLIFY_USE_PNPM tells Netlify's build image to install
+  # dependencies with pnpm at the configured version.
+  NETLIFY_USE_PNPM = "true"
+  PNPM_FLAGS = "--frozen-lockfile"
+  NEXT_TELEMETRY_DISABLED = "1"
+  NODE_VERSION = "22"
+
+# Official Next.js Runtime — required for SSR routes, middleware, and ISR.
+# It also handles build caching automatically.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

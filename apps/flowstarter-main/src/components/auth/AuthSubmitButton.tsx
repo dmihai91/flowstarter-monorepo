@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 
 interface AuthSubmitButtonProps {
   children: ReactNode;
@@ -21,13 +21,13 @@ export function AuthSubmitButton({
   className = '',
 }: AuthSubmitButtonProps) {
   return (
-    <UnifiedButton
+    <Button
       type={type}
       disabled={disabled}
       onClick={onClick}
       className={['w-full !rounded-lg font-semibold', className].join(' ')}
     >
       {children}
-    </UnifiedButton>
+    </Button>
   );
 }

@@ -32,7 +32,7 @@ export function ScrollFab() {
     <button
       onClick={handleClick}
       aria-label={atBottom ? 'Back to top' : 'Scroll to bottom'}
-      className={`fixed bottom-6 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/80 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-xl dark:border-white/10 dark:bg-white/10 ${
+      className={`fixed bottom-24 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/80 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:shadow-xl dark:border-white/10 dark:bg-white/10 ${
         show
           ? 'opacity-100 translate-y-0'
           : 'opacity-0 translate-y-4 pointer-events-none'

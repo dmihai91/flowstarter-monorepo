@@ -1,9 +1,9 @@
 'use client';
 
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { I18nProvider } from '@/lib/i18n';
+import { I18nProvider, useI18n } from '@/lib/i18n';
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 import en from '@/locales/en';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -16,61 +16,50 @@ function GlobalErrorContent({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+
   useEffect(() => {
     console.error('Global application error:', error);
   }, [error]);
 
   return (
     <ErrorPageLayout>
-      <div className="text-center">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[var(--fs-ink)] mb-3 tracking-tight">
-          We hit a snag.
+      <div className="text-center max-w-sm mx-auto">
+        <h1 className="text-2xl sm:text-[1.65rem] font-semibold text-[var(--fs-ink)] mb-3 tracking-tight">
+          {t('errors.500.headline')}
         </h1>
-        <p className="text-[var(--fs-ink-dim)] mb-8 leading-relaxed max-w-xs mx-auto text-sm">
-          Our team has been notified. Try reloading - it usually fixes it.
+        <p className="text-[var(--fs-ink-dim)] mb-7 leading-relaxed text-sm">
+          {t('errors.500.body')}
         </p>
 
-        <div
-          className="rounded-[var(--fs-radius-2xl)] border px-6 py-5 mb-8"
-          style={{
-            background: 'var(--fs-glass-bg)',
-            borderColor: 'var(--fs-glass-edge)',
-            boxShadow: 'var(--fs-card-shadow)',
-          }}
-        >
-          <p className="text-sm text-[var(--fs-ink-dim)] leading-relaxed">
-            This is usually a temporary blip. Give it a moment and reload - or
-            head home and come back.
-          </p>
+        {error?.digest && (
+          <div className="mb-7 flex justify-center">
+            <span
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wide"
+              style={{
+                background: 'var(--fs-bg-elevated)',
+                color: 'var(--fs-ink-faint)',
+                border: '1px solid var(--fs-rule)',
+              }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--fs-accent)] opacity-70" />
+              {t('errors.500.errorIdLabel')}: {error.digest}
+            </span>
+          </div>
+        )}
 
-          {error?.digest && (
-            <div className="mt-4 flex justify-center">
-              <span
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono tracking-wide"
-                style={{
-                  background: 'var(--fs-bg-elevated)',
-                  color: 'var(--fs-ink-faint)',
-                  border: '1px solid var(--fs-rule)',
-                }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--fs-accent)] opacity-70" />
-                {error.digest}
-              </span>
-            </div>
-          )}
-        </div>
-
-        <div className="flex gap-3 justify-center flex-wrap">
-          <UnifiedButton onClick={reset} className="gap-2">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Button onClick={reset} className="gap-2">
             <RefreshCw className="w-4 h-4" />
-            Reload
-          </UnifiedButton>
-          <UnifiedButton tone="secondary" asChild className="gap-2">
+            {t('errors.500.reload')}
+          </Button>
+          <Button tone="secondary" asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
-              Go Home
+              {t('errors.500.goHome')}
             </Link>
-          </UnifiedButton>
+          </Button>
         </div>
       </div>
     </ErrorPageLayout>

@@ -1,21 +1,17 @@
 'use client';
 
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 import { setIsErrorPageFlag, useErrorPage } from '@/contexts/ErrorPageContext';
+import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { Home, ArrowLeft, ArrowRight } from 'lucide-react';
 
-const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/login', label: 'Login' },
-  { href: '/help', label: 'Help' },
-  { href: '/pricing', label: 'Pricing' },
-];
-
 export default function NotFound() {
   const { setIsErrorPage } = useErrorPage();
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
   setIsErrorPageFlag(true);
 
   useEffect(() => {
@@ -23,6 +19,13 @@ export default function NotFound() {
       setIsErrorPage(false);
     };
   }, [setIsErrorPage]);
+
+  const navLinks = [
+    { href: '/', label: t('errors.404.linkHome') },
+    { href: '/#pricing', label: t('errors.404.linkPricing') },
+    { href: '/faq', label: t('errors.404.linkFaq') },
+    { href: '/contact', label: t('errors.404.linkContact') },
+  ];
 
   return (
     <ErrorPageLayout>
@@ -45,11 +48,10 @@ export default function NotFound() {
 
         {/* Headline + subtext */}
         <h1 className="text-2xl sm:text-3xl font-bold text-[var(--fs-ink)] mb-3 tracking-tight">
-          This page moved on.
+          {t('errors.404.headline')}
         </h1>
         <p className="text-[var(--fs-ink-dim)] mb-8 leading-relaxed max-w-xs mx-auto text-sm">
-          Whatever you were looking for isn&apos;t here anymore — but we&apos;ve
-          got you covered.
+          {t('errors.404.body')}
         </p>
 
         {/* Glass quick-nav card */}
@@ -63,11 +65,11 @@ export default function NotFound() {
         >
           <div className="px-5 py-3 border-b border-[var(--fs-rule)]/40">
             <p className="text-xs font-semibold uppercase tracking-widest text-[var(--fs-ink-faint)]">
-              Quick navigation
+              {t('errors.404.quickNav')}
             </p>
           </div>
           <ul className="divide-y divide-[var(--fs-rule)]/30">
-            {NAV_LINKS.map(({ href, label }) => (
+            {navLinks.map(({ href, label }) => (
               <li key={href}>
                 <Link
                   href={href}
@@ -83,20 +85,20 @@ export default function NotFound() {
 
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <UnifiedButton asChild className="gap-2">
+          <Button asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
-              Go Home
+              {t('errors.404.goHome')}
             </Link>
-          </UnifiedButton>
-          <UnifiedButton
+          </Button>
+          <Button
             tone="secondary"
             onClick={() => window.history.back()}
             className="gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Go Back
-          </UnifiedButton>
+            {t('errors.404.goBack')}
+          </Button>
         </div>
       </div>
     </ErrorPageLayout>

@@ -4,19 +4,15 @@ import { AppLoader, CardSkeleton } from '../app-loading';
 
 describe('AppLoader', () => {
   describe('page variant (default)', () => {
-    it('renders a full-page centered spinner', () => {
-      const { container } = render(<AppLoader />);
-      const wrapper = container.firstChild as HTMLElement;
-      expect(wrapper.className).toContain('min-h-[60vh]');
-      expect(wrapper.className).toContain('flex-1');
-      expect(wrapper.className).toContain('items-center');
-      expect(wrapper.className).toContain('justify-center');
+    it('renders the design-system full-screen loading screen', () => {
+      const { getByRole, getByText } = render(<AppLoader />);
+      expect(getByRole('status')).toHaveAttribute('aria-busy', 'true');
+      expect(getByText('Loading...')).toBeInTheDocument();
     });
 
-    it('renders spinning animation', () => {
-      const { container } = render(<AppLoader />);
-      const spinner = container.querySelector('.animate-spin');
-      expect(spinner).toBeInTheDocument();
+    it('passes custom message to loading screen', () => {
+      const { getByText } = render(<AppLoader message="Please wait" />);
+      expect(getByText('Please wait')).toBeInTheDocument();
     });
   });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 import { useContactForm } from '@/hooks/useContactForm';
 import { useState } from 'react';
 import {
@@ -92,7 +92,7 @@ export default function ContactPage() {
     const response =
       supportMode === 'ai'
         ? aiReplyFor(message)
-        : 'Operator request received. We will follow up on hello@flowstarter.app. For urgent questions, include your project URL and deadline.';
+        : 'Operator request received. We will follow up on hello@flowstarter.net. For urgent questions, include your project URL and deadline.';
     window.setTimeout(() => {
       setSupportMessages((prev) => [
         ...prev,
@@ -134,12 +134,12 @@ export default function ContactPage() {
                 <p className="text-[var(--fs-ink-faint)] mb-6">
                   {t('contact.form.successDesc')}
                 </p>
-                <UnifiedButton
+                <Button
                   tone="secondary"
                   onClick={() => contactMutation.reset()}
                 >
                   {t('contact.form.sendAnother')}
-                </UnifiedButton>
+                </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -231,7 +231,7 @@ export default function ContactPage() {
                   </div>
                 )}
 
-                <UnifiedButton
+                <Button
                   type="submit"
                   disabled={status === 'loading'}
                   className="w-full"
@@ -247,7 +247,7 @@ export default function ContactPage() {
                       <Send className="w-4 h-4" />
                     </span>
                   )}
-                </UnifiedButton>
+                </Button>
               </form>
             )}
           </section>
@@ -260,13 +260,13 @@ export default function ContactPage() {
               <p className="text-[var(--fs-ink-faint)] mb-6">
                 {t('contact.talk.description')}
               </p>
-              <UnifiedButton
+              <Button
                 className="w-full"
                 onClick={() => setDiscoveryModalOpen(true)}
               >
                 <Calendar className="w-4 h-4 mr-2" />
                 {t('contact.talk.button')}
-              </UnifiedButton>
+              </Button>
             </section>
 
             <section className="p-5 sm:p-6 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
@@ -275,15 +275,15 @@ export default function ContactPage() {
               </h2>
               <div className="mb-5">
                 {!supportOpen ? (
-                  <div className="flex justify-end">
-                    <UnifiedButton
+                  <div className="flex justify-start">
+                    <Button
                       type="button"
                       onClick={() => setSupportOpen(true)}
-                      className="h-10 px-3 py-2 text-xs"
+                      className="h-12 px-5 py-3 text-base"
                     >
-                      <Headphones className="h-4 w-4" />
+                      <Headphones className="h-5 w-5" />
                       Open support chat
-                    </UnifiedButton>
+                    </Button>
                   </div>
                 ) : (
                   <div className="rounded-xl border border-[var(--fs-rule)] bg-white/70 dark:bg-white/[0.03] p-3">
@@ -353,20 +353,20 @@ export default function ContactPage() {
                         }
                         className="h-9 w-full rounded-lg border border-[var(--fs-rule)] bg-white dark:bg-white/[0.03] px-3 text-xs text-[var(--fs-ink)] outline-none focus:ring-2 focus:ring-[var(--purple)]/20"
                       />
-                      <UnifiedButton
+                      <Button
                         type="button"
                         onClick={submitSupportMessage}
                         className="h-9 px-3 py-2 text-xs"
                       >
                         Send
-                      </UnifiedButton>
+                      </Button>
                     </div>
                   </div>
                 )}
               </div>
               <div className="space-y-4">
                 <a
-                  href="mailto:hello@flowstarter.app"
+                  href="mailto:hello@flowstarter.net"
                   className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
                 >
                   <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">

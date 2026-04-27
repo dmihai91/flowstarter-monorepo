@@ -94,12 +94,12 @@ describe('ExternalNavigationWithAuth', () => {
   });
 
   describe('Signed in', () => {
-    it('renders dashboard nav controls', async () => {
+    it('renders the theme toggle (dashboard chrome lives in the dashboard layout)', async () => {
       mockUseAuth.mockReturnValue({ isSignedIn: true, isLoaded: true });
       await act(async () => {
         render(<ExternalNavigationWithAuth />);
       });
-      expect(screen.getByTestId('dashboard-nav')).toBeInTheDocument();
+      expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();
     });
 
     it('links logo to dashboard', async () => {

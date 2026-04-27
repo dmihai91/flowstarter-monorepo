@@ -33,7 +33,7 @@ describe('Clerk-Supabase JWT Integration', () => {
   });
 
   describe('getSupabaseJWT', () => {
-    it('should return JWT token when session is valid', async () => {
+    it('should return JWT token when session is valid (default session token)', async () => {
       const mockToken = 'mock-jwt-token-123';
 
       mockAuth.mockResolvedValue({
@@ -45,10 +45,11 @@ describe('Clerk-Supabase JWT Integration', () => {
 
       expect(token).toBe(mockToken);
       expect(mockAuth).toHaveBeenCalled();
-      expect(mockGetToken).toHaveBeenCalledWith({ template: 'supabase' });
+      // Preferred path is Supabase Third-Party Auth: no JWT template arg.
+      expect(mockGetToken).toHaveBeenCalledWith();
     });
 
-    it('should use custom template from environment variable', async () => {
+    it('should fall back to custom template from environment variable when default returns null', async () => {
       const mockToken = 'mock-jwt-token-456';
       const customTemplate = 'custom-template';
 
@@ -57,12 +58,16 @@ describe('Clerk-Supabase JWT Integration', () => {
       mockAuth.mockResolvedValue({
         getToken: mockGetToken,
       });
-      mockGetToken.mockResolvedValue(mockToken);
+      // First call (default) returns null, second call (template) returns the token.
+      mockGetToken.mockResolvedValueOnce(null).mockResolvedValueOnce(mockToken);
 
       const token = await getSupabaseJWT();
 
       expect(token).toBe(mockToken);
-      expect(mockGetToken).toHaveBeenCalledWith({ template: customTemplate });
+      expect(mockGetToken).toHaveBeenNthCalledWith(1);
+      expect(mockGetToken).toHaveBeenNthCalledWith(2, {
+        template: customTemplate,
+      });
     });
 
     it('should return null when session is invalid', async () => {
@@ -129,7 +134,7 @@ describe('Clerk-Supabase JWT Integration', () => {
         expect.stringContaining('[Auth] getSupabaseJWT')
       );
       expect(consoleInfoSpy).toHaveBeenCalledWith(
-        expect.stringContaining('template=supabase')
+        expect.stringContaining('strategy=default-session-token')
       );
       expect(consoleInfoSpy).toHaveBeenCalledWith(
         expect.stringContaining('hasToken=true')

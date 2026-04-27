@@ -1,22 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 import { useI18n } from '@/lib/i18n';
 import { LANDING_COPY } from '../landing-copy';
 import { PreQualModal } from './PreQualModal';
+import { useEcommerceWaitlist } from './ecommerce-waitlist-store';
 
-const STORAGE_BY_PLAN: Record<string, string> = {
-  STARTER: '10 GB',
-  RELAUNCH: '10 GB',
-  GROWTH: '50 GB',
-  PRO: '150 GB',
-};
+// Storage tiers are not advertised on the concierge offer.
+const STORAGE_BY_PLAN: Record<string, string> = {};
 
 export function LandingPricing() {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
   const pricing = LANDING_COPY.pricing;
+  const openWaitlist = useEcommerceWaitlist((s) => s.open);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -69,24 +67,9 @@ export function LandingPricing() {
           <p className="ls-body ls-body--lead mt-7 mx-auto">
             {pricing.subtitle}
           </p>
-
-          {pricing.socialProof && (
-            <p
-              className="mt-5"
-              style={{
-                fontFamily: 'var(--ls-mono)',
-                fontSize: '10.5px',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: 'var(--ls-accent)',
-              }}
-            >
-              ● {pricing.socialProof}
-            </p>
-          )}
         </div>
 
-        <div className="ls-pricing-grid mt-14 grid gap-5 sm:grid-cols-2 md:gap-6">
+        <div className="ls-pricing-grid mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
           {pricing.plans.map((plan, i) => {
             const isHighlighted = plan.recommended === true;
             const isComingSoon = plan.status === 'coming-soon';
@@ -153,42 +136,42 @@ export function LandingPricing() {
                 </ul>
 
                 {isComingSoon ? (
-                  <UnifiedButton
-                    disabled
+                  <Button
                     tone="secondary"
-                    className="mt-auto h-[46px] w-full text-[0.9rem] opacity-55"
+                    onClick={openWaitlist}
+                    className="mt-auto h-[46px] w-full text-[0.9rem]"
                   >
                     {plan.cta}
-                  </UnifiedButton>
+                  </Button>
                 ) : isHighlighted ? (
-                  <UnifiedButton
+                  <Button
                     onClick={() => handlePlanClick(plan.name.toLowerCase())}
                     className="mt-auto h-[46px] w-full text-[0.9rem]"
                   >
                     {plan.cta}
-                  </UnifiedButton>
+                  </Button>
                 ) : (
-                  <UnifiedButton
+                  <Button
                     tone="secondary"
                     onClick={() => handlePlanClick(plan.name.toLowerCase())}
                     className="mt-auto h-[46px] w-full text-[0.9rem]"
                   >
                     {plan.cta}
-                  </UnifiedButton>
+                  </Button>
                 )}
               </div>
             );
           })}
         </div>
 
-        <p className="ls-price-note mt-10 mx-auto max-w-2xl text-center">
-          {pricing.note}
-        </p>
-        {pricing.relaunchNote && (
-          <p className="ls-price-relaunch mt-3 mx-auto max-w-2xl text-center">
-            {pricing.relaunchNote}
+        {pricing.socialProof && (
+          <p className="mt-12 mx-auto max-w-2xl text-center text-[var(--ls-ink-dim)] text-[15px] leading-relaxed">
+            {pricing.socialProof}
           </p>
         )}
+        <p className="ls-price-note mt-4 mx-auto max-w-2xl text-center text-[13px]">
+          {pricing.note}
+        </p>
       </div>
 
       <PreQualModal

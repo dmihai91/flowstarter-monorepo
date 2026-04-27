@@ -134,10 +134,10 @@ describe('UserMenu', () => {
     expect(screen.getByText('test@example.com')).toBeInTheDocument();
   });
 
-  it('shows Profile + Settings for client pages', () => {
+  it('shows Profile for client pages', () => {
     render(<UserMenu />);
     expect(screen.getByText('app.profile')).toBeInTheDocument();
-    expect(screen.getByText('app.settings')).toBeInTheDocument();
+    expect(screen.queryByText('app.settings')).not.toBeInTheDocument();
   });
 
   it('shows Security link for team pages', () => {

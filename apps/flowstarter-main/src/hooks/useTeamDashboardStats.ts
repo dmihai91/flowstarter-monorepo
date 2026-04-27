@@ -21,5 +21,6 @@ export function useTeamDashboardStats() {
     },
     staleTime: 20_000,
     gcTime: 5 * 60_000,
+    retry: 1,
   });
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Inbox, CheckCircle2 } from 'lucide-react';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 
 interface OperatorRequest {
   id: string;
@@ -111,7 +111,7 @@ export function OperatorRequestsList() {
           {items.map((item) => {
             const sessionLabel = item.email
               .replace('support+', '')
-              .replace('@flowstarter.app', '');
+              .replace('@flowstarter.net', '');
             const disabled = Boolean(item.responded_at);
             return (
               <div
@@ -152,7 +152,7 @@ export function OperatorRequestsList() {
                       This reply is delivered to the user chat.
                     </span>
                   )}
-                  <UnifiedButton
+                  <Button
                     type="button"
                     className="h-8 px-3 py-1 text-xs"
                     disabled={
@@ -163,7 +163,7 @@ export function OperatorRequestsList() {
                     onClick={() => void handleRequest(item.id)}
                   >
                     {handlingId === item.id ? 'Sending…' : 'Mark handled'}
-                  </UnifiedButton>
+                  </Button>
                 </div>
               </div>
             );

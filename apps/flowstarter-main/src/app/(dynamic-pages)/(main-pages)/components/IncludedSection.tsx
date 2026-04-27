@@ -1,12 +1,9 @@
-'use client';
-
-import { useI18n } from '@/lib/i18n';
+import { tServer } from '@/lib/i18n-server';
 import { LandingIcon, type IconName } from './LandingIcons';
 import { LANDING_COPY } from '../landing-copy';
 
 export function IncludedSection() {
-  const { t: tStrict } = useI18n();
-  const t = tStrict as (key: string) => string;
+  const t = tServer as (key: string) => string;
   const included = LANDING_COPY.included;
 
   return (
@@ -71,7 +68,7 @@ export function IncludedSection() {
             </div>
           ))}
 
-          {/* Storage promise — featured line item */}
+          {/* Ownership promise — featured line item */}
           <div
             className="ls-card ls-included-card ls-included-card--featured"
             style={{
@@ -84,23 +81,23 @@ export function IncludedSection() {
               <LandingIcon name={'layers' as IconName} className="h-4 w-4" />
             </div>
             <h3 className="ls-included-title">
-              {t('landing.storage.tagline')}
+              {t('landing.included.ownership.title')}
             </h3>
             <p className="ls-included-body">
-              {t('landing.storage.includedNote')}
+              {t('landing.included.ownership.body')}
             </p>
             <div className="ls-included-chips">
               <span className="ls-included-chip">
-                {t('landing.storage.starter.tier')}{' '}
-                <b>{t('landing.storage.starter.amount')}</b>
+                {t('landing.included.ownership.chip1Label')}{' '}
+                <b>{t('landing.included.ownership.chip1Value')}</b>
               </span>
               <span className="ls-included-chip">
-                {t('landing.storage.growth.tier')}{' '}
-                <b>{t('landing.storage.growth.amount')}</b>
+                {t('landing.included.ownership.chip2Label')}{' '}
+                <b>{t('landing.included.ownership.chip2Value')}</b>
               </span>
               <span className="ls-included-chip">
-                {t('landing.storage.pro.tier')}{' '}
-                <b>{t('landing.storage.pro.amount')}</b>
+                {t('landing.included.ownership.chip3Label')}{' '}
+                <b>{t('landing.included.ownership.chip3Value')}</b>
               </span>
             </div>
           </div>

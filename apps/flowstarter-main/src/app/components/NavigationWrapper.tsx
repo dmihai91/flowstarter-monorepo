@@ -26,7 +26,6 @@ const publicRoutes = [
 // Routes where we hide the default navbar (they have their own header)
 const noNavbarRoutes = [
   '/',
-  '/status',
   '/404',
   '/team',
   '/team/login',

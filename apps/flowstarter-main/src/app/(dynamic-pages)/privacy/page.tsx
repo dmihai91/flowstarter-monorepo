@@ -3,14 +3,14 @@
 import { Shield, Bot, Download, Eye, Clock, Lock, Mail } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { PublicPageLayout } from '@/components/PublicPageLayout';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 
 export default function PrivacyPage() {
   const { t } = useTranslations();
   const effectiveDate = 'February 27, 2026';
   const lastUpdated = 'February 27, 2026';
-  const privacyEmail = 'privacy@flowstarter.app';
-  const supportEmail = 'hello@flowstarter.app';
+  const privacyEmail = 'privacy@flowstarter.net';
+  const supportEmail = 'hello@flowstarter.net';
   const termsRefText = t('privacy.termsRef', {
     link: t('privacy.termsRefLink'),
   });
@@ -559,9 +559,9 @@ export default function PrivacyPage() {
           <p className="text-[var(--fs-ink-faint)] mb-4">
             {t('privacy.contact.description')}
           </p>
-          <UnifiedButton asChild className="min-w-[15rem]">
+          <Button asChild className="min-w-[15rem]">
             <a href={`mailto:${privacyEmail}`}>{privacyEmail}</a>
-          </UnifiedButton>
+          </Button>
         </div>
       </main>
     </PublicPageLayout>

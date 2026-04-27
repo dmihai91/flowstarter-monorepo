@@ -2,6 +2,7 @@ import { useServerSupabaseWithAuth } from '@/hooks/useServerSupabase';
 import { googleAnalyticsDataService } from '@/lib/google-analytics-data';
 import { getValidGoogleCredentials } from '@/lib/google-oauth-helper';
 import { getAllProjectGACredentials } from '@/lib/google-analytics-vault';
+import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
@@ -64,13 +65,34 @@ export async function GET() {
     }
 
     const supabase = await useServerSupabaseWithAuth();
+    const serviceRoleSupabase = createSupabaseServiceRoleClient();
+
+    const loadProjectsWithFallback = async () => {
+      const authedResult = await supabase
+        .from('projects')
+        .select('*')
+        .order('updated_at', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      // Clerk -> Supabase JWT can be misconfigured in some environments.
+      // If PostgREST rejects it, fallback to service role scoped to this user.
+      if (authedResult.error?.code === 'PGRST301') {
+        console.warn(
+          '[dashboard/stats] Falling back to service-role client due to JWT decode error'
+        );
+        return serviceRoleSupabase
+          .from('projects')
+          .select('*')
+          .eq('user_id', userId)
+          .order('updated_at', { ascending: false })
+          .order('created_at', { ascending: false });
+      }
+
+      return authedResult;
+    };
 
     // Fetch all projects for the user
-    const { data: projects, error: projectsError } = await supabase
-      .from('projects')
-      .select('*')
-      .order('updated_at', { ascending: false })
-      .order('created_at', { ascending: false });
+    const { data: projects, error: projectsError } = await loadProjectsWithFallback();
 
     if (projectsError) {
       console.error('Error fetching projects:', projectsError);

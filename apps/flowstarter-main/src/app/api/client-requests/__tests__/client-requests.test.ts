@@ -174,10 +174,19 @@ describe('GET /api/client-requests', () => {
     expect(body).toEqual({ requests: [] });
   });
 
-  it('returns 403 when role is missing from sessionClaims', async () => {
+  it('returns 403 when role is missing from both sessionClaims and currentUser', async () => {
+    authMock.mockResolvedValue({ userId: 'user_123', sessionClaims: {} });
+    currentUserMock.mockResolvedValue({ publicMetadata: {} });
+    const res = await GET(makeJsonRequest('GET'));
+    expect(res.status).toBe(403);
+  });
+
+  it('falls back to currentUser publicMetadata.role when sessionClaims lack a role', async () => {
     authMock.mockResolvedValue({ userId: 'user_123', sessionClaims: {} });
     currentUserMock.mockResolvedValue({ publicMetadata: { role: 'admin' } });
     const res = await GET(makeJsonRequest('GET'));
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ requests: [] });
   });
 });

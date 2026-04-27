@@ -16,7 +16,7 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid session' }, { status: 400 });
   }
 
-  const email = `support+${parsed.data}@flowstarter.app`;
+  const email = `support+${parsed.data}@flowstarter.net`;
   const db =
     createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
 

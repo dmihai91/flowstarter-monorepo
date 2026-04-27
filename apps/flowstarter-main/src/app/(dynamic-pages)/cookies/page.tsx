@@ -3,7 +3,7 @@
 import { Cookie, Shield, BarChart3, Settings, Check } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { PublicPageLayout } from '@/components/PublicPageLayout';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 
 export default function CookiePolicyPage() {
   const { t } = useTranslations();
@@ -321,9 +321,9 @@ export default function CookiePolicyPage() {
               {t('cookies.contact.privacyLink')}
             </a>
           </p>
-          <UnifiedButton asChild>
-            <a href="mailto:privacy@flowstarter.app">privacy@flowstarter.app</a>
-          </UnifiedButton>
+          <Button asChild>
+            <a href="mailto:privacy@flowstarter.net">privacy@flowstarter.net</a>
+          </Button>
         </div>
       </main>
     </PublicPageLayout>

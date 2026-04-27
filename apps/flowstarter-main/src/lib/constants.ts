@@ -17,7 +17,7 @@ export const ROUTES = {
   teamDashboard: '/team/dashboard',
   profile: '/profile',
   teamProfile: '/team/dashboard/profile',
-  settings: '/dashboard/integrations',
+  settings: '/profile',
   teamSettings: '/team/dashboard/services',
   help: '/help',
   pricing: '/pricing',

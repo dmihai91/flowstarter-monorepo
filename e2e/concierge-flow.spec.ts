@@ -6,13 +6,9 @@
  * Locally: runs against localhost:3000.
  *
  * These do NOT require auth and do NOT hit real AI/Daytona.
- * Full flow tests live in apps/flowstarter-editor/e2e/cross-app/.
  */
 
 import { test, expect } from '@playwright/test';
-
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
-const isExternalUrl = BASE_URL.startsWith('https://');
 
 test.describe('Concierge Flow — Platform Smoke', () => {
   test.describe('Main Platform', () => {
@@ -56,23 +52,4 @@ test.describe('Concierge Flow — Platform Smoke', () => {
     });
   });
 
-  test.describe('Editor', () => {
-    test('Editor redirects to signin when not authenticated', async ({ page }) => {
-      // In CI against an external URL the editor runs on a separate domain —
-      // skip this test and rely on cross-app E2E for editor auth coverage.
-      test.skip(isExternalUrl || !!process.env.CI, 'Editor localhost check skipped in CI — covered by cross-app E2E');
-
-      await page.goto('http://localhost:5173');
-      await page.waitForTimeout(3000);
-      const url = page.url();
-      const isRedirected =
-        url.includes('login') ||
-        url.includes('sign-in') ||
-        url.includes('flowstarter.dev') ||
-        url.includes('localhost:3000');
-      await page.screenshot({ path: 'e2e/screenshots/06-editor-auth-redirect.png', fullPage: true });
-      console.log('Editor redirect URL:', url);
-      expect(typeof isRedirected).toBe('boolean');
-    });
-  });
 });

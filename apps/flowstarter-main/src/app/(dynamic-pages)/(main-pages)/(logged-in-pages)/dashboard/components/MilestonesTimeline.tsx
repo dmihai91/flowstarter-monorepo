@@ -16,12 +16,12 @@ function StepCircle({ index, status }: { index: number; status: StepStatus }) {
   return (
     <div
       className={cn(
-        'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold transition-all duration-300',
+        'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-sm font-semibold transition-all duration-200',
         status === 'active'
-          ? 'bg-gradient-to-br from-[var(--purple)] to-blue-500 text-white shadow-[0_0_20px_rgba(77,93,217,0.4)] ring-[5px] ring-[var(--purple)]/15'
+          ? 'bg-[var(--fs-accent)] text-white ring-2 ring-[var(--fs-accent-ring)]'
           : status === 'completed'
-          ? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-md shadow-emerald-500/30 ring-4 ring-emerald-400/20'
-          : 'bg-gray-100 dark:bg-white/[0.05] border border-gray-200 dark:border-white/[0.10] text-gray-400 dark:text-white/30'
+          ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/30'
+          : 'border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-faint)]'
       )}
     >
       {status === 'completed' ? (
@@ -40,19 +40,19 @@ function StepLabel({ index, status }: { index: number; status: StepStatus }) {
     <div className="flex items-center gap-1.5">
       <span
         className={cn(
-          'text-[0.6rem] font-bold uppercase tracking-widest',
+          'text-[0.62rem] font-semibold uppercase tracking-wide',
           status === 'active'
-            ? 'text-[var(--purple)]'
+            ? 'text-[var(--fs-accent)]'
             : status === 'completed'
             ? 'text-emerald-500 dark:text-emerald-400'
-            : 'text-gray-400 dark:text-white/30'
+            : 'text-[var(--fs-ink-faint)]'
         )}
       >
         Step {index + 1}
       </span>
       {status === 'active' && (
-        <span className="flex items-center gap-1 bg-[var(--purple)]/10 text-[var(--purple)] text-[0.55rem] font-semibold px-1.5 py-0.5 rounded-full">
-          <span className="w-1 h-1 rounded-full bg-[var(--purple)] animate-pulse" />
+        <span className="flex items-center gap-1 rounded-md border border-[var(--fs-rule-accent)] bg-[var(--fs-accent-bg)] px-1.5 py-0.5 text-[0.55rem] font-semibold text-[var(--fs-accent)]">
+          <span className="h-1 w-1 rounded-full bg-[var(--fs-accent)]" />
           You are here
         </span>
       )}
@@ -76,12 +76,12 @@ function StepCard({
   return (
     <div
       className={cn(
-        'w-full p-4 rounded-xl transition-all duration-300',
+        'w-full rounded-lg border p-4 transition-all duration-200',
         status === 'active'
-          ? 'bg-white dark:bg-white/[0.07] border border-[var(--purple)]/25 dark:border-[var(--purple)]/30 shadow-[0_4px_24px_rgba(77,93,217,0.12)] ring-1 ring-[var(--purple)]/15'
+          ? 'bg-[var(--fs-glass-bg)] border-[var(--fs-rule-accent)]'
           : status === 'completed'
-          ? 'bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-200 dark:border-emerald-500/20'
-          : 'bg-[var(--fs-bg-elevated)] border border-gray-200 dark:border-white/[0.07]'
+          ? 'border-emerald-500/30 bg-emerald-500/10'
+          : 'bg-[var(--fs-bg-elevated)] border-[var(--fs-rule)]'
       )}
     >
       <StepLabel index={index} status={status} />
@@ -100,7 +100,7 @@ function StepCard({
           className={cn(
             'text-xs leading-snug mt-1',
             status === 'locked'
-              ? 'text-gray-300 dark:text-white/20'
+              ? 'text-[var(--fs-ink-disabled)]'
               : 'text-[var(--fs-ink-faint)]'
           )}
         >
@@ -151,11 +151,11 @@ export function MilestonesTimeline({
       <div className="sm:hidden">
         <div className="relative pl-16">
           {/* Track */}
-          <div className="absolute left-[19px] top-5 bottom-5 w-[2px] bg-gray-200 dark:bg-white/[0.06] rounded-full" />
+          <div className="absolute left-[19px] top-5 bottom-5 w-[2px] rounded-full bg-[var(--fs-rule)]" />
           {/* Progress fill */}
           {completedCount > 0 && (
             <div
-              className="absolute left-[19px] top-5 w-[2px] bg-gradient-to-b from-[var(--purple)] to-emerald-500 rounded-full transition-all duration-700"
+              className="absolute left-[19px] top-5 w-[2px] rounded-full bg-gradient-to-b from-[var(--fs-accent)] to-emerald-500 transition-all duration-500"
               style={{
                 height: `${(completedCount / (milestones.length - 1)) * 85}%`,
               }}
@@ -186,12 +186,12 @@ export function MilestonesTimeline({
           <div
             key={i}
             className={cn(
-              'relative p-4 flex items-center gap-3 rounded-xl transition-all duration-300',
+              'relative flex items-center gap-3 rounded-lg border p-4 transition-all duration-200',
               m.status === 'active'
-                ? 'bg-white dark:bg-white/[0.07] border border-[var(--purple)]/25 dark:border-[var(--purple)]/30 shadow-[0_4px_20px_rgba(77,93,217,0.12)]'
+                ? 'bg-[var(--fs-glass-bg)] border-[var(--fs-rule-accent)]'
                 : m.status === 'completed'
-                ? 'bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-200 dark:border-emerald-500/20'
-                : 'bg-[var(--fs-bg-elevated)] border border-gray-200 dark:border-white/[0.07]'
+                ? 'border-emerald-500/30 bg-emerald-500/10'
+                : 'bg-[var(--fs-bg-elevated)] border-[var(--fs-rule)]'
             )}
           >
             <StepCircle index={i} status={m.status} />
@@ -221,10 +221,10 @@ export function MilestonesTimeline({
       <div className="hidden lg:block">
         <div className="relative">
           {/* Track */}
-          <div className="absolute top-5 left-[calc(12.5%+24px)] right-[calc(12.5%+24px)] h-[2px] bg-gray-200 dark:bg-white/[0.06] rounded-full" />
+          <div className="absolute top-5 left-[calc(12.5%+24px)] right-[calc(12.5%+24px)] h-[2px] rounded-full bg-[var(--fs-rule)]" />
           {completedCount > 0 && (
             <div
-              className="absolute top-5 left-[calc(12.5%+24px)] h-[2px] bg-gradient-to-r from-[var(--purple)] to-emerald-500 rounded-full z-[1] transition-all duration-700"
+              className="absolute top-5 left-[calc(12.5%+24px)] z-[1] h-[2px] rounded-full bg-gradient-to-r from-[var(--fs-accent)] to-emerald-500 transition-all duration-500"
               style={{
                 width: `${(completedCount / (milestones.length - 1)) * 75}%`,
               }}

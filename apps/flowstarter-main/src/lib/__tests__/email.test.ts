@@ -84,8 +84,8 @@ describe('sendEmail', () => {
     expect(body.to).toEqual(['user@example.com']);
     expect(body.subject).toBe('Hello');
     expect(body.html).toBe('<p>Body</p>');
-    expect(body.from).toBe('Flowstarter <hello@flowstarter.app>');
-    expect(body.reply_to).toBe('hello@flowstarter.app');
+    expect(body.from).toBe('Flowstarter <hello@flowstarter.net>');
+    expect(body.reply_to).toBe('hello@flowstarter.net');
   });
 
   it('returns { success: true } on 200 response', async () => {

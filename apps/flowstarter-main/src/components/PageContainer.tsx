@@ -7,6 +7,7 @@ import {
 } from '@flowstarter/flow-design-system';
 import { cn } from '@/lib/utils';
 import React from 'react';
+import { dashboardDarkOverlay, dashboardLightOverlay } from '@/lib/glass';
 
 interface PageContainerProps extends React.PropsWithChildren {
   gradientVariant?: FlowBackgroundVariant | 'integrations' | 'help' | 'default';
@@ -48,8 +49,19 @@ export function PageContainer({
           variant={flowVariant}
           style={{ position: 'fixed', inset: 0, zIndex: 0 }}
         />
+        <div
+          className="fixed inset-0 z-[1] pointer-events-none dark:hidden"
+          style={{ background: dashboardLightOverlay }}
+        />
+        <div
+          className="fixed inset-0 z-[1] pointer-events-none hidden dark:block"
+          style={{ background: dashboardDarkOverlay }}
+        />
         <MaxWidthContainer
-          className={cn('p-4 sm:p-6 lg:p-8 pt-6', contentClassName)}
+          className={cn(
+            'relative z-10 p-4 sm:p-6 lg:p-8 pt-6',
+            contentClassName
+          )}
         >
           {children}
         </MaxWidthContainer>

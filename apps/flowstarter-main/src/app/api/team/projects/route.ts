@@ -2,6 +2,7 @@ import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { PROJECT_LIST_SELECT } from '@/lib/projects/project-list-columns';
+import { deriveProjectStatus } from '@/lib/team-dashboard/team-project-status';
 import type { Table } from '@/types';
 
 /**
@@ -83,9 +84,15 @@ export async function GET() {
       }
     }
 
-    // Enrich projects with owner info
+    // Enrich projects with owner info and a derived status for schema compatibility.
     const enrichedProjects = projectRows.map((p) => ({
       ...p,
+      status: deriveProjectStatus({
+        is_draft: p.is_draft,
+        final_status: p.final_status,
+        published_url: p.published_url,
+        generation_completed_at: p.generation_completed_at,
+      }),
       owner_email: userMap[p.user_id]?.email || null,
       owner_name: userMap[p.user_id]?.name || null,
     }));

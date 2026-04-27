@@ -140,9 +140,9 @@ flowstarter/
 
 ### Essential Commands
 
-- `pnpm dev` - Start Next.js + Convex development server
+- `pnpm dev` (from repo root) - Start the full local stack (Main, Supabase, Library API/UI, Convex, Code, Tunnel) via mprocs
+- `pnpm dev:main` (from repo root) - Start only the Next.js Main app
 - `pnpm dev:coding-agent` - Start Python coding agent service
-- `pnpm dev:all` - Start everything together
 - `pnpm build` - Build the application for production
 - `pnpm start` - Start production server
 - `pnpm test` - Run unit tests with Vitest

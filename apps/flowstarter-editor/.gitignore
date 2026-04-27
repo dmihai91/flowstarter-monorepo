@@ -1,5 +1,0 @@
-# Build output (never commit — may embed VITE_* and other env)
-build/
-
-# Local secrets (Wrangler)
-.dev.vars

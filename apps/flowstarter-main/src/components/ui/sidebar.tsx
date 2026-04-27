@@ -1,22 +1,31 @@
 'use client';
 
 import { FeedbackDialog } from '@/components/FeedbackDialog';
+import { DashboardSidebarShell } from '@/components/ui/dashboard-sidebar-shell';
+import { Logo } from '@/components/ui/logo';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useSidebar } from '@/contexts/SidebarContext';
 import { EXTERNAL_URLS } from '@/lib/constants';
 import { useTranslations } from '@/lib/i18n';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/ui/logo';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
+import {
+  sidebarNavActiveClass,
+  sidebarNavBaseClass,
+  sidebarNavIdleClass,
+  sidebarSectionLabelClass,
+} from '@/lib/glass';
 import { useTheme } from '@/contexts/ThemeContext';
 import {
   Calendar,
   HelpCircle,
   LayoutDashboard,
   MessageSquare,
-  Puzzle,
-  ChevronsLeft,
-  ChevronsRight,
   X,
   type LucideIcon,
 } from 'lucide-react';
@@ -44,11 +53,6 @@ export function Sidebar() {
       title: t('sidebar.dashboard'),
       href: '/dashboard',
       icon: LayoutDashboard,
-    },
-    {
-      title: t('sidebar.integrations'),
-      href: '/dashboard/integrations',
-      icon: Puzzle,
     },
   ];
 
@@ -122,11 +126,9 @@ export function Sidebar() {
     const active = !external && isActive(href, exact);
 
     const cls = cn(
-      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
-      active
-        ? 'bg-[var(--purple)] text-white shadow-lg shadow-[var(--purple)]/25'
-        : 'text-gray-600 dark:text-white/60 hover:bg-white/55 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
-      !showLabel && 'justify-center !px-2'
+      sidebarNavBaseClass,
+      active ? sidebarNavActiveClass : sidebarNavIdleClass,
+      !showLabel && 'justify-center !px-0 w-11 mx-auto'
     );
 
     const content = (
@@ -136,217 +138,118 @@ export function Sidebar() {
       </>
     );
 
-    if (external) {
-      return (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={!showLabel ? label : undefined}
-          onClick={onClick}
-          className={cls}
-        >
-          {content}
-        </a>
-      );
-    }
-
-    return (
-      <Link
+    const linkNode = external ? (
+      <a
         href={href}
-        title={!showLabel ? label : undefined}
+        target="_blank"
+        rel="noopener noreferrer"
         onClick={onClick}
         className={cls}
       >
         {content}
+      </a>
+    ) : (
+      <Link href={href} onClick={onClick} className={cls}>
+        {content}
       </Link>
     );
+
+    if (!showLabel) {
+      return (
+        <Tooltip delayDuration={200}>
+          <TooltipTrigger asChild>{linkNode}</TooltipTrigger>
+          <TooltipContent side="right" sideOffset={8}>
+            {label}
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return linkNode;
   };
 
-  const sidebarChromeStyle = {
-    background:
-      resolvedTheme === 'dark'
-        ? 'rgba(20, 22, 34, 0.9)'
-        : 'rgba(255, 255, 255, 0.97)',
-    borderRight:
-      resolvedTheme === 'dark'
-        ? '1px solid rgba(255, 255, 255, 0.1)'
-        : '1px solid rgba(18, 10, 34, 0.08)',
-    boxShadow:
-      resolvedTheme === 'dark'
-        ? '6px 0 18px rgba(2, 6, 23, 0.24)'
-        : '6px 0 18px rgba(15, 23, 42, 0.06)',
-    backdropFilter: 'blur(20px) saturate(160%)',
-    WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-  } as const;
-
-  const SidebarContent = ({
-    showToggle = false,
-    forceExpanded = false,
-  }: {
-    showToggle?: boolean;
-    forceExpanded?: boolean;
-  }) => {
-    const showLabel = forceExpanded ? true : !isCollapsed;
-    const effectiveCollapsed = !showLabel;
-    return (
-      <div
-        className={cn(
-          'p-4 space-y-6 h-full overflow-y-auto flex flex-col',
-          effectiveCollapsed && 'items-center'
+  const renderContent = (showLabel: boolean) => (
+    <div
+      className={cn(
+        'py-4 pl-4 pr-6 space-y-6 h-full flex flex-col',
+        !showLabel && 'items-center'
+      )}
+    >
+      <div className={cn(!showLabel && 'w-full')}>
+        {showLabel && (
+          <h3 className={sidebarSectionLabelClass}>{t('sidebar.main')}</h3>
         )}
-      >
-        {/* Collapse/Expand Toggle - Desktop only */}
-        {showToggle && (
-          <div
-            className={cn(
-              'w-full sticky top-2 z-20',
-              effectiveCollapsed ? 'flex justify-center' : 'flex justify-end'
-            )}
-          >
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              title={effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              className={cn(
-                'p-2.5 rounded-xl border border-gray-300 dark:border-white/25',
-                'bg-white text-gray-800 dark:bg-[#22253a] dark:text-white',
-                'hover:bg-gray-100 dark:hover:bg-[#2a2e46] shadow-md transition-all'
-              )}
-            >
-              {effectiveCollapsed ? (
-                <ChevronsRight className="w-4 h-4" />
-              ) : (
-                <ChevronsLeft className="w-4 h-4" />
-              )}
-            </button>
-          </div>
-        )}
-
-        {/* Main Navigation */}
-        <div className={cn(effectiveCollapsed && 'w-full')}>
-          {showLabel && (
-            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-              {t('sidebar.main')}
-            </h3>
-          )}
-          <div className="space-y-1">
-            {mainItems.map((item) => (
-              <NavLink
-                key={item.href}
-                href={item.href}
-                icon={item.icon}
-                label={item.title}
-                exact={item.href === '/dashboard'}
-                showLabel={showLabel}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Support */}
-        <div className={cn(effectiveCollapsed && 'w-full')}>
-          {showLabel && (
-            <h3 className="px-3 mb-2 text-[0.625rem] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wider">
-              {t('sidebar.support')}
-            </h3>
-          )}
-          <div className="space-y-1">
-            {supportItems.map((item) => (
-              <NavLink
-                key={item.href}
-                href={item.href === '#feedback' ? '#' : item.href}
-                icon={item.icon}
-                label={item.title}
-                external={item.external}
-                onClick={
-                  item.href === '#feedback'
-                    ? () => {
-                        setIsFeedbackOpen(true);
-                        setIsMobileOpen(false);
-                      }
-                    : undefined
-                }
-                showLabel={showLabel}
-              />
-            ))}
-          </div>
+        <div className="space-y-1">
+          {mainItems.map((item) => (
+            <NavLink
+              key={item.href}
+              href={item.href}
+              icon={item.icon}
+              label={item.title}
+              exact={item.href === '/dashboard'}
+              showLabel={showLabel}
+            />
+          ))}
         </div>
       </div>
-    );
-  };
+
+      <div className={cn(!showLabel && 'w-full')}>
+        {showLabel && (
+          <h3 className={sidebarSectionLabelClass}>{t('sidebar.support')}</h3>
+        )}
+        <div className="space-y-1">
+          {supportItems.map((item) => (
+            <NavLink
+              key={item.href}
+              href={item.href === '#feedback' ? '#' : item.href}
+              icon={item.icon}
+              label={item.title}
+              external={item.external}
+              onClick={
+                item.href === '#feedback'
+                  ? () => {
+                      setIsFeedbackOpen(true);
+                      setIsMobileOpen(false);
+                    }
+                  : undefined
+              }
+              showLabel={showLabel}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <>
-      {/* Mobile overlay */}
-      {isMobileOpen && (
-        <div
-          className="md:hidden fixed inset-0 z-[150] bg-black/50 backdrop-blur-sm"
-          onClick={() => setIsMobileOpen(false)}
-        />
-      )}
-
-      {/* Mobile sidebar */}
-      <aside
-        style={sidebarChromeStyle}
-        className={cn(
-          'md:hidden fixed inset-y-0 left-0 z-[160] w-72 rounded-r-2xl',
-          'transform transition-transform duration-300 ease-in-out',
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        )}
-      >
-        {/* Mobile header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200/50 dark:border-white/5">
-          <Link href="/dashboard">
-            <Logo size="sm" />
-          </Link>
-          <button
-            onClick={() => setIsMobileOpen(false)}
-            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* ThemeToggle with label */}
-        <div className="px-4 py-3 border-b border-gray-200/50 dark:border-white/5 flex items-center justify-between">
-          <span className="text-sm text-gray-600 dark:text-white/70">
-            Theme
-          </span>
-          <ThemeToggle />
-        </div>
-
-        {/* Always show labels on mobile */}
-        <SidebarContent forceExpanded />
-      </aside>
-
-      {/* Desktop/Tablet sidebar - Glassmorphism */}
-      <aside
-        style={sidebarChromeStyle}
-        className={cn(
-          'hidden md:flex flex-col flex-shrink-0 fixed left-0 top-16 bottom-0 transition-all duration-300 z-40',
-          isCollapsed ? 'w-[68px]' : 'w-52 lg:w-60'
-        )}
-      >
-        <div
-          className={cn(
-            'px-2 pt-2',
-            isCollapsed ? 'flex justify-center' : 'flex justify-end'
-          )}
-        >
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="h-8 w-8 rounded-lg border border-gray-300 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-white/25 dark:bg-[#22253a] dark:text-white dark:hover:bg-[#2a2e46]"
-          >
-            {isCollapsed ? (
-              <ChevronsRight className="mx-auto h-4 w-4" />
-            ) : (
-              <ChevronsLeft className="mx-auto h-4 w-4" />
-            )}
-          </button>
-        </div>
-        <SidebarContent />
-      </aside>
+      <DashboardSidebarShell
+        collapsed={isCollapsed}
+        onToggleCollapsed={() => setIsCollapsed(!isCollapsed)}
+        isMobileOpen={isMobileOpen}
+        setIsMobileOpen={setIsMobileOpen}
+        resolvedTheme={resolvedTheme}
+        renderContent={renderContent}
+        mobileTopArea={
+          <>
+            <div className="flex items-center justify-between p-4 border-b border-[var(--fs-rule)]">
+              <Link href="/dashboard">
+                <Logo size="sm" />
+              </Link>
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="p-2 rounded-lg text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink)] hover:bg-[var(--fs-bg-elevated)]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="px-4 py-3 border-b border-[var(--fs-rule)] flex items-center justify-between">
+              <span className="text-sm text-[var(--fs-ink-dim)]">Theme</span>
+              <ThemeToggle />
+            </div>
+          </>
+        }
+      />
 
       <FeedbackDialog open={isFeedbackOpen} onOpenChange={setIsFeedbackOpen} />
     </>

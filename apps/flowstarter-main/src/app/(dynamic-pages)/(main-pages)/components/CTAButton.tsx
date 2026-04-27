@@ -24,7 +24,7 @@ export function CTAButton({
   className = '',
 }: CTAButtonProps) {
   const base =
-    'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--purple-primary)]';
+    'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--purple-primary)]';
 
   const variants = {
     primary:

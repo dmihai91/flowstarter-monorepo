@@ -97,8 +97,10 @@ const isPublicRoute = createRouteMatcher([
   '/sso-callback(.*)',
   '/api/webhooks(.*)',
   '/api/health(.*)',
-  '/api/auth/session(.*)', // Session check for editor SSO
+  '/api/auth/session(.*)', // Session check
   '/api/contact(.*)', // Public contact form API
+  '/api/ecommerce-waitlist(.*)', // Public ecommerce waitlist signup
+  '/api/support-chat(.*)', // Public support bot LLM endpoint
   '/gdpr(.*)',
   '/contact(.*)',
   '/help(.*)', // Public help page
@@ -122,7 +124,6 @@ const isPublicRoute = createRouteMatcher([
   // Public static pages — landing sections, legal, support
   '/about(.*)',
   '/relaunch(.*)',
-  '/status(.*)',
   '/faq(.*)',
 ]);
 
@@ -153,7 +154,6 @@ const isKnownAppRoute = createRouteMatcher([
   '/sitemap(.*)',
   '/accessibility(.*)',
   '/security(.*)',
-  '/status(.*)',
   '/faq(.*)',
   '/relaunch(.*)',
   '/team(.*)',
@@ -259,7 +259,6 @@ export default clerkMiddleware(async (auth, req) => {
       const isTeamApi = pathname.startsWith('/api/team/');
       const isAiApi = pathname.startsWith('/api/ai/');
       const isAuthApi = pathname.startsWith('/api/auth/'); // Protected by Clerk auth
-      const isEditorApi = pathname.startsWith('/api/editor/'); // Protected by handoff tokens / Clerk auth
       const isProjectsApi =
         pathname.startsWith('/api/projects/') || pathname === '/api/projects';
       const isIntegrationsApi = pathname.startsWith('/api/integrations/'); // Protected by Clerk auth
@@ -271,7 +270,6 @@ export default clerkMiddleware(async (auth, req) => {
         !isTeamApi &&
         !isAiApi &&
         !isAuthApi &&
-        !isEditorApi &&
         !isProjectsApi &&
         !isIntegrationsApi &&
         !isAnalyticsApi

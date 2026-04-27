@@ -31,6 +31,8 @@ const ALLOWED_CONNECT_DOMAINS = [
   // Google Analytics
   'https://www.google-analytics.com',
   'https://analytics.google.com',
+  // Clerk telemetry
+  'https://clerk-telemetry.com',
 ];
 
 const ALLOWED_IMG_DOMAINS = [
@@ -89,6 +91,7 @@ export function buildCSPHeader(nonce?: string): string {
   const directives = [
     `default-src 'self'`,
     `script-src ${scriptSrc.join(' ')}`,
+    `worker-src 'self' blob:`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, // CSS-in-JS requires unsafe-inline
     `img-src ${ALLOWED_IMG_DOMAINS.join(' ')}`,
     `connect-src ${ALLOWED_CONNECT_DOMAINS.join(' ')}${

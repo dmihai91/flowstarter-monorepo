@@ -434,7 +434,7 @@ export function DashboardStatsClient({
             </span>
             {hasLiveProject ? (
               <Link
-                href="/dashboard/integrations"
+                href="/help"
                 className="text-xs sm:text-sm font-medium text-[var(--purple)] hover:underline"
               >
                 {t('dashboard.stats.integrationsSetup')} →

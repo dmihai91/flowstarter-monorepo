@@ -2,6 +2,7 @@
 
 import './landing-design.css';
 import Footer from '@/components/Footer';
+import { FlowBackground } from '@flowstarter/flow-design-system';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
@@ -25,7 +26,13 @@ export default function MainPagesLayout({ children }: { children: ReactNode }) {
       >
         Skip to main content
       </a>
-      {children}
+      <div className="relative flex min-h-screen flex-col">
+        <FlowBackground
+          variant="landing"
+          style={{ position: 'fixed', inset: 0, zIndex: 0 }}
+        />
+        <div className="relative z-10 flex flex-1 flex-col">{children}</div>
+      </div>
       {!hideFooter && <Footer />}
     </>
   );

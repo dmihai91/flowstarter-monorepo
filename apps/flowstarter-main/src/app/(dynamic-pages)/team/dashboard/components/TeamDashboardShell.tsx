@@ -2,9 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-
-const card =
-  'rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150';
+import { glassClass, glassStyle } from '@/lib/glass';
 
 interface TeamDashboardShellProps {
   icon?: React.ReactNode;
@@ -53,13 +51,13 @@ export function TeamDashboardShell({
   }[maxWidth];
 
   return (
-    <div className="pt-10 pb-10 px-4 sm:px-6">
+    <div className="px-4 pb-10 pt-8 sm:px-6 lg:px-8">
       <div className={`${maxWidthClass} mx-auto`}>
         {/* Back */}
         {showBackButton && (
           <Link
             href={backHref}
-            className="inline-flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-300 hover:text-zinc-800 dark:hover:text-white mb-6 transition-colors"
+            className="mb-5 inline-flex items-center gap-1.5 text-sm text-[var(--fs-ink-faint)] transition-colors hover:text-[var(--fs-ink)]"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             {backLabel}
@@ -68,19 +66,19 @@ export function TeamDashboardShell({
 
         {/* Page header */}
         {(icon || title) && (
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
               {icon && (
-                <div className="w-10 h-10 rounded-2xl bg-[var(--purple)]/10 border border-[var(--purple)]/20 flex items-center justify-center shrink-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--fs-rule-accent)] bg-[var(--fs-accent-bg)] text-[var(--fs-accent)]">
                   {icon}
                 </div>
               )}
               <div>
-                <h1 className="text-2xl font-bold text-[var(--fs-ink)]">
+                <h1 className="text-2xl font-semibold tracking-tight text-[var(--fs-ink)] sm:text-[1.65rem]">
                   {title}
                 </h1>
                 {subtitle && (
-                  <p className="text-sm text-gray-500 dark:text-white/40 mt-0.5">
+                  <p className="mt-1 text-sm text-[var(--fs-ink-faint)]">
                     {subtitle}
                   </p>
                 )}
@@ -107,14 +105,7 @@ export function ShellCard({
   className?: string;
 }) {
   return (
-    <div
-      className={`${card} p-5 sm:p-6 ${className}`}
-      style={{
-        background: 'var(--fs-glass-bg)',
-        borderColor: 'var(--fs-glass-edge)',
-        boxShadow: 'var(--fs-card-shadow)',
-      }}
-    >
+    <div className={`${glassClass} p-5 sm:p-6 ${className}`} style={glassStyle}>
       {children}
     </div>
   );
@@ -131,7 +122,7 @@ export function ShellSection({
   return (
     <div>
       {title && (
-        <h2 className="text-sm font-semibold text-[var(--fs-ink)] mb-4">
+        <h2 className="mb-4 text-sm font-semibold tracking-tight text-[var(--fs-ink-dim)]">
           {title}
         </h2>
       )}

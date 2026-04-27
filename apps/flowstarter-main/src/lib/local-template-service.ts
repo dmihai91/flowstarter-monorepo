@@ -278,10 +278,10 @@ function getTemplatePageContent(templateId: string): string {
             Helping {{TARGET_USERS}} achieve their goals and succeed in today's competitive market.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-4 px-8 rounded-xl transition duration-300">
+            <button className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-4 px-8 rounded-lg transition duration-300">
               Get Started
             </button>
-            <button className="bg-white hover:bg-slate-50 text-slate-900 font-semibold py-4 px-8 rounded-xl border border-slate-300 transition duration-300">
+            <button className="bg-white hover:bg-slate-50 text-slate-900 font-semibold py-4 px-8 rounded-lg border border-slate-300 transition duration-300">
               Learn More
             </button>
           </div>
@@ -307,10 +307,10 @@ function getTemplatePageContent(templateId: string): string {
             Perfect for {{TARGET_USERS}} focused on {{BUSINESS_GOALS}}.
           </p>
           <div className="space-x-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
               Enroll Now
             </button>
-            <button className="bg-white hover:bg-gray-50 text-blue-600 font-bold py-3 px-6 rounded-xl border border-blue-600 transition duration-300">
+            <button className="bg-white hover:bg-gray-50 text-blue-600 font-bold py-3 px-6 rounded-lg border border-blue-600 transition duration-300">
               Learn More
             </button>
           </div>
@@ -336,10 +336,10 @@ function getTemplatePageContent(templateId: string): string {
             Serving {{TARGET_USERS}} with focus on {{BUSINESS_GOALS}}.
           </p>
           <div className="space-x-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-300">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
               Get Started
             </button>
-            <button className="bg-white hover:bg-gray-50 text-blue-600 font-bold py-3 px-6 rounded-xl border border-blue-600 transition duration-300">
+            <button className="bg-white hover:bg-gray-50 text-blue-600 font-bold py-3 px-6 rounded-lg border border-blue-600 transition duration-300">
               Learn More
             </button>
           </div>

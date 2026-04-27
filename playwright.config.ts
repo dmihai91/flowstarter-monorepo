@@ -24,20 +24,16 @@ export default defineConfig({
 
   // In CI: PLAYWRIGHT_BASE_URL points at staging — no local server needed.
   // Locally: spin up the dev server.
-  ...(process.env.CI ? {} : {
-    webServer: [
-      {
-        command: 'cd apps/flowstarter-main && npx next dev -p 3000',
-        url: 'http://localhost:3000',
-        reuseExistingServer: true,
-        timeout: 120000,
-      },
-      {
-        command: 'cd apps/flowstarter-editor && pnpm run dev',
-        url: 'http://localhost:5173',
-        reuseExistingServer: true,
-        timeout: 120000,
-      },
-    ],
-  }),
+  ...(process.env.CI
+    ? {}
+    : {
+        webServer: [
+          {
+            command: 'cd apps/flowstarter-main && npx next dev -p 3000',
+            url: 'http://localhost:3000',
+            reuseExistingServer: true,
+            timeout: 120000,
+          },
+        ],
+      }),
 });

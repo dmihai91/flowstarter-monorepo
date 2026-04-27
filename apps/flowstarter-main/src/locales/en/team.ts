@@ -7,7 +7,7 @@ export const teamKeys = {
   'team.login.signInSubtitle':
     'Team access only. Contact admin for credentials.',
   'team.login.emailLabel': 'Email address',
-  'team.login.emailPlaceholder': 'you@flowstarter.app',
+  'team.login.emailPlaceholder': 'you@flowstarter.net',
   'team.login.passwordLabel': 'Password',
   'team.login.passwordPlaceholder': 'Enter your password',
   'team.login.signingIn': 'Signing in...',

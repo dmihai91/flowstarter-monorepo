@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTranslations } from '@/lib/i18n';
 import { useClerk, useUser } from '@clerk/nextjs';
-import { LogOut, Settings, Shield, User } from 'lucide-react';
+import { LogOut, Shield, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -124,12 +124,6 @@ export function UserMenu() {
               <DropdownMenuItem onSelect={() => router.push('/profile')}>
                 <User className="h-4 w-4" />
                 {t('app.profile')}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={() => router.push('/dashboard/integrations')}
-              >
-                <Settings className="h-4 w-4" />
-                {t('app.settings')}
               </DropdownMenuItem>
             </>
           )}

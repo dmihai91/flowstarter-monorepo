@@ -1,11 +1,8 @@
-'use client';
-
-import { useI18n } from '@/lib/i18n';
+import { tServer } from '@/lib/i18n-server';
 import { LANDING_COPY } from '../landing-copy';
 
 export function DifferentiationSection() {
-  const { t: tStrict } = useI18n();
-  const t = tStrict as (key: string) => string;
+  const t = tServer as (key: string) => string;
   const diff = LANDING_COPY.differentiation;
 
   return (

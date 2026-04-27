@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button as BrandButton } from '@/components/ui/unified-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
@@ -189,7 +189,7 @@ export function CustomSignUp() {
           )}
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-4">
-            <UnifiedButton
+            <BrandButton
               type="submit"
               disabled={isVerifyingCode}
               className="w-full !rounded-lg sm:w-auto"
@@ -197,7 +197,7 @@ export function CustomSignUp() {
               {isVerifyingCode
                 ? t('auth.signUp.verifying')
                 : t('auth.signUp.verifyEmail')}
-            </UnifiedButton>
+            </BrandButton>
             <Button
               type="button"
               variant="ghost"
@@ -322,7 +322,7 @@ export function CustomSignUp() {
           </div>
         )}
 
-        <UnifiedButton
+        <BrandButton
           type="submit"
           disabled={isLoading || !formik.isValid}
           className="mt-4 w-full !rounded-lg"
@@ -330,7 +330,7 @@ export function CustomSignUp() {
           {isLoading
             ? t('auth.signUp.creatingAccount')
             : t('auth.signUp.createFreeAccount')}
-        </UnifiedButton>
+        </BrandButton>
       </form>
 
       <div className="text-center text-sm text-muted-foreground mt-6">

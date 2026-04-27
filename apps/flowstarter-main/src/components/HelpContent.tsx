@@ -110,7 +110,7 @@ export function HelpContent({
           </p>
         </button>
         <a
-          href="mailto:hello@flowstarter.app"
+          href="mailto:hello@flowstarter.net"
           className="p-5 sm:p-6 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 hover:border-[var(--purple)]/40 transition-all group"
         >
           <div className="w-11 h-11 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center mb-3 group-hover:bg-[var(--purple)]/20 transition-colors">

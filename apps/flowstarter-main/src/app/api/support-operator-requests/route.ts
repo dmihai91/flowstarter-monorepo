@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     .from('contact_submissions')
     .insert({
       name: 'Landing Support Visitor',
-      email: `support+${sessionId}@flowstarter.app`,
+      email: `support+${sessionId}@flowstarter.net`,
       subject: 'Operator request',
       message: composedMessage,
       notes: null,

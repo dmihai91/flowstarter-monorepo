@@ -1,10 +1,13 @@
-import { isBuilding, isLive } from './team-project-status';
+import { deriveProjectStatus, isBuilding, isLive } from './team-project-status';
 
 /** Minimal columns for aggregating team dashboard KPIs (no Clerk, no large blobs). */
 export const TEAM_DASHBOARD_STATS_PROJECT_SELECT = `
   id,
   name,
-  status,
+  is_draft,
+  final_status,
+  published_url,
+  generation_completed_at,
   is_paid,
   setup_fee,
   monthly_fee,
@@ -17,7 +20,11 @@ export const TEAM_DASHBOARD_STATS_PROJECT_SELECT = `
 export type TeamDashboardStatsProjectRow = {
   id: string;
   name: string | null;
-  status: string | null;
+  status?: string | null;
+  is_draft?: boolean | null;
+  final_status?: string | null;
+  published_url?: string | null;
+  generation_completed_at?: string | null;
   is_paid: boolean | null;
   setup_fee: number | null;
   monthly_fee: number | null;
@@ -72,7 +79,7 @@ export function computeTeamDashboardStats(
   let recentTs = -1;
 
   for (const p of rows) {
-    const st = p.status;
+    const st = deriveProjectStatus(p);
     if (isLive(st)) liveCount += 1;
     else if (isBuilding(st)) inProgressCount += 1;
     else draftCount += 1;
@@ -93,7 +100,7 @@ export function computeTeamDashboardStats(
       recentProject = {
         id: p.id,
         name: p.name,
-        status: p.status,
+        status: st,
         updated_at: p.updated_at,
         created_at: p.created_at,
       };

@@ -1,13 +1,15 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 import { useI18n } from '@/lib/i18n';
+import { useBookingModal } from './booking-modal-store';
 
-export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
+export function FinalCTASection() {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
   const rootRef = useRef<HTMLElement | null>(null);
+  const openBookingModal = useBookingModal((s) => s.open);
 
   useEffect(() => {
     const el = rootRef.current;
@@ -120,8 +122,8 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
 
             {/* CTA */}
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-5">
-              <UnifiedButton
-                onClick={() => onOpenModal?.()}
+              <Button
+                onClick={openBookingModal}
                 className="ls-cta-hero h-14 px-8 text-[1.02rem] sm:text-[1.08rem]"
               >
                 {t('landing.finalCta.primaryCta')}
@@ -138,7 +140,7 @@ export function FinalCTASection({ onOpenModal }: { onOpenModal?: () => void }) {
                     d="M5 12h14m-5-6l6 6-6 6"
                   />
                 </svg>
-              </UnifiedButton>
+              </Button>
             </div>
 
             {/* Micro note */}

@@ -483,7 +483,7 @@ const en = {
   'team.login.signInSubtitle':
     'Team access only. Contact admin for credentials.',
   'team.login.emailLabel': 'Email address',
-  'team.login.emailPlaceholder': 'you@flowstarter.app',
+  'team.login.emailPlaceholder': 'you@flowstarter.net',
   'team.login.passwordLabel': 'Password',
   'team.login.passwordPlaceholder': 'Enter your password',
   'team.login.signingIn': 'Signing in...',
@@ -1307,7 +1307,7 @@ const en = {
   'landing.pricing.finePrint':
     'No contracts. Cancel anytime. First month free.',
   'landing.pricing.cta': 'Claim Your Spot',
-  'landing.header.cta': 'Book free strategy call',
+  'landing.header.cta': 'Book a discovery call',
 
   // Landing Page - For/Not For
 
@@ -1397,6 +1397,7 @@ const en = {
   // Landing - Header Nav
   'nav.process': 'Process',
   'nav.theme': 'Theme',
+  'nav.smartEditor': 'Smart editor',
 
   // Cookie Consent
   'cookie.title': 'We use cookies',
@@ -1484,7 +1485,7 @@ const en = {
   'contact.talk.button': 'Book Free Discovery Call',
   'contact.other.title': 'Other ways to reach us',
   'contact.other.emailLabel': 'Email',
-  'contact.other.emailValue': 'hello@flowstarter.app',
+  'contact.other.emailValue': 'hello@flowstarter.net',
   'contact.other.twitterLabel': 'Twitter',
   'contact.other.twitterValue': '@flowstarter',
   'contact.other.linkedinLabel': 'LinkedIn',
@@ -1503,7 +1504,7 @@ const en = {
   'help.quickAction.discovery.desc':
     'Free 45-minute call to discuss your project',
   'help.quickAction.email.title': 'Email Support',
-  'help.quickAction.email.desc': 'hello@flowstarter.app',
+  'help.quickAction.email.desc': 'hello@flowstarter.net',
   'help.howItWorks': 'How It Works',
   'help.step1.number': '01',
   'help.step1.title': 'We talk',
@@ -2251,42 +2252,50 @@ const en = {
     'Room for images, video, downloads, and client assets. Starter starts at 10 GB, Growth 50 GB, Pro 150 GB.',
 
   // Landing Hero — editorial redesign
-  'landing.hero.displayPrefix':
-    'The right clients are out there looking for you.',
-  'landing.hero.displayFlourish': "Let's make sure they find you.",
+  'landing.hero.displayPrefix': 'Premium websites,',
+  'landing.hero.displayFlourish': 'hand-crafted for service professionals.',
   'landing.hero.subhead':
-    "Starting from scratch or tired of a site that isn't working? One call. Your site is delivered quickly. You stay in control with a smart editor. No code, no waiting, no back and forth.",
-  'landing.hero.primaryCta': 'Start getting clients',
-  'landing.hero.secondaryCta': 'See plans and pricing',
-  'landing.hero.eyebrowSerial': 'Done for you',
-  'landing.hero.eyebrowLabel': 'Live quickly',
-  'landing.hero.eyebrowTagline': 'No code',
+    'Designed and built by hand, with a smart editor included so you can keep updating yours on demand. Live in two weeks. Hosting, domain, and ongoing support all in. From €799 + €49 a month. We take 8 new clients each month, by design.',
+  'landing.hero.primaryCta': 'Build my site',
+  'landing.hero.secondaryCta': 'See how it works',
+  'landing.hero.eyebrowSerial': 'Built for you',
+  'landing.hero.eyebrowLabel': 'Yours forever',
+  'landing.hero.eyebrowTagline': '8 spots a month',
   'landing.hero.guaranteeShort':
-    'First month free. 50% refund in 30 days if not delighted.',
-  'landing.hero.stat1Value': 'Quick',
-  'landing.hero.stat1Label': 'Typical turnaround',
-  'landing.hero.stat2Value': '0',
-  'landing.hero.stat2Label': 'Lines of code you write',
-  'landing.hero.stat3Value': '1 call',
-  'landing.hero.stat3Label': 'From brief to draft',
-  'landing.hero.stat4Value': '50%',
-  'landing.hero.stat4Label': 'Setup refund, any reason',
-  'landing.hero.brief.live': 'Live brief',
-  'landing.hero.brief.serial': 'Live preview',
-  'landing.hero.brief.title': 'Your brief, typed out loud.',
-  'landing.hero.brief.subtitle': 'Auto-generated from your discovery call.',
-  'landing.hero.brief.field1Label': 'Profession',
-  'landing.hero.brief.field1Value': 'Business coach, 1:1 clients',
-  'landing.hero.brief.field2Label': 'Must-haves',
-  'landing.hero.brief.field2Value': 'Calendly, testimonials, Stripe',
-  'landing.hero.brief.field3Label': 'Voice',
-  'landing.hero.brief.field3Value': 'Warm, direct, no fluff',
+    'Limited capacity. We take on 8 new clients each month.',
+  'landing.hero.stat1Value': '8',
+  'landing.hero.stat1Label': 'Clients each month',
+  'landing.hero.stat2Value': '€799',
+  'landing.hero.stat2Label': 'Starter, one-time setup',
+  'landing.hero.stat3Value': '7–14 days',
+  'landing.hero.stat3Label': 'Typical turnaround',
+  'landing.hero.stat4Value': '100%',
+  'landing.hero.stat4Label': 'Yours forever',
+  'landing.hero.brief.live': 'Live',
+  'landing.hero.brief.serial': 'Starter build',
+  'landing.hero.brief.title': 'Your premium build.',
+  'landing.hero.brief.subtitle': 'Crafted for service professionals.',
+  'landing.hero.brief.field1Label': 'For',
+  'landing.hero.brief.field1Value':
+    'Coaches, consultants, therapists, photographers',
+  'landing.hero.brief.field2Label': 'Site',
+  'landing.hero.brief.field2Value': 'Premium, hand-crafted, made for you',
+  'landing.hero.brief.field3Label': 'Includes',
+  'landing.hero.brief.field3Value':
+    'Hosting, domain, smart editor, ongoing care',
+  'landing.hero.brief.field4Label': 'Live',
+  'landing.hero.brief.field4Value': 'In 7 to 14 days',
   'landing.hero.brief.progressLabel': 'Progress',
-  'landing.hero.brief.progressBuilding': 'Now drafting',
+  'landing.hero.brief.progressBuilding': 'Drafting',
   'landing.hero.brief.progressReady': 'Brief ready',
-  'landing.hero.brief.ctaPending': 'Book your discovery call',
-  'landing.hero.brief.ctaReady': 'Brief ready. Book your call.',
+  'landing.hero.brief.ctaPending': 'Build my site',
+  'landing.hero.brief.ctaReady': 'Brief ready. Build my site.',
   'landing.hero.scrollHint': 'Scroll',
+  'landing.hero.pills.label': 'Included from day one',
+  'landing.hero.pills.booking': 'Cal.com booking',
+  'landing.hero.pills.newsletter': 'Newsletter',
+  'landing.hero.pills.leads': 'Leads form',
+  'landing.hero.pills.edit': 'Edit on demand',
 
   // Templates — editorial redesign
   'landing.templates.eyebrow': 'A design for every industry',
@@ -2305,11 +2314,11 @@ const en = {
     'No drag-and-drop, no code, no waiting on a developer. Talk to your site in plain language, it updates instantly.',
 
   // Problem — editorial redesign
-  'landing.problem.eyebrow': 'The real cost of waiting',
-  'landing.problem.headlinePrefix': 'Every week without a working site',
-  'landing.problem.headlineFlourish': 'is a client found by someone else.',
+  'landing.problem.eyebrow': 'The choices you have today',
+  'landing.problem.headlinePrefix': 'Three frustrating choices',
+  'landing.problem.headlineFlourish': 'for your website.',
   'landing.problem.sub':
-    "Starting fresh or starting over. Getting it right shouldn't take months of decisions, revisions, and late-night tutorials.",
+    'Most service professionals end up with one of these. None of them work.',
 
   // Pillars — editorial redesign
   'landing.pillars.eyebrow': 'What you actually get',
@@ -2319,25 +2328,34 @@ const en = {
     'Flowstarter combines done-for-you setup with the flexibility to keep moving on your own.',
 
   // Included — editorial redesign
-  'landing.included.eyebrow': 'Everything included',
-  'landing.included.headlinePrefix': 'Live from day one.',
-  'landing.included.headlineFlourish': 'Everything wired.',
+  'landing.included.eyebrow': "What's in Starter (€799 + €49/mo)",
+  'landing.included.headlinePrefix': 'A premium site,',
+  'landing.included.headlineFlourish': 'wired up before launch.',
   'landing.included.sub':
-    'Every site ships with the essentials already wired, so you start collecting clients, not configuring tools.',
+    'Cal.com booking, your newsletter, a leads form, and your editor, all set up in your own name. Subscription includes editor, maintenance, and support. Your site keeps running even if you cancel.',
+  'landing.included.ownership.title': 'You own everything from day one.',
+  'landing.included.ownership.body':
+    'We set up a private server for you and install your site on it. Site, content, and hosting are all registered in your name, never ours. Cancel your subscription anytime. Your site keeps running on your own server.',
+  'landing.included.ownership.chip1Label': 'Site',
+  'landing.included.ownership.chip1Value': 'Yours',
+  'landing.included.ownership.chip2Label': 'Content',
+  'landing.included.ownership.chip2Value': 'Yours',
+  'landing.included.ownership.chip3Label': 'Hosting',
+  'landing.included.ownership.chip3Value': 'Yours',
 
   // Differentiation — editorial redesign
-  'landing.differentiation.eyebrow': 'Why we are different',
-  'landing.differentiation.headlinePrefix': 'Not a builder.',
-  'landing.differentiation.headlineFlourish': 'Not an agency.',
+  'landing.differentiation.eyebrow': 'Why Flowstarter',
+  'landing.differentiation.headlinePrefix': 'What makes Flowstarter',
+  'landing.differentiation.headlineFlourish': 'different.',
   'landing.differentiation.sub':
-    'The middle ground that actually works: the speed of a builder, the quality of an agency, none of the tradeoffs.',
+    'A small studio, hand-crafted work, and an editor that grows with you.',
 
   // Pricing — editorial redesign
   'landing.pricing.eyebrow': 'Pricing',
-  'landing.pricing.headlinePrefix': 'Clear pricing.',
-  'landing.pricing.headlineFlourish': 'Rate locked forever.',
+  'landing.pricing.headlinePrefix': 'Simple, transparent',
+  'landing.pricing.headlineFlourish': 'pricing.',
   'landing.pricing.sub':
-    'Pay once to launch. A flat monthly keeps everything running. Your rate is locked for life.',
+    'Two ways to work with us. Both start with a discovery call.',
 
   // Testimonials — editorial redesign
   'landing.testimonials.eyebrow': 'The work speaks',
@@ -2360,28 +2378,161 @@ const en = {
   'landing.faq.headlineFlourish': 'here is what people ask.',
 
   // Audience — editorial redesign
-  'landing.audience.eyebrow': 'Who this is for',
-  'landing.audience.headlinePrefix': 'Built for experts who want to',
-  'landing.audience.headlineFlourish': 'stop losing clients to worse sites.',
+  'landing.audience.eyebrow': "Who it's for",
+  'landing.audience.headlinePrefix': 'Built for service professionals',
+  'landing.audience.headlineFlourish': 'who value craft.',
   'landing.audience.sub':
-    "If any of these sound familiar, you're exactly who we built Flowstarter for.",
+    "If you're an expert in your field and want a website that reflects that expertise, we should talk.",
 
   // Process — editorial redesign
   'landing.process.eyebrow': 'How it works',
-  'landing.process.headlinePrefix': 'Three steps.',
-  'landing.process.headlineFlourish': "A site you're proud of.",
+  'landing.process.headlinePrefix': 'From conversation to launch',
+  'landing.process.headlineFlourish': 'in two weeks.',
   'landing.process.sub':
-    'No questionnaires, no revisions hell, no chasing us for updates. We run a tight process on purpose.',
+    'A tight, four-step process from the first call to a site you can keep growing on your own.',
+
+  // Solution — editorial redesign
+  'landing.solution.eyebrow': 'Our approach',
+  'landing.solution.headlinePrefix': 'We hand-craft your site.',
+  'landing.solution.headlineFlourish': 'You keep editing it forever.',
+  'landing.solution.paragraph1':
+    'We hand-craft your website using modern tools, not drag-and-drop builders or template marketplaces. Every site is built specifically for your business.',
+  'landing.solution.paragraph2':
+    'Then we hand you a smart editor so you can update copy, swap images, and refresh content with natural language. No system to learn. No developer to call. Your website grows with you.',
+
+  // Support bot (floating widget on landing)
+  'supportBot.openLabel': 'Open support chat',
+  'supportBot.closeLabel': 'Close support chat',
+  'supportBot.title': 'Ask anything',
+  'supportBot.subtitle': "Quick answers, or we'll book a call.",
+  'supportBot.greeting': 'Hi! Ask about pricing, timelines, or how we work.',
+  'supportBot.placeholder': 'Type your question...',
+  'supportBot.send': 'Send',
+  'supportBot.contactOperator': 'Contact an operator',
+  'supportBot.replyPrice':
+    'Starter is €799 setup + €49/month. Pro starts at €1,499 + €99/month. Both include hosting, domain, and the smart editor. Want a personal walkthrough?',
+  'supportBot.replyTimeline':
+    'Starter projects ship in 7 to 14 days. Pro takes 10 to 21 days. Timelines lock during the discovery call.',
+  'supportBot.replyEditor':
+    'You get a smart editor installed with your site. Update copy, swap images, add sections, all in plain English, no code.',
+  'supportBot.replyOwnership':
+    'Yes, you own everything. Site, content, hosting are all in your name from day one. No platform lock-in.',
+  'supportBot.replyCapacity':
+    "We take just 8 new clients per month. If your project is a fit, we'll find a slot together on the call.",
+  'supportBot.replyDefault':
+    'Good question. The fastest way to get a real answer is a 45-minute discovery call. Book one and we will cover it properly.',
+  'supportBot.replyDomain':
+    'Yes, we set up your custom domain and a professional email address at that domain. If you already own one, we connect it. If not, we register it for you.',
+  'supportBot.replyDiscovery':
+    "The discovery call runs up to 45 minutes. We'll cover your business, brand, and goals, and confirm honestly whether we're the right fit.",
+  'supportBot.replyEcommerce':
+    'Full storefronts are coming soon. The Pro tier covers digital products via Stripe today. Drop your email on the Ecommerce card to be the first to know when full ecommerce ships.',
+  'supportBot.replyIncluded':
+    'Starter (€799 + €49/mo) gets you a 5-7 page custom site, hosting, domain, smart editor (50 edits/mo), and ongoing support. Pro adds extended pages, integrations, Stripe for digital products, and 150 edits/mo.',
+  'supportBot.replySupport':
+    "We're with you after launch. The smart editor handles most updates. For bigger changes, your monthly subscription includes priority support.",
+  'supportBot.replyHandoff':
+    "This one needs a human. Reach out to an operator and they'll handle it directly.",
+  'supportBot.replyError':
+    "Something went wrong reaching me. Contact an operator below and we'll get you sorted.",
+  'supportBot.typing': 'Typing...',
+
+  // About page
+  'about.eyebrow': 'About Flowstarter',
+  'about.headline': 'We build it. You run it.',
+  'about.body':
+    'Flowstarter is a small team that hand-crafts premium websites for solo founders, coaches, consultants, and small service businesses. We do the work for you, install everything on a private server we set up in your name, and hand you the keys. You own your site. You run it. Forever.',
+  'about.stat1.value': '5 to 10 days',
+  'about.stat1.label': 'Typical turnaround from kickoff to launch.',
+  'about.stat2.value': '8 a month',
+  'about.stat2.label': 'Capacity-limited so the work stays premium.',
+  'about.stat3.value': 'You own it',
+  'about.stat3.label': 'Site, content, and hosting are all yours from day one.',
+  'about.cta.pricing': 'See plans and pricing',
+  'about.cta.contact': 'Contact us',
+
+  // FAQ page (standalone)
+  'faqPage.eyebrow': 'Frequently Asked Questions',
+  'faqPage.headline': 'Answers before you book.',
+  'faqPage.cta.pricing': 'See plans and pricing',
+  'faqPage.cta.contact': 'Still have questions?',
+
+  // Error pages (404, 500)
+  'errors.404.headline': 'This page moved on.',
+  'errors.404.body':
+    "Whatever you were looking for isn't here anymore, but we've got you covered.",
+  'errors.404.quickNav': 'Quick navigation',
+  'errors.404.linkHome': 'Home',
+  'errors.404.linkPricing': 'Pricing',
+  'errors.404.linkFaq': 'FAQ',
+  'errors.404.linkContact': 'Contact',
+  'errors.404.goHome': 'Go Home',
+  'errors.404.goBack': 'Go Back',
+  'errors.500.headline': 'Something went wrong.',
+  'errors.500.body':
+    "We've been notified. Try reloading the page, or head back home.",
+  'errors.500.errorIdLabel': 'Error ID',
+  'errors.500.reload': 'Reload',
+  'errors.500.goHome': 'Go Home',
+
+  // PreQual modal
+  'landing.prequal.eyebrow': 'Free discovery call',
+  'landing.prequal.title': 'Which best describes your situation?',
+  'landing.prequal.subtitle': "We'll tailor the call based on your answer.",
+  'landing.prequal.cta': 'Book my discovery call',
+  'landing.prequal.footnote':
+    'No commitment. 45-minute call. Limited to 8 new clients each month.',
+  'landing.prequal.calendar.back': 'Back',
+  'landing.prequal.calendar.planSelected': 'plan selected',
+  'landing.prequal.calendar.title': 'Pick a time that works for you',
+  'landing.prequal.calendar.subtitle':
+    "Choose a 45-minute slot below. We'll confirm via email.",
+  'landing.prequal.confirmed.title': "You're all set!",
+  'landing.prequal.confirmed.body':
+    'Your discovery call is booked. Check your email for the confirmation and calendar invite.',
+  'landing.prequal.confirmed.note':
+    "We're looking forward to learning about your project.",
+  'landing.prequal.confirmed.cta': 'Done',
+  'landing.prequal.close': 'Close',
+  'landing.prequal.options.starter.name': 'Starter',
+  'landing.prequal.options.starter.desc':
+    'A premium site for my service business',
+  'landing.prequal.options.starter.price': '€799 + €49/mo',
+  'landing.prequal.options.pro.name': 'Pro',
+  'landing.prequal.options.pro.desc': "I'm ready to grow with digital products",
+  'landing.prequal.options.pro.price': 'from €1,499 + €99/mo',
+  'landing.prequal.options.custom.name': 'Custom',
+  'landing.prequal.options.custom.desc':
+    'Relaunch, custom integrations, or something bigger',
+  'landing.prequal.options.custom.price': 'Tailored quote',
+  'landing.prequal.options.unsure.name': 'Not sure yet',
+  'landing.prequal.options.unsure.desc':
+    "I'll explain my situation on the call",
+
+  // Ecommerce waitlist modal
+  'landing.waitlist.eyebrow': 'Coming soon',
+  'landing.waitlist.title': 'Be the first to know.',
+  'landing.waitlist.body':
+    'The Ecommerce package is in the works. Drop your email and we will tell you the moment it is ready. We will not share or spam your inbox.',
+  'landing.waitlist.emailLabel': 'Email',
+  'landing.waitlist.emailPlaceholder': 'you@yourbusiness.com',
+  'landing.waitlist.submit': 'Notify me when ready',
+  'landing.waitlist.submitting': 'Adding you…',
+  'landing.waitlist.error': 'Could not save your email. Please try again.',
+  'landing.waitlist.successTitle': 'You are on the list.',
+  'landing.waitlist.successBody':
+    'We will email you as soon as the Ecommerce package is ready. No spam, just one quiet announcement.',
+  'landing.waitlist.successCta': 'Close',
+  'landing.waitlist.close': 'Close',
 
   // Final CTA — editorial redesign
-  'landing.finalCta.eyebrow': 'Your move',
-  'landing.finalCta.headlinePrefix': 'One call.',
-  'landing.finalCta.headlineFlourish': 'Live before you overthink it.',
+  'landing.finalCta.eyebrow': 'Ready when you are',
+  'landing.finalCta.headlinePrefix': "Let's build something",
+  'landing.finalCta.headlineFlourish': "you'll be proud of.",
   'landing.finalCta.subhead':
-    'Zero pressure. We listen, we scope, we tell you honestly if we can help. If yes, your site lands quickly.',
-  'landing.finalCta.primaryCta': 'Book your discovery call',
-  'landing.finalCta.microNote':
-    'No commitment. No tech knowledge needed. Human on the other end.',
+    "Book a 45-minute discovery call. We'll talk about your business, show you what's possible, and tell you honestly if we're the right fit.",
+  'landing.finalCta.primaryCta': 'Book Discovery Call',
+  'landing.finalCta.microNote': 'Limited to 8 new clients each month.',
 } as const;
 
 export default en;

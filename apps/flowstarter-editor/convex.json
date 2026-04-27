@@ -1,5 +1,0 @@
-{
-  "node": {
-    "externalPackages": ["@modelcontextprotocol/sdk", "@anthropic-ai/claude-agent-sdk"]
-  }
-}

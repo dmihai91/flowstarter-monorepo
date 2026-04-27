@@ -1,15 +1,18 @@
 import 'server-only';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 
-/**
- * Resolve role from session claims only — no currentUser() network call.
- */
 async function resolveRole(): Promise<string | undefined> {
   const { sessionClaims } = await auth();
-  return (
+  const claimRole = (
     sessionClaims?.metadata as { role?: string } | undefined
+  )?.role?.toLowerCase();
+  if (claimRole) return claimRole;
+
+  const user = await currentUser();
+  return (
+    user?.publicMetadata as { role?: string } | undefined
   )?.role?.toLowerCase();
 }
 

@@ -1,13 +1,23 @@
 import { auth } from '@clerk/nextjs/server';
 
 export async function getSupabaseJWT() {
-  const template = process.env.CLERK_SUPABASE_TEMPLATE || 'supabase';
+  const template = process.env.CLERK_SUPABASE_TEMPLATE;
   try {
     const session = await auth();
-    const token = await session.getToken({ template });
+    // Preferred path for Supabase Third-Party Auth integration:
+    // use Clerk's default session token (no JWT template).
+    let token = await session.getToken();
+    let strategy = 'default-session-token';
+
+    // Backward-compatible fallback for legacy template-based setups.
+    if (!token && template) {
+      token = await session.getToken({ template });
+      strategy = `template:${template}`;
+    }
+
     // Lightweight debug breadcrumb (no secrets)
     console.info(
-      `[Auth] getSupabaseJWT template=${template} hasToken=${Boolean(token)}`
+      `[Auth] getSupabaseJWT strategy=${strategy} hasToken=${Boolean(token)}`
     );
     return token;
   } catch (error) {

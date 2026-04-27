@@ -140,20 +140,20 @@ export default function DashboardPage() {
 
           <DashboardInit>
             {/* Greeting */}
-            <div className="mt-1 sm:mt-2 mb-6">
-              <p className="text-sm sm:text-base text-[var(--fs-ink-faint)] mb-1">
+            <div className="mb-6 mt-1 sm:mt-2">
+              <p className="mb-1 text-sm text-[var(--fs-ink-faint)] sm:text-base">
                 {greeting},{' '}
                 <span className="text-[var(--fs-ink-dim)] font-medium">
                   {firstName}
                 </span>
               </p>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--fs-ink)]">
+              <h1 className="text-xl font-semibold tracking-tight text-[var(--fs-ink)] sm:text-2xl">
                 {t('dashboard.title')}
               </h1>
               {isAdmin && (
                 <Link
                   href="/team/dashboard"
-                  className="inline-flex items-center gap-1.5 mt-2 text-xs text-[var(--purple)] hover:underline"
+                  className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-[var(--fs-accent)] hover:underline"
                 >
                   Team Dashboard <ArrowRight className="w-3 h-3" />
                 </Link>

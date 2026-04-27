@@ -17,6 +17,7 @@ export function useClientRequestStats() {
       return res.json();
     },
     staleTime: 30_000,
+    retry: 1,
   });
 }
 
@@ -39,6 +40,7 @@ export function useClientRequests(params: {
     },
     staleTime: 20_000, // 20s — re-fetch silently in background
     gcTime: 5 * 60_000, // Keep in cache for 5 min
+    retry: 1,
   });
 }
 

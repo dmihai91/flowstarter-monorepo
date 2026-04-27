@@ -18,7 +18,7 @@ export async function GET(req: Request) {
 
     if (!userId) {
       return NextResponse.redirect(
-        new URL('/sign-in?redirect=/dashboard/integrations', req.url)
+        new URL('/sign-in?redirect=/dashboard/help', req.url)
       );
     }
 
@@ -37,7 +37,7 @@ export async function GET(req: Request) {
       );
       return NextResponse.redirect(
         new URL(
-          `/dashboard/integrations?provider=google-analytics&status=error&message=${encodeURIComponent(
+          `/dashboard/help?provider=google-analytics&status=error&message=${encodeURIComponent(
             stateValidation.error || 'Invalid OAuth state'
           )}`,
           req.url
@@ -49,7 +49,7 @@ export async function GET(req: Request) {
       console.error('OAuth error:', error);
       return NextResponse.redirect(
         new URL(
-          `/dashboard/integrations?provider=google-analytics&status=error&message=${encodeURIComponent(
+          `/dashboard/help?provider=google-analytics&status=error&message=${encodeURIComponent(
             error
           )}`,
           req.url
@@ -60,7 +60,7 @@ export async function GET(req: Request) {
     if (!code) {
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=google-analytics&status=error&message=No+authorization+code',
+          '/dashboard/help?provider=google-analytics&status=error&message=No+authorization+code',
           req.url
         )
       );
@@ -75,7 +75,7 @@ export async function GET(req: Request) {
       console.error('Missing Google OAuth credentials');
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=google-analytics&status=error&message=Server+configuration+error',
+          '/dashboard/help?provider=google-analytics&status=error&message=Server+configuration+error',
           req.url
         )
       );
@@ -100,7 +100,7 @@ export async function GET(req: Request) {
       console.error('Token exchange failed:', errorData);
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=google-analytics&status=error&message=Token+exchange+failed',
+          '/dashboard/help?provider=google-analytics&status=error&message=Token+exchange+failed',
           req.url
         )
       );
@@ -139,7 +139,7 @@ export async function GET(req: Request) {
       );
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=google-analytics&status=error&message=Failed+to+save+credentials',
+          '/dashboard/help?provider=google-analytics&status=error&message=Failed+to+save+credentials',
           req.url
         )
       );
@@ -154,7 +154,7 @@ export async function GET(req: Request) {
 
     return NextResponse.redirect(
       new URL(
-        '/dashboard/integrations?provider=google-analytics&status=success',
+        '/dashboard/help?provider=google-analytics&status=success',
         req.url
       )
     );
@@ -162,7 +162,7 @@ export async function GET(req: Request) {
     console.error('OAuth callback error:', error);
     return NextResponse.redirect(
       new URL(
-        '/dashboard/integrations?provider=google-analytics&status=error&message=Unknown+error',
+        '/dashboard/help?provider=google-analytics&status=error&message=Unknown+error',
         req.url
       )
     );

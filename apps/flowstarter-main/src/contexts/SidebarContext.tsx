@@ -26,7 +26,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setMounted(true);
     try {
-      const stored = localStorage.getItem('client-sidebar-collapsed');
+      const stored = localStorage.getItem('dashboard-sidebar-collapsed-v2');
       if (stored !== null) {
         setIsCollapsedState(JSON.parse(stored));
       }
@@ -39,7 +39,10 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const setIsCollapsed = (value: boolean) => {
     setIsCollapsedState(value);
     try {
-      localStorage.setItem('client-sidebar-collapsed', JSON.stringify(value));
+      localStorage.setItem(
+        'dashboard-sidebar-collapsed-v2',
+        JSON.stringify(value)
+      );
     } catch (e) {
       // Ignore localStorage errors
     }

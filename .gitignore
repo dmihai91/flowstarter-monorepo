@@ -92,3 +92,6 @@ apps/flowstarter-editor/build/
 
 # Coverage reports (nested)
 **/coverage/
+
+# Local Netlify folder
+.netlify

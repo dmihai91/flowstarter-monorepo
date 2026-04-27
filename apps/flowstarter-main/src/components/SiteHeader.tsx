@@ -6,28 +6,28 @@ import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Logo } from '@/components/ui/logo';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 import { UserMenu } from '@/components/ui/user-menu';
 import { useI18n } from '@/lib/i18n';
 import { LANDING_COPY } from '@/app/(dynamic-pages)/(main-pages)/landing-copy';
 import { useHeaderState } from '@/app/(dynamic-pages)/(main-pages)/components/hooks/useHeaderState';
+import { useBookingModal } from '@/app/(dynamic-pages)/(main-pages)/components/booking-modal-store';
 import { useTheme } from '@/contexts/ThemeContext';
 
 type SiteHeaderMode = 'landing' | 'public' | 'auth' | 'app';
 
 interface SiteHeaderProps {
   mode: SiteHeaderMode;
-  onOpenModal?: () => void;
   showTeamBadge?: boolean;
   onOpenAppMenu?: () => void;
 }
 
 export function SiteHeader({
   mode,
-  onOpenModal,
   showTeamBadge = false,
   onOpenAppMenu,
 }: SiteHeaderProps) {
+  const openBookingModal = useBookingModal((s) => s.open);
   const { resolvedTheme } = useTheme();
   const { t: tLanding } = useI18n();
   const {
@@ -98,14 +98,7 @@ export function SiteHeader({
                   onClick={scrollToSection('editor-showcase')}
                   className={navLinkClass(activeSection === 'editor-showcase')}
                 >
-                  Smart editor
-                </a>
-                <a
-                  href="#templates"
-                  onClick={scrollToSection('templates')}
-                  className={navLinkClass(activeSection === 'templates')}
-                >
-                  {LANDING_COPY.nav.templatesLabel}
+                  {tLanding('nav.smartEditor')}
                 </a>
                 <a
                   href="#process"
@@ -134,18 +127,12 @@ export function SiteHeader({
                 <div className="hidden lg:block">
                   <ThemeToggle />
                 </div>
-                <Link
-                  href="/login"
-                  className="text-sm text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white transition-colors hidden lg:block"
-                >
-                  {tLanding('nav.signIn')}
-                </Link>
-                <UnifiedButton
+                <Button
                   className="!hidden h-10 px-4 py-2 text-sm lg:!inline-flex"
-                  onClick={() => onOpenModal?.()}
+                  onClick={openBookingModal}
                 >
                   {tLanding('landing.header.cta')}
-                </UnifiedButton>
+                </Button>
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className="lg:hidden p-2 rounded-lg active:bg-gray-100 dark:active:bg-white/10 transition-colors focus:outline-none"
@@ -209,7 +196,7 @@ export function SiteHeader({
                     activeSection === 'editor-showcase'
                   )}
                 >
-                  Smart editor
+                  {tLanding('nav.smartEditor')}
                 </a>
                 <a
                   href="#process"
@@ -232,29 +219,15 @@ export function SiteHeader({
                 >
                   {tLanding('nav.faq')}
                 </a>
-                <a
-                  href="#templates"
-                  onClick={scrollToSection('templates', true)}
-                  className={mobileNavLinkClass(activeSection === 'templates')}
-                >
-                  {LANDING_COPY.nav.templatesLabel}
-                </a>
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={mobileNavLinkClass(false)}
-                >
-                  {tLanding('nav.signIn')}
-                </Link>
-                <UnifiedButton
+                <Button
                   className="ls-cta-hero mt-3 h-14 w-full px-8 text-[1.02rem]"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    onOpenModal?.();
+                    openBookingModal();
                   }}
                 >
                   {tLanding('landing.finalCta.primaryCta')}
-                </UnifiedButton>
+                </Button>
               </nav>
             </div>
           </div>
@@ -378,14 +351,12 @@ export function SiteHeader({
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>
-          <Link href="/login">
-            <UnifiedButton
-              tone="secondary"
-              className="h-9 px-4 py-2 text-xs sm:h-10 sm:text-sm"
-            >
-              {tLanding('nav.signIn')}
-            </UnifiedButton>
-          </Link>
+          <Button
+            onClick={openBookingModal}
+            className="h-9 px-4 py-2 text-xs sm:h-10 sm:text-sm"
+          >
+            {tLanding('landing.header.cta')}
+          </Button>
         </div>
       </div>
     </header>

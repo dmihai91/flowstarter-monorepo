@@ -22,7 +22,7 @@ interface SendEmailResult {
   error?: string;
 }
 
-const DEFAULT_FROM = 'Flowstarter <hello@flowstarter.app>';
+const DEFAULT_FROM = 'Flowstarter <hello@flowstarter.net>';
 const RESEND_API_URL = 'https://api.resend.com/emails';
 
 export async function sendEmail({
@@ -30,7 +30,7 @@ export async function sendEmail({
   subject,
   html,
   from = DEFAULT_FROM,
-  replyTo = 'hello@flowstarter.app',
+  replyTo = 'hello@flowstarter.net',
 }: SendEmailOptions): Promise<SendEmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
 

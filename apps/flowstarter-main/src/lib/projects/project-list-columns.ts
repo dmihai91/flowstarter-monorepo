@@ -7,7 +7,6 @@ export const PROJECT_LIST_SELECT = `
   user_id,
   name,
   description,
-  status,
   is_draft,
   template_id,
   template_slug,

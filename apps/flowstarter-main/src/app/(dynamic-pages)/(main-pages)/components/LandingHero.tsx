@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 import { useI18n } from '@/lib/i18n';
+import { useBookingModal } from './booking-modal-store';
 
 const PROGRESS_STEPS = 4;
 
@@ -56,9 +57,10 @@ function useBriefTypewriter(
   return { values, activeIndex, done };
 }
 
-export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
+export function LandingHero() {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
+  const openBookingModal = useBookingModal((s) => s.open);
   // Always revealed — entrance animation via CSS, not JS state.
   // JS-gated opacity caused hero flash/reflow on Android Chrome on first paint.
   const revealed = true;
@@ -76,6 +78,10 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
       {
         label: t('landing.hero.brief.field3Label'),
         value: t('landing.hero.brief.field3Value'),
+      },
+      {
+        label: t('landing.hero.brief.field4Label'),
+        value: t('landing.hero.brief.field4Value'),
       },
     ],
     [t]
@@ -145,8 +151,8 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               style={reveal(4)}
               className="mt-10 flex w-full flex-wrap items-center gap-3 sm:gap-6"
             >
-              <UnifiedButton
-                onClick={() => onOpenModal?.()}
+              <Button
+                onClick={openBookingModal}
                 className="ls-cta-hero w-full sm:w-auto h-14 px-8 text-[1.02rem] sm:text-[1.08rem]"
               >
                 {t('landing.hero.primaryCta')}
@@ -164,13 +170,13 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
                     d="M5 12h14m-5-6l6 6-6 6"
                   />
                 </svg>
-              </UnifiedButton>
+              </Button>
               <a
-                href="#pricing"
+                href="#process"
                 onClick={(e) => {
                   e.preventDefault();
                   document
-                    .getElementById('pricing')
+                    .getElementById('process')
                     ?.scrollIntoView({ behavior: 'smooth' });
                 }}
                 className="ls-link ls-link--hero w-full text-center sm:w-auto sm:text-left"
@@ -207,26 +213,14 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
               className="mt-6 flex flex-wrap items-center gap-3"
             >
               <span className="ls-pill ls-pill--accent">
-                {t('landing.storage.tagline')}
+                {t('landing.hero.pills.label')}
               </span>
+              <span className="ls-pill">{t('landing.hero.pills.booking')}</span>
               <span className="ls-pill">
-                {t('landing.storage.starter.tier')}{' '}
-                <b style={{ color: 'var(--ls-ink)', fontWeight: 600 }}>
-                  {t('landing.storage.starter.amount')}
-                </b>
+                {t('landing.hero.pills.newsletter')}
               </span>
-              <span className="ls-pill">
-                {t('landing.storage.growth.tier')}{' '}
-                <b style={{ color: 'var(--ls-ink)', fontWeight: 600 }}>
-                  {t('landing.storage.growth.amount')}
-                </b>
-              </span>
-              <span className="ls-pill">
-                {t('landing.storage.pro.tier')}{' '}
-                <b style={{ color: 'var(--ls-ink)', fontWeight: 600 }}>
-                  {t('landing.storage.pro.amount')}
-                </b>
-              </span>
+              <span className="ls-pill">{t('landing.hero.pills.leads')}</span>
+              <span className="ls-pill">{t('landing.hero.pills.edit')}</span>
             </div>
           </div>
 
@@ -298,7 +292,7 @@ export function LandingHero({ onOpenModal }: { onOpenModal?: () => void }) {
 
             <button
               type="button"
-              onClick={() => onOpenModal?.()}
+              onClick={openBookingModal}
               className={`ls-brief-finish ${briefDone ? 'ready' : ''}`}
             >
               {briefDone

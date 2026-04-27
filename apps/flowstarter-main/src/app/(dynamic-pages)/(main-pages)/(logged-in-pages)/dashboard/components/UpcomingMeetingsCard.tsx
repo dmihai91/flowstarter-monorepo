@@ -99,16 +99,16 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
     <GlassCard className="p-5 col-span-1 sm:col-span-2">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-            <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--fs-accent-bg)]">
+            <Calendar className="h-4 w-4 text-[var(--fs-accent)]" />
           </div>
-          <h3 className="text-sm font-medium text-gray-700 dark:text-white/70">
+          <h3 className="text-sm font-semibold text-[var(--fs-ink-dim)]">
             Upcoming Meetings
           </h3>
         </div>
         <button
           onClick={fetchEvents}
-          className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+          className="rounded-lg p-1.5 transition-colors hover:bg-[var(--fs-bg-elevated)]"
           title="Refresh"
         >
           <RefreshCw
@@ -124,17 +124,17 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
           {[0, 1].map((i) => (
             <div
               key={i}
-              className="h-16 rounded-xl bg-gray-100 dark:bg-white/5 animate-pulse"
+              className="h-16 animate-pulse rounded-lg bg-[var(--fs-bg-elevated)]"
             />
           ))}
         </div>
       ) : events.length === 0 ? (
         <div className="text-center py-6">
-          <Calendar className="w-8 h-8 text-gray-300 dark:text-white/20 mx-auto mb-2" />
-          <p className="text-sm text-gray-400 dark:text-white/40">
+          <Calendar className="mx-auto mb-2 h-8 w-8 text-[var(--fs-ink-disabled)]" />
+          <p className="text-sm text-[var(--fs-ink-faint)]">
             No upcoming meetings
           </p>
-          <p className="text-xs text-gray-300 dark:text-white/20 mt-1">
+          <p className="mt-1 text-xs text-[var(--fs-ink-disabled)]">
             New bookings will appear here automatically
           </p>
         </div>
@@ -143,11 +143,11 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
           {events.slice(0, 5).map((event) => (
             <div
               key={event.uri}
-              className="flex items-center gap-3 p-3 rounded-xl bg-[var(--fs-bg-elevated)] border border-gray-100 dark:border-white/5 hover:border-[var(--purple)]/20 transition-colors group"
+              className="group flex items-center gap-3 rounded-lg border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] p-3 transition-colors hover:border-[var(--fs-rule-accent)]"
             >
               {/* Date badge */}
               <div className="flex flex-col items-center min-w-[48px]">
-                <span className="text-[0.65rem] font-medium text-[var(--purple)] uppercase">
+                <span className="text-[0.65rem] font-medium uppercase text-[var(--fs-accent)]">
                   {formatDate(event.startTime)}
                 </span>
                 <span className="text-lg font-semibold text-[var(--fs-ink)] leading-tight">
@@ -156,7 +156,7 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
               </div>
 
               {/* Divider */}
-              <div className="w-px h-10 bg-gray-200 dark:bg-white/10" />
+              <div className="h-10 w-px bg-[var(--fs-rule)]" />
 
               {/* Details */}
               <div className="flex-1 min-w-0">
@@ -164,18 +164,18 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
                   {event.name}
                 </p>
                 <div className="flex items-center gap-3 mt-0.5">
-                  <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-white/40">
+                  <span className="flex items-center gap-1 text-xs text-[var(--fs-ink-faint)]">
                     <Clock className="w-3 h-3" />
                     {durationMin(event.startTime, event.endTime)} min
                   </span>
                   {event.invitees.length > 0 && (
-                    <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-white/40">
+                    <span className="flex items-center gap-1 text-xs text-[var(--fs-ink-faint)]">
                       <Users className="w-3 h-3" />
                       {event.invitees[0].name}
                     </span>
                   )}
                   {event.location && (
-                    <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-white/40">
+                    <span className="flex items-center gap-1 text-xs text-[var(--fs-ink-faint)]">
                       <LocationIcon type={event.location.type} />
                       {event.location.join_url
                         ? 'Video call'
@@ -191,19 +191,19 @@ export function UpcomingMeetingsCard({ projectId }: Props) {
                   href={event.location.join_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-[var(--purple)]/10 text-[var(--purple)] hover:bg-[var(--purple)]/20 transition-colors opacity-0 group-hover:opacity-100"
+                  className="rounded-lg bg-[var(--fs-accent-bg)] p-2 text-[var(--fs-accent)] opacity-0 transition-colors group-hover:opacity-100 hover:bg-[var(--fs-accent-bg)]/80"
                   title="Join call"
                 >
                   <Video className="w-4 h-4" />
                 </a>
               ) : (
-                <ChevronRight className="w-4 h-4 text-gray-300 dark:text-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ChevronRight className="w-4 h-4 text-[var(--fs-ink-disabled)] opacity-0 transition-opacity group-hover:opacity-100" />
               )}
             </div>
           ))}
 
           {events.length > 5 && (
-            <p className="text-xs text-center text-gray-400 dark:text-white/30 pt-1">
+            <p className="pt-1 text-center text-xs text-[var(--fs-ink-faint)]">
               +{events.length - 5} more meetings
             </p>
           )}

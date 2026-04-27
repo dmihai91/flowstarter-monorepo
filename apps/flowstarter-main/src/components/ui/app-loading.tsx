@@ -1,6 +1,6 @@
 'use client';
 
-import { LogoIcon } from './logo';
+import { LoadingScreen } from '@flowstarter/flow-design-system';
 
 /**
  * Unified loading states for all pages.
@@ -36,21 +36,8 @@ export function AppLoader({
     );
   }
 
-  return (
-    <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] gap-8 animate-in fade-in duration-300">
-      <LogoIcon size="lg" />
-      {spinner}
-      <p
-        className="text-[11px] uppercase tracking-widest"
-        style={{
-          color: 'var(--fs-ink-faint)',
-          fontFamily: 'var(--fs-font-mono)',
-        }}
-      >
-        {message}
-      </p>
-    </div>
-  );
+  // Full-page variant uses the shared design-system loading screen.
+  return <LoadingScreen message={message} />;
 }
 
 export function CardSkeleton({ count = 4 }: { count?: number }) {

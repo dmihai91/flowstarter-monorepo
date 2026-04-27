@@ -1,5 +1,5 @@
 import 'server-only';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
@@ -24,14 +24,16 @@ const bodySchema = z.object({
     .default('normal'),
 });
 
-/**
- * Resolve role from session claims only — no currentUser() network call.
- * Clerk embeds publicMetadata into the JWT so this is always fast.
- */
 async function resolveRole(): Promise<string | undefined> {
   const { sessionClaims } = await auth();
-  return (
+  const claimRole = (
     sessionClaims?.metadata as { role?: string } | undefined
+  )?.role?.toLowerCase();
+  if (claimRole) return claimRole;
+
+  const user = await currentUser();
+  return (
+    user?.publicMetadata as { role?: string } | undefined
   )?.role?.toLowerCase();
 }
 
@@ -125,6 +127,7 @@ export async function GET(request: NextRequest) {
 
   const db = createSupabaseServiceRoleClient();
   // Omit original_prompt + editor_context — they can be large JSON; load via GET /api/client-requests/:id when needed.
+  // NOTE: do not rely on FK joins here; some environments don't have `client_requests -> projects` relation.
   let query = db.from('client_requests').select(
     `
       id,
@@ -139,8 +142,7 @@ export async function GET(request: NextRequest) {
       created_at,
       accepted_at,
       resolved_at,
-      workspace_session_id,
-      projects(name, client_name, client_email)
+      workspace_session_id
       `
   );
 
@@ -175,8 +177,60 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  const projectIds = Array.from(
+    new Set((data ?? []).map((row) => row.project_id).filter(Boolean))
+  );
+
+  let projectMap: Record<
+    string,
+    {
+      name?: string | null;
+      client_name?: string | null;
+      client_email?: string | null;
+    }
+  > = {};
+
+  if (projectIds.length > 0) {
+    const { data: projectRows, error: projectError } = await db
+      .from('projects')
+      .select('id, name, client_name, client_email')
+      .in('id', projectIds);
+
+    if (projectError) {
+      console.warn(
+        '[client-requests] project hydration warning:',
+        projectError
+      );
+    } else {
+      // `client_name` / `client_email` may not be present in the generated
+      // Supabase types in every environment; fall back through a runtime cast.
+      type HydratedProjectRow = {
+        id: string;
+        name: string | null;
+        client_name: string | null;
+        client_email: string | null;
+      };
+      const typedRows = (projectRows ?? []) as unknown as HydratedProjectRow[];
+      projectMap = Object.fromEntries(
+        typedRows.map((project) => [
+          project.id,
+          {
+            name: project.name,
+            client_name: project.client_name,
+            client_email: project.client_email,
+          },
+        ])
+      );
+    }
+  }
+
+  const hydrated = (data ?? []).map((request) => ({
+    ...request,
+    projects: projectMap[request.project_id] ?? null,
+  }));
+
   return NextResponse.json(
-    { requests: data ?? [] },
+    { requests: hydrated },
     {
       headers: {
         // Allow CDN/browser to cache for 10s, revalidate in background

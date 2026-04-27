@@ -21,7 +21,7 @@ export function PublicPageLayout({ children }: PublicPageLayoutProps) {
         style={{ position: 'fixed', inset: 0, zIndex: 0 }}
       />
       <SiteHeader mode="public" />
-      {children}
+      <div className="flex flex-1 flex-col">{children}</div>
       <Footer />
     </div>
   );

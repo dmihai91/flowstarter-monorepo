@@ -122,13 +122,13 @@
   --fs-bg-overlay:  var(--fs-primitive-light-overlay);
 
   /* Glass surfaces */
-  --fs-glass-bg:      rgba(255, 255, 255, 0.55);
-  --fs-glass-edge:    rgba(18, 10, 34, 0.10);
+  --fs-glass-bg:      rgba(255, 255, 255, 0.68);
+  --fs-glass-edge:    rgba(15, 23, 42, 0.11);
 
   /* Chrome surfaces — header & sidebar glass */
-  --fs-chrome-bg:     rgba(255, 255, 255, 0.92);
-  --fs-chrome-border: rgba(18, 10, 34, 0.07);
-  --fs-chrome-shadow: 1px 0 0 rgba(0, 0, 0, 0.05), 4px 0 16px rgba(0, 0, 0, 0.04);
+  --fs-chrome-bg:     rgba(255, 255, 255, 0.82);
+  --fs-chrome-border: rgba(15, 23, 42, 0.10);
+  --fs-chrome-shadow: 1px 0 0 rgba(15, 23, 42, 0.06), 0 10px 28px rgba(15, 23, 42, 0.08);
 
   /* Ink / text */
   --fs-ink:          var(--fs-primitive-ink-dark);
@@ -154,10 +154,10 @@
 
   /* Card shadow */
   --fs-card-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 -1px 0 rgba(18, 10, 34, 0.04),
-    0 24px 60px rgba(78, 94, 218, 0.10),
-    0 8px 22px rgba(18, 10, 34, 0.06);
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(15, 23, 42, 0.03),
+    0 14px 40px rgba(15, 23, 42, 0.08),
+    0 4px 14px rgba(15, 23, 42, 0.05);
 
   /* Borders / rules */
   --fs-rule:        rgba(18, 10, 34, 0.10);
@@ -189,19 +189,19 @@
   --fs-bg-overlay:  var(--fs-primitive-dark-overlay);
 
   /* Glass surfaces */
-  --fs-glass-bg:      rgba(255, 255, 255, 0.035);
-  --fs-glass-edge:    rgba(255, 255, 255, 0.08);
+  --fs-glass-bg:      rgba(22, 28, 45, 0.64);
+  --fs-glass-edge:    rgba(148, 163, 184, 0.30);
 
   /* Chrome surfaces — header & sidebar glass */
-  --fs-chrome-bg:     rgba(16, 18, 36, 0.94);
-  --fs-chrome-border: rgba(255, 255, 255, 0.08);
-  --fs-chrome-shadow: 1px 0 0 rgba(255, 255, 255, 0.04), 4px 0 16px rgba(0, 0, 0, 0.3);
+  --fs-chrome-bg:     rgba(12, 16, 30, 0.86);
+  --fs-chrome-border: rgba(148, 163, 184, 0.22);
+  --fs-chrome-shadow: 1px 0 0 rgba(148, 163, 184, 0.10), 0 14px 34px rgba(2, 6, 23, 0.50);
 
   /* Ink / text */
   --fs-ink:          var(--fs-primitive-ink-light);
-  --fs-ink-dim:      rgba(244, 238, 228, 0.58);
-  --fs-ink-faint:    rgba(244, 238, 228, 0.32);
-  --fs-ink-disabled: rgba(244, 238, 228, 0.18);
+  --fs-ink-dim:      rgba(244, 238, 228, 0.72);
+  --fs-ink-faint:    rgba(244, 238, 228, 0.50);
+  --fs-ink-disabled: rgba(244, 238, 228, 0.30);
 
   /* Accent */
   --fs-accent:       var(--fs-primitive-accent-pale);
@@ -222,10 +222,10 @@
 
   /* Card shadow */
   --fs-card-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.40),
-    0 30px 80px rgba(0, 0, 0, 0.50),
-    0 8px 24px rgba(78, 94, 218, 0.16);
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.34),
+    0 20px 50px rgba(2, 6, 23, 0.38),
+    0 8px 24px rgba(56, 97, 182, 0.14);
 
   /* Borders / rules */
   --fs-rule:        rgba(244, 238, 228, 0.12);
@@ -278,9 +278,9 @@
   --fs-radius-xs:   6px;
   --fs-radius-sm:   8px;
   --fs-radius-md:  12px;
-  --fs-radius-lg:  16px;
-  --fs-radius-xl:  20px;
-  --fs-radius-2xl: 24px;
+  --fs-radius-lg:  14px;
+  --fs-radius-xl:  16px;
+  --fs-radius-2xl: 20px;
   --fs-radius-full: 9999px;
 }
 

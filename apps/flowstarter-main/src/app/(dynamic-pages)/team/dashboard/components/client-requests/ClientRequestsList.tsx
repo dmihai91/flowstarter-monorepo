@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Inbox } from 'lucide-react';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 import { ListShell, FilterTabs, SortSelect, SearchInput } from '../ListShell';
 import { useClientRequests } from '@/lib/client-requests/useClientRequests';
 import { useClientRequestsRealtime } from '@/lib/client-requests/useClientRequestsRealtime';
@@ -182,7 +182,7 @@ export function ClientRequestsList() {
             const disabled = Boolean(item.responded_at);
             const sessionLabel = item.email
               .replace('support+', '')
-              .replace('@flowstarter.app', '');
+              .replace('@flowstarter.net', '');
             return (
               <div
                 key={item.id}
@@ -227,7 +227,7 @@ export function ClientRequestsList() {
                       This reply is delivered to the user chat.
                     </span>
                   )}
-                  <UnifiedButton
+                  <Button
                     type="button"
                     className="h-8 px-3 py-1 text-xs"
                     disabled={
@@ -238,7 +238,7 @@ export function ClientRequestsList() {
                     onClick={() => void handleOperatorRequest(item.id)}
                   >
                     {handlingId === item.id ? 'Sending…' : 'Mark handled'}
-                  </UnifiedButton>
+                  </Button>
                 </div>
               </div>
             );

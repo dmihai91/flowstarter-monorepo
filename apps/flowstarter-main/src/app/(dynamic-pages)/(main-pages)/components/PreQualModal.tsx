@@ -1,38 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { EXTERNAL_URLS } from '@/lib/constants';
+import { useI18n } from '@/lib/i18n';
 import { CalendlyEmbed } from './CalendlyEmbed';
 
-const OPTIONS = [
-  {
-    id: 'starter',
-    name: 'Starter',
-    desc: 'Get a professional site live in 5–7 days',
-    price: '€499',
-  },
-  {
-    id: 'relaunch',
-    name: 'Relaunch',
-    desc: 'My site exists but is not getting me clients',
-    price: '€699–€999',
-  },
-  {
-    id: 'growth',
-    name: 'Growth',
-    desc: 'I want bookings, payments & email all set up',
-    price: '€999–€1,499',
-  },
-  {
-    id: 'unsure',
-    name: 'Not sure yet',
-    desc: "I'll explain my situation on the call",
-    price: null,
-  },
-] as const;
+const OPTION_IDS = ['starter', 'pro', 'custom', 'unsure'] as const;
+const OPTIONS_WITH_PRICE = new Set(['starter', 'pro', 'custom']);
 
-type OptionId = (typeof OPTIONS)[number]['id'];
+type OptionId = (typeof OPTION_IDS)[number];
 type Step = 'select' | 'calendar' | 'confirmed';
 
 interface PreQualModalProps {
@@ -49,14 +26,31 @@ export function PreQualModal({
   source = 'cta',
   initialPlan,
 }: PreQualModalProps) {
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
   const [selected, setSelected] = useState<OptionId | null>(null);
   const [step, setStep] = useState<Step>('select');
+
+  const options = useMemo(
+    () =>
+      OPTION_IDS.map((id) => ({
+        id,
+        name: t(`landing.prequal.options.${id}.name`),
+        desc: t(`landing.prequal.options.${id}.desc`),
+        price: OPTIONS_WITH_PRICE.has(id)
+          ? t(`landing.prequal.options.${id}.price`)
+          : null,
+      })),
+    [t]
+  );
 
   // Reset on open + lock scroll; apply initial plan
   useEffect(() => {
     if (open) {
-      const match = OPTIONS.find((o) => o.id === initialPlan?.toLowerCase());
-      setSelected(match ? match.id : null);
+      const lowered = initialPlan?.toLowerCase() as OptionId | undefined;
+      const matchedId =
+        lowered && OPTION_IDS.includes(lowered) ? lowered : null;
+      setSelected(matchedId);
       setStep('select');
       document.body.style.overflow = 'hidden';
     } else {
@@ -142,7 +136,7 @@ export function PreQualModal({
           {/* Close */}
           <button
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t('landing.prequal.close')}
             className="absolute right-4 top-4 rounded-lg p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors z-10"
           >
             <svg
@@ -166,22 +160,22 @@ export function PreQualModal({
               {/* Header */}
               <div className="mb-6">
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)] mb-2">
-                  Free discovery call
+                  {t('landing.prequal.eyebrow')}
                 </p>
                 <h2
                   id="prequal-title"
                   className="text-2xl font-bold text-[var(--fs-ink)]"
                 >
-                  Which best describes your situation?
+                  {t('landing.prequal.title')}
                 </h2>
                 <p className="mt-1 text-base text-[var(--fs-ink-faint)]">
-                  We'll tailor the call based on your answer.
+                  {t('landing.prequal.subtitle')}
                 </p>
               </div>
 
               {/* Options */}
               <div className="space-y-2 mb-5">
-                {OPTIONS.map((opt) => {
+                {options.map((opt) => {
                   const isSelected = selected === opt.id;
                   return (
                     <button
@@ -241,7 +235,7 @@ export function PreQualModal({
                     : 'border border-[var(--fs-rule-strong)] bg-[color-mix(in_oklab,var(--fs-bg-elevated)_82%,var(--fs-ink)_18%)] text-[var(--fs-ink-faint)] opacity-70 cursor-not-allowed shadow-none',
                 ].join(' ')}
               >
-                Book my discovery call
+                {t('landing.prequal.cta')}
                 <svg
                   className="h-4 w-4"
                   fill="none"
@@ -258,7 +252,7 @@ export function PreQualModal({
               </button>
 
               <p className="mt-3 text-center text-xs text-gray-400 dark:text-white/30">
-                Free, no commitment. 45-minute call.
+                {t('landing.prequal.footnote')}
               </p>
             </>
           )}
@@ -286,14 +280,14 @@ export function PreQualModal({
                       d="M15 19l-7-7 7-7"
                     />
                   </svg>
-                  Back
+                  {t('landing.prequal.calendar.back')}
                 </button>
                 <div className="h-4 w-px bg-gray-200 dark:bg-white/10" />
                 <p className="text-sm text-[var(--fs-ink-faint)]">
                   <span className="font-medium text-[var(--purple-primary)]">
-                    {OPTIONS.find((o) => o.id === selected)?.name}
+                    {options.find((o) => o.id === selected)?.name}
                   </span>{' '}
-                  plan selected
+                  {t('landing.prequal.calendar.planSelected')}
                 </p>
               </div>
 
@@ -302,10 +296,10 @@ export function PreQualModal({
                   id="prequal-title"
                   className="text-xl font-bold text-[var(--fs-ink)]"
                 >
-                  Pick a time that works for you
+                  {t('landing.prequal.calendar.title')}
                 </h2>
                 <p className="mt-1 text-sm text-[var(--fs-ink-faint)]">
-                  Choose a 45-minute slot below. We'll confirm via email.
+                  {t('landing.prequal.calendar.subtitle')}
                 </p>
               </div>
 
@@ -343,14 +337,13 @@ export function PreQualModal({
               </div>
 
               <h2 className="text-2xl font-bold text-[var(--fs-ink)] mb-2">
-                You're all set!
+                {t('landing.prequal.confirmed.title')}
               </h2>
               <p className="text-base text-[var(--fs-ink-faint)] max-w-sm">
-                Your discovery call is booked. Check your email for the
-                confirmation and calendar invite.
+                {t('landing.prequal.confirmed.body')}
               </p>
               <p className="mt-4 text-sm text-gray-400 dark:text-white/30">
-                We're looking forward to learning about your project.
+                {t('landing.prequal.confirmed.note')}
               </p>
 
               <button
@@ -358,7 +351,7 @@ export function PreQualModal({
                 onClick={onClose}
                 className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-8 py-3 text-base font-semibold text-white shadow-lg shadow-[var(--purple-primary)]/25 hover:opacity-90 transition-opacity"
               >
-                Done
+                {t('landing.prequal.confirmed.cta')}
               </button>
             </div>
           )}

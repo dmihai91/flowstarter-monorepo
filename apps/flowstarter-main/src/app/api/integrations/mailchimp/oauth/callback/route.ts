@@ -28,7 +28,7 @@ export async function GET(req: Request) {
 
     if (!userId) {
       return NextResponse.redirect(
-        new URL('/sign-in?redirect=/dashboard/integrations', req.url)
+        new URL('/sign-in?redirect=/dashboard/help', req.url)
       );
     }
 
@@ -47,7 +47,7 @@ export async function GET(req: Request) {
       );
       return NextResponse.redirect(
         new URL(
-          `/dashboard/integrations?provider=mailchimp&status=error&message=${encodeURIComponent(
+          `/dashboard/help?provider=mailchimp&status=error&message=${encodeURIComponent(
             stateValidation.error || 'Invalid OAuth state'
           )}`,
           req.url
@@ -58,7 +58,7 @@ export async function GET(req: Request) {
     if (error) {
       return NextResponse.redirect(
         new URL(
-          `/dashboard/integrations?provider=mailchimp&status=error&message=${encodeURIComponent(
+          `/dashboard/help?provider=mailchimp&status=error&message=${encodeURIComponent(
             error
           )}`,
           req.url
@@ -69,7 +69,7 @@ export async function GET(req: Request) {
     if (!code) {
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=mailchimp&status=error&message=No+authorization+code',
+          '/dashboard/help?provider=mailchimp&status=error&message=No+authorization+code',
           req.url
         )
       );
@@ -82,7 +82,7 @@ export async function GET(req: Request) {
     if (!clientId || !clientSecret) {
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=mailchimp&status=error&message=Server+configuration+error',
+          '/dashboard/help?provider=mailchimp&status=error&message=Server+configuration+error',
           req.url
         )
       );
@@ -114,7 +114,7 @@ export async function GET(req: Request) {
       );
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=mailchimp&status=error&message=Token+exchange+failed',
+          '/dashboard/help?provider=mailchimp&status=error&message=Token+exchange+failed',
           req.url
         )
       );
@@ -167,7 +167,7 @@ export async function GET(req: Request) {
       );
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=mailchimp&status=error&message=Failed+to+encrypt+credentials',
+          '/dashboard/help?provider=mailchimp&status=error&message=Failed+to+encrypt+credentials',
           req.url
         )
       );
@@ -204,7 +204,7 @@ export async function GET(req: Request) {
       );
       return NextResponse.redirect(
         new URL(
-          '/dashboard/integrations?provider=mailchimp&status=error&message=Failed+to+save+credentials',
+          '/dashboard/help?provider=mailchimp&status=error&message=Failed+to+save+credentials',
           req.url
         )
       );
@@ -217,16 +217,13 @@ export async function GET(req: Request) {
     );
 
     return NextResponse.redirect(
-      new URL(
-        '/dashboard/integrations?provider=mailchimp&status=success',
-        req.url
-      )
+      new URL('/dashboard/help?provider=mailchimp&status=success', req.url)
     );
   } catch (error) {
     console.error('Mailchimp OAuth callback error:', error);
     return NextResponse.redirect(
       new URL(
-        '/dashboard/integrations?provider=mailchimp&status=error&message=Unknown+error',
+        '/dashboard/help?provider=mailchimp&status=error&message=Unknown+error',
         req.url
       )
     );

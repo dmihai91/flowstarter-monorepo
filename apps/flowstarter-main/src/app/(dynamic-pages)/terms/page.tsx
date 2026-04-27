@@ -3,7 +3,7 @@
 import { Sparkles, Package, DoorOpen, FileText, Mail } from 'lucide-react';
 import { useTranslations } from '@/lib/i18n';
 import { PublicPageLayout } from '@/components/PublicPageLayout';
-import { UnifiedButton } from '@/components/ui/unified-button';
+import { Button } from '@/components/ui/unified-button';
 
 export default function TermsPage() {
   const { t } = useTranslations();
@@ -166,12 +166,12 @@ export default function TermsPage() {
           <p className="text-[var(--fs-ink-faint)] mb-4">
             {t('terms.contact.description')}
           </p>
-          <UnifiedButton asChild>
-            <a href="mailto:hello@flowstarter.app">
+          <Button asChild>
+            <a href="mailto:hello@flowstarter.net">
               <Mail className="w-4 h-4" />
-              hello@flowstarter.app
+              hello@flowstarter.net
             </a>
-          </UnifiedButton>
+          </Button>
         </div>
       </main>
     </PublicPageLayout>

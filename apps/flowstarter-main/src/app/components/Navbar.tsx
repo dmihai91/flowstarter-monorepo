@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   AuthButtons,
-  DashboardNavControls,
   NavbarHeader,
   NavbarLogo,
   PublicNavLinks,
@@ -38,14 +37,10 @@ export const ExternalNavigationWithAuth = () => {
     <NavbarHeader isScrolled={isScrolled}>
       <NavbarLogo href={logoDestination} />
 
-      {isSignedIn ? (
-        <DashboardNavControls />
-      ) : (
-        <nav className="ml-auto flex gap-3 sm:gap-6 items-center">
-          <ThemeToggle className="inline-flex mr-2" />
-          <AuthButtons />
-        </nav>
-      )}
+      <nav className="ml-auto flex gap-3 sm:gap-6 items-center">
+        <ThemeToggle className="inline-flex mr-2" />
+        {!isSignedIn && <AuthButtons />}
+      </nav>
     </NavbarHeader>
   );
 };

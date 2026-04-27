@@ -228,8 +228,8 @@ pnpm dev:coding-agent
 # Restart AI Coding Agent service
 pnpm dev:restart-coding-agent
 
-# Run both Next.js and Coding Agent together
-pnpm dev:all
+# Start the full local stack (Main, Supabase, Library API/UI, Convex, Code, Tunnel) — from repo root
+pnpm -w dev
 
 # Run unit tests
 pnpm test

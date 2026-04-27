@@ -32,7 +32,7 @@ export const miscKeys = {
   'contact.talk.button': 'Book Free Discovery Call',
   'contact.other.title': 'Other ways to reach us',
   'contact.other.emailLabel': 'Email',
-  'contact.other.emailValue': 'hello@flowstarter.app',
+  'contact.other.emailValue': 'hello@flowstarter.net',
   'contact.other.twitterLabel': 'Twitter',
   'contact.other.twitterValue': '@flowstarter',
   'contact.other.linkedinLabel': 'LinkedIn',
@@ -95,7 +95,7 @@ export const miscKeys = {
   'help.quickAction.discovery.desc':
     'Free 45-minute call to discuss your project',
   'help.quickAction.email.title': 'Email Support',
-  'help.quickAction.email.desc': 'hello@flowstarter.app',
+  'help.quickAction.email.desc': 'hello@flowstarter.net',
   'help.howItWorks': 'How It Works',
   'help.step1.number': '01',
   'help.step1.title': 'We talk',

@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 /**
  * glass.ts — Shared glass card style utilities.
  *
@@ -13,10 +15,10 @@
 
 /** Tailwind structural classes — no color values */
 export const glassClass =
-  'rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150';
+  'rounded-[var(--fs-radius-xl)] border backdrop-blur-xl backdrop-saturate-125';
 
 /** Inline style object — resolves --fs-* tokens at runtime for dark/light */
-export const glassStyle: React.CSSProperties = {
+export const glassStyle: CSSProperties = {
   background: 'var(--fs-glass-bg)',
   borderColor: 'var(--fs-glass-edge)',
   boxShadow: 'var(--fs-card-shadow)',
@@ -24,7 +26,70 @@ export const glassStyle: React.CSSProperties = {
 
 /** Hover variant — adds lift on interactive cards */
 export const glassHoverClass =
-  'rounded-[var(--fs-radius-2xl)] border backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:-translate-y-0.5';
+  'rounded-[var(--fs-radius-xl)] border backdrop-blur-xl backdrop-saturate-125 transition-all duration-200 hover:-translate-y-0.5';
 
 /** Skeleton pulse placeholder using token colors */
 export const skeletonClass = 'bg-[var(--fs-rule)] rounded animate-pulse';
+
+/** Shared dashboard gradient overlays (for layout shells and page containers) */
+export const dashboardLightOverlay = `
+  radial-gradient(ellipse 98% 72% at 0% -10%, rgba(124, 58, 237, 0.16) 0%, transparent 56%),
+  radial-gradient(ellipse 88% 62% at 100% 10%, rgba(59, 130, 246, 0.12) 0%, transparent 58%),
+  radial-gradient(ellipse 124% 80% at 52% 60%, rgba(99, 102, 241, 0.08) 0%, transparent 64%),
+  radial-gradient(ellipse 138% 74% at 50% 108%, rgba(244, 114, 182, 0.07) 0%, transparent 61%)
+`;
+
+export const dashboardDarkOverlay = `
+  radial-gradient(ellipse 108% 76% at 0% -12%, rgba(84, 55, 165, 0.34) 0%, transparent 60%),
+  radial-gradient(ellipse 92% 64% at 100% 12%, rgba(56, 97, 182, 0.24) 0%, transparent 62%),
+  radial-gradient(ellipse 138% 86% at 50% 58%, rgba(45, 78, 151, 0.16) 0%, transparent 68%),
+  radial-gradient(ellipse 145% 78% at 50% 108%, rgba(111, 64, 157, 0.18) 0%, transparent 64%),
+  linear-gradient(180deg, rgba(8, 11, 26, 0.08) 0%, rgba(8, 11, 26, 0.34) 100%)
+`;
+
+/** Sidebar chrome (shared by client + team sidebars) */
+export function getSidebarChromeStyle(
+  resolvedTheme: 'light' | 'dark' | undefined
+): CSSProperties {
+  const isDark = resolvedTheme === 'dark';
+  return {
+    background: isDark ? 'var(--fs-chrome-bg)' : 'var(--fs-chrome-bg)',
+    borderRight: `1px solid var(--fs-chrome-border)`,
+    boxShadow: 'var(--fs-chrome-shadow)',
+    backdropFilter: isDark
+      ? 'blur(14px) saturate(125%)'
+      : 'blur(16px) saturate(120%)',
+    WebkitBackdropFilter: isDark
+      ? 'blur(14px) saturate(125%)'
+      : 'blur(16px) saturate(120%)',
+  };
+}
+
+export const sidebarNavBaseClass =
+  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150';
+export const sidebarNavActiveClass =
+  'border border-[color-mix(in_oklab,var(--fs-accent)_70%,white)] bg-[var(--fs-accent)] text-white font-semibold shadow-[0_10px_22px_color-mix(in_oklab,var(--fs-accent)_32%,transparent)]';
+export const sidebarNavIdleClass =
+  'text-[var(--fs-ink-dim)] hover:bg-[var(--fs-bg-elevated)]/75 hover:text-[var(--fs-ink)]';
+export const sidebarSectionLabelClass =
+  'mb-2 px-3 text-[11px] font-semibold uppercase tracking-wide text-[var(--fs-ink-faint)]';
+
+export function getSidebarToggleButtonClass(
+  resolvedTheme: 'light' | 'dark' | undefined
+): string {
+  const darkClass =
+    'border-white/20 bg-white/[0.10] text-white shadow-[0_8px_22px_rgba(0,0,0,0.35)] hover:border-white/30 hover:bg-white/[0.16]';
+  const lightClass =
+    'border-slate-300/90 bg-white text-slate-700 shadow-[0_8px_20px_rgba(15,23,42,0.14)] hover:border-slate-400/85 hover:bg-slate-50';
+  return [
+    'group inline-flex h-8 w-8 items-center justify-center rounded-md border transition-all duration-150',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fs-accent-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
+    resolvedTheme === 'dark' ? darkClass : lightClass,
+  ].join(' ');
+}
+
+export const sidebarFooterToggleClass = [
+  'group w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150',
+  'text-[var(--fs-ink-faint)] hover:bg-[var(--fs-bg-elevated)]/75 hover:text-[var(--fs-ink)]',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--fs-accent-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
+].join(' ');

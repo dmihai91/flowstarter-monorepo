@@ -21,10 +21,8 @@ services:
       - flowstarter_pnpm_store:/pnpm/store
       - flowstarter_root_node_modules:/workspace/node_modules
       - flowstarter_main_node_modules:/workspace/apps/flowstarter-main/node_modules
-      - flowstarter_editor_engine_node_modules:/workspace/packages/editor-engine/node_modules
       - flowstarter_flow_design_system_node_modules:/workspace/packages/flow-design-system/node_modules
       - flowstarter_platform_config_node_modules:/workspace/packages/platform-config/node_modules
-      - flowstarter_daytona_utils_node_modules:/workspace/packages/daytona-utils/node_modules
       - flowstarter_supabase_utils_node_modules:/workspace/packages/supabase-utils/node_modules
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -35,8 +33,6 @@ volumes:
   flowstarter_pnpm_store:
   flowstarter_root_node_modules:
   flowstarter_main_node_modules:
-  flowstarter_editor_engine_node_modules:
   flowstarter_flow_design_system_node_modules:
   flowstarter_platform_config_node_modules:
-  flowstarter_daytona_utils_node_modules:
   flowstarter_supabase_utils_node_modules:

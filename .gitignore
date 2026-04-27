@@ -87,9 +87,6 @@ docs/screenshots/
 # Next.js build output
 .next/
 
-# flowstarter-editor (Vite / React Router) — production build; can embed env at compile time
-apps/flowstarter-editor/build/
-
 # Coverage reports (nested)
 **/coverage/
 

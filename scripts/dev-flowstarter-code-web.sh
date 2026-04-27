@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs the T3 Vite web client (apps/flowstarter-editor/t3/web). Paired with
+# Runs the T3 Vite web client (apps/t3-code/web). Paired with
 # scripts/dev-flowstarter-code-host.sh, which runs the T3 server.
 # Split into two scripts so each can be PM2-managed independently; the server
 # needs FD 3 for its bootstrap envelope and the web does not.

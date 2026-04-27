@@ -2,10 +2,10 @@
  * PM2 ecosystem for the feature/concierge-pivot worktree.
  *
  * Manages:
- *   - flowstarter-main (Next.js production)   -> 3000
- *   - flowstarter-code (Next.js wrapper)      -> 3001
- *   - t3-code-server   (Bun WebSocket)        -> 3774
- *   - t3-code-web      (Vite)                 -> 5733
+ *   - flowstarter-main    (Next.js production) -> 3000
+ *   - flowstarter-library (Node preview)       -> 2000
+ *   - t3-code-server      (Bun WebSocket)      -> 3774
+ *   - t3-code-web         (Vite)               -> 5733
  *
  * t3-code-server + t3-code-web are tightly coupled to apps/t3-code and
  * the effect@beta.50 overrides that live on this branch.
@@ -49,21 +49,6 @@ module.exports = {
       ...commonRestart,
       out_file: path.join(LOG_DIR, 'flowstarter-main-out.log'),
       error_file: path.join(LOG_DIR, 'flowstarter-main-error.log'),
-      ...commonLog,
-    },
-    {
-      name: 'flowstarter-code',
-      cwd: path.join(ROOT, 'apps/flowstarter-code'),
-      script: 'node_modules/.bin/next',
-      args: 'dev -p 3100',
-      interpreter: 'none',
-      env: {
-        NODE_ENV: 'development',
-      },
-      max_memory_restart: '1G',
-      ...commonRestart,
-      out_file: path.join(LOG_DIR, 'flowstarter-code-out.log'),
-      error_file: path.join(LOG_DIR, 'flowstarter-code-error.log'),
       ...commonLog,
     },
     {

@@ -3,9 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # Source of truth for the T3 server is the in-tree workspace at apps/t3-code.
-# Override with FLOWSTARTER_CODE_UPSTREAM_DIR to fall back to a
-# `.local/flowstarter-code-upstream` clone created by
-# scripts/bootstrap-flowstarter-code-host.sh.
+# Override FLOWSTARTER_CODE_UPSTREAM_DIR to point at a sibling checkout.
 T3_DIR="${FLOWSTARTER_CODE_UPSTREAM_DIR:-$ROOT_DIR/apps/t3-code}"
 FLOWSTARTER_CODE_HOME="${FLOWSTARTER_CODE_HOME:-$ROOT_DIR/.local/flowstarter-code-home}"
 FLOWSTARTER_CODE_HOST="${FLOWSTARTER_CODE_HOST:-127.0.0.1}"
@@ -45,9 +43,8 @@ fi
 
 if [ ! -d "$T3_DIR/server" ]; then
   echo "T3 Code server source not found at $T3_DIR/server" >&2
-  echo "Expected the workspace copy at apps/flowstarter-editor/t3, or set" >&2
-  echo "FLOWSTARTER_CODE_UPSTREAM_DIR to a checkout and run" >&2
-  echo "pnpm setup:flowstarter-code:host." >&2
+  echo "Expected the workspace copy at apps/t3-code, or set" >&2
+  echo "FLOWSTARTER_CODE_UPSTREAM_DIR to a sibling checkout." >&2
   exit 1
 fi
 
@@ -78,8 +75,7 @@ Starting T3 Code SERVER in dev mode
   ws server:    ws://$FLOWSTARTER_CODE_HOST:$FLOWSTARTER_CODE_PORT
 
 (The Vite web client runs as a separate PM2 app: t3-code-web on port
- $FLOWSTARTER_CODE_WEB_PORT. Set FLOWSTARTER_CODE_URL=http://localhost:$FLOWSTARTER_CODE_WEB_PORT
- in apps/flowstarter-code/.env.local to point the shell at it.)
+ $FLOWSTARTER_CODE_WEB_PORT.)
 EOF
 
 # Seed the T3 bootstrap envelope via FD 3 when an auth token is set. The T3

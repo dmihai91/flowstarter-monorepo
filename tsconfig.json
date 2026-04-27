@@ -7,9 +7,6 @@
       "path": "./packages/supabase-utils"
     },
     {
-      "path": "./packages/daytona-utils"
-    },
-    {
       "path": "./apps/t3-code/server"
     },
     {

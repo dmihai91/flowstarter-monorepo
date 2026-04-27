@@ -11,12 +11,6 @@ procs:
   "🖼️ Library UI":
     shell: "pnpm dev:showcase"
     autostart: true
-  "⚡ Convex":
-    shell: "pnpm --filter flowstarter-editor convex:dev"
-    autostart: true
-  "💻 Code (wrapper)":
-    shell: "pnpm dev:code"
-    autostart: true
   "🧠 T3 Server":
     shell: "./scripts/dev-flowstarter-code-host.sh"
     autostart: true

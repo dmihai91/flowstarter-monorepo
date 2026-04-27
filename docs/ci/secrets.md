@@ -1,6 +1,6 @@
 # GitHub Actions — Required Secrets
 
-Add all of these at: Settings → Secrets and variables → Actions
+Add all of these at: **Settings → Secrets and variables → Actions**.
 
 ## Authentication & Auth Bypass
 
@@ -18,49 +18,37 @@ Add all of these at: Settings → Secrets and variables → Actions
 |--------|-------------|
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://avptvzherjxymmbtbbbr.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (real-build only) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (used by Netlify functions, not by GH Actions today) |
 
-## Convex
+## Netlify (Deploy Previews + smoke gating)
 
-| Secret | Description |
-|--------|-------------|
-| `NEXT_PUBLIC_CONVEX_URL` | `https://outstanding-otter-369.convex.cloud` |
-| `CONVEX_SITE_URL` | `https://outstanding-otter-369.convex.site` |
-| `CONVEX_DEPLOY_KEY` | Convex deploy key for CI |
+`e2e-smoke.yml` resolves the Deploy Preview URL by polling Netlify's API for the
+deploy whose `commit_ref` matches the current commit, then runs Playwright
+against that URL. The actual builds are produced by Netlify itself via its
+GitHub App integration; CI just consumes them.
 
-## AI & Sandboxes
-
-| Secret | Description |
-|--------|-------------|
-| `ANTHROPIC_API_KEY` | Claude API key (used in real-build only) |
-| `DAYTONA_API_KEY` | Daytona sandbox key (used in real-build only) |
-
-## Deployment (Railway)
-
-| Secret | Description |
-|--------|-------------|
-| `RAILWAY_TOKEN` | Railway service account token |
-| `RAILWAY_PROJECT_ID` | Railway project ID |
+| Secret | Description | Where to get it |
+|--------|-------------|-----------------|
+| `NETLIFY_AUTH_TOKEN` | Personal access token with read access to the site | Netlify → User settings → Applications → Personal access tokens |
+| `NETLIFY_SITE_ID` | UUID of the Netlify site that hosts `flowstarter-main` | Netlify → Site settings → General → API ID (currently `8cd74d1b-a08a-4746-b77b-61ae37f70b12` for `flowstarter-landing`) |
 
 ## Notifications
 
 | Secret | Description |
 |--------|-------------|
-| `SLACK_QA_WEBHOOK_URL` | Slack incoming webhook for QA channel (real-build failures) |
+| `SLACK_QA_WEBHOOK_URL` | Slack incoming webhook for QA channel (optional) |
 
-## Deployment URLs
+## Optional fallback URLs
 
 | Secret | Description |
 |--------|-------------|
-| `E2E_BASE_URL` | Staging/preview URL for flowstarter-main (e.g. `https://staging.flowstarter.dev`) |
+| `E2E_BASE_URL` | Manual fallback URL for smoke tests when no Netlify Deploy Preview is available (rarely used; the wait script is the canonical path) |
 
 ---
 
 ## Workflow → Secrets map
 
 | Workflow | Secrets needed |
-|----------|---------------|
+|----------|----------------|
 | `quality-gate.yml` | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
-| `e2e-smoke.yml` | All auth + Supabase + Convex + `E2E_BASE_URL` |
-| `e2e-real-build.yml` | Everything |
-| `deploy-preview.yml` | `RAILWAY_TOKEN`, `RAILWAY_PROJECT_ID` |
+| `e2e-smoke.yml` | `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, plus Clerk + Supabase + `E2E_SECRET`/`E2E_USER_ID`/`HANDOFF_SECRET` for any auth-gated specs |

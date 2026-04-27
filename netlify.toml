@@ -8,16 +8,36 @@
 [build]
   # Run install + build from the monorepo root so pnpm workspace links resolve.
   base = "."
-  command = "pnpm install --frozen-lockfile && pnpm --filter flowstarter build"
+  command = "pnpm install --frozen-lockfile --prefer-offline && pnpm --filter flowstarter build"
   publish = "apps/flowstarter-main/.next"
 
 [build.environment]
   # Use pnpm, not npm. NETLIFY_USE_PNPM tells Netlify's build image to install
   # dependencies with pnpm at the configured version.
   NETLIFY_USE_PNPM = "true"
-  PNPM_FLAGS = "--frozen-lockfile"
+  PNPM_FLAGS = "--frozen-lockfile --prefer-offline"
   NEXT_TELEMETRY_DISABLED = "1"
+  NX_DAEMON = "true"
+  TURBO_TELEMETRY_DISABLED = "1"
   NODE_VERSION = "22"
+
+# --- Runtime / cold-start tuning ---------------------------------------------
+# `node_bundler = "esbuild"` produces smaller, faster-cold-starting Lambdas
+# than the default zisi bundler (~20–30% smaller bundle in practice).
+#
+# `region` should match the AWS region your Supabase project lives in so
+# the first DB call after a cold start doesn't pay trans-Atlantic latency.
+# Look up your project at https://supabase.com/dashboard → Settings →
+# General → "Region", then map it to the closest Netlify region:
+#   Supabase eu-central-1 (Frankfurt)  →  Netlify eu-central-1
+#   Supabase eu-west-1   (Ireland)     →  Netlify eu-west-1
+#   Supabase us-east-1   (N. Virginia) →  Netlify us-east-1
+#   Supabase us-west-1   (N. California)→ Netlify us-west-2
+#   Supabase ap-southeast-1 (Singapore)→  Netlify ap-southeast-1
+# Uncomment + set `region` once you've confirmed the Supabase region.
+[functions]
+  node_bundler = "esbuild"
+  # region = "eu-central-1"
 
 # Official Next.js Runtime — required for SSR routes, middleware, and ISR.
 # It also handles build caching automatically.

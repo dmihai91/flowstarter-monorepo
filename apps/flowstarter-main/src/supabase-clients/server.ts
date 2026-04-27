@@ -1,10 +1,17 @@
 import type { Database } from '@/lib/database.types';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+
+// Module-level singletons. In serverless, the same Lambda instance is reused
+// across invocations within its warm window — caching the client here avoids
+// re-running the auth/headers setup on every request after the cold start.
+let cachedAnonClient: SupabaseClient<Database> | null = null;
+let cachedServiceRoleClient: SupabaseClient<Database> | null = null;
 
 // Super simple server-side client with no auth persistence
 // Will work in both pages and app directory, but won't maintain auth state
-export const createSupabaseClient = () => {
-  return createClient<Database>(
+export const createSupabaseClient = (): SupabaseClient<Database> => {
+  if (cachedAnonClient) return cachedAnonClient;
+  cachedAnonClient = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -13,13 +20,17 @@ export const createSupabaseClient = () => {
       },
     }
   );
+  return cachedAnonClient;
 };
 
 // Export an alias that makes the purpose clearer
 export const createSupabaseServerClient = createSupabaseClient;
 
 // Create a server-side client that authenticates with a JWT (e.g., Clerk -> Supabase)
-export const createSupabaseServerClientWithAuth = (jwt: string) => {
+// NOTE: never cached — the JWT is per-request and must not leak across users.
+export const createSupabaseServerClientWithAuth = (
+  jwt: string
+): SupabaseClient<Database> => {
   // Debug breadcrumb (no secrets)
   console.info(
     `[Auth] createSupabaseServerClientWithAuth url=${process.env.NEXT_PUBLIC_SUPABASE_URL}`
@@ -41,10 +52,12 @@ export const createSupabaseServerClientWithAuth = (jwt: string) => {
 };
 
 // Server-only Service Role client (bypasses RLS). Use ONLY in server routes.
-export const createSupabaseServiceRoleClient = () => {
+export const createSupabaseServiceRoleClient = (): SupabaseClient<Database> => {
+  if (cachedServiceRoleClient) return cachedServiceRoleClient;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY as string;
-  return createClient<Database>(url, serviceKey, {
+  cachedServiceRoleClient = createClient<Database>(url, serviceKey, {
     auth: { persistSession: false },
   });
+  return cachedServiceRoleClient;
 };

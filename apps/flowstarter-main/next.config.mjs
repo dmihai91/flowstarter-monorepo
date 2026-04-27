@@ -5,11 +5,30 @@ export default {
   typescript: { ignoreBuildErrors: true },
   async headers() {
     return [
+      // Authenticated app surface — never cache, must revalidate every hit.
       {
-        // Prevent browser caching error/down states on HTML pages
-        source: '/(.*)',
+        source: '/:path(dashboard|team|login|sign-up|forgot-password|reset-password|verify|sso-callback)(.*)',
         headers: [
-          { key: 'Cache-Control', value: 'no-cache, must-revalidate' },
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+        ],
+      },
+      // Auth/session API endpoints — never cache.
+      {
+        source: '/api/(auth|webhooks)(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+        ],
+      },
+      // Everything else (marketing, legal, static-ish pages) — let Netlify's
+      // CDN serve from edge cache so we don't cold-start a function on every
+      // visit. Pages still revalidate in the background via SWR.
+      {
+        source: '/((?!_next/|api/).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=600, stale-while-revalidate=86400',
+          },
         ],
       },
     ];
@@ -111,6 +130,7 @@ export default {
 
     return config;
   },
-  // Exclude templates directory from being processed
-  serverExternalPackages: ['@daytonaio/sdk'],
+  // Keep heavy native deps as external `require()` calls so they aren't
+  // re-bundled per route — keeps Lambda cold starts smaller.
+  serverExternalPackages: [],
 };

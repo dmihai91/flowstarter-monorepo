@@ -361,14 +361,23 @@ export default clerkMiddleware(async (auth, req) => {
   // Check if user is authenticated and redirect based on role
   if (pathname === '/') {
     try {
-      const { userId } = await auth();
+      const { userId, sessionClaims } = await auth();
       if (userId) {
-        // Fetch user to get publicMetadata
-        const client = await clerkClient();
-        const user = await client.users.getUser(userId);
-        const role = (
-          (user.publicMetadata?.role as string) || ''
-        ).toLowerCase();
+        // Prefer the role from sessionClaims (already in the request) so we
+        // don't pay a Clerk API roundtrip on every cold landing-page hit.
+        let role = (
+          sessionClaims?.metadata as { role?: string } | undefined
+        )?.role?.toLowerCase();
+
+        // Fallback: only when the claim is missing, fetch the user object.
+        if (!role) {
+          const client = await clerkClient();
+          const user = await client.users.getUser(userId);
+          role = (
+            (user.publicMetadata?.role as string) || ''
+          ).toLowerCase();
+        }
+
         const isTeamMember = role === 'team' || role === 'admin';
 
         // Team users → /team/dashboard, Clients → /dashboard
@@ -539,5 +548,11 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: [
+    // Run middleware on app routes EXCEPT static assets, Next.js internals,
+    // and common static files. The narrower the matcher, the fewer cold-start
+    // function invocations we pay on a fresh deploy.
+    '/((?!_next/static|_next/image|_next/data|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.json|.*\\.(?:png|jpg|jpeg|gif|webp|avif|svg|ico|css|js|map|woff|woff2|ttf|otf|eot|mp4|webm)).*)',
+    '/api/:path*',
+  ],
 };

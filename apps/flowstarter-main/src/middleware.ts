@@ -373,9 +373,7 @@ export default clerkMiddleware(async (auth, req) => {
         if (!role) {
           const client = await clerkClient();
           const user = await client.users.getUser(userId);
-          role = (
-            (user.publicMetadata?.role as string) || ''
-          ).toLowerCase();
+          role = ((user.publicMetadata?.role as string) || '').toLowerCase();
         }
 
         const isTeamMember = role === 'team' || role === 'admin';

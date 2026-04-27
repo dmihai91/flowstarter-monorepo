@@ -5,10 +5,9 @@
 # Blocks merge if lint, typecheck, or unit tests fail.
 #
 # Steps:
-#   1. Lint (all apps + packages)
-#   2. Typecheck (editor-engine built first, then apps)
+#   1. Lint  — flowstarter-main
+#   2. Typecheck — flow-design-system + flowstarter-main
 #   3. Unit tests — flowstarter-main (vitest)
-#   4. Unit tests — flowstarter-editor (vitest)
 ##############################################################################
 
 name: Quality Gate
@@ -24,7 +23,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
 
 jobs:
   # ── 1. Lint ────────────────────────────────────────────────────────────────
@@ -44,18 +43,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build editor-engine (required for lint imports)
-        run: pnpm --dir packages/editor-engine build
-
       - name: Lint — flowstarter-main
         run: pnpm --dir apps/flowstarter-main lint
         continue-on-error: true
         env:
           ESLINT_USE_FLAT_CONFIG: 'false'
-
-      - name: Lint — flowstarter-editor
-        run: pnpm --dir apps/flowstarter-editor lint
-        continue-on-error: true
 
   # ── 2. Typecheck ──────────────────────────────────────────────────────────
   typecheck:
@@ -74,23 +66,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build packages (editor-engine, flow-design-system)
-        run: pnpm nx run-many -t build --projects=editor-engine,flow-design-system --output-style=stream-without-prefixes
-
       - name: Typecheck — flowstarter-main
         run: pnpm nx run flowstarter-main:typecheck
-
-      - name: Typecheck — flowstarter-editor
-        run: pnpm nx run flowstarter-editor:typecheck
 
   # ── 3. Unit tests ─────────────────────────────────────────────────────────
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        app: [flowstarter-main, flowstarter-editor]
     steps:
       - uses: actions/checkout@v4
 
@@ -104,11 +86,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build editor-engine
-        run: pnpm --dir packages/editor-engine build
-
-      - name: Run unit tests — ${{ matrix.app }}
-        run: pnpm nx run ${{ matrix.app }}:test
+      - name: Run unit tests — flowstarter-main
+        run: pnpm nx run flowstarter-main:test
         env:
           # Optional — tests mock Supabase but some imports need the env var defined
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
@@ -118,15 +97,15 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.app }}
+          name: coverage-flowstarter-main
           path: |
-            apps/${{ matrix.app }}/coverage/
+            apps/flowstarter-main/coverage/
           retention-days: 14
 
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-results-${{ matrix.app }}
-          path: apps/${{ matrix.app }}/test-results/
+          name: unit-test-results-flowstarter-main
+          path: apps/flowstarter-main/test-results/
           retention-days: 7

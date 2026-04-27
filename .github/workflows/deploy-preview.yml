@@ -9,6 +9,10 @@
 #   RAILWAY_PROJECT_ID — project ID (same for all preview envs)
 #
 # The preview deployment is torn down when the PR closes.
+#
+# NOTE: production deploys now run on Netlify (see netlify.toml). This
+# workflow is only used to spin up ephemeral PR previews on Railway. If/when
+# Netlify Deploy Previews replace it, this file can be deleted.
 ##############################################################################
 
 name: Deploy Preview
@@ -27,7 +31,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
 
 jobs:
   deploy:
@@ -37,7 +41,6 @@ jobs:
     timeout-minutes: 15
     outputs:
       preview-url-main: ${{ steps.deploy-main.outputs.url }}
-      preview-url-editor: ${{ steps.deploy-editor.outputs.url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -55,9 +58,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build packages
-        run: pnpm --dir packages/editor-engine build
-
       # ── Deploy flowstarter-main ──────────────────────────────────────────
       - name: Deploy flowstarter-main preview
         id: deploy-main
@@ -74,54 +74,35 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
 
-      # ── Deploy flowstarter-editor ────────────────────────────────────────
-      - name: Deploy flowstarter-editor preview
-        id: deploy-editor
-        run: |
-          PR_NUM="${{ github.event.pull_request.number }}"
-          URL=$(railway up \
-            --service flowstarter-editor \
-            --environment "pr-${PR_NUM}" \
-            --detach \
-            --json | jq -r '.url')
-          echo "url=${URL}" >> "$GITHUB_OUTPUT"
-          echo "Editor preview: ${URL}"
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-
-      - name: Publish preview URLs to job summary
+      - name: Publish preview URL to job summary
         run: |
           {
-            echo "## Preview Deployments"
+            echo "## Preview Deployment"
             echo
             echo "| Service | URL |"
             echo "|---------|-----|"
             echo "| flowstarter-main | ${{ steps.deploy-main.outputs.url }} |"
-            echo "| flowstarter-editor | ${{ steps.deploy-editor.outputs.url }} |"
             echo
             echo "PR comment is best-effort and may be skipped when GitHub token permissions are restricted."
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # ── Comment on PR with preview URLs ─────────────────────────────────
-      - name: Comment preview URLs on PR
+      # ── Comment on PR with preview URL ──────────────────────────────────
+      - name: Comment preview URL on PR
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
             const mainUrl = '${{ steps.deploy-main.outputs.url }}';
-            const editorUrl = '${{ steps.deploy-editor.outputs.url }}';
             const body = [
-              '## 🚀 Preview Deployments',
+              '## 🚀 Preview Deployment',
               '',
               '| Service | URL |',
               '|---------|-----|',
               `| flowstarter-main | [${mainUrl}](${mainUrl}) |`,
-              `| flowstarter-editor | [${editorUrl}](${editorUrl}) |`,
               '',
-              '> These previews are torn down when the PR closes.',
-              '> E2E smoke tests will run against these URLs automatically.',
+              '> This preview is torn down when the PR closes.',
+              '> E2E smoke tests will run against this URL automatically.',
             ].join('\n');
 
             try {
@@ -133,7 +114,7 @@ jobs:
 
               const existing = comments.find(c =>
                 c.user?.login === 'github-actions[bot]' &&
-                c.body?.includes('Preview Deployments')
+                c.body?.includes('Preview Deployment')
               );
 
               if (existing) {

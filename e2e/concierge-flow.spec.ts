@@ -2,7 +2,9 @@
  * Concierge Flow — Smoke Tests (Root Level)
  *
  * Quick sanity checks on the main platform.
- * In CI: runs against PLAYWRIGHT_BASE_URL (deployed staging/preview URL).
+ * In CI: runs against PLAYWRIGHT_BASE_URL — the per-PR Netlify Deploy Preview
+ * for `feature/**` branches and pull_request runs, falling back to the
+ * staging URL for pushes to main if the preview lookup is skipped.
  * Locally: runs against localhost:3000.
  *
  * These do NOT require auth and do NOT hit real AI/Daytona.
@@ -51,5 +53,4 @@ test.describe('Concierge Flow — Platform Smoke', () => {
       await page.screenshot({ path: 'e2e/screenshots/05-pricing-page.png', fullPage: true });
     });
   });
-
 });

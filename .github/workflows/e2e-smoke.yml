@@ -2,14 +2,22 @@
 # e2e-smoke.yml
 #
 # Runs on every PR and push to main / feature branches.
-# Hits the deployed flowstarter-main URL (preview or production) and verifies
-# that the public surface is up:
-#   - Landing page renders
-#   - Auth-gated dashboards redirect unauthenticated users to login
-#   - Pricing page renders
 #
-# This intentionally does NOT spin up a local Next dev server in CI — it
-# relies on PLAYWRIGHT_BASE_URL pointing at a real deploy (preview or prod).
+# For each commit, the job:
+#   1. Polls the Netlify API for a Deploy Preview / branch deploy whose
+#      commit_ref matches GITHUB_SHA, waiting until state=ready.
+#   2. Runs Playwright smoke tests against that preview URL.
+#
+# Required GitHub Actions secrets:
+#   NETLIFY_AUTH_TOKEN  — personal access token (Netlify → User settings →
+#                         Applications → Personal access tokens) with read
+#                         access to the site.
+#   NETLIFY_SITE_ID     — UUID of the site (Netlify → Site settings → General
+#                         → API ID).
+#
+# Optional secrets:
+#   E2E_BASE_URL        — fallback URL used only as a last-resort `pages` test
+#                         target (not used while NETLIFY_AUTH_TOKEN is set).
 ##############################################################################
 
 name: E2E Smoke — Concierge Flow
@@ -28,11 +36,10 @@ env:
   NODE_VERSION: '22'
 
 jobs:
-  # ── Platform smoke (main app routes) ──────────────────────────────────────
   platform-smoke:
     name: Platform Smoke — flowstarter-main routes
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -50,12 +57,25 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps
 
+      # ── Resolve the Netlify Deploy Preview for this commit ─────────────────
+      - name: Wait for Netlify Deploy Preview
+        id: netlify
+        run: bash .github/scripts/wait-for-netlify-deploy.sh
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          # On pull_request, GITHUB_SHA is the merge ref; the branch tip SHA
+          # we need is in pull_request.head.sha.
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          TIMEOUT_SECONDS: '900'
+          POLL_INTERVAL: '15'
+
+      # ── Run smoke against the resolved Netlify preview URL ─────────────────
       - name: E2E — Platform smoke (landing, auth guards, pricing)
         run: pnpm exec playwright test --config playwright.config.ts
         env:
           CI: true
-          # These tests run against a deployed URL, not a local server.
-          PLAYWRIGHT_BASE_URL: ${{ secrets.E2E_BASE_URL || 'https://flowstarter.dev' }}
+          PLAYWRIGHT_BASE_URL: ${{ steps.netlify.outputs.url }}
 
       - name: Upload Playwright report
         if: always()

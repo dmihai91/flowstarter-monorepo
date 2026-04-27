@@ -31,13 +31,41 @@ TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-600}"
 POLL_INTERVAL="${POLL_INTERVAL:-15}"
 NETLIFY_API="${NETLIFY_API:-https://api.netlify.com/api/v1}"
 
+auth_header=( -H "Authorization: Bearer ${NETLIFY_AUTH_TOKEN}" )
+
 echo "Looking up Netlify deploy for commit ${COMMIT_SHA} on site ${NETLIFY_SITE_ID}..."
 
+# ── Sanity-check the SITE_ID up front ──────────────────────────────────────
+# A wrong SITE_ID is the #1 cause of "no deploy yet" loops, so fail fast and
+# print which site we're actually pointed at.
+site_resp=$(curl -sS -w '\n%{http_code}' "${auth_header[@]}" \
+  "${NETLIFY_API}/sites/${NETLIFY_SITE_ID}") || true
+site_status=$(echo "$site_resp" | tail -n1)
+site_body=$(echo "$site_resp" | sed '$d')
+
+if [ "$site_status" != "200" ]; then
+  echo "::error title=Netlify site lookup failed::HTTP ${site_status} from /sites/${NETLIFY_SITE_ID}"
+  echo "Response body:"
+  echo "$site_body" | head -c 500
+  echo
+  echo
+  echo "Most likely causes:"
+  echo "  - NETLIFY_SITE_ID secret is wrong (should be the site's API ID, not the site name)"
+  echo "  - NETLIFY_AUTH_TOKEN secret is missing the 'sites:read' scope"
+  echo "  - The token belongs to a Netlify account that doesn't have access to this site"
+  exit 1
+fi
+
+site_name=$(echo "$site_body" | jq -r '.name // "unknown"')
+site_repo=$(echo "$site_body" | jq -r '.build_settings.repo_url // "unset"')
+site_branch=$(echo "$site_body" | jq -r '.build_settings.repo_branch // "unset"')
+echo "  ↳ site: ${site_name}  (repo=${site_repo}, prod branch=${site_branch})"
+
 deadline=$(( $(date +%s) + TIMEOUT_SECONDS ))
+diagnostics_printed=0
 
 while [ "$(date +%s)" -lt "$deadline" ]; do
-  resp=$(curl -fsS \
-    -H "Authorization: Bearer ${NETLIFY_AUTH_TOKEN}" \
+  resp=$(curl -fsS "${auth_header[@]}" \
     "${NETLIFY_API}/sites/${NETLIFY_SITE_ID}/deploys?per_page=50" || true)
 
   if [ -z "$resp" ]; then
@@ -50,7 +78,17 @@ while [ "$(date +%s)" -lt "$deadline" ]; do
     '[.[] | select(.commit_ref == $sha)] | sort_by(.created_at) | reverse | .[0] // empty')
 
   if [ -z "$match" ] || [ "$match" = "null" ]; then
-    echo "  …no Netlify deploy yet for ${COMMIT_SHA}; sleeping ${POLL_INTERVAL}s"
+    if [ "$diagnostics_printed" -eq 0 ]; then
+      total=$(echo "$resp" | jq 'length')
+      echo "  …no Netlify deploy yet for ${COMMIT_SHA}. Site has ${total} recent deploy(s). Most recent 5:"
+      echo "$resp" | jq -r '
+        sort_by(.created_at) | reverse | .[0:5][] |
+        "    - \(.created_at)  state=\(.state)  branch=\(.branch // "?")  ctx=\(.context // "?")  ref=\(.commit_ref // "<none>")"
+      '
+      diagnostics_printed=1
+    else
+      echo "  …no Netlify deploy yet for ${COMMIT_SHA}; sleeping ${POLL_INTERVAL}s"
+    fi
     sleep "$POLL_INTERVAL"
     continue
   fi
@@ -81,5 +119,8 @@ while [ "$(date +%s)" -lt "$deadline" ]; do
   esac
 done
 
-echo "Timed out after ${TIMEOUT_SECONDS}s waiting for Netlify deploy of ${COMMIT_SHA}"
+echo "::error title=Netlify deploy not found::Timed out after ${TIMEOUT_SECONDS}s waiting for deploy of ${COMMIT_SHA}"
+echo "If the diagnostics above show no deploy with this commit_ref, check:"
+echo "  - Netlify dashboard → Site settings → Build & deploy → Deploy Previews → enable for all PRs"
+echo "  - Netlify dashboard → Site settings → Build & deploy → Continuous deployment → repo is connected"
 exit 1

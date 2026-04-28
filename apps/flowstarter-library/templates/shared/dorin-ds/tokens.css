@@ -89,6 +89,41 @@
   --ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Global dark mode token overrides.
+ * Applied when DSHead sets <html class="theme-dark"> from localStorage or
+ * when the parent preview frame posts a setTheme event.
+ */
+.theme-dark {
+  --bg-dark: #050505;
+  --bg-card: #151515;
+  --bg-card-hover: #1f1f1f;
+  --surface-base: #101013;
+  --surface-panel: rgba(255, 255, 255, 0.05);
+  --surface-panel-border: rgba(255, 255, 255, 0.1);
+  --surface-field: #17171c;
+  --surface-field-border: rgba(255, 255, 255, 0.16);
+  --surface-subtle: #15151b;
+  --surface-subtle-hover: #1d1d25;
+  --surface-subtle-border: rgba(255, 255, 255, 0.08);
+
+  --text-on-dark: #f6f3ec;
+  --text-primary: #f6f3ec;
+  --text-body: #ece8de;
+  --text-secondary: #b6b1a6;
+  --text-muted: #969084;
+  --text-nav: #d7d1c3;
+  --text-dim-38: rgba(246, 243, 236, 0.38);
+  --text-dim-72: rgba(246, 243, 236, 0.72);
+  --color-ink-strong: #f6f3ec;
+  --border-color: rgba(255, 255, 255, 0.14);
+
+  --surface-selected: color-mix(in srgb, var(--accent) 22%, transparent);
+  --surface-brand-glow: color-mix(in srgb, var(--brand-primary) 20%, transparent);
+  --surface-accent-glow: color-mix(in srgb, var(--accent) 22%, transparent);
+  --focus-ring-color: color-mix(in srgb, var(--brand-primary) 34%, transparent);
+  --shadow-float: 0 22px 42px rgba(0, 0, 0, 0.45);
+}
+
 /* ─────────────────────────────────────────────
  * Per-template accent palette
  * Each template sets <html data-template="<slug>">

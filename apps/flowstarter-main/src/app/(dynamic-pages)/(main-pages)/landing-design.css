@@ -887,6 +887,19 @@
   transition: transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
   display: block;
 }
+.ls-proof-thumb {
+  position: absolute;
+  inset: 0;
+}
+.ls-proof-thumb--dark {
+  opacity: 0;
+}
+.dark .ls-proof-thumb--light {
+  opacity: 0;
+}
+.dark .ls-proof-thumb--dark {
+  opacity: 1;
+}
 
 .ls-proof-card:hover .ls-proof-frame {
   border-color: color-mix(in oklab, var(--ls-accent) 50%, var(--ls-rule));

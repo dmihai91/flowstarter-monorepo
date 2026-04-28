@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface DeferredPreviewFrameProps {
   previewPath: string;
@@ -14,14 +14,52 @@ export function DeferredPreviewFrame({
   thumbnailPath,
 }: DeferredPreviewFrameProps) {
   const [loaded, setLoaded] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    const sendThemeToPreview = () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      iframeRef.current?.contentWindow?.postMessage(
+        {
+          source: 'fs-preview',
+          type: 'setTheme',
+          value: isDark ? 'dark' : 'light',
+        },
+        '*'
+      );
+    };
+
+    sendThemeToPreview();
+    const observer = new MutationObserver(sendThemeToPreview);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, [loaded]);
 
   return (
     <div className="preview-shell reveal" data-delay="2">
       {loaded ? (
         <iframe
+          ref={iframeRef}
           src={previewPath}
           title={`${title} — live preview`}
           loading="eager"
+          onLoad={() => {
+            const isDark = document.documentElement.classList.contains('dark');
+            iframeRef.current?.contentWindow?.postMessage(
+              {
+                source: 'fs-preview',
+                type: 'setTheme',
+                value: isDark ? 'dark' : 'light',
+              },
+              '*'
+            );
+          }}
           sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
           className="preview-frame"
         />

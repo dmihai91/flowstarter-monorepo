@@ -93,14 +93,28 @@ export function ProofSection() {
               >
                 <div className="ls-proof-frame">
                   {item.thumbnail ? (
-                    <Image
-                      src={item.thumbnail}
-                      alt={`${item.title} preview`}
-                      width={1200}
-                      height={750}
-                      quality={75}
-                      sizes="(min-width: 1080px) 380px, (min-width: 720px) 45vw, 92vw"
-                    />
+                    <>
+                      <Image
+                        src={item.thumbnail}
+                        alt={`${item.title} preview`}
+                        width={1200}
+                        height={750}
+                        quality={75}
+                        sizes="(min-width: 1080px) 380px, (min-width: 720px) 45vw, 92vw"
+                        className="ls-proof-thumb ls-proof-thumb--light"
+                      />
+                      {item.thumbnailDark ? (
+                        <Image
+                          src={item.thumbnailDark}
+                          alt={`${item.title} preview dark`}
+                          width={1200}
+                          height={750}
+                          quality={75}
+                          sizes="(min-width: 1080px) 380px, (min-width: 720px) 45vw, 92vw"
+                          className="ls-proof-thumb ls-proof-thumb--dark"
+                        />
+                      ) : null}
+                    </>
                   ) : item.placeholder ? (
                     <div
                       className="ls-proof-frame--type"

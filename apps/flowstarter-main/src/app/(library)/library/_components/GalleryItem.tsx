@@ -12,6 +12,9 @@ interface GalleryItemProps {
 export function GalleryItem({ template, index, total }: GalleryItemProps) {
   const ord = String(index + 1).padStart(2, '0');
   const tot = String(total).padStart(2, '0');
+  const darkThumb = template.thumbnail
+    ? `/showcase/${template.thumbnail}-dark.png`
+    : null;
 
   return (
     <Link
@@ -22,15 +25,30 @@ export function GalleryItem({ template, index, total }: GalleryItemProps) {
     >
       <div className="item-frame">
         {template.thumbnail ? (
-          <Image
-            src={`/showcase/${template.thumbnail}.png`}
-            alt={`${template.title} preview`}
-            width={1200}
-            height={750}
-            quality={90}
-            priority={index < 2}
-            sizes="(min-width: 1100px) 540px, (min-width: 700px) 50vw, 100vw"
-          />
+          <>
+            <Image
+              src={`/showcase/${template.thumbnail}.png`}
+              alt={`${template.title} preview`}
+              width={1200}
+              height={750}
+              quality={90}
+              priority={index < 2}
+              sizes="(min-width: 1100px) 540px, (min-width: 700px) 50vw, 100vw"
+              className="item-thumb item-thumb--light"
+            />
+            {darkThumb ? (
+              <Image
+                src={darkThumb}
+                alt={`${template.title} preview dark`}
+                width={1200}
+                height={750}
+                quality={90}
+                priority={index < 2}
+                sizes="(min-width: 1100px) 540px, (min-width: 700px) 50vw, 100vw"
+                className="item-thumb item-thumb--dark"
+              />
+            ) : null}
+          </>
         ) : template.placeholder ? (
           <TypePlaceholder
             line={template.placeholder.line}

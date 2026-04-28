@@ -1,15 +1,10 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/unified-button';
-import { useI18n } from '@/lib/i18n';
-import { useBookingModal } from './booking-modal-store';
 
 export function FinalCTASection() {
-  const { t: tStrict } = useI18n();
-  const t = tStrict as (key: string) => string;
   const rootRef = useRef<HTMLElement | null>(null);
-  const openBookingModal = useBookingModal((s) => s.open);
+  const calLink = 'https://cal.com/flowstarter/intro';
 
   useEffect(() => {
     const el = rootRef.current;
@@ -93,7 +88,7 @@ export function FinalCTASection() {
                   background: 'var(--ls-ink-faint)',
                 }}
               />
-              <span className="num">{t('landing.finalCta.eyebrow')}</span>
+              <span className="num">09</span>
               <span
                 aria-hidden
                 style={{
@@ -107,26 +102,22 @@ export function FinalCTASection() {
 
             {/* Headline */}
             <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
-              <span className="line">
-                {t('landing.finalCta.headlinePrefix')}
-              </span>
-              <span className="line flourish mt-2">
-                {t('landing.finalCta.headlineFlourish')}
-              </span>
+              <span className="line">Ready to launch in 5 days?</span>
             </h2>
 
             {/* Subhead */}
             <p className="ls-body ls-body--lead mt-7 mx-auto">
-              {t('landing.finalCta.subhead')}
+              Book your call and we will map your website scope, timeline, and
+              next steps.
             </p>
 
             {/* CTA */}
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-5">
-              <Button
-                onClick={openBookingModal}
-                className="ls-cta-hero h-14 px-8 text-[1.02rem] sm:text-[1.08rem]"
+              <a
+                href={calLink}
+                className="ls-cta-hero inline-flex h-14 items-center px-8 text-[1.02rem] sm:text-[1.08rem]"
               >
-                {t('landing.finalCta.primaryCta')}
+                Book your call
                 <svg
                   className="arrow ml-2 h-4 w-4"
                   fill="none"
@@ -140,7 +131,13 @@ export function FinalCTASection() {
                     d="M5 12h14m-5-6l6 6-6 6"
                   />
                 </svg>
-              </Button>
+              </a>
+              <a
+                href="mailto:hello@flowstarter.net"
+                className="ls-link ls-link--hero text-[var(--ls-ink-dim)]"
+              >
+                hello@flowstarter.net
+              </a>
             </div>
 
             {/* Micro note */}
@@ -151,7 +148,7 @@ export function FinalCTASection() {
                 fontFamily: 'var(--ls-mono)',
               }}
             >
-              {t('landing.finalCta.microNote')}
+              We reply within one business day.
             </p>
           </div>
         </div>

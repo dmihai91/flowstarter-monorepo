@@ -46,6 +46,19 @@ const resolvedLinks = links.map((link) => ({ ...link, href: withBase(link.href) 
       }
     </nav>
 
+    <div class="ds-header__actions">
+      <button
+        class="ds-theme-toggle"
+        type="button"
+        aria-label="Toggle color theme"
+        aria-pressed="false"
+        data-ds-theme-toggle
+      >
+        <span class="ds-theme-toggle__icon" aria-hidden>◐</span>
+        <span class="ds-theme-toggle__label">Theme</span>
+      </button>
+    </div>
+
     <div class="ds-header__cta-wrap">
       <ActionButton
         href={ctaHref}
@@ -88,6 +101,16 @@ const resolvedLinks = links.map((link) => ({ ...link, href: withBase(link.href) 
       }
     </nav>
     <div class="ds-mobile-nav__footer">
+      <button
+        class="ds-theme-toggle ds-theme-toggle--mobile"
+        type="button"
+        aria-label="Toggle color theme"
+        aria-pressed="false"
+        data-ds-theme-toggle
+      >
+        <span class="ds-theme-toggle__icon" aria-hidden>◐</span>
+        <span class="ds-theme-toggle__label">Switch theme</span>
+      </button>
       <ActionButton
         href={ctaHref}
         label={ctaLabel}
@@ -123,6 +146,32 @@ const resolvedLinks = links.map((link) => ({ ...link, href: withBase(link.href) 
       document.body.style.overflow = '';
     }),
   );
+
+  const syncThemeToggleUI = () => {
+    const isDark = document.documentElement.classList.contains('theme-dark');
+    document.querySelectorAll('[data-ds-theme-toggle]').forEach((toggle) => {
+      const button = toggle as HTMLButtonElement;
+      button.setAttribute('aria-pressed', String(isDark));
+    });
+  };
+
+  const applyTheme = (mode: 'light' | 'dark') => {
+    const root = document.documentElement;
+    root.classList.toggle('theme-dark', mode === 'dark');
+    root.classList.toggle('theme-light', mode === 'light');
+    try {
+      localStorage.setItem('theme', mode);
+    } catch (_) {}
+    syncThemeToggleUI();
+  };
+
+  syncThemeToggleUI();
+  document.querySelectorAll('[data-ds-theme-toggle]').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('theme-dark');
+      applyTheme(isDark ? 'light' : 'dark');
+    });
+  });
 </script>
 
 <style>
@@ -172,6 +221,37 @@ const resolvedLinks = links.map((link) => ({ ...link, href: withBase(link.href) 
     flex-shrink: 0;
   }
 
+  .ds-header__actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 12px;
+  }
+
+  .ds-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-on-dark);
+    border-radius: 10px;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background var(--transition);
+  }
+
+  .ds-theme-toggle:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .ds-theme-toggle__icon {
+    font-size: 0.875rem;
+  }
+
   .ds-header__menu-btn {
     display: none;
     width: 40px;
@@ -206,7 +286,8 @@ const resolvedLinks = links.map((link) => ({ ...link, href: withBase(link.href) 
 
   @media (max-width: 900px) {
     .ds-header__nav,
-    .ds-header__cta-wrap {
+    .ds-header__cta-wrap,
+    .ds-header__actions {
       display: none;
     }
 
@@ -268,6 +349,12 @@ const resolvedLinks = links.map((link) => ({ ...link, href: withBase(link.href) 
       justify-content: center;
       padding: 18px 24px;
       margin-top: 32px;
+    }
+
+    .ds-theme-toggle--mobile {
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 12px;
     }
   }
 </style>

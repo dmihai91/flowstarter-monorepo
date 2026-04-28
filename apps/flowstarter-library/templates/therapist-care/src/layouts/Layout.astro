@@ -5,6 +5,7 @@ import DSHead from '../../../shared/dorin-ds/components/DSHead.astro';
 import Header from '../../../shared/dorin-ds/components/Header.astro';
 import Footer from '../../../shared/dorin-ds/components/Footer.astro';
 import ContactScript from '../../../shared/ContactScript.astro';
+import ScrollToggle from '../../../shared/dorin-ds/components/ScrollToggle.astro';
 import { frontmatter as contactFormData } from '../../content/integrations/contact-form.md';
 
 interface Props {
@@ -162,6 +163,7 @@ const socials = [
       successMessage={contactFormSuccessMessage}
       templateName="therapist-care"
     />
+    <ScrollToggle />
 
     <style is:global>
       .ds-main {

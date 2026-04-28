@@ -1,161 +1,46 @@
-'use client';
-
-import { useEffect, useMemo, useState } from 'react';
-import { Button } from '@/components/ui/unified-button';
-import { useI18n } from '@/lib/i18n';
-import { useBookingModal } from './booking-modal-store';
-
-const PROGRESS_STEPS = 4;
-
-function useBriefTypewriter(
-  sequence: { label: string; value: string }[],
-  startDelay: number
-) {
-  const [values, setValues] = useState<string[]>(() => sequence.map(() => ''));
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const sleep = (ms: number) =>
-      new Promise<void>((resolve) => {
-        const id = setTimeout(resolve, ms);
-        timers.push(id);
-      });
-
-    const run = async () => {
-      await sleep(startDelay);
-      for (let step = 0; step < sequence.length; step++) {
-        if (cancelled) return;
-        setActiveIndex(step);
-        const target = sequence[step].value;
-        for (let i = 1; i <= target.length; i++) {
-          if (cancelled) return;
-          setValues((prev) => {
-            const next = prev.slice();
-            next[step] = target.slice(0, i);
-            return next;
-          });
-          await sleep(28 + Math.random() * 32);
-        }
-        await sleep(520);
-      }
-      if (!cancelled) {
-        setActiveIndex(sequence.length);
-        setDone(true);
-      }
-    };
-
-    run();
-    return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
-    };
-  }, [sequence, startDelay]);
-
-  return { values, activeIndex, done };
-}
-
 export function LandingHero() {
-  const { t: tStrict } = useI18n();
-  const t = tStrict as (key: string) => string;
-  const openBookingModal = useBookingModal((s) => s.open);
-  // Always revealed — entrance animation via CSS, not JS state.
-  // JS-gated opacity caused hero flash/reflow on Android Chrome on first paint.
-  const revealed = true;
-
-  const briefSequence = useMemo(
-    () => [
-      {
-        label: t('landing.hero.brief.field1Label'),
-        value: t('landing.hero.brief.field1Value'),
-      },
-      {
-        label: t('landing.hero.brief.field2Label'),
-        value: t('landing.hero.brief.field2Value'),
-      },
-      {
-        label: t('landing.hero.brief.field3Label'),
-        value: t('landing.hero.brief.field3Value'),
-      },
-      {
-        label: t('landing.hero.brief.field4Label'),
-        value: t('landing.hero.brief.field4Value'),
-      },
-    ],
-    [t]
-  );
-
-  const {
-    values: briefValues,
-    activeIndex,
-    done: briefDone,
-  } = useBriefTypewriter(briefSequence, 900);
-
-  const reveal = (order: number): React.CSSProperties => ({
-    opacity: revealed ? 1 : 0,
-    transform: revealed ? 'translateY(0)' : 'translateY(22px)',
-    transition: `opacity 900ms cubic-bezier(0.19,1,0.22,1) ${
-      order * 110
-    }ms, transform 900ms cubic-bezier(0.19,1,0.22,1) ${order * 110}ms`,
-  });
-
-  const filled = briefDone
-    ? PROGRESS_STEPS
-    : Math.min(PROGRESS_STEPS - 1, Math.max(0, activeIndex));
-
-  const stats = [
-    { val: t('landing.hero.stat1Value'), lbl: t('landing.hero.stat1Label') },
-    { val: t('landing.hero.stat2Value'), lbl: t('landing.hero.stat2Label') },
-    { val: t('landing.hero.stat3Value'), lbl: t('landing.hero.stat3Label') },
-    { val: t('landing.hero.stat4Value'), lbl: t('landing.hero.stat4Label') },
-  ];
+  const calLink = 'https://cal.com/flowstarter/intro';
 
   return (
     <section
       className="ls-scope ls-section ls-section--pad-lg ls-fade-bottom"
       style={{
-        minHeight: '100svh',
+        minHeight: '96svh',
         paddingTop: 'clamp(5.25rem, 10vh, 7.75rem)',
       }}
     >
       <div className="ls-container">
         <div className="grid items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-14 lg:gap-20">
           <div className="ls-hero-content">
-            <div
-              style={reveal(0)}
-              className="ls-eyebrow flex flex-wrap items-center gap-1"
-            >
-              <span className="num">{t('landing.hero.eyebrowSerial')}</span>
-              <span className="dot">·</span>
-              <span>{t('landing.hero.eyebrowLabel')}</span>
-              <span className="dot">·</span>
-              <span>{t('landing.hero.eyebrowTagline')}</span>
+            <div className="ls-eyebrow flex flex-wrap items-center gap-2">
+              <span className="num">01</span>
+              <span>Concierge website service</span>
             </div>
 
             <h1 className="ls-display ls-display--hero mt-9">
-              <span className="line" style={reveal(1)}>
-                {t('landing.hero.displayPrefix')}
+              <span className="line">
+                Premium websites for service businesses.
               </span>
-              <span className="line flourish mt-2" style={reveal(2)}>
-                {t('landing.hero.displayFlourish')}
-              </span>
+              <span className="line flourish mt-2">Live in 5 days.</span>
             </h1>
 
-            <p style={reveal(3)} className="ls-body ls-body--lead mt-8">
-              {t('landing.hero.subhead')}
+            <p className="ls-body ls-body--lead mt-8">
+              Handcrafted by our team. Updated by you with AI assistance. Fully
+              managed, end to end.
             </p>
 
-            <div
-              style={reveal(4)}
-              className="mt-10 flex w-full flex-wrap items-center gap-3 sm:gap-6"
-            >
-              <Button
-                onClick={openBookingModal}
-                className="ls-cta-hero w-full sm:w-auto h-14 px-8 text-[1.02rem] sm:text-[1.08rem]"
+            <p className="mt-4 text-sm text-[var(--ls-ink-dim)]">
+              Built for owner-operated service businesses with 1-15 team
+              members: coaches, consultants, therapists, nutritionists,
+              professional services, and small studios.
+            </p>
+
+            <div className="mt-10 flex w-full flex-wrap items-center gap-3 sm:gap-6">
+              <a
+                href={calLink}
+                className="ls-cta-hero inline-flex h-14 w-full items-center justify-center px-8 text-[1.02rem] sm:w-auto sm:text-[1.08rem]"
               >
-                {t('landing.hero.primaryCta')}
+                Book a free 20-min call
                 <svg
                   className="arrow ml-2 h-4 w-4"
                   aria-hidden="true"
@@ -170,148 +55,46 @@ export function LandingHero() {
                     d="M5 12h14m-5-6l6 6-6 6"
                   />
                 </svg>
-              </Button>
+              </a>
               <a
-                href="#process"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .getElementById('process')
-                    ?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="ls-link ls-link--hero w-full text-center sm:w-auto sm:text-left"
+                href="#pricing"
+                className="ls-link ls-link--hero w-full sm:w-auto"
               >
-                {t('landing.hero.secondaryCta')}
+                See pricing
               </a>
             </div>
 
             <p
               style={{
-                ...reveal(5),
                 color: 'var(--ls-ink-faint)',
                 fontFamily: 'var(--ls-mono)',
               }}
               className="mt-5 text-[10.5px] uppercase tracking-[0.18em]"
             >
-              {t('landing.hero.guaranteeShort')}
+              Limited to 4 new projects per month.
             </p>
-
-            <div
-              style={reveal(6)}
-              className="ls-hero-trust mt-10 flex flex-wrap items-stretch border-t"
-            >
-              {stats.map((s) => (
-                <div key={s.lbl} className="ls-hero-stat">
-                  <span className="val">{s.val}</span>
-                  <span className="lbl">{s.lbl}</span>
-                </div>
-              ))}
-            </div>
-
-            <div
-              style={reveal(7)}
-              className="mt-6 flex flex-wrap items-center gap-3"
-            >
-              <span className="ls-pill ls-pill--accent">
-                {t('landing.hero.pills.label')}
-              </span>
-              <span className="ls-pill">{t('landing.hero.pills.booking')}</span>
-              <span className="ls-pill">
-                {t('landing.hero.pills.newsletter')}
-              </span>
-              <span className="ls-pill">{t('landing.hero.pills.leads')}</span>
-              <span className="ls-pill">{t('landing.hero.pills.edit')}</span>
-            </div>
           </div>
 
-          <aside
-            style={{
-              ...reveal(2),
-              transform: revealed
-                ? 'translateY(0) translateX(0)'
-                : 'translateY(22px) translateX(16px)',
-            }}
-            className="ls-card ls-brief"
-          >
-            <div className="ls-brief-hdr">
-              <span className="ls-brief-live">
-                <span className="dot" />
-                {t('landing.hero.brief.live')}
-              </span>
-              <span className="ls-brief-serial">
-                {t('landing.hero.brief.serial')}
+          <aside className="ls-card p-6 md:p-7">
+            <div className="flex items-center justify-between border-b border-[var(--ls-rule)] pb-3">
+              <p className="text-xs uppercase tracking-[0.13em] text-[var(--ls-ink-faint)]">
+                Website mockup
+              </p>
+              <span className="rounded-full border border-[var(--ls-rule-strong)] px-3 py-1 text-[11px] text-[var(--ls-ink-dim)]">
+                Smart Editor connected
               </span>
             </div>
-
-            <div className="ls-brief-title">
-              {t('landing.hero.brief.title')}
-            </div>
-            <div className="ls-brief-subtitle">
-              {t('landing.hero.brief.subtitle')}
-            </div>
-
-            {briefSequence.map((field, i) => {
-              const shown = briefValues[i];
-              const isActive = activeIndex === i && !briefDone;
-              const isPending = activeIndex < i;
-              return (
-                <div key={field.label} className="ls-field">
-                  <span className="lbl">{field.label}</span>
-                  <span
-                    className="val"
-                    style={{ opacity: isPending ? 0.3 : 1 }}
-                  >
-                    {isPending ? '·' : shown || '\u00A0'}
-                    {isActive && <span className="ls-caret" />}
-                  </span>
-                </div>
-              );
-            })}
-
-            <div className="ls-brief-delivery">
-              <div className="row">
-                <span className="lbl">
-                  {t('landing.hero.brief.progressLabel')}
-                </span>
-                <span className="val">
-                  {briefDone
-                    ? t('landing.hero.brief.progressReady')
-                    : t('landing.hero.brief.progressBuilding')}
-                </span>
+            {/* TODO: Replace with final production mockup visual. */}
+            <div className="mt-4 rounded-2xl border border-[var(--ls-rule)] bg-[var(--ls-surface-2)] p-4">
+              <div className="mb-3 h-2.5 w-28 rounded-full bg-[var(--ls-rule)]" />
+              <div className="mb-2 h-7 rounded-lg bg-[var(--ls-surface-3)]" />
+              <div className="mb-4 h-7 w-4/5 rounded-lg bg-[var(--ls-surface-3)]" />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="h-28 rounded-xl border border-[var(--ls-rule)] bg-[var(--ls-surface-1)]" />
+                <div className="h-28 rounded-xl border border-[var(--ls-rule)] bg-[var(--ls-surface-1)]" />
               </div>
-              <div className="ls-bar">
-                {Array.from({ length: PROGRESS_STEPS }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`ls-bar-cell ${i < filled ? 'on' : ''}`}
-                    style={{ animationDelay: `${i * 90}ms` }}
-                  />
-                ))}
-              </div>
+              <div className="mt-3 h-10 w-full rounded-lg bg-[var(--ls-surface-3)]" />
             </div>
-
-            <button
-              type="button"
-              onClick={openBookingModal}
-              className={`ls-brief-finish ${briefDone ? 'ready' : ''}`}
-            >
-              {briefDone
-                ? t('landing.hero.brief.ctaReady')
-                : t('landing.hero.brief.ctaPending')}
-              <svg
-                className="h-3.5 w-3.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 12h14m-5-6l6 6-6 6"
-                />
-              </svg>
-            </button>
           </aside>
         </div>
       </div>

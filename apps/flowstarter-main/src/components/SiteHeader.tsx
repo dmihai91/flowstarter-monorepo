@@ -65,6 +65,7 @@ export function SiteHeader({
     ].join(' ');
 
   if (mode === 'landing') {
+    const calLink = 'https://cal.com/flowstarter/intro';
     return (
       <>
         {mobileMenuOpen && (
@@ -128,10 +129,10 @@ export function SiteHeader({
                   <ThemeToggle />
                 </div>
                 <Button
+                  asChild
                   className="!hidden h-10 px-4 py-2 text-sm lg:!inline-flex"
-                  onClick={openBookingModal}
                 >
-                  {tLanding('landing.header.cta')}
+                  <a href={calLink}>{tLanding('landing.header.cta')}</a>
                 </Button>
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -220,13 +221,17 @@ export function SiteHeader({
                   {tLanding('nav.faq')}
                 </a>
                 <Button
+                  asChild
                   className="ls-cta-hero mt-3 h-14 w-full px-8 text-[1.02rem]"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openBookingModal();
-                  }}
                 >
-                  {tLanding('landing.finalCta.primaryCta')}
+                  <a
+                    href={calLink}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    {tLanding('landing.finalCta.primaryCta')}
+                  </a>
                 </Button>
               </nav>
             </div>

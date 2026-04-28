@@ -1,0 +1,82 @@
+<button
+  type="button"
+  class="ds-scroll-toggle"
+  aria-label="Scroll to bottom"
+  data-ds-scroll-toggle
+>
+  <span class="ds-scroll-toggle__icon" aria-hidden>↓</span>
+</button>
+
+<script>
+  const button = document.querySelector(
+    '[data-ds-scroll-toggle]',
+  ) as HTMLButtonElement | null;
+
+  const updateButton = () => {
+    if (!button) return;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollY = window.scrollY;
+    const nearBottom = scrollY >= maxScroll - 80;
+    button.setAttribute('aria-label', nearBottom ? 'Scroll to top' : 'Scroll to bottom');
+    button.dataset.mode = nearBottom ? 'top' : 'bottom';
+    button.querySelector('.ds-scroll-toggle__icon')!.textContent = nearBottom ? '↑' : '↓';
+    button.classList.toggle('is-visible', scrollY > 120);
+  };
+
+  updateButton();
+  window.addEventListener('scroll', updateButton, { passive: true });
+  window.addEventListener('resize', updateButton);
+  button?.addEventListener('click', () => {
+    const mode = button.dataset.mode ?? 'bottom';
+    const target =
+      mode === 'top' ? 0 : document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({ top: target, behavior: 'smooth' });
+  });
+</script>
+
+<style>
+  .ds-scroll-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 120;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-card);
+    color: var(--text-on-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition:
+      opacity 0.18s ease,
+      transform 0.18s ease,
+      background var(--transition);
+  }
+
+  .ds-scroll-toggle:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .ds-scroll-toggle.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .ds-scroll-toggle__icon {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  @media (max-width: 768px) {
+    .ds-scroll-toggle {
+      right: 14px;
+      bottom: 14px;
+    }
+  }
+</style>

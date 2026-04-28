@@ -1,11 +1,4 @@
-import { tServer } from '@/lib/i18n-server';
-import { LandingIcon, type IconName } from './LandingIcons';
-import { LANDING_COPY } from '../landing-copy';
-
 export function ProblemSection() {
-  const t = tServer as (key: string) => string;
-  const problem = LANDING_COPY.problem;
-
   return (
     <section
       id="problem"
@@ -15,66 +8,46 @@ export function ProblemSection() {
       <div className="ls-grain" aria-hidden />
       <div className="ls-container">
         <div className="text-center max-w-3xl mx-auto">
-          <div
-            className="ls-eyebrow inline-flex items-center justify-center gap-3"
-            style={{ justifyContent: 'center' }}
-          >
-            <span
-              aria-hidden
-              style={{
-                display: 'inline-block',
-                width: '28px',
-                height: '1px',
-                background: 'var(--ls-ink-faint)',
-              }}
-            />
-            <span className="num">{t('landing.problem.eyebrow')}</span>
-            <span
-              aria-hidden
-              style={{
-                display: 'inline-block',
-                width: '28px',
-                height: '1px',
-                background: 'var(--ls-ink-faint)',
-              }}
-            />
+          <div className="ls-eyebrow inline-flex items-center justify-center gap-3">
+            <span className="num">02</span>
+            <span>The problem</span>
           </div>
 
           <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
-            <span className="line">{t('landing.problem.headlinePrefix')}</span>
-            <span className="line flourish mt-2">
-              {t('landing.problem.headlineFlourish')}
-            </span>
+            <span className="line">Most service businesses lose clients</span>
+            <span className="line flourish mt-2">before the first call.</span>
           </h2>
-
-          <p className="ls-body ls-body--lead mt-7 mx-auto">
-            {t('landing.problem.sub')}
-          </p>
         </div>
 
-        <div className="ls-problem-grid mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
-          {problem.pains.map((pain, i) => (
-            <div
-              key={pain.title}
-              className="ls-card ls-problem-card"
-              style={{
-                animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
-                  i * 100
-                }ms both`,
-              }}
-            >
-              <div className="ls-problem-icon">
-                <LandingIcon name={pain.icon as IconName} className="h-4 w-4" />
-              </div>
-              <h3 className="ls-problem-title">{pain.title}</h3>
-              <p className="ls-problem-body">{pain.body}</p>
-            </div>
-          ))}
+        <div className="mx-auto mt-14 grid max-w-5xl gap-5 md:grid-cols-3 md:gap-6">
+          <article className="ls-card p-6">
+            <h3 className="text-base font-semibold text-[var(--ls-ink)]">
+              Amateur first impression
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ls-ink-dim)]">
+              Most sites look outdated, slow, or hard to trust. Visitors leave
+              in seconds, even if your service is excellent.
+            </p>
+          </article>
+          <article className="ls-card p-6">
+            <h3 className="text-base font-semibold text-[var(--ls-ink)]">
+              Agencies move too slowly
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ls-ink-dim)]">
+              Traditional agencies often take weeks just to start. You spend too
+              much time waiting, reviewing, and chasing updates.
+            </p>
+          </article>
+          <article className="ls-card p-6">
+            <h3 className="text-base font-semibold text-[var(--ls-ink)]">
+              Freelancer risk
+            </h3>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ls-ink-dim)]">
+              A single freelancer can disappear, get overloaded, or move on.
+              Then your website becomes hard to maintain.
+            </p>
+          </article>
         </div>
-
-        <p className="ls-problem-closing mx-auto mt-14 max-w-2xl text-center">
-          {problem.closing}
-        </p>
       </div>
     </section>
   );

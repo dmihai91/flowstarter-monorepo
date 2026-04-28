@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { Mast, Footnote } from '../../_components/Mast';
+import { Footnote } from '../../_components/Mast';
+import { DeferredPreviewFrame } from '../../_components/DeferredPreviewFrame';
 import {
   TEMPLATES,
   getTemplate,
@@ -47,20 +48,10 @@ export default async function TemplateDetailPage({ params }: PageProps) {
 
   return (
     <>
-      <Mast
-        homeHref="../.."
-        issueLabel={`Entry ${String(indexInList + 1).padStart(2, '0')} · ${
-          template.year
-        }`}
-      />
-
       {/* ── PRODUCT HEADER ──────────────────────────────────────────────── */}
-      <section className="frame frame--wide detail-hero">
+      <section id="editor-showcase" className="frame frame--wide detail-hero">
         <div className="detail-nav-row">
-          <Link
-            href="../.."
-            className="meta detail-backlink"
-          >
+          <Link href="../.." className="meta detail-backlink">
             ← the shelf
           </Link>
           <span className="meta">
@@ -140,70 +131,38 @@ export default async function TemplateDetailPage({ params }: PageProps) {
               Open full screen ↗
             </Link>
           </div>
-          <div className="preview-shell reveal" data-delay="2">
-            <iframe
-              src={template.previewPath}
-              title={`${template.title} — live preview`}
-              loading="lazy"
-              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-              className="preview-frame"
-            />
-          </div>
+          <DeferredPreviewFrame
+            previewPath={template.previewPath}
+            title={template.title}
+            thumbnailPath={
+              template.thumbnail ? `/showcase/${template.thumbnail}.png` : null
+            }
+          />
         </section>
       ) : null}
 
       {/* ── BODY + META SIDEBAR ─────────────────────────────────────────── */}
-      <section
-        className="frame frame--book"
-        style={{ paddingBlock: 'clamp(4rem, 8vw, 6rem) 0' }}
-      >
+      <section id="process" className="frame frame--book detail-body-section">
         <div className="detail-grid">
           {/* Body column */}
           <div>
-            <p
-              className="display display--small reveal"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontStyle: 'italic',
-                fontSize: 'clamp(1.5rem, 3.4vw, 2.2rem)',
-                lineHeight: 1.25,
-                marginBottom: '2rem',
-                color: 'var(--color-ink)',
-              }}
-            >
+            <p className="display display--small detail-pull reveal">
               {firstSentence(template.blurb)}
             </p>
-            <div
-              className="body reveal"
-              data-delay="1"
-              style={{
-                fontSize: '1rem',
-                lineHeight: 1.7,
-                color: 'var(--color-ink-soft)',
-              }}
-            >
+            <div className="body reveal detail-body-copy" data-delay="1">
               {paragraphs(restAfterFirstSentence(template.blurb)).map(
                 (p, i) => (
-                  <p key={i} style={{ margin: i === 0 ? 0 : '1.25rem 0 0' }}>
+                  <p
+                    key={i}
+                    className={i === 0 ? 'detail-paragraph-first' : ''}
+                  >
                     {p}
                   </p>
                 )
               )}
             </div>
 
-            <div
-              className="reveal"
-              data-delay="2"
-              style={{
-                marginTop: 'clamp(2.5rem, 5vw, 3.5rem)',
-                display: 'flex',
-                gap: '1.5rem',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                paddingTop: '1.5rem',
-                borderTop: '1px solid var(--color-rule)',
-              }}
-            >
+            <div className="reveal detail-body-actions" data-delay="2">
               {template.liveUrl ? (
                 <Link
                   href={template.liveUrl}
@@ -214,22 +173,11 @@ export default async function TemplateDetailPage({ params }: PageProps) {
                   View live
                 </Link>
               ) : (
-                <span
-                  className="meta-strong"
-                  style={{
-                    padding: '0.85rem 1.4rem',
-                    border: '1px solid var(--color-rule-strong)',
-                    color: 'var(--color-ink-soft)',
-                  }}
-                >
+                <span className="meta-strong detail-unavailable">
                   Available on request
                 </span>
               )}
-              <Link
-                href="https://flowstarter.net#pricing"
-                className="action"
-                style={{ borderColor: 'var(--color-ink)' }}
-              >
+              <Link href="https://flowstarter.net#pricing" className="action">
                 Want a site like this? Book a call
               </Link>
             </div>
@@ -295,61 +243,32 @@ export default async function TemplateDetailPage({ params }: PageProps) {
       </section>
 
       {/* ── PREV / NEXT ─────────────────────────────────────────────────── */}
-      <nav
-        className="frame frame--wide"
-        style={{ paddingBlock: 'clamp(5rem, 10vw, 8rem) 0' }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '1.5rem',
-            paddingTop: '1.5rem',
-            borderTop: '1px solid var(--color-ink)',
-          }}
-        >
+      <nav id="pricing" className="frame frame--wide detail-pagination-wrap">
+        <div className="detail-pagination">
           <Link
             href={`../${prev.slug}`}
-            style={{
-              textDecoration: 'none',
-              color: 'inherit',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.4rem',
-            }}
+            className="detail-pagination-link detail-pagination-link-prev"
           >
             <span className="meta">← previous</span>
-            <span
-              className="display display--small"
-              style={{ fontSize: '1.25rem' }}
-            >
+            <span className="display display--small detail-pagination-title">
               {prev.title}
             </span>
           </Link>
           <Link
             href={`../${next.slug}`}
-            style={{
-              textDecoration: 'none',
-              color: 'inherit',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.4rem',
-              alignItems: 'flex-end',
-              textAlign: 'right',
-            }}
+            className="detail-pagination-link detail-pagination-link-next"
           >
             <span className="meta">next →</span>
-            <span
-              className="display display--small"
-              style={{ fontSize: '1.25rem' }}
-            >
+            <span className="display display--small detail-pagination-title">
               {next.title}
             </span>
           </Link>
         </div>
       </nav>
 
-      <Footnote />
+      <div id="faq">
+        <Footnote />
+      </div>
     </>
   );
 }

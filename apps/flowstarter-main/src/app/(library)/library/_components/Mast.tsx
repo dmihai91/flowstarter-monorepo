@@ -13,33 +13,17 @@ interface MastProps {
 export function Mast({ homeHref, issueLabel }: MastProps) {
   return (
     <header className="masthead-rule">
-      <div className="frame frame--wide" style={{ paddingBlock: '0.85rem' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            gap: '1.5rem',
-          }}
-        >
-          <Link
-            href={homeHref}
-            className="meta-strong"
-            style={{
-              textDecoration: 'none',
-              color: 'inherit',
-              letterSpacing: '0.02em',
-            }}
-          >
+      <div className="frame frame--wide masthead-wrap">
+        <div className="masthead-row">
+          <Link href={homeHref} className="meta-strong masthead-brand">
             Flowstarter Library
           </Link>
-          <div className="meta" aria-hidden="true">
+          <div className="meta masthead-issue" aria-hidden="true">
             <span>{issueLabel ?? 'Issue 01 · 2026'}</span>
           </div>
           <Link
             href="https://flowstarter.net"
-            className="meta"
-            style={{ textDecoration: 'none' }}
+            className="meta masthead-backlink"
           >
             ← back to flowstarter.net
           </Link>
@@ -51,23 +35,12 @@ export function Mast({ homeHref, issueLabel }: MastProps) {
 
 export function Footnote() {
   return (
-    <footer style={{ marginTop: 'clamp(6rem, 12vw, 10rem)' }}>
-      <div
-        className="frame frame--wide"
-        style={{ paddingBlock: '2.5rem 1.25rem' }}
-      >
+    <footer className="library-footnote">
+      <div className="frame frame--wide footnote-rule-wrap">
         <hr className="rule" />
       </div>
-      <div className="frame frame--wide" style={{ paddingBlock: '0 3rem' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            gap: '1.5rem',
-            flexWrap: 'wrap',
-          }}
-        >
+      <div className="frame frame--wide footnote-content-wrap">
+        <div className="footnote-row">
           <p className="meta">
             Hand-built by Darius &amp; Dorin. Eight clients per month.
           </p>
@@ -75,19 +48,11 @@ export function Footnote() {
             <Link className="link" href="https://flowstarter.net">
               flowstarter.net
             </Link>
-            <span
-              style={{ margin: '0 0.6em', color: 'var(--color-rule-strong)' }}
-            >
-              ·
-            </span>
+            <span className="footnote-dot">·</span>
             <Link className="link" href="https://flowstarter.net#pricing">
               pricing
             </Link>
-            <span
-              style={{ margin: '0 0.6em', color: 'var(--color-rule-strong)' }}
-            >
-              ·
-            </span>
+            <span className="footnote-dot">·</span>
             <Link className="link" href="https://flowstarter.net#faq">
               faq
             </Link>

@@ -48,3 +48,15 @@
 # It also handles build caching automatically.
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Preview templates are static artifacts generated during build. Serve them with
+# explicit CDN cache headers to avoid slow revalidation misses on first request.
+[[headers]]
+  for = "/preview/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+
+[[headers]]
+  for = "/showcase/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, s-maxage=2592000, stale-while-revalidate=604800"

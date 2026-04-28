@@ -2,11 +2,11 @@
 import { withBase } from '../lib/base.ts';
 
 type FontPair =
-  | 'clash-inter'
-  | 'fraunces-inter'
-  | 'manrope-anton'
+  | 'sora-plus-jakarta'
+  | 'fraunces-source'
+  | 'oswald-manrope'
   | 'space-grotesk-jet'
-  | 'cormorant-inter';
+  | 'playfair-manrope';
 
 interface Props {
   title: string;
@@ -14,27 +14,27 @@ interface Props {
   fontPair?: FontPair;
 }
 
-const { title, description = '', fontPair = 'clash-inter' } = Astro.props;
+const { title, description = '', fontPair = 'sora-plus-jakarta' } = Astro.props;
 
 // Build the Google Fonts <link> URL based on the chosen pair.
 const googleFontsHref = (() => {
   switch (fontPair) {
-    case 'fraunces-inter':
-      return 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap';
-    case 'manrope-anton':
-      return 'https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap';
+    case 'fraunces-source':
+      return 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap';
+    case 'oswald-manrope':
+      return 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap';
     case 'space-grotesk-jet':
       return 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap';
-    case 'cormorant-inter':
-      return 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700&display=swap';
-    case 'clash-inter':
+    case 'playfair-manrope':
+      return 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap';
+    case 'sora-plus-jakarta':
     default:
-      return 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+      return 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap';
   }
 })();
 
 // Clash Grotesk is hosted by Fontshare, not Google. Only load it when needed.
-const includesClash = fontPair === 'clash-inter';
+const includesClash = false;
 
 const faviconHref = withBase('/favicon.svg');
 ---

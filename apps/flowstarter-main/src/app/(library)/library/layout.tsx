@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import '@/styles/library.css';
+import { SiteHeader } from '@/components/SiteHeader';
+import { BookingModalProvider } from '@/app/(dynamic-pages)/(main-pages)/components/BookingModalProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://library.flowstarter.net'),
@@ -32,8 +34,10 @@ export default function LibraryLayout({
 }) {
   return (
     <div className="library-root">
+      <SiteHeader mode="landing" />
+      <BookingModalProvider />
       <div className="grain" aria-hidden="true" />
-      {children}
+      <div className="library-content">{children}</div>
     </div>
   );
 }

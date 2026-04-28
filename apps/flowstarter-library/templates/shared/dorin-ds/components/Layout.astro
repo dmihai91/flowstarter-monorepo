@@ -19,17 +19,17 @@ interface Props {
 const { template, title, description } = Astro.props;
 
 const fontPairFor: Record<TemplateSlug,
-  | 'clash-inter'
-  | 'fraunces-inter'
-  | 'manrope-anton'
+  | 'sora-plus-jakarta'
+  | 'fraunces-source'
+  | 'oswald-manrope'
   | 'space-grotesk-jet'
-  | 'cormorant-inter'
+  | 'playfair-manrope'
 > = {
-  'coach-pro': 'clash-inter',
-  'therapist-care': 'fraunces-inter',
-  'fitness-coach': 'manrope-anton',
+  'coach-pro': 'sora-plus-jakarta',
+  'therapist-care': 'fraunces-source',
+  'fitness-coach': 'oswald-manrope',
   'freelancer-portfolio': 'space-grotesk-jet',
-  'creative-portfolio': 'cormorant-inter',
+  'creative-portfolio': 'playfair-manrope',
 };
 
 const fontPair = fontPairFor[template];

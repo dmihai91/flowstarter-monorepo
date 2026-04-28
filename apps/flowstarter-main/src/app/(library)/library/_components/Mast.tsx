@@ -1,9 +1,8 @@
 import Link from 'next/link';
-import { libHref } from '../_lib/href';
 
 interface MastProps {
-  /** Path prefix injected by the layout. `''` on subdomain, `/library` on main domain. */
-  pathPrefix: string;
+  /** Relative URL to the library home from the current page context. */
+  homeHref: string;
   issueLabel?: string;
 }
 
@@ -11,7 +10,7 @@ interface MastProps {
  * Editorial masthead — the running header that appears on every library page.
  * Fixed-metric typography, hairline rule above and below.
  */
-export function Mast({ pathPrefix, issueLabel }: MastProps) {
+export function Mast({ homeHref, issueLabel }: MastProps) {
   return (
     <header className="masthead-rule">
       <div className="frame frame--wide" style={{ paddingBlock: '0.85rem' }}>
@@ -24,7 +23,7 @@ export function Mast({ pathPrefix, issueLabel }: MastProps) {
           }}
         >
           <Link
-            href={libHref(pathPrefix, '/')}
+            href={homeHref}
             className="meta-strong"
             style={{
               textDecoration: 'none',

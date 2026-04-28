@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { Mast, Footnote } from './_components/Mast';
 import { GalleryItem } from './_components/GalleryItem';
 import { TEMPLATES } from './_data/templates';
-import { getLibraryPathPrefix } from './_lib/href';
+
+export const dynamic = 'force-static';
 
 export default async function GalleryPage() {
-  const pathPrefix = await getLibraryPathPrefix();
   const total = TEMPLATES.length;
   const liveCount = TEMPLATES.filter((t) => t.status === 'live').length;
   const inDev = total - liveCount;
@@ -13,8 +13,8 @@ export default async function GalleryPage() {
   return (
     <>
       <Mast
-        pathPrefix={pathPrefix}
-        issueLabel={`Issue 01 · ${new Date().getFullYear()}`}
+        homeHref="."
+        issueLabel="Issue 01 · 2026"
       />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
@@ -117,12 +117,7 @@ export default async function GalleryPage() {
         >
           {TEMPLATES.map((template, index) => (
             <li key={template.slug} style={{ minWidth: 0 }}>
-              <GalleryItem
-                template={template}
-                index={index}
-                total={total}
-                pathPrefix={pathPrefix}
-              />
+              <GalleryItem template={template} index={index} total={total} />
             </li>
           ))}
         </ul>

@@ -7,7 +7,8 @@ import {
   getTemplate,
   getTemplateSlugs,
 } from '../../_data/templates';
-import { getLibraryPathPrefix, libHref } from '../../_lib/href';
+
+export const dynamic = 'force-static';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -39,7 +40,6 @@ export default async function TemplateDetailPage({ params }: PageProps) {
   const template = getTemplate(slug);
   if (!template) notFound();
 
-  const pathPrefix = await getLibraryPathPrefix();
   const indexInList = TEMPLATES.findIndex((t) => t.slug === slug);
   const next = TEMPLATES[(indexInList + 1) % TEMPLATES.length];
   const prev =
@@ -48,7 +48,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
   return (
     <>
       <Mast
-        pathPrefix={pathPrefix}
+        homeHref="../.."
         issueLabel={`Entry ${String(indexInList + 1).padStart(2, '0')} · ${
           template.year
         }`}
@@ -57,7 +57,10 @@ export default async function TemplateDetailPage({ params }: PageProps) {
       {/* ── PRODUCT HEADER ──────────────────────────────────────────────── */}
       <section className="frame frame--wide detail-hero">
         <div className="detail-nav-row">
-          <Link href={libHref(pathPrefix, '/')} className="meta detail-backlink">
+          <Link
+            href="../.."
+            className="meta detail-backlink"
+          >
             ← the shelf
           </Link>
           <span className="meta">
@@ -68,7 +71,8 @@ export default async function TemplateDetailPage({ params }: PageProps) {
         <div className="detail-hero-grid">
           <div className="detail-title-stack reveal">
             <p className="meta">
-              Entry {String(indexInList + 1).padStart(2, '0')} / {String(TEMPLATES.length).padStart(2, '0')}
+              Entry {String(indexInList + 1).padStart(2, '0')} /{' '}
+              {String(TEMPLATES.length).padStart(2, '0')}
             </p>
             <h1 className="display detail-title">{template.title}</h1>
             <p className="lede detail-kicker">{template.kicker}</p>
@@ -305,7 +309,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
           }}
         >
           <Link
-            href={libHref(pathPrefix, `/templates/${prev.slug}`)}
+            href={`../${prev.slug}`}
             style={{
               textDecoration: 'none',
               color: 'inherit',
@@ -323,7 +327,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
             </span>
           </Link>
           <Link
-            href={libHref(pathPrefix, `/templates/${next.slug}`)}
+            href={`../${next.slug}`}
             style={{
               textDecoration: 'none',
               color: 'inherit',

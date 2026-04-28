@@ -1,12 +1,10 @@
 import Link from 'next/link';
 import { Mast, Footnote } from '../../_components/Mast';
-import { getLibraryPathPrefix, libHref } from '../../_lib/href';
 
-export default async function NotFound() {
-  const pathPrefix = await getLibraryPathPrefix();
+export default function NotFound() {
   return (
     <>
-      <Mast pathPrefix={pathPrefix} />
+      <Mast homeHref="../.." />
       <section
         className="frame frame--book"
         style={{ paddingBlock: 'clamp(5rem, 12vw, 8rem) 0', textAlign: 'left' }}
@@ -20,7 +18,7 @@ export default async function NotFound() {
           place. The full shelf is one click away.
         </p>
         <div style={{ marginTop: '2.5rem' }}>
-          <Link href={libHref(pathPrefix, '/')} className="cta-block">
+          <Link href="../.." className="cta-block">
             Back to the library
           </Link>
         </div>

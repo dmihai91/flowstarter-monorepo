@@ -98,7 +98,7 @@ export function ProofSection() {
                       alt={`${item.title} preview`}
                       width={1200}
                       height={750}
-                      quality={88}
+                      quality={75}
                       sizes="(min-width: 1080px) 380px, (min-width: 720px) 45vw, 92vw"
                     />
                   ) : item.placeholder ? (

@@ -240,7 +240,7 @@ export const LANDING_COPY = {
     ],
   },
   proof: {
-    libraryUrl: 'https://library.flowstarter.net',
+    libraryUrl: '/library',
     items: [
       {
         slug: 'ux-journey',
@@ -260,8 +260,8 @@ export const LANDING_COPY = {
         kicker:
           'Measured, hand-built starter for ICF-certified coaches and consultants.',
         thumbnail: '/showcase/coach-pro.png',
-        href: 'https://library.flowstarter.net/templates/coach-pro',
-        external: true,
+        href: '/library/templates/coach-pro',
+        external: false,
         status: 'live' as const,
       },
       {
@@ -271,8 +271,8 @@ export const LANDING_COPY = {
         kicker:
           'Quiet, trust-first design for therapists and clinical practices.',
         thumbnail: '/showcase/therapist-care.png',
-        href: 'https://library.flowstarter.net/templates/therapist-care',
-        external: true,
+        href: '/library/templates/therapist-care',
+        external: false,
         status: 'live' as const,
       },
       {
@@ -281,8 +281,8 @@ export const LANDING_COPY = {
         meta: 'Portfolio · Starter · Live',
         kicker: 'A serious portfolio for serious work — not a Dribbble shot.',
         thumbnail: '/showcase/freelancer-portfolio.png',
-        href: 'https://library.flowstarter.net/templates/freelancer-portfolio',
-        external: true,
+        href: '/library/templates/freelancer-portfolio',
+        external: false,
         status: 'live' as const,
       },
       {
@@ -291,8 +291,8 @@ export const LANDING_COPY = {
         meta: 'Fitness · Starter · Live',
         kicker: 'Confident starter for personal trainers and small studios.',
         thumbnail: '/showcase/fitness-coach.png',
-        href: 'https://library.flowstarter.net/templates/fitness-coach',
-        external: true,
+        href: '/library/templates/fitness-coach',
+        external: false,
         status: 'live' as const,
       },
       {
@@ -301,8 +301,8 @@ export const LANDING_COPY = {
         meta: 'Creative · Starter · Live',
         kicker: 'Editorial portfolio for photographers and studios.',
         thumbnail: '/showcase/creative-portfolio.png',
-        href: 'https://library.flowstarter.net/templates/creative-portfolio',
-        external: true,
+        href: '/library/templates/creative-portfolio',
+        external: false,
         status: 'live' as const,
       },
     ],

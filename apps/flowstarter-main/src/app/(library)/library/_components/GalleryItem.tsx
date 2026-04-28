@@ -1,29 +1,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { TemplateEntry } from '../_data/templates';
-import { libHref } from '../_lib/href';
 
 interface GalleryItemProps {
   template: TemplateEntry;
   index: number;
   /** Total count for the running counter, e.g. "01 / 06". */
   total: number;
-  /** Path prefix injected by the layout. `''` on subdomain, `/library` on main. */
-  pathPrefix: string;
 }
 
-export function GalleryItem({
-  template,
-  index,
-  total,
-  pathPrefix,
-}: GalleryItemProps) {
+export function GalleryItem({ template, index, total }: GalleryItemProps) {
   const ord = String(index + 1).padStart(2, '0');
   const tot = String(total).padStart(2, '0');
 
   return (
     <Link
-      href={libHref(pathPrefix, `/templates/${template.slug}`)}
+      href={`templates/${template.slug}`}
       className="item reveal"
       data-delay={Math.min(index, 6)}
       aria-label={`${template.title} — ${template.kicker}`}

@@ -75,7 +75,7 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     tags: ['coaching', 'editorial', 'cal.com'],
     repoUrl: null,
     liveUrl: 'https://ux-journey.com/',
-    thumbnail: null,
+    thumbnail: 'ux-journey',
     placeholder: {
       line: 'ux-journey.com',
       sub: 'shipped · 2026',

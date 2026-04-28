@@ -247,7 +247,7 @@ export const LANDING_COPY = {
         title: 'UX Journey',
         meta: 'Coaching · Live · 2026',
         kicker: 'A senior UX coach. Hand-built, live since early 2026.',
-        thumbnail: null,
+        thumbnail: '/showcase/ux-journey.png',
         placeholder: 'ux-journey.com',
         href: 'https://ux-journey.com/',
         external: true,

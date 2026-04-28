@@ -1,10 +1,14 @@
 ---
-enabled: false
-provider: null
+enabled: true
+provider: cal
 embed_url: null
+cal_link: "therapist-care/intro-consult"
+cal_event_label: "20-minute intro call"
+cal_duration_label: "20 minutes · video or phone · confidential"
+cal_layout: "month_view"
 
-title: "Schedule Your Free Consultation"
-description: "A brief 15-minute call to discuss your needs and see if we're a good fit. No pressure, completely confidential."
+title: "Choose a time that feels right."
+description: "A 20-minute intro call to talk briefly about what's bringing you here and answer your questions. Calm, confidential, no commitment."
 cta: "Confirm Appointment"
 
 available_label: "Available Times"

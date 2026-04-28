@@ -1,383 +1,603 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Icon from '../components/Icon.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import ServiceCard from '../../../shared/dorin-ds/components/ServiceCard.astro';
+import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
+import CaseStudyCard from '../../../shared/dorin-ds/components/CaseStudyCard.astro';
+import TestimonialBlock from '../../../shared/dorin-ds/components/TestimonialBlock.astro';
+import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
+import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
+import VideoBlock from '../../../shared/dorin-ds/components/VideoBlock.astro';
+import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
 
+import { frontmatter as siteData } from '../../content/site.md';
+import { frontmatter as heroData } from '../../content/hero.md';
+import { frontmatter as servicesData } from '../../content/services.md';
+import { frontmatter as testimonialsData } from '../../content/testimonials.md';
+import { frontmatter as videoData } from '../../content/video.md';
+import { frontmatter as bookingData } from '../../content/integrations/booking.md';
 
-const _iconMap: Record<string, string> = {
-  "lucide:book-open": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
-  "lucide:camera": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
-  "lucide:monitor": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
-  "lucide:palette": `<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></g>`,
-  "lucide:share-2": `<circle cx="12" cy="12" r="5" fill="currentColor"/>`,
-  "lucide:video": `<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m22 8-6 4 6 4V8z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></g>`,
+interface SiteContent {
+  name?: string;
+  tagline?: string;
+  description?: string;
+  year?: number;
+}
+interface HeroStat { value?: string; label?: string }
+interface HeroContent { stats?: HeroStat[] }
+interface ServiceItem {
+  icon?: string;
+  title?: string;
+  description?: string;
+  price?: string;
+}
+interface ServicesContent { services?: ServiceItem[] }
+interface TestimonialItem {
+  quote?: string;
+  author?: string;
+  role?: string;
+  result?: string;
+}
+interface TestimonialsContent { testimonials?: TestimonialItem[] }
+interface VideoContent {
+  eyebrow?: string;
+  title?: string;
+  duration?: string;
+  caption?: string;
+  poster?: string;
+  src?: string;
+  aspect?: '21/9' | '16/9' | '4/3' | '1/1' | string;
+}
+interface BookingContent {
+  cal_link?: string;
+  cal_event_label?: string;
+  cal_duration_label?: string;
+  cal_layout?: 'month_view' | 'week_view' | 'column_view';
+  title?: string;
+  description?: string;
+  cta?: string;
+}
+
+const site = siteData as SiteContent;
+const hero = heroData as HeroContent;
+const servicesContent = servicesData as ServicesContent;
+const testimonialsContent = testimonialsData as TestimonialsContent;
+const video = videoData as VideoContent;
+const booking = bookingData as BookingContent;
+
+// Hero stats mapped from hero.md ({ value, label } -> { number, label })
+const heroStats = (hero.stats ?? []).map((s) => ({
+  number: s.value ?? '',
+  label: s.label ?? '',
+}));
+
+// Hand-built selected work — no .md source, kept as-is.
+const selectedWork = [
+  {
+    title: 'Casa Bruma',
+    category: 'Hospitality · Identity & photography · 2025',
+    imageSrc:
+      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&h=1040&fit=crop',
+    index: '№ 01',
+  },
+  {
+    title: 'Maison Lune',
+    category: 'Fashion · Editorial photography · 2025',
+    imageSrc:
+      'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&h=1040&fit=crop',
+    index: '№ 02',
+  },
+  {
+    title: 'Galería Norte',
+    category: 'Gallery · Identity, print, web · 2024',
+    imageSrc:
+      'https://images.unsplash.com/photo-1577720580479-7d839d829c73?w=1200&h=1040&fit=crop',
+    index: '№ 03',
+  },
+  {
+    title: 'Atelier Vega',
+    category: 'Hospitality · Brand & art direction · 2024',
+    imageSrc:
+      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&h=1040&fit=crop',
+    index: '№ 04',
+  },
+];
+
+// Hardcoded SVG icon strings — keyed to lucide:* names in services.md.
+// Per the rules: keep SVGs in code, only swap text fields from .md.
+const ICONS: Record<string, string> = {
+  'lucide:palette':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+  'lucide:camera':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="14" x="3" y="5" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M7 5l1.5-2h7L17 5"/></svg>',
+  'lucide:monitor':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="14" x="3" y="3" rx="2"/><path d="M3 10h18M7 17h10"/></svg>',
 };
-function getIconSvg(name: string, cls: string): string {
-  const body = _iconMap[name] || '<circle cx="12" cy="12" r="5" fill="currentColor"/>';
-  const needsFill = ["lucide:facebook","lucide:star","lucide:linkedin"].includes(name);
-  const fill = needsFill ? "currentColor" : "none";
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${fill}" class="${cls}" aria-hidden="true">${body}</svg>`;
-}
+const FALLBACK_ICON =
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>';
 
-interface Service {
-  icon: string;
-  title: string;
-  description: string;
-  price: string;
-}
+// Home page features the first three services from services.md.
+const previewServices = (servicesContent.services ?? []).slice(0, 3).map((s) => ({
+  icon: (s.icon && ICONS[s.icon]) || FALLBACK_ICON,
+  title: s.title ?? '',
+  description: s.description ?? '',
+  meta: s.price ?? '',
+}));
 
-interface ProcessStep {
-  title: string;
-  description: string;
-}
+const testimonials = (testimonialsContent.testimonials ?? []).slice(0, 3);
 
-interface Testimonial {
-  quote: string;
-  author: string;
-  type: string;
-}
-
-interface FAQ {
-  question: string;
-  answer: string;
-}
-
-const services: Service[] = [
-  { icon: "lucide:palette", title: "Brand Identity", description: "Complete brand identity systems including logos, color palettes, typography, and comprehensive brand guidelines.", price: "From $3,000" },
-  { icon: "lucide:camera", title: "Photography", description: "Product photography, portraits, lifestyle shoots, and event coverage. Crisp, editorial-quality imagery.", price: "From $500/session" },
-  { icon: "lucide:monitor", title: "Web Design", description: "Responsive, conversion-focused websites that look stunning on every device. From concept to launch.", price: "From $5,000" },
-  { icon: "lucide:video", title: "Video Production", description: "Brand films, social media content, product videos, and motion graphics that capture attention.", price: "From $2,000" },
-  { icon: "lucide:share-2", title: "Social Media Content", description: "Strategic content creation and visual storytelling for Instagram, TikTok, LinkedIn, and beyond.", price: "$1,500/month" },
-  { icon: "lucide:book-open", title: "Print Design", description: "Packaging, editorial layouts, business collateral, and exhibition materials with meticulous attention to detail.", price: "From $1,500" },
+// FAQ — no .md source, kept as-is.
+const faqs = [
+  {
+    question: 'How does a typical commission start?',
+    answer:
+      'A studio call, then a written proposal, then a deposit. The studio works on a four-week minimum lead time, longer for travel-heavy shoots. Most commissions start within four to six weeks of first contact.',
+  },
+  {
+    question: 'Do you travel for shoots?',
+    answer:
+      'Yes. About a third of the studio\u2019s shoots happen on location. Travel is invoiced at cost, with a flat per-diem. The studio has worked across Mexico, Spain, Italy, Morocco, Japan, and the United States.',
+  },
+  {
+    question: 'Do you license existing imagery?',
+    answer:
+      'A small selection of personal work is available for editorial license — write to the studio with the publication, run dates, and territory. Commercial usage of commissioned work is negotiated per project.',
+  },
+  {
+    question: 'Do you work with agencies?',
+    answer:
+      'Sometimes. The studio takes on agency-routed work when the brief is interesting and the rights structure is clean. Direct-client commissions are the default and account for most of the year.',
+  },
+  {
+    question: 'Where does the studio work from?',
+    answer:
+      'Estudio Rivera is on Río Lerma in Mexico City. The studio also keeps a small loft in Brooklyn for North American shoots. About a third of each year is on location.',
+  },
 ];
 
-const process: ProcessStep[] = [
-  { title: "Discovery", description: "We dive deep into your brand, audience, and objectives. I want to understand not just what you need, but why it matters." },
-  { title: "Concept", description: "I develop creative concepts and mood boards that align with your vision. We collaborate until the direction feels right." },
-  { title: "Create", description: "With the concept locked in, I bring it to life with meticulous craft. You'll see progress at every milestone." },
-  { title: "Launch", description: "Final assets are delivered in all formats you need, with a style guide ensuring consistency across every touchpoint." },
-];
+const pageTitle = `${site.name ?? 'Marcus Rivera'} — Visual Designer & Photographer`;
+const pageDescription =
+  site.description ??
+  'Visual design and photography for hospitality, fashion, and gallery clients.';
 
-const testimonials: Testimonial[] = [
-  { quote: "Marcus completely transformed our brand identity. The new visual system he created helped us secure our Series A — investors said our branding was the most professional they'd seen at our stage.", author: "David Chen", type: "CEO, NovaTech" },
-  { quote: "The product photography Marcus delivered went viral on our social channels. We saw a 340% increase in engagement and our best sales quarter ever. He has an incredible eye for detail.", author: "Priya Sharma", type: "Marketing Director, Lumina" },
-  { quote: "We hired Marcus for our annual gala and the photos were absolutely breathtaking. He captured every moment perfectly and the final gallery told the complete story of the evening.", author: "Angela Torres", type: "Event Director, Arts Foundation" },
-];
-
-const faqs: FAQ[] = [
-  { question: "What is your typical project timeline?", answer: "Timelines vary by scope. Brand identity projects typically take 4-6 weeks, web design 6-8 weeks, and photography projects 1-2 weeks from shoot to delivery. I'll provide a detailed timeline during our discovery call." },
-  { question: "How many revisions are included?", answer: "All projects include 2 rounds of revisions at each milestone. I find that our thorough discovery process means we usually nail it by the first revision. Additional rounds can be added at a reasonable rate." },
-  { question: "Who owns the final deliverables?", answer: "You do. Upon final payment, all rights to the created work transfer to you. I retain the right to showcase the work in my portfolio unless we agree otherwise." },
-  { question: "What's your budget range?", answer: "Projects range from $500 for a single photo session to $15,000+ for comprehensive brand identity packages. I'm transparent about pricing from our first conversation and always work within your budget." },
-  { question: "What does collaboration look like?", answer: "I keep communication open and regular. You'll have access to a shared project board, receive weekly updates, and we'll have check-in calls at each milestone. I'm responsive on email and Slack." },
-];
-
-const stats = [
-  { value: "200+", label: "Projects Completed" },
-  { value: "6", label: "Years Experience" },
-  { value: "50+", label: "Brands Served" },
-  { value: "Forbes", label: "Featured In" },
-];
+// Normalize aspect ratio; VideoBlock only accepts a known set.
+const allowedAspects = new Set(['21/9', '16/9', '4/3', '1/1']);
+const videoAspect = (allowedAspects.has(video.aspect ?? '')
+  ? (video.aspect as '21/9' | '16/9' | '4/3' | '1/1')
+  : '16/9');
 ---
 
-<Layout>
-  <!-- Hero Section -->
-  <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
-    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-warm-100 dark:from-slate-800/50 to-transparent opacity-50"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-    
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <div>
-          <p class="text-primary font-medium mb-4 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></g></svg>
-            Award-Winning Creative
-          </p>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-sans font-bold text-white leading-tight mb-6">
-            Crafting Visual <span class="text-primary">Stories</span>
-          </h1>
-          <p class="text-lg text-gray-400 mb-8 max-w-lg">
-            I'm Marcus Rivera — a visual designer and photographer who helps brands stand out through bold, purposeful creative. From identity systems to campaign photography, every project tells a story.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 mb-8">
-            <a href="#contact" class="btn-primary">
-              Start a Project
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></g></svg>
-            </a>
-            <a href="#services" class="btn-outline">View Work</a>
-          </div>
-          <div class="grid grid-cols-4 gap-4">
-            {stats.map((stat: { value: string; label: string }) => (
-              <div class="text-center">
-                <div class="text-2xl font-bold text-white">{stat.value}</div>
-                <div class="text-xs text-gray-400 font-mono">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  activeIndex={-1}
+>
+  <!-- ─── Hero ──────────────────────────────────────────────── -->
+  <SectionBlock id="home" tone="light" padding="hero" className="cv-hero">
+    <Container className="cv-hero__inner">
+      <div class="cv-hero__copy">
+        <OverlineText text="Estudio Rivera · Mexico City / NYC" tone="accent" />
+        <h1 class="cv-hero__title">
+          <span>A studio for</span>
+          <span class="cv-hero__title-accent">photograph-led</span>
+          <span>identity &amp; image.</span>
+        </h1>
+        <p class="cv-hero__lede">
+          Marcus Rivera is a visual designer and photographer working with
+          hospitality, fashion, and gallery clients. Six years of studio
+          practice. Two passports' worth of frequent flyer miles.
+        </p>
+        <div class="cv-hero__actions">
+          <ActionButton
+            href="/contact"
+            label="Commission a project"
+            variant="primary"
+            size="large"
+          />
+          <ActionButton
+            href="/services"
+            label="View the studio"
+            variant="outline-dark"
+            size="large"
+          />
         </div>
-        
-        <div class="relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
-          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&h=700&fit=crop&crop=face" alt="Marcus Rivera, Visual Designer" class="relative rounded-3xl shadow-xl w-full object-cover aspect-[5/6]" />
-          <div class="absolute -bottom-6 -left-6 bg-[#1C1C1C] rounded-2xl p-6 shadow-lg">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></g></svg>
-              </div>
-              <div>
-                <div class="text-2xl font-bold text-white">200+</div>
-                <div class="text-sm text-gray-400 font-mono">Projects</div>
-              </div>
-            </div>
-          </div>
+        <div class="cv-hero__pills">
+          <TagPill label="Hospitality" />
+          <TagPill label="Fashion" />
+          <TagPill label="Gallery" />
+          <TagPill label="Booking 6 weeks out" />
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- About Section -->
-  <section id="about" class="py-20 bg-[#1A1A1A] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div class="order-2 lg:order-1">
-          <div class="grid grid-cols-2 gap-4">
-            <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=300&h=400&fit=crop" alt="Photography work" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4]" />
-            <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=300&h=400&fit=crop" alt="Design studio" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4] mt-8" />
-          </div>
-        </div>
-        
-        <div class="order-1 lg:order-2">
-          <p class="text-primary font-medium mb-4">About Me</p>
-          <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
-            Design With Purpose
-          </h2>
-          <p class="text-gray-400 mb-6">
-            With a BFA from Rhode Island School of Design and 6 years of professional experience, I've had the privilege of working with Fortune 500 companies and ambitious startups alike.
-          </p>
-          <p class="text-gray-400 mb-8">
-            I'm passionate about visual storytelling that drives results. Whether it's a complete rebrand, a product launch, or ongoing content creation, I bring the same level of craft and strategic thinking to every project.
-          </p>
-          <ul class="space-y-3">
-            {["BFA in Graphic Design, RISD", "Former Creative Lead at Pentagram", "Featured in Forbes, Communication Arts", "50+ Brands Across 12 Industries"].map((credential: string) => (
-              <li class="flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></g></svg>
-                <span class="text-gray-300">{credential}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <figure class="cv-hero__plate" aria-hidden="true">
+        <div class="cv-hero__plate-image"></div>
+        <figcaption class="cv-hero__plate-caption">
+          Casa Bruma · Tulum · 2025
+        </figcaption>
+        <span class="cv-hero__plate-tag">№ 001 / 200</span>
+      </figure>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Stats (hero.md) ──────────────────────────────────── -->
+  <SectionBlock tone="accent-light" padding="compact" topBorder>
+    <Container>
+      <StatsRow items={heroStats} />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Selected work ───────────────────────────────────── -->
+  <SectionBlock id="work" tone="light" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="Selected work"
+        title="Four recent commissions."
+        maxWidth="22ch"
+      />
+      <div class="cv-work-grid">
+        {
+          selectedWork.map((w) => (
+            <CaseStudyCard
+              title={w.title}
+              category={w.category}
+              imageSrc={w.imageSrc}
+              index={w.index}
+              href="/services"
+            />
+          ))
+        }
       </div>
-    </div>
-  </section>
-
-  <!-- Services / Work Section -->
-  <section id="services" class="py-20 bg-[#141414] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-medium mb-4">Work</p>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Selected Work</h2>
-        <p class="text-gray-400">A curated selection of services spanning brand identity, photography, web design, and content creation.</p>
+      <div class="cv-work-cta">
+        <ActionButton
+          href="/services"
+          label="See the studio archive"
+          variant="outline-dark"
+        />
       </div>
+    </Container>
+  </SectionBlock>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.map((service: Service) => (
-          <div class="card group hover:-translate-y-1">
-            <div class="w-14 h-14 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
-              <Fragment set:html={getIconSvg(service.icon, "w-7 h-7 text-primary")} />
-            </div>
-            <h3 class="text-xl font-bold text-white mb-2">{service.title}</h3>
-            <p class="text-gray-400 mb-4">{service.description}</p>
-            <span class="inline-flex items-center gap-2 text-sm text-primary font-medium font-mono">
-              {service.price}
-            </span>
-          </div>
-        ))}
+  <!-- ─── Editorial plate ─────────────────────────────────── -->
+  <SectionBlock tone="dark" padding="none" className="cv-plate-section">
+    <div class="cv-plate-section__plate" aria-hidden="true"></div>
+    <Container className="cv-plate-section__caption">
+      <OverlineText text="From the archive" tone="accent" />
+      <p class="cv-plate-section__text">
+        Maison Lune · Spring lookbook · Marrakech · 2025. Shot on Pentax
+        67ii, scanned and graded in studio. Editorial license available.
+      </p>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Services preview (services.md) ──────────────────── -->
+  <SectionBlock id="services" tone="subtle" padding="default">
+    <Container>
+      <SectionHeading
+        label="The studio offers"
+        title="Three core practices."
+        maxWidth="22ch"
+      />
+      <div class="cv-services-grid">
+        {
+          previewServices.map((s) => (
+            <ServiceCard
+              icon={s.icon}
+              title={s.title}
+              description={s.description}
+              meta={s.meta}
+            />
+          ))
+        }
       </div>
-
-      <div class="mt-12 text-center">
-        <a href="#contact" class="btn-primary">
-          Start a Project
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></g></svg>
-        </a>
+      <div class="cv-services-cta">
+        <ActionButton
+          href="/services"
+          label="See all six practices"
+          variant="outline-dark"
+        />
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Process Section -->
-  <section id="process" class="py-20 bg-[#111111] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-medium mb-4">Process</p>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">How I Work</h2>
-        <p class="text-gray-400">A structured yet flexible process that keeps projects on track and delivers exceptional results.</p>
-      </div>
+  <!-- ─── Process film (video.md) ──────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container>
+      <VideoBlock
+        src={video.src ?? ''}
+        poster={video.poster}
+        title={video.title ?? 'Watch the studio at work'}
+        caption={video.caption}
+        eyebrow={video.eyebrow}
+        duration={video.duration}
+        aspect={videoAspect}
+      />
+    </Container>
+  </SectionBlock>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {process.map((item: ProcessStep, index: number) => (
-          <div class="flex gap-5">
-            <div class="w-12 h-12 bg-primary text-secondary-dark rounded-full flex items-center justify-center font-bold font-mono flex-shrink-0">{String(index + 1).padStart(2, '0')}</div>
-            <div>
-              <h3 class="text-xl font-bold text-white mb-2">{item.title}</h3>
-              <p class="text-gray-400">{item.description}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section class="py-20 bg-[#141414] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-medium mb-4">Testimonials</p>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Client Feedback</h2>
-        <p class="text-gray-400">What happens when creativity meets strategy — hear from the brands I've worked with.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {testimonials.map((testimonial: Testimonial) => (
-          <div class="card-warm">
-            <div class="mb-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-10 h-10 text-primary/30" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></g></svg></div>
-            <p class="text-gray-300 mb-6 leading-relaxed italic">"{testimonial.quote}"</p>
-            <div class="border-t border-white/10 pt-4">
-              <div class="font-semibold text-white">{testimonial.author}</div>
-              <div class="text-sm text-gray-400">{testimonial.type}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ Section -->
-  <section id="faq" class="py-20 bg-[#1A1A1A] transition-colors">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <p class="text-primary font-medium mb-4">FAQ</p>
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Common Questions</h2>
-        <p class="text-gray-400">Everything you need to know about working together.</p>
-      </div>
-
-      <div class="space-y-4">
-        {faqs.map((faq: FAQ, index: number) => (
-          <div class="faq-item bg-[#1C1C1C] rounded-xl border border-white/10 overflow-hidden">
-            <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
-              <span class="font-medium text-white pr-4">{faq.question}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/></svg>
-            </button>
-            <div class="faq-content hidden px-6 pb-5">
-              <p class="text-gray-400">{faq.answer}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact" class="py-20 bg-[#141414] transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div>
-          <p class="text-primary font-medium mb-4">Let's Talk</p>
-          <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Have a Project in Mind?</h2>
-          <p class="text-gray-400 mb-8">I'd love to hear about your project. Tell me what you're working on and let's figure out how to bring it to life together.</p>
-
-          <div class="space-y-6 mb-8">
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></g></svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-white mb-1">Studio</h4>
-                <p class="text-gray-400">42 Wythe Avenue, Studio 3F<br>Brooklyn, NY 11249</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></g></svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-white mb-1">Availability</h4>
-                <p class="text-gray-400">Monday – Friday: 10am – 6pm<br>Open to remote collaboration</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-white mb-1">Contact</h4>
-                <p class="text-gray-400">
-                  <a href="tel:+17185550237" class="hover:text-primary transition-colors">(718) 555-0237</a><br>
-                  <a href="mailto:hello@marcusrivera.com" class="hover:text-primary transition-colors">hello@marcusrivera.com</a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-[#1C1C1C] rounded-2xl p-8 shadow-lg ">
-          <h3 class="text-xl font-bold text-white mb-6">Start a Project</h3>
-          <div id="form-success" class="hidden rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-            Thank you! We'll be in touch within 24 hours.
-          </div>
-          <div id="form-error" class="hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            Something went wrong. Please try again.
-          </div>
-          <form id="contact-form" data-contact-form data-success-message="Thank you! We'll be in touch within 24 hours." class="space-y-5">
-            <input type="hidden" name="_template" value="" />
-            <input type="hidden" name="_source" value="" />
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
-                <input type="text" class="input" placeholder="Your name" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-300 mb-2">Company</label>
-                <input type="text" class="input" placeholder="Your company" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-              <input type="email" class="input" placeholder="your@email.com" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-300 mb-2">Budget Range</label>
-              <input type="text" class="input" placeholder="e.g. $3,000 - $5,000" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-300 mb-2">Tell me about your project</label>
-              <textarea rows="4" class="textarea" placeholder="What are you working on? What are your goals and timeline?"></textarea>
-            </div>
-            <button type="submit" class="btn-primary w-full">
-              Send Inquiry
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></g></svg>
-            </button>
-            <p class="text-xs text-gray-400 text-center">I'll respond within 24-48 hours with next steps.</p>
-          </form>
+  <!-- ─── Testimonials (testimonials.md) ───────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container>
+      <SectionHeading label="Said by clients" title="Words from the work." />
+      <div class="cv-testimonials">
+        {
+          testimonials[0] && (
+            <TestimonialBlock
+              quote={testimonials[0].quote ?? ''}
+              author={testimonials[0].author ?? ''}
+              role={testimonials[0].role ?? ''}
+              result={testimonials[0].result ?? ''}
+              layout="spotlight"
+              className="cv-testimonials__lead"
+            />
+          )
+        }
+        <div class="cv-testimonials__rest">
+          {
+            testimonials.slice(1).map((t) => (
+              <TestimonialBlock
+                quote={t.quote ?? ''}
+                author={t.author ?? ''}
+                role={t.role ?? ''}
+                result={t.result ?? ''}
+              />
+            ))
+          }
         </div>
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── FAQ ──────────────────────────────────────────────── -->
+  <SectionBlock id="faq" tone="subtle" padding="default" topBorder>
+    <Container className="cv-faq">
+      <SectionHeading label="FAQ" title="Practical questions." />
+      <div class="cv-faq__list">
+        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── CTA — Cal.com booking (booking.md) ───────────────── -->
+  <SectionBlock id="contact" tone="dark" padding="default">
+    <Container>
+      <CalBookingBlock
+        variant="cta"
+        calLink={booking.cal_link}
+        eventLabel={booking.cal_event_label ?? booking.cta ?? 'Book a studio call'}
+        title={booking.title ?? 'Open a slot for the project.'}
+        subtitle={booking.description}
+        durationLabel={booking.cal_duration_label}
+        layout={booking.cal_layout}
+        className="cv-cta-booking"
+      />
+    </Container>
+  </SectionBlock>
 </Layout>
 
-<script>
-  document.querySelectorAll('.faq-trigger').forEach(trigger => {
-    trigger.addEventListener('click', () => {
-      const item = trigger.closest('.faq-item');
-      const content = item?.querySelector('.faq-content');
-      const icon = trigger.querySelector('.faq-icon');
-      
-      document.querySelectorAll('.faq-item').forEach(otherItem => {
-        if (otherItem !== item) {
-          otherItem.querySelector('.faq-content')?.classList.add('hidden');
-          otherItem.querySelector('.faq-icon')?.classList.remove('rotate-180');
-        }
-      });
-      
-      content?.classList.toggle('hidden');
-      icon?.classList.toggle('rotate-180');
-    });
-  });
-</script>
+<style>
+  /* Hero */
+  .cv-hero {
+    position: relative;
+    overflow: clip;
+  }
+
+  .cv-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 48%);
+    gap: 80px;
+    align-items: center;
+    min-height: 84vh;
+  }
+
+  .cv-hero__copy {
+    max-width: 640px;
+  }
+
+  .cv-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.6rem, 7vw, 5.8rem);
+    font-weight: var(--fw-headline);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 24px 0 32px;
+    color: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cv-hero__title-accent {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    text-transform: none;
+    color: var(--brand-primary);
+    font-weight: var(--fw-regular);
+    letter-spacing: -0.045em;
+  }
+
+  .cv-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--text-primary);
+    max-width: 56ch;
+    margin-bottom: 36px;
+  }
+
+  .cv-hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+
+  .cv-hero__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Plate */
+  .cv-hero__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .cv-hero__plate-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&h=1100&fit=crop&crop=face');
+    background-size: cover;
+    background-position: center;
+    filter: contrast(1.06) saturate(0.9);
+    transition: transform 1.4s var(--ease-emphasized);
+  }
+
+  .cv-hero:hover .cv-hero__plate-image {
+    transform: scale(1.03);
+  }
+
+  .cv-hero__plate-caption {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--bg-dark);
+    background: var(--surface-base);
+    padding: 6px 12px;
+    letter-spacing: 0;
+  }
+
+  .cv-hero__plate-tag {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-on-dark);
+    background: var(--bg-dark);
+    padding: 6px 10px;
+  }
+
+  /* Work grid */
+  .cv-work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 56px 32px;
+  }
+
+  .cv-work-cta {
+    margin-top: 64px;
+    text-align: center;
+  }
+
+  /* Editorial plate section */
+  .cv-plate-section {
+    position: relative;
+    overflow: clip;
+  }
+
+  .cv-plate-section__plate {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-image: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=2000&h=1125&fit=crop');
+    background-size: cover;
+    background-position: center;
+    filter: contrast(1.06) saturate(0.85);
+  }
+
+  .cv-plate-section__caption {
+    padding-top: 48px;
+    padding-bottom: 80px;
+    max-width: 760px;
+  }
+
+  .cv-plate-section__text {
+    margin-top: 16px;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+    line-height: 1.45;
+    color: var(--text-on-dark);
+  }
+
+  /* Services */
+  .cv-services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .cv-services-cta {
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  /* Testimonials */
+  .cv-testimonials {
+    display: grid;
+    gap: 24px;
+  }
+
+  .cv-testimonials__rest {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  /* FAQ */
+  .cv-faq {
+    max-width: 920px;
+  }
+
+  .cv-faq__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  /* Booking CTA — keep the dark tone of the section, but let the
+     CalBookingBlock card pop forward on top of it. */
+  .cv-cta-booking {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 1024px) {
+    .cv-hero__inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      min-height: auto;
+    }
+
+    .cv-hero__plate {
+      aspect-ratio: 16 / 11;
+      max-width: 720px;
+    }
+
+    .cv-services-grid,
+    .cv-work-grid,
+    .cv-testimonials__rest {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cv-services-grid,
+    .cv-work-grid,
+    .cv-testimonials__rest {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

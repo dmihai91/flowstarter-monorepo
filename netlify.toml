@@ -7,8 +7,13 @@
 
 [build]
   # Run install + build from the monorepo root so pnpm workspace links resolve.
+  # The library previews (5 Astro templates under apps/flowstarter-library/templates/*)
+  # are built into apps/flowstarter-main/public/preview/<slug>/ FIRST, so the
+  # iframes ship with fresh static output on every deploy. The Astro builds
+  # are cheap (≈10s each) and run with `--skip-install` because the workspace
+  # install above already pulled their deps via the pnpm-workspace globs.
   base = "."
-  command = "pnpm install --frozen-lockfile --prefer-offline && pnpm --filter flowstarter build"
+  command = "pnpm install --frozen-lockfile --prefer-offline && node apps/flowstarter-main/scripts/build-library-previews.mjs --skip-install && pnpm --filter flowstarter build"
   publish = "apps/flowstarter-main/.next"
 
 [build.environment]

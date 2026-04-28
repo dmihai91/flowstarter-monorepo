@@ -1,0 +1,68 @@
+---
+import { withBase } from '../lib/base.ts';
+
+interface Props {
+  label: string;
+  value: string;
+  href?: string;
+  hint?: string;
+  className?: string;
+}
+
+const { label, value, href, hint, className = '' } = Astro.props;
+const Tag = href ? 'a' : 'div';
+const resolvedHref = href ? withBase(href) : undefined;
+---
+
+<Tag
+  href={resolvedHref}
+  class={`ds-contact-card ${className}`.trim()}
+>
+  <span class="ds-contact-card__label">{label}</span>
+  <span class="ds-contact-card__value">{value}</span>
+  {hint && <span class="ds-contact-card__hint">{hint}</span>}
+</Tag>
+
+<style>
+  .ds-contact-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 28px 24px;
+    background: var(--surface-base);
+    border: 1px solid var(--surface-subtle-border);
+    border-radius: var(--radius-md);
+    transition:
+      border-color var(--transition),
+      transform var(--transition);
+  }
+
+  a.ds-contact-card:hover {
+    border-color: var(--bg-dark);
+    transform: translateY(-4px);
+  }
+
+  .ds-contact-card__label {
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+  }
+
+  .ds-contact-card__value {
+    font-family: var(--font-title);
+    font-size: var(--fs-h5);
+    font-weight: var(--fw-semibold);
+    color: var(--bg-dark);
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .ds-contact-card__hint {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+</style>

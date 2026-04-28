@@ -1,22 +1,589 @@
 ---
-import { frontmatter as aboutFrontmatter } from '../../content/about.md';
 import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import AboutSection from '../components/About.astro';
-import TestimonialsSection from '../components/Testimonials.astro';
-import ContactSection from '../components/Contact.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
+import QuoteBlock from '../../../shared/dorin-ds/components/QuoteBlock.astro';
+import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
+import GalleryGrid from '../../../shared/dorin-ds/components/GalleryGrid.astro';
 
-interface AboutPageData {
-  page_title: string;
-  page_subtitle: string;
+import { frontmatter as siteData } from '../../content/site.md';
+import { frontmatter as aboutData } from '../../content/about.md';
+import { frontmatter as galleryData } from '../../content/gallery.md';
+
+interface SiteContent {
+  name?: string;
+  description?: string;
+}
+interface AboutContent {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  story?: string;
+  image?: string;
+  image_alt?: string;
+}
+interface GalleryItemContent {
+  src: string;
+  alt: string;
+  span?: string;
+  aspect?: string;
+  tag?: string;
+  caption?: string;
+  href?: string;
+}
+interface GalleryContent {
+  eyebrow?: string;
+  title?: string;
+  side_note?: string;
+  items?: GalleryItemContent[];
 }
 
-const aboutPage = aboutFrontmatter as AboutPageData;
+const site = siteData as SiteContent;
+const about = aboutData as AboutContent;
+const gallery = galleryData as GalleryContent;
+
+const aboutEyebrow = about.eyebrow ?? 'The studio · MX & NY';
+const bioImage =
+  about.image ??
+  'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=900&h=1100&fit=crop';
+
+// Hand-built journey, recognition, and stats — no .md source, kept as-is.
+const journey = [
+  {
+    number: '2019',
+    title: 'Estudio Rivera opens, Mexico City',
+    description:
+      'I left a staff role at a Mexico City magazine and rented a third-floor walk-up in Colonia Cuauhtémoc. The first year was editorial — small commissions for restaurants, ateliers, and a single gallery that has stayed a client ever since.',
+  },
+  {
+    number: '2021',
+    title: 'First international commissions',
+    description:
+      'Wallpaper* commissioned a hospitality feature on the Yucatán. The work led to a year of cross-border commissions, and to the small workspace in NYC the studio still keeps for shoots and edits north of the border.',
+  },
+  {
+    number: '2023',
+    title: 'Forbes 30 Under 30',
+    description:
+      "The recognition was unexpected and slightly off-axis. The work that earned it was a long campaign with a hospitality client where the brief was carefully not photogenic — I'm grateful, and a little embarrassed, in equal measure.",
+  },
+  {
+    number: '2026',
+    title: 'Six years, by appointment',
+    description:
+      'Two hundred shipped commissions, eleven Forbes mentions, thirty-eight Wallpaper* features, and one studio that still books four to six commissions per year, plus one or two long retainers.',
+  },
+];
+
+const recognition = [
+  'Forbes 30 Under 30 — Art & Style, 2023',
+  'Wallpaper* — Contributing Photographer, 2021–present',
+  'AD Mexico — Cover, March 2025 (Casa Mirador)',
+  'Cereal Magazine — Hospitality feature, Vol. 27',
+  'AIGA — Member, New York chapter',
+  'PDN — Photo Annual Selection, 2022',
+];
+
+const stats = [
+  { number: '200+', label: 'Projects shipped' },
+  { number: '6', label: 'Years studio practice' },
+  { number: '11', label: 'Forbes mentions' },
+  { number: '38', label: 'Wallpaper* features' },
+];
+
+const pageTitle = `About — ${site.name ?? 'Studio Rivera'}`;
+const pageDescription =
+  site.description ??
+  'Studio Rivera is the visual practice of Marcus Rivera. Six years between Mexico City and New York.';
 ---
 
-<Layout title={`About | ${aboutPage.page_title}`}>
-  <Hero title={aboutPage.page_title} subtitle={aboutPage.page_subtitle} badge="About the Studio" compact={true} showStats={false} />
-  <AboutSection />
-  <TestimonialsSection />
-  <ContactSection />
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  activeIndex={1}
+>
+  <!-- ─── Hero ──────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="hero">
+    <Container className="cv-about-hero">
+      <div class="cv-about-hero__copy">
+        <OverlineText text={aboutEyebrow} tone="accent" />
+        <h1 class="cv-about-hero__title">
+          Studio Rivera<br />
+          is one <em>editorial</em><br />
+          eye, two cities,<br />
+          and a calendar.
+        </h1>
+        <p class="cv-about-hero__lede">
+          The studio is the practice of <strong>Marcus Rivera</strong>.
+          The work moves between brand identity and editorial
+          photography, with art direction as the connective tissue.
+        </p>
+      </div>
+      <div class="cv-about-hero__plate" aria-hidden="true">
+        <div class="cv-about-hero__plate-image"></div>
+        <span class="cv-about-hero__plate-meta">
+          Studio · Río Lerma 232
+        </span>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Quote ──────────────────────────────────────────── -->
+  <SectionBlock tone="subtle" padding="compact">
+    <Container className="cv-about-quote">
+      <QuoteBlock
+        quote="The room is the photograph. The camera, on a good day, is allowed to be in the same room."
+        author="Marcus Rivera"
+        role="Studio Rivera"
+      />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Long-form bio + plate (about.md) ──────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container className="cv-about-bio">
+      <div class="cv-about-bio__copy">
+        <OverlineText text="Bio" />
+        <h2 class="section-title cv-about-bio__heading">A long way around to a quiet picture.</h2>
+        <p>
+          I trained as a graphic designer in Mexico City — Universidad
+          Iberoamericana, then five years inside a small editorial
+          shop on Avenida Reforma. The photography started as an
+          afterthought: I was unhappy with the stock options for a
+          client's annual report, borrowed a camera, and missed the
+          rest of that year on graphic projects.
+        </p>
+        <p>
+          The studio that exists now grew out of that detour. The work
+          is mostly photographic, but the eye is a designer's eye: the
+          photograph wants the layout it will eventually live inside,
+          and the layout wants the photograph the room actually has.
+        </p>
+        <p>
+          The studio is open between Mexico City and New York, with
+          most of the calendar spent on location — Oaxaca, Mérida, the
+          Pacific Coast, occasionally Tangier — and the print masters
+          finished out of Río Lerma 232.
+        </p>
+      </div>
+      <div class="cv-about-bio__plate" aria-hidden="true">
+        <div
+          class="cv-about-bio__plate-image"
+          style={`background-image:url('${bioImage}');`}
+        ></div>
+        <span class="cv-about-bio__plate-meta">Process plate · Casa Mirador, sheet film</span>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Stats ───────────────────────────────────────────── -->
+  <SectionBlock tone="subtle" padding="default">
+    <Container>
+      <SectionHeading
+        label="Track record"
+        title="Six years, in numbers."
+        align="center"
+      />
+      <StatsRow items={stats} />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Editorial 2-up image strip ─────────────────────── -->
+  <SectionBlock tone="light" padding="compact">
+    <Container>
+      <div class="cv-about-strip">
+        <figure class="cv-about-strip__plate">
+          <div
+            class="cv-about-strip__image"
+            style="background-image:url('https://images.unsplash.com/photo-1486718448742-163732cd1544?w=900&h=900&fit=crop');"
+          ></div>
+          <figcaption class="cv-about-strip__caption">
+            <span>Plate IV</span>
+            <span>Galería Norte · Atrium</span>
+          </figcaption>
+        </figure>
+        <figure class="cv-about-strip__plate">
+          <div
+            class="cv-about-strip__image"
+            style="background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900&h=900&fit=crop');"
+          ></div>
+          <figcaption class="cv-about-strip__caption">
+            <span>Plate V</span>
+            <span>Atelier Solène · Look 12</span>
+          </figcaption>
+        </figure>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Journey ─────────────────────────────────────────── -->
+  <SectionBlock tone="dark" padding="default">
+    <Container className="cv-about-journey">
+      <div class="cv-about-journey__heading">
+        <OverlineText text="Journey" tone="accent" />
+        <h2 class="section-title cv-about-journey__title">
+          How the studio<br />got here.
+        </h2>
+      </div>
+      <div class="cv-about-journey__list">
+        {
+          journey.map((j) => (
+            <NumberedFeatureItem
+              number={j.number}
+              title={j.title}
+              description={j.description}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Recognition ─────────────────────────────────────── -->
+  <SectionBlock id="press" tone="light" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="Recognition & press"
+        title="Selected appearances."
+        align="center"
+      />
+      <ul class="cv-about-recognition">
+        {
+          recognition.map((r) => (
+            <li class="cv-about-recognition__item">
+              <span class="cv-about-recognition__mark" aria-hidden="true">
+                ◆
+              </span>
+              {r}
+            </li>
+          ))
+        }
+      </ul>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Gallery (gallery.md) ───────────────────────────── -->
+  <SectionBlock tone="subtle" padding="default" topBorder>
+    <Container>
+      <GalleryGrid
+        items={gallery.items ?? []}
+        eyebrow={gallery.eyebrow}
+        title={gallery.title}
+        sideNote={gallery.side_note}
+      />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── CTA ─────────────────────────────────────────────── -->
+  <SectionBlock tone="dark" padding="default">
+    <Container className="cv-about-cta">
+      <h2 class="cv-about-cta__title">Want to commission a project?</h2>
+      <p class="cv-about-cta__lede">
+        New commissions begin with a 45-minute call to walk through
+        the room, the brief, and the picture you have in mind.
+      </p>
+      <ActionButton
+        href="/contact"
+        label="Book a studio call"
+        variant="primary-light"
+        size="large"
+        className="fs-book-btn"
+      />
+    </Container>
+  </SectionBlock>
 </Layout>
+
+<style>
+  /* Hero */
+  .cv-about-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: center;
+  }
+
+  .cv-about-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.4rem, 5.4vw, 4.4rem);
+    font-weight: var(--fw-headline);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .cv-about-hero__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .cv-about-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    max-width: 56ch;
+  }
+
+  .cv-about-hero__lede strong {
+    color: var(--bg-dark);
+    font-weight: var(--fw-semibold);
+  }
+
+  .cv-about-hero__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--bg-dark);
+    overflow: hidden;
+  }
+
+  .cv-about-hero__plate-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=900&h=1100&fit=crop');
+    background-size: cover;
+    background-position: center;
+    filter: contrast(1.05) saturate(0.86);
+  }
+
+  .cv-about-hero__plate-meta {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    background: var(--surface-base);
+    padding: 8px 12px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--bg-dark);
+  }
+
+  /* Quote */
+  .cv-about-quote {
+    max-width: 920px;
+  }
+
+  /* Bio */
+  .cv-about-bio {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
+  }
+
+  .cv-about-bio__heading {
+    margin: 16px 0 28px;
+  }
+
+  .cv-about-bio__copy {
+    max-width: 60ch;
+  }
+
+  .cv-about-bio__copy p {
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+  }
+
+  .cv-about-bio__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--bg-dark);
+    overflow: hidden;
+    position: sticky;
+    top: 100px;
+  }
+
+  .cv-about-bio__plate-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: contrast(1.05) saturate(0.85);
+    transition: transform 1.4s var(--ease-emphasized);
+  }
+
+  .cv-about-bio__plate:hover .cv-about-bio__plate-image {
+    transform: scale(1.03);
+  }
+
+  .cv-about-bio__plate-meta {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    background: var(--surface-base);
+    padding: 8px 12px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--bg-dark);
+  }
+
+  /* Editorial strip */
+  .cv-about-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .cv-about-strip__plate {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--bg-dark);
+  }
+
+  .cv-about-strip__image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: contrast(1.05) saturate(0.88);
+    transition: transform 1.4s var(--ease-emphasized);
+  }
+
+  .cv-about-strip__plate:hover .cv-about-strip__image {
+    transform: scale(1.03);
+  }
+
+  .cv-about-strip__caption {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--surface-base);
+    padding: 8px 12px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--bg-dark);
+  }
+
+  .cv-about-strip__caption span:first-child {
+    color: var(--brand-primary);
+    font-weight: var(--fw-semibold);
+  }
+
+  /* Journey (dark) */
+  .cv-about-journey {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .cv-about-journey__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .cv-about-journey__title {
+    color: var(--text-on-dark);
+    margin-top: 16px;
+    max-width: 14ch;
+  }
+
+  .cv-about-journey__list :global(.ds-numbered-feature) {
+    border-bottom-color: var(--border-color);
+  }
+
+  .cv-about-journey__list :global(.ds-numbered-feature__title),
+  .cv-about-journey__list :global(.ds-numbered-feature__desc) {
+    color: var(--text-on-dark);
+  }
+
+  /* Recognition */
+  .cv-about-recognition {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 40px;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .cv-about-recognition__item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bg-dark);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--surface-subtle-border);
+  }
+
+  .cv-about-recognition__mark {
+    color: var(--brand-primary);
+    font-size: 0.75em;
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cv-about-cta {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .cv-about-cta__title {
+    font-family: var(--font-title);
+    font-size: clamp(2rem, 4.4vw, 3.4rem);
+    font-weight: var(--fw-headline);
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--text-on-dark);
+    margin-bottom: 24px;
+  }
+
+  .cv-about-cta__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    .cv-about-hero,
+    .cv-about-bio,
+    .cv-about-journey {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .cv-about-bio__plate {
+      position: static;
+      aspect-ratio: 16 / 11;
+      max-width: 720px;
+    }
+
+    .cv-about-journey__heading {
+      position: static;
+    }
+
+    .cv-about-recognition {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .cv-about-strip {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

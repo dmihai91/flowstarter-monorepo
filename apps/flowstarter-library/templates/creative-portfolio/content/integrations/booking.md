@@ -1,11 +1,15 @@
 ---
-enabled: false
-provider: null
+enabled: true
+provider: cal
 calendly_url: ""
 calcom_url: ""
+cal_link: "creative-studio/project-intro"
+cal_event_label: "30-minute project intro"
+cal_duration_label: "30 minutes · video · free"
+cal_layout: "month_view"
 
-title: "Book A Discovery Call"
-description: "Give prospective clients a clear entry point for project scoping, timelines, and budget alignment."
+title: "Open a slot for the project."
+description: "Talk through deliverables, timeline, and budget in a focused 30-minute call. We will leave the call with a clear next step — proposal, sprint, or polite no."
 cta: "Request Discovery Call"
 available_label: "Open Call Windows"
 timezone_label: "Times shown in your local timezone"

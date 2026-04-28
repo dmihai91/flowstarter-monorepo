@@ -125,6 +125,7 @@ const isPublicRoute = createRouteMatcher([
   '/about(.*)',
   '/relaunch(.*)',
   '/faq(.*)',
+  '/library(.*)', // Public template library (also reachable via library.* subdomain rewrite)
 ]);
 
 // Routes that only exist if they match a known app path prefix.
@@ -160,9 +161,38 @@ const isKnownAppRoute = createRouteMatcher([
   '/dashboard(.*)',
   '/new(.*)',
   '/api(.*)',
+  '/library(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  // ── Library subdomain rewrite ─────────────────────────────────────────────
+  // The library lives at https://library.flowstarter.net but is served from
+  // the same Next.js app under /library/*. Rewrite the host to the internal
+  // route segment so the address bar stays clean (no /library/ prefix).
+  // Static asset paths (preview iframes, showcase images, _next, api) must
+  // pass through unchanged so the Astro previews and Next runtime keep
+  // working from the library subdomain.
+  {
+    const host = (req.headers.get('host') ?? '').toLowerCase();
+    const reqPath = req.nextUrl.pathname;
+    const isLibrarySubdomain = host.startsWith('library.');
+    const passThrough =
+      reqPath.startsWith('/library') ||
+      reqPath.startsWith('/_next') ||
+      reqPath.startsWith('/api') ||
+      reqPath.startsWith('/preview') ||
+      reqPath.startsWith('/showcase') ||
+      reqPath.startsWith('/favicon') ||
+      reqPath === '/robots.txt' ||
+      reqPath === '/sitemap.xml' ||
+      reqPath === '/manifest.json';
+    if (isLibrarySubdomain && !passThrough) {
+      const url = req.nextUrl.clone();
+      url.pathname = `/library${reqPath === '/' ? '' : reqPath}`;
+      return NextResponse.rewrite(url);
+    }
+  }
+
   // Generate nonce for CSP - must be forwarded as a REQUEST header so
   // server components (layout.tsx) can read it via headers(). Setting it
   // only on the response headers is not visible to server components.

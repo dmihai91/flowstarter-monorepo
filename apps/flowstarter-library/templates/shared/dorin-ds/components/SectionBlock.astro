@@ -1,0 +1,95 @@
+---
+interface Props {
+  id?: string;
+  className?: string;
+  tone?: 'light' | 'dark' | 'accent' | 'accent-light' | 'subtle' | 'none';
+  padding?: 'default' | 'hero' | 'compact' | 'tight' | 'none';
+  topBorder?: boolean;
+  bottomBorder?: boolean;
+}
+
+const {
+  id,
+  className = '',
+  tone = 'light',
+  padding = 'default',
+  topBorder = false,
+  bottomBorder = false,
+} = Astro.props;
+---
+
+<section
+  id={id}
+  class={`ds-section ds-section--${tone} ds-section--${padding} ${topBorder ? 'ds-section--top-border' : ''} ${bottomBorder ? 'ds-section--bottom-border' : ''} ${className}`.trim()}
+>
+  <slot />
+</section>
+
+<style>
+  .ds-section {
+    width: 100%;
+  }
+
+  .ds-section--default {
+    padding: var(--section-padding);
+  }
+
+  .ds-section--hero {
+    padding: 140px 0 80px;
+  }
+
+  .ds-section--compact {
+    padding: 60px 0;
+  }
+
+  .ds-section--tight {
+    padding: 40px 0;
+  }
+
+  .ds-section--none {
+    padding: 0;
+  }
+
+  .ds-section--light {
+    background: transparent;
+    color: var(--bg-dark);
+  }
+
+  .ds-section--dark {
+    background: var(--bg-dark);
+  }
+
+  .ds-section--accent {
+    background: var(--accent);
+  }
+
+  .ds-section--accent-light {
+    background: var(--accent-light);
+  }
+
+  .ds-section--subtle {
+    background: var(--surface-subtle);
+  }
+
+  .ds-section--top-border {
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  .ds-section--bottom-border {
+    border-bottom: 1px solid var(--surface-subtle-border);
+  }
+
+  .ds-section--dark.ds-section--top-border {
+    border-top-color: var(--border-color);
+  }
+
+  .ds-section--dark.ds-section--bottom-border {
+    border-bottom-color: var(--border-color);
+  }
+
+  @media (max-width: 768px) {
+    .ds-section--hero {
+      padding: 112px 0 64px;
+    }
+  }
+</style>

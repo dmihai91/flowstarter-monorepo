@@ -1,0 +1,63 @@
+---
+interface Props {
+  quote: string;
+  author?: string;
+  role?: string;
+  className?: string;
+}
+
+const { quote, author, role, className = '' } = Astro.props;
+---
+
+<figure class={`ds-quote-block ${className}`.trim()}>
+  <p class="ds-quote-block__quote">"{quote}"</p>
+  {
+    (author || role) && (
+      <figcaption class="ds-quote-block__caption">
+        {author && <span class="ds-quote-block__author">{author}</span>}
+        {role && <span class="ds-quote-block__role">{role}</span>}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .ds-quote-block {
+    max-width: 760px;
+  }
+
+  .ds-quote-block__quote {
+    font-family: var(--font-title);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: var(--fw-medium);
+    line-height: 1.35;
+    color: var(--bg-dark);
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  .ds-quote-block__caption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  .ds-quote-block__author {
+    font-family: var(--font-title);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--bg-dark);
+  }
+
+  .ds-quote-block__role {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+</style>

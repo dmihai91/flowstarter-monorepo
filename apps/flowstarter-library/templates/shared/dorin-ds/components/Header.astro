@@ -1,0 +1,273 @@
+---
+import BrandLogo from './BrandLogo.astro';
+import ActionButton from './ActionButton.astro';
+import { withBase } from '../lib/base.ts';
+
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  brandLabel: string;
+  brandHref?: string;
+  links: NavLink[];
+  ctaLabel?: string;
+  ctaHref?: string;
+  activeIndex?: number;
+}
+
+const {
+  brandLabel,
+  brandHref = '/',
+  links,
+  ctaLabel = 'Book a call',
+  ctaHref = '/contact',
+  activeIndex = -1,
+} = Astro.props;
+const resolvedLinks = links.map((link) => ({ ...link, href: withBase(link.href) }));
+---
+
+<header class="ds-header">
+  <div class="ds-container ds-header__inner">
+    <BrandLogo label={brandLabel} href={brandHref} variant="light" />
+
+    <nav class="ds-header__nav" aria-label="Primary">
+      {
+        resolvedLinks.map((link, index) => (
+          <a
+            href={link.href}
+            class={`ds-header__link ${index === activeIndex ? 'is-active' : ''}`}
+            aria-current={index === activeIndex ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="ds-header__cta-wrap">
+      <ActionButton
+        href={ctaHref}
+        label={ctaLabel}
+        variant="outline-light"
+        className="ds-header__cta"
+      />
+    </div>
+
+    <button
+      class="ds-header__menu-btn"
+      type="button"
+      aria-label="Open navigation menu"
+      aria-expanded="false"
+      aria-controls="ds-mobile-nav"
+      data-ds-menu-btn
+    >
+      <span class="ds-header__menu-line"></span>
+      <span class="ds-header__menu-line"></span>
+    </button>
+  </div>
+
+  <div
+    class="ds-mobile-nav"
+    id="ds-mobile-nav"
+    aria-hidden="true"
+    data-ds-mobile-nav
+  >
+    <nav class="ds-mobile-nav__links">
+      {
+        resolvedLinks.map((link, index) => (
+          <a
+            href={link.href}
+            class={`ds-mobile-nav__link ${index === activeIndex ? 'is-active' : ''}`}
+            aria-current={index === activeIndex ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="ds-mobile-nav__footer">
+      <ActionButton
+        href={ctaHref}
+        label={ctaLabel}
+        variant="outline-light"
+        className="ds-mobile-nav__cta"
+      />
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.querySelector(
+    '[data-ds-menu-btn]',
+  ) as HTMLButtonElement | null;
+  const nav = document.querySelector(
+    '[data-ds-mobile-nav]',
+  ) as HTMLElement | null;
+
+  btn?.addEventListener('click', () => {
+    const isOpen = btn.classList.toggle('is-open');
+    btn.setAttribute('aria-expanded', String(isOpen));
+    nav?.classList.toggle('is-open', isOpen);
+    nav?.setAttribute('aria-hidden', String(!isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  nav?.querySelectorAll('a').forEach((link) =>
+    link.addEventListener('click', () => {
+      btn?.classList.remove('is-open');
+      btn?.setAttribute('aria-expanded', 'false');
+      nav.classList.remove('is-open');
+      nav.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }),
+  );
+</script>
+
+<style>
+  .ds-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    background: var(--bg-dark);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .ds-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+
+  .ds-header__nav {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+  }
+
+  .ds-header__link {
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: var(--text-nav);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color var(--transition);
+    padding: 8px 0;
+    border-bottom: 1.5px solid transparent;
+  }
+
+  .ds-header__link:hover {
+    color: var(--text-on-dark);
+  }
+
+  .ds-header__link.is-active {
+    color: var(--text-on-dark);
+    border-bottom-color: var(--brand-primary);
+  }
+
+  .ds-header__cta-wrap {
+    flex-shrink: 0;
+  }
+
+  .ds-header__menu-btn {
+    display: none;
+    width: 40px;
+    height: 40px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-on-dark);
+  }
+
+  .ds-header__menu-line {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    background: var(--text-on-dark);
+    transition: transform var(--transition);
+  }
+
+  .ds-header__menu-btn.is-open .ds-header__menu-line:nth-child(1) {
+    transform: translateY(4px) rotate(45deg);
+  }
+  .ds-header__menu-btn.is-open .ds-header__menu-line:nth-child(2) {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  .ds-mobile-nav {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .ds-header__nav,
+    .ds-header__cta-wrap {
+      display: none;
+    }
+
+    .ds-header__menu-btn {
+      display: inline-flex;
+    }
+
+    .ds-mobile-nav {
+      position: fixed;
+      top: 72px;
+      inset: 72px 0 0 0;
+      background: var(--bg-dark);
+      border-top: 1px solid var(--border-color);
+      padding: 40px 24px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    .ds-mobile-nav.is-open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .ds-mobile-nav__links {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ds-mobile-nav__link {
+      font-family: var(--font-title);
+      font-size: 1.6rem;
+      font-weight: var(--fw-medium);
+      color: var(--text-nav);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border-color);
+      transition: color var(--transition);
+    }
+
+    .ds-mobile-nav__link.is-active {
+      color: var(--text-on-dark);
+      text-decoration: underline;
+      text-decoration-color: var(--brand-primary);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 6px;
+    }
+
+    .ds-mobile-nav__footer :global(.ds-mobile-nav__cta) {
+      width: 100%;
+      justify-content: center;
+      padding: 18px 24px;
+      margin-top: 32px;
+    }
+  }
+</style>

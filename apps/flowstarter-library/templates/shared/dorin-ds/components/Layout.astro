@@ -1,0 +1,47 @@
+---
+import '../tokens.css';
+import '../reset.css';
+import DSHead from './DSHead.astro';
+
+type TemplateSlug =
+  | 'coach-pro'
+  | 'therapist-care'
+  | 'freelancer-portfolio'
+  | 'fitness-coach'
+  | 'creative-portfolio';
+
+interface Props {
+  template: TemplateSlug;
+  title: string;
+  description?: string;
+}
+
+const { template, title, description } = Astro.props;
+
+const fontPairFor: Record<TemplateSlug,
+  | 'clash-inter'
+  | 'fraunces-inter'
+  | 'manrope-anton'
+  | 'space-grotesk-jet'
+  | 'cormorant-inter'
+> = {
+  'coach-pro': 'clash-inter',
+  'therapist-care': 'fraunces-inter',
+  'fitness-coach': 'manrope-anton',
+  'freelancer-portfolio': 'space-grotesk-jet',
+  'creative-portfolio': 'cormorant-inter',
+};
+
+const fontPair = fontPairFor[template];
+---
+
+<!doctype html>
+<html lang="en" data-template={template}>
+  <head>
+    <DSHead title={title} description={description} fontPair={fontPair} />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

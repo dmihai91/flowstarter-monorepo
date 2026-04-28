@@ -1,368 +1,726 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import ServiceCard from '../../../shared/dorin-ds/components/ServiceCard.astro';
+import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
+import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
+import TestimonialBlock from '../../../shared/dorin-ds/components/TestimonialBlock.astro';
+import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
+import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
+import VideoBlock from '../../../shared/dorin-ds/components/VideoBlock.astro';
+import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
 
-interface Service {
+import { frontmatter as siteData } from '../../content/site.md';
+import { frontmatter as heroData } from '../../content/hero.md';
+import { frontmatter as servicesData } from '../../content/services.md';
+import { frontmatter as testimonialsData } from '../../content/testimonials.md';
+import { frontmatter as videoData } from '../../content/video.md';
+import { frontmatter as bookingData } from '../../content/integrations/booking.md';
+
+interface SiteContent {
+  name: string;
+  tagline?: string;
+  description?: string;
+}
+
+interface HeroStat {
+  value: string;
+  label: string;
+}
+
+interface HeroContent {
+  headline?: string;
+  subheadline?: string;
+  badge?: string;
+  stats?: HeroStat[];
+}
+
+interface ServiceItem {
   icon: string;
   title: string;
   description: string;
-  price: string;
+  price?: string;
 }
 
-interface MethodStep {
-  step: string;
-  title: string;
-  description: string;
+interface ServicesContent {
+  title?: string;
+  subtitle?: string;
+  services: ServiceItem[];
 }
 
-interface Testimonial {
+interface TestimonialItem {
   quote: string;
   author: string;
-  result: string;
-  type: string;
+  role?: string;
+  result?: string;
 }
 
-interface FAQ {
-  question: string;
-  answer: string;
+interface TestimonialsContent {
+  title?: string;
+  subtitle?: string;
+  testimonials: TestimonialItem[];
 }
 
-const services: Service[] = [
-  { icon: "lucide:dumbbell", title: "1-on-1 Training", description: "Fully customized training programs designed around your goals, schedule, and fitness level. Every rep counts.", price: "$85/session" },
-  { icon: "lucide:users", title: "Group Classes", description: "High-energy group workouts that push you harder. Community motivation meets expert programming.", price: "$25/class" },
-  { icon: "lucide:monitor", title: "Online Coaching", description: "Remote training with custom workout plans, video form checks, and weekly accountability calls.", price: "$199/month" },
-  { icon: "lucide:target", title: "Weight Loss Program", description: "12-week body transformation combining training, nutrition planning, and lifestyle coaching.", price: "$499" },
-  { icon: "lucide:activity", title: "Strength & Conditioning", description: "Progressive overload programming for athletes and lifters who want to get seriously strong.", price: "$100/session" },
-  { icon: "lucide:apple", title: "Nutrition Planning", description: "Custom meal plans, macro coaching, and ongoing dietary support to fuel your training.", price: "$150/month" },
+interface VideoContent {
+  eyebrow?: string;
+  title: string;
+  duration?: string;
+  caption?: string;
+  poster?: string;
+  src: string;
+  aspect?: '21/9' | '16/9' | '4/3' | '1/1';
+}
+
+interface BookingContent {
+  enabled?: boolean;
+  cal_link?: string;
+  cal_event_label?: string;
+  cal_duration_label?: string;
+  cal_layout?: 'month_view' | 'week_view' | 'column_view';
+  title?: string;
+  description?: string;
+}
+
+const site = siteData as SiteContent;
+const hero = heroData as HeroContent;
+const services = servicesData as ServicesContent;
+const testimonials = testimonialsData as TestimonialsContent;
+const video = videoData as VideoContent;
+const booking = bookingData as BookingContent;
+
+// Hero stat row — content is in hero.md, but StatsRow uses { number, label }.
+const heroStats = (hero.stats ?? []).map((s) => ({
+  number: s.value,
+  label: s.label,
+}));
+
+// Hand-built SVG icon palette, paired by index with services.md so the
+// content file stays clean (lucide:* tokens) while the visual identity
+// remains hand-crafted, not lucide-extracted.
+const serviceIcons: string[] = [
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M18 4v16M3 8h3M3 16h3M18 8h3M18 16h3M9 6v12M15 6v12"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M12 3v18M9 8l3 3 3-3M9 16l3-3 3 3"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8m-4-3v3"/><path d="M7 9h10M7 13h6"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l5 3"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6H4zM4 14h16v6H4zM8 4v6M16 4v6M8 14v6M16 14v6"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0z"/><path d="M12 7v5l3 2M8.5 14.5h7"/></svg>',
 ];
 
-const method: MethodStep[] = [
-  { step: "01", title: "Assessment", description: "Full fitness assessment — body composition, movement screening, and an honest conversation about your goals." },
-  { step: "02", title: "Custom Programming", description: "A training program tailored to your body, your goals, and your life. No cookie-cutter plans." },
-  { step: "03", title: "Progressive Overload", description: "Each session builds on the last. We track every lift, every set, every PR to ensure forward progress." },
-  { step: "04", title: "Track & Adapt", description: "Monthly check-ins, progress photos, and program adjustments keep you on the fastest path to results." },
+// Approach + FAQ + credentials are bespoke long-form copy (no .md mapping).
+const approach = [
+  {
+    number: '01',
+    title: 'Assess. Honest baseline.',
+    description:
+      'Full movement screen. Squat depth, hip rotation, scapular control, asymmetries. Strength baseline across the big four. We log what is, not what we want.',
+  },
+  {
+    number: '02',
+    title: 'Program. With intent.',
+    description:
+      'Periodised blocks built for your goal, your equipment, your schedule. Volume rises before intensity. Every rep has a job. No filler movements, no random AMRAPs.',
+  },
+  {
+    number: '03',
+    title: 'Train. Track everything.',
+    description:
+      "Sessions logged in the app. RPE on every working set. Form video on the heavy lifts. We don't guess what's working — we look at the numbers.",
+  },
+  {
+    number: '04',
+    title: 'Adapt. On schedule.',
+    description:
+      'Monthly review built into the program. Plateaus get broken with a deload, a tempo shift, a new movement pattern. The plan serves the person, not the other way around.',
+  },
 ];
 
-const testimonials: Testimonial[] = [
-  { quote: "I lost 45 pounds in 5 months and deadlifted 300lbs for the first time. Mike's programming is next level.", author: "Marcus R.", result: "Lost 45 lbs, hit 300lb deadlift", type: "Weight Loss Client" },
-  { quote: "Training with Mike got me across the finish line of my first marathon injury-free. His conditioning work is unmatched.", author: "Sarah K.", result: "Completed first marathon", type: "Endurance Athlete" },
-  { quote: "The group classes are addictive. I went from 5 push-ups to 40 in three months. The energy is unmatched.", author: "James T.", result: "5 to 40 push-ups in 3 months", type: "Group Class Member" },
+const faqs = [
+  {
+    question: 'What does a first session with you actually look like?',
+    answer:
+      "Movement screen and conversation, mostly. We run a full squat / hinge / push / pull / brace assessment, talk about your training history, injury history, and what you actually want to be able to do. You'll lift, but the goal of the first session is data — not exhaustion. You leave with a plan.",
+  },
+  {
+    question: 'How often should I be training?',
+    answer:
+      'For most clients, 3–4 sessions a week — two with me (or self-led from your program) and one or two on your own. Frequency matters more than duration; consistent 50-minute sessions beat sporadic two-hour ones every time.',
+  },
+  {
+    question: 'Do you handle nutrition?',
+    answer:
+      'I build macro targets based on your goals (cut, recomp, gain) and your real eating habits. The add-on includes meal frameworks, weekly reviews, and adjustments. I do not write rigid meal plans — they do not survive contact with a real life.',
+  },
+  {
+    question: 'Can you work around an injury?',
+    answer:
+      "Yes — most of my clients are training around something (old shoulder, cranky knee, lower back). I'm trained in CSCS-level rehab progressions and stay in close communication with your PT or doc when one is involved. Pain is information; we route around it intelligently.",
+  },
+  {
+    question: 'Online coaching vs in-person — which is better?',
+    answer:
+      "In-person if you're new to lifting or coming back from a layoff — the form coaching is irreplaceable in those first months. Online once you can move well: the programming is identical, video reviews catch the form drift, and the cost per week is lower.",
+  },
 ];
 
-const faqs: FAQ[] = [
-  { question: "What happens in the first session?", answer: "Your first session is a full assessment. We'll do a movement screening, discuss your goals, take baseline measurements, and do a trial workout. No judgment — just a starting point." },
-  { question: "How often should I train?", answer: "For most people, 3-4 sessions per week is ideal. It depends on your goals and recovery. We'll find the right frequency and adjust as you progress." },
-  { question: "Do you provide nutrition guidance?", answer: "Absolutely. Nutrition is 80% of the game. I include basic nutrition coaching with all packages. For transformations, try the dedicated Nutrition Planning package." },
-  { question: "What if I have an injury?", answer: "I work with clients at every level, including those rehabbing injuries. I'll modify exercises and coordinate with your doctor if needed. Safety always comes first." },
-  { question: "Online vs in-person training?", answer: "In-person gives real-time form corrections. Online gives flexibility with custom programs, video reviews, and weekly check-ins. Both get results." },
+const credentials = [
+  'NASM Certified Personal Trainer',
+  'CSCS — Strength & Conditioning Specialist',
+  'ACE Fitness Nutrition Specialist',
+  '8+ years coaching strength & performance',
 ];
-
-const credentials: string[] = [
-  "NASM Certified Personal Trainer",
-  "ACE Fitness Nutrition Specialist",
-  "CSCS — Strength & Conditioning",
-  "8+ Years Training Experience",
-];
-const iconBodies: Record<string, string> = {
-  'lucide:activity': '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>',
-  'lucide:apple': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10a3 3 0 0 0 3.648.648a5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></g>',
-  'lucide:dumbbell': '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.596 12.768a2 2 0 1 0 2.829-2.829l-1.768-1.767a2 2 0 0 0 2.828-2.829l-2.828-2.828a2 2 0 0 0-2.829 2.828l-1.767-1.768a2 2 0 1 0-2.829 2.829zM2.5 21.5l1.4-1.4M20.1 3.9l1.4-1.4M5.343 21.485a2 2 0 1 0 2.829-2.828l1.767 1.768a2 2 0 1 0 2.829-2.829l-6.364-6.364a2 2 0 1 0-2.829 2.829l1.768 1.767a2 2 0 0 0-2.828 2.829zM9.6 14.4l4.8-4.8"/>',
-  'lucide:monitor': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8m-4-4v4"/></g>',
-  'lucide:target': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></g>',
-  'lucide:users': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3.128a4 4 0 0 1 0 7.744M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></g>',
-};
-
-const getIconBody = (name: string): string => iconBodies[name] ?? '';
 ---
 
-<Layout>
-  <!-- Hero Section -->
-  <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-br from-[#090909] via-[#0F0F0F] to-[#1A1A1A]"></div>
-    <div class="absolute inset-0 geo-pattern opacity-30"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-    <div class="absolute top-20 right-0 w-72 h-72 bg-ember-400/10 rounded-full blur-3xl"></div>
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <div>
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 border border-primary/30 rounded-lg text-primary-light text-sm font-medium mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-4 h-4"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m15.477 12.89l1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></g></svg>
-            NASM Certified Personal Trainer
-          </div>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white leading-tight mb-6">
-            Push Beyond Your <span class="text-primary">Limits</span>
-          </h1>
-          <p class="text-lg text-gray-200 mb-8 max-w-lg">
-            I'm Mike Torres, and I help people build the strongest version of themselves. Custom training programs, real accountability, and results you can see.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 mb-10">
-            <a href="#contact" class="btn-primary">
-              Start Training Today
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7l7 7l-7 7"/></svg>
-            </a>
-            <a href="#programs" class="btn-outline border-white/30 text-white hover:bg-white/10 hover:border-white/50">View Programs</a>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
-            <div class="text-center"><div class="text-2xl font-display font-bold text-white">800+</div><div class="text-sm text-gray-400">Clients Transformed</div></div>
-            <div class="text-center"><div class="text-2xl font-display font-bold text-white">8+</div><div class="text-sm text-gray-400">Years Experience</div></div>
-            <div class="text-center"><div class="text-2xl font-display font-bold text-white">98%</div><div class="text-sm text-gray-400">Goal Achievement</div></div>
-            <div class="text-center"><div class="text-2xl font-display font-bold text-white">4.9</div><div class="text-sm text-gray-400">Star Rating</div></div>
-          </div>
+<Layout
+  title={`${site.name} — Strength & Performance Coach, Austin`}
+  description={site.description ??
+    'Train with intent. Strength, conditioning, and 12-week transformations out of Iron Forge in East Austin. NASM + CSCS certified.'}
+  activeIndex={-1}
+>
+  <!-- ─── Hero ──────────────────────────────────────────────── -->
+  <SectionBlock id="home" tone="light" padding="hero" className="fc-hero">
+    <Container className="fc-hero__inner">
+      <div class="fc-hero__copy">
+        <OverlineText text="NASM-CPT · CSCS · Austin, TX" tone="accent" />
+        <h1 class="fc-hero__title">
+          Train with<br />
+          <span class="fc-hero__title-accent">intent</span>.<br />
+          Build something<br />
+          you can use.
+        </h1>
+        <p class="fc-hero__lede">
+          I'm <strong>Mike Torres</strong> — strength and performance coach
+          out of Iron Forge in East Austin. Eight years building stronger,
+          more capable athletes through programmed work, tracked numbers,
+          and zero guesswork.
+        </p>
+        <div class="fc-hero__actions">
+          <ActionButton
+            href="/contact"
+            label="Start training"
+            variant="primary"
+            size="large"
+          />
+          <ActionButton
+            href="/services"
+            label="See programs"
+            variant="outline-dark"
+            size="large"
+          />
         </div>
-        <div class="relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-primary/30 to-ember-400/20 rounded-2xl transform rotate-3"></div>
-          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=700&fit=crop" alt="Mike Torres - Personal Trainer" class="relative rounded-2xl shadow-2xl w-full object-cover aspect-[5/6]" />
-          <div class="absolute -bottom-6 -left-6 bg-[#1C1C1C] border border-white/10 rounded-xl p-5 shadow-xl">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 bg-primary/15 rounded-xl flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978m7-7.318v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978M18 9h1.5a1 1 0 0 0 0-5H18M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm0 0H4.5a1 1 0 0 1 0-5H6"/></g></svg>
-              </div>
-              <div>
-                <div class="text-2xl font-display font-bold text-white">800+</div>
-                <div class="text-sm text-gray-400">Bodies Transformed</div>
-              </div>
-            </div>
-          </div>
+        <div class="fc-hero__pills">
+          <TagPill label="Free trial session" />
+          <TagPill label="800+ athletes coached" />
+          <TagPill label="In-person & online" />
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- About Section -->
-  <section id="about" class="py-20 bg-[#141414]">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div class="order-2 lg:order-1">
-          <div class="grid grid-cols-2 gap-4">
-            <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=300&h=400&fit=crop" alt="Training session" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4]" />
-            <img src="https://images.unsplash.com/photo-1517963879433-6ad2b056d712?w=300&h=400&fit=crop" alt="Gym training" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4] mt-8" />
-          </div>
-        </div>
-        <div class="order-1 lg:order-2">
-          <p class="text-primary font-semibold mb-4 uppercase tracking-wider text-sm">About Your Coach</p>
-          <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-6">Your Coach. Your Results.</h2>
-          <p class="text-gray-200 mb-6">I've spent 8+ years helping people from all walks of life transform their bodies and mindsets. From busy professionals to competitive athletes, I design programs that actually work for real life.</p>
-          <p class="text-gray-300 mb-8">I specialize in strength training, weight loss, and athletic performance. My approach is simple: assess where you are, build a plan that fits your life, and hold you accountable every step of the way.</p>
-          <ul class="space-y-3">
-            {credentials.map((credential: string) => (
-              <li class="flex items-center gap-3">
-                <div class="w-6 h-6 bg-primary/15 rounded-md flex items-center justify-center flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-4 h-4 text-primary"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 6L9 17l-5-5"/></svg>
-                </div>
-                <span class="text-white font-medium">{credential}</span>
+      <div class="fc-hero__plate" aria-hidden="true">
+        <div class="fc-hero__plate-image"></div>
+        <span class="fc-hero__index">Block 12 — Week 04</span>
+        <span class="fc-hero__stamp">EST. 2018</span>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Stats ────────────────────────────────────────────── -->
+  {
+    heroStats.length > 0 && (
+      <SectionBlock tone="accent-light" padding="compact" topBorder>
+        <Container>
+          <StatsRow items={heroStats} />
+        </Container>
+      </SectionBlock>
+    )
+  }
+
+  <!-- ─── About ────────────────────────────────────────────── -->
+  <SectionBlock id="about" tone="light" padding="default">
+    <Container className="fc-about">
+      <div class="fc-about__heading">
+        <OverlineText text="About" />
+        <h2 class="section-title fc-about__title">
+          Coaching that<br /><em>respects</em> your time<br />and the iron.
+        </h2>
+      </div>
+      <div class="fc-about__body">
+        <p class="fc-about__intro">
+          I've coached eight hundred athletes — engineers, parents, weekend
+          lifters, recovering athletes, college kids — through structured
+          training that actually moves the needle.
+        </p>
+        <p class="fc-about__copy">
+          Every program is periodised, tracked, and reviewed monthly. I work
+          out of Iron Forge in East Austin and run online programming for
+          athletes across Texas and beyond. The work is direct, the lifts are
+          heavy, and the results compound.
+        </p>
+        <ul class="fc-about__credentials" id="credentials">
+          {
+            credentials.map((c) => (
+              <li class="fc-about__credential">
+                <span class="fc-about__credential-mark" aria-hidden="true">
+                  ▶
+                </span>
+                {c}
               </li>
-            ))}
-          </ul>
-        </div>
+            ))
+          }
+        </ul>
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Programs Section -->
-  <section id="programs" class="py-20 bg-[#1A1A1A]">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-semibold mb-4 uppercase tracking-wider text-sm">Programs</p>
-        <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-6">Training Programs Built for Results</h2>
-        <p class="text-gray-300">Whether you want to lose weight, build muscle, or train for competition — there's a program for you.</p>
+  <!-- ─── Services ─────────────────────────────────────────── -->
+  <SectionBlock id="services" tone="subtle" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="Programs"
+        title={services.title ?? 'Six ways to train under coaching.'}
+        maxWidth="22ch"
+      >
+        {
+          services.subtitle && (
+            <p slot="lede" class="fc-services-lede">
+              {services.subtitle}
+            </p>
+          )
+        }
+      </SectionHeading>
+      <div class="fc-services-grid">
+        {
+          services.services.map((s, i) => (
+            <ServiceCard
+              icon={serviceIcons[i % serviceIcons.length]}
+              title={s.title}
+              description={s.description}
+              meta={s.price}
+            />
+          ))
+        }
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.map((service: Service) => (
-          <div class="card group">
-            <div class="w-14 h-14 bg-primary/15 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-7 h-7 text-primary group-hover:text-white" set:html={getIconBody(service.icon)} />
-            </div>
-            <h3 class="text-xl font-display font-bold text-white mb-3">{service.title}</h3>
-            <p class="text-gray-300 mb-4">{service.description}</p>
-            <div class="flex items-center justify-between pt-4 border-t border-white/10">
-              <span class="text-primary font-bold text-lg">{service.price}</span>
-              <a href="#contact" class="text-sm text-gray-300 hover:text-primary transition-colors font-medium flex items-center gap-1">
-                Get Started <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7l7 7l-7 7"/></svg>
-              </a>
-            </div>
-          </div>
-        ))}
+      <div class="fc-services-cta">
+        <ActionButton
+          href="/services"
+          label="See programs & pricing"
+          variant="outline-dark"
+        />
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Method Section -->
-  <section class="py-20 bg-[#0F0F0F]">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-semibold mb-4 uppercase tracking-wider text-sm">The Method</p>
-        <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-6">How We Get You Results</h2>
-        <p class="text-gray-300">A proven 4-step system that's transformed 800+ clients. No guesswork — just science and consistency.</p>
+  <!-- ─── Approach ─────────────────────────────────────────── -->
+  <SectionBlock id="approach" tone="dark" padding="default">
+    <Container className="fc-approach">
+      <div class="fc-approach__heading">
+        <OverlineText text="The method" tone="accent" />
+        <h2 class="section-title fc-approach__title">
+          Assess. Program. Train. Adapt.
+        </h2>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {method.map((item: MethodStep) => (
-          <div class="card text-center">
-            <div class="w-16 h-16 bg-primary text-white rounded-xl flex items-center justify-center font-display font-bold text-xl mx-auto mb-5">{item.step}</div>
-            <h3 class="text-lg font-display font-bold text-white mb-3">{item.title}</h3>
-            <p class="text-gray-300">{item.description}</p>
-          </div>
-        ))}
+      <div class="fc-approach__list">
+        {
+          approach.map((a) => (
+            <NumberedFeatureItem
+              number={a.number}
+              title={a.title}
+              description={a.description}
+            />
+          ))
+        }
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Testimonials Section -->
-  <section id="results" class="py-20 bg-[#141414]">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-semibold mb-4 uppercase tracking-wider text-sm">Client Results</p>
-        <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-6">Real People. Real Transformations.</h2>
-        <p class="text-gray-300">Don't take my word for it. Here's what happens when you commit to the process.</p>
+  <!-- ─── Video — inside the gym ───────────────────────────── -->
+  <SectionBlock id="video" tone="light" padding="default" topBorder>
+    <Container className="fc-video">
+      <VideoBlock
+        src={video.src}
+        poster={video.poster}
+        title={video.title}
+        caption={video.caption}
+        eyebrow={video.eyebrow}
+        duration={video.duration}
+        aspect={video.aspect ?? '16/9'}
+      />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Testimonials ─────────────────────────────────────── -->
+  <SectionBlock id="testimonials" tone="light" padding="default">
+    <Container>
+      <SectionHeading
+        label="The receipts"
+        title={testimonials.title ?? 'Athletes, in numbers.'}
+      >
+        {
+          testimonials.subtitle && (
+            <p slot="lede" class="fc-testimonials-lede">
+              {testimonials.subtitle}
+            </p>
+          )
+        }
+      </SectionHeading>
+      <div class="fc-testimonials">
+        {
+          testimonials.testimonials.map((t) => (
+            <TestimonialBlock
+              quote={t.quote}
+              author={t.author}
+              role={t.role}
+              result={t.result}
+            />
+          ))
+        }
       </div>
+    </Container>
+  </SectionBlock>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {testimonials.map((testimonial: Testimonial) => (
-          <div class="card-steel">
-            <div class="flex items-center gap-2 mb-4">
-              {[1,2,3,4,5].map((_: number) => (
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="w-5 h-5 text-primary fill-primary"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.12 2.12 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.12 2.12 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.12 2.12 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.12 2.12 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.12 2.12 0 0 0 1.597-1.16z"/></svg>
-              ))}
-            </div>
-            <p class="text-gray-200 mb-6 leading-relaxed">"{testimonial.quote}"</p>
-            <div class="border-t border-white/10 pt-4">
-              <div class="font-display font-bold text-white">{testimonial.author}</div>
-              <div class="text-sm text-primary font-medium">{testimonial.result}</div>
-              <div class="text-sm text-gray-400">{testimonial.type}</div>
-            </div>
-          </div>
-        ))}
+  <!-- ─── FAQ ──────────────────────────────────────────────── -->
+  <SectionBlock id="faq" tone="light" padding="default" topBorder>
+    <Container className="fc-faq">
+      <SectionHeading label="FAQ" title="Common questions." />
+      <div class="fc-faq__list">
+        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- FAQ Section -->
-  <section id="faq" class="py-20 bg-[#1A1A1A]">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <p class="text-primary font-semibold mb-4 uppercase tracking-wider text-sm">FAQ</p>
-        <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-6">Got Questions?</h2>
-        <p class="text-gray-300">Here are the most common things people ask before getting started.</p>
+  <!-- ─── CTA — Cal.com booking ─────────────────────────────── -->
+  <SectionBlock id="contact" tone="dark" padding="default">
+    <Container className="fc-cta">
+      <CalBookingBlock
+        variant="cta"
+        calLink={booking.cal_link}
+        eventLabel={booking.cal_event_label ?? 'Book a free trial'}
+        title={booking.title ?? 'Stop hoping. Start training.'}
+        subtitle={booking.description ??
+          'First session is on me — a full assessment, a sample workout, and a plain-language conversation about what we would build together.'}
+        durationLabel={booking.cal_duration_label ?? '45 minutes · in-person or video · free'}
+        layout={booking.cal_layout ?? 'month_view'}
+        className="fc-cta__cal"
+      />
+      <div class="fc-cta__actions">
+        <ActionButton
+          href="/services"
+          label="See programs"
+          variant="outline-light"
+          size="large"
+        />
       </div>
-
-      <div class="space-y-4">
-        {faqs.map((faq: FAQ, index: number) => (
-          <div class="faq-item bg-[#1C1C1C] rounded-xl border border-white/10 overflow-hidden">
-            <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
-              <span class="font-display font-semibold text-white pr-4">{faq.question}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9l6 6l6-6"/></svg>
-            </button>
-            <div class="faq-content hidden px-6 pb-5">
-              <p class="text-gray-300">{faq.answer}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact" class="py-20 bg-[#0F0F0F]">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div>
-          <p class="text-primary font-semibold mb-4 uppercase tracking-wider text-sm">Let's Go</p>
-          <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-6">Ready to Transform?</h2>
-          <p class="text-gray-300 mb-8">Stop thinking about it. Book a free consultation and let's map out your game plan. No pressure, no commitment — just a conversation about your goals.</p>
-
-          <div class="space-y-6 mb-8">
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/15 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></g></svg>
-              </div>
-              <div>
-                <h4 class="font-display font-semibold text-white mb-1">Training Location</h4>
-                <p class="text-gray-300">456 Iron Street, Fitness District<br>Austin, TX 78701</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/15 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></g></svg>
-              </div>
-              <div>
-                <h4 class="font-display font-semibold text-white mb-1">Training Hours</h4>
-                <p class="text-gray-300">Monday - Friday: 5am - 9pm<br>Saturday: 7am - 2pm<br>Sunday: Closed</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/15 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233a14 14 0 0 0 6.392 6.384"/></svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-white mb-1">Contact</h4>
-                <p class="text-gray-300">
-                  <a href="tel:+15553456789" class="hover:text-primary transition-colors">(555) 345-6789</a><br>
-                  <a href="mailto:mike@torresfit.com" class="hover:text-primary transition-colors">mike@torresfit.com</a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-[#1C1C1C] rounded-2xl p-8 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-          <h3 class="text-xl font-display font-bold text-white mb-6">Book a Free Consultation</h3>
-          <div id="form-success" class="hidden rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-            Thank you! We'll be in touch within 24 hours.
-          </div>
-          <div id="form-error" class="hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            Something went wrong. Please try again.
-          </div>
-          <form id="contact-form" data-contact-form data-success-message="Thank you! We'll be in touch within 24 hours." class="space-y-5">
-            <input type="hidden" name="_template" value="" />
-            <input type="hidden" name="_source" value="" />
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label class="block text-sm font-medium text-gray-200 mb-2">First Name</label>
-                <input type="text" class="input" placeholder="Your first name" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-200 mb-2">Last Name</label>
-                <input type="text" class="input" placeholder="Your last name" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-200 mb-2">Email</label>
-              <input type="email" class="input" placeholder="your@email.com" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-200 mb-2">Phone</label>
-              <input type="tel" class="input" placeholder="(555) 123-4567" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-200 mb-2">What are your fitness goals?</label>
-              <textarea rows="4" class="textarea" placeholder="Tell me about your goals — weight loss, muscle gain, athletic performance, etc."></textarea>
-            </div>
-            <button type="submit" class="btn-primary w-full">
-              Book Free Consultation
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939"/></svg>
-            </button>
-            <p class="text-xs text-gray-400 text-center">Free consultation. No commitment required.</p>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 </Layout>
 
-<script>
-  document.querySelectorAll('.faq-trigger').forEach(trigger => {
-    trigger.addEventListener('click', () => {
-      const item = trigger.closest('.faq-item');
-      const content = item?.querySelector('.faq-content');
-      const icon = trigger.querySelector('.faq-icon');
-      
-      document.querySelectorAll('.faq-item').forEach(otherItem => {
-        if (otherItem !== item) {
-          otherItem.querySelector('.faq-content')?.classList.add('hidden');
-          otherItem.querySelector('.faq-icon')?.classList.remove('rotate-180');
-        }
-      });
-      
-      content?.classList.toggle('hidden');
-      icon?.classList.toggle('rotate-180');
-    });
-  });
-</script>
+<style>
+  /* Hero — direct entry, blockier than coach-pro */
+  .fc-hero {
+    position: relative;
+    overflow: clip;
+  }
+
+  .fc-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(380px, 42%);
+    gap: 64px;
+    align-items: center;
+    min-height: 78vh;
+  }
+
+  .fc-hero__copy {
+    max-width: 620px;
+  }
+
+  .fc-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.6rem, 6.8vw, 5.6rem);
+    font-weight: var(--fw-headline);
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .fc-hero__title-accent {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .fc-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    color: var(--text-primary);
+    max-width: 540px;
+    margin-bottom: 36px;
+  }
+
+  .fc-hero__lede strong {
+    font-weight: var(--fw-semibold);
+  }
+
+  .fc-hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .fc-hero__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Plate — tighter radius, dual stamp for industrial feel */
+  .fc-hero__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--bg-dark);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .fc-hero__plate-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&h=1100&fit=crop');
+    background-size: cover;
+    background-position: center 40%;
+    filter: contrast(1.08) saturate(0.95);
+    transition: transform 1s var(--ease-emphasized);
+  }
+
+  .fc-hero:hover .fc-hero__plate-image {
+    transform: scale(1.03);
+  }
+
+  .fc-hero__index {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--bg-dark);
+    background: var(--brand-primary);
+    padding: 6px 10px;
+    z-index: 1;
+  }
+
+  .fc-hero__stamp {
+    position: absolute;
+    bottom: 18px;
+    right: 18px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--text-on-dark);
+    border: 1px solid var(--text-on-dark);
+    padding: 6px 12px;
+    z-index: 1;
+  }
+
+  /* About */
+  .fc-about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .fc-about__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .fc-about__title {
+    margin-top: 16px;
+  }
+
+  .fc-about__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .fc-about__intro {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--bg-dark);
+    margin-bottom: 24px;
+    max-width: 56ch;
+  }
+
+  .fc-about__copy {
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--text-primary);
+    max-width: 60ch;
+    margin-bottom: 36px;
+  }
+
+  .fc-about__credentials {
+    display: grid;
+    gap: 14px;
+    padding-top: 28px;
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  .fc-about__credential {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bg-dark);
+  }
+
+  .fc-about__credential-mark {
+    color: var(--brand-primary);
+    font-size: 0.7em;
+    line-height: 1.7;
+  }
+
+  /* Services grid */
+  .fc-services-lede {
+    margin-top: 18px;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--text-primary);
+    max-width: 56ch;
+  }
+
+  .fc-services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .fc-services-cta {
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  /* Approach (dark) */
+  .fc-approach {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 80px;
+  }
+
+  .fc-approach__heading {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+  }
+
+  .fc-approach__title {
+    color: var(--text-on-dark);
+    margin-top: 16px;
+    max-width: 16ch;
+  }
+
+  /* Video */
+  .fc-video {
+    max-width: 1120px;
+  }
+
+  /* Testimonials */
+  .fc-testimonials-lede {
+    margin-top: 18px;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--text-primary);
+    max-width: 56ch;
+  }
+
+  .fc-testimonials {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  /* FAQ */
+  .fc-faq {
+    max-width: 920px;
+  }
+
+  .fc-faq__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  /* CTA */
+  .fc-cta {
+    display: grid;
+    gap: 32px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .fc-cta__actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .fc-hero__inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      min-height: auto;
+    }
+
+    .fc-hero__plate {
+      aspect-ratio: 16 / 11;
+      max-width: 720px;
+    }
+
+    .fc-about,
+    .fc-approach {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .fc-about__heading,
+    .fc-approach__heading {
+      position: static;
+    }
+
+    .fc-services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fc-testimonials {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .fc-services-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .fc-hero__title {
+      font-size: 2.6rem;
+    }
+  }
+</style>

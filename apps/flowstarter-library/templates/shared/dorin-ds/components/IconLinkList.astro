@@ -1,0 +1,55 @@
+---
+interface IconLinkItem {
+  href: string;
+  ariaLabel: string;
+  icon: string;
+}
+
+interface Props {
+  items: IconLinkItem[];
+  className?: string;
+  size?: 'small' | 'default';
+}
+
+const { items, className = '', size = 'default' } = Astro.props;
+---
+
+<div class={`ds-icon-link-list ds-icon-link-list--${size} ${className}`.trim()}>
+  {
+    items.map((item) => (
+      <a href={item.href} aria-label={item.ariaLabel}>
+        <span set:html={item.icon} />
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .ds-icon-link-list {
+    display: flex;
+    gap: 16px;
+  }
+
+  .ds-icon-link-list--small {
+    gap: 12px;
+  }
+
+  .ds-icon-link-list a {
+    color: var(--text-secondary);
+    transition: color var(--transition);
+    line-height: 0;
+  }
+
+  .ds-icon-link-list a:hover {
+    color: var(--text-primary);
+  }
+
+  .ds-icon-link-list--small a :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ds-icon-link-list a :global(svg) {
+    display: block;
+  }
+</style>

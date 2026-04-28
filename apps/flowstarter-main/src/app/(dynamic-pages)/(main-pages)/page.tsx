@@ -11,6 +11,7 @@ import { SolutionSection } from './components/SolutionSection';
 import { DifferentiationSection } from './components/DifferentiationSection';
 import { ProcessSection } from './components/ProcessSection';
 import { AudienceSection } from './components/AudienceSection';
+import { ProofSection } from './components/ProofSection';
 import { ScrollFab } from './components/ScrollFab';
 import { BookingModalProvider } from './components/BookingModalProvider';
 
@@ -62,6 +63,8 @@ export default function LandingPage() {
         <ProcessSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <AudienceSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <ProofSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <LandingPricing />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />

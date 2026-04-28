@@ -1,0 +1,67 @@
+---
+interface Props {
+  label?: string;
+  title?: string;
+  titleLines?: string[];
+  align?: 'left' | 'center';
+  className?: string;
+  labelClassName?: string;
+  titleClassName?: string;
+  maxWidth?: string;
+}
+
+const {
+  label,
+  title,
+  titleLines,
+  align = 'left',
+  className = '',
+  labelClassName = '',
+  titleClassName = '',
+  maxWidth,
+} = Astro.props;
+
+const resolvedTitle = titleLines?.join('<br />') ?? title ?? '';
+const titleStyle = maxWidth ? `max-width:${maxWidth};` : undefined;
+---
+
+<div
+  class={`ds-section-heading ds-section-heading--${align} ${className}`.trim()}
+>
+  {
+    label && (
+      <p class={`section-label ${labelClassName}`.trim()}>{label}</p>
+    )
+  }
+  {
+    resolvedTitle && (
+      <h2
+        class={`section-title ${titleClassName}`.trim()}
+        style={titleStyle}
+        set:html={resolvedTitle}
+      />
+    )
+  }
+  <slot name="lede" />
+</div>
+
+<style>
+  .ds-section-heading {
+    margin-bottom: 64px;
+  }
+
+  .ds-section-heading--center {
+    text-align: center;
+  }
+
+  .ds-section-heading--center .section-title {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 768px) {
+    .ds-section-heading {
+      margin-bottom: 40px;
+    }
+  }
+</style>

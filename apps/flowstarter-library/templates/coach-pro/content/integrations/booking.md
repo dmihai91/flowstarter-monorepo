@@ -1,10 +1,16 @@
 ---
-enabled: false
-provider: null
+enabled: true
+provider: cal
 embed_url: null
+# Cal.com handle: the path after cal.com/, e.g. "yourname/30min" or
+# "team/discovery-call". Leave empty to render a configure-me placeholder.
+cal_link: "flowstarter/discovery-call"
+cal_event_label: "30-minute discovery call"
+cal_duration_label: "30 minutes · video · free"
+cal_layout: "month_view"
 
-title: "Schedule Your Free Consultation"
-description: "A brief 15-minute call to discuss your needs and see if we're a good fit. No pressure, completely confidential."
+title: "Pick a time that works."
+description: "A 30-minute discovery call to talk through where you are, where you want to be, and whether coaching is the right next step. No pressure, no hard sell."
 cta: "Confirm Appointment"
 
 available_label: "Available Times"

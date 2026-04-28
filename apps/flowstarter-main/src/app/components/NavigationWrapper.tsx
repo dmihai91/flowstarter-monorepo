@@ -58,8 +58,12 @@ export function NavigationWrapper() {
   const [hasSeenInitial, setHasSeenInitial] = useState(false);
   const isDashboardRoute = pathname === '/dashboard';
   const isClientDashboard = pathname.startsWith('/dashboard'); // Client dashboard has its own header
+  const isLibraryRoute = pathname.startsWith('/library'); // Library has its own editorial Mast
   const isNoNavbarRoute =
-    noNavbarRoutes.includes(pathname) || isTeamRoute || isClientDashboard;
+    noNavbarRoutes.includes(pathname) ||
+    isTeamRoute ||
+    isClientDashboard ||
+    isLibraryRoute;
   const [, setIsErrorPage] = useState(false);
 
   // Check synchronously during render to catch error pages immediately

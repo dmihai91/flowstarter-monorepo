@@ -1,0 +1,292 @@
+---
+/**
+ * VideoBlock — full-bleed video showcase with hand-built poster framing.
+ *
+ * Supports three sources, in order of preference:
+ *  - YouTube (auto-detected from youtube.com / youtu.be URLs)
+ *  - Vimeo   (auto-detected from vimeo.com URLs)
+ *  - Native MP4 / WebM (any other URL — uses <video> with captions track)
+ *
+ * The poster image renders immediately and is replaced with the player on
+ * click ("facade pattern"), so the home page LCP isn't blown out by an iframe.
+ */
+interface Props {
+  src: string;
+  poster?: string;
+  title: string;
+  caption?: string;
+  eyebrow?: string;
+  duration?: string;
+  className?: string;
+  /** Aspect ratio — defaults to cinematic 21/9; set "16/9" for talking-head. */
+  aspect?: '21/9' | '16/9' | '4/3' | '1/1';
+}
+
+const {
+  src,
+  poster,
+  title,
+  caption,
+  eyebrow = 'Watch',
+  duration,
+  className = '',
+  aspect = '16/9',
+} = Astro.props;
+
+function detectKind(url: string): {
+  kind: 'youtube' | 'vimeo' | 'native';
+  embed?: string;
+} {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('youtube.com')) {
+      const id = u.searchParams.get('v');
+      if (id)
+        return {
+          kind: 'youtube',
+          embed: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`,
+        };
+    }
+    if (u.hostname.includes('youtu.be')) {
+      const id = u.pathname.replace('/', '');
+      if (id)
+        return {
+          kind: 'youtube',
+          embed: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`,
+        };
+    }
+    if (u.hostname.includes('vimeo.com')) {
+      const id = u.pathname.split('/').filter(Boolean)[0];
+      if (id)
+        return {
+          kind: 'vimeo',
+          embed: `https://player.vimeo.com/video/${id}?autoplay=1&title=0&byline=0`,
+        };
+    }
+  } catch (_) {
+    /* fallthrough */
+  }
+  return { kind: 'native' };
+}
+
+const detected = detectKind(src);
+const aspectStyle = `--video-aspect: ${aspect};`;
+---
+
+<figure class={`ds-video-block ${className}`.trim()} style={aspectStyle}>
+  <div class="ds-video-block__head">
+    <span class="ds-video-block__eyebrow">{eyebrow}</span>
+    <h3 class="ds-video-block__title">{title}</h3>
+    {duration && <span class="ds-video-block__duration">{duration}</span>}
+  </div>
+
+  <div
+    class="ds-video-block__frame"
+    data-video-kind={detected.kind}
+    data-video-src={detected.embed ?? src}
+  >
+    {
+      detected.kind === 'native' ? (
+        <video
+          class="ds-video-block__media"
+          poster={poster}
+          controls
+          preload="metadata"
+          playsinline
+        >
+          <source src={src} />
+          Your browser doesn't support embedded video.
+        </video>
+      ) : (
+        <button
+          type="button"
+          class="ds-video-block__poster"
+          aria-label={`Play: ${title}`}
+          data-video-trigger
+          style={poster ? `background-image: url(${poster})` : undefined}
+        >
+          <span class="ds-video-block__play" aria-hidden="true">
+            ►
+          </span>
+          <span class="ds-video-block__play-label">Play</span>
+        </button>
+      )
+    }
+  </div>
+
+  {caption && <figcaption class="ds-video-block__caption">{caption}</figcaption>}
+</figure>
+
+<script>
+  // Replace the poster facade with the real iframe on click. We only attach
+  // once per element so re-entering the player works without double-mount.
+  document
+    .querySelectorAll<HTMLElement>('.ds-video-block')
+    .forEach((block) => {
+      const trigger = block.querySelector<HTMLButtonElement>(
+        '[data-video-trigger]',
+      );
+      const frame = block.querySelector<HTMLElement>(
+        '.ds-video-block__frame',
+      );
+      if (!trigger || !frame) return;
+
+      trigger.addEventListener('click', () => {
+        const url = frame.dataset.videoSrc;
+        if (!url) return;
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+        iframe.title = trigger.getAttribute('aria-label') ?? 'video';
+        iframe.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.loading = 'lazy';
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        iframe.className = 'ds-video-block__iframe';
+        trigger.replaceWith(iframe);
+      });
+    });
+</script>
+
+<style>
+  .ds-video-block {
+    display: grid;
+    gap: 24px;
+    margin: 0;
+  }
+
+  .ds-video-block__head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--surface-subtle-border);
+  }
+
+  .ds-video-block__eyebrow {
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: var(--brand-primary);
+    font-weight: var(--fw-semibold);
+  }
+
+  .ds-video-block__title {
+    font-family: var(--font-title);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-headline);
+    text-transform: var(--title-text-transform, uppercase);
+    letter-spacing: var(--title-tracking, -0.02em);
+    line-height: var(--title-line-height, 1.05);
+    color: var(--bg-dark);
+  }
+
+  .ds-video-block__duration {
+    font-family: var(--font-accent, var(--font-title));
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-muted);
+  }
+
+  .ds-video-block__frame {
+    position: relative;
+    aspect-ratio: var(--video-aspect, 16 / 9);
+    background: var(--bg-dark);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--surface-subtle-border);
+  }
+
+  .ds-video-block__media,
+  .ds-video-block__iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: var(--bg-dark);
+    object-fit: cover;
+  }
+
+  .ds-video-block__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    border: 0;
+    background-color: var(--bg-dark);
+    background-size: cover;
+    background-position: center;
+    transition: filter var(--transition);
+  }
+
+  .ds-video-block__poster::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 10, 10, 0.05) 0%,
+      rgba(10, 10, 10, 0.4) 100%
+    );
+  }
+
+  .ds-video-block__poster:hover {
+    filter: brightness(1.05);
+  }
+
+  .ds-video-block__play {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 92px;
+    height: 92px;
+    background: var(--brand-primary);
+    color: var(--bg-dark);
+    font-size: 34px;
+    line-height: 0;
+    padding-left: 6px;
+    border-radius: 50%;
+    box-shadow: 0 18px 40px rgba(10, 10, 10, 0.36);
+    transition: transform var(--transition);
+  }
+
+  .ds-video-block__poster:hover .ds-video-block__play {
+    transform: scale(1.06);
+  }
+
+  .ds-video-block__play-label {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    color: var(--text-on-dark);
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+  }
+
+  .ds-video-block__caption {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .ds-video-block__head {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .ds-video-block__play {
+      width: 64px;
+      height: 64px;
+      font-size: 24px;
+    }
+  }
+</style>

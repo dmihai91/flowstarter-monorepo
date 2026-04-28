@@ -1,10 +1,14 @@
 ---
-enabled: false
-provider: null
+enabled: true
+provider: cal
 embed_url: null
+cal_link: "fitness-coach/free-session"
+cal_event_label: "Free assessment session"
+cal_duration_label: "45 minutes · in-person or video · free"
+cal_layout: "month_view"
 
-title: "Schedule Your Free Consultation"
-description: "A brief 15-minute call to discuss your needs and see if we're a good fit. No pressure, completely confidential."
+title: "Lock in your free assessment."
+description: "Pick a time and we will run a 45-minute movement and goals assessment. You'll leave with a written next-step plan whether we keep training together or not."
 cta: "Confirm Appointment"
 
 available_label: "Available Times"

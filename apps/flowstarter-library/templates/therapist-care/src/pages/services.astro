@@ -1,42 +1,389 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Footer from '../components/Footer.astro';
-import Services from '../components/Services.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
+import PricingCard from '../../../shared/dorin-ds/components/PricingCard.astro';
+import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
+import ProcessStep from '../../../shared/dorin-ds/components/ProcessStep.astro';
+import { frontmatter as servicesData } from '../../content/services.md';
+import { frontmatter as pricingData } from '../../content/pricing.md';
+
+interface ServicesContent {
+  title?: string;
+  subtitle?: string;
+  services?: Array<{
+    icon?: string;
+    title: string;
+    description: string;
+    price?: string;
+  }>;
+}
+
+interface PricingPlan {
+  name: string;
+  price: number | string;
+  period?: string;
+  description?: string;
+  features?: string[];
+  cta?: string;
+  popular?: boolean;
+}
+
+interface PricingContent {
+  title?: string;
+  subtitle?: string;
+  plans?: PricingPlan[];
+  guarantee?: string;
+}
+
+const servicesFm = servicesData as ServicesContent;
+const pricingFm = pricingData as PricingContent;
+
+const programs = (servicesFm.services ?? []).map((service, index) => ({
+  number: String(index + 1).padStart(2, '0'),
+  title: service.title,
+  description: service.description,
+}));
+
+const pricing = (pricingFm.plans ?? []).map((plan) => ({
+  name: plan.name,
+  price: typeof plan.price === 'number' ? `$${plan.price}` : `${plan.price}`,
+  cadence: plan.period ?? '',
+  description: plan.description ?? '',
+  features: plan.features ?? [],
+  ctaLabel: plan.cta ?? 'Get started',
+  ctaHref: '/contact',
+  featured: !!plan.popular,
+}));
+
+const process = [
+  {
+    step: 'Step 1',
+    title: 'Free phone consultation',
+    description:
+      "A 20-minute call, free, no commitment. We talk about what is bringing you in, how I work, and whether this feels like the right fit. If it is not, I will gladly point you toward a colleague who is.",
+  },
+  {
+    step: 'Step 2',
+    title: 'Intake & first session',
+    description:
+      'A short intake form gives us a starting picture. The first 50–80 minute session is unhurried — your story, in your own words, with as much or as little structure as feels right.',
+  },
+  {
+    step: 'Step 3',
+    title: 'Ongoing therapy',
+    description:
+      'Weekly or bi-weekly sessions, paced at trust. We adjust modality and cadence as we learn what is helping. Brief written check-ins are available between sessions when useful.',
+  },
+  {
+    step: 'Step 4',
+    title: 'Integration & close',
+    description:
+      "When the work has done what it came to do, we close it carefully — with a short integration arc rather than an abrupt stop. The door remains open if life ever asks you to come back.",
+  },
+];
+
+const faqs = [
+  {
+    question: 'What can I expect from the first session?',
+    answer:
+      "Mostly your story, in your own words, at your own pace. I will ask about what brings you in, the history that feels relevant, and what you are hoping for. There is nothing to prepare. By the end, you will have a sense of how I work and whether I feel like the right fit.",
+  },
+  {
+    question: 'How long does therapy typically last?',
+    answer:
+      'It depends on what you are bringing. Some clients feel meaningfully steadier after 8–12 sessions; others choose longer-term work because the questions are bigger or older. We review progress every few months, and the choice to slow, pause, or close is always yours.',
+  },
+  {
+    question: 'Do you accept insurance?',
+    answer:
+      "I am out-of-network for most insurance plans, but I provide superbills you can submit to your insurance for partial reimbursement (typically 50–80% depending on your plan). I also reserve a small number of sliding-scale slots — please mention this on the consultation if it is relevant.",
+  },
+  {
+    question: 'What is your cancellation policy?',
+    answer:
+      'I ask for 24 hours notice for cancellations. Sessions cancelled within 24 hours are billed at the full rate, except in genuine emergencies. The boundary keeps the work consistent and protects the time we have set aside for you.',
+  },
+  {
+    question: 'Are virtual sessions just as effective as in-person?',
+    answer:
+      'For most concerns, yes — research and my own caseload both bear this out. Some kinds of trauma processing and somatic work are slightly stronger in person, and we can talk through which mode would suit you best on the consultation.',
+  },
+];
 ---
 
-<Layout title="Services | Therapist Care">
-  <!-- Hero -->
-  <section class="pt-32 pb-12 bg-gray-950">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto">
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
-          Our Services
-        </h1>
-        <p class="text-xl text-gray-400">
-          Comprehensive solutions tailored to your needs.
-        </p>
+<Layout
+  title="Practice — Sarah Mitchell, LMFT"
+  description="Individual, couples, family, and EMDR therapy in San Francisco. Considered, evidence-based, and paced at trust."
+  activeIndex={0}
+>
+  <!-- ─── Hero ──────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="hero">
+    <Container className="tc-services-hero">
+      <OverlineText text="The practice" tone="accent" />
+      <h1 class="tc-services-hero__title">
+        Compassionate care,<br />
+        <em>thoughtfully matched</em><br />
+        to the work you need.
+      </h1>
+      <p class="tc-services-hero__lede">
+        Six considered offerings for the work I most often hold —
+        individual, relational, and trauma-focused. Each one is
+        evidence-based, paced at trust, and adapted to where you actually
+        are.
+      </p>
+      <div class="tc-services-hero__actions">
+        <ActionButton
+          href="/contact"
+          label="Schedule a consultation"
+          variant="primary"
+          size="large"
+        />
+        <ActionButton
+          href="#pricing"
+          label="See fees"
+          variant="outline-dark"
+          size="large"
+        />
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Services -->
-  <Services />
+  <!-- ─── Programs list ────────────────────────────────────── -->
+  <SectionBlock id="programs" tone="light" padding="default" topBorder>
+    <Container className="tc-services-list">
+      <div class="tc-services-list__heading">
+        <OverlineText text="Offerings" />
+        <h2 class="section-title">Six ways the practice works.</h2>
+      </div>
+      <div class="tc-services-list__items">
+        {
+          programs.map((p) => (
+            <NumberedFeatureItem
+              number={p.number}
+              title={p.title}
+              description={p.description}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
 
-  <!-- CTA -->
-  <section class="py-24 bg-gray-950">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-        Ready to Get Started?
-      </h2>
-      <p class="text-xl text-gray-400 mb-10">Contact us today for a free consultation.</p>
-      <a href="/contact" class="btn-gradient inline-flex items-center">
-        Contact Us
-        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-        </svg>
-      </a>
-    </div>
-  </section>
+  <!-- ─── Process ─────────────────────────────────────────── -->
+  <SectionBlock tone="subtle" padding="default">
+    <Container>
+      <SectionHeading
+        label="From first call to ongoing work"
+        title="A gentle four-step path into therapy."
+        maxWidth="22ch"
+      />
+      <div class="tc-services-process">
+        {
+          process.map((s) => (
+            <ProcessStep
+              step={s.step}
+              title={s.title}
+              description={s.description}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
 
-  <Footer />
+  <!-- ─── Pricing ─────────────────────────────────────────── -->
+  <SectionBlock id="pricing" tone="light" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="Fees"
+        title="Clear, considered fees."
+        align="center"
+        maxWidth="22ch"
+      />
+      <div class="tc-services-pricing">
+        {pricing.map((p) => <PricingCard {...p} />)}
+      </div>
+      <p class="tc-services-pricing-note">
+        Most insurance accepted as out-of-network — superbills are
+        provided each month for reimbursement. A small number of
+        sliding-scale slots are available; please ask on the consultation.
+      </p>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── FAQ ─────────────────────────────────────────────── -->
+  <SectionBlock id="faq" tone="subtle" padding="default">
+    <Container className="tc-services-faq">
+      <SectionHeading label="Common questions" title="Practical things, answered honestly." />
+      <div class="tc-services-faq__list">
+        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── CTA ─────────────────────────────────────────────── -->
+  <SectionBlock tone="dark" padding="default">
+    <Container className="tc-services-cta">
+      <h2 class="tc-services-cta__title">Not sure which is right for you?</h2>
+      <p class="tc-services-cta__lede">
+        That is one of the things the consultation is for. Twenty
+        minutes, free, and entirely without pressure — we will figure
+        out together what kind of room would actually serve you.
+      </p>
+      <ActionButton
+        href="/contact"
+        label="Schedule a consultation"
+        variant="primary-light"
+        size="large"
+        className="fs-book-btn"
+      />
+    </Container>
+  </SectionBlock>
 </Layout>
+
+<style>
+  .tc-services-hero {
+    max-width: 880px;
+  }
+
+  .tc-services-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.4rem, 5.6vw, 4.6rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .tc-services-hero__title em {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .tc-services-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.6;
+    max-width: 60ch;
+    margin-bottom: 36px;
+  }
+
+  .tc-services-hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .tc-services-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .tc-services-list__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .tc-services-list__heading .section-title {
+    margin-top: 16px;
+    max-width: 14ch;
+  }
+
+  .tc-services-list__items {
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  .tc-services-process {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .tc-services-pricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .tc-services-pricing-note {
+    margin-top: 40px;
+    text-align: center;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    max-width: 64ch;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .tc-services-faq {
+    max-width: 920px;
+  }
+
+  .tc-services-faq__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .tc-services-cta {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .tc-services-cta__title {
+    font-family: var(--font-title);
+    font-size: clamp(1.9rem, 4vw, 3.2rem);
+    font-weight: var(--fw-headline);
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--text-on-dark);
+    margin-bottom: 24px;
+  }
+
+  .tc-services-cta__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    .tc-services-list {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .tc-services-list__heading {
+      position: static;
+    }
+
+    .tc-services-process {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tc-services-pricing {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .tc-services-process {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

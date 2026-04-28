@@ -1,0 +1,268 @@
+/* Dorin DS — Design Tokens
+ * The invariant typography, spacing, and surface system across all templates.
+ * Per-template accent overrides via [data-template="..."] selectors at the end.
+ */
+
+:root {
+  /* Surfaces (invariant) */
+  --bg-dark: #0a0a0a;
+  --bg-card: #1a1a1a;
+  --bg-card-hover: #222222;
+  --surface-base: #f9f7f1;
+  --surface-panel: rgba(255, 255, 255, 0.72);
+  --surface-panel-border: rgba(10, 10, 10, 0.14);
+  --surface-field: #ffffff;
+  --surface-field-border: rgba(10, 10, 10, 0.22);
+  --surface-subtle: #efe9df;
+  --surface-subtle-hover: #ebe4d8;
+  --surface-subtle-border: rgba(10, 10, 10, 0.08);
+
+  /* Text (invariant) */
+  --text-on-dark: #ffffff;
+  --text-primary: #0a0a0a;
+  --text-body: #0a0a0a;
+  --text-secondary: #999999;
+  --text-muted: #666666;
+  --text-nav: #c9c9c9;
+  --text-dim-38: rgba(10, 10, 10, 0.38);
+  --text-dim-72: rgba(10, 10, 10, 0.72);
+  --color-ink-strong: #1c1c1c;
+  --border-color: #2a2a2a;
+
+  /* Accent (DEFAULT — overridden per-template below) */
+  --brand-primary: #fb8857;
+  --accent: #b3b6ff;
+  --accent-light: #f5e6d3;
+  --surface-brand-glow: rgba(251, 136, 87, 0.16);
+  --surface-accent-glow: rgba(179, 182, 255, 0.18);
+  --surface-selected: rgba(179, 182, 255, 0.18);
+  --surface-field-border-active: var(--brand-primary);
+  --focus-ring-color: rgba(251, 136, 87, 0.28);
+
+  /* Spacing */
+  --section-padding: 100px 0;
+  --container-width: 1200px;
+  --container-padding: 0 24px;
+
+  /* Typography */
+  --fs-display: 4.5rem;
+  --fs-h1: 3.25rem;
+  --fs-h2: 2.75rem;
+  --fs-h3: 1.9rem;
+  --fs-h4: 1.6rem;
+  --fs-h5: 1.3rem;
+  --fs-body: 1.05rem;
+  --fs-small: 0.875rem;
+  --fs-xs: 0.75rem;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-title: 'Clash Grotesk', 'Space Grotesk', 'Inter', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-button: 'Clash Grotesk', 'Space Grotesk', 'Inter', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Optional accent + mono families. Templates may opt-in for ornamental quotes,
+   * editorial italic, or technical detail blocks. Defaults fall back to body. */
+  --font-accent: var(--font-title);
+  --font-mono: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  /* Title typography knobs that templates may tune for personality. */
+  --title-tracking: -0.02em;
+  --title-line-height: 1;
+  --title-text-transform: uppercase;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-black: 900;
+  --fw-headline: 600;
+
+  /* Borders & radii (deliberately small — Dorin avoids round-everything) */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 50px;
+
+  /* Shadows (rare — opacity hover is preferred) */
+  --shadow-float: 0 18px 36px rgba(10, 10, 10, 0.12);
+
+  /* Transitions */
+  --transition: 0.3s ease;
+  --ease-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─────────────────────────────────────────────
+ * Per-template accent palette
+ * Each template sets <html data-template="<slug>">
+ * to swap in its accent without touching anything else.
+ * ───────────────────────────────────────────── */
+
+/* Coach Pro — Coral + Clash Grotesk display (Dorin canonical, executive)
+ * Personality: confident, modern, slightly impatient. Tracks tight, all-caps
+ * display, classic Dorin pairing.
+ */
+[data-template='coach-pro'] {
+  --brand-primary: #fb8857;
+  --accent: #b3b6ff;
+  --accent-light: #f5e6d3;
+  --surface-subtle: #efe9df;
+  --surface-brand-glow: rgba(251, 136, 87, 0.16);
+  --surface-accent-glow: rgba(179, 182, 255, 0.18);
+  --surface-selected: rgba(179, 182, 255, 0.18);
+  --focus-ring-color: rgba(251, 136, 87, 0.28);
+
+  --font-title: 'Clash Grotesk', 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-button: 'Clash Grotesk', 'Space Grotesk', 'Inter', sans-serif;
+  --font-accent: 'Clash Grotesk', 'Space Grotesk', sans-serif;
+  --title-tracking: -0.02em;
+  --title-line-height: 1;
+  --title-text-transform: uppercase;
+}
+
+/* Therapist Care — Sage + Fraunces serif display (warm, humane, trust-first)
+ * Personality: soft authority. Optical-size serif with a touch of italic for
+ * pull-quotes; sentence-case headlines feel less corporate.
+ */
+[data-template='therapist-care'] {
+  --brand-primary: #7c9885;
+  --accent: #d9c9b6;
+  --accent-light: #eae3d7;
+  --surface-base: #f8f5ee;
+  --surface-subtle: #ece6d8;
+  --surface-brand-glow: rgba(124, 152, 133, 0.16);
+  --surface-accent-glow: rgba(217, 201, 182, 0.22);
+  --surface-selected: rgba(124, 152, 133, 0.14);
+  --focus-ring-color: rgba(124, 152, 133, 0.32);
+
+  --font-title: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-button: 'Inter', sans-serif;
+  --font-accent: 'Fraunces', Georgia, serif;
+  --title-tracking: -0.015em;
+  --title-line-height: 1.04;
+  --title-text-transform: none;
+}
+
+/* Freelancer Portfolio — Periwinkle + Space Grotesk display, JetBrains accents
+ * Personality: studio practitioner, technical confidence. Mono for figures,
+ * grotesk for everything else, slight ALL CAPS micro-labels.
+ */
+[data-template='freelancer-portfolio'] {
+  --brand-primary: #b3b6ff;
+  --accent: #fb8857;
+  --accent-light: #f5e6d3;
+  --surface-base: #f5f3ec;
+  --surface-subtle: #ede8db;
+  --surface-brand-glow: rgba(179, 182, 255, 0.22);
+  --surface-accent-glow: rgba(251, 136, 87, 0.16);
+  --surface-selected: rgba(179, 182, 255, 0.22);
+  --focus-ring-color: rgba(179, 182, 255, 0.34);
+
+  --font-title: 'Space Grotesk', 'Clash Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-button: 'Space Grotesk', sans-serif;
+  --font-accent: 'JetBrains Mono', ui-monospace, monospace;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --title-tracking: -0.025em;
+  --title-line-height: 0.98;
+  --title-text-transform: uppercase;
+}
+
+/* Fitness Trainer Pro — Terracotta + Anton/Manrope (urgent, embodied)
+ * Personality: tall narrow display, italic numerals optional, body in Manrope
+ * for legibility under heavy color.
+ */
+[data-template='fitness-coach'] {
+  --brand-primary: #e07856;
+  --accent: #2a2a2a;
+  --accent-light: #f5e1d7;
+  --surface-base: #f7f1e8;
+  --surface-subtle: #ede4d3;
+  --surface-brand-glow: rgba(224, 120, 86, 0.18);
+  --surface-accent-glow: rgba(42, 42, 42, 0.08);
+  --surface-selected: rgba(224, 120, 86, 0.16);
+  --focus-ring-color: rgba(224, 120, 86, 0.3);
+
+  --font-title: 'Anton', 'Bebas Neue', 'Clash Grotesk', sans-serif;
+  --font-body: 'Manrope', 'Inter', -apple-system, sans-serif;
+  --font-button: 'Manrope', 'Inter', sans-serif;
+  --font-accent: 'Anton', 'Bebas Neue', sans-serif;
+  --title-tracking: 0;
+  --title-line-height: 0.92;
+  --title-text-transform: uppercase;
+}
+
+/* Creative Portfolio — Ochre + Cormorant Garamond display (editorial, gallery)
+ * Personality: gallery wall, italic flourishes, generous tracking, paired with
+ * Inter for body so it stays modern.
+ */
+[data-template='creative-portfolio'] {
+  --brand-primary: #d4a574;
+  --accent: #b3b6ff;
+  --accent-light: #f0e4d2;
+  --surface-base: #f8f3ea;
+  --surface-subtle: #ece4d3;
+  --surface-brand-glow: rgba(212, 165, 116, 0.18);
+  --surface-accent-glow: rgba(179, 182, 255, 0.18);
+  --surface-selected: rgba(212, 165, 116, 0.16);
+  --focus-ring-color: rgba(212, 165, 116, 0.32);
+
+  --font-title: 'Cormorant Garamond', 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-button: 'Inter', sans-serif;
+  --font-accent: 'Cormorant Garamond', Georgia, serif;
+  --title-tracking: 0.005em;
+  --title-line-height: 1.02;
+  --title-text-transform: none;
+}
+
+/* Utility container */
+.ds-container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+/* Utility heading classes (matches Dorin's section-label / section-title) */
+.section-label {
+  font-size: var(--fs-body);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  font-weight: var(--fw-medium);
+}
+
+.section-title {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-headline);
+  text-transform: var(--title-text-transform, uppercase);
+  line-height: var(--title-line-height, 1.1);
+  letter-spacing: var(--title-tracking, -0.02em);
+  font-family: var(--font-title);
+}
+
+/* Responsive scaling */
+@media (max-width: 1024px) {
+  :root {
+    --fs-display: 3.4rem;
+    --fs-h1: 2.6rem;
+    --fs-h2: 2.4rem;
+    --fs-h3: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 64px 0;
+    --container-padding: 0 16px;
+    --fs-display: 2.6rem;
+    --fs-h1: 2rem;
+    --fs-h2: 2rem;
+    --fs-h3: 1.25rem;
+    --fs-body: 1rem;
+  }
+
+  .section-label {
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+  }
+}

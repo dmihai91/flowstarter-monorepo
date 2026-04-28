@@ -1,0 +1,213 @@
+---
+/**
+ * GalleryGrid — editorial asymmetric image grid (à la Dorin's portfolio).
+ *
+ * Layout: 12-col CSS grid where each item declares its own column-span /
+ * row-span via per-item `span` strings. Defaults form a tasteful gallery
+ * even with mixed aspect ratios; items also support a `tone` overlay for
+ * dim/highlight on hover.
+ *
+ * Use it for: about-page studio shots, before/after scenes, lifestyle pulls,
+ * portfolio thumbnails, gym/treatment-room photography, etc.
+ */
+interface GalleryItem {
+  src: string;
+  alt: string;
+  caption?: string;
+  /** CSS grid placement string e.g. "span 6 / span 6" or "span 4". */
+  span?: string;
+  /** Aspect ratio (CSS string). Default: "4/5" for editorial portrait feel. */
+  aspect?: string;
+  /** Optional tag pill rendered in the corner. */
+  tag?: string;
+  /** External href to make the tile a link. */
+  href?: string;
+}
+
+interface Props {
+  items: GalleryItem[];
+  className?: string;
+  /** Optional intro pair that floats above the grid, on the left. */
+  eyebrow?: string;
+  title?: string;
+  /** Side-note paragraph; renders top-right of grid on desktop. */
+  sideNote?: string;
+}
+
+const {
+  items,
+  className = '',
+  eyebrow,
+  title,
+  sideNote,
+} = Astro.props;
+---
+
+<section class={`ds-gallery-grid ${className}`.trim()}>
+  {
+    (eyebrow || title || sideNote) && (
+      <header class="ds-gallery-grid__head">
+        <div class="ds-gallery-grid__head-text">
+          {eyebrow && <span class="ds-gallery-grid__eyebrow">{eyebrow}</span>}
+          {title && (
+            <h2 class="ds-gallery-grid__title" set:html={title} />
+          )}
+        </div>
+        {sideNote && <p class="ds-gallery-grid__note">{sideNote}</p>}
+      </header>
+    )
+  }
+
+  <div class="ds-gallery-grid__items">
+    {
+      items.map((item, index) => {
+        const Tag = item.href ? 'a' : 'div';
+        const props = {
+          class: 'ds-gallery-grid__item',
+          style: `grid-column: ${item.span ?? 'span 6'}; aspect-ratio: ${item.aspect ?? '4 / 5'};`,
+        };
+        if (item.href) {
+          props.href = item.href;
+          props.target = '_blank';
+          props.rel = 'noreferrer';
+        }
+        return (
+          <Tag {...props}>
+            <img
+              class="ds-gallery-grid__img"
+              src={item.src}
+              alt={item.alt}
+              loading={index < 2 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+            {item.tag && (
+              <span class="ds-gallery-grid__tag">{item.tag}</span>
+            )}
+            {item.caption && (
+              <span class="ds-gallery-grid__caption">{item.caption}</span>
+            )}
+          </Tag>
+        );
+      })
+    }
+  </div>
+</section>
+
+<style>
+  .ds-gallery-grid {
+    display: grid;
+    gap: 36px;
+  }
+
+  .ds-gallery-grid__head {
+    display: grid;
+    grid-template-columns: 1fr minmax(auto, 36ch);
+    align-items: end;
+    gap: 32px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--surface-subtle-border);
+  }
+
+  .ds-gallery-grid__eyebrow {
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: var(--brand-primary);
+  }
+
+  .ds-gallery-grid__title {
+    font-family: var(--font-title);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-headline);
+    text-transform: var(--title-text-transform, uppercase);
+    letter-spacing: var(--title-tracking, -0.02em);
+    line-height: var(--title-line-height, 1.05);
+    color: var(--bg-dark);
+    margin-top: 10px;
+  }
+
+  .ds-gallery-grid__note {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .ds-gallery-grid__items {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 18px;
+  }
+
+  .ds-gallery-grid__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--surface-subtle);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ds-gallery-grid__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-emphasized);
+  }
+
+  a.ds-gallery-grid__item:hover .ds-gallery-grid__img,
+  .ds-gallery-grid__item:hover .ds-gallery-grid__img {
+    transform: scale(1.04);
+  }
+
+  .ds-gallery-grid__tag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--bg-dark);
+    background: var(--surface-base);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+  }
+
+  .ds-gallery-grid__caption {
+    position: absolute;
+    bottom: 16px;
+    left: 18px;
+    right: 18px;
+    z-index: 2;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-on-dark);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+  }
+
+  @media (max-width: 768px) {
+    .ds-gallery-grid__head {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .ds-gallery-grid__note {
+      text-align: left;
+    }
+    .ds-gallery-grid__items {
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+    .ds-gallery-grid__item {
+      grid-column: span 6 !important;
+      aspect-ratio: 4 / 5 !important;
+    }
+  }
+</style>

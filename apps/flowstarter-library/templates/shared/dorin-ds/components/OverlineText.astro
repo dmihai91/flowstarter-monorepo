@@ -1,0 +1,35 @@
+---
+interface Props {
+  text: string;
+  className?: string;
+  tone?: 'primary' | 'muted' | 'accent';
+}
+
+const { text, className = '', tone = 'primary' } = Astro.props;
+---
+
+<p class={`ds-overline-text ds-overline-text--${tone} ${className}`.trim()}>
+  {text}
+</p>
+
+<style>
+  .ds-overline-text {
+    font-size: var(--fs-small);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.3;
+  }
+
+  .ds-overline-text--primary {
+    color: var(--text-primary);
+  }
+
+  .ds-overline-text--muted {
+    color: var(--text-muted);
+  }
+
+  .ds-overline-text--accent {
+    color: var(--brand-primary);
+  }
+</style>

@@ -1,0 +1,103 @@
+---
+interface Props {
+  type?: 'text' | 'email' | 'tel' | 'textarea';
+  name: string;
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  rows?: number;
+  className?: string;
+}
+
+const {
+  type = 'text',
+  name,
+  label,
+  placeholder = '',
+  required = false,
+  rows = 5,
+  className = '',
+} = Astro.props;
+
+const fieldId = `field-${name}`;
+---
+
+<div class={`ds-form-field ${className}`.trim()}>
+  <label class="ds-form-field__label" for={fieldId}>
+    {label}
+    {required && <span class="ds-form-field__required">*</span>}
+  </label>
+  {
+    type === 'textarea' ? (
+      <textarea
+        id={fieldId}
+        name={name}
+        rows={rows}
+        required={required}
+        placeholder={placeholder}
+        class="ds-form-field__control ds-form-field__control--textarea"
+      />
+    ) : (
+      <input
+        id={fieldId}
+        type={type}
+        name={name}
+        required={required}
+        placeholder={placeholder}
+        class="ds-form-field__control"
+      />
+    )
+  }
+</div>
+
+<style>
+  .ds-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ds-form-field__label {
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--bg-dark);
+  }
+
+  .ds-form-field__required {
+    color: var(--brand-primary);
+    margin-left: 2px;
+  }
+
+  .ds-form-field__control {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--surface-field);
+    border: 1px solid var(--surface-field-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    color: var(--text-primary);
+    transition:
+      border-color var(--transition),
+      box-shadow var(--transition);
+  }
+
+  .ds-form-field__control--textarea {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.5;
+  }
+
+  .ds-form-field__control::placeholder {
+    color: var(--text-muted);
+  }
+
+  .ds-form-field__control:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px var(--focus-ring-color);
+  }
+</style>

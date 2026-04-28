@@ -1,0 +1,82 @@
+---
+interface TitleLine {
+  text: string;
+  accent?: string;
+  suffix?: string;
+}
+
+interface Props {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
+  lines: TitleLine[];
+  className?: string;
+  size?: 'display' | 'h1' | 'h2';
+}
+
+const {
+  as = 'h2',
+  lines = [],
+  className = '',
+  size = 'h1',
+} = Astro.props;
+const Tag = as;
+---
+
+<Tag
+  class={`ds-multi-line-title ds-multi-line-title--${size} ${className}`.trim()}
+>
+  {
+    lines.map((line) => (
+      <span class="ds-multi-line-title__line">
+        {line.text}
+        {line.accent && (
+          <>
+            {' '}
+            <span class="ds-multi-line-title__accent">{line.accent}</span>
+          </>
+        )}
+        {line.suffix && (
+          <span class="ds-multi-line-title__suffix">{line.suffix}</span>
+        )}
+      </span>
+    ))
+  }
+</Tag>
+
+<style>
+  .ds-multi-line-title {
+    display: grid;
+    align-content: start;
+    text-transform: var(--title-text-transform, uppercase);
+    color: var(--bg-dark);
+    line-height: var(--title-line-height, 1);
+    font-family: var(--font-title);
+    font-weight: var(--fw-headline);
+    letter-spacing: var(--title-tracking, -0.03em);
+  }
+
+  .ds-multi-line-title--display {
+    font-size: var(--fs-display);
+  }
+
+  .ds-multi-line-title--h1 {
+    font-size: var(--fs-h1);
+  }
+
+  .ds-multi-line-title--h2 {
+    font-size: var(--fs-h2);
+  }
+
+  .ds-multi-line-title__line {
+    line-height: 1.05;
+  }
+
+  .ds-multi-line-title__accent {
+    color: var(--brand-primary);
+    font-style: italic;
+  }
+  [data-template='coach-pro'] .ds-multi-line-title__accent,
+  [data-template='fitness-coach'] .ds-multi-line-title__accent,
+  [data-template='freelancer-portfolio'] .ds-multi-line-title__accent {
+    font-style: normal;
+  }
+</style>

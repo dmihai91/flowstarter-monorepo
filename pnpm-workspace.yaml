@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - apps/flowstarter-library/*
+  - apps/flowstarter-library/templates/*
   - apps/t3-code/server
   - apps/t3-code/web
   - apps/t3-code/packages/*

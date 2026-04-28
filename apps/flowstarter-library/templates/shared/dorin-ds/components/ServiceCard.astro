@@ -1,0 +1,149 @@
+---
+import { withBase } from '../lib/base.ts';
+
+interface Props {
+  icon?: string;
+  title: string;
+  description: string;
+  meta?: string;
+  href?: string;
+  className?: string;
+  accent?: boolean;
+}
+
+const {
+  icon,
+  title,
+  description,
+  meta,
+  href,
+  className = '',
+  accent = false,
+} = Astro.props;
+const Tag = href ? 'a' : 'div';
+const resolvedHref = href ? withBase(href) : undefined;
+---
+
+<Tag
+  href={resolvedHref}
+  class={`ds-service-card ${accent ? 'ds-service-card--accent' : ''} ${className}`.trim()}
+  data-service-card
+>
+  {icon && <div class="ds-service-card__icon" set:html={icon} />}
+  <h4 class="ds-service-card__title">{title}</h4>
+  <p class="ds-service-card__desc">{description}</p>
+  {meta && <span class="ds-service-card__meta">{meta}</span>}
+  {
+    href && (
+      <span class="ds-service-card__arrow" aria-hidden="true">
+        →
+      </span>
+    )
+  }
+</Tag>
+
+<style>
+  .ds-service-card {
+    --service-hover-y: 0px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 32px 28px 28px;
+    border-radius: var(--radius-lg);
+    background: var(--surface-subtle);
+    color: var(--bg-dark);
+    transform: translateY(var(--service-hover-y));
+    transition:
+      transform var(--transition),
+      background-color var(--transition);
+  }
+
+  .ds-service-card:hover {
+    --service-hover-y: -8px;
+    background: var(--brand-primary);
+  }
+
+  .ds-service-card--accent {
+    background: var(--brand-primary);
+    color: var(--bg-dark);
+  }
+
+  .ds-service-card__icon {
+    color: var(--bg-dark);
+    margin-bottom: 24px;
+    transition:
+      transform 0.35s ease,
+      color 0.35s ease;
+  }
+
+  .ds-service-card__icon :global(svg) {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ds-service-card__title {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    color: var(--bg-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    transition:
+      transform 0.35s ease,
+      letter-spacing 0.35s ease;
+  }
+
+  .ds-service-card__desc {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--bg-dark);
+    margin-bottom: 16px;
+    transition: transform 0.35s ease;
+  }
+
+  .ds-service-card__meta {
+    display: inline-block;
+    margin-top: auto;
+    padding-top: 12px;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    color: var(--bg-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-top: 1px solid rgba(10, 10, 10, 0.16);
+  }
+
+  .ds-service-card__arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 1.5rem;
+    color: var(--bg-dark);
+    line-height: 1;
+    opacity: 0;
+    transform: translate(-6px, 4px);
+    transition:
+      opacity var(--transition),
+      transform var(--transition);
+  }
+
+  .ds-service-card:hover .ds-service-card__icon {
+    transform: translateY(-4px) rotate(-6deg) scale(1.04);
+  }
+
+  .ds-service-card:hover .ds-service-card__title {
+    transform: translateX(6px);
+    letter-spacing: 0.9px;
+  }
+
+  .ds-service-card:hover .ds-service-card__desc {
+    transform: translateX(6px);
+  }
+
+  .ds-service-card:hover .ds-service-card__arrow {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+</style>

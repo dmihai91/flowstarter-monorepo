@@ -1,0 +1,166 @@
+---
+import BrandLogo from './BrandLogo.astro';
+import IconLinkList from './IconLinkList.astro';
+import { withBase } from '../lib/base.ts';
+
+interface Column {
+  heading: string;
+  links: { label: string; href: string }[];
+}
+
+interface SocialItem {
+  href: string;
+  ariaLabel: string;
+  icon: string;
+}
+
+interface Props {
+  brandLabel: string;
+  tagline?: string;
+  columns?: Column[];
+  socials?: SocialItem[];
+  copyrightSuffix?: string;
+}
+
+const {
+  brandLabel,
+  tagline,
+  columns = [],
+  socials = [],
+  copyrightSuffix,
+} = Astro.props;
+const resolvedColumns = columns.map((column) => ({
+  ...column,
+  links: column.links.map((link) => ({ ...link, href: withBase(link.href) })),
+}));
+// Socials usually external (https://…); withBase passes them through.
+const resolvedSocials = socials.map((s) => ({ ...s, href: withBase(s.href) }));
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="ds-footer">
+  <div class="ds-container ds-footer__inner">
+    <div class="ds-footer__top">
+      <div class="ds-footer__brand">
+        <BrandLogo label={brandLabel} variant="light" className="ds-footer__logo" />
+        {tagline && <p class="ds-footer__tagline">{tagline}</p>}
+      </div>
+      {
+        resolvedColumns.length > 0 && (
+          <div class="ds-footer__columns">
+            {resolvedColumns.map((column) => (
+              <div class="ds-footer__col">
+                <h4 class="ds-footer__heading">{column.heading}</h4>
+                <ul class="ds-footer__links">
+                  {column.links.map((link) => (
+                    <li>
+                      <a href={link.href} class="ds-footer__link">
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
+    <div class="ds-footer__bottom">
+      <p class="ds-footer__copyright">
+        © {currentYear} {copyrightSuffix ?? brandLabel + '. All rights reserved.'}
+      </p>
+      {resolvedSocials.length > 0 && <IconLinkList items={resolvedSocials} size="small" />}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ds-footer {
+    padding: 96px 0 40px;
+    background: var(--bg-dark);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-nav);
+  }
+
+  .ds-footer__top {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 60px;
+    margin-bottom: 64px;
+  }
+
+  .ds-footer__logo {
+    margin-bottom: 16px;
+  }
+
+  .ds-footer__tagline {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    max-width: 320px;
+    color: var(--text-nav);
+  }
+
+  .ds-footer__columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 32px;
+  }
+
+  .ds-footer__heading {
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-on-dark);
+    margin-bottom: 16px;
+  }
+
+  .ds-footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ds-footer__link {
+    font-size: var(--fs-small);
+    color: var(--text-nav);
+    transition: color var(--transition);
+  }
+
+  .ds-footer__link:hover {
+    color: var(--text-on-dark);
+  }
+
+  .ds-footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .ds-footer__copyright {
+    font-size: var(--fs-small);
+    color: var(--text-nav);
+  }
+
+  @media (max-width: 768px) {
+    .ds-footer {
+      padding: 64px 0 32px;
+    }
+
+    .ds-footer__top {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .ds-footer__bottom {
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+    }
+  }
+</style>

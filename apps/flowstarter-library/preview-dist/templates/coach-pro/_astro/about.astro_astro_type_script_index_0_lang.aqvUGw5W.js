@@ -1,1 +1,0 @@
-import{u as e}from"./useVisibilityClass.D7qgX2Jw.js";e({selector:'[data-reveal="about-background-title"]',threshold:.12,rootMargin:"0px 0px -8% 0px"});e({selector:"[data-zigzag-section]",threshold:.45,rootMargin:"0px 0px -14% 0px",once:!0,revealIfAlreadyVisible:!1});e({selector:"[data-about-reveal]",threshold:.16,rootMargin:"0px 0px -8% 0px",once:!0});

@@ -1,30 +1,692 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import CaseStudies from '../components/CaseStudies.astro';
-import Expertise from '../components/Expertise.astro';
-import About from '../components/About.astro';
-import Services from '../components/Services.astro';
-import AboutStory from '../components/AboutStory.astro';
-import Stats from '../components/Stats.astro';
-import Testimonial from '../components/Testimonial.astro';
-import CTASection from '../components/CTASection.astro';
-import Footer from '../components/Footer.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import ServiceCard from '../../../shared/dorin-ds/components/ServiceCard.astro';
+import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
+import CaseStudyCard from '../../../shared/dorin-ds/components/CaseStudyCard.astro';
+import TestimonialBlock from '../../../shared/dorin-ds/components/TestimonialBlock.astro';
+import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
+import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
+import HeroIntro from '../../../shared/dorin-ds/components/HeroIntro.astro';
+import AnimatedWordTitle from '../../../shared/dorin-ds/components/AnimatedWordTitle.astro';
+import VideoBlock from '../../../shared/dorin-ds/components/VideoBlock.astro';
+import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import { frontmatter as videoData } from '../../content/video.md';
+import { frontmatter as bookingData } from '../../content/integrations/booking.md';
+
+interface SiteLabelsShape {
+  siteMeta?: { title?: string; description?: string };
+  caseStudies?: {
+    projects?: Array<{
+      title?: string;
+      category?: string;
+      description?: string;
+      imageSrc?: string;
+    }>;
+  };
+  services?: { items?: Array<{ title?: string; description?: string }> };
+  testimonials?: Array<{
+    quote?: string;
+    authorName?: string;
+    authorRole?: string;
+  }>;
+  servicesPage?: {
+    faq?: { items?: Array<{ question?: string; answer?: string }> };
+  };
+  stats?: { items?: Array<{ number?: string; label?: string }> };
+}
+
+interface VideoFrontmatter {
+  eyebrow?: string;
+  title?: string;
+  duration?: string;
+  caption?: string;
+  poster?: string;
+  src?: string;
+  aspect?: '21/9' | '16/9' | '4/3' | '1/1';
+}
+
+interface BookingFrontmatter {
+  cal_link?: string;
+  cal_event_label?: string;
+  cal_duration_label?: string;
+  cal_layout?: 'month_view' | 'week_view' | 'column_view';
+  title?: string;
+  description?: string;
+}
+
+const labels = siteLabels as SiteLabelsShape;
+const video = videoData as VideoFrontmatter;
+const booking = bookingData as BookingFrontmatter;
+
+const ICONS = [
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="14" x="3" y="3" rx="2"/><path d="M3 10h18M7 17h10"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+];
+
+// Hero section keeps its hand-tuned copy; site-labels.hero is the
+// generic placeholder that does not carry the studio narrative.
+const HERO_META_FALLBACK = [
+  { number: '60+', label: 'Shipped projects' },
+  { number: '8', label: 'Years independent' },
+  { number: '12', label: 'Industries served' },
+  { number: '4.9', label: 'Average client rating' },
+];
+
+const heroStats = (labels.stats?.items ?? [])
+  .filter((s) => s?.number && s?.label)
+  .slice(0, 4)
+  .map((s) => ({ number: s.number ?? '', label: s.label ?? '' }));
+const resolvedHeroStats = heroStats.length === 4 ? heroStats : HERO_META_FALLBACK;
+
+const selectedWork = (labels.caseStudies?.projects ?? [])
+  .slice(0, 4)
+  .map((p, i) => ({
+    title: p?.title ?? '',
+    category: p?.category ?? '',
+    imageSrc: p?.imageSrc ?? '',
+    index: `№ 0${i + 1}`,
+  }));
+
+const services = (labels.services?.items ?? [])
+  .slice(0, 3)
+  .map((s, i) => ({
+    icon: ICONS[i] ?? ICONS[0],
+    title: s?.title ?? '',
+    description: s?.description ?? '',
+    // The site-labels services list does not carry per-service pricing,
+    // so we keep a curated price band per slot to preserve the marketing UI.
+    meta: ['From $7,500', 'From $9,500', 'From $6,500'][i] ?? '',
+  }));
+
+const testimonials = (labels.testimonials ?? [])
+  .slice(0, 3)
+  .map((t) => ({
+    quote: t?.quote ?? '',
+    author: t?.authorName ?? '',
+    role: t?.authorRole ?? '',
+  }));
+
+const faqs = (labels.servicesPage?.faq?.items ?? [])
+  .slice(0, 5)
+  .map((f) => ({ question: f?.question ?? '', answer: f?.answer ?? '' }));
+
+// Credentials are a studio-page artifact that doesn't appear in
+// site-labels.md; preserve the curated copy instead of dropping it.
+const credentials = [
+  'AIGA member · Brooklyn chapter',
+  'Selected for Dribbble Top 100 · 2024',
+  'Awwwards Site of the Day · 4×',
+  'Webby Honoree · 2023',
+];
 ---
 
-<Layout>
-  <Header />
-  <main>
-    <Hero />
-    <CaseStudies />
-    <Stats />
-    <Expertise />
-    <About />
-    <Services />
-    <AboutStory />
-    <Testimonial />
-  </main>
-  <CTASection />
-  <Footer />
+<Layout
+  title="Alex Morgan — Independent Product Designer & Developer"
+  description="Studio-led product design and development for SaaS startups. Brand strategy, product design, web development. Brooklyn, NY."
+  activeIndex={-1}
+>
+  <HeroIntro text="Alex Morgan" />
+
+  <!-- ─── Hero ──────────────────────────────────────────────── -->
+  <SectionBlock id="home" tone="light" padding="hero" className="fp-hero">
+    <Container className="fp-hero__inner">
+      <div class="fp-hero__copy">
+        <OverlineText text="Independent studio · Brooklyn, NY" tone="accent" />
+        <h1 class="fp-hero__title">
+          <span>Studio for</span>
+          <span class="fp-hero__title-accent">considered</span>
+          <span>SaaS work.</span>
+        </h1>
+        <p class="fp-hero__pull">
+          A small, deliberate practice — not a passion project, not a hustle.
+          Brand, product, and web for founders who want the work done once,
+          and done right.
+        </p>
+        <p class="fp-hero__lede">
+          I'm <strong>Alex Morgan</strong>, an independent product designer
+          and developer. Eight years in, sixty-plus shipped projects, and a
+          waiting list that runs about two weeks out.
+        </p>
+        <div class="fp-hero__actions">
+          <ActionButton
+            href="/contact"
+            label="Start a project"
+            variant="primary"
+            size="large"
+          />
+          <ActionButton
+            href="/work"
+            label="View selected work"
+            variant="outline-dark"
+            size="large"
+          />
+        </div>
+        <div class="fp-hero__pills">
+          <TagPill label="SaaS specialists" />
+          <TagPill label="Booking 4 weeks out" />
+          <TagPill label="Async-friendly" />
+        </div>
+      </div>
+
+      <div class="fp-hero__plate" aria-hidden="true">
+        <div class="fp-hero__plate-image"></div>
+        <span class="fp-hero__index">№ 01 — 2026</span>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Stats ────────────────────────────────────────────── -->
+  <SectionBlock tone="accent-light" padding="compact" topBorder>
+    <Container>
+      <StatsRow items={resolvedHeroStats} />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Animated word title ──────────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container className="fp-statement">
+      <OverlineText text="The practice" />
+      <AnimatedWordTitle
+        as="h2"
+        size="h1"
+        lines={[
+          { text: 'Brand, product,' },
+          { text: 'and web for', accent: 'studio-grade SaaS.' },
+        ]}
+      />
+      <p class="fp-statement__copy">
+        I take on three to four engagements a quarter. Each one starts with
+        a real problem — usually a product surface that has outgrown its
+        founder-era brand — and ends with a system the team can keep
+        building on.
+      </p>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Selected work ────────────────────────────────────── -->
+  <SectionBlock id="work" tone="subtle" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="Selected work"
+        title="Four recent engagements."
+        maxWidth="22ch"
+      />
+      <div class="fp-work-grid">
+        {
+          selectedWork.map((w) => (
+            <CaseStudyCard
+              title={w.title}
+              category={w.category}
+              imageSrc={w.imageSrc}
+              index={w.index}
+              href="#"
+            />
+          ))
+        }
+      </div>
+      <div class="fp-work-cta">
+        <ActionButton
+          href="/work"
+          label="See the full archive"
+          variant="outline-dark"
+        />
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Process reel (video) ─────────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container className="fp-video">
+      <VideoBlock
+        src={video.src ?? ''}
+        poster={video.poster}
+        title={video.title ?? ''}
+        caption={video.caption}
+        eyebrow={video.eyebrow}
+        duration={video.duration}
+        aspect={video.aspect ?? '16/9'}
+      />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Services preview ─────────────────────────────────── -->
+  <SectionBlock id="services" tone="light" padding="default">
+    <Container>
+      <SectionHeading
+        label="Services"
+        title="Three ways to work together."
+        maxWidth="22ch"
+      />
+      <div class="fp-services-grid">
+        {
+          services.map((s) => (
+            <ServiceCard
+              icon={s.icon}
+              title={s.title}
+              description={s.description}
+              meta={s.meta}
+            />
+          ))
+        }
+      </div>
+      <div class="fp-services-cta">
+        <ActionButton
+          href="/services"
+          label="See all six services"
+          variant="outline-dark"
+        />
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── About preview ────────────────────────────────────── -->
+  <SectionBlock id="about" tone="light" padding="default" topBorder>
+    <Container className="fp-about">
+      <div class="fp-about__heading">
+        <OverlineText text="About the studio" />
+        <h2 class="section-title fp-about__title">
+          A practice, not a<br />
+          <em>pipeline</em>.
+        </h2>
+      </div>
+      <div class="fp-about__body">
+        <p class="fp-about__intro">
+          Studio AM is one operator and a small bench. We take fewer
+          engagements so each one gets the attention founders thought they
+          had to hire a 30-person agency to access.
+        </p>
+        <p class="fp-about__copy">
+          Eight years in independent practice. Backgrounds at IDEO and
+          Stripe before that. The work runs across fintech, climate, B2B
+          tooling, and the occasional editorial project that keeps the rest
+          of the practice honest.
+        </p>
+        <ul class="fp-about__credentials">
+          {
+            credentials.map((c) => (
+              <li class="fp-about__credential">
+                <span class="fp-about__credential-mark" aria-hidden="true">
+                  ◆
+                </span>
+                {c}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Testimonials ─────────────────────────────────────── -->
+  <SectionBlock tone="subtle" padding="default" topBorder>
+    <Container>
+      <SectionHeading label="Said by clients" title="Words from the work." />
+      <div class="fp-testimonials">
+        {
+          testimonials.map((t) => (
+            <TestimonialBlock
+              quote={t.quote}
+              author={t.author}
+              role={t.role}
+              result={t.result}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── FAQ ──────────────────────────────────────────────── -->
+  <SectionBlock id="faq" tone="light" padding="default" topBorder>
+    <Container className="fp-faq">
+      <SectionHeading label="FAQ" title="Practical questions." />
+      <div class="fp-faq__list">
+        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── CTA — Cal.com booking ────────────────────────────── -->
+  <SectionBlock id="contact" tone="subtle" padding="default" topBorder>
+    <Container className="fp-cta">
+      <CalBookingBlock
+        variant="cta"
+        calLink={booking.cal_link}
+        eventLabel={booking.cal_event_label}
+        title={booking.title}
+        subtitle={booking.description}
+        durationLabel={booking.cal_duration_label}
+        layout={booking.cal_layout}
+        className="fs-book-btn"
+      />
+    </Container>
+  </SectionBlock>
 </Layout>
+
+<style>
+  /* Hero */
+  .fp-hero {
+    position: relative;
+    overflow: clip;
+  }
+
+  .fp-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(380px, 44%);
+    gap: 64px;
+    align-items: center;
+    min-height: 76vh;
+  }
+
+  .fp-hero__copy {
+    max-width: 640px;
+  }
+
+  .fp-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.6rem, 6vw, 5.2rem);
+    font-weight: var(--fw-headline);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    margin: 24px 0 32px;
+    color: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .fp-hero__title-accent {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    text-transform: none;
+    color: var(--brand-primary);
+    font-weight: var(--fw-regular);
+    letter-spacing: -0.04em;
+  }
+
+  .fp-hero__pull {
+    font-family: var(--font-title);
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+    line-height: 1.4;
+    color: var(--bg-dark);
+    padding-left: 20px;
+    border-left: 3px solid var(--brand-primary);
+    max-width: 56ch;
+    margin-bottom: 28px;
+    letter-spacing: -0.005em;
+  }
+
+  .fp-hero__lede {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--text-primary);
+    max-width: 56ch;
+    margin-bottom: 36px;
+  }
+
+  .fp-hero__lede strong {
+    font-weight: var(--fw-semibold);
+    color: var(--bg-dark);
+  }
+
+  .fp-hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+
+  .fp-hero__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Plate */
+  .fp-hero__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .fp-hero__plate-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&h=1100&fit=crop&crop=face');
+    background-size: cover;
+    background-position: center 30%;
+    filter: contrast(1.04) saturate(0.9);
+    transition: transform 1.2s var(--ease-emphasized);
+  }
+
+  .fp-hero:hover .fp-hero__plate-image {
+    transform: scale(1.02);
+  }
+
+  .fp-hero__index {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-on-dark);
+    background: var(--bg-dark);
+    padding: 6px 10px;
+    z-index: 1;
+  }
+
+  /* Statement */
+  .fp-statement {
+    max-width: 940px;
+  }
+
+  .fp-statement__copy {
+    margin-top: 32px;
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    max-width: 60ch;
+    color: var(--text-primary);
+  }
+
+  /* Work grid */
+  .fp-work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 32px;
+  }
+
+  .fp-work-cta {
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  /* Services */
+  .fp-services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .fp-services-cta {
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  /* About */
+  .fp-about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .fp-about__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .fp-about__title {
+    margin-top: 16px;
+  }
+
+  .fp-about__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .fp-about__intro {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--bg-dark);
+    margin-bottom: 24px;
+    max-width: 56ch;
+  }
+
+  .fp-about__copy {
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--text-primary);
+    max-width: 60ch;
+    margin-bottom: 36px;
+  }
+
+  .fp-about__credentials {
+    display: grid;
+    gap: 14px;
+    padding-top: 28px;
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  .fp-about__credential {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bg-dark);
+  }
+
+  .fp-about__credential-mark {
+    color: var(--brand-primary);
+    font-size: 0.8em;
+    line-height: 1.5;
+  }
+
+  /* Testimonials */
+  .fp-testimonials {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  /* FAQ */
+  .fp-faq {
+    max-width: 920px;
+  }
+
+  .fp-faq__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  /* CTA */
+  .fp-cta {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .fp-cta__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--text-on-dark);
+    margin-bottom: 28px;
+  }
+
+  .fp-cta__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .fp-cta__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+    max-width: 56ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .fp-cta__actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .fp-hero__inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      min-height: auto;
+    }
+
+    .fp-hero__plate {
+      aspect-ratio: 16 / 11;
+      max-width: 720px;
+    }
+
+    .fp-about {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .fp-about__heading {
+      position: static;
+    }
+
+    .fp-services-grid,
+    .fp-work-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fp-testimonials {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .fp-services-grid,
+    .fp-work-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,142 @@
+---
+import { withBase } from '../lib/base.ts';
+
+interface Props {
+  href: string;
+  label: string;
+  variant?: 'primary' | 'primary-light' | 'outline' | 'outline-dark' | 'outline-light';
+  size?: 'default' | 'large';
+  className?: string;
+  ariaLabel?: string;
+  external?: boolean;
+}
+
+const {
+  href,
+  label,
+  variant = 'primary',
+  size = 'default',
+  className = '',
+  ariaLabel,
+  external = false,
+} = Astro.props;
+const resolvedHref = withBase(href);
+const hasPrefix = Astro.slots.has('prefix');
+const hasSuffix = Astro.slots.has('suffix');
+---
+
+<a
+  href={resolvedHref}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noreferrer' : undefined}
+  class={`ds-action-button ds-action-button--${variant} ds-action-button--${size} ${hasPrefix || hasSuffix ? 'ds-action-button--adorned' : ''} ${className}`.trim()}
+  aria-label={ariaLabel}
+>
+  {
+    hasPrefix && (
+      <span class="ds-action-button__prefix" aria-hidden="true">
+        <slot name="prefix" />
+      </span>
+    )
+  }
+  <span class="ds-action-button__label">{label}</span>
+  {
+    hasSuffix && (
+      <span class="ds-action-button__suffix" aria-hidden="true">
+        <slot name="suffix" />
+      </span>
+    )
+  }
+</a>
+
+<style>
+  .ds-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 0;
+    border: 1px solid transparent;
+    font-family: var(--font-button);
+    transition:
+      opacity var(--transition),
+      border-color var(--transition),
+      background-size var(--transition),
+      color var(--transition);
+  }
+
+  .ds-action-button--large {
+    padding: 18px 36px;
+    font-size: var(--fs-body);
+  }
+
+  .ds-action-button--adorned {
+    gap: 16px;
+  }
+
+  .ds-action-button__prefix,
+  .ds-action-button__suffix {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ds-action-button--primary {
+    background: var(--bg-dark);
+    color: var(--text-on-dark);
+  }
+  .ds-action-button--primary:hover {
+    opacity: 0.85;
+  }
+
+  .ds-action-button--primary-light {
+    background: var(--text-on-dark);
+    color: var(--bg-dark);
+  }
+  .ds-action-button--primary-light:hover {
+    opacity: 0.85;
+  }
+
+  .ds-action-button--outline,
+  .ds-action-button--outline-dark,
+  .ds-action-button--outline-light {
+    border-width: 2px;
+    border-style: solid;
+    background-color: transparent;
+    background-image: linear-gradient(var(--outline-fill), var(--outline-fill));
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-size: 0 100%;
+    transition:
+      color var(--transition),
+      border-color var(--transition),
+      background-size var(--transition);
+  }
+
+  .ds-action-button--outline,
+  .ds-action-button--outline-dark {
+    --outline-fill: var(--bg-dark);
+    --outline-hover-text: var(--text-on-dark);
+    border-color: var(--bg-dark);
+    color: var(--bg-dark);
+  }
+
+  .ds-action-button--outline-light {
+    --outline-fill: var(--text-on-dark);
+    --outline-hover-text: var(--bg-dark);
+    border-color: var(--text-on-dark);
+    color: var(--text-on-dark);
+  }
+
+  .ds-action-button--outline:hover,
+  .ds-action-button--outline-dark:hover,
+  .ds-action-button--outline-light:hover {
+    color: var(--outline-hover-text);
+    background-size: 100% 100%;
+  }
+</style>

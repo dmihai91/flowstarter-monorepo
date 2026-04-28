@@ -10,6 +10,7 @@
     "gen:types": "pnpm dlx supabase gen types typescript --project-id avptvzherjxymmbtbbbr --schema public > src/lib/database.types.ts",
     "gen:thumbs": "node scripts/generate-template-thumbnails.js",
     "gen:previews": "node scripts/build-template-previews.js",
+    "gen:previews:dorin": "node scripts/build-library-previews.mjs",
     "build": "next build",
     "test:e2e": "playwright test",
     "test": "vitest --root src --run",

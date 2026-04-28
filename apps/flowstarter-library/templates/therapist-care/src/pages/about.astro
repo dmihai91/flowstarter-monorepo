@@ -1,91 +1,421 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Footer from '../components/Footer.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
+import QuoteBlock from '../../../shared/dorin-ds/components/QuoteBlock.astro';
+import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
+import GalleryGrid from '../../../shared/dorin-ds/components/GalleryGrid.astro';
+import { frontmatter as galleryData } from '../../content/gallery.md';
+
+interface GalleryContent {
+  eyebrow?: string;
+  title?: string;
+  side_note?: string;
+  items?: Array<{
+    src: string;
+    alt: string;
+    span?: string;
+    aspect?: string;
+    tag?: string;
+    caption?: string;
+    href?: string;
+  }>;
+}
+
+const galleryFm = galleryData as GalleryContent;
+const galleryItems = galleryFm.items ?? [];
+
+const journey = [
+  {
+    number: '2008',
+    title: 'Started in community care',
+    description:
+      'Began as a pre-licensed clinician at a community mental health centre in Oakland, working with families navigating crisis, trauma, and immigration transitions. The roots of how I think about therapy were planted there — slowly, and at the kitchen-table level.',
+  },
+  {
+    number: '2012',
+    title: 'EMDR certification',
+    description:
+      'Completed advanced EMDR training and began folding it into my work with trauma clients. The shift in what was possible — particularly for clients who had felt stuck for years — set the direction the practice has held since.',
+  },
+  {
+    number: '2016',
+    title: 'Private practice in San Francisco',
+    description:
+      'Opened a small private practice on California Street, focused on individuals, couples, and families. Limited my caseload deliberately so each client gets the attention the work actually requires.',
+  },
+  {
+    number: 'Today',
+    title: '1,200+ clients in, still listening',
+    description:
+      'The practice now serves clients across the Bay Area and across California by telehealth. The same instincts hold: listen first, move at the speed of trust, and choose the modality that fits the person — not the other way around.',
+  },
+];
+
+const credentials = [
+  'Licensed Marriage & Family Therapist (LMFT #87654)',
+  'EMDR Certified Therapist — EMDRIA, 2012',
+  "Master's in Clinical Psychology, Stanford University, 2008",
+  'Member, California Association of Marriage and Family Therapists',
+  'Member, EMDR International Association',
+  'Trained in Gottman Method couples therapy (Levels 1 & 2)',
+];
+
+const stats = [
+  { number: '15+', label: 'Years in practice' },
+  { number: '1,200+', label: 'Clients supported' },
+  { number: '92%', label: 'Client retention rate' },
+  { number: '4.9', label: 'Average client rating' },
+];
 ---
 
-<Layout title="About Us | Therapist Care">
-  <!-- Hero -->
-  <section class="pt-32 pb-20 bg-gray-950 relative overflow-hidden">
-    <div class="absolute inset-0" style="background: var(--gradient-mesh);"></div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto">
-        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
-          About Us
+<Layout
+  title="About — Sarah Mitchell, LMFT"
+  description="Fifteen years of compassionate, evidence-based therapy in the San Francisco Bay Area. Licensed Marriage & Family Therapist, EMDR-certified."
+  activeIndex={1}
+>
+  <!-- ─── Hero ──────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="hero">
+    <Container className="tc-about-hero">
+      <div class="tc-about-hero__copy">
+        <OverlineText text="About" tone="accent" />
+        <h1 class="tc-about-hero__title">
+          Fifteen years of<br />
+          quietly considered<br />
+          <em>therapeutic work</em>.
         </h1>
-        <p class="text-xl text-gray-400">
-          Learn more about who we are and what we do.
+        <p class="tc-about-hero__lede">
+          I'm Sarah Mitchell, LMFT — a licensed marriage and family
+          therapist based in San Francisco. My practice is small,
+          deliberate, and focused on doing one thing carefully: helping
+          people make meaningful sense of difficult chapters.
         </p>
       </div>
-    </div>
-  </section>
+      <div class="tc-about-hero__plate" aria-hidden="true">
+        <div class="tc-about-hero__plate-image"></div>
+      </div>
+    </Container>
+  </SectionBlock>
 
-  <!-- Story -->
-  <section class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
-        <div>
-          <span class="text-primary font-semibold text-sm uppercase tracking-wider">Our Story</span>
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-6">
-            A commitment to excellence
-          </h2>
-          <div class="space-y-4 text-gray-600">
-            <p>We are passionate about what we do and committed to delivering exceptional results for every client. Our team brings years of experience and dedication to every project.</p>
-            <p>We believe in building lasting relationships with our clients through trust, transparency, and exceptional service.</p>
-          </div>
-        </div>
-        <div class="relative">
-          <img 
-            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600" 
-            alt="Our team"
-            class="rounded-2xl shadow-2xl"
+  <!-- ─── Quote ───────────────────────────────────────────── -->
+  <SectionBlock tone="subtle" padding="compact">
+    <Container className="tc-about-quote">
+      <QuoteBlock
+        quote="My clients rarely arrive needing more advice. What they almost always need is a place quiet enough to hear what they already know."
+      />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Stats ───────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="The practice in numbers"
+        title="Fifteen years, gently."
+        align="center"
+      />
+      <StatsRow items={stats} />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Approach ────────────────────────────────────────── -->
+  <SectionBlock id="approach" tone="dark" padding="default">
+    <Container className="tc-about-approach">
+      <div class="tc-about-approach__heading">
+        <OverlineText text="The approach" tone="accent" />
+        <h2 class="section-title tc-about-approach__title">
+          What it actually feels like<br />to work together.
+        </h2>
+      </div>
+      <div class="tc-about-approach__copy">
+        <p>
+          The first few sessions are about getting to know each other. I
+          listen for the shape of the trouble, the places it shows up in
+          your week, and the resources you already have. There is no
+          script and no rush. We move at a pace that lets the work
+          actually settle.
+        </p>
+        <p>
+          The methodology is a careful blend. <strong>Cognitive
+          behavioural techniques</strong> for the patterns that repeat.
+          <strong>EMDR and somatic work</strong> for what lives in the
+          body. <strong>Attachment-based and systemic frames</strong> for
+          relationships and family dynamics. The combination is matched
+          to the person — never the other way around.
+        </p>
+        <p>
+          You will leave each session with a clearer sense of what is
+          shifting and what is asking for more attention. The work is
+          confidential, deeply held, and entirely on your terms. Therapy
+          should feel like a careful conversation with someone who is
+          paying attention — and that is the bar I hold myself to.
+        </p>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Journey ─────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container className="tc-about-journey">
+      <div class="tc-about-journey__heading">
+        <OverlineText text="Journey" />
+        <h2 class="section-title">A long, slow arc.</h2>
+      </div>
+      <div class="tc-about-journey__list">
+        {
+          journey.map((j) => (
+            <NumberedFeatureItem
+              number={j.number}
+              title={j.title}
+              description={j.description}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Credentials ─────────────────────────────────────── -->
+  <SectionBlock id="credentials" tone="subtle" padding="default">
+    <Container>
+      <SectionHeading
+        label="Credentials"
+        title="Training & affiliations."
+        align="center"
+      />
+      <ul class="tc-about-credentials">
+        {
+          credentials.map((c) => (
+            <li class="tc-about-credentials__item">
+              <span class="tc-about-credentials__mark" aria-hidden="true">
+                ◆
+              </span>
+              {c}
+            </li>
+          ))
+        }
+      </ul>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Gallery ─────────────────────────────────────────── -->
+  {
+    galleryItems.length > 0 && (
+      <SectionBlock tone="subtle" padding="default" topBorder>
+        <Container>
+          <GalleryGrid
+            eyebrow={galleryFm.eyebrow}
+            title={galleryFm.title}
+            sideNote={galleryFm.side_note}
+            items={galleryItems}
           />
-        </div>
-      </div>
-    </div>
-  </section>
+        </Container>
+      </SectionBlock>
+    )
+  }
 
-  <!-- Values -->
-  <section class="py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Values</h2>
-      </div>
-      <div class="grid md:grid-cols-3 gap-8">
-        
-        <div class="bg-white p-8 rounded-2xl shadow-lg">
-          <div class="text-4xl mb-4">⭐</div>
-          <h3 class="text-xl font-semibold mb-3">Excellence</h3>
-          <p class="text-gray-600">We strive for excellence in everything we do.</p>
-        </div>
-        <div class="bg-white p-8 rounded-2xl shadow-lg">
-          <div class="text-4xl mb-4">🤝</div>
-          <h3 class="text-xl font-semibold mb-3">Trust</h3>
-          <p class="text-gray-600">Building lasting relationships through transparency.</p>
-        </div>
-        <div class="bg-white p-8 rounded-2xl shadow-lg">
-          <div class="text-4xl mb-4">💡</div>
-          <h3 class="text-xl font-semibold mb-3">Innovation</h3>
-          <p class="text-gray-600">Always looking for better ways to serve you.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="py-24 bg-gray-950">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-        Ready to Get Started?
-      </h2>
-      <p class="text-xl text-gray-400 mb-10">Contact us today and let's talk about how we can help.</p>
-      <a href="/contact" class="btn-gradient inline-flex items-center">
-        Contact Us
-        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-        </svg>
-      </a>
-    </div>
-  </section>
-
-  <Footer />
+  <!-- ─── CTA ─────────────────────────────────────────────── -->
+  <SectionBlock tone="dark" padding="default">
+    <Container className="tc-about-cta">
+      <h2 class="tc-about-cta__title">If something here resonated.</h2>
+      <p class="tc-about-cta__lede">
+        The first conversation is a free, unhurried 20-minute call. There
+        is no commitment, no sales pitch, and no expectation — just a
+        chance to see whether this feels like the right room for the
+        work you want to do.
+      </p>
+      <ActionButton
+        href="/contact"
+        label="Schedule a consultation"
+        variant="primary-light"
+        size="large"
+        className="fs-book-btn"
+      />
+    </Container>
+  </SectionBlock>
 </Layout>
+
+<style>
+  .tc-about-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: center;
+  }
+
+  .tc-about-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .tc-about-hero__title em {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .tc-about-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+
+  .tc-about-hero__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .tc-about-hero__plate-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=900&h=1100&fit=crop&crop=face');
+    background-size: cover;
+    background-position: center;
+    filter: contrast(1.02) saturate(0.92);
+  }
+
+  .tc-about-quote {
+    max-width: 920px;
+  }
+
+  .tc-about-approach {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 80px;
+  }
+
+  .tc-about-approach__heading {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+  }
+
+  .tc-about-approach__title {
+    color: var(--text-on-dark);
+    margin-top: 16px;
+    max-width: 16ch;
+  }
+
+  .tc-about-approach__copy {
+    display: grid;
+    gap: 24px;
+    max-width: 64ch;
+  }
+
+  .tc-about-approach__copy p {
+    font-size: var(--fs-h5);
+    line-height: 1.6;
+    color: var(--text-on-dark);
+  }
+
+  .tc-about-approach__copy strong {
+    color: var(--brand-primary);
+    font-weight: var(--fw-semibold);
+  }
+
+  .tc-about-journey {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .tc-about-journey__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .tc-about-journey__heading .section-title {
+    margin-top: 16px;
+    max-width: 12ch;
+  }
+
+  .tc-about-journey__list {
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  .tc-about-credentials {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 40px;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .tc-about-credentials__item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bg-dark);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--surface-subtle-border);
+  }
+
+  .tc-about-credentials__mark {
+    color: var(--brand-primary);
+    font-size: 0.75em;
+    line-height: 1.5;
+  }
+
+  .tc-about-cta {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .tc-about-cta__title {
+    font-family: var(--font-title);
+    font-size: clamp(1.9rem, 4vw, 3.2rem);
+    font-weight: var(--fw-headline);
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--text-on-dark);
+    margin-bottom: 24px;
+  }
+
+  .tc-about-cta__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    .tc-about-hero,
+    .tc-about-approach,
+    .tc-about-journey {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .tc-about-approach__heading,
+    .tc-about-journey__heading {
+      position: static;
+    }
+
+    .tc-about-credentials {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

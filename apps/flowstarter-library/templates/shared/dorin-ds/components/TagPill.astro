@@ -1,0 +1,40 @@
+---
+interface Props {
+  label: string;
+  className?: string;
+  tone?: 'default' | 'accent' | 'dark';
+}
+
+const { label, className = '', tone = 'default' } = Astro.props;
+---
+
+<span class={`ds-tag-pill ds-tag-pill--${tone} ${className}`.trim()}>
+  {label}
+</span>
+
+<style>
+  .ds-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border: 1px solid var(--surface-subtle-border);
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    background: transparent;
+    line-height: 1;
+  }
+
+  .ds-tag-pill--accent {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+  }
+
+  .ds-tag-pill--dark {
+    border-color: var(--bg-dark);
+    color: var(--bg-dark);
+  }
+</style>

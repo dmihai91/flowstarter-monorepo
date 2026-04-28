@@ -1,0 +1,108 @@
+---
+import StatItem from './StatItem.astro';
+
+interface Stat {
+  number: string;
+  label: string;
+}
+
+interface Props {
+  items: Stat[];
+  className?: string;
+}
+
+const { items, className = '' } = Astro.props;
+---
+
+<div class={`ds-stats-row ${className}`.trim()} data-stats-row>
+  {items.map((s) => <StatItem number={s.number} label={s.label} />)}
+</div>
+
+<style>
+  .ds-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 56px;
+    align-items: end;
+  }
+
+  @media (max-width: 768px) {
+    .ds-stats-row {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+  }
+</style>
+
+<script>
+  const sections = Array.from(document.querySelectorAll('[data-stats-row]'));
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  );
+
+  const parseTarget = (value: string) => {
+    const numeric = Number.parseFloat(value.replace(/[^0-9.\-]/g, ''));
+    const suffix = value.replace(/[0-9.\-]/g, '').trim();
+    const decimals = value.includes('.')
+      ? (value.split('.')[1]?.replace(/[^0-9]/g, '').length ?? 0)
+      : 0;
+    return {
+      numeric: Number.isFinite(numeric) ? numeric : 0,
+      suffix,
+      decimals,
+    };
+  };
+
+  const format = (value: number, decimals: number, suffix: string) => {
+    const rounded =
+      decimals > 0 ? value.toFixed(decimals) : Math.round(value).toString();
+    return `${rounded}${suffix}`;
+  };
+
+  const animate = (element: HTMLElement, index: number) => {
+    const target = element.dataset.target ?? element.textContent ?? '0';
+    const { numeric, suffix, decimals } = parseTarget(target);
+    const duration = 1000 + index * 90;
+    const start = performance.now();
+    element.classList.add('is-visible');
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = numeric * eased;
+      element.textContent = format(current, decimals, suffix);
+      if (progress < 1) {
+        window.requestAnimationFrame(tick);
+      } else {
+        element.textContent = target;
+      }
+    };
+
+    window.requestAnimationFrame(tick);
+  };
+
+  sections.forEach((section) => {
+    const numbers = Array.from(
+      section.querySelectorAll<HTMLElement>('[data-stat-number]'),
+    );
+    if (numbers.length === 0) return;
+
+    if (prefersReducedMotion.matches) {
+      numbers.forEach((el) => {
+        el.classList.add('is-visible');
+        el.textContent = el.dataset.target ?? el.textContent ?? '';
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        numbers.forEach((el, i) => animate(el, i));
+        observer.disconnect();
+      },
+      { threshold: 0.35 },
+    );
+    observer.observe(section);
+  });
+</script>

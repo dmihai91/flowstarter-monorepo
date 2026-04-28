@@ -1,91 +1,464 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Footer from '../components/Footer.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
+import QuoteBlock from '../../../shared/dorin-ds/components/QuoteBlock.astro';
+import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
+import GalleryGrid from '../../../shared/dorin-ds/components/GalleryGrid.astro';
+
+import { frontmatter as siteData } from '../../content/site.md';
+import { frontmatter as heroData } from '../../content/hero.md';
+import { frontmatter as galleryData } from '../../content/gallery.md';
+
+interface SiteContent {
+  name: string;
+  description?: string;
+}
+
+interface HeroStat {
+  value: string;
+  label: string;
+}
+
+interface HeroContent {
+  stats?: HeroStat[];
+}
+
+interface GalleryItemContent {
+  src: string;
+  alt: string;
+  span?: string;
+  aspect?: string;
+  tag?: string;
+  caption?: string;
+}
+
+interface GalleryContent {
+  eyebrow?: string;
+  title?: string;
+  side_note?: string;
+  items: GalleryItemContent[];
+}
+
+const site = siteData as SiteContent;
+const hero = heroData as HeroContent;
+const gallery = galleryData as GalleryContent;
+
+// Hero.md stats drive the receipts row; the bespoke "Sessions logged" /
+// "12,000+" extras live in code because they don't appear in hero.md.
+const heroStats = (hero.stats ?? []).map((s) => ({
+  number: s.value,
+  label: s.label,
+}));
+const stats = [
+  ...heroStats,
+  { number: '12,000+', label: 'Sessions logged' },
+].slice(0, 4);
+
+const journey = [
+  {
+    number: '2014',
+    title: 'College football, then injuries',
+    description:
+      "Played strong-side linebacker at UT San Antonio. Three torn labrums and a herniated disc later, I learned more from rehab than from the game itself. The reps you can't take become the ones that teach you.",
+  },
+  {
+    number: '2017',
+    title: 'NASM, the gym floor, the work',
+    description:
+      'NASM-CPT certification while interning at a small private gym in San Antonio. Logged five hundred sessions with general population clients in eighteen months. Learned the difference between a textbook program and one that survives a Tuesday.',
+  },
+  {
+    number: '2020',
+    title: 'CSCS and the Austin move',
+    description:
+      'Earned the Strength & Conditioning Specialist credential from NSCA. Moved to Austin and joined Iron Forge in East Sixth — the kind of warehouse gym where the bars are chalked and the playlist is loud. Built a roster from the ground up.',
+  },
+  {
+    number: 'Today',
+    title: '800 athletes, eight years deep',
+    description:
+      'Coaching out of Iron Forge in person and online athletes nationwide. Programming periodised blocks, running 12-week transformations, coaching small group strength classes. Same approach since day one — assess, program, train, adapt.',
+  },
+];
+
+const credentials = [
+  'NASM Certified Personal Trainer (NASM-CPT) — 2017',
+  'CSCS — Strength & Conditioning Specialist (NSCA), 2020',
+  'ACE Fitness Nutrition Specialist — 2019',
+  'FMS — Functional Movement Screen, Level 2',
+  'Precision Nutrition Level 1 Coach',
+  'CPR / AED / First Aid current',
+];
+
 ---
 
-<Layout title="About Us | Therapist Care">
-  <!-- Hero -->
-  <section class="pt-32 pb-20 bg-gray-950 relative overflow-hidden">
-    <div class="absolute inset-0" style="background: var(--gradient-mesh);"></div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto">
-        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
-          About Us
+<Layout
+  title={`About — ${site.name}`}
+  description={site.description ??
+    "Eight years coaching strength and performance out of Iron Forge in East Austin. NASM-CPT, CSCS, and a long line of athletes who PR'd."}
+  activeIndex={1}
+>
+  <!-- ─── Hero ──────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="hero">
+    <Container className="fc-about-hero">
+      <div class="fc-about-hero__copy">
+        <OverlineText text="About" tone="accent" />
+        <h1 class="fc-about-hero__title">
+          Eight years on the<br />
+          gym floor.<br />
+          <em>Every program</em><br />
+          earned.
         </h1>
-        <p class="text-xl text-gray-400">
-          Learn more about who we are and what we do.
+        <p class="fc-about-hero__lede">
+          I'm Mike Torres. I coach out of Iron Forge in East Austin and run
+          online programming for athletes across Texas and beyond. The work
+          is direct, the lifts are heavy, and the progress is tracked
+          against the only thing that matters — last week.
         </p>
       </div>
-    </div>
-  </section>
-
-  <!-- Story -->
-  <section class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
-        <div>
-          <span class="text-primary font-semibold text-sm uppercase tracking-wider">Our Story</span>
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-6">
-            A commitment to excellence
-          </h2>
-          <div class="space-y-4 text-gray-600">
-            <p>We are passionate about what we do and committed to delivering exceptional results for every client. Our team brings years of experience and dedication to every project.</p>
-            <p>We believe in building lasting relationships with our clients through trust, transparency, and exceptional service.</p>
-          </div>
-        </div>
-        <div class="relative">
-          <img 
-            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600" 
-            alt="Our team"
-            class="rounded-2xl shadow-2xl"
-          />
-        </div>
+      <div class="fc-about-hero__plate" aria-hidden="true">
+        <div class="fc-about-hero__plate-image"></div>
+        <span class="fc-about-hero__stamp">PR &nbsp;·&nbsp; 04.2026</span>
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Values -->
-  <section class="py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Values</h2>
+  <!-- ─── Quote ───────────────────────────────────────────── -->
+  <SectionBlock tone="subtle" padding="compact">
+    <Container className="fc-about-quote">
+      <QuoteBlock
+        quote="The bar doesn't lie. The program is either working, or we change it. Coaching is the discipline of looking honestly at the numbers — and acting on them."
+      />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Stats ───────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="The receipts"
+        title="Eight years, in numbers."
+        align="center"
+      />
+      <StatsRow items={stats} />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Approach ────────────────────────────────────────── -->
+  <SectionBlock id="approach" tone="dark" padding="default">
+    <Container className="fc-about-approach">
+      <div class="fc-about-approach__heading">
+        <OverlineText text="The method" tone="accent" />
+        <h2 class="section-title fc-about-approach__title">
+          Why my programs<br />actually work.
+        </h2>
       </div>
-      <div class="grid md:grid-cols-3 gap-8">
-        
-        <div class="bg-white p-8 rounded-2xl shadow-lg">
-          <div class="text-4xl mb-4">⭐</div>
-          <h3 class="text-xl font-semibold mb-3">Excellence</h3>
-          <p class="text-gray-600">We strive for excellence in everything we do.</p>
-        </div>
-        <div class="bg-white p-8 rounded-2xl shadow-lg">
-          <div class="text-4xl mb-4">🤝</div>
-          <h3 class="text-xl font-semibold mb-3">Trust</h3>
-          <p class="text-gray-600">Building lasting relationships through transparency.</p>
-        </div>
-        <div class="bg-white p-8 rounded-2xl shadow-lg">
-          <div class="text-4xl mb-4">💡</div>
-          <h3 class="text-xl font-semibold mb-3">Innovation</h3>
-          <p class="text-gray-600">Always looking for better ways to serve you.</p>
-        </div>
+      <div class="fc-about-approach__copy">
+        <p>
+          Every program I write is periodised. That means volume rises before
+          intensity, intensity peaks before deload, and deload is scheduled —
+          not an apology for a bad week. The structure is what makes
+          progressive overload safe.
+        </p>
+        <p>
+          The work blends three things. <strong>Strength training</strong> as
+          the spine: squat, hinge, push, pull, brace, four to five days a
+          week. <strong>Conditioning</strong> programmed against the strength
+          work, not bolted on top. <strong>Movement quality</strong> as
+          non-negotiable warm-up: no rep gets coached if the position isn't
+          there yet.
+        </p>
+        <p>
+          We track everything — RPE, weight, reps, video on the heavy lifts.
+          Monthly reviews are built into the program. If the numbers stop
+          moving we change the variable, deliberately. Nothing is by feel.
+        </p>
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- CTA -->
-  <section class="py-24 bg-gray-950">
-    <div class="max-w-4xl mx-auto px-4 text-center">
-      <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">
-        Ready to Get Started?
-      </h2>
-      <p class="text-xl text-gray-400 mb-10">Contact us today and let's talk about how we can help.</p>
-      <a href="/contact" class="btn-gradient inline-flex items-center">
-        Contact Us
-        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-        </svg>
-      </a>
-    </div>
-  </section>
+  <!-- ─── Journey ─────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container className="fc-about-journey">
+      <div class="fc-about-journey__heading">
+        <OverlineText text="The path" />
+        <h2 class="section-title">From linebacker to the floor.</h2>
+      </div>
+      <div class="fc-about-journey__list">
+        {
+          journey.map((j) => (
+            <NumberedFeatureItem
+              number={j.number}
+              title={j.title}
+              description={j.description}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
 
-  <Footer />
+  <!-- ─── Credentials ─────────────────────────────────────── -->
+  <SectionBlock id="credentials" tone="subtle" padding="default">
+    <Container>
+      <SectionHeading
+        label="Credentials"
+        title="Certifications & training."
+        align="center"
+      />
+      <ul class="fc-about-credentials">
+        {
+          credentials.map((c) => (
+            <li class="fc-about-credentials__item">
+              <span class="fc-about-credentials__mark" aria-hidden="true">
+                ▶
+              </span>
+              {c}
+            </li>
+          ))
+        }
+      </ul>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Gallery — inside the gym ────────────────────────── -->
+  <SectionBlock tone="subtle" padding="default" topBorder>
+    <Container className="fc-about-gallery">
+      <GalleryGrid
+        eyebrow={gallery.eyebrow}
+        title={gallery.title}
+        sideNote={gallery.side_note}
+        items={gallery.items}
+      />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── CTA ─────────────────────────────────────────────── -->
+  <SectionBlock tone="dark" padding="default">
+    <Container className="fc-about-cta">
+      <h2 class="fc-about-cta__title">Ready to put the work in?</h2>
+      <p class="fc-about-cta__lede">
+        First trial session is on me. Full assessment, sample workout,
+        plain conversation about what we'd build. Bring your training shoes.
+      </p>
+      <ActionButton
+        href="/contact"
+        label="Book a free trial"
+        variant="primary-light"
+        size="large"
+        className="fs-book-btn"
+      />
+    </Container>
+  </SectionBlock>
 </Layout>
+
+<style>
+  /* Hero */
+  .fc-about-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: center;
+  }
+
+  .fc-about-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.4rem, 5.6vw, 4.6rem);
+    font-weight: var(--fw-headline);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .fc-about-hero__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .fc-about-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    max-width: 56ch;
+  }
+
+  .fc-about-hero__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--bg-dark);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .fc-about-hero__plate-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&h=1100&fit=crop');
+    background-size: cover;
+    background-position: center;
+    filter: contrast(1.08) saturate(0.94);
+  }
+
+  .fc-about-hero__stamp {
+    position: absolute;
+    bottom: 18px;
+    left: 18px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--bg-dark);
+    background: var(--brand-primary);
+    padding: 6px 12px;
+    z-index: 1;
+  }
+
+  /* Quote */
+  .fc-about-quote {
+    max-width: 920px;
+  }
+
+  /* Approach */
+  .fc-about-approach {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 80px;
+  }
+
+  .fc-about-approach__heading {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+  }
+
+  .fc-about-approach__title {
+    color: var(--text-on-dark);
+    margin-top: 16px;
+    max-width: 14ch;
+  }
+
+  .fc-about-approach__copy {
+    display: grid;
+    gap: 24px;
+    max-width: 64ch;
+  }
+
+  .fc-about-approach__copy p {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    color: var(--text-on-dark);
+  }
+
+  .fc-about-approach__copy strong {
+    color: var(--brand-primary);
+    font-weight: var(--fw-semibold);
+  }
+
+  /* Journey */
+  .fc-about-journey {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .fc-about-journey__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .fc-about-journey__heading .section-title {
+    margin-top: 16px;
+    max-width: 14ch;
+  }
+
+  .fc-about-journey__list {
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  /* Credentials */
+  .fc-about-credentials {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 40px;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  .fc-about-credentials__item {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bg-dark);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--surface-subtle-border);
+  }
+
+  .fc-about-credentials__mark {
+    color: var(--brand-primary);
+    font-size: 0.7em;
+    line-height: 1.7;
+  }
+
+  /* Gallery */
+  .fc-about-gallery {
+    max-width: 1200px;
+  }
+
+  /* CTA */
+  .fc-about-cta {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .fc-about-cta__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+    font-weight: var(--fw-headline);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--text-on-dark);
+    margin-bottom: 24px;
+  }
+
+  .fc-about-cta__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    .fc-about-hero,
+    .fc-about-approach,
+    .fc-about-journey {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .fc-about-approach__heading,
+    .fc-about-journey__heading {
+      position: static;
+    }
+
+    .fc-about-credentials {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -2377,6 +2377,16 @@ const en = {
   'landing.faq.headlinePrefix': 'Before you book,',
   'landing.faq.headlineFlourish': 'here is what people ask.',
 
+  // Proof — the shelf
+  'landing.proof.eyebrow': 'The proof',
+  'landing.proof.headlinePrefix': 'Five starters, one live client —',
+  'landing.proof.headlineFlourish': 'all hand-built.',
+  'landing.proof.sub':
+    'Every starter below was hand-coded by us — no Tailwind soup, no AI scaffolding, no template-mart. Click a card to open the full interactive preview at library.flowstarter.net.',
+  'landing.proof.cta': 'Browse the library',
+  'landing.proof.statusLive': 'live',
+  'landing.proof.statusSoon': 'in development',
+
   // Audience — editorial redesign
   'landing.audience.eyebrow': "Who it's for",
   'landing.audience.headlinePrefix': 'Built for service professionals',

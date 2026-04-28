@@ -1,0 +1,353 @@
+---
+/**
+ * CalBookingBlock — inline Cal.com booking embed with hand-built framing.
+ *
+ * Usage: <CalBookingBlock calLink="ux-journey/intro" eventLabel="30-min intro call" />
+ *
+ * - calLink is the path after cal.com/, e.g. "yourname/30min" or "team/discovery".
+ * - When calLink is omitted, the component renders a tasteful "configure me"
+ *   placeholder with a link to cal.com so the template stays demo-friendly.
+ * - The embed loads lazily (script attached on first user gesture or after 3s
+ *   idle) so the home-page LCP isn't blown out by the Cal bundle.
+ * - Falls back to an iframe in the no-JS case, which Cal supports via
+ *   /embed/<calLink>?layout=month_view.
+ */
+interface Props {
+  calLink?: string;
+  eventLabel?: string;
+  title?: string;
+  subtitle?: string;
+  durationLabel?: string;
+  ctaFallbackLabel?: string;
+  layout?: 'month_view' | 'week_view' | 'column_view';
+  brandColor?: string;
+  className?: string;
+  /** Show the Cal widget inline (default) or as a centered button modal hint. */
+  variant?: 'inline' | 'cta';
+}
+
+const {
+  calLink,
+  eventLabel = 'Book a call',
+  title = 'Pick a time that works.',
+  subtitle = 'A short call to see if we are a fit. No pressure, no follow-up sequence.',
+  durationLabel = '30 minutes · video · free',
+  ctaFallbackLabel = 'Open booking page',
+  layout = 'month_view',
+  brandColor = 'var(--brand-primary)',
+  className = '',
+  variant = 'inline',
+} = Astro.props;
+
+const hasCal = typeof calLink === 'string' && calLink.length > 0;
+const calIframeSrc = hasCal
+  ? `https://cal.com/${calLink}/embed?layout=${layout}&theme=light`
+  : null;
+const calOpenUrl = hasCal ? `https://cal.com/${calLink}` : 'https://cal.com';
+---
+
+<section class={`ds-cal-booking ds-cal-booking--${variant} ${className}`.trim()} data-cal-link={calLink ?? ''}>
+  <header class="ds-cal-booking__head">
+    <span class="ds-cal-booking__eyebrow">Book directly</span>
+    <h2 class="ds-cal-booking__title">{title}</h2>
+    <p class="ds-cal-booking__subtitle">{subtitle}</p>
+    <p class="ds-cal-booking__meta">{durationLabel}</p>
+  </header>
+
+  {
+    hasCal && variant === 'inline' && (
+      <div class="ds-cal-booking__embed" data-cal-mount>
+        {/* Initial paint = noscript-friendly iframe; once Cal JS attaches it
+         * upgrades the experience without a layout shift. */}
+        <iframe
+          src={calIframeSrc}
+          title={`${eventLabel} — Cal.com booking`}
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="payment; fullscreen *"
+        />
+      </div>
+    )
+  }
+
+  {
+    hasCal && variant === 'cta' && (
+      <div class="ds-cal-booking__cta-row">
+        <button
+          type="button"
+          class="ds-cal-booking__cta"
+          data-cal-trigger
+          data-cal-link={calLink}
+          data-cal-namespace=""
+          data-cal-config={`{"layout":"${layout}","theme":"light"}`}
+        >
+          {eventLabel}
+          <span aria-hidden="true">→</span>
+        </button>
+        <a class="ds-cal-booking__open" href={calOpenUrl} target="_blank" rel="noreferrer">
+          {ctaFallbackLabel}
+        </a>
+      </div>
+    )
+  }
+
+  {
+    !hasCal && (
+      <div class="ds-cal-booking__placeholder" role="note">
+        <p class="ds-cal-booking__placeholder-title">Cal.com not configured</p>
+        <p class="ds-cal-booking__placeholder-body">
+          Drop your Cal.com handle in <code>content/integrations/booking.md</code> →
+          <code>cal_link</code> (e.g. <code>yourname/30min</code>) and the
+          live calendar will mount here automatically.
+        </p>
+        <a class="ds-cal-booking__open" href="https://cal.com" target="_blank" rel="noreferrer">
+          Get a Cal.com handle ↗
+        </a>
+      </div>
+    )
+  }
+</section>
+
+{
+  hasCal && (
+    <script
+      is:inline
+      define:vars={{ calLink, brandColor: brandColor as string, layout }}
+    >
+      // Lazy-load Cal.com embed.js after first idle / first gesture so the
+      // initial page render isn't blocked by ~50KB of third-party JS.
+      (function () {
+        let loaded = false;
+        function load() {
+          if (loaded) return;
+          loaded = true;
+          (function (C, A, L) {
+            let p = function (a, ar) {
+              a.q.push(ar);
+            };
+            let d = C.document;
+            // @ts-ignore
+            C.Cal =
+              C.Cal ||
+              function () {
+                let cal = C.Cal;
+                let ar = arguments;
+                if (!cal.loaded) {
+                  cal.ns = {};
+                  cal.q = cal.q || [];
+                  d.head.appendChild(d.createElement('script')).src = A;
+                  cal.loaded = true;
+                }
+                if (ar[0] === L) {
+                  const api = function () {
+                    p(api, arguments);
+                  };
+                  const namespace = ar[1];
+                  api.q = api.q || [];
+                  if (typeof namespace === 'string') {
+                    cal.ns[namespace] = cal.ns[namespace] || api;
+                    p(cal.ns[namespace], ar);
+                    p(cal, ['initNamespace', namespace]);
+                  } else p(cal, ar);
+                  return;
+                }
+                p(cal, ar);
+              };
+          })(window, 'https://app.cal.com/embed/embed.js', 'init');
+          // @ts-ignore
+          window.Cal('init', { origin: 'https://cal.com' });
+          // @ts-ignore
+          window.Cal('inline', {
+            elementOrSelector: '[data-cal-mount]',
+            calLink: calLink,
+            layout: layout,
+            config: { theme: 'light' },
+          });
+          // @ts-ignore
+          window.Cal('ui', {
+            theme: 'light',
+            styles: { branding: { brandColor: brandColor } },
+            hideEventTypeDetails: false,
+          });
+        }
+        if ('requestIdleCallback' in window) {
+          // @ts-ignore
+          window.requestIdleCallback(load, { timeout: 3000 });
+        } else {
+          setTimeout(load, 1500);
+        }
+        ['pointerdown', 'keydown', 'touchstart'].forEach((evt) =>
+          window.addEventListener(evt, load, { once: true, passive: true }),
+        );
+      })();
+    </script>
+  )
+}
+
+<style>
+  .ds-cal-booking {
+    display: grid;
+    gap: 36px;
+    padding: 48px;
+    background: var(--surface-base);
+    border: 1px solid var(--surface-subtle-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .ds-cal-booking--cta {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 56px;
+  }
+
+  .ds-cal-booking__eyebrow {
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: var(--brand-primary);
+  }
+
+  .ds-cal-booking__title {
+    font-family: var(--font-title);
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-headline);
+    text-transform: var(--title-text-transform, uppercase);
+    letter-spacing: var(--title-tracking, -0.02em);
+    line-height: var(--title-line-height, 1.05);
+    color: var(--bg-dark);
+    margin: 14px 0 12px;
+    max-width: 22ch;
+  }
+
+  .ds-cal-booking__subtitle {
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--text-muted);
+    max-width: 56ch;
+  }
+
+  .ds-cal-booking__meta {
+    margin-top: 14px;
+    font-family: var(--font-accent, var(--font-title));
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-muted);
+  }
+
+  .ds-cal-booking__embed {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--surface-subtle-border);
+  }
+
+  .ds-cal-booking__embed > iframe {
+    display: block;
+    width: 100%;
+    height: 720px;
+    min-height: 600px;
+    border: 0;
+  }
+
+  .ds-cal-booking__cta-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+    text-align: right;
+  }
+
+  .ds-cal-booking__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 28px;
+    border: 0;
+    cursor: pointer;
+    background: var(--brand-primary);
+    color: var(--bg-dark);
+    font-family: var(--font-button);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    transition:
+      transform var(--transition),
+      background-color var(--transition);
+  }
+
+  .ds-cal-booking__cta:hover {
+    transform: translateY(-2px);
+    background: var(--bg-dark);
+    color: var(--text-on-dark);
+  }
+
+  .ds-cal-booking__open {
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+
+  .ds-cal-booking__open:hover {
+    color: var(--bg-dark);
+  }
+
+  .ds-cal-booking__placeholder {
+    border-top: 1px dashed var(--surface-subtle-border);
+    padding-top: 28px;
+    display: grid;
+    gap: 8px;
+  }
+
+  .ds-cal-booking__placeholder-title {
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--brand-primary);
+  }
+
+  .ds-cal-booking__placeholder-body {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  .ds-cal-booking__placeholder-body code {
+    font-family: var(--font-mono);
+    font-size: 0.95em;
+    background: var(--surface-subtle);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .ds-cal-booking {
+      padding: 28px;
+      border-radius: var(--radius-md);
+    }
+    .ds-cal-booking--cta {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .ds-cal-booking__cta-row {
+      align-items: stretch;
+      text-align: left;
+    }
+    .ds-cal-booking__cta {
+      justify-content: center;
+      width: 100%;
+    }
+    .ds-cal-booking__embed > iframe {
+      height: 560px;
+    }
+  }
+</style>

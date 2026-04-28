@@ -1,0 +1,162 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import PricingCard from '../../../shared/dorin-ds/components/PricingCard.astro';
+import QuoteBlock from '../../../shared/dorin-ds/components/QuoteBlock.astro';
+import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
+import { frontmatter as siteData } from '../../content/site.md';
+import { frontmatter as pricingData } from '../../content/pricing.md';
+import { frontmatter as bookingData } from '../../content/integrations/booking.md';
+
+interface SiteContent { name?: string; description?: string }
+interface PricingPlan {
+  name: string;
+  price: number | string;
+  period: string;
+  description: string;
+  features: string[];
+  cta: string;
+  popular?: boolean;
+}
+interface PricingContent {
+  title?: string;
+  subtitle?: string;
+  plans?: PricingPlan[];
+  guarantee?: string;
+}
+interface BookingContent {
+  cal_link?: string;
+  cal_event_label?: string;
+  cal_duration_label?: string;
+  cal_layout?: 'month_view' | 'week_view' | 'column_view';
+  title?: string;
+  description?: string;
+}
+
+const site = siteData as SiteContent;
+const pricing = pricingData as PricingContent;
+const booking = bookingData as BookingContent;
+
+const plans = (pricing.plans ?? []).map((p) => ({
+  name: p.name,
+  price: `$${p.price}`,
+  cadence: p.period,
+  description: p.description,
+  features: p.features,
+  ctaLabel: p.cta,
+  ctaHref: '/contact',
+  featured: !!p.popular,
+}));
+
+const siteName = site.name ?? 'James Parker Coaching';
+const siteDescription =
+  site.description ??
+  'Executive, business, and life coaching for ambitious professionals.';
+---
+
+<Layout
+  title={`Pricing — ${siteName}`}
+  description={siteDescription}
+  activeIndex={1}
+>
+  <!-- ─── Hero ──────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="hero">
+    <Container className="cp-pricing-hero">
+      <OverlineText text="Pricing" tone="accent" />
+      <h1 class="cp-pricing-hero__title">{pricing.title ?? 'Investment'}</h1>
+      <p class="cp-pricing-hero__lede">{pricing.subtitle ?? ''}</p>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Plans grid ────────────────────────────────────── -->
+  <SectionBlock id="plans" tone="light" padding="default" topBorder>
+    <Container>
+      <div class="cp-pricing-grid">
+        {plans.map((p) => <PricingCard {...p} />)}
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Guarantee ─────────────────────────────────────── -->
+  {
+    pricing.guarantee && (
+      <SectionBlock tone="accent-light" padding="compact" topBorder>
+        <Container className="cp-pricing-guarantee">
+          <OverlineText text="The guarantee" />
+          <QuoteBlock quote={pricing.guarantee} />
+        </Container>
+      </SectionBlock>
+    )
+  }
+
+  <!-- ─── Booking CTA ───────────────────────────────────── -->
+  <SectionBlock tone="dark" padding="default">
+    <Container className="cp-pricing-cta">
+      <CalBookingBlock
+        variant="cta"
+        calLink={booking.cal_link}
+        eventLabel={booking.cal_event_label}
+        title={booking.title}
+        subtitle={booking.description}
+        durationLabel={booking.cal_duration_label}
+        layout={booking.cal_layout}
+      />
+    </Container>
+  </SectionBlock>
+</Layout>
+
+<style>
+  .cp-pricing-hero {
+    max-width: 880px;
+  }
+
+  .cp-pricing-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .cp-pricing-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--text-primary);
+    max-width: 60ch;
+  }
+
+  .cp-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .cp-pricing-guarantee {
+    display: grid;
+    gap: 18px;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .cp-pricing-guarantee .ds-quote-block {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .cp-pricing-cta {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 1024px) {
+    .cp-pricing-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

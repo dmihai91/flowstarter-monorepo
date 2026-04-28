@@ -1,0 +1,145 @@
+---
+interface TitleLine {
+  text: string;
+  accent?: string;
+}
+
+interface Props {
+  as?: 'h1' | 'h2' | 'h3';
+  lines: TitleLine[];
+  className?: string;
+  size?: 'display' | 'h1' | 'h2';
+  centered?: boolean;
+  autoplay?: boolean;
+}
+
+const {
+  as = 'h1',
+  lines = [],
+  className = '',
+  size = 'display',
+  centered = false,
+  autoplay = true,
+} = Astro.props;
+const Tag = as;
+const splitWords = (value = '') => value.split(' ').filter(Boolean);
+let wordIndex = 0;
+---
+
+<Tag
+  class={`ds-awt ds-awt--${size} ${autoplay ? 'ds-awt--autoplay' : ''} ${centered ? 'ds-awt--centered' : ''} ${className}`.trim()}
+>
+  {
+    lines.map((line) => (
+      <span class="ds-awt__line">
+        {splitWords(line.text).map((word) => {
+          const delay = wordIndex * 70;
+          wordIndex += 1;
+          return (
+            <span class="ds-awt__word" style={`--word-delay:${delay}ms;`}>
+              {word}
+            </span>
+          );
+        })}
+        {splitWords(line.accent ?? '').map((word) => {
+          const delay = wordIndex * 70;
+          wordIndex += 1;
+          return (
+            <span
+              class="ds-awt__word ds-awt__word--accent"
+              style={`--word-delay:${delay}ms;`}
+            >
+              {word}
+            </span>
+          );
+        })}
+      </span>
+    ))
+  }
+</Tag>
+
+<style>
+  .ds-awt {
+    text-transform: var(--title-text-transform, uppercase);
+    color: var(--bg-dark);
+    line-height: var(--title-line-height, 1);
+    font-family: var(--font-title);
+    font-weight: var(--fw-headline);
+    letter-spacing: var(--title-tracking, -0.03em);
+  }
+
+  .ds-awt__word--accent {
+    font-style: italic;
+  }
+  /* Italic-as-accent reads great with Fraunces / Cormorant; keep upright in
+   * grotesks so the Coach / Fitness / Freelancer wordmarks don't slant. */
+  [data-template='coach-pro'] .ds-awt__word--accent,
+  [data-template='fitness-coach'] .ds-awt__word--accent,
+  [data-template='freelancer-portfolio'] .ds-awt__word--accent {
+    font-style: normal;
+  }
+
+  .ds-awt--display {
+    font-size: var(--fs-display);
+  }
+  .ds-awt--h1 {
+    font-size: var(--fs-h1);
+  }
+  .ds-awt--h2 {
+    font-size: var(--fs-h2);
+  }
+
+  .ds-awt__line {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.22em;
+    line-height: 1.05;
+  }
+
+  .ds-awt--centered .ds-awt__line {
+    justify-content: center;
+  }
+
+  .ds-awt__word {
+    display: inline-block;
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--word-delay, 0ms);
+    will-change: transform, opacity;
+  }
+
+  .ds-awt__word--accent {
+    color: var(--brand-primary);
+    font-style: inherit;
+  }
+
+  .ds-awt--autoplay .ds-awt__word {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: ds-awt-enter 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--word-delay, 0ms);
+  }
+
+  @keyframes ds-awt-enter {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-awt__word {
+      opacity: 1;
+      transform: none;
+      animation: none;
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+interface Props {
+  step: string;
+  title: string;
+  description: string;
+  className?: string;
+}
+
+const { step, title, description, className = '' } = Astro.props;
+---
+
+<article class={`ds-process-step ${className}`.trim()}>
+  <span class="ds-process-step__step">{step}</span>
+  <h3 class="ds-process-step__title">{title}</h3>
+  <p class="ds-process-step__desc">{description}</p>
+</article>
+
+<style>
+  .ds-process-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 32px 24px 28px;
+    background: var(--surface-base);
+    border: 1px solid var(--surface-subtle-border);
+    border-radius: var(--radius-md);
+    transition:
+      border-color var(--transition),
+      transform var(--transition);
+  }
+
+  .ds-process-step:hover {
+    border-color: var(--bg-dark);
+    transform: translateY(-4px);
+  }
+
+  .ds-process-step__step {
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--brand-primary);
+  }
+
+  .ds-process-step__title {
+    font-size: var(--fs-h4);
+    font-weight: var(--fw-semibold);
+    color: var(--bg-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.15;
+  }
+
+  .ds-process-step__desc {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+</style>

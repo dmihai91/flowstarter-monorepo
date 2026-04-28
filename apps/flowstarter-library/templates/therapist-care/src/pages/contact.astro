@@ -1,138 +1,388 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Footer from '../components/Footer.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ContactCard from '../../../shared/dorin-ds/components/ContactCard.astro';
+import FormField from '../../../shared/dorin-ds/components/FormField.astro';
+import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
+import { frontmatter as bookingData } from '../../content/integrations/booking.md';
+
+interface BookingContent {
+  enabled?: boolean;
+  cal_link?: string;
+  cal_event_label?: string;
+  cal_duration_label?: string;
+  cal_layout?: 'month_view' | 'week_view' | 'column_view';
+  title?: string;
+  description?: string;
+}
+
+const bookingFm = bookingData as BookingContent;
+const showBooking = bookingFm.enabled !== false;
 ---
 
-<Layout title="Contact Us | Therapist Care">
-  <!-- Hero -->
-  <section class="pt-32 pb-12 bg-gray-950">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-3xl mx-auto">
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
-          Get in Touch
-        </h1>
-        <p class="text-xl text-gray-400">
-          We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+<Layout
+  title="Contact — Sarah Mitchell, LMFT"
+  description="Schedule a free 20-minute consultation. Confidential, unhurried, with no pressure to commit."
+  activeIndex={3}
+>
+  <!-- ─── Hero ──────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="hero">
+    <Container className="tc-contact-hero">
+      <OverlineText text="Get in touch" tone="accent" />
+      <h1 class="tc-contact-hero__title">
+        A first conversation,<br />
+        <em>quietly held</em>.
+      </h1>
+      <p class="tc-contact-hero__lede">
+        The first step is a free 20-minute phone consultation —
+        confidential, unhurried, and with no pressure to commit. Tell me
+        what is going on, and we can see together whether this feels
+        like the right room for the work.
+      </p>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Direct booking ──────────────────────────────────── -->
+  {
+    showBooking && (
+      <SectionBlock tone="subtle" padding="default" topBorder>
+        <Container>
+          <CalBookingBlock
+            variant="inline"
+            calLink={bookingFm.cal_link}
+            eventLabel={bookingFm.cal_event_label}
+            title={bookingFm.title}
+            subtitle={bookingFm.description}
+            durationLabel={bookingFm.cal_duration_label}
+            layout={bookingFm.cal_layout}
+          />
+        </Container>
+      </SectionBlock>
+    )
+  }
+
+  <!-- ─── Contact (form + info) ───────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container className="tc-contact-grid">
+      <div class="tc-contact-grid__form-col">
+        <h2 class="tc-contact-grid__form-title">Schedule a consultation</h2>
+        <p class="tc-contact-grid__form-lede">
+          Share as much or as little as feels comfortable. I respond
+          personally within one business day, and everything you write
+          here is kept strictly confidential.
         </p>
-      </div>
-    </div>
-  </section>
 
-  <!-- Contact Form & Info -->
-  <section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid lg:grid-cols-2 gap-16">
-        <!-- Contact Form -->
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
-          <form class="space-y-6">
-            <div class="grid md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                <input 
-                  type="text" 
-                  class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                  placeholder="John"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                <input 
-                  type="text" 
-                  class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                  placeholder="Doe"
-                />
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input 
-                type="email" 
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                placeholder="john@example.com"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Phone (optional)</label>
-              <input 
-                type="tel" 
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                placeholder="(555) 123-4567"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-              <textarea 
-                rows="5" 
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
-                placeholder="How can we help you?"
-              ></textarea>
-            </div>
-            <button type="submit" class="btn-gradient w-full">
-              Send Message
-            </button>
-          </form>
+        <div
+          id="form-success"
+          class="tc-contact-grid__alert tc-contact-grid__alert--success"
+          hidden
+        >
+          Thank you — I'll respond within 24 hours.
+        </div>
+        <div
+          id="form-error"
+          class="tc-contact-grid__alert tc-contact-grid__alert--error"
+          hidden
+        >
+          Something went wrong. Please try again or email me directly.
         </div>
 
-        <!-- Contact Info -->
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
-          <div class="space-y-6">
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900">Address</h3>
-                <p class="text-gray-600">123 Main Street<br/>Your City, ST 12345</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900">Phone</h3>
-                <p class="text-gray-600">(555) 123-4567</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900">Email</h3>
-                <p class="text-gray-600">hello@example.com</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900">Hours</h3>
-                <p class="text-gray-600">Mon-Fri: 9am - 6pm<br/>Sat: 10am - 4pm<br/>Sun: Closed</p>
-              </div>
-            </div>
+        <form
+          id="contact-form"
+          data-contact-form
+          data-success-message="Thank you — I'll respond within 24 hours, all communications are confidential."
+          class="tc-contact-grid__form"
+        >
+          <input type="hidden" name="_template" value="" />
+          <input type="hidden" name="_source" value="" />
+
+          <div class="tc-contact-grid__row">
+            <FormField
+              type="text"
+              name="firstName"
+              label="First name"
+              placeholder="Your first name"
+              required
+            />
+            <FormField
+              type="text"
+              name="lastName"
+              label="Last name"
+              placeholder="Your last name"
+              required
+            />
           </div>
 
-          <!-- Map placeholder -->
-          <div class="mt-8 h-64 bg-gray-200 rounded-xl flex items-center justify-center">
-            <p class="text-gray-500">Map Integration</p>
-          </div>
-        </div>
+          <FormField
+            type="email"
+            name="email"
+            label="Email"
+            placeholder="you@example.com"
+            required
+          />
+
+          <FormField
+            type="tel"
+            name="phone"
+            label="Phone (optional)"
+            placeholder="(415) 555-0184"
+          />
+
+          <FormField
+            type="textarea"
+            name="message"
+            label="What brings you in?"
+            placeholder="A few sentences about what is going on, what you have already tried, and what you are hoping for. There is nothing to prepare."
+            required
+          />
+
+          <button type="submit" class="tc-contact-grid__submit">
+            Request consultation
+          </button>
+
+          <p class="tc-contact-grid__note">
+            Strictly confidential. You will hear back within one business day.
+          </p>
+        </form>
       </div>
-    </div>
-  </section>
 
-  <Footer />
+      <aside class="tc-contact-grid__info-col">
+        <h3 class="tc-contact-grid__info-title">Or reach out directly</h3>
+        <div class="tc-contact-grid__info-cards">
+          <ContactCard
+            label="Email"
+            value="hello@sarahmitchell-lmft.com"
+            href="mailto:hello@sarahmitchell-lmft.com"
+            hint="Replies within one business day, kept strictly confidential"
+          />
+          <ContactCard
+            label="Phone"
+            value="(415) 555-0184"
+            href="tel:+14155550184"
+            hint="Mon–Thu, 9am–5pm PT — voicemail returned the same day"
+          />
+          <ContactCard
+            label="Office"
+            value="San Francisco, CA"
+            hint="248 California Street, Suite 500 — in-person sessions by appointment, telehealth across California"
+          />
+        </div>
+
+        <div class="tc-contact-grid__hours">
+          <span class="tc-contact-grid__hours-label">Practice hours</span>
+          <ul class="tc-contact-grid__hours-list">
+            <li><span>Mon — Thu</span><span>9:00 — 17:00 PT</span></li>
+            <li><span>Friday</span><span>By appointment</span></li>
+            <li><span>Sat — Sun</span><span>Closed</span></li>
+          </ul>
+        </div>
+
+        <p class="tc-contact-grid__crisis">
+          <strong>If you are in crisis</strong>, please don't wait for
+          email — call or text 988 (Suicide &amp; Crisis Lifeline) or
+          dial 911. I respond as quickly as I can, but this form is not
+          monitored continuously.
+        </p>
+      </aside>
+    </Container>
+  </SectionBlock>
 </Layout>
+
+<style>
+  .tc-contact-hero {
+    max-width: 880px;
+  }
+
+  .tc-contact-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.4rem, 5.6vw, 4.6rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .tc-contact-hero__title em {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .tc-contact-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.6;
+    max-width: 62ch;
+  }
+
+  .tc-contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
+  }
+
+  .tc-contact-grid__form-title {
+    font-family: var(--font-title);
+    font-size: var(--fs-h3);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--bg-dark);
+    margin-bottom: 16px;
+  }
+
+  .tc-contact-grid__form-lede {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: 32px;
+    max-width: 56ch;
+  }
+
+  .tc-contact-grid__form {
+    display: grid;
+    gap: 20px;
+  }
+
+  .tc-contact-grid__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .tc-contact-grid__alert {
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-small);
+    margin-bottom: 24px;
+  }
+
+  .tc-contact-grid__alert[hidden] {
+    display: none;
+  }
+
+  .tc-contact-grid__alert--success {
+    background: var(--surface-brand-glow);
+    color: var(--bg-dark);
+    border: 1px solid var(--brand-primary);
+  }
+
+  .tc-contact-grid__alert--error {
+    background: rgba(220, 80, 80, 0.12);
+    color: #8a2a2a;
+    border: 1px solid rgba(220, 80, 80, 0.32);
+  }
+
+  .tc-contact-grid__submit {
+    margin-top: 8px;
+    padding: 18px 32px;
+    font-family: var(--font-button);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: var(--bg-dark);
+    color: var(--text-on-dark);
+    border: 1px solid var(--bg-dark);
+    transition: opacity var(--transition);
+  }
+
+  .tc-contact-grid__submit:hover {
+    opacity: 0.85;
+  }
+
+  .tc-contact-grid__note {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .tc-contact-grid__info-title {
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .tc-contact-grid__info-cards {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .tc-contact-grid__hours {
+    padding: 28px 24px;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+    margin-bottom: 24px;
+  }
+
+  .tc-contact-grid__hours-label {
+    display: block;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .tc-contact-grid__hours-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .tc-contact-grid__hours-list li {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bg-dark);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--surface-subtle-border);
+  }
+
+  .tc-contact-grid__hours-list li:last-child {
+    border-bottom: none;
+  }
+
+  .tc-contact-grid__crisis {
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--text-muted);
+    padding: 18px 20px;
+    border-left: 2px solid var(--brand-primary);
+    background: var(--surface-brand-glow);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  .tc-contact-grid__crisis strong {
+    color: var(--bg-dark);
+    font-weight: var(--fw-semibold);
+  }
+
+  @media (max-width: 1024px) {
+    .tc-contact-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .tc-contact-grid__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,94 @@
+---
+interface Props {
+  number: string;
+  title: string;
+  description: string;
+  className?: string;
+}
+
+const { number, title, description, className = '' } = Astro.props;
+---
+
+<div class={`ds-numbered-feature ${className}`.trim()}>
+  <span class="ds-numbered-feature__number">{number}</span>
+  <div class="ds-numbered-feature__content">
+    <h3 class="ds-numbered-feature__title">{title}</h3>
+    <p class="ds-numbered-feature__desc">{description}</p>
+  </div>
+</div>
+
+<style>
+  .ds-numbered-feature {
+    display: flex;
+    gap: 32px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--surface-subtle-border);
+    align-items: flex-start;
+  }
+
+  .ds-numbered-feature__number {
+    font-family: var(--font-title);
+    font-size: var(--fs-h4);
+    color: var(--brand-primary);
+    font-weight: var(--fw-semibold);
+    min-width: 56px;
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .ds-numbered-feature__content {
+    flex: 1;
+    filter: blur(3px);
+    opacity: 0.72;
+    transition:
+      filter 260ms ease,
+      opacity 260ms ease,
+      transform 260ms ease;
+    transform: translateX(0);
+  }
+
+  .ds-numbered-feature:hover .ds-numbered-feature__content,
+  .ds-numbered-feature:focus-within .ds-numbered-feature__content {
+    filter: blur(0);
+    opacity: 1;
+    transform: translateX(8px);
+  }
+
+  .ds-numbered-feature__title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    line-height: 1.15;
+  }
+
+  .ds-numbered-feature__desc {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-numbered-feature__content {
+      transition: none;
+      transform: none;
+      filter: none;
+      opacity: 1;
+    }
+    .ds-numbered-feature:hover .ds-numbered-feature__content {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .ds-numbered-feature {
+      gap: 20px;
+      padding: 24px 0;
+    }
+    .ds-numbered-feature__number {
+      min-width: 36px;
+      font-size: var(--fs-h5);
+    }
+  }
+</style>

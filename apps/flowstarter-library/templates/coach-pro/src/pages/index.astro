@@ -1,383 +1,673 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import ServiceCard from '../../../shared/dorin-ds/components/ServiceCard.astro';
+import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
+import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
+import TestimonialBlock from '../../../shared/dorin-ds/components/TestimonialBlock.astro';
+import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
+import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
+import HeroIntro from '../../../shared/dorin-ds/components/HeroIntro.astro';
+import VideoBlock from '../../../shared/dorin-ds/components/VideoBlock.astro';
+import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
+import { frontmatter as heroData } from '../../content/hero.md';
+import { frontmatter as servicesData } from '../../content/services.md';
+import { frontmatter as testimonialsData } from '../../content/testimonials.md';
+import { frontmatter as videoData } from '../../content/video.md';
+import { frontmatter as bookingData } from '../../content/integrations/booking.md';
 
-interface Service {
-  icon: string;
+interface HeroStat { value: string; label: string }
+interface HeroContent { stats?: HeroStat[] }
+interface ServiceItem { icon: string; title: string; description: string; price: string }
+interface ServicesContent { services?: ServiceItem[] }
+interface TestimonialItem { quote: string; author: string; role: string; result: string }
+interface TestimonialsContent { testimonials?: TestimonialItem[] }
+interface VideoContent {
+  eyebrow?: string;
   title: string;
-  description: string;
-  price: string;
+  duration?: string;
+  caption?: string;
+  poster?: string;
+  src: string;
+  aspect?: '21/9' | '16/9' | '4/3' | '1/1';
+}
+interface BookingContent {
+  cal_link?: string;
+  cal_event_label?: string;
+  cal_duration_label?: string;
+  cal_layout?: 'month_view' | 'week_view' | 'column_view';
+  title?: string;
+  description?: string;
 }
 
-interface Approach {
-  title: string;
-  description: string;
-}
+const hero = heroData as HeroContent;
+const servicesContent = servicesData as ServicesContent;
+const testimonialsContent = testimonialsData as TestimonialsContent;
+const video = videoData as VideoContent;
+const booking = bookingData as BookingContent;
 
-interface Testimonial {
-  quote: string;
-  author: string;
-  role: string;
-  result: string;
-}
+// Map .md hero stats (value/label) to StatsRow's expected (number/label) shape.
+const heroStats = (hero.stats ?? []).map((s) => ({
+  number: s.value,
+  label: s.label,
+}));
 
-interface FAQ {
-  question: string;
-  answer: string;
-}
-
-interface Credential {
-  text: string;
-}
-
-const services: Service[] = [
-  { icon: "lucide:crown", title: "Executive Coaching", description: "High-impact 1-on-1 coaching for C-suite leaders. Navigate high-stakes decisions, strengthen executive presence, and lead with vision and purpose.", price: "$500/session" },
-  { icon: "lucide:briefcase", title: "Business Coaching", description: "Scale your business with confidence. Strategic planning, leadership development, and accountability frameworks for entrepreneurs and founders.", price: "$350/session" },
-  { icon: "lucide:heart", title: "Life Coaching", description: "Gain clarity on your purpose, break through limiting beliefs, and design a life that truly fulfills you. Personal growth starts here.", price: "$200/session" },
-  { icon: "lucide:graduation-cap", title: "Career Coaching", description: "Navigate career transitions, land promotions, and build a career aligned with your values. From pivot to purpose with clarity and confidence.", price: "$200/session" },
-  { icon: "lucide:users", title: "Group Mastermind", description: "Accelerate growth with peer accountability. Monthly group sessions with like-minded professionals for collective breakthroughs.", price: "$150/month" },
-  { icon: "lucide:sparkles", title: "Intensive Programs", description: "90-day transformation programs with weekly sessions, structured milestones, and deep accountability. For clients ready for rapid, lasting change.", price: "Custom pricing" },
-];
-
-const approach: Approach[] = [
-  { title: "Goal Clarity", description: "We start by getting crystal clear on what you truly want. Through deep inquiry and assessment, we define your vision, identify obstacles, and create a compelling roadmap for your transformation." },
-  { title: "Accountability Framework", description: "I provide structured accountability that keeps you on track. Weekly check-ins, progress tracking, and honest feedback ensure you follow through on your commitments and stay aligned with your goals." },
-  { title: "Mindset Mastery", description: "We identify and rewire the limiting beliefs, patterns, and stories that hold you back. Through proven cognitive techniques, you develop an empowered mindset that supports lasting change." },
-  { title: "Action Planning", description: "Every session ends with clear, actionable next steps. We break big goals into manageable milestones, so you always know exactly what to do next to move forward with confidence." },
-];
-
-const testimonials: Testimonial[] = [
-  { quote: "I was stuck in a career that drained me for years. Within 6 months of working with James, I had the clarity to make my move, landed my dream role, and negotiated a 40% salary increase. The ROI was incredible.", author: "Rachel T.", role: "Senior Product Director", result: "Career pivot + 40% raise" },
-  { quote: "As a first-time founder, I was making decisions from fear and uncertainty. Business coaching helped me develop a clear growth strategy, set boundaries, and scale from $80K to $600K in revenue within 18 months.", author: "Marcus D.", role: "Tech Startup Founder", result: "7x revenue growth" },
-  { quote: "Executive coaching transformed how I lead. I went from burning out and micromanaging to delegating effectively and leading with purpose. My team engagement scores are up 35%, and I actually enjoy my work again.", author: "Christine W.", role: "VP of Operations", result: "Sustainable leadership transformation" },
-];
-
-const faqs: FAQ[] = [
-  { question: "What happens in a typical coaching session?", answer: "Each session begins with a check-in on your progress since our last meeting. We then dive into the key challenges or opportunities you are facing, using targeted questions and exercises to create breakthroughs. Every session ends with clear action items and accountability commitments. Sessions are 60 minutes and conducted via video call or in person." },
-  { question: "How often should I have coaching sessions?", answer: "Most clients see the best results with weekly or bi-weekly sessions. Weekly sessions create stronger momentum and faster results, while bi-weekly works well for maintenance and ongoing development. We will determine the right cadence based on your goals and schedule during our discovery call." },
-  { question: "What is the ROI of coaching?", answer: "The International Coaching Federation reports that 86% of companies that invested in coaching saw a positive ROI. My clients typically report outcomes like salary increases of 20-50%, revenue growth, improved leadership effectiveness, better work-life balance, and greater clarity and confidence in decision-making." },
-  { question: "Do you offer virtual coaching sessions?", answer: "Absolutely. The majority of my clients work with me virtually via secure video calls. Virtual coaching is just as effective as in-person sessions and offers the flexibility to work together regardless of location. I also offer in-person sessions in Austin, TX for local clients." },
-  { question: "How is coaching different from therapy?", answer: "While therapy typically focuses on healing past wounds and addressing mental health concerns, coaching is future-focused and action-oriented. Coaching assumes you are resourceful and capable, and helps you bridge the gap between where you are and where you want to be. I focus on goals, performance, accountability, and creating measurable results." },
-];
-
-const credentials: string[] = [
-  "ICF Professional Certified Coach (PCC)",
-  "Certified Executive Coach - Columbia University",
-  "MBA, Harvard Business School",
-  "12+ Years Coaching Experience",
-];
-const iconBodies: Record<string, string> = {
-  'lucide:briefcase': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></g>',
-  'lucide:crown': '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294zM5 21h14"/>',
-  'lucide:graduation-cap': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0zM22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></g>',
-  'lucide:heart': '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676a.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/>',
-  'lucide:sparkles': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594zM20 2v4m2-2h-4"/><circle cx="4" cy="20" r="2"/></g>',
-  'lucide:users': '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3.128a4 4 0 0 1 0 7.744M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></g>',
+// Inline SVG strings for each `lucide:*` icon name referenced in services.md.
+// Kept here (not in the .md) so authors can edit copy without touching markup.
+const lucideIcons: Record<string, string> = {
+  'lucide:crown':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294zM5 21h14"/></svg>',
+  'lucide:briefcase':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>',
+  'lucide:heart':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676a.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>',
+  'lucide:graduation-cap':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0zM22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>',
+  'lucide:users':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3.128a4 4 0 0 1 0 7.744M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>',
+  'lucide:sparkles':
+    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594zM20 2v4m2-2h-4"/><circle cx="4" cy="20" r="2"/></svg>',
 };
 
-const getIconBody = (name: string): string => iconBodies[name] ?? '';
+const services = (servicesContent.services ?? []).map((s) => ({
+  icon: lucideIcons[s.icon] ?? '',
+  title: s.title,
+  description: s.description,
+  meta: s.price,
+}));
+
+const testimonials = testimonialsContent.testimonials ?? [];
+
+const approach = [
+  {
+    number: '01',
+    title: 'Goal clarity',
+    description:
+      'We start by getting crystal clear on what you truly want. Through deep inquiry and assessment, we define your vision, identify obstacles, and create a compelling roadmap for your transformation.',
+  },
+  {
+    number: '02',
+    title: 'Accountability framework',
+    description:
+      'Structured accountability that keeps you on track. Weekly check-ins, progress tracking, and honest feedback ensure you follow through on your commitments and stay aligned with your goals.',
+  },
+  {
+    number: '03',
+    title: 'Mindset mastery',
+    description:
+      'We identify and rewire the limiting beliefs, patterns, and stories that hold you back. Through proven cognitive techniques, you develop an empowered mindset that supports lasting change.',
+  },
+  {
+    number: '04',
+    title: 'Action planning',
+    description:
+      'Every session ends with clear, actionable next steps. We break big goals into manageable milestones, so you always know exactly what to do next to move forward with confidence.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'What happens in a typical coaching session?',
+    answer:
+      'Each session begins with a check-in on your progress since our last meeting. We dive into the key challenges or opportunities you are facing, using targeted questions and exercises to create breakthroughs. Every session ends with clear action items and accountability commitments. Sessions are 60 minutes, video or in-person.',
+  },
+  {
+    question: 'How often should I have coaching sessions?',
+    answer:
+      'Most clients see the best results with weekly or bi-weekly sessions. Weekly sessions create stronger momentum and faster results, while bi-weekly works well for maintenance and ongoing development. We will determine the right cadence during your discovery call.',
+  },
+  {
+    question: 'What is the ROI of coaching?',
+    answer:
+      'The International Coaching Federation reports that 86% of companies that invested in coaching saw a positive ROI. My clients typically report salary increases of 20–50%, revenue growth, improved leadership effectiveness, better work-life balance, and greater clarity in decision-making.',
+  },
+  {
+    question: 'Do you offer virtual coaching sessions?',
+    answer:
+      'Yes. The majority of my clients work with me virtually via secure video calls. Virtual coaching is just as effective as in-person and offers the flexibility to work together regardless of location. I also offer in-person sessions in Austin, TX for local clients.',
+  },
+  {
+    question: 'How is coaching different from therapy?',
+    answer:
+      'Therapy typically focuses on healing past wounds and addressing mental health concerns. Coaching is future-focused and action-oriented — it assumes you are resourceful and capable, and helps you bridge the gap between where you are and where you want to be.',
+  },
+];
+
+const credentials = [
+  'ICF Professional Certified Coach (PCC)',
+  'Certified Executive Coach — Columbia University',
+  'MBA, Harvard Business School',
+  '12+ years coaching experience',
+];
 ---
 
-<Layout>
-  <!-- Hero Section -->
-  <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
-    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 dark:from-slate-800/50 to-transparent opacity-50"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <div>
-          <p class="text-primary font-medium mb-4 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m15.477 12.89l1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></g></svg>
-            ICF Certified Professional Coach
-          </p>
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-slate-800 dark:text-white leading-tight mb-6">
-            Unlock Your True <span class="text-primary">Potential</span>
-          </h1>
-          <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-lg">
-            I'm James Parker, and I help ambitious professionals and entrepreneurs break through limitations, gain clarity, and achieve extraordinary results in life, career, and business.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 mb-8">
-            <a href="#contact" class="btn-primary">
-              Book a Discovery Call
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7l7 7l-7 7"/></svg>
-            </a>
-            <a href="#services" class="btn-outline">View Programs</a>
-          </div>
-          <div class="flex items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
-            <div class="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-4 h-4 text-primary"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m16 13l5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect width="14" height="12" x="2" y="6" rx="2"/></g></svg>
-              Virtual Sessions Available
-            </div>
-            <div class="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-4 h-4 text-primary"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20a14.5 14.5 0 0 0 0-20M2 12h20"/></g></svg>
-              Clients Worldwide
-            </div>
-          </div>
+<Layout
+  title="James Parker — Executive & Life Coach"
+  description="Executive, business, and life coaching for ambitious professionals ready to break through limitations and achieve extraordinary results."
+  activeIndex={-1}
+>
+  <HeroIntro text="James Parker" />
+
+  <!-- ─── Hero ──────────────────────────────────────────────── -->
+  <SectionBlock id="home" tone="light" padding="hero" className="cp-hero">
+    <Container className="cp-hero__inner">
+      <div class="cp-hero__copy">
+        <OverlineText text="ICF Certified · Austin, TX" tone="accent" />
+        <h1 class="cp-hero__title">
+          Unlock your true<br />
+          <span class="cp-hero__title-accent">potential.</span>
+        </h1>
+        <p class="cp-hero__lede">
+          I'm <strong>James Parker</strong> — I help ambitious professionals
+          and entrepreneurs break through limitations, gain clarity, and
+          achieve extraordinary results in life, career, and business.
+        </p>
+        <div class="cp-hero__actions">
+          <ActionButton
+            href="/contact"
+            label="Book discovery call"
+            variant="primary"
+            size="large"
+          />
+          <ActionButton
+            href="/services"
+            label="Explore programs"
+            variant="outline-dark"
+            size="large"
+          />
         </div>
-        <div class="relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl transform rotate-3"></div>
-          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&h=700&fit=crop&crop=face" alt="James Parker, Certified Coach" class="relative rounded-3xl shadow-xl w-full object-cover aspect-[5/6]" />
-          <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="text-center">
-                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">500+</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400">Clients Coached</div>
-              </div>
-              <div class="text-center">
-                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">96%</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400">Goal Achievement</div>
-              </div>
-              <div class="text-center">
-                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">12</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400">Years Experience</div>
-              </div>
-              <div class="text-center">
-                <div class="text-2xl font-serif font-bold text-slate-800 dark:text-white">4.9</div>
-                <div class="text-xs text-slate-500 dark:text-slate-400">Client Rating</div>
-              </div>
-            </div>
-          </div>
+        <div class="cp-hero__pills">
+          <TagPill label="Virtual sessions worldwide" />
+          <TagPill label="500+ clients coached" />
+          <TagPill label="ICF accredited" />
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- About Section -->
-  <section id="about" class="py-20 bg-sage-50 dark:bg-slate-800/50 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div class="order-2 lg:order-1">
-          <div class="grid grid-cols-2 gap-4">
-            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=400&fit=crop" alt="Modern coaching office" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4]" />
-            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300&h=400&fit=crop" alt="Coaching session" class="rounded-2xl shadow-md w-full object-cover aspect-[3/4] mt-8" />
-          </div>
-        </div>
-        <div class="order-1 lg:order-2">
-          <p class="text-primary font-medium mb-4">About Me</p>
-          <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">
-            Your Partner in Transformation
-          </h2>
-          <p class="text-slate-600 dark:text-slate-400 mb-6">
-            For over 12 years, I have been coaching leaders, entrepreneurs, and professionals through pivotal moments in their careers and lives. My approach blends strategic thinking with deep personal insight.
-          </p>
-          <p class="text-slate-600 dark:text-slate-400 mb-8">
-            I specialize in life transitions, leadership development, business growth, and career acceleration. Whether you are scaling a company, navigating a career pivot, or seeking greater fulfillment, I am here to help you achieve breakthrough results.
-          </p>
-          <ul class="space-y-3">
-            {credentials.map((credential: string) => (
-              <li class="flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary flex-shrink-0"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11l3 3L22 4"/></g></svg>
-                <span class="text-slate-700 dark:text-slate-300">{credential}</span>
+      <div class="cp-hero__plate" aria-hidden="true">
+        <div class="cp-hero__plate-image"></div>
+        <span class="cp-hero__index">№ 01 — 2026</span>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Stats ────────────────────────────────────────────── -->
+  <SectionBlock tone="accent-light" padding="compact" topBorder>
+    <Container>
+      <StatsRow items={heroStats} />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── About ────────────────────────────────────────────── -->
+  <SectionBlock id="about" tone="light" padding="default">
+    <Container className="cp-about">
+      <div class="cp-about__heading">
+        <OverlineText text="About" />
+        <h2 class="section-title cp-about__title">
+          Your partner in<br />
+          <em>transformation</em>.
+        </h2>
+      </div>
+      <div class="cp-about__body">
+        <p class="cp-about__intro">
+          For over twelve years, I've coached leaders, entrepreneurs, and
+          professionals through pivotal moments in their careers and lives.
+          My approach blends strategic thinking with deep personal insight —
+          rigorous, practical, and unsentimental.
+        </p>
+        <p class="cp-about__copy">
+          I specialize in life transitions, leadership development, business
+          growth, and career acceleration. Whether you're scaling a company,
+          navigating a pivot, or seeking greater fulfillment, I'm here to help
+          you achieve breakthrough results.
+        </p>
+        <ul class="cp-about__credentials" id="credentials">
+          {
+            credentials.map((c) => (
+              <li class="cp-about__credential">
+                <span class="cp-about__credential-mark" aria-hidden="true">
+                  ◆
+                </span>
+                {c}
               </li>
-            ))}
-          </ul>
-        </div>
+            ))
+          }
+        </ul>
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Programs Section -->
-  <section id="services" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-medium mb-4">Programs</p>
-        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Coaching Programs Designed for Results</h2>
-        <p class="text-slate-600 dark:text-slate-400">Tailored coaching programs to meet you where you are and accelerate you toward where you want to be.</p>
+  <!-- ─── Services ─────────────────────────────────────────── -->
+  <SectionBlock id="services" tone="subtle" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="Programs"
+        title="Coaching, designed for results."
+        maxWidth="20ch"
+      />
+      <div class="cp-services-grid">
+        {
+          services.map((s) => (
+            <ServiceCard
+              icon={s.icon}
+              title={s.title}
+              description={s.description}
+              meta={s.meta}
+            />
+          ))
+        }
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.map((service: Service) => (
-          <div class="card group hover:-translate-y-1">
-            <div class="w-14 h-14 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-7 h-7 text-primary" set:html={getIconBody(service.icon)} />
-            </div>
-            <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-2">{service.title}</h3>
-            <p class="text-slate-600 dark:text-slate-400 mb-4">{service.description}</p>
-            <span class="inline-flex items-center gap-2 text-sm text-secondary font-semibold">
-              {service.price}
-            </span>
-          </div>
-        ))}
+      <div class="cp-services-cta">
+        <ActionButton
+          href="/services"
+          label="See all coaching programs"
+          variant="outline-dark"
+        />
       </div>
-      <div class="mt-12 text-center">
-        <a href="#contact" class="btn-primary">
-          Book a Discovery Call
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 2v4m8-4v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></g></svg>
-        </a>
-      </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Approach Section -->
-  <section id="approach" class="py-20 bg-warm-100 dark:bg-slate-800/50 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-medium mb-4">My Approach</p>
-        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">The Transformation Framework</h2>
-        <p class="text-slate-600 dark:text-slate-400">A proven four-pillar approach that creates lasting change and measurable results.</p>
+  <!-- ─── Approach ─────────────────────────────────────────── -->
+  <SectionBlock id="approach" tone="dark" padding="default">
+    <Container className="cp-approach">
+      <div class="cp-approach__heading">
+        <OverlineText text="The framework" tone="accent" />
+        <h2 class="section-title cp-approach__title">
+          A proven four-pillar approach to lasting change.
+        </h2>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {approach.map((item: Approach, index: number) => (
-          <div class="flex gap-5">
-            <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-serif font-bold flex-shrink-0">{index + 1}</div>
-            <div>
-              <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-2">{item.title}</h3>
-              <p class="text-slate-600 dark:text-slate-400">{item.description}</p>
-            </div>
-          </div>
-        ))}
+      <div class="cp-approach__list">
+        {
+          approach.map((a) => (
+            <NumberedFeatureItem
+              number={a.number}
+              title={a.title}
+              description={a.description}
+            />
+          ))
+        }
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Testimonials Section -->
-  <section class="py-20 bg-cream dark:bg-slate-900 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <p class="text-primary font-medium mb-4">Success Stories</p>
-        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Client Transformations</h2>
-        <p class="text-slate-600 dark:text-slate-400">Real results from real clients who committed to the coaching process.</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {testimonials.map((testimonial: Testimonial) => (
-          <div class="card-warm">
-            <div class="mb-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-10 h-10 text-primary/30"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2a1 1 0 0 1 1 1v1a2 2 0 0 1-2 2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1a6 6 0 0 0 6-6V5a2 2 0 0 0-2-2zM5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2a1 1 0 0 1 1 1v1a2 2 0 0 1-2 2a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1a6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg></div>
-            <p class="text-slate-700 dark:text-slate-300 mb-6 leading-relaxed italic">"{testimonial.quote}"</p>
-            <div class="mb-3">
-              <span class="inline-block px-3 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full">{testimonial.result}</span>
-            </div>
-            <div class="border-t border-warm-300 dark:border-slate-700 pt-4">
-              <div class="font-semibold text-slate-800 dark:text-white">{testimonial.author}</div>
-              <div class="text-sm text-slate-500 dark:text-slate-400">{testimonial.role}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
+  <!-- ─── Video ────────────────────────────────────────────── -->
+  <SectionBlock id="video" tone="light" padding="default" topBorder>
+    <Container className="cp-video">
+      <VideoBlock
+        src={video.src}
+        poster={video.poster}
+        title={video.title}
+        caption={video.caption}
+        eyebrow={video.eyebrow}
+        duration={video.duration}
+        aspect={video.aspect}
+      />
+    </Container>
+  </SectionBlock>
 
-  <!-- FAQ Section -->
-  <section id="faq" class="py-20 bg-sage-50 dark:bg-slate-800/50 transition-colors">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <p class="text-primary font-medium mb-4">FAQ</p>
-        <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Common Questions</h2>
-        <p class="text-slate-600 dark:text-slate-400">Everything you need to know about working with a professional coach.</p>
+  <!-- ─── Testimonials ─────────────────────────────────────── -->
+  <SectionBlock id="testimonials" tone="light" padding="default">
+    <Container>
+      <SectionHeading label="Success stories" title="Client transformations." />
+      <div class="cp-testimonials">
+        {
+          testimonials.map((t) => (
+            <TestimonialBlock
+              quote={t.quote}
+              author={t.author}
+              role={t.role}
+              result={t.result}
+            />
+          ))
+        }
       </div>
-      <div class="space-y-4">
-        {faqs.map((faq: FAQ, index: number) => (
-          <div class="faq-item bg-white dark:bg-slate-800 rounded-xl shadow-sm dark:shadow-none dark:border dark:border-slate-700 overflow-hidden">
-            <button class="faq-trigger w-full px-6 py-5 flex items-center justify-between text-left" data-index={index}>
-              <span class="font-medium text-slate-800 dark:text-white pr-4">{faq.question}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-primary transition-transform faq-icon flex-shrink-0"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9l6 6l6-6"/></svg>
-            </button>
-            <div class="faq-content hidden px-6 pb-5">
-              <p class="text-slate-600 dark:text-slate-400">{faq.answer}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
 
-  <!-- Contact Section -->
-  <section id="contact" class="py-20 bg-cream dark:bg-slate-900 transition-colors">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div>
-          <p class="text-primary font-medium mb-4">Get Started</p>
-          <h2 class="text-3xl md:text-4xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Ready to Transform Your Life?</h2>
-          <p class="text-slate-600 dark:text-slate-400 mb-8">The first step is a complimentary 30-minute discovery call. We will discuss your goals, explore how coaching can help, and determine if we are the right fit to work together.</p>
-          <div class="space-y-6 mb-8">
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></g></svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Office Location</h4>
-                <p class="text-slate-600 dark:text-slate-400">456 Executive Blvd, Suite 300<br>Austin, TX 78701</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></g></svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Availability</h4>
-                <p class="text-slate-600 dark:text-slate-400">Monday - Friday: 8am - 6pm CT<br>Virtual sessions worldwide</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-6 h-6 text-primary"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233a14 14 0 0 0 6.392 6.384"/></svg>
-              </div>
-              <div>
-                <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Contact</h4>
-                <p class="text-slate-600 dark:text-slate-400">
-                  <a href="tel:+15552345678" class="hover:text-primary transition-colors">(555) 234-5678</a><br>
-                  <a href="mailto:coach@jamesparker.com" class="hover:text-primary transition-colors">coach@jamesparker.com</a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg dark:shadow-none dark:border dark:border-slate-700">
-          <h3 class="text-xl font-serif font-semibold text-slate-800 dark:text-white mb-6">Book Your Free Discovery Call</h3>
-          <div id="form-success" class="hidden rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-            Thank you! We'll be in touch within 24 hours.
-          </div>
-          <div id="form-error" class="hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            Something went wrong. Please try again.
-          </div>
-          <form id="contact-form" data-contact-form data-success-message="Thank you! We'll be in touch within 24 hours." class="space-y-5">
-            <input type="hidden" name="_template" value="" />
-            <input type="hidden" name="_source" value="" />
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">First Name</label>
-                <input type="text" class="input" placeholder="Your first name" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Last Name</label>
-                <input type="text" class="input" placeholder="Your last name" />
-              </div>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
-              <input type="email" class="input" placeholder="your@email.com" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Phone</label>
-              <input type="tel" class="input" placeholder="(555) 234-5678" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">What are you looking to achieve?</label>
-              <textarea rows="4" class="textarea" placeholder="Tell me about your goals and what you hope to accomplish through coaching..."></textarea>
-            </div>
-            <button type="submit" class="btn-primary w-full">
-              Request Discovery Call
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 ml-2"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11zm7.318-19.539l-10.94 10.939"/></svg>
-            </button>
-            <p class="text-xs text-slate-500 dark:text-slate-400 text-center">Your information is kept strictly confidential.</p>
-          </form>
-        </div>
+  <!-- ─── FAQ ──────────────────────────────────────────────── -->
+  <SectionBlock id="faq" tone="light" padding="default" topBorder>
+    <Container className="cp-faq">
+      <SectionHeading label="FAQ" title="Common questions." />
+      <div class="cp-faq__list">
+        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
       </div>
-    </div>
-  </section>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── CTA ──────────────────────────────────────────────── -->
+  <SectionBlock id="contact" tone="dark" padding="default">
+    <Container className="cp-cta">
+      <h2 class="cp-cta__title">
+        Ready to transform<br />your life and work?
+      </h2>
+      <p class="cp-cta__lede">
+        The first step is a complimentary 30-minute discovery call. We'll
+        discuss your goals, explore how coaching can help, and determine if
+        we're the right fit to work together.
+      </p>
+      <div class="cp-cta__actions">
+        <ActionButton
+          href="/contact"
+          label="Book discovery call"
+          variant="primary-light"
+          size="large"
+          className="fs-book-btn"
+        />
+        <ActionButton
+          href="mailto:coach@jamesparker.com"
+          label="Send an email instead"
+          variant="outline-light"
+          size="large"
+        />
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Cal.com booking CTA ──────────────────────────────── -->
+  <SectionBlock tone="subtle" padding="default" topBorder>
+    <Container className="cp-cal-cta">
+      <CalBookingBlock
+        variant="cta"
+        calLink={booking.cal_link}
+        eventLabel={booking.cal_event_label}
+        title={booking.title}
+        subtitle={booking.description}
+        durationLabel={booking.cal_duration_label}
+        layout={booking.cal_layout}
+      />
+    </Container>
+  </SectionBlock>
 </Layout>
 
-<script>
-  document.querySelectorAll('.faq-trigger').forEach(trigger => {
-    trigger.addEventListener('click', () => {
-      const item = trigger.closest('.faq-item');
-      const content = item?.querySelector('.faq-content');
-      const icon = trigger.querySelector('.faq-icon');
-      document.querySelectorAll('.faq-item').forEach(otherItem => {
-        if (otherItem !== item) {
-          otherItem.querySelector('.faq-content')?.classList.add('hidden');
-          otherItem.querySelector('.faq-icon')?.classList.remove('rotate-180');
-        }
-      });
-      content?.classList.toggle('hidden');
-      icon?.classList.toggle('rotate-180');
-    });
-  });
-</script>
+<style>
+  /* Hero */
+  .cp-hero {
+    position: relative;
+    overflow: clip;
+  }
+
+  .cp-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 44%);
+    gap: 64px;
+    align-items: center;
+    min-height: 76vh;
+  }
+
+  .cp-hero__copy {
+    max-width: 620px;
+  }
+
+  .cp-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.8rem, 6.5vw, 5.4rem);
+    font-weight: var(--fw-headline);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .cp-hero__title-accent {
+    color: var(--brand-primary);
+    font-style: normal;
+  }
+
+  .cp-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--text-primary);
+    max-width: 520px;
+    margin-bottom: 36px;
+  }
+
+  .cp-hero__lede strong {
+    font-weight: var(--fw-semibold);
+  }
+
+  .cp-hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .cp-hero__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Plate */
+  .cp-hero__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .cp-hero__plate-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=900&h=1100&fit=crop&crop=faces');
+    background-size: cover;
+    background-position: center 30%;
+    filter: contrast(1.04) saturate(0.92);
+    transition: transform 1.2s var(--ease-emphasized);
+  }
+
+  .cp-hero:hover .cp-hero__plate-image {
+    transform: scale(1.02);
+  }
+
+  .cp-hero__index {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-on-dark);
+    background: var(--bg-dark);
+    padding: 6px 10px;
+    z-index: 1;
+  }
+
+  /* About */
+  .cp-about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .cp-about__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .cp-about__title {
+    margin-top: 16px;
+  }
+
+  .cp-about__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .cp-about__intro {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--bg-dark);
+    margin-bottom: 24px;
+    max-width: 56ch;
+  }
+
+  .cp-about__copy {
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--text-primary);
+    max-width: 60ch;
+    margin-bottom: 36px;
+  }
+
+  .cp-about__credentials {
+    display: grid;
+    gap: 14px;
+    padding-top: 28px;
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  .cp-about__credential {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bg-dark);
+  }
+
+  .cp-about__credential-mark {
+    color: var(--brand-primary);
+    font-size: 0.8em;
+    line-height: 1.5;
+  }
+
+  /* Services grid */
+  .cp-services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .cp-services-cta {
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  /* Approach (dark) */
+  .cp-approach {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 80px;
+  }
+
+  .cp-approach__heading {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+  }
+
+  .cp-approach__title {
+    color: var(--text-on-dark);
+    margin-top: 16px;
+    max-width: 18ch;
+  }
+
+  /* Testimonials */
+  .cp-testimonials {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  /* FAQ */
+  .cp-faq {
+    max-width: 920px;
+  }
+
+  .cp-faq__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  /* CTA */
+  .cp-cta {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .cp-cta__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--text-on-dark);
+    margin-bottom: 28px;
+  }
+
+  .cp-cta__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+    max-width: 56ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cp-cta__actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .cp-hero__inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      min-height: auto;
+    }
+
+    .cp-hero__plate {
+      aspect-ratio: 16 / 11;
+      max-width: 720px;
+    }
+
+    .cp-about,
+    .cp-approach {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .cp-about__heading,
+    .cp-approach__heading {
+      position: static;
+    }
+
+    .cp-services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cp-testimonials {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cp-services-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cp-hero__title {
+      font-size: 2.6rem;
+    }
+  }
+</style>

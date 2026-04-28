@@ -1,0 +1,184 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import PricingCard from '../../../shared/dorin-ds/components/PricingCard.astro';
+import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
+import { frontmatter as bookingData } from '../../content/integrations/booking.md';
+
+interface BookingFrontmatter {
+  cal_link?: string;
+  cal_event_label?: string;
+  cal_duration_label?: string;
+  cal_layout?: 'month_view' | 'week_view' | 'column_view';
+  title?: string;
+  description?: string;
+}
+
+const booking = bookingData as BookingFrontmatter;
+
+const plans = [
+  {
+    name: 'Audit',
+    price: '$5,000',
+    cadence: 'one week',
+    description:
+      'A senior outside read on a product, brand, or marketing surface. One week, one written deliverable, one walkthrough.',
+    features: [
+      '25-page written report',
+      '90-minute recorded walkthrough',
+      'Prioritized fix list',
+      'Async follow-up for two weeks',
+    ],
+    ctaLabel: 'Book an audit',
+    ctaHref: '/contact',
+  },
+  {
+    name: 'Sprint',
+    price: '$14,000',
+    cadence: 'two weeks · fixed scope',
+    description:
+      'A focused two-week sprint to ship one named outcome. The default engagement and the way most clients start.',
+    features: [
+      'Discovery & alignment day',
+      'Daily working sessions',
+      'Mid-sprint review',
+      'Figma library handoff',
+      'Two weeks of post-launch support',
+    ],
+    ctaLabel: 'Book a sprint',
+    ctaHref: '/contact',
+    featured: true,
+  },
+  {
+    name: 'Retainer',
+    price: '$9,000',
+    cadence: 'per month',
+    description:
+      'Senior design and front-end on tap, billed monthly. Available after one completed sprint, capped to one retained client at a time.',
+    features: [
+      'Up to 40 hours per month',
+      'Standing weekly working session',
+      'Async Slack / Loom support',
+      'Quarterly written roadmap',
+      'Priority on rolling scopes',
+    ],
+    ctaLabel: 'Book a working session',
+    ctaHref: '/contact',
+  },
+];
+---
+
+<Layout
+  title="Pricing — Studio AM"
+  description="Three ways to work together: a one-week audit, a two-week sprint, or a monthly retainer. Fixed fees, named outcomes."
+  activeIndex={3}
+>
+  <!-- ─── Hero ─────────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="hero">
+    <Container className="fp-pricing-hero">
+      <OverlineText text="Pricing" tone="accent" />
+      <h1 class="fp-pricing-hero__title">
+        Three ways to<br />
+        work <em>together</em>.
+      </h1>
+      <p class="fp-pricing-hero__lede">
+        Pick the shape of work; the price is the price. Every engagement
+        is fixed-fee, written down before kickoff, and capped to whatever
+        we agreed in the proposal — no scope creep, no surprise invoices.
+      </p>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Pricing grid ─────────────────────────────────────── -->
+  <SectionBlock id="plans" tone="light" padding="default" topBorder>
+    <Container>
+      <div class="fp-pricing-grid">
+        {plans.map((p) => <PricingCard {...p} />)}
+      </div>
+      <p class="fp-pricing-note">
+        Custom scopes, multi-sprint commitments, and equity discussions
+        are available on request. Two retainer slots open per quarter.
+      </p>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Final CTA — Cal.com booking ──────────────────────── -->
+  <SectionBlock tone="dark" padding="default">
+    <Container className="fp-pricing-cta">
+      <CalBookingBlock
+        variant="cta"
+        calLink={booking.cal_link}
+        eventLabel={booking.cal_event_label}
+        title={booking.title}
+        subtitle={booking.description}
+        durationLabel={booking.cal_duration_label}
+        layout={booking.cal_layout}
+        className="fs-book-btn"
+      />
+    </Container>
+  </SectionBlock>
+</Layout>
+
+<style>
+  .fp-pricing-hero {
+    max-width: 880px;
+  }
+
+  .fp-pricing-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .fp-pricing-hero__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .fp-pricing-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    max-width: 60ch;
+  }
+
+  .fp-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .fp-pricing-note {
+    margin-top: 40px;
+    text-align: center;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .fp-pricing-cta {
+    /* CalBookingBlock provides its own framing/padding; the container
+     * just constrains width on very wide viewports. */
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 1024px) {
+    .fp-pricing-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

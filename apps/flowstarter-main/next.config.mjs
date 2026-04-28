@@ -3,6 +3,8 @@ const CONFIG_FILE = new URL('', import.meta.url).pathname;
 
 export default {
   typescript: { ignoreBuildErrors: true },
+  // Allow LAN access during dev (IDE browser MCP, mobile testing, etc.)
+  allowedDevOrigins: ['192.168.3.210', '127.0.0.1', 'localhost'],
   async headers() {
     return [
       // Authenticated app surface — never cache, must revalidate every hit.
@@ -17,6 +19,28 @@ export default {
         source: '/api/(auth|webhooks)(.*)',
         headers: [
           { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+        ],
+      },
+      // Astro template previews — fully static, served straight from /public.
+      // Hash-fingerprinted assets in /preview/_astro/ get a long cache; the
+      // index.html shells stay short so we can publish content updates fast.
+      {
+        source: '/preview/:slug/_astro/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        source: '/preview/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=86400' },
+        ],
+      },
+      // Library showcase imagery is rebuilt only when we recapture thumbs.
+      {
+        source: '/showcase/:file*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
         ],
       },
       // Everything else (marketing, legal, static-ish pages) — let Netlify's

@@ -1,22 +1,529 @@
 ---
-import { frontmatter as servicesFrontmatter } from '../../content/services.md';
 import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import ServicesSection from '../components/Services.astro';
-import TestimonialsSection from '../components/Testimonials.astro';
-import ContactSection from '../components/Contact.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
+import PricingCard from '../../../shared/dorin-ds/components/PricingCard.astro';
+import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
+import ProcessStep from '../../../shared/dorin-ds/components/ProcessStep.astro';
+import CaseStudyCard from '../../../shared/dorin-ds/components/CaseStudyCard.astro';
+import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
 
-interface ServicesPageData {
-  title: string;
-  subtitle: string;
+import { frontmatter as siteData } from '../../content/site.md';
+import { frontmatter as servicesData } from '../../content/services.md';
+import { frontmatter as pricingData } from '../../content/pricing.md';
+
+interface SiteContent {
+  name?: string;
+  description?: string;
+}
+interface ServiceItem {
+  icon?: string;
+  title?: string;
+  description?: string;
+  price?: string;
+}
+interface ServicesContent {
+  title?: string;
+  subtitle?: string;
+  services?: ServiceItem[];
+}
+interface PricingPlan {
+  name?: string;
+  price?: number | string;
+  period?: string;
+  description?: string;
+  features?: string[];
+  cta?: string;
+  popular?: boolean;
+}
+interface PricingContent {
+  title?: string;
+  subtitle?: string;
+  plans?: PricingPlan[];
+  guarantee?: string;
 }
 
-const servicesPage = servicesFrontmatter as ServicesPageData;
+const site = siteData as SiteContent;
+const servicesContent = servicesData as ServicesContent;
+const pricingContent = pricingData as PricingContent;
+
+const formatPrice = (p: number | string | undefined): string => {
+  if (typeof p === 'number') return `$${p.toLocaleString()}`;
+  if (typeof p === 'string' && p.length > 0) return p;
+  return '—';
+};
+
+const offerings = (servicesContent.services ?? []).map((s, i) => ({
+  number: String(i + 1).padStart(2, '0'),
+  title: s.title ?? '',
+  description: s.description ?? '',
+}));
+
+const pricing = (pricingContent.plans ?? []).map((p) => ({
+  name: p.name ?? '',
+  price: formatPrice(p.price),
+  cadence: p.period ?? '',
+  description: p.description ?? '',
+  features: p.features ?? [],
+  ctaLabel: p.cta ?? 'Get in touch',
+  ctaHref: '/contact',
+  featured: Boolean(p.popular),
+}));
+
+// Hand-built featured work, process, and FAQ — no .md source, kept as-is.
+const featuredWork = [
+  {
+    title: 'Casa Mirador',
+    category: 'Hospitality · Brand & photography',
+    href: '#',
+    imageSrc: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=900&h=820&fit=crop',
+    index: 'I',
+  },
+  {
+    title: 'Atelier Solène',
+    category: 'Fashion · Editorial photography',
+    href: '#',
+    imageSrc: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900&h=820&fit=crop',
+    index: 'II',
+  },
+  {
+    title: 'Galería Norte',
+    category: 'Gallery · Identity & exhibit',
+    href: '#',
+    imageSrc: 'https://images.unsplash.com/photo-1545987796-200677ee1011?w=900&h=820&fit=crop',
+    index: 'III',
+  },
+  {
+    title: 'Cantina Rosa',
+    category: 'Hospitality · Print & packaging',
+    href: '#',
+    imageSrc: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&h=820&fit=crop',
+    index: 'IV',
+  },
+];
+
+const process = [
+  {
+    step: 'Step 1',
+    title: 'Studio call',
+    description:
+      'A 45-minute call to walk through the room, the brief, and the picture you have in mind. The proposal that follows is precise, written, and free.',
+  },
+  {
+    step: 'Step 2',
+    title: 'Brief & test prints',
+    description:
+      'For brand and editorial work, the studio produces a small set of test prints before the shoot. The point is to argue about the picture before the camera is on the tripod.',
+  },
+  {
+    step: 'Step 3',
+    title: 'Production',
+    description:
+      'Shoot days, location, lighting, and a small repeat circle of producers and assistants. The studio insists on this part being calm — calmness is the picture.',
+  },
+  {
+    step: 'Step 4',
+    title: 'Edit & masters',
+    description:
+      'Selects in 72 hours, full edit in two weeks, print masters and licensed deliverables in three. The studio finishes its own work; nothing is outsourced.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'Does the studio shoot film or digital?',
+    answer:
+      'Both. Most commercial work is digital for speed and license-flexibility. Editorial work for hospitality and gallery clients is often shot on medium-format sheet film when the print is the deliverable. The choice is always about the picture, not the technique.',
+  },
+  {
+    question: 'Will Marcus shoot personally?',
+    answer:
+      "Yes. The studio is a one-photographer practice; Marcus shoots every commission personally and is on every shoot day. Producers, assistants, and the small repeat circle of collaborators are credited individually in the deliverables.",
+  },
+  {
+    question: 'How is licensing structured?',
+    answer:
+      'Licensing is laid out in the proposal — territory, duration, surface count. The defaults are editorial (12 months, single-territory) or commercial (24 months, multi-territory). Buyouts and exclusive rights are available and priced separately.',
+  },
+  {
+    question: 'Does the studio work outside hospitality and fashion?',
+    answer:
+      'Occasionally. The studio also takes one or two commissions per year for cultural institutions, food brands, and the occasional editorial assignment for Wallpaper* or AD. Commercial product photography and weddings are politely declined.',
+  },
+  {
+    question: 'How far out is the studio booking?',
+    answer:
+      'New commissions begin four weeks out. Brand identity engagements are scheduled a quarter ahead. The studio typically takes four to six commissions per year, plus one or two long retainers — the calendar is the constraint.',
+  },
+];
+
+const pageTitle = `Services — ${site.name ?? 'Studio Rivera'}`;
+const pageDescription =
+  site.description ??
+  'Six core practices: brand identity, editorial photography, web design, video, print, and art direction.';
+
+const pricingTitle = pricingContent.title ?? 'Three engagements, transparently priced.';
+const pricingSubtitle = pricingContent.subtitle;
 ---
 
-<Layout title={`Services | ${servicesPage.title}`}>
-  <Hero title={servicesPage.title} subtitle={servicesPage.subtitle} badge="Signature Offerings" compact={true} showStats={false} />
-  <ServicesSection />
-  <TestimonialsSection />
-  <ContactSection />
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  activeIndex={0}
+>
+  <!-- ─── Hero ──────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="hero">
+    <Container className="cv-services-hero">
+      <OverlineText text="The studio menu" tone="accent" />
+      <h1 class="cv-services-hero__title">
+        Six practices,<br />
+        held to <em>one</em><br />
+        editorial standard.
+      </h1>
+      <p class="cv-services-hero__lede">
+        Studio Rivera is selective by design — typically four to six
+        commissions per year, plus one or two retainers. Every
+        engagement comes with a fixed scope, a written license, and a
+        calendar the studio will defend.
+      </p>
+      <div class="cv-services-hero__pills">
+        <TagPill label="Hospitality" />
+        <TagPill label="Fashion" />
+        <TagPill label="Gallery" />
+        <TagPill label="Editorial" tone="accent" />
+      </div>
+      <div class="cv-services-hero__actions">
+        <ActionButton
+          href="/contact"
+          label="Commission a project"
+          variant="primary"
+          size="large"
+        />
+        <ActionButton
+          href="/pricing"
+          label="See pricing"
+          variant="outline-dark"
+          size="large"
+        />
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Offerings list (services.md) ──────────────────── -->
+  <SectionBlock id="offerings" tone="light" padding="default" topBorder>
+    <Container className="cv-services-list">
+      <div class="cv-services-list__heading">
+        <OverlineText text="The work" />
+        <h2 class="section-title">{servicesContent.title ?? 'Six ways the studio engages.'}</h2>
+        {
+          servicesContent.subtitle && (
+            <p class="cv-services-list__lede">{servicesContent.subtitle}</p>
+          )
+        }
+      </div>
+      <div class="cv-services-list__items">
+        {
+          offerings.map((p) => (
+            <NumberedFeatureItem
+              number={p.number}
+              title={p.title}
+              description={p.description}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Selected work ──────────────────────────────────── -->
+  <SectionBlock id="selected" tone="subtle" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="Recent commissions"
+        title="Work that ran in the last twelve months."
+        maxWidth="22ch"
+      />
+      <div class="cv-services-work">
+        {
+          featuredWork.map((w) => (
+            <CaseStudyCard
+              title={w.title}
+              category={w.category}
+              href={w.href}
+              imageSrc={w.imageSrc}
+              index={w.index}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Process ─────────────────────────────────────────── -->
+  <SectionBlock tone="light" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="The process"
+        title="Four steps from brief to print master."
+        maxWidth="22ch"
+      />
+      <div class="cv-services-process">
+        {
+          process.map((s) => (
+            <ProcessStep
+              step={s.step}
+              title={s.title}
+              description={s.description}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Pricing (pricing.md) ───────────────────────────── -->
+  <SectionBlock id="pricing" tone="light" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="Pricing"
+        title={pricingTitle}
+        align="center"
+        maxWidth="28ch"
+      />
+      {
+        pricingSubtitle && (
+          <p class="cv-services-pricing-lede">{pricingSubtitle}</p>
+        )
+      }
+      <div class="cv-services-pricing">
+        {pricing.map((p) => <PricingCard {...p} />)}
+      </div>
+      {
+        pricingContent.guarantee && (
+          <p class="cv-services-pricing-note">{pricingContent.guarantee}</p>
+        )
+      }
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── FAQ ─────────────────────────────────────────────── -->
+  <SectionBlock id="faq" tone="subtle" padding="default">
+    <Container className="cv-services-faq">
+      <SectionHeading label="Practical notes" title="Practical questions, answered." />
+      <div class="cv-services-faq__list">
+        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── CTA ─────────────────────────────────────────────── -->
+  <SectionBlock tone="dark" padding="default">
+    <Container className="cv-services-cta">
+      <h2 class="cv-services-cta__title">
+        Ready to <em>commission</em> a project?
+      </h2>
+      <p class="cv-services-cta__lede">
+        Tell the studio what you are trying to make. The first
+        45-minute call is the proposal — written, precise, and free.
+      </p>
+      <ActionButton
+        href="/contact"
+        label="Book a studio call"
+        variant="primary-light"
+        size="large"
+        className="fs-book-btn"
+      />
+    </Container>
+  </SectionBlock>
 </Layout>
+
+<style>
+  .cv-services-hero {
+    max-width: 880px;
+  }
+
+  .cv-services-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    font-weight: var(--fw-headline);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .cv-services-hero__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .cv-services-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    max-width: 60ch;
+    margin-bottom: 24px;
+  }
+
+  .cv-services-hero__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .cv-services-hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Offerings list */
+  .cv-services-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .cv-services-list__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .cv-services-list__heading .section-title {
+    margin-top: 16px;
+    max-width: 14ch;
+  }
+
+  .cv-services-list__lede {
+    margin-top: 16px;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--text-muted);
+    max-width: 32ch;
+  }
+
+  .cv-services-list__items {
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  /* Featured work grid */
+  .cv-services-work {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 24px;
+  }
+
+  /* Process */
+  .cv-services-process {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  /* Pricing */
+  .cv-services-pricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .cv-services-pricing-lede {
+    margin: -32px auto 48px;
+    max-width: 56ch;
+    text-align: center;
+    font-size: var(--fs-body);
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .cv-services-pricing-note {
+    margin-top: 40px;
+    text-align: center;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* FAQ */
+  .cv-services-faq {
+    max-width: 920px;
+  }
+
+  .cv-services-faq__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  /* CTA */
+  .cv-services-cta {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .cv-services-cta__title {
+    font-family: var(--font-title);
+    font-size: clamp(2rem, 4.4vw, 3.4rem);
+    font-weight: var(--fw-headline);
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--text-on-dark);
+    margin-bottom: 24px;
+  }
+
+  .cv-services-cta__title em {
+    font-style: italic;
+    font-family: 'Georgia', serif;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.04em;
+  }
+
+  .cv-services-cta__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.5;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 1024px) {
+    .cv-services-list {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .cv-services-list__heading {
+      position: static;
+    }
+
+    .cv-services-process {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cv-services-pricing,
+    .cv-services-work {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cv-services-process {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

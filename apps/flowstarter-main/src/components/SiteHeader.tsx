@@ -53,15 +53,15 @@ export function SiteHeader({
     [
       'text-sm transition-colors cursor-pointer',
       isActive
-        ? 'text-[var(--fs-ink)] font-semibold'
-        : 'text-[var(--fs-ink-faint)] hover:text-gray-900 dark:hover:text-white',
+        ? 'text-[var(--fs-ink)] dark:text-white font-semibold'
+        : 'text-[var(--fs-ink-faint)] dark:text-white/72 hover:text-gray-900 dark:hover:text-white',
     ].join(' ');
   const mobileNavLinkClass = (isActive: boolean) =>
     [
       'px-3 py-3 text-base rounded-lg transition-colors cursor-pointer',
       isActive
-        ? 'font-semibold text-[var(--fs-ink)] bg-gray-100 dark:bg-white/10'
-        : 'font-medium text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/5',
+        ? 'font-semibold text-[var(--fs-ink)] dark:text-white bg-gray-100 dark:bg-white/14'
+        : 'font-medium text-gray-700 dark:text-white/82 hover:bg-gray-100 dark:hover:bg-white/10',
     ].join(' ');
 
   if (mode === 'landing') {

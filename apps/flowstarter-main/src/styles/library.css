@@ -431,6 +431,193 @@
 }
 
 /* ═══════════════════════════════════════════════
+ * Template detail showcase
+ * ═══════════════════════════════════════════════ */
+
+.library-root .detail-hero {
+  padding-block: clamp(1rem, 2.5vw, 1.75rem) 0;
+}
+
+.library-root .detail-nav-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-block: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.library-root .detail-backlink {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.library-root .detail-backlink:hover {
+  color: var(--color-violet-ink);
+}
+
+.library-root .detail-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  padding-block: clamp(3rem, 8vw, 7rem) clamp(2.5rem, 6vw, 5rem);
+}
+
+@media (min-width: 980px) {
+  .library-root .detail-hero-grid {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: end;
+  }
+}
+
+.library-root .detail-title-stack {
+  max-width: 880px;
+}
+
+.library-root .detail-title {
+  max-width: 11ch;
+  margin-top: 0.75rem;
+  font-size: clamp(3.6rem, 10vw, 9.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+}
+
+.library-root .detail-kicker {
+  max-width: 48ch;
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+}
+
+.library-root .detail-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem 1.35rem;
+  margin-top: clamp(1.8rem, 4vw, 2.8rem);
+}
+
+.library-root .detail-spec-card {
+  border-top: 1px solid var(--color-ink);
+  border-bottom: 1px solid var(--color-rule);
+  padding-block: 1rem 1.2rem;
+}
+
+.library-root .detail-spec-card dl {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+}
+
+.library-root .detail-spec-card div {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 1.25rem;
+  align-items: baseline;
+}
+
+.library-root .detail-spec-card dt {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-faint);
+}
+
+.library-root .detail-spec-card dd {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.library-root .detail-preview-section {
+  padding-block: 0 clamp(4rem, 8vw, 6rem);
+}
+
+.library-root .preview-toolbar {
+  position: relative;
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--color-ink);
+  border-bottom: 0;
+  background:
+    linear-gradient(90deg, var(--color-ink) 0 98px, transparent 98px),
+    var(--color-paper-2);
+}
+
+.library-root .preview-toolbar h2 {
+  margin: 0;
+  padding-left: 116px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-ink);
+}
+
+.library-root .preview-toolbar::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  box-shadow:
+    18px 0 0 var(--color-rule-strong),
+    36px 0 0 var(--color-rule-strong);
+  transform: translateY(-50%);
+}
+
+.library-root .preview-url {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-ink-faint);
+}
+
+@media (min-width: 760px) {
+  .library-root .preview-toolbar {
+    grid-template-columns: auto 1fr auto;
+  }
+  .library-root .preview-url {
+    display: block;
+  }
+}
+
+.library-root .preview-open {
+  margin-right: 0.9rem;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.library-root .preview-open:hover {
+  color: var(--color-violet-ink);
+}
+
+.library-root .preview-shell {
+  position: relative;
+  border: 1px solid var(--color-ink);
+  background: var(--color-paper);
+  overflow: hidden;
+}
+
+.library-root .preview-frame {
+  display: block;
+  width: 100%;
+  height: clamp(720px, 82vh, 1080px);
+  border: 0;
+  background: #f9f7f1;
+}
+
+/* ═══════════════════════════════════════════════
  * Subtle paper grain (very light, on cream only)
  * ═══════════════════════════════════════════════ */
 

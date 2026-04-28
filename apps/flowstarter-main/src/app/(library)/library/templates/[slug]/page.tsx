@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Mast, Footnote } from '../../_components/Mast';
@@ -55,174 +54,97 @@ export default async function TemplateDetailPage({ params }: PageProps) {
         }`}
       />
 
-      {/* ── BREADCRUMB ROW ──────────────────────────────────────────────── */}
-      <section
-        className="frame frame--wide"
-        style={{ paddingBlock: '1.25rem 0' }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            gap: '1.5rem',
-          }}
-        >
-          <Link
-            href={libHref(pathPrefix, '/')}
-            className="meta link"
-            style={{ textDecorationColor: 'transparent' }}
-          >
+      {/* ── PRODUCT HEADER ──────────────────────────────────────────────── */}
+      <section className="frame frame--wide detail-hero">
+        <div className="detail-nav-row">
+          <Link href={libHref(pathPrefix, '/')} className="meta detail-backlink">
             ← the shelf
           </Link>
-          <div className="meta">
-            {template.category}
-            <span
-              style={{ margin: '0 0.7em', color: 'var(--color-rule-strong)' }}
-            >
-              ·
-            </span>
-            {template.year}
-          </div>
+          <span className="meta">
+            {template.category} · {template.year}
+          </span>
         </div>
-      </section>
 
-      {/* ── TITLE BLOCK ─────────────────────────────────────────────────── */}
-      <section
-        className="frame frame--book"
-        style={{ paddingBlock: 'clamp(2.5rem, 6vw, 5rem) 0' }}
-      >
-        <h1 className="display reveal" style={{ maxWidth: '18ch' }}>
-          {template.title}
-        </h1>
-        <p
-          className="lede reveal"
-          data-delay="1"
-          style={{
-            marginTop: 'clamp(1.25rem, 2.5vw, 2rem)',
-            fontSize: '1.125rem',
-          }}
-        >
-          {template.kicker}
-        </p>
-      </section>
-
-      {/* ── HERO IMAGE ──────────────────────────────────────────────────── */}
-      <section
-        className="frame frame--wide"
-        style={{ paddingBlock: 'clamp(3rem, 6vw, 5rem) 0' }}
-      >
-        <div
-          className="reveal"
-          data-delay="2"
-          style={{
-            position: 'relative',
-            background: 'var(--color-paper-2)',
-            border: '1px solid var(--color-rule)',
-            aspectRatio: template.thumbnail ? 'auto' : '16 / 10',
-            overflow: 'hidden',
-          }}
-        >
-          {template.thumbnail ? (
-            <Image
-              src={`/showcase/${template.thumbnail}.png`}
-              alt={`${template.title} preview`}
-              width={2400}
-              height={1500}
-              quality={92}
-              priority
-              sizes="(min-width: 1480px) 1400px, 100vw"
-              style={{ width: '100%', height: 'auto', display: 'block' }}
-            />
-          ) : template.placeholder ? (
-            <div
-              className="item-frame--type"
-              style={{ position: 'absolute', inset: 0, paddingBlock: '4rem' }}
-            >
-              <div>
-                <div
-                  className="typeplate"
-                  style={{ fontSize: 'clamp(2rem, 6vw, 4rem)' }}
+        <div className="detail-hero-grid">
+          <div className="detail-title-stack reveal">
+            <p className="meta">
+              Entry {String(indexInList + 1).padStart(2, '0')} / {String(TEMPLATES.length).padStart(2, '0')}
+            </p>
+            <h1 className="display detail-title">{template.title}</h1>
+            <p className="lede detail-kicker">{template.kicker}</p>
+            <div className="detail-actions">
+              {template.previewPath ? (
+                <Link
+                  href={template.previewPath}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="cta-block"
                 >
-                  <em>{template.placeholder.line}</em>
-                </div>
-                <div className="typeplate-meta">{template.placeholder.sub}</div>
-              </div>
+                  Open full template
+                </Link>
+              ) : null}
+              <Link href="https://flowstarter.net#pricing" className="action">
+                Build one like this
+              </Link>
             </div>
-          ) : null}
+          </div>
+
+          <aside className="detail-spec-card reveal" data-delay="1">
+            <dl>
+              <div>
+                <dt>Category</dt>
+                <dd>{template.category}</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>
+                  {template.status === 'live'
+                    ? 'ready to adapt'
+                    : template.status === 'private'
+                    ? 'private'
+                    : 'in development'}
+                </dd>
+              </div>
+              <div>
+                <dt>Built with</dt>
+                <dd>{template.built.join(' · ')}</dd>
+              </div>
+              <div>
+                <dt>Tags</dt>
+                <dd>{template.tags.join(', ')}</dd>
+              </div>
+            </dl>
+          </aside>
         </div>
       </section>
 
       {/* ── LIVE INTERACTIVE PREVIEW ────────────────────────────────────── */}
       {template.previewPath ? (
         <section
-          className="frame frame--wide"
-          style={{ paddingBlock: 'clamp(4rem, 8vw, 6rem) 0' }}
+          className="frame frame--wide detail-preview-section"
           aria-labelledby="live-preview-heading"
         >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'baseline',
-              gap: '1.5rem',
-              marginBottom: '1.25rem',
-            }}
-          >
-            <h2 id="live-preview-heading" className="meta-strong">
-              <span className="num">02</span>
-              <span
-                style={{ margin: '0 0.7em', color: 'var(--color-rule-strong)' }}
-              >
-                ·
-              </span>
-              Live preview
-            </h2>
+          <div className="preview-toolbar">
+            <h2 id="live-preview-heading">Live template</h2>
+            <span className="preview-url">/preview/{template.slug}/</span>
             <Link
               href={template.previewPath}
               target="_blank"
               rel="noreferrer"
-              className="meta link"
+              className="preview-open"
             >
-              Open in new tab ↗
+              Open full screen ↗
             </Link>
           </div>
-          <div
-            className="reveal"
-            data-delay="1"
-            style={{
-              position: 'relative',
-              border: '1px solid var(--color-ink)',
-              background: 'var(--color-paper)',
-              overflow: 'hidden',
-            }}
-          >
+          <div className="preview-shell reveal" data-delay="2">
             <iframe
               src={template.previewPath}
               title={`${template.title} — live preview`}
               loading="lazy"
               sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-              style={{
-                display: 'block',
-                width: '100%',
-                height: 'min(78vh, 1100px)',
-                minHeight: '720px',
-                border: 0,
-                background: '#f9f7f1',
-              }}
+              className="preview-frame"
             />
           </div>
-          <p
-            className="meta"
-            style={{
-              marginTop: '1rem',
-              color: 'var(--color-ink-faint)',
-              fontStyle: 'italic',
-            }}
-          >
-            Interactive — scroll, click pages, see the design system at work.
-            The same code ships when we build a custom site for you.
-          </p>
         </section>
       ) : null}
 

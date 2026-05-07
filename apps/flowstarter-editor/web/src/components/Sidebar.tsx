@@ -135,6 +135,7 @@ import {
   ThreadStatusPill,
 } from "./Sidebar.logic";
 import { SidebarUpdatePill } from "./sidebar/SidebarUpdatePill";
+import { UsageChip } from "./UsageChip";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { readEnvironmentApi } from "../environmentApi";
 import { useSettings, useUpdateSettings } from "~/hooks/useSettings";
@@ -1987,6 +1988,9 @@ const SidebarChromeFooter = memo(function SidebarChromeFooter() {
 
   return (
     <SidebarFooter className="p-2">
+      <div className="px-1 pb-1">
+        <UsageChip />
+      </div>
       <SidebarUpdatePill />
       <SidebarMenu>
         <SidebarMenuItem>

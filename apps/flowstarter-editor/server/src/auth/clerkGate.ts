@@ -1,19 +1,25 @@
 /**
  * Clerk-aware gate for the editor server.
  *
+ * URL contract: the editor lives at `https://{slug}.flowstarter.net/editor/*`.
+ * Caddy on the Hetzner host strips the `/editor` prefix and reverse-proxies
+ * to this server, preserving the original `Host` header. The workspace slug
+ * is therefore the leftmost label of `Host` (or the `X-Forwarded-Host` if
+ * Caddy adds one). `verifyClerkRequest()` returns it alongside the userId.
+ *
  * Authentication contract:
- *   - flowstarter-main owns the Clerk integration. When a user signs in there,
- *     Clerk drops a session cookie scoped to the parent domain (e.g.
- *     `.flowstarter.dev`), which is automatically sent to subdomains
- *     including `editor.flowstarter.app`.
- *   - We verify that cookie via @clerk/backend. No editor-side sign-in UI.
+ *   - The Clerk session cookie is scoped to `.flowstarter.net` (configure
+ *     `flowstarter.net` as a satellite of `flowstarter.dev` in the Clerk
+ *     dashboard). We verify that cookie via @clerk/backend. No editor-side
+ *     sign-in UI; unauthenticated users redirect to CLERK_SIGN_IN_URL.
  *
  * Authorization contract:
- *   - Admins (Clerk publicMetadata.role === 'team' | 'admin') get full access
- *     to every workspace. Their tier is hard-coded to 'custom' (full UI).
+ *   - Admins (Clerk publicMetadata.role === 'team' | 'admin') get full
+ *     access to every workspace. Their tier is hard-coded to 'custom'.
  *   - Clients (any other Clerk user) must have a row in
- *     `workspace_memberships` for the workspace they're trying to edit. Their
- *     tier is the workspace's `tier_name` (defaults to 'essential' if unset).
+ *     `workspace_memberships` for the workspace whose slug matches the
+ *     request's `Host`. Their tier is that workspace's `tier_name`
+ *     (defaults to 'essential' if unset).
  *
  * We deliberately keep this module non-Effect so it can be unit-tested in
  * isolation and so the Clerk + Supabase SDKs stay outside T3's runtime
@@ -38,6 +44,20 @@ export interface ResolvedIdentity {
   readonly tier: EditorTier;
   /** Workspace UUIDs this user can open. Admins get every workspace id. */
   readonly allowedWorkspaceIds: ReadonlyArray<string>;
+  /**
+   * Workspace this specific request is scoped to (derived from the `Host`
+   * header). `null` when the request didn't carry a recognisable workspace
+   * subdomain — e.g. local dev on `localhost:5733`. The auto-pair handler
+   * uses this to scope T3 sessions to the right workspace.
+   */
+  readonly currentWorkspace: ResolvedWorkspace | null;
+}
+
+export interface ResolvedWorkspace {
+  readonly id: string;
+  readonly slug: string;
+  readonly name: string;
+  readonly tier: EditorTier;
 }
 
 export class ClerkGateUnauthenticated extends Error {
@@ -205,13 +225,46 @@ function parseAuthorizedParties(): string[] | undefined {
 }
 
 /**
+ * Strip the public editor domain off a request `Host` and return the
+ * workspace slug. Returns `null` for local dev (`localhost:*`), bare
+ * apex / `www`, or unfamiliar domains so the gate can still produce a
+ * sensible identity for non-workspace requests.
+ *
+ * Configurable via `EDITOR_PUBLIC_DOMAIN` (default `flowstarter.net`)
+ * so this works for staging hosts too.
+ */
+export function parseWorkspaceSlugFromHost(host: string | null | undefined): string | null {
+  if (!host) return null;
+  const cleaned = host.split(",")[0]?.trim().toLowerCase().replace(/:\d+$/, "");
+  if (!cleaned) return null;
+  if (cleaned === "localhost" || cleaned.endsWith(".local")) return null;
+
+  const publicDomain = (process.env.EDITOR_PUBLIC_DOMAIN ?? "flowstarter.net").toLowerCase();
+  if (!cleaned.endsWith(`.${publicDomain}`)) return null;
+
+  const head = cleaned.slice(0, -(`.${publicDomain}`).length);
+  if (!head || head === "www" || head.includes(".")) return null;
+  // Slugs are alphanumeric + dashes only.
+  if (!/^[a-z0-9](?:[a-z0-9-]{0,58}[a-z0-9])?$/.test(head)) return null;
+  return head;
+}
+
+/**
  * Resolve a user's editor role + tier + allowed workspaces.
  *
  * Adminship comes from Clerk publicMetadata.role. Membership comes from
- * Supabase. Tier defaults to 'custom' for admins and to the workspace's
- * `tier_name` (or 'essential' as a safe fallback) for clients.
+ * Supabase. Tier defaults to 'custom' for admins. For clients the tier
+ * is the `currentWorkspace.tier_name` if a slug was supplied; otherwise
+ * the highest tier across their memberships (back-compat).
+ *
+ * If `currentSlug` is provided, this function ALSO verifies that the
+ * user is allowed to open that specific workspace — admins always pass,
+ * clients must be a member. Throws `ClerkGateForbidden` on mismatch.
  */
-export async function resolveAuthorization(userId: string): Promise<ResolvedIdentity> {
+export async function resolveAuthorization(
+  userId: string,
+  options: { currentSlug?: string | null } = {},
+): Promise<ResolvedIdentity> {
   const clerk = getClerkClient();
   const supabase = getSupabaseClient();
 
@@ -227,6 +280,36 @@ export async function resolveAuthorization(userId: string): Promise<ResolvedIden
   const rawRole = (user.publicMetadata as { role?: unknown } | null)?.role;
   const normalisedRole = typeof rawRole === "string" ? rawRole.toLowerCase() : null;
   const isAdmin = normalisedRole === "team" || normalisedRole === "admin";
+  const currentSlug = options.currentSlug ?? null;
+
+  // Always resolve the workspace addressed by the current Host (if any),
+  // regardless of role. Admin or member, we want to surface the same
+  // `currentWorkspace` block to the client so it can render the right
+  // workspace context.
+  let currentWorkspace: ResolvedWorkspace | null = null;
+  if (currentSlug) {
+    const { data: ws, error: wsErr } = await supabase
+      .from("workspaces")
+      .select("id, slug, name, tier_name")
+      .eq("slug", currentSlug)
+      .maybeSingle();
+    if (wsErr) {
+      throw new ClerkGateForbidden(
+        `Workspace lookup for ${currentSlug} failed: ${wsErr.message}`,
+      );
+    }
+    if (!ws) {
+      throw new ClerkGateForbidden(
+        `Workspace ${currentSlug} not found`,
+      );
+    }
+    currentWorkspace = {
+      id: ws.id as string,
+      slug: ws.slug as string,
+      name: ws.name as string,
+      tier: normaliseTier(ws.tier_name as string | null),
+    };
+  }
 
   if (isAdmin) {
     const { data: workspaces, error } = await supabase
@@ -240,6 +323,7 @@ export async function resolveAuthorization(userId: string): Promise<ResolvedIden
       role: "admin",
       tier: "custom",
       allowedWorkspaceIds: (workspaces ?? []).map((row) => row.id as string),
+      currentWorkspace,
     };
   }
 
@@ -253,6 +337,15 @@ export async function resolveAuthorization(userId: string): Promise<ResolvedIden
   }
 
   const allowedIds = (memberships ?? []).map((row) => row.workspace_id as string);
+
+  // If the request scoped to a specific workspace, the client MUST be a
+  // member of it. Refuse otherwise — even if they have other workspaces.
+  if (currentWorkspace && !allowedIds.includes(currentWorkspace.id)) {
+    throw new ClerkGateForbidden(
+      `User is not a member of workspace ${currentWorkspace.slug}`,
+    );
+  }
+
   if (allowedIds.length === 0) {
     return {
       userId,
@@ -261,6 +354,7 @@ export async function resolveAuthorization(userId: string): Promise<ResolvedIden
       // will refuse to open anything anyway.
       tier: "essential",
       allowedWorkspaceIds: [],
+      currentWorkspace,
     };
   }
 
@@ -272,15 +366,22 @@ export async function resolveAuthorization(userId: string): Promise<ResolvedIden
     throw new ClerkGateForbidden(`Workspace tier fetch failed: ${wErr.message}`);
   }
 
-  const tierFromHighestPaying = pickHighestTier(
-    (workspaces ?? []).map((row) => row.tier_name as string | null),
-  );
+  // When the request is scoped to a specific workspace, that tier is
+  // authoritative — clients see the UI level for the workspace they're
+  // editing, not the highest tier across all of theirs. Otherwise fall
+  // back to the highest available so generic queries still work.
+  const tier = currentWorkspace
+    ? currentWorkspace.tier
+    : pickHighestTier(
+        (workspaces ?? []).map((row) => row.tier_name as string | null),
+      );
 
   return {
     userId,
     role: "client",
-    tier: tierFromHighestPaying,
+    tier,
     allowedWorkspaceIds: allowedIds,
+    currentWorkspace,
   };
 }
 
@@ -301,6 +402,11 @@ function pickHighestTier(values: ReadonlyArray<string | null>): EditorTier {
     }
   }
   return best;
+}
+
+function normaliseTier(value: string | null): EditorTier {
+  if (value && isEditorTier(value)) return value;
+  return "essential";
 }
 
 function isEditorTier(value: string): value is EditorTier {

@@ -1,26 +1,34 @@
 /**
  * Tier-gating context for the multitenant editor.
  *
- * Source of truth comes from `GET /api/clerk/me` (see `lib/clerkSession.ts`)
+ * Source of truth comes from `GET /api/clerk/me` (see `lib/clerkSession.ts`),
  * which derives the tier per the master-decisions doc:
  *   - admins (Clerk role 'team' | 'admin') → 'custom' (full UI)
- *   - clients → workspaces.tier_name
+ *   - clients → tier of the workspace addressed by `{slug}.flowstarter.net`
+ *     (falls back to highest across memberships when no slug in Host).
  *
  * Components that render advanced features (file tree, terminal, raw code
  * editor) read `tier` via `useTier()` and hide themselves below 'custom'.
- *
- * Phase D (auth slice) will add per-workspace tier resolution; for now the
- * tier is the highest the user has access to across all their workspaces.
  */
 
 import { createContext, useContext, type ReactNode } from "react";
-import type { ClerkIdentity, EditorTier } from "../lib/clerkSession";
+import type {
+  ClerkIdentity,
+  ClerkWorkspaceContext,
+  EditorTier,
+} from "../lib/clerkSession";
 
 export interface TierContextValue {
   readonly tier: EditorTier;
   readonly role: "admin" | "client";
   readonly userId: string;
   readonly allowedWorkspaceIds: ReadonlyArray<string>;
+  /**
+   * The specific workspace this browser session is editing, derived from
+   * `{slug}.flowstarter.net`. `null` for local dev or for admin views
+   * that aren't tied to a single workspace.
+   */
+  readonly currentWorkspace: ClerkWorkspaceContext | null;
 }
 
 const TierContext = createContext<TierContextValue | null>(null);
@@ -36,6 +44,7 @@ export function TierProvider({ identity, children }: TierProviderProps) {
     role: identity.role,
     userId: identity.userId,
     allowedWorkspaceIds: identity.allowedWorkspaceIds,
+    currentWorkspace: identity.currentWorkspace,
   };
   return <TierContext.Provider value={value}>{children}</TierContext.Provider>;
 }

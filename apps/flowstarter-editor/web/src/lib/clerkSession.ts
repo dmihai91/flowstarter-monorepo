@@ -16,11 +16,24 @@
 export type EditorTier = "essential" | "pro" | "commerce" | "custom";
 export type EditorRole = "admin" | "client";
 
+export interface ClerkWorkspaceContext {
+  readonly id: string;
+  readonly slug: string;
+  readonly name: string;
+  readonly tier: EditorTier;
+}
+
 export interface ClerkIdentity {
   readonly userId: string;
   readonly role: EditorRole;
   readonly tier: EditorTier;
   readonly allowedWorkspaceIds: ReadonlyArray<string>;
+  /**
+   * Workspace this request was scoped to (derived server-side from the
+   * `Host` header). `null` when the request didn't carry a recognised
+   * workspace subdomain — e.g. local dev on `localhost:5733`.
+   */
+  readonly currentWorkspace: ClerkWorkspaceContext | null;
 }
 
 export type ClerkSessionResolution =

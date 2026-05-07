@@ -87,6 +87,17 @@ async function shellOk(cmd: string): Promise<{ ok: boolean; stderr: string }> {
   });
 }
 
+/**
+ * Reverse-proxy upstream for the multitenant editor container. Each
+ * Hetzner host runs ONE editor container; every site's Caddy snippet
+ * sends `/editor*` requests there. Defaults to `http://editor:3773`
+ * which matches the docker-compose service name; override via env when
+ * the editor lives at a different address (e.g. systemd unit on
+ * 127.0.0.1).
+ */
+const EDITOR_UPSTREAM =
+  process.env.DEPLOY_AGENT_EDITOR_UPSTREAM ?? 'http://editor:3773';
+
 function buildCaddySnippet(
   slug: string,
   rootDir: string,
@@ -98,7 +109,41 @@ function buildCaddySnippet(
     (h): h is string => !!h && h.length > 0
   );
   if (hosts.length === 0) return '';
-  return `# Managed by flowstarter deploy-agent — site ${slug}\n${hosts.join(', ')} {\n  encode gzip zstd\n  root * ${rootDir}\n  try_files {path} {path}/ /index.html\n  file_server\n}\n`;
+
+  // The site is split into two routes:
+  //   /editor*  → multitenant editor container (path stripped before forward
+  //               so the editor sees `/`, `/api/...`, etc. without prefix)
+  //   /...      → static site files in `rootDir`
+  //
+  // Editor requests carry the workspace slug via the `Host` header, which
+  // Caddy preserves automatically — the editor server (`clerkGate.ts`)
+  // reads it to scope the auth check to that specific workspace.
+  return [
+    `# Managed by flowstarter deploy-agent — site ${slug}`,
+    `${hosts.join(', ')} {`,
+    `  encode gzip zstd`,
+    ``,
+    `  # Editor (multitenant) — Clerk-gated; auth derives workspace from Host.`,
+    `  handle_path /editor/* {`,
+    `    reverse_proxy ${EDITOR_UPSTREAM} {`,
+    `      header_up X-Forwarded-Host {host}`,
+    `      header_up X-Forwarded-Proto {scheme}`,
+    `    }`,
+    `  }`,
+    `  # Editor health/short URL — `,
+    `  handle /editor {`,
+    `    redir /editor/ permanent`,
+    `  }`,
+    ``,
+    `  # Static site (the deployed client artifact)`,
+    `  handle {`,
+    `    root * ${rootDir}`,
+    `    try_files {path} {path}/ /index.html`,
+    `    file_server`,
+    `  }`,
+    `}`,
+    ``,
+  ].join('\n');
 }
 
 async function ensureDirs(): Promise<void> {

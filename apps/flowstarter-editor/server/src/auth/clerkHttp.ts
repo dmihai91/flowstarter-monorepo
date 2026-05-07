@@ -19,6 +19,7 @@ import {
   ClerkGateConfigError,
   ClerkGateForbidden,
   ClerkGateUnauthenticated,
+  parseWorkspaceSlugFromHost,
   resolveAuthorization,
   verifyClerkRequest,
   type ResolvedIdentity,
@@ -44,7 +45,12 @@ type ClerkMeOutcome =
   | { kind: "error"; reason: string };
 
 function buildLoginUrl(currentUrl: string): string {
-  const base = process.env.CLERK_SIGN_IN_URL ?? "https://flowstarter.dev/login";
+  // Default to the satellite-hosted Clerk sign-in on the same root domain
+  // as the editor (`flowstarter.net`) so the cookie set by Clerk is
+  // visible at every `{slug}.flowstarter.net` afterwards. Override via env
+  // for staging or for the legacy `flowstarter.dev/login` flow.
+  const base =
+    process.env.CLERK_SIGN_IN_URL ?? "https://flowstarter.net/sign-in";
   try {
     const target = new URL(base);
     target.searchParams.set("redirect_url", currentUrl);
@@ -52,6 +58,16 @@ function buildLoginUrl(currentUrl: string): string {
   } catch {
     return base;
   }
+}
+
+function resolveCurrentSlug(
+  request: HttpServerRequest.HttpServerRequest,
+): string | null {
+  const host =
+    request.headers["x-forwarded-host"]?.toString() ??
+    request.headers["host"]?.toString() ??
+    null;
+  return parseWorkspaceSlugFromHost(host);
 }
 
 function reconstructRequestUrl(
@@ -83,10 +99,11 @@ function clerkHeadersToRecord(
 async function runClerkMe(
   url: string,
   headers: Record<string, string | undefined>,
+  currentSlug: string | null,
 ): Promise<ClerkMeOutcome> {
   try {
     const { userId } = await verifyClerkRequest({ headers, url, method: "GET" });
-    const identity = await resolveAuthorization(userId);
+    const identity = await resolveAuthorization(userId, { currentSlug });
     return { kind: "ok", identity };
   } catch (error) {
     if (error instanceof ClerkGateUnauthenticated) {
@@ -125,8 +142,9 @@ export const clerkMeRouteLayer = HttpRouter.add(
     const request = yield* HttpServerRequest.HttpServerRequest;
     const url = reconstructRequestUrl(request);
     const headers = clerkHeadersToRecord(request);
+    const currentSlug = resolveCurrentSlug(request);
 
-    const outcome = yield* Effect.promise(() => runClerkMe(url, headers));
+    const outcome = yield* Effect.promise(() => runClerkMe(url, headers, currentSlug));
 
     if (outcome.kind === "ok") {
       const body: ClerkMeOk = {
@@ -175,10 +193,11 @@ type AutoPairOutcome =
 async function runAutoPairIdentity(
   url: string,
   headers: Record<string, string | undefined>,
+  currentSlug: string | null,
 ): Promise<AutoPairOutcome> {
   try {
     const { userId } = await verifyClerkRequest({ headers, url, method: "POST" });
-    const identity = await resolveAuthorization(userId);
+    const identity = await resolveAuthorization(userId, { currentSlug });
     if (identity.role !== "admin" && identity.allowedWorkspaceIds.length === 0) {
       return {
         kind: "no-workspace",
@@ -234,8 +253,11 @@ export const clerkAutoPairRouteLayer = HttpRouter.add(
     const request = yield* HttpServerRequest.HttpServerRequest;
     const url = reconstructRequestUrl(request);
     const headers = clerkHeadersToRecord(request);
+    const currentSlug = resolveCurrentSlug(request);
 
-    const outcome = yield* Effect.promise(() => runAutoPairIdentity(url, headers));
+    const outcome = yield* Effect.promise(() =>
+      runAutoPairIdentity(url, headers, currentSlug),
+    );
 
     if (outcome.kind === "unauthenticated") {
       return HttpServerResponse.jsonUnsafe(

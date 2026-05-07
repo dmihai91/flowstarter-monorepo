@@ -206,7 +206,7 @@ export function getTeamEmailDomains(hostname?: string): string[] {
   const base = root.split('.')[0]; // e.g. "flowstarter"
 
   // Include common TLD variants for the same brand
-  const tlds = ['app', 'dev', 'com'];
+  const tlds = ['app', 'dev', 'com', 'net'];
   return tlds.map((tld) => `${base}.${tld}`);
 }
 

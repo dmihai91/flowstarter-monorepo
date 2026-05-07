@@ -7,7 +7,7 @@
  * @module lib/api-auth
  */
 
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { createSupabaseServerClient } from '@/supabase-clients/server';
 
@@ -178,6 +178,46 @@ export async function requireAuthWithSupabase(request?: Request): Promise<
       response: unauthorizedResponse(
         'Failed to establish authenticated database connection'
       ),
+    };
+  }
+}
+
+/**
+ * Require team-or-admin role for /api/team/* routes.
+ *
+ * Reads role from Clerk session claims first, falls back to publicMetadata.
+ * Mirrors the inline checks in app/api/team/clients and projects/[id].
+ */
+export type TeamAuthResult =
+  | { authorized: true; userId: string; role: 'team' | 'admin' }
+  | { authorized: false; response: NextResponse };
+
+export async function requireTeamAuth(): Promise<TeamAuthResult> {
+  try {
+    const { userId, sessionClaims } = await auth();
+    if (!userId) {
+      return { authorized: false, response: unauthorizedResponse() };
+    }
+
+    let role = (
+      sessionClaims?.metadata as { role?: string } | undefined
+    )?.role?.toLowerCase();
+
+    if (!role) {
+      const user = await currentUser();
+      role = (user?.publicMetadata as { role?: string } | undefined)?.role?.toLowerCase();
+    }
+
+    if (role !== 'team' && role !== 'admin') {
+      return { authorized: false, response: forbiddenResponse('Not a team member') };
+    }
+
+    return { authorized: true, userId, role: role as 'team' | 'admin' };
+  } catch (error) {
+    console.error('[Team Auth] Error:', error);
+    return {
+      authorized: false,
+      response: NextResponse.json({ error: 'Auth failed' }, { status: 500 }),
     };
   }
 }

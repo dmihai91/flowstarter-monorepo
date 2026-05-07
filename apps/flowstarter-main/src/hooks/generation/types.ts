@@ -91,7 +91,6 @@ export interface GenerationResult {
   tested: boolean;
   orchestrated: boolean;
   qualityMetrics?: QualityMetrics;
-  daytonaWorkspace?: string;
   timestamp?: string;
 }
 
@@ -99,7 +98,7 @@ export interface GenerationResult {
 export type { TemplateInfo, WebsiteProjectDetails };
 
 export interface UseStreamingWebsiteGenerationOptions {
-  sessionId?: string | null; // Convex session ID for real-time sync
+  sessionId?: string | null;
 }
 
 export interface UseStreamingWebsiteGenerationResult {

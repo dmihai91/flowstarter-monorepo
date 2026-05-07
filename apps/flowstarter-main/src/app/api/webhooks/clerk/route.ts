@@ -21,9 +21,6 @@ import {
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-/**
- * Clerk webhook event types we handle
- */
 type ClerkWebhookEventType =
   | 'user.created'
   | 'user.updated'
@@ -35,9 +32,6 @@ type ClerkWebhookEventType =
   | 'organization.updated'
   | 'organization.deleted';
 
-/**
- * Clerk user data structure
- */
 interface ClerkUserData {
   id: string;
   first_name: string | null;
@@ -53,127 +47,84 @@ interface ClerkUserData {
   updated_at: number;
 }
 
-/**
- * Clerk webhook event structure
- */
 interface ClerkWebhookEvent {
   type: ClerkWebhookEventType;
   data: ClerkUserData;
   object: 'event';
 }
 
-/**
- * Handle user.created event
- * Log the event for audit purposes (no PII stored)
- */
-async function handleUserCreated(data: ClerkUserData): Promise<void> {
-  console.info('[Clerk Webhook] User created:', data.id);
+function primaryEmail(user: ClerkUserData): string | null {
+  if (!user.primary_email_address_id) return null;
+  const match = user.email_addresses.find(
+    (e) => e.id === user.primary_email_address_id
+  );
+  return match?.email_address ?? null;
+}
 
-  // Log to security audit (no PII)
-  const supabase = createSupabaseServiceRoleClient();
-  await supabase.from('security_audit_logs').insert({
-    event: 'user.created',
-    severity: 'info',
-    user_hash: await hashUserId(data.id),
-    provider: 'clerk',
-    success: true,
-  });
+function fullName(user: ClerkUserData): string | null {
+  const parts = [user.first_name, user.last_name].filter(Boolean);
+  return parts.length > 0 ? parts.join(' ') : null;
 }
 
 /**
- * Handle user.updated event
+ * Mirror the Clerk user into our profiles table so SQL joins resolve.
+ * Workspace ownership is tracked separately via workspace_memberships.
  */
-async function handleUserUpdated(data: ClerkUserData): Promise<void> {
-  console.info('[Clerk Webhook] User updated:', data.id);
-
-  // Log to security audit
+async function upsertProfile(data: ClerkUserData): Promise<void> {
   const supabase = createSupabaseServiceRoleClient();
-  await supabase.from('security_audit_logs').insert({
-    event: 'user.updated',
-    severity: 'info',
-    user_hash: await hashUserId(data.id),
-    provider: 'clerk',
-    success: true,
-  });
+  const { error } = await supabase.from('profiles').upsert(
+    {
+      clerk_user_id: data.id,
+      email: primaryEmail(data),
+      full_name: fullName(data),
+      avatar_url: data.image_url,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'clerk_user_id' }
+  );
+  if (error) {
+    console.error('[Clerk Webhook] profile upsert failed:', error.message);
+  }
 }
 
 /**
- * Handle user.deleted event
- * Clean up user data from our database
+ * On user.deleted, remove the Clerk user's profile row + workspace memberships.
+ * Workspaces themselves are preserved — the team manages those, not the user.
  */
 async function handleUserDeleted(data: ClerkUserData): Promise<void> {
   console.info('[Clerk Webhook] User deleted:', data.id);
-
   const supabase = createSupabaseServiceRoleClient();
 
-  // Delete user's projects (cascade will handle related data)
-  const { error: projectsError } = await supabase
-    .from('projects')
+  const { error: membershipsError } = await supabase
+    .from('workspace_memberships')
     .delete()
-    .eq('user_id', data.id);
-
-  if (projectsError) {
+    .eq('clerk_user_id', data.id);
+  if (membershipsError) {
     console.error(
-      '[Clerk Webhook] Error deleting user projects:',
-      projectsError
+      '[Clerk Webhook] Error deleting workspace memberships:',
+      membershipsError.message
     );
   }
 
-  // Delete user's integrations
-  const { error: integrationsError } = await supabase
-    .from('user_integrations')
+  const { error: profileError } = await supabase
+    .from('profiles')
     .delete()
-    .eq('user_id', data.id);
-
-  if (integrationsError) {
+    .eq('clerk_user_id', data.id);
+  if (profileError) {
     console.error(
-      '[Clerk Webhook] Error deleting user integrations:',
-      integrationsError
+      '[Clerk Webhook] Error deleting profile:',
+      profileError.message
     );
   }
-
-  // Delete user's feedback
-  const { error: feedbackError } = await supabase
-    .from('user_feedback')
-    .delete()
-    .eq('user_id', data.id);
-
-  if (feedbackError) {
-    console.error(
-      '[Clerk Webhook] Error deleting user feedback:',
-      feedbackError
-    );
-  }
-
-  // Log to security audit
-  await supabase.from('security_audit_logs').insert({
-    event: 'user.deleted',
-    severity: 'info',
-    user_hash: await hashUserId(data.id),
-    provider: 'clerk',
-    success: true,
-  });
-}
-
-/**
- * Hash user ID for privacy-compliant logging
- */
-async function hashUserId(userId: string): Promise<string> {
-  // Use a simple hash for correlation without PII
-  const { createHash } = await import('crypto');
-  return createHash('sha256').update(userId).digest('hex').substring(0, 16);
 }
 
 /**
  * POST /api/webhooks/clerk
- *
- * Receives and processes Clerk webhook events.
- * Signature verification is mandatory - unsigned requests are rejected.
+ * Receives and processes Clerk webhook events. Svix signature is mandatory.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
 
-  // Check if webhook secret is configured
   if (!webhookSecret) {
     console.error('[Clerk Webhook] CLERK_WEBHOOK_SECRET is not configured');
     return NextResponse.json(
@@ -183,69 +134,41 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    // Get the raw body for signature verification
     const payload = await request.text();
     const headers = extractWebhookHeaders(request);
 
-    // Log webhook received
     logWebhookEvent('clerk', 'received', {
       webhookId: headers['svix-id'],
     });
 
-    // Verify the webhook signature
     const verification = verifySvixSignature(payload, headers, webhookSecret);
-
     if (!verification.valid) {
       logWebhookEvent('clerk', 'failed', {
         error: verification.error,
         webhookId: headers['svix-id'],
       });
-
-      // Log security event for failed verification
-      const supabase = createSupabaseServiceRoleClient();
-      await supabase.from('security_audit_logs').insert({
-        event: 'webhook.verification_failed',
-        severity: 'warning',
-        provider: 'clerk',
-        error_code: 'INVALID_SIGNATURE',
-        route: '/api/webhooks/clerk',
-        method: 'POST',
-        success: false,
-      });
-
       return NextResponse.json({ error: verification.error }, { status: 401 });
     }
 
-    // Parse the verified payload
     const event = verification.payload as ClerkWebhookEvent;
-
-    // Log successful verification
     logWebhookEvent('clerk', 'verified', {
       eventType: event.type,
       webhookId: headers['svix-id'],
     });
 
-    // Handle the event based on type
     switch (event.type) {
       case 'user.created':
-        await handleUserCreated(event.data);
-        break;
-
       case 'user.updated':
-        await handleUserUpdated(event.data);
+        await upsertProfile(event.data);
         break;
-
       case 'user.deleted':
         await handleUserDeleted(event.data);
         break;
-
       case 'session.created':
       case 'session.ended':
       case 'session.removed':
-        // Log session events for security monitoring
         console.info(`[Clerk Webhook] Session event: ${event.type}`);
         break;
-
       default:
         console.info(`[Clerk Webhook] Unhandled event type: ${event.type}`);
     }
@@ -253,12 +176,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('[Clerk Webhook] Error processing webhook:', error);
-
-    // Log the error
     logWebhookEvent('clerk', 'failed', {
       error: error instanceof Error ? error.message : 'Unknown error',
     });
-
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }
@@ -268,9 +188,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
 /**
  * GET /api/webhooks/clerk
- *
- * Health check endpoint for webhook configuration verification.
- * Returns 405 Method Not Allowed as webhooks should only use POST.
+ * Health check endpoint. Webhooks only accept POST.
  */
 export async function GET(): Promise<NextResponse> {
   return NextResponse.json(

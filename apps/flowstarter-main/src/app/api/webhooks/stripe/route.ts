@@ -8,73 +8,90 @@ function getStripe(): Stripe {
   return new Stripe(key, { apiVersion: '2026-02-25.clover' });
 }
 
+/**
+ * Stripe writes to `invoice.metadata.workspaceId` (and historically projectId).
+ * Read both so older invoices in flight on cutover still resolve.
+ */
+function workspaceIdFromMetadata(
+  meta: Stripe.Metadata | null | undefined
+): string | undefined {
+  if (!meta) return undefined;
+  const ws = meta['workspaceId'];
+  if (typeof ws === 'string' && ws.length > 0) return ws;
+  const pj = meta['projectId'];
+  if (typeof pj === 'string' && pj.length > 0) return pj;
+  return undefined;
+}
+
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
-  const { projectId, invoiceType } = invoice.metadata ?? {};
-  if (!projectId || !invoiceType) return;
+  const workspaceId = workspaceIdFromMetadata(invoice.metadata);
+  const invoiceType = invoice.metadata?.invoiceType;
+  if (!workspaceId || !invoiceType) return;
   const supabase = createSupabaseServiceRoleClient();
   const now = new Date().toISOString();
 
   if (invoiceType === 'deposit') {
     await supabase
-      .from('projects')
+      .from('workspaces')
       .update({
         deposit_status: 'paid',
         deposit_paid_at: now,
         outstanding_payment: false,
       })
-      .eq('id', projectId);
+      .eq('id', workspaceId);
   }
   if (invoiceType === 'final') {
     const trialEnd = new Date();
     trialEnd.setDate(trialEnd.getDate() + 30);
     await supabase
-      .from('projects')
+      .from('workspaces')
       .update({
         final_status: 'paid',
         final_paid_at: now,
         outstanding_payment: false,
-        launched_at: now,
+        setup_go_live_at: now,
         subscription_status: 'trial',
         subscription_trial_ends: trialEnd.toISOString(),
       })
-      .eq('id', projectId);
+      .eq('id', workspaceId);
   }
   console.info(
-    `[Stripe] payment_succeeded -- ${invoiceType} for project ${projectId}`
+    `[Stripe] payment_succeeded -- ${invoiceType} for workspace ${workspaceId}`
   );
 }
 
 async function handleInvoiceOverdue(invoice: Stripe.Invoice) {
-  const { projectId, invoiceType } = invoice.metadata ?? {};
-  if (!projectId || !invoiceType) return;
+  const workspaceId = workspaceIdFromMetadata(invoice.metadata);
+  const invoiceType = invoice.metadata?.invoiceType;
+  if (!workspaceId || !invoiceType) return;
   const supabase = createSupabaseServiceRoleClient();
   if (invoiceType === 'deposit') {
     await supabase
-      .from('projects')
+      .from('workspaces')
       .update({ deposit_status: 'overdue', outstanding_payment: true })
-      .eq('id', projectId);
+      .eq('id', workspaceId);
   } else {
     await supabase
-      .from('projects')
+      .from('workspaces')
       .update({ final_status: 'overdue', outstanding_payment: true })
-      .eq('id', projectId);
+      .eq('id', workspaceId);
   }
-  console.warn(`[Stripe] overdue -- ${invoiceType} for project ${projectId}`);
+  console.warn(`[Stripe] overdue -- ${invoiceType} for workspace ${workspaceId}`);
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const { projectId } = invoice.metadata ?? {};
-  if (!projectId) return;
+  const workspaceId = workspaceIdFromMetadata(invoice.metadata);
+  if (!workspaceId) return;
   await createSupabaseServiceRoleClient()
-    .from('projects')
+    .from('workspaces')
     .update({ outstanding_payment: true })
-    .eq('id', projectId);
-  console.warn(`[Stripe] payment_failed for project ${projectId}`);
+    .eq('id', workspaceId);
+  console.warn(`[Stripe] payment_failed for workspace ${workspaceId}`);
 }
 
 async function handleSubscriptionEvent(subscription: Stripe.Subscription) {
-  const { projectId } = subscription.metadata ?? {};
-  if (!projectId) return;
+  const workspaceId = workspaceIdFromMetadata(subscription.metadata);
+  if (!workspaceId) return;
   const supabase = createSupabaseServiceRoleClient();
 
   const statusMap: Partial<Record<Stripe.Subscription.Status, string>> = {
@@ -90,17 +107,17 @@ async function handleSubscriptionEvent(subscription: Stripe.Subscription) {
     : null;
 
   await supabase
-    .from('projects')
+    .from('workspaces')
     .update({
       subscription_status: status,
       stripe_subscription_id: subscription.id,
       subscription_next_billing: nextBilling,
       outstanding_payment: subscription.status === 'past_due',
     })
-    .eq('id', projectId);
+    .eq('id', workspaceId);
 
   console.info(
-    `[Stripe] subscription ${subscription.id} -> ${status} for project ${projectId}`
+    `[Stripe] subscription ${subscription.id} -> ${status} for workspace ${workspaceId}`
   );
 }
 

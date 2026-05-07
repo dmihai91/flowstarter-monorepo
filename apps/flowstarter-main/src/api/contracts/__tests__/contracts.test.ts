@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   ApiErrorSchema,
-  CreateProjectRequestSchema,
-  CreateProjectResponseSchema,
   DashboardStatsResponseSchema,
   DomainAvailabilityRequestSchema,
   DomainAvailabilityResponseSchema,
-  ProjectSchema,
   ProjectSuggestionsRequestSchema,
   ProjectSuggestionsResponseSchema,
   errorResponse,
@@ -41,77 +38,6 @@ describe('API Contracts', () => {
         error: 'Not found',
         code: 'ERR_NOT_FOUND',
       });
-    });
-  });
-
-  describe('Project Contracts', () => {
-    it('should validate project schema', () => {
-      const validProject = {
-        id: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'Test Project',
-        description: 'A test project',
-        status: 'draft',
-        user_id: 'user_123',
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-      };
-
-      const result = ProjectSchema.safeParse(validProject);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject invalid project status', () => {
-      const invalidProject = {
-        id: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'Test Project',
-        status: 'invalid_status',
-        user_id: 'user_123',
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-      };
-
-      const result = ProjectSchema.safeParse(invalidProject);
-      expect(result.success).toBe(false);
-    });
-
-    it('should validate create project request', () => {
-      const validRequest = {
-        name: 'My New Project',
-        description: 'A great project',
-        industry: 'technology',
-      };
-
-      const result = CreateProjectRequestSchema.safeParse(validRequest);
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject create request with empty name', () => {
-      const invalidRequest = {
-        name: '',
-        description: 'A project without a name',
-      };
-
-      const result = CreateProjectRequestSchema.safeParse(invalidRequest);
-      expect(result.success).toBe(false);
-    });
-
-    it('should reject name exceeding max length', () => {
-      const invalidRequest = {
-        name: 'A'.repeat(81), // 81 characters, max is 80
-      };
-
-      const result = CreateProjectRequestSchema.safeParse(invalidRequest);
-      expect(result.success).toBe(false);
-    });
-
-    it('should validate create project response', () => {
-      const validResponse = {
-        success: true,
-        projectId: '550e8400-e29b-41d4-a716-446655440000',
-      };
-
-      const result = CreateProjectResponseSchema.safeParse(validResponse);
-      expect(result.success).toBe(true);
     });
   });
 

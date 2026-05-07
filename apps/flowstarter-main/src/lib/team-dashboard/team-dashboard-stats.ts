@@ -1,18 +1,20 @@
 import { deriveProjectStatus, isBuilding, isLive } from './team-project-status';
 
-/** Minimal columns for aggregating team dashboard KPIs (no Clerk, no large blobs). */
+/**
+ * Minimal columns for aggregating team dashboard KPIs from workspaces.
+ * Stays narrow so we don't pull JSON columns unnecessarily.
+ */
 export const TEAM_DASHBOARD_STATS_PROJECT_SELECT = `
   id,
   name,
-  is_draft,
-  final_status,
-  published_url,
-  generation_completed_at,
-  is_paid,
+  concierge_stage,
+  deploy_status,
   setup_fee,
   monthly_fee,
-  ai_credits_used,
-  generation_cost_usd,
+  deposit_status,
+  final_status,
+  outstanding_payment,
+  subscription_status,
   created_at,
   updated_at
 `.trim();
@@ -20,16 +22,14 @@ export const TEAM_DASHBOARD_STATS_PROJECT_SELECT = `
 export type TeamDashboardStatsProjectRow = {
   id: string;
   name: string | null;
-  status?: string | null;
-  is_draft?: boolean | null;
-  final_status?: string | null;
-  published_url?: string | null;
-  generation_completed_at?: string | null;
-  is_paid: boolean | null;
+  concierge_stage?: string | null;
+  deploy_status?: string | null;
   setup_fee: number | null;
   monthly_fee: number | null;
-  ai_credits_used: number | null;
-  generation_cost_usd: number | null;
+  deposit_status?: string | null;
+  final_status?: string | null;
+  outstanding_payment?: boolean | null;
+  subscription_status?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -50,9 +50,7 @@ export type TeamDashboardStatsPayload = {
   totalSetupFees: number;
   monthlyRevenue: number;
   paidCount: number;
-  totalCredits: number;
-  totalCostEur: number;
-  sitesGenerated: number;
+  outstandingCount: number;
   recentProject: TeamDashboardRecentProject | null;
 };
 
@@ -62,7 +60,10 @@ function activityTimestamp(row: TeamDashboardStatsProjectRow): number {
   return Math.max(u, c);
 }
 
-/** Mirrors the previous client-side aggregation in `TeamProjectsStats`. */
+/**
+ * Aggregate workspace-row stats for the team dashboard KPI strip.
+ * `paidCount` is "deposit + final both paid" (i.e. setup is fully collected).
+ */
 export function computeTeamDashboardStats(
   rows: TeamDashboardStatsProjectRow[]
 ): TeamDashboardStatsPayload {
@@ -72,9 +73,7 @@ export function computeTeamDashboardStats(
   let totalSetupFees = 0;
   let monthlyRevenue = 0;
   let paidCount = 0;
-  let totalCredits = 0;
-  let totalCostEur = 0;
-  let sitesGenerated = 0;
+  let outstandingCount = 0;
   let recentProject: TeamDashboardRecentProject | null = null;
   let recentTs = -1;
 
@@ -85,14 +84,15 @@ export function computeTeamDashboardStats(
     else draftCount += 1;
 
     totalSetupFees += p.setup_fee || 0;
-    if (p.is_paid) {
+    const setupPaid =
+      p.deposit_status === 'paid' && p.final_status === 'paid';
+    if (setupPaid) {
       paidCount += 1;
+    }
+    if (p.subscription_status === 'active' || p.subscription_status === 'trial') {
       monthlyRevenue += p.monthly_fee || 0;
     }
-    totalCredits += p.ai_credits_used || 0;
-    const costUsd = p.generation_cost_usd || 0;
-    totalCostEur += costUsd * 0.92;
-    if (costUsd > 0) sitesGenerated += 1;
+    if (p.outstanding_payment) outstandingCount += 1;
 
     const ts = activityTimestamp(p);
     if (ts >= recentTs) {
@@ -115,9 +115,7 @@ export function computeTeamDashboardStats(
     totalSetupFees,
     monthlyRevenue,
     paidCount,
-    totalCredits,
-    totalCostEur,
-    sitesGenerated,
+    outstandingCount,
     recentProject,
   };
 }

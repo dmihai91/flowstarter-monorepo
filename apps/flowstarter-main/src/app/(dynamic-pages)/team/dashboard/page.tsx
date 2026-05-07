@@ -1,7 +1,6 @@
 'use client';
 
 import { TeamProjectsStats } from './components/TeamProjectsStats';
-import { ClientRequestsList } from './components/client-requests/ClientRequestsList';
 import { DashboardLoader } from './components/DashboardSkeleton';
 import { TeamDashboardShell } from './components/TeamDashboardShell';
 import { useTranslations } from '@/lib/i18n';
@@ -47,9 +46,6 @@ export default function TeamDashboardPage() {
       <div className="mb-8">
         <TeamProjectsStats />
       </div>
-
-      {/* Client Requests */}
-      <ClientRequestsList />
     </TeamDashboardShell>
   );
 }

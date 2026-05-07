@@ -3,7 +3,6 @@ import '@/lib/storage-polyfill';
 
 import { DatabaseOfflineHandler } from '@/components/DatabaseOfflineHandler';
 import { ErrorBoundaryWrapper } from '@/components/ErrorBoundary';
-import { GoogleAnalytics } from '@/components/GoogleAnalytics';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { I18nProvider } from '@/lib/i18n';
 import ro from '@/locales/ro';
@@ -113,9 +112,6 @@ export default async function RootLayout({
         style={{ fontFamily: 'var(--font-jakarta)' }}
         suppressHydrationWarning
       >
-        <GoogleAnalytics
-          measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''}
-        />
         <ErrorBoundaryWrapper>
           <ThemeProvider>
             <I18nProvider initialLocale="en" initialMessages={{ en, ro }}>

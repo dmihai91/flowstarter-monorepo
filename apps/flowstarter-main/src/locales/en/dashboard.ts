@@ -79,7 +79,7 @@ export const dashboardKeys = {
   // Premium dashboard - build phase
   'dashboard.action.kickoffTitle': "Let's get your website started",
   'dashboard.action.kickoffDesc':
-    'A 45-minute call to define your goals. We handle the rest.',
+    'A 30-minute call to define your goals. We handle the rest.',
   'dashboard.stats.buildPhase': 'Build in progress',
   'dashboard.stats.buildPhaseActive': 'In progress',
   'dashboard.stats.currentMilestone': 'Current phase: {phase}',

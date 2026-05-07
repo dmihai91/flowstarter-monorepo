@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useBookingModal } from './booking-modal-store';
 
 export function FinalCTASection() {
   const rootRef = useRef<HTMLElement | null>(null);
-  const calLink = 'https://cal.com/flowstarter/intro';
+  const openBookingModal = useBookingModal((s) => s.open);
 
   useEffect(() => {
     const el = rootRef.current;
@@ -113,8 +114,9 @@ export function FinalCTASection() {
 
             {/* CTA */}
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-5">
-              <a
-                href={calLink}
+              <button
+                type="button"
+                onClick={openBookingModal}
                 className="ls-cta-hero inline-flex h-14 items-center px-8 text-[1.02rem] sm:text-[1.08rem]"
               >
                 Book your call
@@ -131,7 +133,7 @@ export function FinalCTASection() {
                     d="M5 12h14m-5-6l6 6-6 6"
                   />
                 </svg>
-              </a>
+              </button>
               <a
                 href="mailto:hello@flowstarter.net"
                 className="ls-link ls-link--hero text-[var(--ls-ink-dim)]"

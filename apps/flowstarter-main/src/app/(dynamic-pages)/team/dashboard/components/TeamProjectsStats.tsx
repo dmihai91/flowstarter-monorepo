@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import Link from 'next/link';
 
 import { useTeamDashboardStats } from '@/hooks/useTeamDashboardStats';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -13,7 +12,6 @@ import {
   isLive,
 } from '@/lib/team-dashboard/team-project-status';
 import { GlassPanel } from '@flowstarter/flow-design-system';
-import { ClientRequestsKpiCard } from './ClientRequestsKpiCard';
 import { TeamProjectsStatsSkeleton } from './TeamProjectsStatsSkeleton';
 
 export {
@@ -31,6 +29,12 @@ function formatCurrency(amount: number): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+function statusBadgeClassFor(status: string | null) {
+  if (isLive(status)) return STATUS_BADGE_CLASS.live;
+  if (isBuilding(status)) return STATUS_BADGE_CLASS.building;
+  return STATUS_BADGE_CLASS.intake;
 }
 
 export function TeamProjectsStats() {
@@ -58,9 +62,7 @@ export function TeamProjectsStats() {
     totalSetupFees,
     monthlyRevenue,
     paidCount,
-    totalCredits,
-    totalCostEur,
-    sitesGenerated,
+    outstandingCount,
     recentProject,
   } = stats;
 
@@ -70,14 +72,8 @@ export function TeamProjectsStats() {
     return t('status.draft');
   };
 
-  const getStatusBadgeClass = (status: string | null) => {
-    if (isLive(status)) return STATUS_BADGE_CLASS.live;
-    if (isBuilding(status)) return STATUS_BADGE_CLASS.building;
-    return STATUS_BADGE_CLASS.draft;
-  };
-
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full min-w-0">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full min-w-0">
       {/* Total Projects Card */}
       <GlassPanel
         shadow="glass"
@@ -115,7 +111,7 @@ export function TeamProjectsStats() {
             </span>
           )}
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-gray-400" />
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
             <span className="text-[var(--fs-ink-dim)]">
               {t('team.dashboard.countDraft', { count: draftCount })}
             </span>
@@ -132,7 +128,7 @@ export function TeamProjectsStats() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span
-                    className={`px-1.5 py-0.5 text-[0.625rem] font-medium rounded ${getStatusBadgeClass(
+                    className={`px-1.5 py-0.5 text-[0.625rem] font-medium rounded ${statusBadgeClassFor(
                       recentProject.status
                     )}`}
                   >
@@ -210,7 +206,7 @@ export function TeamProjectsStats() {
         </div>
       </GlassPanel>
 
-      {/* AI Usage Card */}
+      {/* Outstanding payments */}
       <GlassPanel
         shadow="glass"
         padding="md"
@@ -224,34 +220,17 @@ export function TeamProjectsStats() {
         }
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-[var(--fs-ink-faint)]">AI Usage</span>
-          <Link
-            href="/team/dashboard/ai-usage"
-            className="text-xs text-[var(--purple)] hover:underline font-medium"
-          >
-            {t('team.dashboard.details')} →
-          </Link>
-        </div>
-        <div className="mb-3">
-          <p className="text-3xl font-bold text-[var(--fs-ink)]">
-            {totalCredits} credits
-          </p>
-          <p className="text-lg font-semibold text-[var(--purple)] dark:text-[var(--purple)]">
-            €{totalCostEur.toFixed(2)}
-          </p>
-        </div>
-        <div className="flex items-center gap-3 text-xs">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[var(--purple)]" />
-            <span className="text-[var(--fs-ink-dim)]">
-              {sitesGenerated} sites generated
-            </span>
+          <span className="text-sm text-[var(--fs-ink-faint)]">
+            Outstanding payments
           </span>
         </div>
+        <p className="text-3xl font-bold text-[var(--fs-ink)]">
+          {outstandingCount}
+        </p>
+        <p className="text-xs text-[var(--fs-ink-faint)] mt-1">
+          Workspaces with deposit/final/subscription past due
+        </p>
       </GlassPanel>
-
-      {/* Client Requests KPI */}
-      <ClientRequestsKpiCard />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 export const landingProcessKeys = {
   'landing.process.title': "Three steps. A site you're proud of.",
   'landing.process.step1.number': '01',
-  'landing.process.step1.title': 'We talk for 45 minutes',
+  'landing.process.step1.title': 'We talk for 30 minutes',
   'landing.process.step1.description':
     "You book a free discovery call. We ask the right questions about your brand, your clients, and what you want your site to do. You don't need to prepare anything.",
   'landing.process.step2.number': '02',

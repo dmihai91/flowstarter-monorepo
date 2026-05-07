@@ -9,7 +9,7 @@ export async function GET() {
     // Simple query to test database connection
     // Using a lightweight query that should work on any Supabase instance
     const { error } = await supabase
-      .from('projects') // Replace with any table that exists in your schema
+      .from('workspaces')
       .select('count', { count: 'exact', head: true });
 
     if (error) {
@@ -51,7 +51,7 @@ export async function HEAD() {
   try {
     const supabase = useServerSupabase();
     const { error } = await supabase
-      .from('projects')
+      .from('workspaces')
       .select('count', { count: 'exact', head: true });
 
     if (error) {

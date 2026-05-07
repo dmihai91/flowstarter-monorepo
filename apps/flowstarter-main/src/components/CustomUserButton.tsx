@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTranslations } from '@/lib/i18n';
-import { useDraftStore } from '@/store/draft-store';
 import { useClerk, useUser } from '@clerk/nextjs';
 import { LogOut, Settings } from 'lucide-react';
 import Image from 'next/image';
@@ -26,7 +25,6 @@ export const CustomUserButton = ({ className }: CustomUserButtonProps) => {
   const { signOut, openUserProfile } = useClerk();
   const { user } = useUser();
   const { t } = useTranslations();
-  const { reset: resetDraft } = useDraftStore();
 
   useEffect(() => {
     setMounted(true);
@@ -42,10 +40,6 @@ export const CustomUserButton = ({ className }: CustomUserButtonProps) => {
       />
     );
   }
-
-  const resetAllStores = () => {
-    resetDraft();
-  };
 
   const getInitials = () => {
     const firstName = user.firstName || '';
@@ -148,7 +142,6 @@ export const CustomUserButton = ({ className }: CustomUserButtonProps) => {
         confirmVariant="destructive"
         onConfirmAction={() => {
           setConfirmOpen(false);
-          resetAllStores();
           queueMicrotask(() => signOut());
         }}
       />

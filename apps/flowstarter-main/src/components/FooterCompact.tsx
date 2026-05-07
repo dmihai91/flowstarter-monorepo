@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from '@/lib/i18n';
+import { getSubdomainUrl } from '@flowstarter/platform-config';
 import { CustomNavLink } from './ui/custom-nav-link';
 
 export default function FooterCompact() {
@@ -48,10 +49,7 @@ export default function FooterCompact() {
               </CustomNavLink>
               <span className="text-gray-300 dark:text-gray-700">•</span>
               <a
-                href={
-                  process.env.NEXT_PUBLIC_EDITOR_URL ||
-                  'https://editor.flowstarter.dev'
-                }
+                href={getSubdomainUrl('editor')}
                 className="hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
               >
                 {t('footer.nav.editorLabel')}

@@ -218,7 +218,7 @@ export default function RelaunchPage() {
                 What&apos;s included
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold text-[var(--fs-ink)] [text-wrap:balance]">
-                Everything rebuilt to convert — starting at €699
+                Everything rebuilt to convert — starting at €799
               </h2>
               <p className="mt-3 text-base text-[var(--fs-ink-faint)]">
                 Price depends on complexity. We&apos;ll assess it together on

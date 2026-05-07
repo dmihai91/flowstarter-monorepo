@@ -188,7 +188,6 @@ export const GenerationResultSchema = z.object({
   tested: z.boolean(),
   orchestrated: z.boolean(),
   qualityMetrics: z.record(z.unknown()).optional(),
-  daytonaWorkspace: z.string().optional(),
   timestamp: z.string().optional(),
 });
 

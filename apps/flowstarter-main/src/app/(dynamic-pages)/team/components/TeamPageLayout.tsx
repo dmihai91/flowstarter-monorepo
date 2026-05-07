@@ -37,7 +37,9 @@ export function TeamPageLayout({
       if (!user) {
         router.push('/team/login');
       } else if (!isTeam) {
-        router.push('/dashboard');
+        // Non-team users have no client dashboard in v1; bounce them to the
+        // public landing. Editor access happens via magic link, not a logged-in surface.
+        router.push('/');
       } else {
         setIsLoading(false);
       }

@@ -14,3 +14,4 @@ export { baseEmailTemplate, EMAIL_STYLES } from './base';
 export { invitationEmail } from './invitation';
 export { welcomeEmail } from './welcome';
 export { verificationEmail } from './verification';
+export { leadNotificationEmail } from './lead-notification';

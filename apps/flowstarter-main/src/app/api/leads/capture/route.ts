@@ -2,17 +2,17 @@
  * POST /api/leads/capture
  * Public endpoint — called from generated client sites.
  * No auth required. Rate-limited by IP.
- * Stores lead in Supabase.
+ * Stores lead in Supabase + emails the project owner (best-effort).
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DatabaseExtended } from '@/lib/database-extensions.types';
+import { sendEmail } from '@/lib/email';
+import { leadNotificationEmail } from '@/lib/email-templates';
 
 const LeadCaptureSchema = z
   .object({
-    projectId: z.string().uuid('Invalid project ID'),
+    workspaceId: z.string().uuid('Invalid workspace ID'),
     name: z.string().max(200).optional(),
     email: z.string().email('Invalid email').optional(),
     phone: z.string().max(50).optional(),
@@ -82,22 +82,21 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { projectId, name, email, phone, message, source, ...extra } =
+  const { workspaceId, name, email, phone, message, source, ...extra } =
     result.data;
 
   try {
-    const supabase =
-      createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
+    const supabase = createSupabaseServiceRoleClient();
 
-    const { data: project } = await supabase
-      .from('projects')
-      .select('id')
-      .eq('id', projectId)
+    const { data: workspace } = await supabase
+      .from('workspaces')
+      .select('id, name, client_name, client_email, client_business_name')
+      .eq('id', workspaceId)
       .single();
 
-    if (!project) {
+    if (!workspace) {
       return NextResponse.json(
-        { error: 'Invalid project' },
+        { error: 'Invalid workspace' },
         { status: 400, headers: corsHeaders(origin) }
       );
     }
@@ -105,7 +104,7 @@ export async function POST(request: NextRequest) {
     const isSpam = detectSpam(name || '', email || '', message || '');
 
     const { error } = await supabase.from('leads').insert({
-      project_id: projectId,
+      workspace_id: workspaceId,
       name: name ?? null,
       email: email ?? null,
       phone: phone ?? null,
@@ -127,6 +126,31 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to save' },
         { status: 500, headers: corsHeaders(origin) }
       );
+    }
+
+    // Best-effort: email the workspace's client. Spam leads are not emailed.
+    // Failures log but don't fail the request — the lead is already saved.
+    if (!isSpam && workspace.client_email) {
+      try {
+        const tpl = leadNotificationEmail({
+          recipientName: workspace.client_name,
+          projectName: workspace.client_business_name ?? workspace.name,
+          leadName: name ?? null,
+          leadEmail: email ?? null,
+          leadPhone: phone ?? null,
+          leadMessage: message ?? null,
+          source: source ?? null,
+          receivedAt: new Date().toISOString(),
+        });
+        await sendEmail({
+          to: workspace.client_email,
+          subject: tpl.subject,
+          html: tpl.html,
+          replyTo: email ?? undefined,
+        });
+      } catch (e) {
+        console.warn('[Leads] notification email failed:', e);
+      }
     }
 
     return NextResponse.json(

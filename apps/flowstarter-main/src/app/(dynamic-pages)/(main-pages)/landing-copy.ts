@@ -60,7 +60,7 @@ export const LANDING_COPY = {
     steps: [
       {
         number: '01',
-        title: 'Discovery call (45 minutes)',
+        title: 'Discovery call (30 minutes)',
         description:
           'We talk about your business, brand, and goals. You ask questions. We tell you honestly if we are the right fit.',
       },

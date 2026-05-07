@@ -40,7 +40,7 @@ export async function GET() {
 
   const db = createSupabaseServiceRoleClient();
   const { data: rows, error } = await db
-    .from('projects')
+    .from('workspaces')
     .select(TEAM_DASHBOARD_STATS_PROJECT_SELECT);
 
   if (error) {

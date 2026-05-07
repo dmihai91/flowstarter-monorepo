@@ -28,7 +28,7 @@ export const miscKeys = {
   'contact.form.sendButton': 'Send Message',
   'contact.talk.title': 'Prefer to talk?',
   'contact.talk.description':
-    "Book a free 45-minute discovery call. We'll learn about your business and figure out the best approach together.",
+    "Book a free 30-minute discovery call. We'll learn about your business and figure out the best approach together.",
   'contact.talk.button': 'Book Free Discovery Call',
   'contact.other.title': 'Other ways to reach us',
   'contact.other.emailLabel': 'Email',
@@ -93,14 +93,14 @@ export const miscKeys = {
   'help.loggedInDescription': 'Everything you need to know about your project.',
   'help.quickAction.discovery.title': 'Book a Discovery Call',
   'help.quickAction.discovery.desc':
-    'Free 45-minute call to discuss your project',
+    'Free 30-minute call to discuss your project',
   'help.quickAction.email.title': 'Email Support',
   'help.quickAction.email.desc': 'hello@flowstarter.net',
   'help.howItWorks': 'How It Works',
   'help.step1.number': '01',
   'help.step1.title': 'We talk',
   'help.step1.description':
-    'Book a free 45-minute discovery call. We learn about your business, your brand, and your goals.',
+    'Book a free 30-minute discovery call. We learn about your business, your brand, and your goals.',
   'help.step2.number': '02',
   'help.step2.title': 'We build',
   'help.step2.description':
@@ -118,7 +118,7 @@ export const miscKeys = {
     "Most websites are completed within 2 weeks after your discovery call. We'll keep you updated throughout the process and send you a preview link when it's ready for your review.",
   'help.faq3.question': 'What happens during the discovery call?',
   'help.faq3.answer':
-    "We spend 45 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
+    "We spend 30 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
   'help.faq4.question': 'Can I make changes after my site is live?',
   'help.faq4.answer':
     "That's the whole point! Your subscription includes our smart editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code.",

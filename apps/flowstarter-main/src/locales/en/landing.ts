@@ -15,8 +15,8 @@ export const landingKeys = {
   'landing.hero.cta': 'Launch my business',
   'landing.hero.ctaNote':
     "One call. We handle everything. You'll be live in days.",
-  'landing.hero.priceBuild': '€499',
-  'landing.hero.priceMonthly': '€39',
+  'landing.hero.priceBuild': 'from €799',
+  'landing.hero.priceMonthly': 'from €49',
 
   // Storage promise (shared across hero, included, pricing)
   'landing.storage.tagline': 'Generous storage on every plan.',
@@ -97,7 +97,7 @@ export const landingKeys = {
   // FAQ Section
   'landing.faq.q1': 'What happens on the discovery call?',
   'landing.faq.a1':
-    "We spend up to 45 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
+    "We spend up to 30 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
   'landing.faq.q2': 'How long until my site is live?',
   'landing.faq.a2':
     'Most sites go live within 1 to 2 weeks after the discovery call. We keep you updated throughout the process.',
@@ -110,9 +110,9 @@ export const landingKeys = {
   'landing.faq.q5': 'Do I need any technical skills?',
   'landing.faq.a5':
     'Zero. We handle the entire setup. You just review and approve.',
-  'landing.faq.q6': 'What happens when the beta ends?',
+  'landing.faq.q6': 'How does pricing work over time?',
   'landing.faq.a6':
-    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €499 setup + €49/month. You get 30 days notice before anything changes.',
+    'Your monthly rate is locked in for as long as you stay subscribed. We give 30 days notice before any change. Cancel anytime.',
   'landing.faq.q7': "What's included in the email?",
   'landing.faq.a7':
     'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.',
@@ -163,16 +163,16 @@ export const landingKeys = {
   'landing.pricing.title': 'No surprises.',
   'landing.pricing.subtitle':
     'One fee to build. One fee to maintain. Cancel anytime.',
-  'landing.pricing.limitedBadge': 'Launch pricing',
+  'landing.pricing.limitedBadge': 'Capacity limited',
   'landing.pricing.limitedNote':
-    'Monthly rate goes up after launch (€49/mo). Lock in €39/mo for life.',
+    'We take on 8 new clients each month so every site gets full attention.',
   'landing.pricing.buildLabel': 'Setup:',
-  'landing.pricing.buildOriginalPrice': '€699',
-  'landing.pricing.buildPrice': '€499',
+  'landing.pricing.buildOriginalPrice': 'from €799',
+  'landing.pricing.buildPrice': 'from €799',
   'landing.pricing.buildPeriod': 'one-time',
   'landing.pricing.careLabel': 'Monthly:',
-  'landing.pricing.careOriginalPrice': '€49',
-  'landing.pricing.carePrice': '€39',
+  'landing.pricing.careOriginalPrice': 'from €49',
+  'landing.pricing.carePrice': 'from €49',
   'landing.pricing.carePeriod': '/month',
   'landing.pricing.firstMonthFree': 'First month free',
   'landing.pricing.note': 'First month free. Cancel anytime.',
@@ -180,7 +180,7 @@ export const landingKeys = {
   'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 
   // Landing Page - Pricing Features
-  'landing.pricing.websiteTitle': 'Setup (€499)',
+  'landing.pricing.websiteTitle': 'Setup (from €799)',
   'landing.pricing.websiteDesc':
     'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included.',
   'landing.pricing.websiteFeature1': 'Strategy call to clarify your offer',
@@ -189,7 +189,7 @@ export const landingKeys = {
   'landing.pricing.websiteFeature4': 'Mobile-ready, fast, SEO basics handled',
   'landing.pricing.websiteFeature5': 'Live in about 2 weeks',
 
-  'landing.pricing.careTitle': 'Monthly (€39)',
+  'landing.pricing.careTitle': 'Monthly (from €49)',
   'landing.pricing.careDesc':
     'Hosting, security, updates, and small edits. Bigger changes are quoted separately.',
   'landing.pricing.careFeature1': '1,000 AI credits for edits each month',
@@ -214,8 +214,8 @@ export const landingKeys = {
   'landing.cta.button': 'Launch my business',
 
   // Landing Page - Footer CTA
-  'landing.cta.setupPrice': '€499 setup',
-  'landing.cta.monthlyPrice': '€39/month',
+  'landing.cta.setupPrice': 'from €799 setup',
+  'landing.cta.monthlyPrice': 'from €49/month',
   'landing.cta.firstMonthFree': 'First month free',
 
   // Three Pillars
@@ -254,13 +254,13 @@ export const landingKeys = {
   'landing.team.linkedin': 'LinkedIn',
 
   // Landing Hero - Price Pill
-  'landing.hero.limitedBadge': '\uD83D\uDD25 Limited launch price',
-  'landing.hero.buildOriginalPrice': '€699',
+  'landing.hero.limitedBadge': '8 spots a month',
+  'landing.hero.buildOriginalPrice': 'from €799',
   'landing.hero.buildSetupLabel': 'setup',
-  'landing.hero.careOriginalPrice': '€49',
+  'landing.hero.careOriginalPrice': 'from €49',
   'landing.hero.monthlyLabel': '/mo',
   'landing.hero.urgency':
-    "This price won't last. Lock it in before it goes up.",
+    "Limited capacity. We take on 8 new clients each month.",
 
   // Landing - Process Heading
   'landing.process.heading1': 'How it',

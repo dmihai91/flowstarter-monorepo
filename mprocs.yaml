@@ -1,22 +1,29 @@
+# Local dev runner for the Flowstarter monorepo.
+#
+# Run `pnpm dev` to start everything that auto-starts. Optional procs are
+# defined here too — toggle them on inside mprocs (highlight + `s`) only when
+# you need them.
+#
+# Stripe webhook secret note: the first time `stripe listen` runs on this
+# machine, copy the printed `whsec_...` into apps/flowstarter-main/.env.local
+# as STRIPE_WEBHOOK_SECRET (one-time per machine; secret persists across
+# CLI restarts), then restart the Main proc so Next.js picks up the env.
+#
 procs:
   "🏠 Main":
     shell: "pnpm dev:main"
     autostart: true
+
   "🗄️ Supabase":
     shell: "pnpm dev:supabase"
     autostart: true
-  "📚 Library API":
-    shell: "HTTP_PORT=3001 pnpm --dir apps/flowstarter-library/mcp-server dev:http"
+
+  "💳 Stripe Webhooks":
+    shell: "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
     autostart: true
-  "🖼️ Library UI":
-    shell: "pnpm dev:showcase"
-    autostart: true
-  "🧠 T3 Server":
-    shell: "./scripts/dev-flowstarter-code-host.sh"
-    autostart: true
-  "🎨 T3 Web":
-    shell: "./scripts/dev-flowstarter-code-web.sh"
-    autostart: true
-  "🌐 Tunnel":
-    shell: "cloudflared tunnel run"
-    autostart: true
+
+  "📦 Deploy Agent":
+    # Bun service used on each Caddy host in production. Only start locally
+    # when testing /api/team/projects/[id]/site/deploy. Requires bun.
+    shell: "DEPLOY_AGENT_SHARED_SECRET=dev-secret DEPLOY_AGENT_SITES_ROOT=/tmp/fs-sites DEPLOY_AGENT_CADDY_SITES_DIR=/tmp/fs-caddy-sites DEPLOY_AGENT_CADDY_RELOAD_CMD='echo reloaded' pnpm --dir apps/deploy-agent dev"
+    autostart: false

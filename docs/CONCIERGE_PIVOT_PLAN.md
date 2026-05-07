@@ -1,5 +1,53 @@
 # Flowstarter: Concierge Pivot Plan
-## February 2026
+## February 2026 — last revised May 2026
+
+> **⚠️ Superseded for pricing + tier names + billing structure.**
+> See `docs/FLOWSTARTER_MASTER_DECISIONS.md` (May 2026) which is the canonical
+> source for: subscription tiers (Essential / Pro / Commerce), setup fees
+> (Service site / Shopify store / Custom), founding vs standard pricing,
+> annual + monthly billing, 4-stage milestone payments, and the Spec-Match
+> Guarantee. The strategic narrative + technical architecture sections of
+> this doc remain relevant.
+
+---
+
+## Architecture updates (decided 2026-05-06)
+
+The original plan assumed Cloudflare Pages + Daytona-managed sandboxes. After working through the implementation, the architecture has been finalized as follows:
+
+- **Platform split**: `flowstarter-main` (this Next.js app) hosts on **Netlify**. Heavy compute (per-client sandboxes, the editor, deploy/operator services) hosts on **Hetzner**.
+- **Per-client sandboxes**: each project runs in its own **Docker container** on a shared Hetzner server. Strong isolation: per-client volumes, user-namespace remapping, private bridge networks, internal-only file-ops agent. Replaces Daytona for client-facing.
+- **Editor**: a stripped-down fork of T3 Code, **multitenant**, hosted on Hetzner at `editor.flowstarter.app`. Auth by Clerk (team) or magic-link (client). UI gated by `client_editor_access_level`. Team role auto-grants full access; clients get the level set on their project.
+- **Hosting topology**: shared Caddy host on Hetzner reverse-proxies:
+  - `editor.flowstarter.app` → editor container
+  - `{slug}.preview.flowstarter.app` → that client's dev-server container
+  - `{custom-domain}` → that client's production output
+- **DNS**: Cloudflare API, called from the Hetzner operator service (not from Netlify functions, to avoid the 10–26s function timeout when provisioning takes 60–120s).
+- **Operator service**: a small Bun/Node app on Hetzner that owns Hetzner Cloud API calls + Docker lifecycle + deploy jobs + DNS upserts. flowstarter-main on Netlify enqueues jobs to it via a shared-bearer-authed HTTP API.
+- **Client editor evolution**: Phase 1 = chat-only (request a change → escalates to team). Phase 2 = iframe + click-to-edit overlay. Phase 3 = block editor. Phase 4 = full-code unlock (paid upsell, same T3 with hidden chrome shown).
+- **Daytona** stays only for the team-internal generation flow until the per-client Docker pipeline replaces it. Removed from client-facing.
+
+Sections of this doc that mention Cloudflare Pages, `pages.dev` URLs, or Daytona-as-client-editor predate this update and are preserved for context.
+
+---
+
+## Pricing (current as of 2026-05-06)
+
+Three main tiers. **All prices are "starting from" minimums** — final price is scoped on the discovery call based on complexity. Older sections of this doc that reference €499 / €39 / €699 / "launch price" / "lock in before it goes up" framing are superseded.
+
+| Tier | Setup (from) | Monthly (from) | Best for |
+|------|--------------|----------------|----------|
+| **Starter** | €799 | €49/mo | Coaches, consultants, therapists, freelancers, solo service businesses. No online store. |
+| **Pro** | €1,199 | €79/mo | Growing service businesses, agencies, multi-page sites with extended integrations. **No headless storefront** — uses Stripe Payment Links for simple paid offers if needed. |
+| **Commerce** | €2,199 | €129/mo | Businesses with a real catalog. Custom Astro storefront on the client's own domain, headless against **Shopify** (physical goods) or **Lemon Squeezy / Paddle** (digital goods). |
+
+All tiers include: domain, professional email, hosting, smart editor, ongoing support, first month free, 50% setup refund if not happy in 30 days. Discovery call is **30 minutes**.
+
+**Why a separate Commerce tier?** Building a branded headless storefront is real work (8–15 extra hours: provider account setup, products configured, Astro shop pages, cart + checkout flow, webhook integration). Most service-business clients don't sell products — bundling commerce into Pro would charge them for something they don't use. Commerce clients have revenue from sales, justifying the higher fee + larger ongoing retainer.
+
+**Relaunch** offering (from €999, audit + rebuild of an existing site) and **Custom** plan (from €2,499 for bespoke web apps) live alongside the three tiers and are quoted on the call.
+
+Heavy commerce ops (payment, tax, fulfillment, refunds, inventory) stay at the provider — Flowstarter renders product display + cart UI but **never reimplements checkout**. See `docs/CONCIERGE_COMMERCE_MODEL.md` for provider routing and `docs/PRO_PLAN_DELIVERY.md` for the Pro/Commerce delivery model.
 
 ---
 
@@ -49,6 +97,7 @@ Flowstarter pivots from a public AI website builder to a **concierge-first manag
 | Client Customization UI | P3 | Post-delivery interface |
 | Billing/Subscriptions | P4 | Stripe integration |
 | Escalation Tracking | P4 | Human handoff system |
+| Commerce Routing | P4 | See `docs/CONCIERGE_COMMERCE_MODEL.md` |
 
 ---
 

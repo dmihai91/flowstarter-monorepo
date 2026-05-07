@@ -247,10 +247,12 @@ export default clerkMiddleware(async (auth, req) => {
       const siteOrigin = req.nextUrl.origin;
       const allowedOrigins = [
         process.env.NEXT_PUBLIC_SITE_URL,
-        process.env.NEXT_PUBLIC_EDITOR_URL,
         process.env.NEXT_PUBLIC_VERCEL_URL
           ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
           : undefined,
+        // editor.${domain} subdomains are included in getAllowedRedirectOrigins
+        // (see @flowstarter/platform-config). No separate EDITOR_URL needed
+        // post master-doc realignment.
         ...getAllowedRedirectOrigins(req.headers.get('host') ?? undefined),
       ].filter(Boolean) as string[];
       const isAllowedOrigin = !!origin && allowedOrigins.includes(origin);
@@ -289,8 +291,6 @@ export default clerkMiddleware(async (auth, req) => {
       const isTeamApi = pathname.startsWith('/api/team/');
       const isAiApi = pathname.startsWith('/api/ai/');
       const isAuthApi = pathname.startsWith('/api/auth/'); // Protected by Clerk auth
-      const isProjectsApi =
-        pathname.startsWith('/api/projects/') || pathname === '/api/projects';
       const isIntegrationsApi = pathname.startsWith('/api/integrations/'); // Protected by Clerk auth
       const isAnalyticsApi = pathname.startsWith('/api/analytics/'); // Protected by Clerk auth
       const unsafe = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
@@ -300,7 +300,6 @@ export default clerkMiddleware(async (auth, req) => {
         !isTeamApi &&
         !isAiApi &&
         !isAuthApi &&
-        !isProjectsApi &&
         !isIntegrationsApi &&
         !isAnalyticsApi
       ) {

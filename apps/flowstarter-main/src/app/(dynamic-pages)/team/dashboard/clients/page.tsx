@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Clock,
   Plus,
+  ShoppingBag,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { TeamDashboardShell } from '../components/TeamDashboardShell';
@@ -22,12 +23,25 @@ interface Client {
   projectCount: number;
   totalFee: number;
   statuses: string[];
+  editorStatuses: string[];
+  commerceProjectCount: number;
+  commerceProductCount: number;
+  commerceProviders: string[];
+  commerceStatuses: string[];
+  commerceProductTypes: string[];
   lastActivity: string;
 }
 
 function ClientCard({ client }: { client: Client }) {
   const router = useRouter();
   const hasLive = client.statuses.some((s) => s === 'live');
+  const hasCommerce = client.commerceProjectCount > 0;
+  const commerceProviderLabel =
+    client.commerceProviders.length > 0
+      ? client.commerceProviders
+          .map((provider) => provider.replace('_', ' '))
+          .join(', ')
+      : 'commerce';
   const initials =
     client.name
       .split(' ')
@@ -61,6 +75,12 @@ function ClientCard({ client }: { client: Client }) {
             {hasLive && (
               <span className="px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
                 Live
+              </span>
+            )}
+            {hasCommerce && (
+              <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+                <ShoppingBag className="h-3 w-3" />
+                Commerce
               </span>
             )}
           </div>
@@ -111,6 +131,22 @@ function ClientCard({ client }: { client: Client }) {
           </p>
         </div>
       </div>
+      {hasCommerce && (
+        <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-[var(--fs-rule)] px-3 py-2">
+          <div className="min-w-0">
+            <p className="truncate text-xs font-medium text-[var(--fs-ink)] capitalize">
+              {commerceProviderLabel}
+            </p>
+            <p className="text-[0.65rem] text-[var(--fs-ink-faint)]">
+              {client.commerceProjectCount} commerce project
+              {client.commerceProjectCount === 1 ? '' : 's'}
+            </p>
+          </div>
+          <p className="shrink-0 text-xs font-semibold text-[var(--fs-ink-dim)]">
+            {client.commerceProductCount || 'TBD'} products
+          </p>
+        </div>
+      )}
     </div>
   );
 }

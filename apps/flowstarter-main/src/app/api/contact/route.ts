@@ -5,8 +5,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DatabaseExtended } from '@/lib/database-extensions.types';
 
 const ContactSchema = z.object({
   name: z
@@ -45,8 +43,7 @@ export async function POST(request: NextRequest) {
   const { name, email, subject, message } = result.data;
 
   try {
-    const supabase =
-      createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
+    const supabase = createSupabaseServiceRoleClient();
 
     const { error } = await supabase.from('contact_submissions').insert({
       name,

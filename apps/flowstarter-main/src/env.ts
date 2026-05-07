@@ -39,6 +39,19 @@ export const env = createEnv({
     // Cloudflare Nameservers (comma-separated)
     CLOUDFLARE_NAMESERVERS: z.string().optional(),
 
+    // Cloudflare DNS API (Slice 2 — operator uses this to upsert client DNS records)
+    // Token scope: Zone.Zone (read), Zone.DNS (edit). NOT the same as R2 keys below.
+    CLOUDFLARE_API_TOKEN: z.string().optional(),
+    CLOUDFLARE_DEFAULT_ZONE_ID: z.string().optional(),
+
+    // Hetzner Cloud (Slice 2 — operator uses this to provision servers + Docker hosts)
+    HETZNER_API_TOKEN: z.string().optional(),
+    HETZNER_SSH_KEY_ID: z.string().optional(),
+
+    // Hetzner operator service (Slice 2 — flowstarter-main calls this for long-running ops)
+    HETZNER_OPERATOR_URL: z.string().url().optional(),
+    HETZNER_OPERATOR_SECRET: z.string().optional(),
+
     // UploadThing (File Uploads)
     UPLOADTHING_SECRET: z.string().optional(),
     UPLOADTHING_APP_ID: z.string().optional(),
@@ -47,17 +60,18 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_URL: z.string().url().optional(),
     UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
-    // Daytona (Code Workspaces)
-    DAYTONA_API_KEY: z.string().optional(),
-
     // Google OAuth & Analytics
     GOOGLE_OAUTH_CLIENT_ID: z.string().optional(),
     GOOGLE_OAUTH_CLIENT_SECRET: z.string().optional(),
     GOOGLE_ANALYTICS_CREDENTIALS: z.string().optional(),
 
-    // Stripe Payments
+    // Stripe Payments (concierge platform billing — NOT per-project client integrations)
     STRIPE_SECRET_KEY: z.string().optional(),
     STRIPE_WEBHOOK_SECRET: z.string().optional(),
+    // Stripe Product ID used for all concierge subscriptions. Create once in
+    // the Stripe dashboard (e.g. "Flowstarter Concierge"), reuse for every
+    // client. Per-client monthly amount lives on the Price, not the Product.
+    STRIPE_CONCIERGE_PRODUCT_ID: z.string().optional(),
 
     // Email
     RESEND_API_KEY: z.string().optional(),
@@ -75,7 +89,6 @@ export const env = createEnv({
     R2_SECRET_ACCESS_KEY: z.string().optional(),
 
     // Cross-app Communication
-    HANDOFF_SECRET: z.string().optional(),
     INVITE_TOKEN_SECRET: z.string().optional(),
 
     // Runtime
@@ -109,9 +122,6 @@ export const env = createEnv({
     // Site Config
     NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
     NEXT_PUBLIC_VERCEL_URL: z.string().optional(),
-
-    // Editor Integration
-    NEXT_PUBLIC_EDITOR_URL: z.string().url().optional(),
   },
 
   /*
@@ -138,16 +148,22 @@ export const env = createEnv({
     NAME_COM_TOKEN: process.env.NAME_COM_TOKEN,
     NAME_COM_SANDBOX: process.env.NAME_COM_SANDBOX,
     CLOUDFLARE_NAMESERVERS: process.env.CLOUDFLARE_NAMESERVERS,
+    CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
+    CLOUDFLARE_DEFAULT_ZONE_ID: process.env.CLOUDFLARE_DEFAULT_ZONE_ID,
+    HETZNER_API_TOKEN: process.env.HETZNER_API_TOKEN,
+    HETZNER_SSH_KEY_ID: process.env.HETZNER_SSH_KEY_ID,
+    HETZNER_OPERATOR_URL: process.env.HETZNER_OPERATOR_URL,
+    HETZNER_OPERATOR_SECRET: process.env.HETZNER_OPERATOR_SECRET,
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
     UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
-    DAYTONA_API_KEY: process.env.DAYTONA_API_KEY,
     GOOGLE_OAUTH_CLIENT_ID: process.env.GOOGLE_OAUTH_CLIENT_ID,
     GOOGLE_OAUTH_CLIENT_SECRET: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
     GOOGLE_ANALYTICS_CREDENTIALS: process.env.GOOGLE_ANALYTICS_CREDENTIALS,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_CONCIERGE_PRODUCT_ID: process.env.STRIPE_CONCIERGE_PRODUCT_ID,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     LINEAR_API_KEY: process.env.LINEAR_API_KEY,
     CALENDLY_CLIENT_ID: process.env.CALENDLY_CLIENT_ID,
@@ -155,7 +171,6 @@ export const env = createEnv({
     R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID,
     R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
     R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
-    HANDOFF_SECRET: process.env.HANDOFF_SECRET,
     INVITE_TOKEN_SECRET: process.env.INVITE_TOKEN_SECRET,
     NODE_ENV: process.env.NODE_ENV,
 
@@ -175,7 +190,6 @@ export const env = createEnv({
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
-    NEXT_PUBLIC_EDITOR_URL: process.env.NEXT_PUBLIC_EDITOR_URL,
   },
 
   /**

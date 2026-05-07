@@ -9,7 +9,7 @@ export const landingFaqKeys = {
   'landing.faq.q3':
     'My current site exists but it is not getting me clients. Can you help?',
   'landing.faq.a3':
-    'Yes, that is exactly what the Relaunch plan is for. We audit what is costing you leads, migrate your content, set up proper SEO redirects so you keep your rankings, and rebuild the structure around converting visitors. Pricing starts at €699 depending on complexity. Book a free discovery call and we will assess it together.',
+    'Yes, that is exactly what the Relaunch plan is for. We audit what is costing you leads, migrate your content, set up proper SEO redirects so you keep your rankings, and rebuild the structure around converting visitors. Pricing starts at €999 depending on complexity. Book a free discovery call and we will assess it together.',
   'landing.faq.q4': 'How long does launch usually take?',
   'landing.faq.a4':
     'We move fast. Starter sites go live quickly after your discovery call. Relaunch and Growth projects may take a bit longer depending on scope. We keep you in the loop throughout.',

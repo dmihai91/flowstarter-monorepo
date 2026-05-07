@@ -11,10 +11,12 @@
     "docker:dev:main:down": "docker compose -f docker-compose.flowstarter-main-dev.yml down",
     "docker:dev:main:logs": "docker compose -f docker-compose.flowstarter-main-dev.yml logs -f flowstarter-main-dev",
     "docker:dev:main:restart": "docker compose -f docker-compose.flowstarter-main-dev.yml restart flowstarter-main-dev",
-    "dev:library": "HTTP_PORT=3001 pnpm --dir apps/flowstarter-library/mcp-server dev:http",
-    "dev:showcase": "pnpm nx run flowstarter-showcase:dev --output-style=stream",
     "build:all": "pnpm nx run-many -t build --output-style=stream",
     "lint:all": "pnpm nx run-many -t lint --output-style=stream --fix",
+    "stripe:setup": "tsx scripts/stripe-setup.ts",
+    "stripe:setup:dry": "tsx scripts/stripe-setup.ts --dry-run",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
+    "dev:deploy-agent": "DEPLOY_AGENT_SHARED_SECRET=dev-secret DEPLOY_AGENT_SITES_ROOT=/tmp/fs-sites DEPLOY_AGENT_CADDY_SITES_DIR=/tmp/fs-caddy-sites DEPLOY_AGENT_CADDY_RELOAD_CMD='echo reloaded' pnpm --dir apps/deploy-agent dev",
     "supabase:login": "pnpm dlx supabase login",
     "db:link": "pnpm dlx supabase link --project-ref avptvzherjxymmbtbbbr",
     "db:start": "pnpm dlx supabase start",
@@ -24,8 +26,6 @@
     "db:reset": "pnpm dlx supabase db reset",
     "db:rollback": "pnpm dlx supabase db rollback",
     "dev:supabase": "pnpm run db:start",
-    "dev:flowstarter-code:host": "./scripts/dev-flowstarter-code-host.sh",
-    "start:flowstarter-code:host": "./scripts/start-flowstarter-code-host.sh",
     "staging:start": "pnpm --filter flowstarter-main build && pm2 startOrReload ecosystem.config.cjs && pm2 list",
     "staging:stop": "pm2 stop ecosystem.config.cjs",
     "staging:restart": "pm2 reload ecosystem.config.cjs",
@@ -34,7 +34,6 @@
     "staging:monit": "pm2 monit",
     "staging:logs": "pm2 logs",
     "staging:logs:main": "pm2 logs flowstarter-main",
-    "staging:logs:t3": "pm2 logs t3-code-server t3-code-web",
     "staging:save": "pm2 save",
     "staging:flush": "pm2 flush",
     "ci:lint": "pnpm --dir apps/flowstarter-main lint || true",
@@ -75,13 +74,11 @@
     "overrides": {
       "@types/react": "19.1.0",
       "@types/react-dom": "19.1.2",
-      "wrangler": "^4.42.1",
       "jsondiffpatch": "^0.7.2",
       "@effect/platform": "0.96.1"
     },
     "peerDependencyRules": {
       "allowedVersions": {
-        "wrangler": "4",
         "react": "19",
         "react-dom": "19"
       }

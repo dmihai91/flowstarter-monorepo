@@ -1,5 +1,9 @@
+'use client';
+
+import { useBookingModal } from './booking-modal-store';
+
 export function LandingHero() {
-  const calLink = 'https://cal.com/flowstarter/intro';
+  const openBookingModal = useBookingModal((s) => s.open);
 
   return (
     <section
@@ -36,8 +40,9 @@ export function LandingHero() {
             </p>
 
             <div className="mt-10 flex w-full flex-wrap items-center gap-3 sm:gap-6">
-              <a
-                href={calLink}
+              <button
+                type="button"
+                onClick={openBookingModal}
                 className="ls-cta-hero inline-flex h-14 w-full items-center justify-center px-8 text-[1.02rem] sm:w-auto sm:text-[1.08rem]"
               >
                 Book a free 20-min call
@@ -55,7 +60,7 @@ export function LandingHero() {
                     d="M5 12h14m-5-6l6 6-6 6"
                   />
                 </svg>
-              </a>
+              </button>
               <a
                 href="#pricing"
                 className="ls-link ls-link--hero w-full sm:w-auto"

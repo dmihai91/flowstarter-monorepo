@@ -1,6 +1,6 @@
 /**
- * GET /api/leads/list?projectId=xxx&status=new&limit=50
- * Lists leads for a project. Requires auth.
+ * GET /api/leads/list?workspaceId=xxx&status=new&limit=50
+ * Lists leads for a workspace. Requires auth.
  *
  * PATCH /api/leads/list
  * Updates lead status/notes. Requires auth.
@@ -10,11 +10,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { DatabaseExtended } from '@/lib/database-extensions.types';
 
 const GetLeadsSchema = z.object({
-  projectId: z.string().uuid('Invalid project ID'),
+  workspaceId: z.string().uuid('Invalid workspace ID'),
   status: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
 });
@@ -39,14 +37,13 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { projectId, status, limit } = result.data;
-  const supabase =
-    createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
+  const { workspaceId, status, limit } = result.data;
+  const supabase = createSupabaseServiceRoleClient();
 
   let query = supabase
     .from('leads')
     .select('*')
-    .eq('project_id', projectId)
+    .eq('workspace_id', workspaceId)
     .order('created_at', { ascending: false })
     .limit(limit);
 
@@ -61,11 +58,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const { data: counts } = await supabase.rpc('get_lead_counts', {
-    p_project_id: projectId,
-  });
-
-  return NextResponse.json({ leads: data || [], counts: counts || [] });
+  return NextResponse.json({ leads: data || [] });
 }
 
 export async function PATCH(request: NextRequest) {
@@ -95,8 +88,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
   }
 
-  const supabase =
-    createSupabaseServiceRoleClient() as unknown as SupabaseClient<DatabaseExtended>;
+  const supabase = createSupabaseServiceRoleClient();
   const { error } = await supabase
     .from('leads')
     .update(update)

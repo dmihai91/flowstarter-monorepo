@@ -55,7 +55,7 @@ export function DashboardMobileDropdown() {
                       });
                     }
                   } else {
-                    router.push('/dashboard#flowstarter-assistant');
+                    router.push('/#flowstarter-assistant');
                   }
                 }}
                 className="flex items-start gap-3 p-4 cursor-pointer"

@@ -4,9 +4,14 @@ import { teamDashboardStatsQueryKey } from '@/hooks/useTeamDashboardStats';
 import type { Table } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export interface ProjectWithOwner extends Table<'projects'> {
-  owner_email?: string | null;
-  owner_name?: string | null;
+/**
+ * What the team admin pages call a "project" is a workspace row enriched
+ * with a UI-derived status. URL paths still say `/projects/...` for the
+ * humans who read them.
+ */
+export interface ProjectWithOwner extends Table<'workspaces'> {
+  /** Derived from concierge_stage by GET /api/team/projects. */
+  status?: string;
   thumbnailUrl?: string | null;
 }
 
@@ -120,10 +125,57 @@ export function useTeamRenameProject() {
 }
 
 export interface ProjectPricingData {
-  project_type?: string;
   setup_fee?: number;
   monthly_fee?: number;
-  is_paid?: boolean;
+  tier_name?: 'essential' | 'pro' | 'commerce' | 'custom' | null;
+  is_founding?: boolean;
+  billing_interval?: 'monthly' | 'annual';
+}
+
+export function useTeamProject(id: string | undefined) {
+  return useQuery({
+    queryKey: ['team-project', id],
+    enabled: !!id,
+    queryFn: async (): Promise<ProjectWithOwner> => {
+      const res = await fetch(`/api/team/projects/${id}`, {
+        cache: 'no-store',
+      });
+      if (!res.ok) {
+        if (res.status === 404) throw new Error('Project not found');
+        throw new Error('Failed to load project');
+      }
+      const json = await res.json();
+      return json.project;
+    },
+    staleTime: 10_000,
+  });
+}
+
+export function useTeamUpdateProject(id: string | undefined) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (patch: Record<string, unknown>) => {
+      if (!id) throw new Error('Missing project id');
+      const res = await fetch(`/api/team/projects/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(patch),
+      });
+      if (!res.ok) {
+        const err = await res
+          .json()
+          .catch(() => ({ error: 'Update failed' }));
+        throw new Error(err.error || 'Update failed');
+      }
+      return (await res.json()).project as ProjectWithOwner;
+    },
+    onSuccess: (project) => {
+      qc.setQueryData(['team-project', id], project);
+      qc.invalidateQueries({ queryKey: ['team-projects'] });
+      qc.invalidateQueries({ queryKey: ['team-clients'] });
+      qc.invalidateQueries({ queryKey: teamDashboardStatsQueryKey });
+    },
+  });
 }
 
 export function useTeamUpdateProjectPricing() {

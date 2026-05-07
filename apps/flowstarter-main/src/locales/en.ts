@@ -4,7 +4,7 @@ const en = {
   'app.title':
     'Flowstarter | Professional websites for coaches, consultants & therapists',
   'app.description':
-    'We design, build, and launch your professional website in days. Update it yourself with AI. Starting at €499.',
+    'We design, build, and launch your professional website in days. Update it yourself with AI. Founding pricing from €799 setup + €39/mo (first 10 spots).',
   'app.back': 'Back',
   'app.saveContinue': 'Continue',
   'app.createProject': 'Create Project',
@@ -453,7 +453,7 @@ const en = {
   // Premium dashboard - build phase
   'dashboard.action.kickoffTitle': "Let's get your website started",
   'dashboard.action.kickoffDesc':
-    'A 45-minute call to define your goals. We handle the rest.',
+    'A 30-minute call to define your goals. We handle the rest.',
   'dashboard.stats.buildPhase': 'Build in progress',
   'dashboard.stats.buildPhaseActive': 'In progress',
   'dashboard.stats.currentMilestone': 'Current phase: {phase}',
@@ -1161,8 +1161,8 @@ const en = {
   'landing.hero.cta': 'Launch my business',
   'landing.hero.ctaNote':
     "One call. We handle everything. You'll be live in days.",
-  'landing.hero.priceBuild': '€499',
-  'landing.hero.priceMonthly': '€39',
+  'landing.hero.priceBuild': 'from €799',
+  'landing.hero.priceMonthly': 'from €49',
 
   // What's Included section
   'landing.included.title': 'Everything you need to get found and get booked.',
@@ -1194,7 +1194,7 @@ const en = {
   // FAQ Section
   'landing.faq.q1': 'What happens on the discovery call?',
   'landing.faq.a1':
-    "We spend up to 45 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
+    "We spend up to 30 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
   'landing.faq.q2': 'How long until my site is live?',
   'landing.faq.a2':
     'Most sites go live within 1 to 2 weeks after the discovery call. We keep you updated throughout the process.',
@@ -1207,9 +1207,9 @@ const en = {
   'landing.faq.q5': 'Do I need any technical skills?',
   'landing.faq.a5':
     'Zero. We handle the entire setup. You just review and approve.',
-  'landing.faq.q6': 'What happens when the beta ends?',
+  'landing.faq.q6': 'How does pricing work over time?',
   'landing.faq.a6':
-    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €699 setup + €49/month. You get 30 days notice before anything changes.',
+    'Your monthly rate is locked in for as long as you stay subscribed. We give 30 days notice before any change. Cancel anytime.',
   'landing.faq.q7': "What's included in the email?",
   'landing.faq.a7':
     'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.',
@@ -1265,16 +1265,16 @@ const en = {
   'landing.pricing.title': 'No surprises.',
   'landing.pricing.subtitle':
     'One fee to build. One fee to maintain. Cancel anytime.',
-  'landing.pricing.limitedBadge': 'Launch pricing',
+  'landing.pricing.limitedBadge': 'Capacity limited',
   'landing.pricing.limitedNote':
-    'Prices go up after launch (€699 + €49/mo). Lock in current rates.',
+    'We take on 8 new clients each month so every site gets full attention.',
   'landing.pricing.buildLabel': 'Setup:',
-  'landing.pricing.buildOriginalPrice': '€699',
-  'landing.pricing.buildPrice': '€499',
+  'landing.pricing.buildOriginalPrice': 'from €799',
+  'landing.pricing.buildPrice': 'from €799',
   'landing.pricing.buildPeriod': 'one-time',
   'landing.pricing.careLabel': 'Monthly:',
-  'landing.pricing.careOriginalPrice': '€49',
-  'landing.pricing.carePrice': '€39',
+  'landing.pricing.careOriginalPrice': 'from €49',
+  'landing.pricing.carePrice': 'from €49',
   'landing.pricing.carePeriod': '/month',
   'landing.pricing.firstMonthFree': 'First month free',
   'landing.pricing.note': 'First month free. Cancel anytime.',
@@ -1282,7 +1282,7 @@ const en = {
   'landing.pricing.assets': 'All your site assets downloadable. You own them.',
 
   // Landing Page - Pricing Features
-  'landing.pricing.websiteTitle': 'Setup (€499)',
+  'landing.pricing.websiteTitle': 'Setup (from €799)',
   'landing.pricing.websiteDesc':
     'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included.',
   'landing.pricing.websiteFeature1': 'Strategy call to clarify your offer',
@@ -1291,7 +1291,7 @@ const en = {
   'landing.pricing.websiteFeature4': 'Mobile-ready, fast, SEO basics handled',
   'landing.pricing.websiteFeature5': 'Live in about 2 weeks',
 
-  'landing.pricing.careTitle': 'Monthly (€39)',
+  'landing.pricing.careTitle': 'Monthly (from €49)',
   'landing.pricing.careDesc':
     'Hosting, security, updates, and small edits. Bigger changes are quoted separately.',
   'landing.pricing.careFeature1': '1,000 AI credits for edits each month',
@@ -1318,8 +1318,8 @@ const en = {
   'landing.cta.button': 'Launch my business',
 
   // Landing Page - Footer CTA
-  'landing.cta.setupPrice': '€499 setup',
-  'landing.cta.monthlyPrice': '€39/month',
+  'landing.cta.setupPrice': 'from €799 setup',
+  'landing.cta.monthlyPrice': 'from €49/month',
   'landing.cta.firstMonthFree': 'First month free',
 
   // Three Pillars
@@ -1357,13 +1357,13 @@ const en = {
   'landing.team.linkedin': 'LinkedIn',
 
   // Landing Hero - Price Pill
-  'landing.hero.limitedBadge': '🔥 Limited launch price',
-  'landing.hero.buildOriginalPrice': '€699',
+  'landing.hero.limitedBadge': '8 spots a month',
+  'landing.hero.buildOriginalPrice': 'from €799',
   'landing.hero.buildSetupLabel': 'setup',
-  'landing.hero.careOriginalPrice': '€49',
+  'landing.hero.careOriginalPrice': 'from €49',
   'landing.hero.monthlyLabel': '/mo',
   'landing.hero.urgency':
-    "This price won't last. Lock it in before it goes up.",
+    'Limited capacity. We take on 8 new clients each month.',
 
   // Landing - Process Heading
   'landing.process.heading1': 'How it',
@@ -1481,7 +1481,7 @@ const en = {
   'contact.form.sendButton': 'Send Message',
   'contact.talk.title': 'Prefer to talk?',
   'contact.talk.description':
-    "Book a free 45-minute discovery call. We'll learn about your business and figure out the best approach together.",
+    "Book a free 30-minute discovery call. We'll learn about your business and figure out the best approach together.",
   'contact.talk.button': 'Book Free Discovery Call',
   'contact.other.title': 'Other ways to reach us',
   'contact.other.emailLabel': 'Email',
@@ -1502,14 +1502,14 @@ const en = {
   'help.loggedInDescription': 'Everything you need to know about your project.',
   'help.quickAction.discovery.title': 'Book a Discovery Call',
   'help.quickAction.discovery.desc':
-    'Free 45-minute call to discuss your project',
+    'Free 30-minute call to discuss your project',
   'help.quickAction.email.title': 'Email Support',
   'help.quickAction.email.desc': 'hello@flowstarter.net',
   'help.howItWorks': 'How It Works',
   'help.step1.number': '01',
   'help.step1.title': 'We talk',
   'help.step1.description':
-    'Book a free 45-minute discovery call. We learn about your business, your brand, and your goals.',
+    'Book a free 30-minute discovery call. We learn about your business, your brand, and your goals.',
   'help.step2.number': '02',
   'help.step2.title': 'We build',
   'help.step2.description':
@@ -1527,7 +1527,7 @@ const en = {
     "Most websites are completed within 2 weeks after your discovery call. We'll keep you updated throughout the process and send you a preview link when it's ready for your review.",
   'help.faq3.question': 'What happens during the discovery call?',
   'help.faq3.answer':
-    "We spend 45 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
+    "We spend 30 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
   'help.faq4.question': 'Can I make changes after my site is live?',
   'help.faq4.answer':
     "That's the whole point! Your subscription includes our AI editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code.",
@@ -2265,7 +2265,7 @@ const en = {
     'Limited capacity. We take on 8 new clients each month.',
   'landing.hero.stat1Value': '8',
   'landing.hero.stat1Label': 'Clients each month',
-  'landing.hero.stat2Value': '€799',
+  'landing.hero.stat2Value': 'from €799',
   'landing.hero.stat2Label': 'Starter, one-time setup',
   'landing.hero.stat3Value': '7–14 days',
   'landing.hero.stat3Label': 'Typical turnaround',
@@ -2328,7 +2328,7 @@ const en = {
     'Flowstarter combines done-for-you setup with the flexibility to keep moving on your own.',
 
   // Included — editorial redesign
-  'landing.included.eyebrow': "What's in Starter (€799 + €49/mo)",
+  'landing.included.eyebrow': "What's in Starter (from €799 + €49/mo)",
   'landing.included.headlinePrefix': 'A premium site,',
   'landing.included.headlineFlourish': 'wired up before launch.',
   'landing.included.sub':
@@ -2420,7 +2420,7 @@ const en = {
   'supportBot.send': 'Send',
   'supportBot.contactOperator': 'Contact an operator',
   'supportBot.replyPrice':
-    'Starter is €799 setup + €49/month. Pro starts at €1,499 + €99/month. Both include hosting, domain, and the smart editor. Want a personal walkthrough?',
+    'Three subscription tiers + setup fee. Founding pricing for the first 10 clients per tier (locked 12 months): Essential €799 setup + €39/mo or €390/year (15 editor sessions). Pro €799 setup + €59/mo or €590/year (50 sessions, multi-page + blog). Commerce €1,799 setup + €99/mo or €990/year (75 sessions, Shopify store). Custom from €2,999. Annual = 10× monthly (2 months free).',
   'supportBot.replyTimeline':
     'Starter projects ship in 7 to 14 days. Pro takes 10 to 21 days. Timelines lock during the discovery call.',
   'supportBot.replyEditor':
@@ -2430,15 +2430,15 @@ const en = {
   'supportBot.replyCapacity':
     "We take just 8 new clients per month. If your project is a fit, we'll find a slot together on the call.",
   'supportBot.replyDefault':
-    'Good question. The fastest way to get a real answer is a 45-minute discovery call. Book one and we will cover it properly.',
+    'Good question. The fastest way to get a real answer is a 30-minute discovery call. Book one and we will cover it properly.',
   'supportBot.replyDomain':
     'Yes, we set up your custom domain and a professional email address at that domain. If you already own one, we connect it. If not, we register it for you.',
   'supportBot.replyDiscovery':
-    "The discovery call runs up to 45 minutes. We'll cover your business, brand, and goals, and confirm honestly whether we're the right fit.",
+    "The discovery call runs up to 30 minutes. We'll cover your business, brand, and goals, and confirm honestly whether we're the right fit.",
   'supportBot.replyEcommerce':
     'Full storefronts are coming soon. The Pro tier covers digital products via Stripe today. Drop your email on the Ecommerce card to be the first to know when full ecommerce ships.',
   'supportBot.replyIncluded':
-    'Starter (€799 + €49/mo) gets you a 5-7 page custom site, hosting, domain, smart editor (50 edits/mo), and ongoing support. Pro adds extended pages, integrations, Stripe for digital products, and 150 edits/mo.',
+    'Essential (€799 setup + €39/mo founding, or €1,499 + €49/mo standard) gets you a 5-page custom site, hosting, domain, AI editor (15 sessions/mo), and ongoing support. Pro (€799 setup + €59/mo founding, or €1,499 + €79/mo standard) adds blog, extended integrations (Mailchimp, Maps, Instagram), and 50 sessions/mo. Commerce (€1,799 setup + €99/mo founding, or €2,999 + €129/mo standard) is a fully built Shopify store with 75 sessions/mo. Annual = 10× monthly (2 months free).',
   'supportBot.replySupport':
     "We're with you after launch. The smart editor handles most updates. For bigger changes, your monthly subscription includes priority support.",
   'supportBot.replyHandoff':
@@ -2491,12 +2491,12 @@ const en = {
   'landing.prequal.subtitle': "We'll tailor the call based on your answer.",
   'landing.prequal.cta': 'Book my discovery call',
   'landing.prequal.footnote':
-    'No commitment. 45-minute call. Limited to 8 new clients each month.',
+    'No commitment. 30-minute call. Limited to 8 new clients each month.',
   'landing.prequal.calendar.back': 'Back',
   'landing.prequal.calendar.planSelected': 'plan selected',
   'landing.prequal.calendar.title': 'Pick a time that works for you',
   'landing.prequal.calendar.subtitle':
-    "Choose a 45-minute slot below. We'll confirm via email.",
+    "Choose a 30-minute slot below. We'll confirm via email.",
   'landing.prequal.confirmed.title': "You're all set!",
   'landing.prequal.confirmed.body':
     'Your discovery call is booked. Check your email for the confirmation and calendar invite.',
@@ -2504,17 +2504,25 @@ const en = {
     "We're looking forward to learning about your project.",
   'landing.prequal.confirmed.cta': 'Done',
   'landing.prequal.close': 'Close',
-  'landing.prequal.options.starter.name': 'Starter',
+  'landing.prequal.options.starter.name': 'Essential',
   'landing.prequal.options.starter.desc':
-    'A premium site for my service business',
-  'landing.prequal.options.starter.price': '€799 + €49/mo',
+    'A simple presentation site for my service business',
+  'landing.prequal.options.starter.price':
+    '€799 setup (founding) + €39/mo or €390/year',
   'landing.prequal.options.pro.name': 'Pro',
-  'landing.prequal.options.pro.desc': "I'm ready to grow with digital products",
-  'landing.prequal.options.pro.price': 'from €1,499 + €99/mo',
+  'landing.prequal.options.pro.desc':
+    'Multi-page site with blog + integrations',
+  'landing.prequal.options.pro.price':
+    '€799 setup (founding) + €59/mo or €590/year',
+  'landing.prequal.options.commerce.name': 'Commerce',
+  'landing.prequal.options.commerce.desc':
+    'A Shopify store designed and built around my brand',
+  'landing.prequal.options.commerce.price':
+    '€1,799 setup (founding) + €99/mo or €990/year',
   'landing.prequal.options.custom.name': 'Custom',
   'landing.prequal.options.custom.desc':
-    'Relaunch, custom integrations, or something bigger',
-  'landing.prequal.options.custom.price': 'Tailored quote',
+    'Bespoke integrations, web app, or relaunch of an existing site',
+  'landing.prequal.options.custom.price': 'from €2,999 setup, tailored quote',
   'landing.prequal.options.unsure.name': 'Not sure yet',
   'landing.prequal.options.unsure.desc':
     "I'll explain my situation on the call",
@@ -2540,7 +2548,7 @@ const en = {
   'landing.finalCta.headlinePrefix': "Let's build something",
   'landing.finalCta.headlineFlourish': "you'll be proud of.",
   'landing.finalCta.subhead':
-    "Book a 45-minute discovery call. We'll talk about your business, show you what's possible, and tell you honestly if we're the right fit.",
+    "Book a 30-minute discovery call. We'll talk about your business, show you what's possible, and tell you honestly if we're the right fit.",
   'landing.finalCta.primaryCta': 'Book Discovery Call',
   'landing.finalCta.microNote': 'Limited to 8 new clients each month.',
 } as const;

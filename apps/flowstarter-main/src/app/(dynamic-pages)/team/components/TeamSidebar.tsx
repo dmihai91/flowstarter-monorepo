@@ -19,6 +19,9 @@ import {
   ShieldCheck,
   Sparkles as SparklesIcon,
   Inbox,
+  FolderOpen,
+  Server,
+  Settings as SettingsIcon,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -44,16 +47,28 @@ export function TeamSidebar() {
   // Show admin items optimistically until auth loads, then gate on actual role
   const isAdmin = !isLoaded || role === 'admin' || role === 'team';
 
-  const adminOnlyItems = [
-    {
-      label: 'Client requests',
-      href: '/team/dashboard#client-requests-list',
-      icon: Inbox,
-    },
+  // Sidebar reorganized for the concierge admin model.
+  // Top section is the day-to-day operations surface.
+  // Infrastructure groups the hosting + server fleet.
+  // Insights are read-only analytics.
+  // Workspace is team management.
+  const operationsItems = [
+    { label: 'Projects', href: '/team/dashboard/projects', icon: FolderOpen },
+    { label: 'Clients', href: '/team/dashboard/clients', icon: Users },
+  ];
+
+  const infrastructureItems = [
+    { label: 'Hosting', href: '/team/dashboard/hosting', icon: Server },
+  ];
+
+  const insightsItems = [
     { label: 'Analytics', href: '/team/dashboard/analytics', icon: BarChart3 },
     { label: 'AI usage', href: '/team/dashboard/ai-usage', icon: SparklesIcon },
-    { label: 'Clients', href: '/team/dashboard/clients', icon: Users },
+  ];
+
+  const workspaceItems = [
     { label: 'Team members', href: '/team/dashboard/team', icon: ShieldCheck },
+    { label: 'Settings', href: '/team/dashboard/profile', icon: SettingsIcon },
   ];
 
   // Close mobile sidebar on route change
@@ -134,16 +149,53 @@ export function TeamSidebar() {
         />
       </div>
 
-      {/* Admin-only pages */}
+      {/* Admin-only sections, organized by responsibility */}
       {isAdmin && (
-        <div className={cn(!showLabel && 'w-full')}>
-          {showLabel && <h3 className={sidebarSectionLabelClass}>Admin</h3>}
-          <div className="space-y-1">
-            {adminOnlyItems.map((item) => (
-              <NavLink key={item.href} {...item} showLabel={showLabel} />
-            ))}
+        <>
+          <div className={cn(!showLabel && 'w-full')}>
+            {showLabel && (
+              <h3 className={sidebarSectionLabelClass}>Operations</h3>
+            )}
+            <div className="space-y-1">
+              {operationsItems.map((item) => (
+                <NavLink key={item.href} {...item} showLabel={showLabel} />
+              ))}
+            </div>
           </div>
-        </div>
+
+          <div className={cn(!showLabel && 'w-full')}>
+            {showLabel && (
+              <h3 className={sidebarSectionLabelClass}>Infrastructure</h3>
+            )}
+            <div className="space-y-1">
+              {infrastructureItems.map((item) => (
+                <NavLink key={item.href} {...item} showLabel={showLabel} />
+              ))}
+            </div>
+          </div>
+
+          <div className={cn(!showLabel && 'w-full')}>
+            {showLabel && (
+              <h3 className={sidebarSectionLabelClass}>Insights</h3>
+            )}
+            <div className="space-y-1">
+              {insightsItems.map((item) => (
+                <NavLink key={item.href} {...item} showLabel={showLabel} />
+              ))}
+            </div>
+          </div>
+
+          <div className={cn(!showLabel && 'w-full')}>
+            {showLabel && (
+              <h3 className={sidebarSectionLabelClass}>Workspace</h3>
+            )}
+            <div className="space-y-1">
+              {workspaceItems.map((item) => (
+                <NavLink key={item.href} {...item} showLabel={showLabel} />
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

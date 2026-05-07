@@ -11,6 +11,7 @@ import { ProcessSection } from './components/ProcessSection';
 import { ScrollFab } from './components/ScrollFab';
 import { IncludedSection } from './components/IncludedSection';
 import { LandingMinimalFooter } from './components/LandingMinimalFooter';
+import { BookingModalProvider } from './components/BookingModalProvider';
 
 // Below-the-fold client islands — code-split into separate chunks so they
 // don't bloat the initial JS payload. SSR stays on (default).
@@ -39,6 +40,7 @@ export default function LandingPage() {
       <SiteHeader mode="landing" />
       <main id="main-content" className="flex-1">
         <LandingHero />
+        <BookingModalProvider />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <ProblemSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />

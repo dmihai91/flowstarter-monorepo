@@ -1,5 +1,9 @@
+'use client';
+
+import { useBookingModal } from './booking-modal-store';
+
 export function LandingPricing() {
-  const calLink = 'https://cal.com/flowstarter/intro';
+  const openBookingModal = useBookingModal((s) => s.open);
 
   return (
     <section id="pricing" className="ls-scope ls-section ls-section--pad">
@@ -37,12 +41,13 @@ export function LandingPricing() {
             <p className="mt-3 text-sm text-[var(--ls-ink-dim)]">
               Final price depends on scope.
             </p>
-            <a
-              href={calLink}
+            <button
+              type="button"
+              onClick={openBookingModal}
               className="ls-cta-hero mt-7 inline-flex h-12 items-center justify-center px-6 text-sm"
             >
               Book a free 20-min call
-            </a>
+            </button>
             <div className="mt-7 rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-surface-2)] p-4">
               <p className="text-xs uppercase tracking-[0.13em] text-[var(--ls-ink-faint)]">
                 Payments - Coming Q3 2026

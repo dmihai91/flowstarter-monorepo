@@ -7,10 +7,10 @@
       "path": "./packages/supabase-utils"
     },
     {
-      "path": "./apps/t3-code/server"
+      "path": "./apps/flowstarter-editor/server"
     },
     {
-      "path": "./apps/t3-code/web"
+      "path": "./apps/flowstarter-editor/web"
     }
   ]
 }

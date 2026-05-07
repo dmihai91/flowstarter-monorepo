@@ -2,14 +2,14 @@ packages:
   - apps/*
   - apps/flowstarter-library/*
   - apps/flowstarter-library/templates/*
-  - apps/t3-code/server
-  - apps/t3-code/web
-  - apps/t3-code/packages/*
+  - apps/flowstarter-editor/server
+  - apps/flowstarter-editor/web
+  - apps/flowstarter-editor/packages/*
   - packages/*
 
 # Catalog mirrors the upstream T3 bun catalog so `catalog:` specifiers inside
-# the apps/t3-code/* packages resolve under pnpm. Keep these versions in sync
-# with the upstream t3code repo.
+# the apps/flowstarter-editor/* packages resolve under pnpm. Keep these versions
+# in sync with the upstream t3code repo.
 catalog:
   effect: 4.0.0-beta.50
   '@effect/atom-react': 4.0.0-beta.50

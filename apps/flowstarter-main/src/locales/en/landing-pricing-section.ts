@@ -15,8 +15,7 @@
 //   - "relaunch" key→ kept as a separate Custom-style offering (audit + rebuild)
 
 export const landingPricingSectionKeys = {
-  'landing.pricingSection.title':
-    'Clear pricing. EUR. No surprises.',
+  'landing.pricingSection.title': 'Clear pricing. EUR. No surprises.',
   'landing.pricingSection.subtitle':
     'One-time setup + monthly or annual subscription. Annual = 10× monthly (2 months free). Founding pricing for the first 10 clients per tier — second year moves to standard with 30 days notice.',
   'landing.pricingSection.socialProof':
@@ -116,8 +115,7 @@ export const landingPricingSectionKeys = {
 
   // ─── Commerce — Shopify store (or Astro headless when justified) ─────────
   'landing.pricingSection.commerce.name': 'COMMERCE',
-  'landing.pricingSection.commerce.label':
-    'Shopify store, designed and built',
+  'landing.pricingSection.commerce.label': 'Shopify store, designed and built',
   'landing.pricingSection.commerce.setupPrice': '€1,799',
   'landing.pricingSection.commerce.setupOriginalPrice': '€2,999',
   'landing.pricingSection.commerce.monthlyPrice': '€99/mo',
@@ -158,8 +156,7 @@ export const landingPricingSectionKeys = {
     'Google Maps, Instagram feed, Facebook Pixel',
   'landing.pricingSection.growth.feature5':
     'Traffic analytics + visitor trends',
-  'landing.pricingSection.growth.feature6':
-    '50 AI editor sessions/month',
+  'landing.pricingSection.growth.feature6': '50 AI editor sessions/month',
   'landing.pricingSection.growth.feature7':
     'First month free, founding rate for 12 months',
   'landing.pricingSection.growth.feature8':

@@ -57,10 +57,7 @@ export async function GET() {
   const grouped = new Map<string, Group>();
   for (const w of workspaces ?? []) {
     const key =
-      w.client_email ||
-      w.client_business_name ||
-      w.client_name ||
-      w.id;
+      w.client_email || w.client_business_name || w.client_name || w.id;
     if (!key) continue;
     const ex = grouped.get(key);
     const ua = (w.updated_at ?? w.created_at) as string;

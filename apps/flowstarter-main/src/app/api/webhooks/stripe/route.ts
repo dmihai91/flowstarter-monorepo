@@ -76,7 +76,9 @@ async function handleInvoiceOverdue(invoice: Stripe.Invoice) {
       .update({ final_status: 'overdue', outstanding_payment: true })
       .eq('id', workspaceId);
   }
-  console.warn(`[Stripe] overdue -- ${invoiceType} for workspace ${workspaceId}`);
+  console.warn(
+    `[Stripe] overdue -- ${invoiceType} for workspace ${workspaceId}`
+  );
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {

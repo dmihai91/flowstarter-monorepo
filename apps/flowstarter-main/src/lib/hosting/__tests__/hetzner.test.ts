@@ -1,9 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import {
-  HetznerApiError,
-  HetznerClient,
-  hetznerFromEnv,
-} from '../hetzner';
+import { HetznerApiError, HetznerClient, hetznerFromEnv } from '../hetzner';
 
 function mockFetch(responseBody: unknown, init: { status?: number } = {}) {
   return vi.fn(async (_url: string | URL | Request, _init?: RequestInit) => {
@@ -76,7 +72,11 @@ describe('HetznerClient', () => {
       token: 't',
       fetch: fetchSpy as unknown as typeof globalThis.fetch,
     });
-    await client.listServers({ label_selector: 'role=caddy', page: 2, per_page: 50 });
+    await client.listServers({
+      label_selector: 'role=caddy',
+      page: 2,
+      per_page: 50,
+    });
     const [url] = fetchSpy.mock.calls[0];
     expect(String(url)).toContain('label_selector=role%3Dcaddy');
     expect(String(url)).toContain('page=2');
@@ -104,9 +104,9 @@ describe('HetznerClient', () => {
 
 describe('hetznerFromEnv', () => {
   it('throws when HETZNER_API_TOKEN is missing', () => {
-    expect(() =>
-      hetznerFromEnv({} as unknown as NodeJS.ProcessEnv)
-    ).toThrow(/HETZNER_API_TOKEN/);
+    expect(() => hetznerFromEnv({} as unknown as NodeJS.ProcessEnv)).toThrow(
+      /HETZNER_API_TOKEN/
+    );
   });
   it('returns a client when set', () => {
     const c = hetznerFromEnv({

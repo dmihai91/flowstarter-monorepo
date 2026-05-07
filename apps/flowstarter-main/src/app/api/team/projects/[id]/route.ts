@@ -27,9 +27,7 @@ function assignEnumField(
   value: unknown,
   allowed: readonly string[],
   { allowNull = false }: { allowNull?: boolean } = {}
-):
-  | { ok: true }
-  | { ok: false; response: NextResponse<{ error: string }> } {
+): { ok: true } | { ok: false; response: NextResponse<{ error: string }> } {
   if (value === undefined) return { ok: true };
   if (allowNull && (value === null || value === '')) {
     updateData[field] = null;
@@ -52,9 +50,7 @@ function assignNonNegativeIntegerField(
   updateData: Record<string, unknown>,
   field: string,
   value: unknown
-):
-  | { ok: true }
-  | { ok: false; response: NextResponse<{ error: string }> } {
+): { ok: true } | { ok: false; response: NextResponse<{ error: string }> } {
   if (value === undefined) return { ok: true };
   const numberValue = Number(value);
   if (!Number.isFinite(numberValue) || numberValue < 0) {
@@ -301,7 +297,12 @@ export async function PATCH(
         billing_interval,
         BILLING_INTERVALS
       ),
-      assignEnumField(updateData, 'commerce_mode', commerce_mode, COMMERCE_MODES),
+      assignEnumField(
+        updateData,
+        'commerce_mode',
+        commerce_mode,
+        COMMERCE_MODES
+      ),
       assignEnumField(
         updateData,
         'commerce_product_type',

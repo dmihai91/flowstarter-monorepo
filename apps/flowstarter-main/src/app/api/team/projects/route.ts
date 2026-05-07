@@ -52,15 +52,15 @@ export async function GET() {
       deploy_status: string | null;
       [key: string]: unknown;
     };
-    const enrichedProjects = ((workspaces ?? []) as unknown as WorkspaceRow[]).map(
-      (p) => ({
-        ...p,
-        status: deriveProjectStatus({
-          concierge_stage: p.concierge_stage,
-          deploy_status: p.deploy_status,
-        }),
-      })
-    );
+    const enrichedProjects = (
+      (workspaces ?? []) as unknown as WorkspaceRow[]
+    ).map((p) => ({
+      ...p,
+      status: deriveProjectStatus({
+        concierge_stage: p.concierge_stage,
+        deploy_status: p.deploy_status,
+      }),
+    }));
 
     return NextResponse.json(
       { projects: enrichedProjects },

@@ -1,11 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   Server,
@@ -59,10 +55,12 @@ type HostingServer = {
 };
 
 const STATUS_TONE: Record<string, string> = {
-  active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
+  active:
+    'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
   provisioning:
     'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-  draining: 'bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400',
+  draining:
+    'bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400',
   decommissioned:
     'bg-slate-100 text-slate-600 dark:bg-slate-500/15 dark:text-slate-400',
   error: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400',
@@ -79,7 +77,8 @@ const LOCATION_LABELS: Record<string, string> = {
 function StatusIcon({ status }: { status: string }) {
   if (status === 'active') return <CheckCircle2 className="w-3 h-3" />;
   if (status === 'error') return <AlertCircle className="w-3 h-3" />;
-  if (status === 'provisioning') return <Clock className="w-3 h-3 animate-pulse" />;
+  if (status === 'provisioning')
+    return <Clock className="w-3 h-3 animate-pulse" />;
   return <Server className="w-3 h-3" />;
 }
 
@@ -209,7 +208,11 @@ export default function HostingPage() {
     >
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <StatCard label="Active servers" value={stats.active} icon={<Server className="w-4 h-4" />} />
+        <StatCard
+          label="Active servers"
+          value={stats.active}
+          icon={<Server className="w-4 h-4" />}
+        />
         <StatCard
           label="Provisioning"
           value={stats.provisioning}
@@ -274,8 +277,7 @@ export default function HostingPage() {
                 decommission.mutate({ id: s.id, force })
               }
               isDecommissioning={
-                decommission.isPending &&
-                decommission.variables?.id === s.id
+                decommission.isPending && decommission.variables?.id === s.id
               }
             />
           ))}
@@ -331,12 +333,24 @@ export default function HostingPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="cpx22">cpx22 · AMD · 2 vCPU / 4 GB · Flowstarter default</SelectItem>
-                    <SelectItem value="cpx21">cpx21 · AMD · 3 vCPU / 4 GB</SelectItem>
-                    <SelectItem value="cpx31">cpx31 · AMD · 4 vCPU / 8 GB</SelectItem>
-                    <SelectItem value="cx22">cx22 · Intel · 2 vCPU / 4 GB</SelectItem>
-                    <SelectItem value="cx32">cx32 · Intel · 4 vCPU / 8 GB</SelectItem>
-                    <SelectItem value="cx42">cx42 · Intel · 8 vCPU / 16 GB</SelectItem>
+                    <SelectItem value="cpx22">
+                      cpx22 · AMD · 2 vCPU / 4 GB · Flowstarter default
+                    </SelectItem>
+                    <SelectItem value="cpx21">
+                      cpx21 · AMD · 3 vCPU / 4 GB
+                    </SelectItem>
+                    <SelectItem value="cpx31">
+                      cpx31 · AMD · 4 vCPU / 8 GB
+                    </SelectItem>
+                    <SelectItem value="cx22">
+                      cx22 · Intel · 2 vCPU / 4 GB
+                    </SelectItem>
+                    <SelectItem value="cx32">
+                      cx32 · Intel · 4 vCPU / 8 GB
+                    </SelectItem>
+                    <SelectItem value="cx42">
+                      cx42 · Intel · 8 vCPU / 16 GB
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -353,7 +367,8 @@ export default function HostingPage() {
                 className="mt-1"
               />
               <p className="mt-1 text-[0.65rem] text-[var(--fs-ink-faint)]">
-                Maximum sites this server will host before allocation routes elsewhere.
+                Maximum sites this server will host before allocation routes
+                elsewhere.
               </p>
             </div>
 
@@ -417,9 +432,7 @@ function StatCard({
         </span>
         <span
           className={
-            accent === 'amber'
-              ? 'text-amber-500'
-              : 'text-[var(--fs-ink-faint)]'
+            accent === 'amber' ? 'text-amber-500' : 'text-[var(--fs-ink-faint)]'
           }
         >
           {icon}
@@ -475,9 +488,7 @@ function ServerRow({
             )}
           </p>
           {server.status_detail && (
-            <p className="mt-1 text-xs text-red-500">
-              {server.status_detail}
-            </p>
+            <p className="mt-1 text-xs text-red-500">{server.status_detail}</p>
           )}
           <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-[0.7rem] text-[var(--fs-ink-dim)]">
             <span>

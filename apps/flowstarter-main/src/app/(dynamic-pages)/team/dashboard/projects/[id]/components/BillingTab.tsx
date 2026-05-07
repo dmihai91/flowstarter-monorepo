@@ -31,7 +31,8 @@ type SubscriptionState =
 const INVOICE_TONE: Record<string, string> = {
   paid: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
   sent: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-  pending: 'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
+  pending:
+    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
   overdue: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400',
 };
 
@@ -40,7 +41,8 @@ const SUBSCRIPTION_TONE: Record<string, string> = {
   active:
     'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
   past_due: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400',
-  cancelled: 'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-400',
+  cancelled:
+    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-400',
   incomplete:
     'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
 };
@@ -83,22 +85,33 @@ export function BillingTab({ project }: { project: Project }) {
   const monthlyFee = (project.monthly_fee as number | null) ?? 0;
   const depositStatus = (project.deposit_status as InvoiceState) ?? 'pending';
   const finalStatus = (project.final_status as InvoiceState) ?? 'pending';
-  const subscriptionStatus = (project.subscription_status as SubscriptionState) ?? null;
+  const subscriptionStatus =
+    (project.subscription_status as SubscriptionState) ?? null;
   const stripeSubscriptionId = project.stripe_subscription_id as string | null;
   const stripeCustomerId = project.stripe_customer_id as string | null;
   const depositInvoiceUrl = project.deposit_invoice_url as string | null;
   const finalInvoiceUrl = project.final_invoice_url as string | null;
-  const subscriptionTrialEnds = project.subscription_trial_ends as string | null;
-  const subscriptionNextBilling = project.subscription_next_billing as string | null;
+  const subscriptionTrialEnds = project.subscription_trial_ends as
+    | string
+    | null;
+  const subscriptionNextBilling = project.subscription_next_billing as
+    | string
+    | null;
 
   const callBilling = useMutation({
     mutationFn: async (vars: {
-      action: 'deposit-invoice' | 'final-invoice' | 'activate-subscription' | 'cancel-subscription';
+      action:
+        | 'deposit-invoice'
+        | 'final-invoice'
+        | 'activate-subscription'
+        | 'cancel-subscription';
       query?: string;
     }) => {
       setBusy(vars.action);
       const res = await fetch(
-        `/api/team/projects/${project.id}/billing/${vars.action}${vars.query ?? ''}`,
+        `/api/team/projects/${project.id}/billing/${vars.action}${
+          vars.query ?? ''
+        }`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -127,9 +140,13 @@ export function BillingTab({ project }: { project: Project }) {
     onError: (e) => toast.error(e instanceof Error ? e.message : 'Failed'),
   });
 
-  const canSendDeposit = !!project.client_email && setupFee > 0 && depositStatus !== 'paid';
+  const canSendDeposit =
+    !!project.client_email && setupFee > 0 && depositStatus !== 'paid';
   const canSendFinal =
-    !!project.client_email && setupFee > 0 && depositStatus === 'paid' && finalStatus !== 'paid';
+    !!project.client_email &&
+    setupFee > 0 &&
+    depositStatus === 'paid' &&
+    finalStatus !== 'paid';
   const canActivateSubscription =
     !!project.client_email &&
     monthlyFee > 0 &&
@@ -195,15 +212,17 @@ export function BillingTab({ project }: { project: Project }) {
               <Button
                 size="sm"
                 disabled={!canSendDeposit || busy !== null}
-                onClick={() => callBilling.mutate({ action: 'deposit-invoice' })}
+                onClick={() =>
+                  callBilling.mutate({ action: 'deposit-invoice' })
+                }
                 variant="outline"
               >
                 <Send className="w-3.5 h-3.5" />
                 {busy === 'deposit-invoice'
                   ? 'Sending…'
                   : depositStatus === 'sent'
-                    ? 'Resend deposit'
-                    : 'Send deposit'}
+                  ? 'Resend deposit'
+                  : 'Send deposit'}
               </Button>
             </div>
           </div>
@@ -245,8 +264,8 @@ export function BillingTab({ project }: { project: Project }) {
                 {busy === 'final-invoice'
                   ? 'Sending…'
                   : finalStatus === 'sent'
-                    ? 'Resend final'
-                    : 'Send final'}
+                  ? 'Resend final'
+                  : 'Send final'}
               </Button>
             </div>
           </div>
@@ -313,7 +332,8 @@ export function BillingTab({ project }: { project: Project }) {
 
           {!canActivateSubscription && !stripeSubscriptionId && (
             <p className="text-[0.65rem] text-[var(--fs-ink-faint)]">
-              Available once both invoices are paid (or pass force=true via API).
+              Available once both invoices are paid (or pass force=true via
+              API).
             </p>
           )}
 

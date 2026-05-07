@@ -89,11 +89,7 @@ function safeNotes(value: unknown): string | null {
 }
 
 export function normalizeCommercePlan(input?: CommercePlanInput): CommercePlan {
-  const productType = oneOf(
-    input?.productType,
-    COMMERCE_PRODUCT_TYPES,
-    'none'
-  );
+  const productType = oneOf(input?.productType, COMMERCE_PRODUCT_TYPES, 'none');
   const provider = oneOf(input?.provider, COMMERCE_PROVIDERS, 'none');
   const mode = oneOf(input?.mode, COMMERCE_MODES, 'none');
   const productCount = normalizedCount(input?.productCount);
@@ -104,11 +100,7 @@ export function normalizeCommercePlan(input?: CommercePlanInput): CommercePlan {
     commerce_mode: mode,
     commerce_product_type: productType,
     commerce_provider: provider,
-    commerce_status: oneOf(
-      input?.status,
-      COMMERCE_STATUSES,
-      statusFallback
-    ),
+    commerce_status: oneOf(input?.status, COMMERCE_STATUSES, statusFallback),
     commerce_product_count: productCount,
     commerce_requirements: safeJsonObject(input?.requirements),
     commerce_notes: safeNotes(input?.notes),

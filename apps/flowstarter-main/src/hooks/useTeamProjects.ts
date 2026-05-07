@@ -162,9 +162,7 @@ export function useTeamUpdateProject(id: string | undefined) {
         body: JSON.stringify(patch),
       });
       if (!res.ok) {
-        const err = await res
-          .json()
-          .catch(() => ({ error: 'Update failed' }));
+        const err = await res.json().catch(() => ({ error: 'Update failed' }));
         throw new Error(err.error || 'Update failed');
       }
       return (await res.json()).project as ProjectWithOwner;

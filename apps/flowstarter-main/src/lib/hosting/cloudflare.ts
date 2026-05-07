@@ -32,10 +32,10 @@ export interface CloudflareDnsRecord {
   id: string;
   zone_id: string;
   zone_name: string;
-  name: string;       // FQDN, e.g. "shop.example.com"
+  name: string; // FQDN, e.g. "shop.example.com"
   type: CloudflareDnsType;
-  content: string;    // IP, hostname, or value depending on type
-  ttl: number;        // 1 = automatic
+  content: string; // IP, hostname, or value depending on type
+  ttl: number; // 1 = automatic
   proxied: boolean;
   comment?: string | null;
   tags?: string[];
@@ -56,7 +56,7 @@ export interface CloudflareZone {
 export interface CloudflareUpsertRecordInput {
   zoneId: string;
   type: CloudflareDnsType;
-  name: string;       // FQDN
+  name: string; // FQDN
   content: string;
   ttl?: number;
   proxied?: boolean;
@@ -69,7 +69,10 @@ export class CloudflareApiError extends Error {
     public errors: Array<{ code: number; message: string }>,
     message?: string
   ) {
-    super(message ?? `Cloudflare API ${status}: ${errors.map((e) => e.message).join('; ')}`);
+    super(
+      message ??
+        `Cloudflare API ${status}: ${errors.map((e) => e.message).join('; ')}`
+    );
     this.name = 'CloudflareApiError';
   }
 }
@@ -122,18 +125,28 @@ export class CloudflareClient {
     if (params?.name) query.set('name', params.name);
     if (params?.type) query.set('type', params.type);
     const suffix = query.toString() ? `?${query.toString()}` : '';
-    return this.request<CloudflareDnsRecord[]>('GET', `/zones/${zoneId}/dns_records${suffix}`);
+    return this.request<CloudflareDnsRecord[]>(
+      'GET',
+      `/zones/${zoneId}/dns_records${suffix}`
+    );
   }
 
-  async createRecord(zoneId: string, body: Omit<CloudflareUpsertRecordInput, 'zoneId'>): Promise<CloudflareDnsRecord> {
-    return this.request<CloudflareDnsRecord>('POST', `/zones/${zoneId}/dns_records`, {
-      type: body.type,
-      name: body.name,
-      content: body.content,
-      ttl: body.ttl ?? 1,
-      proxied: body.proxied ?? false,
-      comment: body.comment,
-    });
+  async createRecord(
+    zoneId: string,
+    body: Omit<CloudflareUpsertRecordInput, 'zoneId'>
+  ): Promise<CloudflareDnsRecord> {
+    return this.request<CloudflareDnsRecord>(
+      'POST',
+      `/zones/${zoneId}/dns_records`,
+      {
+        type: body.type,
+        name: body.name,
+        content: body.content,
+        ttl: body.ttl ?? 1,
+        proxied: body.proxied ?? false,
+        comment: body.comment,
+      }
+    );
   }
 
   async updateRecord(
@@ -141,18 +154,30 @@ export class CloudflareClient {
     recordId: string,
     body: Partial<Omit<CloudflareUpsertRecordInput, 'zoneId'>>
   ): Promise<CloudflareDnsRecord> {
-    return this.request<CloudflareDnsRecord>('PATCH', `/zones/${zoneId}/dns_records/${recordId}`, body);
+    return this.request<CloudflareDnsRecord>(
+      'PATCH',
+      `/zones/${zoneId}/dns_records/${recordId}`,
+      body
+    );
   }
 
-  async deleteRecord(zoneId: string, recordId: string): Promise<{ id: string }> {
-    return this.request<{ id: string }>('DELETE', `/zones/${zoneId}/dns_records/${recordId}`);
+  async deleteRecord(
+    zoneId: string,
+    recordId: string
+  ): Promise<{ id: string }> {
+    return this.request<{ id: string }>(
+      'DELETE',
+      `/zones/${zoneId}/dns_records/${recordId}`
+    );
   }
 
   /**
    * Idempotent: if a record with the same (name, type) exists in the zone,
    * patch it to match the input. Otherwise create.
    */
-  async upsertRecord(input: CloudflareUpsertRecordInput): Promise<CloudflareDnsRecord> {
+  async upsertRecord(
+    input: CloudflareUpsertRecordInput
+  ): Promise<CloudflareDnsRecord> {
     const existing = await this.listRecords(input.zoneId, {
       name: input.name,
       type: input.type,
@@ -185,7 +210,11 @@ export class CloudflareClient {
     });
   }
 
-  private async request<T>(method: 'GET' | 'POST' | 'PATCH' | 'DELETE', path: string, body?: unknown): Promise<T> {
+  private async request<T>(
+    method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+    path: string,
+    body?: unknown
+  ): Promise<T> {
     const res = await this.fetchImpl(`${this.baseUrl}${path}`, {
       method,
       headers: {
@@ -217,7 +246,9 @@ export class CloudflareClient {
   }
 }
 
-export function cloudflareFromEnv(env: NodeJS.ProcessEnv = process.env): CloudflareClient {
+export function cloudflareFromEnv(
+  env: NodeJS.ProcessEnv = process.env
+): CloudflareClient {
   const token = env.CLOUDFLARE_API_TOKEN;
   if (!token) {
     throw new Error('CLOUDFLARE_API_TOKEN is not set in env');

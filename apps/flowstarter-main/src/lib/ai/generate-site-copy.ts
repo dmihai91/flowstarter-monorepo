@@ -96,7 +96,9 @@ OUTPUT — pure JSON, no markdown fences, no commentary, exactly this shape:
 }`;
 }
 
-export async function generateSiteCopy(input: SiteCopyInput): Promise<SiteCopy> {
+export async function generateSiteCopy(
+  input: SiteCopyInput
+): Promise<SiteCopy> {
   if (!input.businessName?.trim() || !input.description?.trim()) {
     throw new Error(
       'generateSiteCopy: businessName and description are required'
@@ -145,7 +147,9 @@ function isSiteCopy(value: unknown): value is SiteCopy {
 function isObjectWithStrings(value: unknown, keys: string[]): boolean {
   if (!value || typeof value !== 'object') return false;
   const v = value as Record<string, unknown>;
-  return keys.every((k) => typeof v[k] === 'string' && (v[k] as string).length > 0);
+  return keys.every(
+    (k) => typeof v[k] === 'string' && (v[k] as string).length > 0
+  );
 }
 
 function isServicesShape(value: unknown): boolean {
@@ -153,7 +157,7 @@ function isServicesShape(value: unknown): boolean {
   const v = value as Record<string, unknown>;
   if (typeof v.sectionTitle !== 'string') return false;
   if (!Array.isArray(v.items)) return false;
-  return v.items.every(
-    (item) => isObjectWithStrings(item, ['title', 'description'])
+  return v.items.every((item) =>
+    isObjectWithStrings(item, ['title', 'description'])
   );
 }

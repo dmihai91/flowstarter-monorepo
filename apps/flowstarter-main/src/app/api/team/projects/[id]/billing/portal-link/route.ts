@@ -83,7 +83,8 @@ function isSafePlatformUrl(value: string): boolean {
   if (!value) return false;
   try {
     const parsed = new URL(value);
-    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:')
+      return false;
     // Only accept URLs that share the platform's root domain so we never
     // hand Stripe a customer-supplied open redirect.
     const platformOrigin = new URL(getMainUrl()).hostname;

@@ -59,8 +59,9 @@ vi.mock('@/supabase-clients/server', () => ({
 
 // ─── Auth mock ──────────────────────────────────────────────────────────────
 vi.mock('@/lib/api-auth', async () => {
-  const actual =
-    await vi.importActual<typeof import('@/lib/api-auth')>('@/lib/api-auth');
+  const actual = await vi.importActual<typeof import('@/lib/api-auth')>(
+    '@/lib/api-auth'
+  );
   return {
     ...actual,
     requireTeamAuth: async () => ({
@@ -138,10 +139,7 @@ beforeEach(() => {
         } else if (typeof fn === 'object' && fn !== null) {
           // sessions.create etc.
           Object.values(fn).forEach((nested) => {
-            if (
-              typeof nested === 'function' &&
-              'mockReset' in nested
-            ) {
+            if (typeof nested === 'function' && 'mockReset' in nested) {
               (nested as ReturnType<typeof vi.fn>).mockReset();
             }
           });
@@ -315,7 +313,11 @@ describe('POST /api/team/projects/[id]/billing/activate-subscription', () => {
       id: 'sub_1',
       status: 'trialing',
       trial_end: Math.floor(Date.now() / 1000) + 30 * 86400,
-      items: { data: [{ current_period_end: Math.floor(Date.now() / 1000) + 60 * 86400 }] },
+      items: {
+        data: [
+          { current_period_end: Math.floor(Date.now() / 1000) + 60 * 86400 },
+        ],
+      },
     });
     const { POST } = await import(
       '../../../[id]/billing/activate-subscription/route'
@@ -350,10 +352,9 @@ describe('POST /api/team/projects/[id]/billing/activate-subscription', () => {
     const { POST } = await import(
       '../../../[id]/billing/activate-subscription/route'
     );
-    const res = await POST(
-      makeReq({}, 'https://example.com/?force=true'),
-      { params: Promise.resolve({ id: 'proj_1' }) }
-    );
+    const res = await POST(makeReq({}, 'https://example.com/?force=true'), {
+      params: Promise.resolve({ id: 'proj_1' }),
+    });
     expect(res.status).toBe(200);
     expect(stripeMock.subscriptions.create).toHaveBeenCalledOnce();
   });
@@ -380,10 +381,9 @@ describe('POST /api/team/projects/[id]/billing/cancel-subscription', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.subscription.cancelAtPeriodEnd).toBe(true);
-    expect(stripeMock.subscriptions.update).toHaveBeenCalledWith(
-      'sub_active',
-      { cancel_at_period_end: true }
-    );
+    expect(stripeMock.subscriptions.update).toHaveBeenCalledWith('sub_active', {
+      cancel_at_period_end: true,
+    });
     expect(stripeMock.subscriptions.cancel).not.toHaveBeenCalled();
   });
 
@@ -401,10 +401,9 @@ describe('POST /api/team/projects/[id]/billing/cancel-subscription', () => {
     const { POST } = await import(
       '../../../[id]/billing/cancel-subscription/route'
     );
-    const res = await POST(
-      makeReq({}, 'https://example.com/?immediate=true'),
-      { params: Promise.resolve({ id: 'proj_1' }) }
-    );
+    const res = await POST(makeReq({}, 'https://example.com/?immediate=true'), {
+      params: Promise.resolve({ id: 'proj_1' }),
+    });
     expect(res.status).toBe(200);
     expect(stripeMock.subscriptions.cancel).toHaveBeenCalledWith('sub_active');
   });

@@ -166,9 +166,7 @@ describe('StripeBilling.createFinalInvoice', () => {
       customerId: 'cus_1',
       amountMinor: 39950,
     });
-    expect(
-      (invoices.create as AnyMock).mock.calls[0]?.[0]
-    ).toMatchObject({
+    expect((invoices.create as AnyMock).mock.calls[0]?.[0]).toMatchObject({
       metadata: { workspaceId: 'ws_1', invoiceType: 'final' },
     });
   });
@@ -335,7 +333,9 @@ describe('StripeBilling.cancelSubscription', () => {
 
   it('throws if there is no active subscription', async () => {
     const billing = new StripeBilling({
-      client: fakeStripe({ subscriptions: { update: vi.fn(), cancel: vi.fn() } }),
+      client: fakeStripe({
+        subscriptions: { update: vi.fn(), cancel: vi.fn() },
+      }),
     });
     await expect(
       billing.cancelSubscription({ project: baseProject() })

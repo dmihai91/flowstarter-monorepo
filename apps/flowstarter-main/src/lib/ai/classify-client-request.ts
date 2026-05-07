@@ -122,7 +122,9 @@ export async function classifyClientRequest(
     parsed = JSON.parse(jsonText);
   } catch (e) {
     throw new Error(
-      `classifyClientRequest: model returned invalid JSON: ${(e as Error).message}`
+      `classifyClientRequest: model returned invalid JSON: ${
+        (e as Error).message
+      }`
     );
   }
 
@@ -154,8 +156,14 @@ function normalize(value: unknown): ClassifiedClientRequest {
       : 'Triage';
 
   let estimatedMinutes = 30;
-  if (typeof v.estimatedMinutes === 'number' && Number.isFinite(v.estimatedMinutes)) {
-    estimatedMinutes = Math.max(5, Math.min(480, Math.round(v.estimatedMinutes)));
+  if (
+    typeof v.estimatedMinutes === 'number' &&
+    Number.isFinite(v.estimatedMinutes)
+  ) {
+    estimatedMinutes = Math.max(
+      5,
+      Math.min(480, Math.round(v.estimatedMinutes))
+    );
   }
 
   return { category, urgency, summary, suggestedAction, estimatedMinutes };
@@ -167,7 +175,5 @@ function inEnum<T extends readonly string[]>(
   fallback: T[number]
 ): T[number] {
   if (typeof value !== 'string') return fallback;
-  return allowed.includes(value as T[number])
-    ? (value as T[number])
-    : fallback;
+  return allowed.includes(value as T[number]) ? (value as T[number]) : fallback;
 }

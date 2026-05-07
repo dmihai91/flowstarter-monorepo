@@ -53,7 +53,10 @@ export async function POST(
     billing = new StripeBilling();
   } catch (e) {
     return NextResponse.json(
-      { error: e instanceof StripeBillingError ? e.message : 'Stripe init failed' },
+      {
+        error:
+          e instanceof StripeBillingError ? e.message : 'Stripe init failed',
+      },
       { status: 500 }
     );
   }
@@ -138,4 +141,3 @@ export async function POST(
     },
   });
 }
-

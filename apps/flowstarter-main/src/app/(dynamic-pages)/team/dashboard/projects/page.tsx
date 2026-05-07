@@ -24,9 +24,11 @@ const STAGE_LABEL: Record<string, string> = {
 };
 
 const STAGE_TONE: Record<string, string> = {
-  intake: 'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
+  intake:
+    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
   brief: 'bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300',
-  build: 'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
+  build:
+    'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
   internal_review:
     'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
   client_review:
@@ -49,7 +51,8 @@ const TIER_TONE: Record<string, string> = {
   pro: 'bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300',
   commerce:
     'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300',
-  custom: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
+  custom:
+    'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
 };
 
 export default function TeamProjectsPage() {

@@ -51,7 +51,11 @@ describe('HttpDeployAgentClient', () => {
       deployAgentUrl: 'https://10.0.0.1:8443',
       sharedSecret: 'super-shh',
       siteSlug: 'acme',
-      artifact: { kind: 'url', url: 'https://artifacts/abc.tar.gz', sha256: 'def' },
+      artifact: {
+        kind: 'url',
+        url: 'https://artifacts/abc.tar.gz',
+        sha256: 'def',
+      },
       primaryDomain: 'acme.com',
       additionalDomains: ['www.acme.com'],
     });

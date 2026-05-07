@@ -118,7 +118,5 @@ function enumOr<T extends readonly string[]>(
   fallback: T[number]
 ): T[number] {
   if (typeof value !== 'string') return fallback;
-  return allowed.includes(value as T[number])
-    ? (value as T[number])
-    : fallback;
+  return allowed.includes(value as T[number]) ? (value as T[number]) : fallback;
 }

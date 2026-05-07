@@ -84,12 +84,14 @@ export function computeTeamDashboardStats(
     else draftCount += 1;
 
     totalSetupFees += p.setup_fee || 0;
-    const setupPaid =
-      p.deposit_status === 'paid' && p.final_status === 'paid';
+    const setupPaid = p.deposit_status === 'paid' && p.final_status === 'paid';
     if (setupPaid) {
       paidCount += 1;
     }
-    if (p.subscription_status === 'active' || p.subscription_status === 'trial') {
+    if (
+      p.subscription_status === 'active' ||
+      p.subscription_status === 'trial'
+    ) {
       monthlyRevenue += p.monthly_fee || 0;
     }
     if (p.outstanding_payment) outstandingCount += 1;

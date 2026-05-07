@@ -205,11 +205,16 @@ export async function requireTeamAuth(): Promise<TeamAuthResult> {
 
     if (!role) {
       const user = await currentUser();
-      role = (user?.publicMetadata as { role?: string } | undefined)?.role?.toLowerCase();
+      role = (
+        user?.publicMetadata as { role?: string } | undefined
+      )?.role?.toLowerCase();
     }
 
     if (role !== 'team' && role !== 'admin') {
-      return { authorized: false, response: forbiddenResponse('Not a team member') };
+      return {
+        authorized: false,
+        response: forbiddenResponse('Not a team member'),
+      };
     }
 
     return { authorized: true, userId, role: role as 'team' | 'admin' };

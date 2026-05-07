@@ -79,9 +79,7 @@ function fromProject(p: Project): CommerceState {
     commerce_product_type: (p.commerce_product_type as string) || 'none',
     commerce_provider: (p.commerce_provider as string) || 'none',
     commerce_status: (p.commerce_status as string) || 'not_needed',
-    commerce_product_count: String(
-      (p.commerce_product_count as number) ?? 0
-    ),
+    commerce_product_count: String((p.commerce_product_count as number) ?? 0),
     commerce_notes: (p.commerce_notes as string) || '',
   };
 }
@@ -127,9 +125,7 @@ export function CommerceTab({ project }: { project: Project }) {
             <Label>Mode</Label>
             <Select
               value={state.commerce_mode}
-              onValueChange={(v) =>
-                setState({ ...state, commerce_mode: v })
-              }
+              onValueChange={(v) => setState({ ...state, commerce_mode: v })}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue />
@@ -190,9 +186,7 @@ export function CommerceTab({ project }: { project: Project }) {
             <Label>Status</Label>
             <Select
               value={state.commerce_status}
-              onValueChange={(v) =>
-                setState({ ...state, commerce_status: v })
-              }
+              onValueChange={(v) => setState({ ...state, commerce_status: v })}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue />
@@ -236,8 +230,8 @@ export function CommerceTab({ project }: { project: Project }) {
         <div>
           <Label htmlFor="commerce-notes">Notes</Label>
           <p className="text-xs text-[var(--fs-ink-faint)] mb-2">
-            Tax, shipping, fulfillment, license delivery — anything that
-            shapes commerce setup.
+            Tax, shipping, fulfillment, license delivery — anything that shapes
+            commerce setup.
           </p>
           <Textarea
             id="commerce-notes"

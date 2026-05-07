@@ -22,11 +22,7 @@ import { CloudflareClient } from './cloudflare';
 import { getSubdomainUrl } from '@flowstarter/platform-config';
 
 export class DeployError extends Error {
-  constructor(
-    public code: string,
-    message: string,
-    public cause?: unknown
-  ) {
+  constructor(public code: string, message: string, public cause?: unknown) {
     super(message);
     this.name = 'DeployError';
   }
@@ -70,7 +66,10 @@ export class HttpDeployAgentClient implements DeployAgentClient {
   ) {}
 
   async push(opts: Parameters<DeployAgentClient['push']>[0]) {
-    const url = `${opts.deployAgentUrl.replace(/\/$/, '')}/sites/${encodeURIComponent(opts.siteSlug)}/deploy`;
+    const url = `${opts.deployAgentUrl.replace(
+      /\/$/,
+      ''
+    )}/sites/${encodeURIComponent(opts.siteSlug)}/deploy`;
     const headers: Record<string, string> = {
       Authorization: `Bearer ${opts.sharedSecret}`,
     };
@@ -119,16 +118,16 @@ export class HttpDeployAgentClient implements DeployAgentClient {
   }
 
   async remove(opts: Parameters<DeployAgentClient['remove']>[0]) {
-    const url = `${opts.deployAgentUrl.replace(/\/$/, '')}/sites/${encodeURIComponent(opts.siteSlug)}`;
+    const url = `${opts.deployAgentUrl.replace(
+      /\/$/,
+      ''
+    )}/sites/${encodeURIComponent(opts.siteSlug)}`;
     const res = await this.fetchImpl(url, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${opts.sharedSecret}` },
     });
     if (!res.ok) {
-      throw new DeployError(
-        'agent_error',
-        `deploy-agent DELETE ${res.status}`
-      );
+      throw new DeployError('agent_error', `deploy-agent DELETE ${res.status}`);
     }
     return { ok: true as const };
   }
@@ -139,7 +138,8 @@ export class HttpDeployAgentClient implements DeployAgentClient {
  * a real agent is reachable.
  */
 export class DryRunDeployAgentClient implements DeployAgentClient {
-  public readonly calls: Array<{ method: 'push' | 'remove'; args: unknown }> = [];
+  public readonly calls: Array<{ method: 'push' | 'remove'; args: unknown }> =
+    [];
   async push(args: Parameters<DeployAgentClient['push']>[0]) {
     this.calls.push({ method: 'push', args });
     return { ok: true as const, sha256: 'dryrun', sizeBytes: 0 };

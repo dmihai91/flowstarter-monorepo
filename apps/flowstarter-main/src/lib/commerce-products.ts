@@ -141,15 +141,21 @@ function normalizeCurrency(value: unknown): string {
 export function validateCommerceProductInput(
   input: CommerceProductInput,
   options?: { partial?: false }
-): { ok: true; record: CommerceProductRecord } | { ok: false; errors: ValidationError[] };
+):
+  | { ok: true; record: CommerceProductRecord }
+  | { ok: false; errors: ValidationError[] };
 export function validateCommerceProductInput(
   input: CommerceProductInput,
   options: { partial: true }
-): { ok: true; record: Partial<CommerceProductRecord> } | { ok: false; errors: ValidationError[] };
+):
+  | { ok: true; record: Partial<CommerceProductRecord> }
+  | { ok: false; errors: ValidationError[] };
 export function validateCommerceProductInput(
   input: CommerceProductInput,
   options: { partial?: boolean } = {}
-): { ok: true; record: Partial<CommerceProductRecord> } | { ok: false; errors: ValidationError[] } {
+):
+  | { ok: true; record: Partial<CommerceProductRecord> }
+  | { ok: false; errors: ValidationError[] } {
   const partial = options.partial === true;
   const errors: ValidationError[] = [];
   const record: Partial<CommerceProductRecord> = {};

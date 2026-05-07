@@ -92,8 +92,8 @@ describe('classifyClientRequest', () => {
 
   it('throws on invalid JSON', async () => {
     generateTextMock.mockResolvedValueOnce({ text: 'nope' });
-    await expect(
-      classifyClientRequest({ requestText: 'x' })
-    ).rejects.toThrow(/invalid JSON/);
+    await expect(classifyClientRequest({ requestText: 'x' })).rejects.toThrow(
+      /invalid JSON/
+    );
   });
 });

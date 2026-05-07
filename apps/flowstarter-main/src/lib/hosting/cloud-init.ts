@@ -94,7 +94,11 @@ packages:
 
 users:
   - name: root
-${sshKeysYaml ? `    ssh_authorized_keys:\n${sshKeysYaml}` : '    # no extra ssh keys'}
+${
+  sshKeysYaml
+    ? `    ssh_authorized_keys:\n${sshKeysYaml}`
+    : '    # no extra ssh keys'
+}
 
 write_files:
   - path: /etc/flowstarter/version
@@ -163,16 +167,20 @@ runcmd:
 
   # ─── Deploy-agent install (placeholder until artifact is published) ───
 ${
-    artifactUrl
-      ? `  - curl -fsSL ${escapeShell(artifactUrl)} -o /usr/local/bin/flowstarter-deploy-agent
+  artifactUrl
+    ? `  - curl -fsSL ${escapeShell(
+        artifactUrl
+      )} -o /usr/local/bin/flowstarter-deploy-agent
   - chmod +x /usr/local/bin/flowstarter-deploy-agent
   - systemctl daemon-reload
   - systemctl enable --now flowstarter-deploy-agent`
-      : `  # Deploy-agent artifact URL not provided. Service unit installed but disabled.
+    : `  # Deploy-agent artifact URL not provided. Service unit installed but disabled.
   - systemctl daemon-reload`
-  }
+}
 
-final_message: "Flowstarter host bootstrap complete (cloud_init_version=${CLOUD_INIT_VERSION}). Caddy + Docker installed. Deploy-agent ${artifactUrl ? 'started' : 'disabled (no artifact url)'}."
+final_message: "Flowstarter host bootstrap complete (cloud_init_version=${CLOUD_INIT_VERSION}). Caddy + Docker installed. Deploy-agent ${
+    artifactUrl ? 'started' : 'disabled (no artifact url)'
+  }."
 `;
 }
 

@@ -63,8 +63,7 @@ export async function POST(req: NextRequest) {
   // returned response — keep the values in local consts only.
   const hetznerToken = process.env.HETZNER_API_TOKEN;
   const sshKeyId = process.env.HETZNER_SSH_KEY_ID;
-  const acmeEmail =
-    process.env.CADDY_ACME_EMAIL ?? `ops@${derivedDomain()}`;
+  const acmeEmail = process.env.CADDY_ACME_EMAIL ?? `ops@${derivedDomain()}`;
 
   if (!hetznerToken) {
     return NextResponse.json(
@@ -101,7 +100,8 @@ export async function POST(req: NextRequest) {
     typeof body.site_capacity === 'number' && body.site_capacity > 0
       ? Math.floor(body.site_capacity)
       : 50;
-  const notes = typeof body.notes === 'string' ? body.notes.slice(0, 1000) : null;
+  const notes =
+    typeof body.notes === 'string' ? body.notes.slice(0, 1000) : null;
 
   // Generate a per-server shared secret. NEVER returned in the response.
   // Stored only in cloud-init (server-side only) and inserted into the
@@ -201,7 +201,8 @@ export async function POST(req: NextRequest) {
   const { data: updated, error: updateErr } = await supabase
     .from('hosting_servers')
     .update({
-      hetzner_server_id: hetznerServerId !== null ? String(hetznerServerId) : null,
+      hetzner_server_id:
+        hetznerServerId !== null ? String(hetznerServerId) : null,
       ipv4: publicIpv4,
       ipv6: publicIpv6,
       // Initial state is "provisioning" until we confirm SSH + Caddy + agent ready.

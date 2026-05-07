@@ -30,7 +30,10 @@ export async function GET(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   if (!row) {
-    return NextResponse.json({ error: 'Hosting server not found' }, { status: 404 });
+    return NextResponse.json(
+      { error: 'Hosting server not found' },
+      { status: 404 }
+    );
   }
 
   let hetznerSnapshot: unknown = null;
@@ -48,8 +51,8 @@ export async function GET(
           e instanceof HetznerApiError
             ? `${e.code}: ${e.message}`
             : e instanceof Error
-              ? e.message
-              : 'unknown',
+            ? e.message
+            : 'unknown',
       };
     }
   }
@@ -88,7 +91,10 @@ export async function DELETE(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   if (!row) {
-    return NextResponse.json({ error: 'Hosting server not found' }, { status: 404 });
+    return NextResponse.json(
+      { error: 'Hosting server not found' },
+      { status: 404 }
+    );
   }
   if (row.status === 'decommissioned') {
     return NextResponse.json({ server: row, alreadyDecommissioned: true });
@@ -96,8 +102,7 @@ export async function DELETE(
   if (row.sites_count > 0 && !force) {
     return NextResponse.json(
       {
-        error:
-          `Server has ${row.sites_count} active sites. Migrate them or pass ?force=true.`,
+        error: `Server has ${row.sites_count} active sites. Migrate them or pass ?force=true.`,
       },
       { status: 409 }
     );
@@ -116,8 +121,8 @@ export async function DELETE(
         e instanceof HetznerApiError
           ? `${e.code}: ${e.message}`
           : e instanceof Error
-            ? e.message
-            : 'unknown';
+          ? e.message
+          : 'unknown';
     }
   }
 

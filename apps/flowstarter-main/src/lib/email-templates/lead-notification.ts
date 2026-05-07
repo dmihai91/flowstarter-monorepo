@@ -57,7 +57,9 @@ export function leadNotificationEmail(props: LeadNotificationProps): {
 
   const message = props.leadMessage?.trim();
   const messageBlock = message
-    ? `<div style="margin-top: 16px; padding: 12px 16px; background: #f9fafb; border-left: 3px solid #4f46e5; color: #111827; white-space: pre-wrap;">${escapeHtml(message)}</div>`
+    ? `<div style="margin-top: 16px; padding: 12px 16px; background: #f9fafb; border-left: 3px solid #4f46e5; color: #111827; white-space: pre-wrap;">${escapeHtml(
+        message
+      )}</div>`
     : '';
 
   const tableRows = [

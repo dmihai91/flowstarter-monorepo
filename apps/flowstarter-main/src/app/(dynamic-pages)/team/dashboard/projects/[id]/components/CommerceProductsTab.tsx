@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, Package } from 'lucide-react';
 import { ShellCard } from '../../../components/TeamDashboardShell';
@@ -248,15 +244,16 @@ export function CommerceProductsTab({ project }: { project: Project }) {
       {isLoading ? (
         <div className="space-y-2">
           {[1, 2].map((i) => (
-            <div key={i} className="h-14 rounded-lg animate-pulse bg-white/40 dark:bg-white/5" />
+            <div
+              key={i}
+              className="h-14 rounded-lg animate-pulse bg-white/40 dark:bg-white/5"
+            />
           ))}
         </div>
       ) : products.length === 0 ? (
         <div className="rounded-lg border border-dashed border-[var(--fs-rule)] p-8 text-center">
           <Package className="mx-auto mb-2 h-8 w-8 text-[var(--fs-ink-faint)]" />
-          <p className="text-sm text-[var(--fs-ink-faint)]">
-            No products yet.
-          </p>
+          <p className="text-sm text-[var(--fs-ink-faint)]">No products yet.</p>
         </div>
       ) : (
         <div className="rounded-lg border border-[var(--fs-rule)] overflow-hidden">
@@ -337,8 +334,8 @@ export function CommerceProductsTab({ project }: { project: Project }) {
               {editing ? 'Edit product' : 'Add product'}
             </DialogTitle>
             <DialogDescription>
-              Catalog record for concierge handoff. Most checkout details
-              live with the external provider; use this for display + links.
+              Catalog record for concierge handoff. Most checkout details live
+              with the external provider; use this for display + links.
             </DialogDescription>
           </DialogHeader>
 
@@ -348,9 +345,7 @@ export function CommerceProductsTab({ project }: { project: Project }) {
               <Input
                 id="prod-name"
                 value={draft.name}
-                onChange={(e) =>
-                  setDraft({ ...draft, name: e.target.value })
-                }
+                onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                 className="mt-1"
               />
             </div>
@@ -360,9 +355,7 @@ export function CommerceProductsTab({ project }: { project: Project }) {
                 <Label>Type</Label>
                 <Select
                   value={draft.product_type}
-                  onValueChange={(v) =>
-                    setDraft({ ...draft, product_type: v })
-                  }
+                  onValueChange={(v) => setDraft({ ...draft, product_type: v })}
                 >
                   <SelectTrigger className="mt-1">
                     <SelectValue />
@@ -536,11 +529,7 @@ export function CommerceProductsTab({ project }: { project: Project }) {
           </div>
 
           <DialogFooter>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setOpen(false)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button

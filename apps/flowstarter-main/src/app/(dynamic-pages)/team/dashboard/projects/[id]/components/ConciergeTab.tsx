@@ -90,8 +90,8 @@ export function ConciergeTab({ project }: { project: Project }) {
             <strong>Build → Internal review:</strong> first draft ready.
           </p>
           <p>
-            <strong>Internal review → Client review:</strong> sent to client
-            for approval (also triggers payment-on-approval flow once enabled).
+            <strong>Internal review → Client review:</strong> sent to client for
+            approval (also triggers payment-on-approval flow once enabled).
           </p>
           <p>
             <strong>Client review → Launched:</strong> client approves, site

@@ -260,7 +260,7 @@ export const landingKeys = {
   'landing.hero.careOriginalPrice': 'from €49',
   'landing.hero.monthlyLabel': '/mo',
   'landing.hero.urgency':
-    "Limited capacity. We take on 8 new clients each month.",
+    'Limited capacity. We take on 8 new clients each month.',
 
   // Landing - Process Heading
   'landing.process.heading1': 'How it',

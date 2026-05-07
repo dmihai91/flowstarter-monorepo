@@ -1,11 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   Server,
@@ -77,14 +73,16 @@ type SiteResponse = {
 };
 
 const DEPLOY_STATUS_TONE: Record<string, string> = {
-  pending: 'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
+  pending:
+    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
   deploying:
     'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
   live: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300',
   failed: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300',
   rolled_back:
     'bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300',
-  archived: 'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
+  archived:
+    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
 };
 
 const SERVER_STATUS_TONE: Record<string, string> = {
@@ -199,8 +197,8 @@ export function HostingTab({ project }: { project: Project }) {
               Not allocated to a hosting server yet
             </p>
             <p className="text-xs text-[var(--fs-ink-faint)] mb-4">
-              Pin this workspace to a Hetzner Caddy host so you can deploy
-              and attach a domain. Slug:{' '}
+              Pin this workspace to a Hetzner Caddy host so you can deploy and
+              attach a domain. Slug:{' '}
               <span className="font-mono">{workspace.slug}</span>
             </p>
             {!showAllocate ? (
@@ -265,9 +263,7 @@ export function HostingTab({ project }: { project: Project }) {
       <ShellCard>
         <div className="flex items-start justify-between gap-3 mb-4">
           <div>
-            <h3 className="text-sm font-semibold text-[var(--fs-ink)]">
-              Site
-            </h3>
+            <h3 className="text-sm font-semibold text-[var(--fs-ink)]">Site</h3>
             <p className="text-xs text-[var(--fs-ink-faint)]">
               Allocated to {server?.name ?? 'an unknown server'}
             </p>
@@ -422,7 +418,8 @@ export function HostingTab({ project }: { project: Project }) {
             Deploy history
           </h3>
           <span className="text-[0.65rem] text-[var(--fs-ink-faint)]">
-            {deployments.length} {deployments.length === 1 ? 'deploy' : 'deploys'}
+            {deployments.length}{' '}
+            {deployments.length === 1 ? 'deploy' : 'deploys'}
           </span>
         </div>
 
@@ -454,10 +451,7 @@ export function HostingTab({ project }: { project: Project }) {
               </thead>
               <tbody>
                 {deployments.map((d) => (
-                  <tr
-                    key={d.id}
-                    className="border-t border-[var(--fs-rule)]"
-                  >
+                  <tr key={d.id} className="border-t border-[var(--fs-rule)]">
                     <td className="px-3 py-2 font-mono text-xs text-[var(--fs-ink-dim)]">
                       v{d.version}
                       {d.rolled_back_from_id && (

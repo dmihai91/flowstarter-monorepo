@@ -48,11 +48,7 @@ export type WorkspaceBillingRow = {
 export type ProjectBillingRow = WorkspaceBillingRow;
 
 export class StripeBillingError extends Error {
-  constructor(
-    public code: string,
-    message: string,
-    public cause?: unknown
-  ) {
+  constructor(public code: string, message: string, public cause?: unknown) {
     super(message);
     this.name = 'StripeBillingError';
   }
@@ -208,8 +204,7 @@ export class StripeBilling {
         'monthlyAmountMinor must be a positive integer'
       );
     }
-    const productId =
-      opts.productId ?? process.env.STRIPE_CONCIERGE_PRODUCT_ID;
+    const productId = opts.productId ?? process.env.STRIPE_CONCIERGE_PRODUCT_ID;
     if (!productId) {
       throw new StripeBillingError(
         'missing_product_id',
@@ -319,7 +314,13 @@ export class StripeBilling {
     hostedUrl: string | null;
     status: Stripe.Invoice.Status;
   }> {
-    const { project, customerId, amountMinor, invoiceType, defaultDescription } = opts;
+    const {
+      project,
+      customerId,
+      amountMinor,
+      invoiceType,
+      defaultDescription,
+    } = opts;
     if (!Number.isFinite(amountMinor) || amountMinor <= 0) {
       throw new StripeBillingError(
         'invalid_amount',

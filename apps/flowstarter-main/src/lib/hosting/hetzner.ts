@@ -23,16 +23,16 @@ export type HetznerLocation =
   | 'fsn1' // Falkenstein, DE
   | 'nbg1' // Nuremberg, DE
   | 'hel1' // Helsinki, FI
-  | 'ash'  // Ashburn, US
+  | 'ash' // Ashburn, US
   | 'hil'; // Hillsboro, US
 
 export type HetznerServerType =
-  | 'cpx22'  // shared AMD, 2 vCPU / 4 GB — Flowstarter v1 default per master doc
-  | 'cpx21'  // shared AMD, 3 vCPU / 4 GB
-  | 'cpx31'  // shared AMD, 4 vCPU / 8 GB
-  | 'cx22'   // shared Intel, 2 vCPU / 4 GB
-  | 'cx32'   // shared Intel, 4 vCPU / 8 GB
-  | 'cx42';  // shared Intel, 8 vCPU / 16 GB
+  | 'cpx22' // shared AMD, 2 vCPU / 4 GB — Flowstarter v1 default per master doc
+  | 'cpx21' // shared AMD, 3 vCPU / 4 GB
+  | 'cpx31' // shared AMD, 4 vCPU / 8 GB
+  | 'cx22' // shared Intel, 2 vCPU / 4 GB
+  | 'cx32' // shared Intel, 4 vCPU / 8 GB
+  | 'cx42'; // shared Intel, 8 vCPU / 16 GB
 
 export type HetznerServerStatus =
   | 'initializing'
@@ -47,7 +47,11 @@ export type HetznerServerStatus =
 
 export interface HetznerPublicNet {
   ipv4?: { ip: string; blocked: boolean; dns_ptr: string };
-  ipv6?: { ip: string; blocked: boolean; dns_ptr: Array<{ ip: string; dns_ptr: string }> };
+  ipv6?: {
+    ip: string;
+    blocked: boolean;
+    dns_ptr: Array<{ ip: string; dns_ptr: string }>;
+  };
   floating_ips?: number[];
 }
 
@@ -58,7 +62,11 @@ export interface HetznerServer {
   created: string;
   public_net: HetznerPublicNet;
   server_type: { id: number; name: string };
-  datacenter: { id: number; name: string; location: { name: string; country: string } };
+  datacenter: {
+    id: number;
+    name: string;
+    location: { name: string; country: string };
+  };
   image: { id: number; name: string | null; type: string };
   iso: unknown | null;
   rescue_enabled: boolean;
@@ -87,7 +95,9 @@ export interface HetznerCreateServerResponse {
 
 export interface HetznerListServersResponse {
   servers: HetznerServer[];
-  meta: { pagination: { page: number; per_page: number; total_entries: number } };
+  meta: {
+    pagination: { page: number; per_page: number; total_entries: number };
+  };
 }
 
 export class HetznerApiError extends Error {
@@ -122,32 +132,48 @@ export class HetznerClient {
     this.fetchImpl = opts.fetch ?? globalThis.fetch;
   }
 
-  async createServer(req: HetznerCreateServerRequest): Promise<HetznerCreateServerResponse> {
+  async createServer(
+    req: HetznerCreateServerRequest
+  ): Promise<HetznerCreateServerResponse> {
     return this.request<HetznerCreateServerResponse>('POST', '/servers', req);
   }
 
   async getServer(id: number | string): Promise<HetznerServer> {
-    const data = await this.request<{ server: HetznerServer }>('GET', `/servers/${id}`);
+    const data = await this.request<{ server: HetznerServer }>(
+      'GET',
+      `/servers/${id}`
+    );
     return data.server;
   }
 
-  async listServers(params?: { label_selector?: string; page?: number; per_page?: number }): Promise<HetznerListServersResponse> {
+  async listServers(params?: {
+    label_selector?: string;
+    page?: number;
+    per_page?: number;
+  }): Promise<HetznerListServersResponse> {
     const query = new URLSearchParams();
-    if (params?.label_selector) query.set('label_selector', params.label_selector);
+    if (params?.label_selector)
+      query.set('label_selector', params.label_selector);
     if (params?.page !== undefined) query.set('page', String(params.page));
-    if (params?.per_page !== undefined) query.set('per_page', String(params.per_page));
+    if (params?.per_page !== undefined)
+      query.set('per_page', String(params.per_page));
     const suffix = query.toString() ? `?${query.toString()}` : '';
     return this.request<HetznerListServersResponse>('GET', `/servers${suffix}`);
   }
 
-  async deleteServer(id: number | string): Promise<{ action: { id: number; status: string; command: string } }> {
-    return this.request<{ action: { id: number; status: string; command: string } }>(
-      'DELETE',
-      `/servers/${id}`
-    );
+  async deleteServer(
+    id: number | string
+  ): Promise<{ action: { id: number; status: string; command: string } }> {
+    return this.request<{
+      action: { id: number; status: string; command: string };
+    }>('DELETE', `/servers/${id}`);
   }
 
-  private async request<T>(method: 'GET' | 'POST' | 'DELETE', path: string, body?: unknown): Promise<T> {
+  private async request<T>(
+    method: 'GET' | 'POST' | 'DELETE',
+    path: string,
+    body?: unknown
+  ): Promise<T> {
     const res = await this.fetchImpl(`${this.baseUrl}${path}`, {
       method,
       headers: {
@@ -169,7 +195,11 @@ export class HetznerClient {
     }
 
     if (!res.ok) {
-      const errPayload = (data as { error?: { code?: string; message?: string; details?: unknown } } | undefined)?.error;
+      const errPayload = (
+        data as
+          | { error?: { code?: string; message?: string; details?: unknown } }
+          | undefined
+      )?.error;
       throw new HetznerApiError(
         res.status,
         errPayload?.code ?? 'unknown_error',
@@ -186,7 +216,9 @@ export class HetznerClient {
  * Build a HetznerClient from process.env. Throws if the token isn't set.
  * Use this from server-side code only — never bundle the token into the client.
  */
-export function hetznerFromEnv(env: NodeJS.ProcessEnv = process.env): HetznerClient {
+export function hetznerFromEnv(
+  env: NodeJS.ProcessEnv = process.env
+): HetznerClient {
   const token = env.HETZNER_API_TOKEN;
   if (!token) {
     throw new Error('HETZNER_API_TOKEN is not set in env');

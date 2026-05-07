@@ -55,7 +55,9 @@ describe('buildCloudInit', () => {
     });
     expect(out).toContain('disabled (no artifact url)');
     expect(out).not.toContain('flowstarter-deploy-agent\n  - chmod +x');
-    expect(out).not.toContain('systemctl enable --now flowstarter-deploy-agent');
+    expect(out).not.toContain(
+      'systemctl enable --now flowstarter-deploy-agent'
+    );
   });
 
   it('downloads + enables agent when artifact url provided', () => {
@@ -65,9 +67,7 @@ describe('buildCloudInit', () => {
       deployAgentArtifactUrl: 'https://artifacts.flowstarter.app/agent-v1.bin',
     });
     expect(out).toContain('agent-v1.bin');
-    expect(out).toContain(
-      '/usr/local/bin/flowstarter-deploy-agent'
-    );
+    expect(out).toContain('/usr/local/bin/flowstarter-deploy-agent');
     expect(out).toContain('systemctl enable --now flowstarter-deploy-agent');
   });
 

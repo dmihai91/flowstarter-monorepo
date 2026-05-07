@@ -42,7 +42,10 @@ export async function POST(
 
   if (typeof body.artifact_url !== 'string' || body.artifact_url.length === 0) {
     return NextResponse.json(
-      { error: 'artifact_url is required (https URL the deploy-agent pulls from)' },
+      {
+        error:
+          'artifact_url is required (https URL the deploy-agent pulls from)',
+      },
       { status: 400 }
     );
   }

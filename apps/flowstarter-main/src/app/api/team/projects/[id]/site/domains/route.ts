@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireTeamAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
-import {
-  CloudflareClient,
-  CloudflareApiError,
-} from '@/lib/hosting/cloudflare';
+import { CloudflareClient, CloudflareApiError } from '@/lib/hosting/cloudflare';
 
 /**
  * POST /api/team/projects/[id]/site/domains
@@ -136,7 +133,9 @@ export async function POST(
       }
     } catch (e) {
       if (e instanceof CloudflareApiError) {
-        dnsError = `Cloudflare error: ${e.errors.map((x) => x.message).join('; ')}`;
+        dnsError = `Cloudflare error: ${e.errors
+          .map((x) => x.message)
+          .join('; ')}`;
       } else {
         dnsError = e instanceof Error ? e.message : 'DNS upsert failed';
       }
@@ -157,11 +156,10 @@ export async function POST(
 
   // Track CF record ID on the workspace.
   if (dnsResult) {
-    const existingMap =
-      ((workspace.cloudflare_record_ids as Record<string, unknown>) ?? {}) as Record<
-        string,
-        { recordId: string; zoneId: string }
-      >;
+    const existingMap = ((workspace.cloudflare_record_ids as Record<
+      string,
+      unknown
+    >) ?? {}) as Record<string, { recordId: string; zoneId: string }>;
     existingMap[domain] = dnsResult;
     await supabase
       .from('workspaces')
@@ -272,7 +270,11 @@ export async function DELETE(
 function sanitizeDomain(raw: unknown): string | null {
   if (typeof raw !== 'string') return null;
   const trimmed = raw.trim().toLowerCase();
-  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(trimmed)) {
+  if (
+    !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(
+      trimmed
+    )
+  ) {
     return null;
   }
   if (trimmed.length > 253) return null;

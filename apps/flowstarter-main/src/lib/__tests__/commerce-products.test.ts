@@ -45,9 +45,7 @@ describe('validateCommerceProductInput', () => {
     });
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(
-        result.errors.some((e) => e.field === 'product_type')
-      ).toBe(true);
+      expect(result.errors.some((e) => e.field === 'product_type')).toBe(true);
     }
   });
 

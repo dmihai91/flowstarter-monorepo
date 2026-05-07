@@ -62,6 +62,7 @@ import {
 } from "./auth/http";
 import { clerkAutoPairRouteLayer, clerkMeRouteLayer } from "./auth/clerkHttp";
 import { clerkUsageRouteLayer } from "./usage/usageHttp";
+import { clerkApproveMockupRouteLayer } from "./workspace/approvalHttp";
 import { ServerSecretStoreLive } from "./auth/Layers/ServerSecretStore";
 import { ServerAuthLive } from "./auth/Layers/ServerAuth";
 import { OrchestrationLayerLive } from "./orchestration/runtimeLayer";
@@ -237,6 +238,7 @@ export const makeRoutesLayer = Layer.mergeAll(
   clerkMeRouteLayer,
   clerkAutoPairRouteLayer,
   clerkUsageRouteLayer,
+  clerkApproveMockupRouteLayer,
   attachmentsRouteLayer,
   orchestrationDispatchRouteLayer,
   orchestrationSnapshotRouteLayer,

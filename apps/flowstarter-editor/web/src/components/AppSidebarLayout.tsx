@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { ApprovalBanner } from "./ApprovalBanner";
 import ThreadSidebar from "./Sidebar";
 import { Sidebar, SidebarProvider, SidebarRail } from "./ui/sidebar";
 
@@ -24,7 +25,10 @@ export function AppSidebarLayout({ children }: { children: ReactNode }) {
         <ThreadSidebar />
         <SidebarRail />
       </Sidebar>
-      {children}
+      <div className="flex h-full min-w-0 flex-1 flex-col">
+        <ApprovalBanner />
+        <div className="flex-1 min-h-0">{children}</div>
+      </div>
     </SidebarProvider>
   );
 }

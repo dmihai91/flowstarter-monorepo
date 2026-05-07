@@ -1,0 +1,143 @@
+/**
+ * Web-side companion to `apps/flowstarter-editor/server/src/auth/clerkGate.ts`.
+ *
+ * The editor itself owns no sign-in UI. Instead:
+ *   1. The browser calls `GET /api/clerk/me` on bootstrap.
+ *   2. If the response is `{ authenticated: true, identity }`, we feed
+ *      `identity.tier` into <TierProvider> and let the rest of the app render.
+ *   3. If the response is `{ authenticated: false, loginUrl }`, we redirect
+ *      the browser to `loginUrl` (typically `flowstarter.dev/login`) which
+ *      lives in the main app's Clerk integration.
+ *
+ * Cookies are scoped to the parent domain, so once Clerk is happy the
+ * session is automatically present on `editor.flowstarter.app`.
+ */
+
+export type EditorTier = "essential" | "pro" | "commerce" | "custom";
+export type EditorRole = "admin" | "client";
+
+export interface ClerkIdentity {
+  readonly userId: string;
+  readonly role: EditorRole;
+  readonly tier: EditorTier;
+  readonly allowedWorkspaceIds: ReadonlyArray<string>;
+}
+
+export type ClerkSessionResolution =
+  | { readonly status: "authenticated"; readonly identity: ClerkIdentity }
+  | { readonly status: "unauthenticated"; readonly loginUrl: string; readonly reason: string }
+  | { readonly status: "config-error"; readonly reason: string }
+  | { readonly status: "error"; readonly reason: string };
+
+interface ClerkMeOk {
+  readonly authenticated: true;
+  readonly identity: ClerkIdentity;
+}
+
+interface ClerkMeFailure {
+  readonly authenticated: false;
+  readonly reason: string;
+  readonly loginUrl?: string;
+  readonly configError?: boolean;
+}
+
+const CLERK_ME_PATH = "/api/clerk/me";
+
+/**
+ * Fetch the current identity from the editor server. Resolves to one of
+ * four outcomes; never throws for ordinary unauthenticated cases. Network
+ * + parse errors land in the `error` branch with a `reason` string.
+ */
+export async function fetchClerkSession(
+  signal?: AbortSignal,
+): Promise<ClerkSessionResolution> {
+  let response: Response;
+  try {
+    response = await fetch(CLERK_ME_PATH, {
+      method: "GET",
+      credentials: "include",
+      cache: "no-store",
+      ...(signal ? { signal } : {}),
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      reason: error instanceof Error ? error.message : "Network error",
+    };
+  }
+
+  if (response.status === 503) {
+    const body = await safeReadJson(response);
+    return {
+      status: "config-error",
+      reason: typeof body?.reason === "string" ? body.reason : "Editor server is missing Clerk config",
+    };
+  }
+
+  if (!response.ok && response.status !== 200) {
+    const body = await safeReadJson(response);
+    return {
+      status: "error",
+      reason: typeof body?.reason === "string" ? body.reason : `HTTP ${response.status}`,
+    };
+  }
+
+  const body = (await safeReadJson(response)) as ClerkMeOk | ClerkMeFailure | null;
+  if (!body) {
+    return { status: "error", reason: "Editor server returned empty body" };
+  }
+
+  if (body.authenticated === true) {
+    return { status: "authenticated", identity: body.identity };
+  }
+
+  if (body.configError === true) {
+    return {
+      status: "config-error",
+      reason: body.reason ?? "Editor server is missing Clerk config",
+    };
+  }
+
+  if (typeof body.loginUrl === "string" && body.loginUrl.length > 0) {
+    return {
+      status: "unauthenticated",
+      loginUrl: body.loginUrl,
+      reason: body.reason ?? "Sign-in required",
+    };
+  }
+
+  return {
+    status: "error",
+    reason: body.reason ?? "Editor server returned an unexpected response",
+  };
+}
+
+async function safeReadJson(response: Response): Promise<Record<string, unknown> | null> {
+  try {
+    const text = await response.text();
+    if (!text) return null;
+    return JSON.parse(text) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Hard-redirect the browser to the given login URL, augmenting it with the
+ * current page so the user lands back here after signing in.
+ */
+export function redirectToLogin(loginUrl: string, currentHref: string = window.location.href): void {
+  let target: URL;
+  try {
+    target = new URL(loginUrl);
+  } catch {
+    window.location.href = loginUrl;
+    return;
+  }
+  // Server-side already sets `redirect_url`, but if it didn't (e.g. the env
+  // override pointed at a bare URL), fall through to setting it here.
+  if (!target.searchParams.has("redirect_url")) {
+    target.searchParams.set("redirect_url", currentHref);
+  }
+  window.location.href = target.toString();
+}

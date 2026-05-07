@@ -27,3 +27,13 @@ procs:
     # when testing /api/team/projects/[id]/site/deploy. Requires bun.
     shell: "DEPLOY_AGENT_SHARED_SECRET=dev-secret DEPLOY_AGENT_SITES_ROOT=/tmp/fs-sites DEPLOY_AGENT_CADDY_SITES_DIR=/tmp/fs-caddy-sites DEPLOY_AGENT_CADDY_RELOAD_CMD='echo reloaded' pnpm --dir apps/deploy-agent dev"
     autostart: false
+
+  "✏️  Editor":
+    # Flowstarter editor (forked T3 Code) — server on :3773 (Bun) and web
+    # client on :5733 (Vite), launched in parallel by the editor's own
+    # workspace dev script. Toggle on inside mprocs when working on the
+    # editor. Needs ANTHROPIC_API_KEY for the agent to do anything;
+    # CLERK_SECRET_KEY + Supabase service role only matter once the Clerk
+    # gate is wired.
+    shell: "pnpm dev:editor"
+    autostart: false

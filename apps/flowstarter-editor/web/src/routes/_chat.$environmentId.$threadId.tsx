@@ -3,6 +3,7 @@ import { Suspense, lazy, type ReactNode, useCallback, useEffect, useMemo, useSta
 
 import ChatView from "../components/ChatView";
 import { threadHasStarted } from "../components/ChatView.logic";
+import { PowerUserOnly } from "../components/auth/TierGate";
 import { DiffWorkerPoolProvider } from "../components/DiffWorkerPoolProvider";
 import {
   DiffPanelHeaderSkeleton,
@@ -257,12 +258,14 @@ function ChatThreadRouteView() {
             routeKind="server"
           />
         </SidebarInset>
-        <DiffPanelInlineSidebar
-          diffOpen={diffOpen}
-          onCloseDiff={closeDiff}
-          onOpenDiff={openDiff}
-          renderDiffContent={shouldRenderDiffContent}
-        />
+        <PowerUserOnly>
+          <DiffPanelInlineSidebar
+            diffOpen={diffOpen}
+            onCloseDiff={closeDiff}
+            onOpenDiff={openDiff}
+            renderDiffContent={shouldRenderDiffContent}
+          />
+        </PowerUserOnly>
       </>
     );
   }
@@ -276,9 +279,11 @@ function ChatThreadRouteView() {
           routeKind="server"
         />
       </SidebarInset>
-      <DiffPanelSheet diffOpen={diffOpen} onCloseDiff={closeDiff}>
-        {shouldRenderDiffContent ? <LazyDiffPanel mode="sheet" /> : null}
-      </DiffPanelSheet>
+      <PowerUserOnly>
+        <DiffPanelSheet diffOpen={diffOpen} onCloseDiff={closeDiff}>
+          {shouldRenderDiffContent ? <LazyDiffPanel mode="sheet" /> : null}
+        </DiffPanelSheet>
+      </PowerUserOnly>
     </>
   );
 }

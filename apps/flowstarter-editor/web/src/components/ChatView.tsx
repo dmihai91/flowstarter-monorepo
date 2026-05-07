@@ -90,6 +90,7 @@ import {
 import { useTheme } from "../hooks/useTheme";
 import { useTurnDiffSummaries } from "../hooks/useTurnDiffSummaries";
 import { BranchToolbar } from "./BranchToolbar";
+import { PowerUserOnly } from "./auth/TierGate";
 import { resolveShortcutCommand, shortcutLabelForCommand } from "../keybindings";
 import PlanSidebar from "./PlanSidebar";
 import ThreadTerminalDrawer from "./ThreadTerminalDrawer";
@@ -3434,23 +3435,25 @@ export default function ChatView(props: ChatViewProps) {
           </div>
 
           {isGitRepo && (
-            <BranchToolbar
-              environmentId={activeThread.environmentId}
-              threadId={activeThread.id}
-              {...(routeKind === "draft" && draftId ? { draftId } : {})}
-              onEnvModeChange={onEnvModeChange}
-              envLocked={envLocked}
-              onComposerFocusRequest={scheduleComposerFocus}
-              {...(canCheckoutPullRequestIntoThread
-                ? { onCheckoutPullRequestRequest: openPullRequestDialog }
-                : {})}
-              {...(hasMultipleEnvironments
-                ? {
-                    availableEnvironments: logicalProjectEnvironments,
-                    onEnvironmentChange,
-                  }
-                : {})}
-            />
+            <PowerUserOnly>
+              <BranchToolbar
+                environmentId={activeThread.environmentId}
+                threadId={activeThread.id}
+                {...(routeKind === "draft" && draftId ? { draftId } : {})}
+                onEnvModeChange={onEnvModeChange}
+                envLocked={envLocked}
+                onComposerFocusRequest={scheduleComposerFocus}
+                {...(canCheckoutPullRequestIntoThread
+                  ? { onCheckoutPullRequestRequest: openPullRequestDialog }
+                  : {})}
+                {...(hasMultipleEnvironments
+                  ? {
+                      availableEnvironments: logicalProjectEnvironments,
+                      onEnvironmentChange,
+                    }
+                  : {})}
+              />
+            </PowerUserOnly>
           )}
           {pullRequestDialogState ? (
             <PullRequestThreadDialog

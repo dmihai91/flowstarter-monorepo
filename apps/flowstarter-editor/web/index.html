@@ -6,7 +6,10 @@
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#101014" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#101014" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script>
       (() => {
@@ -45,7 +48,8 @@
         background: #ffffff;
         color: #262626;
         font-family:
-          "DM Sans",
+          "Plus Jakarta Sans",
+          "Plus Jakarta Sans Variable",
           -apple-system,
           BlinkMacSystemFont,
           "Segoe UI",
@@ -76,15 +80,18 @@
       #boot-shell-logo {
         width: 40px;
         height: 40px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #4D5DD9, #8B5CF6);
+        border-radius: 11px;
+        background: linear-gradient(135deg, #7c3aed 0%, #7c3aed 50%, #06b6d4 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-weight: 700;
-        font-size: 18px;
-        font-family: "DM Sans", system-ui, sans-serif;
+        font-size: 20px;
+        font-family: "Plus Jakarta Sans", "Plus Jakarta Sans Variable", system-ui, sans-serif;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+          0 1px 3px rgba(0, 0, 0, 0.06);
       }
 
       #boot-shell-name {
@@ -96,10 +103,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Onest:wght@300..800&display=swap"
       rel="stylesheet"
     />
-    <title>Flowstarter</title>
+    <title>Flowstarter Editor</title>
   </head>
   <body>
     <div id="root">

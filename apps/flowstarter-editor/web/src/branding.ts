@@ -1,4 +1,4 @@
-export const APP_BASE_NAME = "Flowstarter";
+export const APP_BASE_NAME = "Flowstarter Editor";
 export const APP_STAGE_LABEL = import.meta.env.DEV ? "Dev" : "";
 export const APP_DISPLAY_NAME = APP_STAGE_LABEL
   ? `${APP_BASE_NAME} (${APP_STAGE_LABEL})`

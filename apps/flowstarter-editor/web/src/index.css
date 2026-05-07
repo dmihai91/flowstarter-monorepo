@@ -75,9 +75,27 @@
   --card-foreground: var(--color-neutral-800);
   --popover: var(--color-white);
   --popover-foreground: var(--color-neutral-800);
-  /* Flowstarter violet as primary */
-  --primary: #4D5DD9;
+  /* Flowstarter violet as primary — matches packages/flow-design-system */
+  --primary: hsl(233, 65%, 58%);
   --primary-foreground: var(--color-white);
+
+  /* Flowstarter brand tokens (mirror of flowstarter-main + flow-design-system).
+     Components ported from the main app expect these var() names. */
+  --purple: hsl(233, 65%, 58%);
+  --blue: hsl(211, 93%, 61%);
+  --green: hsl(119, 54%, 41%);
+  --fs-accent: hsl(233, 65%, 58%);
+  --fs-accent-bg: rgba(77, 93, 217, 0.1);
+  --fs-ink: rgba(2, 6, 23, 0.92);
+  --fs-ink-dim: rgba(2, 6, 23, 0.7);
+  --fs-ink-faint: rgba(2, 6, 23, 0.5);
+  --fs-rule: rgba(2, 6, 23, 0.08);
+  --fs-rule-accent: rgba(77, 93, 217, 0.18);
+  --fs-glass-bg: rgba(255, 255, 255, 0.6);
+  --fs-glass-edge: rgba(2, 6, 23, 0.08);
+  --fs-card-shadow: 0 1px 2px rgba(2, 6, 23, 0.04), 0 4px 12px rgba(2, 6, 23, 0.04);
+  --fs-radius-md: 12px;
+  --fs-radius-2xl: 20px;
   --secondary: --alpha(var(--color-black) / 4%);
   --secondary-foreground: var(--color-neutral-800);
   --muted: --alpha(var(--color-black) / 4%);
@@ -106,8 +124,21 @@
     --card-foreground: rgba(255, 255, 255, 0.92);
     --popover: #1a1a22;
     --popover-foreground: rgba(255, 255, 255, 0.92);
-    --primary: #6366f1;
+    --primary: hsl(233, 75%, 70%);
     --primary-foreground: var(--color-white);
+
+    /* Flowstarter brand tokens — dark mode counterparts. */
+    --purple: hsl(233, 75%, 70%);
+    --fs-accent: hsl(233, 75%, 70%);
+    --fs-accent-bg: rgba(102, 119, 235, 0.12);
+    --fs-ink: rgba(255, 255, 255, 0.92);
+    --fs-ink-dim: rgba(255, 255, 255, 0.7);
+    --fs-ink-faint: rgba(255, 255, 255, 0.5);
+    --fs-rule: rgba(255, 255, 255, 0.08);
+    --fs-rule-accent: rgba(102, 119, 235, 0.22);
+    --fs-glass-bg: rgba(58, 58, 74, 0.3);
+    --fs-glass-edge: rgba(255, 255, 255, 0.08);
+    --fs-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
     --secondary: --alpha(var(--color-white) / 4%);
     --secondary-foreground: rgba(255, 255, 255, 0.85);
     --muted: --alpha(var(--color-white) / 4%);
@@ -130,7 +161,8 @@
 
 body {
   font-family:
-    "DM Sans",
+    "Plus Jakarta Sans",
+    "Plus Jakarta Sans Variable",
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",

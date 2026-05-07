@@ -42,6 +42,7 @@ interface ClerkMeFailure {
 }
 
 const CLERK_ME_PATH = "/api/clerk/me";
+const CLERK_AUTO_PAIR_PATH = "/api/clerk/auto-pair";
 
 /**
  * Fetch the current identity from the editor server. Resolves to one of
@@ -120,6 +121,78 @@ async function safeReadJson(response: Response): Promise<Record<string, unknown>
   } catch {
     return null;
   }
+}
+
+export type AutoPairResolution =
+  | { readonly status: "paired"; readonly identity: ClerkIdentity }
+  | { readonly status: "no-workspace"; readonly reason: string }
+  | { readonly status: "unauthenticated"; readonly loginUrl?: string; readonly reason: string }
+  | { readonly status: "config-error"; readonly reason: string }
+  | { readonly status: "error"; readonly reason: string };
+
+/**
+ * Bridge from a Clerk-authenticated browser to a T3 session cookie. The
+ * server validates the Clerk JWT, mints a one-shot pairing credential
+ * with the appropriate role (admin → owner, client → client), exchanges
+ * it for a session, and sets the `t3_session` cookie.
+ *
+ * Idempotent — repeat calls just create extra T3 sessions; the editor
+ * deduplicates them on the next descriptor refresh.
+ */
+export async function autoPairWithEditor(
+  signal?: AbortSignal,
+): Promise<AutoPairResolution> {
+  let response: Response;
+  try {
+    response = await fetch(CLERK_AUTO_PAIR_PATH, {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+      ...(signal ? { signal } : {}),
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      reason: error instanceof Error ? error.message : "Network error",
+    };
+  }
+
+  const body = (await safeReadJson(response)) as
+    | { paired?: boolean; identity?: ClerkIdentity; reason?: string; loginUrl?: string; configError?: boolean; code?: string }
+    | null;
+
+  if (response.status === 401) {
+    return {
+      status: "unauthenticated",
+      reason: body?.reason ?? "Sign-in required",
+      ...(body?.loginUrl ? { loginUrl: body.loginUrl } : {}),
+    };
+  }
+  if (response.status === 403) {
+    if (body?.code === "no_workspace") {
+      return {
+        status: "no-workspace",
+        reason: body?.reason ?? "No workspaces are accessible to this user",
+      };
+    }
+    return {
+      status: "error",
+      reason: body?.reason ?? "Forbidden",
+    };
+  }
+  if (response.status === 503) {
+    return {
+      status: "config-error",
+      reason: body?.reason ?? "Editor server is missing Clerk config",
+    };
+  }
+  if (!response.ok || !body || body.paired !== true || !body.identity) {
+    return {
+      status: "error",
+      reason: body?.reason ?? `HTTP ${response.status}`,
+    };
+  }
+  return { status: "paired", identity: body.identity };
 }
 
 /**

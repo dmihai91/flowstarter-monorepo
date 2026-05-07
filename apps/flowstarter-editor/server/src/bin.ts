@@ -1,3 +1,8 @@
+// Must run before any module reads process.env — loads .env files (the
+// editor's own + the main app's as a fallback) and maps OPENROUTER_API_KEY
+// → ANTHROPIC_API_KEY + ANTHROPIC_BASE_URL.
+import "./envBootstrap";
+
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import * as Effect from "effect/Effect";

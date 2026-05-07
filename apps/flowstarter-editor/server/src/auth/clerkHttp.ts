@@ -7,8 +7,13 @@
  * during the transition.
  */
 
-import { Effect } from "effect";
+import { DateTime, Effect } from "effect";
 import { HttpRouter, HttpServerRequest, HttpServerResponse } from "effect/unstable/http";
+
+import { ServerAuth } from "./Services/ServerAuth.ts";
+import { SessionCredentialService } from "./Services/SessionCredentialService.ts";
+import { respondToAuthError } from "./http.ts";
+import { deriveAuthClientMetadata } from "./utils.ts";
 
 import {
   ClerkGateConfigError,
@@ -152,4 +157,145 @@ export const clerkMeRouteLayer = HttpRouter.add(
       { status: outcome.kind === "forbidden" ? 403 : 500 },
     );
   }),
+);
+
+interface AutoPairOk {
+  readonly kind: "ok";
+  readonly identity: ResolvedIdentity;
+}
+
+type AutoPairOutcome =
+  | AutoPairOk
+  | { kind: "unauthenticated"; reason: string; loginUrl: string }
+  | { kind: "no-workspace"; reason: string }
+  | { kind: "forbidden"; reason: string }
+  | { kind: "config"; reason: string }
+  | { kind: "error"; reason: string };
+
+async function runAutoPairIdentity(
+  url: string,
+  headers: Record<string, string | undefined>,
+): Promise<AutoPairOutcome> {
+  try {
+    const { userId } = await verifyClerkRequest({ headers, url, method: "POST" });
+    const identity = await resolveAuthorization(userId);
+    if (identity.role !== "admin" && identity.allowedWorkspaceIds.length === 0) {
+      return {
+        kind: "no-workspace",
+        reason:
+          "This Clerk user has no workspace memberships yet. Ask the team to add you to a workspace.",
+      };
+    }
+    return { kind: "ok", identity };
+  } catch (error) {
+    if (error instanceof ClerkGateUnauthenticated) {
+      return {
+        kind: "unauthenticated",
+        reason: error.message,
+        loginUrl: buildLoginUrl(url),
+      };
+    }
+    if (error instanceof ClerkGateForbidden) {
+      return { kind: "forbidden", reason: error.message };
+    }
+    if (error instanceof ClerkGateConfigError) {
+      return { kind: "config", reason: error.message };
+    }
+    return {
+      kind: "error",
+      reason: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+/**
+ * `POST /api/clerk/auto-pair`
+ *
+ * The bridge between Clerk auth and T3's session model. When a Clerk-
+ * authenticated user lands on the editor:
+ *
+ *   1. We verify the Clerk JWT cookie (same as `/api/clerk/me`).
+ *   2. We resolve their role + allowed workspaces; clients with zero
+ *      workspaces are refused with 403.
+ *   3. We mint a single-use T3 pairing credential via ServerAuth, mapping
+ *      Clerk admin → T3 'owner' and Clerk client → T3 'client'.
+ *   4. We immediately exchange that credential for a session and set the
+ *      `t3_session` cookie.
+ *
+ * The web client can then proceed with T3's existing bootstrap (HTTP
+ * + WebSocket) without ever showing the manual pairing UI.
+ *
+ * Body is empty; everything we need comes from the Clerk cookie.
+ */
+export const clerkAutoPairRouteLayer = HttpRouter.add(
+  "POST",
+  "/api/clerk/auto-pair",
+  Effect.gen(function* () {
+    const request = yield* HttpServerRequest.HttpServerRequest;
+    const url = reconstructRequestUrl(request);
+    const headers = clerkHeadersToRecord(request);
+
+    const outcome = yield* Effect.promise(() => runAutoPairIdentity(url, headers));
+
+    if (outcome.kind === "unauthenticated") {
+      return HttpServerResponse.jsonUnsafe(
+        { paired: false, reason: outcome.reason, loginUrl: outcome.loginUrl },
+        { status: 401 },
+      );
+    }
+    if (outcome.kind === "no-workspace") {
+      return HttpServerResponse.jsonUnsafe(
+        { paired: false, reason: outcome.reason, code: "no_workspace" },
+        { status: 403 },
+      );
+    }
+    if (outcome.kind === "forbidden") {
+      return HttpServerResponse.jsonUnsafe(
+        { paired: false, reason: outcome.reason },
+        { status: 403 },
+      );
+    }
+    if (outcome.kind === "config") {
+      return HttpServerResponse.jsonUnsafe(
+        { paired: false, reason: outcome.reason, configError: true },
+        { status: 503 },
+      );
+    }
+    if (outcome.kind === "error") {
+      return HttpServerResponse.jsonUnsafe(
+        { paired: false, reason: outcome.reason },
+        { status: 500 },
+      );
+    }
+
+    const { identity } = outcome;
+    const sessionRole = identity.role === "admin" ? ("owner" as const) : ("client" as const);
+
+    const serverAuth = yield* ServerAuth;
+    const sessions = yield* SessionCredentialService;
+
+    const credential = yield* serverAuth.issuePairingCredential({
+      role: sessionRole,
+      label: `clerk:${identity.userId}`,
+    });
+
+    const exchanged = yield* serverAuth.exchangeBootstrapCredential(
+      credential.credential,
+      deriveAuthClientMetadata({ request, label: `clerk:${identity.userId}` }),
+    );
+
+    const body = {
+      paired: true as const,
+      identity,
+      session: exchanged.response,
+    };
+    return yield* HttpServerResponse.jsonUnsafe(body, { status: 200 }).pipe(
+      HttpServerResponse.setCookie(sessions.cookieName, exchanged.sessionToken, {
+        expires: DateTime.toDate(exchanged.response.expiresAt),
+        httpOnly: true,
+        path: "/",
+        sameSite: "lax",
+      }),
+    );
+  }).pipe(Effect.catchTag("AuthError", (error) => respondToAuthError(error))),
 );

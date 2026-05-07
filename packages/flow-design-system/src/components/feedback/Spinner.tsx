@@ -43,7 +43,9 @@ export function Spinner({ size = 'md', color = 'primary', className = '' }: Spin
           width: px,
           height: px,
           borderRadius: '9999px',
-          border: `2px solid ${borderColor}`,
+          borderWidth: 2,
+          borderStyle: 'solid',
+          borderColor: borderColor,
           borderTopColor: topColor,
           animation: 'flow-spin 0.7s linear infinite',
         }}

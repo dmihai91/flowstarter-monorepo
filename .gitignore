@@ -102,3 +102,7 @@ apps/flowstarter-library/templates/*/package-lock.json
 
 # Local Netlify folder
 .netlify
+
+# Local WIP archives — kept out of the repo so they can't break CI
+.archive-wip-*/
+

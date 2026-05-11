@@ -46,9 +46,20 @@ export function I18nProvider({
   const [locale, setLocale] = useState(initialLocale);
 
   const t = useMemo(() => {
-    const messages = (initialMessages[locale] ||
-      initialMessages.en ||
-      {}) as Record<TranslationKeys, string>;
+    const enMessages = (initialMessages.en || {}) as Record<
+      TranslationKeys,
+      string
+    >;
+    const localeOverlay = (initialMessages[locale] || {}) as Partial<
+      Record<TranslationKeys, string>
+    >;
+    // Merge: English as base, locale overrides only the keys it defines.
+    // Prevents partially-translated locales (e.g. ro with a single key) from
+    // wiping out unrelated English strings and showing raw key IDs.
+    const messages = { ...enMessages, ...localeOverlay } as Record<
+      TranslationKeys,
+      string
+    >;
     return (<K extends TranslationKeys>(key: K, vars?: VarsFor<K>) => {
       let template = messages[key] ?? (key as string);
       if (vars) {
@@ -62,8 +73,12 @@ export function I18nProvider({
 
   const value: I18nContextValue = {
     locale,
-    // expose the resolved messages for debugging if needed
-    messages: initialMessages[locale] || initialMessages.en || {},
+    messages: {
+      ...(initialMessages.en || {}),
+      ...((initialMessages[locale] || {}) as Partial<
+        Record<TranslationKeys, string>
+      >),
+    } as Record<TranslationKeys, string>,
     t,
     setLocale,
   };

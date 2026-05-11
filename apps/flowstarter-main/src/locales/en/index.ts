@@ -1,3 +1,4 @@
+import { adminKeys } from './admin';
 import { appKeys } from './app';
 import { authKeys } from './auth';
 import { landingKeys } from './landing';
@@ -11,6 +12,7 @@ import { legalKeys } from './legal';
 import { miscKeys } from './misc';
 
 const en = {
+  ...adminKeys,
   ...appKeys,
   ...authKeys,
   ...landingKeys,

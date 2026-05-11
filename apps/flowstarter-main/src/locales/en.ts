@@ -1,10 +1,12 @@
+import { adminKeys } from './en/admin';
+
 const en = {
   // General
   'app.name': 'Flowstarter',
   'app.title':
     'Flowstarter | Professional websites for coaches, consultants & therapists',
   'app.description':
-    'We design, build, and launch your professional website in days. Update it yourself with AI. Starting at €499.',
+    'We design, build, and launch your professional website by hand. Update it yourself with AI. Starting at €499.',
   'app.back': 'Back',
   'app.saveContinue': 'Continue',
   'app.createProject': 'Create Project',
@@ -18,7 +20,7 @@ const en = {
   'app.failedToFetchIndustries':
     'Failed to fetch industries. Please try again.',
   'app.needHelp': 'Need help or a custom solution?',
-  'app.bookCallWithUs': 'Book a call with us',
+  'app.bookCallWithUs': 'Book a free discovery call',
   'app.saveFailed': 'Save failed',
   'app.saving': 'Saving…',
   'app.offline': 'Offline',
@@ -45,8 +47,6 @@ const en = {
   'auth.marketing.signup.noCreditCard':
     'Enterprise-grade security protects your data',
   'auth.marketing.signup.getOnlineFast': 'Smart guidance every step of the way',
-  'auth.google': 'Continue with Google',
-  'auth.apple': 'Continue with Apple',
   'auth.signUp.fullName': 'Full name',
   'auth.signUp.passwordRequirements':
     'Must be {min}-{max} characters and contain numbers and letters.',
@@ -58,12 +58,7 @@ const en = {
   'auth.signUp.privacyPolicy': 'Privacy Policy',
   'auth.email': 'Email address',
   'auth.password': 'Password',
-  'auth.googleError': 'Google sign in error',
-  'auth.googleErrorDescription': 'Please try again.',
-  'auth.appleError': 'Apple sign in error',
-  'auth.appleErrorDescription': 'Please try again.',
   'auth.signIn.signingIn': 'Signing in...',
-  'auth.signIn.completingSignIn': 'Completing sign in...',
   'auth.signIn': 'Sign in',
   'auth.forgotPassword': 'Forgot password?',
   'auth.forgotPassword.title': 'Reset your password',
@@ -106,7 +101,6 @@ const en = {
     'Wait a few minutes for delivery',
   'auth.notice.verificationSent.help.tryNewAccount':
     'Try creating a new account if needed',
-  'auth.signIn.connecting': 'Connecting...',
   'auth.signUp.verifying': 'Verifying...',
   'auth.signUp.resending': 'Resending...',
   'auth.signUp.resendCode': 'Resend Code',
@@ -453,7 +447,7 @@ const en = {
   // Premium dashboard - build phase
   'dashboard.action.kickoffTitle': "Let's get your website started",
   'dashboard.action.kickoffDesc':
-    'A 45-minute call to define your goals. We handle the rest.',
+    'A 30-minute call to define your goals. We handle the rest.',
   'dashboard.stats.buildPhase': 'Build in progress',
   'dashboard.stats.buildPhaseActive': 'In progress',
   'dashboard.stats.currentMilestone': 'Current phase: {phase}',
@@ -465,7 +459,7 @@ const en = {
   'dashboard.loading': 'Loading your workspace...',
 
   // Onboarding stepper
-  'dashboard.stepper.bookCallButton': 'Book Free Call',
+  'dashboard.stepper.bookCallButton': 'Book a free discovery call',
 
   // Dashboard details link
   'dashboard.details': 'Details',
@@ -475,8 +469,8 @@ const en = {
   'dashboard.analytics.avgSession': '{minutes}min avg',
   'dashboard.analytics.conversionRateValue': '{rate}% conversion rate',
 
-  // Team login
-  'team.login.title': 'Team Login',
+  // Team / admin login
+  'team.login.title': 'Admin Login',
   'team.login.subtitle':
     'Sign in to manage client projects and configure services.',
   'team.login.signInTitle': 'Sign in to your account',
@@ -488,12 +482,6 @@ const en = {
   'team.login.passwordPlaceholder': 'Enter your password',
   'team.login.signingIn': 'Signing in...',
   'team.login.signIn': 'Sign in',
-  'team.login.twoFactorTitle': 'Two-factor authentication',
-  'team.login.twoFactorSubtitle': 'Enter the code from your authenticator app',
-  'team.login.codeLabel': 'Authentication code',
-  'team.login.verifying': 'Verifying...',
-  'team.login.verify': 'Verify',
-  'team.login.back': 'Back',
 
   // Team sidebar
   'team.sidebar.dashboard': 'Dashboard',
@@ -502,7 +490,6 @@ const en = {
   'team.sidebar.email': 'Email',
   'team.sidebar.analytics': 'Analytics',
   'team.sidebar.services': 'Services',
-  'team.sidebar.security': 'Security',
   'team.sidebar.team': 'Team',
   'team.sidebar.invite': 'Invite Team Member',
 
@@ -799,7 +786,7 @@ const en = {
   'sidebar.support': 'Support',
   'sidebar.dashboard': 'Dashboard',
   'sidebar.integrations': 'Integrations',
-  'sidebar.bookFreeCall': 'Book Free Call',
+  'sidebar.bookFreeCall': 'Book a free discovery call',
   'sidebar.scheduleCheckin': 'Schedule Check-in',
   'sidebar.helpGuide': 'Help Guide',
 
@@ -1160,7 +1147,7 @@ const en = {
   'landing.hero.subheadline': '',
   'landing.hero.cta': 'Launch my business',
   'landing.hero.ctaNote':
-    "One call. We handle everything. You'll be live in days.",
+    "One call. We handle everything. We agree the timeline together.",
   'landing.hero.priceBuild': '€499',
   'landing.hero.priceMonthly': '€39',
 
@@ -1194,10 +1181,10 @@ const en = {
   // FAQ Section
   'landing.faq.q1': 'What happens on the discovery call?',
   'landing.faq.a1':
-    "We spend up to 45 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
+    "We spend up to 30 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
   'landing.faq.q2': 'How long until my site is live?',
   'landing.faq.a2':
-    'Most sites go live within 1 to 2 weeks after the discovery call. We keep you updated throughout the process.',
+    'We agree a realistic timeline together during the discovery call, then keep you in the loop the whole way. We aim to ship faster than traditional agencies, without rushing the craft.',
   'landing.faq.q3': 'Can I make changes after the site is built?',
   'landing.faq.a3':
     "Yes. Your subscription includes updates handled for you. Get in touch and we'll take care of it.",
@@ -1229,8 +1216,8 @@ const en = {
   // Coming soon tiers
 
   // Landing Page - Stats
-  'landing.stats.weeks': 'Days',
-  'landing.stats.weeksLabel': 'NOT MONTHS, TO LAUNCH',
+  'landing.stats.weeks': 'By hand',
+  'landing.stats.weeksLabel': 'EVERY SITE, HAND-CRAFTED',
   'landing.stats.calls': '1',
   'landing.stats.callsLabel': 'ONE CALL TO START',
   'landing.stats.techSkills': '0',
@@ -1289,7 +1276,7 @@ const en = {
   'landing.pricing.websiteFeature2': 'Up to 7 pages, designed to convert',
   'landing.pricing.websiteFeature3': 'Your domain and professional email',
   'landing.pricing.websiteFeature4': 'Mobile-ready, fast, SEO basics handled',
-  'landing.pricing.websiteFeature5': 'Live in about 2 weeks',
+  'landing.pricing.websiteFeature5': 'Live when you sign off',
 
   'landing.pricing.careTitle': 'Monthly (€39)',
   'landing.pricing.careDesc':
@@ -1307,14 +1294,14 @@ const en = {
   'landing.pricing.finePrint':
     'No contracts. Cancel anytime. First month free.',
   'landing.pricing.cta': 'Claim Your Spot',
-  'landing.header.cta': 'Book a discovery call',
+  'landing.header.cta': 'Book free discovery call',
 
   // Landing Page - For/Not For
 
   // Landing Page - CTA
-  'landing.cta.title': 'Stop waiting months to get online.',
+  'landing.cta.title': 'Ready to get online?',
   'landing.cta.subtitle':
-    'Get your business foundation launched in days, then manage and grow it with Flowstarter.',
+    'Get your business foundation hand-built, then manage and grow it with Flowstarter.',
   'landing.cta.button': 'Launch my business',
 
   // Landing Page - Footer CTA
@@ -1450,7 +1437,7 @@ const en = {
   'mockEditor.site.proPrice': '$29/mo',
   'mockEditor.site.popular': 'POPULAR',
   'mockEditor.floatingDraft': 'Draft',
-  'mockEditor.floatingTime': '~2 weeks',
+  'mockEditor.floatingTime': 'Just saved',
 
   // Contact Page
   'contact.badge': 'Get in Touch',
@@ -1481,8 +1468,8 @@ const en = {
   'contact.form.sendButton': 'Send Message',
   'contact.talk.title': 'Prefer to talk?',
   'contact.talk.description':
-    "Book a free 45-minute discovery call. We'll learn about your business and figure out the best approach together.",
-  'contact.talk.button': 'Book Free Discovery Call',
+    "Book a free discovery call. We'll learn about your business and figure out the best approach together.",
+  'contact.talk.button': 'Book a free discovery call',
   'contact.other.title': 'Other ways to reach us',
   'contact.other.emailLabel': 'Email',
   'contact.other.emailValue': 'hello@flowstarter.net',
@@ -1500,20 +1487,20 @@ const en = {
     'Everything you need to know about getting your website built and customized.',
   'help.loggedInTitle': 'Help & Support',
   'help.loggedInDescription': 'Everything you need to know about your project.',
-  'help.quickAction.discovery.title': 'Book a Discovery Call',
+  'help.quickAction.discovery.title': 'Book a free discovery call',
   'help.quickAction.discovery.desc':
-    'Free 45-minute call to discuss your project',
+    'Free 30-minute call to discuss your project',
   'help.quickAction.email.title': 'Email Support',
   'help.quickAction.email.desc': 'hello@flowstarter.net',
   'help.howItWorks': 'How It Works',
   'help.step1.number': '01',
   'help.step1.title': 'We talk',
   'help.step1.description':
-    'Book a free 45-minute discovery call. We learn about your business, your brand, and your goals.',
+    'Book a free discovery call. We learn about your business, your brand, and your goals.',
   'help.step2.number': '02',
   'help.step2.title': 'We build',
   'help.step2.description':
-    'Our team designs and builds your site from scratch, tailored to your brand. Ready in about 2 weeks.',
+    'Our team designs and builds your site from scratch, tailored to your brand. You review progress along the way.',
   'help.step3.number': '03',
   'help.step3.title': 'You own it',
   'help.step3.description':
@@ -1521,13 +1508,13 @@ const en = {
   'help.faqTitle': 'Frequently Asked Questions',
   'help.faq1.question': 'How does the process work?',
   'help.faq1.answer':
-    "It's simple! Book a free discovery call with our team. We'll learn about your business, goals, and design preferences. Then we design and build your professional website in about 2 weeks. Once it's live, you can customize it anytime using our AI editor.",
+    "It's simple! Book a free discovery call with our team. We'll learn about your business, goals, and design preferences. Then we hand-craft your professional website around your brand. Once it's live, you can customize it anytime using our AI editor.",
   'help.faq2.question': 'How long does it take to build my website?',
   'help.faq2.answer':
-    "Most websites are completed within 2 weeks after your discovery call. We'll keep you updated throughout the process and send you a preview link when it's ready for your review.",
+    "We agree a realistic timeline together during your discovery call, then keep you in the loop the whole way. We'll send you a preview link when it's ready for your review.",
   'help.faq3.question': 'What happens during the discovery call?',
   'help.faq3.answer':
-    "We spend 45 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
+    "We spend 30 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
   'help.faq4.question': 'Can I make changes after my site is live?',
   'help.faq4.answer':
     "That's the whole point! Your subscription includes our AI editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code.",
@@ -1552,7 +1539,7 @@ const en = {
   'help.cta.title': 'Ready to get started?',
   'help.cta.description':
     "Book a free discovery call and let's build your website together.",
-  'help.cta.button': 'Book Free Discovery Call',
+  'help.cta.button': 'Book a free discovery call',
 
   // Pricing Page
   'pricing.badge': 'Beta Pricing - 50% Off Everything',
@@ -1579,7 +1566,7 @@ const en = {
   'pricing.starter.feature5': 'Analytics dashboard (leads + page views)',
   'pricing.starter.feature6': 'AI-powered site customization',
   'pricing.starter.feature7': 'First month free',
-  'pricing.starter.cta': 'Book Free Discovery Call',
+  'pricing.starter.cta': 'Book a free discovery call',
   'pricing.starter.disclaimer':
     'No lock-in. Cancel anytime. 50% setup fee refund if you share feedback.',
   'pricing.details.heading': "Everything you need. Nothing you don't.",
@@ -1648,7 +1635,7 @@ const en = {
   'pricing.earlyAccess.title': 'Launching beta - early adopters get 50% off',
   'pricing.earlyAccess.description':
     'Lock in beta pricing (\u20AC150 setup + \u20AC15/month) until v1.0. Regular pricing will be \u20AC299 setup + \u20AC29/month.',
-  'pricing.earlyAccess.cta': 'Book Free Discovery Call',
+  'pricing.earlyAccess.cta': 'Book a free discovery call',
   'pricing.earlyAccess.noCreditCard': 'No credit card required',
   'pricing.earlyAccess.consultation': '30-min consultation',
   'pricing.earlyAccess.cancelAnytime': 'Cancel anytime',
@@ -2132,7 +2119,7 @@ const en = {
   'app.chatPlaceholder': 'Describe what you want to build...',
 
   // Landing hero
-  'landing.hero.launchBatch': 'Launch batch: accepting only 10 clients',
+  'landing.hero.launchBatch': 'Launch batch: limited spots open',
 
   // Team pages
   'team.domains.clientDomain': 'Client Domain',
@@ -2147,7 +2134,6 @@ const en = {
   'team.dashboard.namePlaceholder': 'John Smith',
   'team.invite.failedToSend': 'Failed to send invitation',
   'team.login.invalidCredentials': 'Invalid credentials',
-  'team.login.invalidCode': 'Invalid code',
 
   // Scaffold - Quick Draft Generator
   'scaffold.client.title': 'Client Details',
@@ -2255,20 +2241,20 @@ const en = {
   'landing.hero.displayPrefix': 'Premium websites,',
   'landing.hero.displayFlourish': 'hand-crafted for service professionals.',
   'landing.hero.subhead':
-    'Designed and built by hand, with a smart editor included so you can keep updating yours on demand. Live in two weeks. Hosting, domain, and ongoing support all in. From €799 + €49 a month.',
+    'Designed and built by hand, with a smart editor included so you can keep updating yours on demand. Hosting, domain, and ongoing support all in. From €799 + €49 a month.',
   'landing.hero.primaryCta': 'Build my site',
   'landing.hero.secondaryCta': 'See how it works',
   'landing.hero.eyebrowSerial': 'Built for you',
   'landing.hero.eyebrowLabel': 'Yours forever',
-  'landing.hero.eyebrowTagline': '8 spots a month',
+  'landing.hero.eyebrowTagline': 'Limited spots',
   'landing.hero.guaranteeShort':
-    'Limited capacity. We take on 8 new clients each month.',
-  'landing.hero.stat1Value': '8',
-  'landing.hero.stat1Label': 'Clients each month',
+    'Limited capacity. We take a small number of new clients each month.',
+  'landing.hero.stat1Value': 'Limited',
+  'landing.hero.stat1Label': 'Spots each month',
   'landing.hero.stat2Value': '€799',
   'landing.hero.stat2Label': 'Starter, one-time setup',
-  'landing.hero.stat3Value': '7–14 days',
-  'landing.hero.stat3Label': 'Typical turnaround',
+  'landing.hero.stat3Value': 'Hand-built',
+  'landing.hero.stat3Label': 'Every site, by us',
   'landing.hero.stat4Value': '100%',
   'landing.hero.stat4Label': 'Yours forever',
   'landing.hero.brief.live': 'Live',
@@ -2283,8 +2269,8 @@ const en = {
   'landing.hero.brief.field3Label': 'Includes',
   'landing.hero.brief.field3Value':
     'Hosting, domain, smart editor, ongoing care',
-  'landing.hero.brief.field4Label': 'Live',
-  'landing.hero.brief.field4Value': 'In 7 to 14 days',
+  'landing.hero.brief.field4Label': 'Launch',
+  'landing.hero.brief.field4Value': 'When you sign off',
   'landing.hero.brief.progressLabel': 'Progress',
   'landing.hero.brief.progressBuilding': 'Drafting',
   'landing.hero.brief.progressReady': 'Brief ready',
@@ -2378,11 +2364,11 @@ const en = {
   'landing.faq.headlineFlourish': 'here is what people ask.',
 
   // Proof — the shelf
-  'landing.proof.eyebrow': 'The proof',
-  'landing.proof.headlinePrefix': 'Five starters, one live client —',
+  'landing.proof.eyebrow': 'Selected work',
+  'landing.proof.headlinePrefix': 'Two clients live, one starter ready —',
   'landing.proof.headlineFlourish': 'all hand-built.',
   'landing.proof.sub':
-    'Every starter below was hand-coded by us — no Tailwind soup, no AI scaffolding, no template-mart. Click a card to open the full interactive preview at library.flowstarter.net.',
+    'Open any card to see the full interactive preview at library.flowstarter.net.',
   'landing.proof.cta': 'Browse the library',
   'landing.proof.statusLive': 'live',
   'landing.proof.statusSoon': 'in development',
@@ -2396,8 +2382,8 @@ const en = {
 
   // Process — editorial redesign
   'landing.process.eyebrow': 'How it works',
-  'landing.process.headlinePrefix': 'From conversation to launch',
-  'landing.process.headlineFlourish': 'in two weeks.',
+  'landing.process.headlinePrefix': 'From conversation to launch,',
+  'landing.process.headlineFlourish': 'hand-crafted.',
   'landing.process.sub':
     'A tight, four-step process from the first call to a site you can keep growing on your own.',
 
@@ -2422,19 +2408,19 @@ const en = {
   'supportBot.replyPrice':
     'Starter is €799 setup + €49/month. Pro starts at €1,499 + €99/month. Both include hosting, domain, and the smart editor. Want a personal walkthrough?',
   'supportBot.replyTimeline':
-    'Starter projects ship in 7 to 14 days. Pro takes 10 to 21 days. Timelines lock during the discovery call.',
+    'We agree on the timeline together during the discovery call. You see drafts before launch, and we keep you in the loop the whole way.',
   'supportBot.replyEditor':
     'You get a smart editor installed with your site. Update copy, swap images, add sections, all in plain English, no code.',
   'supportBot.replyOwnership':
     'Yes, you own everything. Site, content, hosting are all in your name from day one. No platform lock-in.',
   'supportBot.replyCapacity':
-    "We take just 8 new clients per month. If your project is a fit, we'll find a slot together on the call.",
+    "We take a limited number of new clients each month so every project gets dedicated craft. If yours is a fit, we'll find a slot together on the call.",
   'supportBot.replyDefault':
-    'Good question. The fastest way to get a real answer is a 45-minute discovery call. Book one and we will cover it properly.',
+    'Good question. The fastest way to get a real answer is a 30-minute discovery call. Book one and we will cover it properly.',
   'supportBot.replyDomain':
     'Yes, we set up your custom domain and a professional email address at that domain. If you already own one, we connect it. If not, we register it for you.',
   'supportBot.replyDiscovery':
-    "The discovery call runs up to 45 minutes. We'll cover your business, brand, and goals, and confirm honestly whether we're the right fit.",
+    "The discovery call runs up to 30 minutes. We'll cover your business, brand, and goals, and confirm honestly whether we're the right fit.",
   'supportBot.replyEcommerce':
     'Full storefronts are coming soon. The Pro tier covers digital products via Stripe today. Drop your email on the Ecommerce card to be the first to know when full ecommerce ships.',
   'supportBot.replyIncluded':
@@ -2452,8 +2438,8 @@ const en = {
   'about.headline': 'We build it. You run it.',
   'about.body':
     'Flowstarter is a small team that hand-crafts premium websites for solo founders, coaches, consultants, and small service businesses. We do the work for you, install everything on a private server we set up in your name, and hand you the keys. You own your site. You run it. Forever.',
-  'about.stat1.value': '5 to 10 days',
-  'about.stat1.label': 'Typical turnaround from kickoff to launch.',
+  'about.stat1.value': 'By hand',
+  'about.stat1.label': 'Every site crafted by the founders, never outsourced.',
   'about.stat2.value': '8 a month',
   'about.stat2.label': 'Capacity-limited so the work stays premium.',
   'about.stat3.value': 'You own it',
@@ -2489,14 +2475,14 @@ const en = {
   'landing.prequal.eyebrow': 'Free discovery call',
   'landing.prequal.title': 'Which best describes your situation?',
   'landing.prequal.subtitle': "We'll tailor the call based on your answer.",
-  'landing.prequal.cta': 'Book my discovery call',
+  'landing.prequal.cta': 'Book a free discovery call',
   'landing.prequal.footnote':
-    'No commitment. 45-minute call. Limited to 8 new clients each month.',
+    'No commitment. 30-minute call. Limited spots each month.',
   'landing.prequal.calendar.back': 'Back',
   'landing.prequal.calendar.planSelected': 'plan selected',
   'landing.prequal.calendar.title': 'Pick a time that works for you',
   'landing.prequal.calendar.subtitle':
-    "Choose a 45-minute slot below. We'll confirm via email.",
+    "Choose a 30-minute slot below. We'll confirm via email.",
   'landing.prequal.confirmed.title': "You're all set!",
   'landing.prequal.confirmed.body':
     'Your discovery call is booked. Check your email for the confirmation and calendar invite.',
@@ -2540,9 +2526,11 @@ const en = {
   'landing.finalCta.headlinePrefix': "Let's build something",
   'landing.finalCta.headlineFlourish': "you'll be proud of.",
   'landing.finalCta.subhead':
-    "Book a 45-minute discovery call. We'll talk about your business, show you what's possible, and tell you honestly if we're the right fit.",
-  'landing.finalCta.primaryCta': 'Book Discovery Call',
-  'landing.finalCta.microNote': 'Limited to 8 new clients each month.',
+    "Book a free discovery call. We'll talk about your business, show you what's possible, and tell you honestly if we're the right fit.",
+  'landing.finalCta.primaryCta': 'Book a free discovery call',
+  'landing.finalCta.microNote': 'Limited spots each month.',
+
+  ...adminKeys,
 } as const;
 
 export default en;

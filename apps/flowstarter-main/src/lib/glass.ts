@@ -31,21 +31,34 @@ export const glassHoverClass =
 /** Skeleton pulse placeholder using token colors */
 export const skeletonClass = 'bg-[var(--fs-rule)] rounded animate-pulse';
 
-/** Shared dashboard gradient overlays (for layout shells and page containers) */
+/**
+ * Dashboard atmosphere — editorial dual-tone wash using landing tokens
+ * (`--ls-accent` indigo + `--ls-accent-warm` rust). Two low-opacity radials
+ * (cool top-left, warm bottom-right) sit on the FlowBackground orbs; a soft
+ * mid vignette and bottom fade darken the canvas without swallowing the wash.
+ * `.ls-card` glass remains the only strong surface treatment so the depth
+ * reads as "glass on paper" instead of stacked glass shells.
+ */
 export const dashboardLightOverlay = `
-  radial-gradient(ellipse 98% 72% at 0% -10%, rgba(124, 58, 237, 0.16) 0%, transparent 56%),
-  radial-gradient(ellipse 88% 62% at 100% 10%, rgba(59, 130, 246, 0.12) 0%, transparent 58%),
-  radial-gradient(ellipse 124% 80% at 52% 60%, rgba(99, 102, 241, 0.08) 0%, transparent 64%),
-  radial-gradient(ellipse 138% 74% at 50% 108%, rgba(244, 114, 182, 0.07) 0%, transparent 61%)
+  radial-gradient(ellipse 70% 55% at 8% 0%, rgba(78, 94, 218, 0.10) 0%, transparent 62%),
+  radial-gradient(ellipse 56% 50% at 96% 108%, rgba(180, 83, 9, 0.07) 0%, transparent 64%),
+  linear-gradient(180deg, rgba(251, 247, 239, 0) 0%, rgba(243, 236, 219, 0.32) 100%)
 `;
 
 export const dashboardDarkOverlay = `
-  radial-gradient(ellipse 108% 76% at 0% -12%, rgba(84, 55, 165, 0.34) 0%, transparent 60%),
-  radial-gradient(ellipse 92% 64% at 100% 12%, rgba(56, 97, 182, 0.24) 0%, transparent 62%),
-  radial-gradient(ellipse 138% 86% at 50% 58%, rgba(45, 78, 151, 0.16) 0%, transparent 68%),
-  radial-gradient(ellipse 145% 78% at 50% 108%, rgba(111, 64, 157, 0.18) 0%, transparent 64%),
-  linear-gradient(180deg, rgba(8, 11, 26, 0.08) 0%, rgba(8, 11, 26, 0.34) 100%)
+  radial-gradient(ellipse 64% 52% at 6% 2%, rgba(78, 94, 218, 0.22) 0%, transparent 58%),
+  radial-gradient(ellipse 54% 46% at 98% 104%, rgba(180, 83, 9, 0.12) 0%, transparent 62%),
+  radial-gradient(ellipse 110% 70% at 50% 56%, rgba(10, 7, 20, 0) 0%, rgba(4, 3, 8, 0.32) 78%),
+  linear-gradient(180deg, rgba(10, 7, 20, 0) 0%, rgba(4, 3, 8, 0.42) 100%)
 `;
+
+/**
+ * Editorial paper grain — same SVG fractal noise the landing uses in
+ * `.ls-grain`. Layered above the wash to break up gradients and avoid the
+ * flat "AI gradient" feel. Tile size kept at 160px to match the landing.
+ */
+export const dashboardGrainBackground =
+  "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
 
 /** Sidebar chrome (shared by client + team sidebars) */
 export function getSidebarChromeStyle(
@@ -68,7 +81,7 @@ export function getSidebarChromeStyle(
 export const sidebarNavBaseClass =
   'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150';
 export const sidebarNavActiveClass =
-  'border border-[color-mix(in_oklab,var(--fs-accent)_70%,white)] bg-[var(--fs-accent)] text-white font-semibold shadow-[0_10px_22px_color-mix(in_oklab,var(--fs-accent)_32%,transparent)]';
+  'bg-[var(--purple)] text-white font-semibold shadow-md hover:brightness-110';
 export const sidebarNavIdleClass =
   'text-[var(--fs-ink-dim)] hover:bg-[var(--fs-bg-elevated)]/75 hover:text-[var(--fs-ink)]';
 export const sidebarSectionLabelClass =

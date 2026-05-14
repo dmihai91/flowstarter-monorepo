@@ -66,7 +66,10 @@ describe('security-headers', () => {
     it('includes nonce when provided', () => {
       const csp = buildCSPHeader('test-nonce-123');
       expect(csp).toContain("'nonce-test-nonce-123'");
-      expect(csp).toContain("'strict-dynamic'");
+      // `'strict-dynamic'` is intentionally NOT emitted — it would
+      // override the host allowlist and break Clerk's external script
+      // load. See the comment in `buildCSPHeader` in `security-headers.ts`.
+      expect(csp).not.toContain("'strict-dynamic'");
     });
 
     it('uses unsafe-inline without nonce in production', () => {

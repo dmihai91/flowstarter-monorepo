@@ -16,6 +16,9 @@ const ALLOWED_SCRIPT_DOMAINS = [
   'https://www.googletagmanager.com',
   'https://www.google-analytics.com',
   'https://*.clerk.accounts.dev',
+  // Cal.com booking widget used inside Astro template previews
+  'https://app.cal.com',
+  'https://cal.com',
   process.env.NEXT_PUBLIC_SITE_URL,
 ];
 
@@ -54,11 +57,48 @@ const ALLOWED_IMG_DOMAINS = [
 
 const ALLOWED_FONT_DOMAINS = ["'self'", 'https://fonts.gstatic.com', 'data:'];
 
+/**
+ * In dev, allow browser calls to the same machine on a LAN IP when
+ * `NEXT_PUBLIC_SITE_URL` / `NEXT_PUBLIC_EDITOR_URL` point at http://192.168.x.x:…
+ */
+function devHttpWsConnectSrcExtras(): string {
+  const urls = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.NEXT_PUBLIC_EDITOR_URL,
+  ];
+  const parts: string[] = [];
+  for (const raw of urls) {
+    const u = raw?.trim();
+    if (!u?.startsWith('http')) continue;
+    try {
+      const parsed = new URL(u);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') continue;
+      parts.push(parsed.origin);
+      const wsProto = parsed.protocol === 'https:' ? 'wss:' : 'ws:';
+      parts.push(`${wsProto}//${parsed.host}`);
+    } catch {
+      /* skip */
+    }
+  }
+  return parts.length ? ` ${parts.join(' ')}` : '';
+}
+
 const ALLOWED_FRAME_DOMAINS = [
   'https://accounts.google.com', // Google OAuth
   'https://*.clerk.accounts.dev', // Clerk OAuth
   'https://challenges.cloudflare.com', // Turnstile if used
   'https://calendly.com', // Calendly inline embed
+  // Cal.com booking widget embedded inside Astro template previews
+  'https://cal.com',
+  'https://*.cal.com',
+  // Library "Live template" iframes for shipped client work. The detail
+  // page at /library/templates/<slug> renders the client's live site
+  // when the entry sets `externalPreviewUrl`. Each origin must be
+  // allowlisted explicitly here or the browser will block the frame
+  // under our own CSP (the client site can ALSO block framing via its
+  // own X-Frame-Options / frame-ancestors — that we can't override).
+  'https://ux-journey.com',
+  'https://lebadusularticoledepescuit.ro',
 ];
 
 // Create headers without CSP (we'll add it dynamically with nonce)
@@ -80,12 +120,17 @@ export function buildCSPHeader(nonce?: string): string {
   const isDev = process.env.NODE_ENV === 'development';
   const nonceToken = nonce ? `'nonce-${nonce}'` : undefined;
 
-  // In development, use relaxed CSP to allow Next.js hot reload and dev scripts
-  // In production, use strict CSP with nonces
+  // In development, use relaxed CSP to allow Next.js hot reload and dev scripts.
+  // In production, use nonce + host allowlist. We deliberately do NOT emit
+  // `'strict-dynamic'` here — it would override the host allowlist and block
+  // external `<script src="https://...clerk.accounts.dev/...">` tags that
+  // Clerk's SDK injects without a nonce, breaking auth on every page that
+  // loads Clerk. The nonce still locks down all inline scripts, and the
+  // allowlist still constrains which third-party hosts can serve scripts.
   const scriptSrc = isDev
     ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...ALLOWED_SCRIPT_DOMAINS]
     : nonceToken
-    ? ["'self'", nonceToken, "'strict-dynamic'", ...ALLOWED_SCRIPT_DOMAINS]
+    ? ["'self'", nonceToken, ...ALLOWED_SCRIPT_DOMAINS]
     : ["'self'", "'unsafe-inline'", ...ALLOWED_SCRIPT_DOMAINS];
 
   const directives = [
@@ -95,7 +140,9 @@ export function buildCSPHeader(nonce?: string): string {
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`, // CSS-in-JS requires unsafe-inline
     `img-src ${ALLOWED_IMG_DOMAINS.join(' ')}`,
     `connect-src ${ALLOWED_CONNECT_DOMAINS.join(' ')}${
-      isDev ? ' ws://localhost:* http://localhost:*' : ''
+      isDev
+        ? `${devHttpWsConnectSrcExtras()} ws://localhost:* http://localhost:*`
+        : ''
     }`,
     `font-src ${ALLOWED_FONT_DOMAINS.join(' ')}`,
     `frame-src ${ALLOWED_FRAME_DOMAINS.join(' ')}`,
@@ -103,7 +150,12 @@ export function buildCSPHeader(nonce?: string): string {
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
-    isDev ? '' : `upgrade-insecure-requests`, // Skip in dev to allow localhost HTTP
+    // Only upgrade insecure requests when the site is actually served over HTTPS.
+    // Staging / LAN access over plain HTTP would break all sub-resource loads
+    // because the browser would silently rewrite http→https.
+    !isDev && process.env.NEXT_PUBLIC_SITE_URL?.startsWith('https://')
+      ? 'upgrade-insecure-requests'
+      : '',
   ].filter(Boolean);
 
   return directives.join('; ');

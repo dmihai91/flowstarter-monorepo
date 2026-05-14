@@ -40,18 +40,20 @@ const baseStyles = [
 
 const variantStyles: Record<ButtonVariant, string> = {
   default: [
-    'bg-gray-900 dark:bg-white',
-    'text-white dark:text-gray-900',
-    'hover:bg-gray-700 dark:hover:bg-gray-300',
-    'hover:shadow-xl hover:scale-[1.02]',
-    'focus-visible:ring-gray-500',
+    'bg-[var(--purple)] text-white',
+    'shadow-sm shadow-[color-mix(in_oklab,var(--purple)_32%,transparent)]',
+    'hover:brightness-110 hover:shadow-md hover:shadow-[color-mix(in_oklab,var(--purple)_40%,transparent)]',
+    'active:brightness-[0.94]',
+    'hover:scale-[1.02]',
+    'focus-visible:ring-[color-mix(in_oklab,var(--purple)_45%,transparent)]',
   ].join(' '),
   primary: [
-    'bg-gray-900 dark:bg-white',
-    'text-white dark:text-gray-900',
-    'hover:bg-gray-800 dark:hover:bg-gray-100',
-    'hover:shadow-xl hover:scale-[1.02]',
-    'focus-visible:ring-gray-500',
+    'bg-[var(--purple)] text-white',
+    'shadow-sm shadow-[color-mix(in_oklab,var(--purple)_32%,transparent)]',
+    'hover:brightness-110 hover:shadow-md hover:shadow-[color-mix(in_oklab,var(--purple)_40%,transparent)]',
+    'active:brightness-[0.94]',
+    'hover:scale-[1.02]',
+    'focus-visible:ring-[color-mix(in_oklab,var(--purple)_45%,transparent)]',
   ].join(' '),
   secondary: [
     'bg-white dark:bg-zinc-800',
@@ -90,10 +92,10 @@ const variantStyles: Record<ButtonVariant, string> = {
     'focus-visible:ring-green-500',
   ].join(' '),
   gradient: [
-    'bg-gradient-to-r from-purple-500 to-cyan-500',
+    'bg-gradient-to-r from-[var(--purple)] via-[color-mix(in_oklab,var(--purple)_55%,hsl(211_93%_61%)_45%)] to-[hsl(211_93%_61%)]',
     'text-white',
-    'hover:from-purple-600 hover:to-cyan-600',
-    'focus-visible:ring-purple-500',
+    'hover:brightness-110',
+    'focus-visible:ring-[color-mix(in_oklab,var(--purple)_45%,transparent)]',
   ].join(' '),
   accent: [
     'bg-[var(--purple)] text-white',
@@ -102,11 +104,11 @@ const variantStyles: Record<ButtonVariant, string> = {
     'focus-visible:ring-[var(--purple)]',
   ].join(' '),
   'brand-gradient': [
-    'bg-gradient-to-r from-[var(--purple)] via-blue-500 to-[var(--purple)]',
+    'bg-gradient-to-r from-[var(--purple)] via-[color-mix(in_oklab,var(--purple)_55%,hsl(211_93%_61%)_45%)] to-[hsl(211_93%_61%)]',
     'text-white',
-    'hover:shadow-lg hover:shadow-[var(--purple)]/20',
+    'hover:shadow-lg hover:shadow-[color-mix(in_oklab,var(--purple)_22%,transparent)]',
     'hover:scale-[1.02]',
-    'focus-visible:ring-[var(--purple)]',
+    'focus-visible:ring-[color-mix(in_oklab,var(--purple)_45%,transparent)]',
   ].join(' '),
   brand: [
     'bg-[var(--purple)] text-white',
@@ -160,10 +162,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const classes = getButtonStyles(variant, size, className);
     const Comp = asChild ? Slot : 'button';
 
-    // When asChild is true, Slot calls React.Children.only — pass only children
+    // When asChild is true (typically `<Button asChild><Link/></Button>`),
+    // the Slot's child is usually an `<a>` and `disabled` is not a valid
+    // attribute there. Passing `disabled={false}` triggers React's
+    // hydration mismatch on a non-button element. Forward it as a
+    // `data-disabled` + `aria-disabled` instead — the CSS still keys
+    // off `disabled:` because tailwind also matches `[disabled]`/
+    // `[aria-disabled]` selectors when applied via plugin; the visible
+    // selector targets below cover that.
     if (asChild) {
+      const slotProps = isDisabled
+        ? { 'aria-disabled': true, 'data-disabled': '' }
+        : {};
       return (
-        <Comp ref={ref} disabled={isDisabled} className={classes} {...props}>
+        <Comp ref={ref} className={classes} {...slotProps} {...props}>
           {children}
         </Comp>
       );

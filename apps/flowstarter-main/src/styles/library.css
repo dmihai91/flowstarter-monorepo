@@ -136,17 +136,28 @@
 .library-root .link:hover { border-color: var(--color-violet); color: var(--color-violet); }
 
 .library-root .action {
+  /* Height-match the `.cta-block` (48px) so when both render side-by-
+     side in `.detail-actions` they sit on the same baseline. The
+     underline moves from `border-bottom` (which sits at the bottom of
+     the flex container) to `text-decoration: underline` so it tracks
+     the text itself, not the action's hit area. */
   display: inline-flex;
   align-items: center;
+  min-height: 48px;
   gap: 0.45rem;
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+  text-decoration-color: var(--color-ink);
   color: var(--color-ink);
-  border-bottom: 1px solid var(--color-ink);
   font-size: 0.92rem;
   font-weight: 500;
 }
-.library-root .action::after { content: '↗'; font-size: 0.9em; }
-.library-root .action:hover { color: var(--color-violet); border-color: var(--color-violet); }
+.library-root .action::after { content: '↗'; font-size: 0.9em; text-decoration: none; }
+.library-root .action:hover {
+  color: var(--color-violet);
+  text-decoration-color: var(--color-violet);
+}
 
 .library-root .cta-block {
   display: inline-flex;
@@ -229,7 +240,10 @@
 .library-root .item:hover .item-frame img { transform: scale(1.03); }
 .library-root .item-thumb { position: absolute; inset: 0; }
 .library-root .item-thumb--dark { opacity: 0; }
-.dark .library-root .item-thumb--light { opacity: 0; }
+/* Hide the light variant in dark mode ONLY when a dark variant is rendered
+   alongside it — otherwise the card would go blank. The :has() selector
+   keeps the light thumb visible if it's the only image inside the frame. */
+.dark .library-root .item-frame:has(.item-thumb--dark) .item-thumb--light { opacity: 0; }
 .dark .library-root .item-thumb--dark { opacity: 1; }
 .library-root .item-caption {
   display: grid;
@@ -289,6 +303,9 @@
 .library-root .preview-frame { width: 100%; height: clamp(680px, 78vh, 980px); border: 0; display: block; background: var(--color-bg-soft); }
 .library-root .preview-poster { position: relative; min-height: clamp(540px, 70vh, 860px); }
 .library-root .preview-poster-image { width: 100%; height: clamp(540px, 70vh, 860px); object-fit: cover; display: block; }
+.library-root .preview-poster-image--dark { position: absolute; inset: 0; opacity: 0; }
+.dark .library-root .preview-poster:has(.preview-poster-image--dark) .preview-poster-image--light { opacity: 0; }
+.dark .library-root .preview-poster-image--dark { opacity: 1; }
 .library-root .preview-poster-placeholder { display: grid; place-items: center; width: 100%; height: clamp(540px, 70vh, 860px); color: var(--color-ink-soft); }
 .library-root .preview-poster-overlay { position: absolute; inset: auto 1rem 1rem; border: 1px solid var(--color-glass-edge); background: color-mix(in srgb, var(--color-bg) 88%, transparent); border-radius: 12px; display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; padding: 0.75rem 0.9rem; }
 .library-root .preview-load-button { height: 40px; padding-inline: 1rem; border-radius: 10px; border: 1px solid transparent; background: var(--cta-bg); color: var(--cta-fg); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }

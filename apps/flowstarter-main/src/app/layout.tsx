@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { I18nProvider } from '@/lib/i18n';
 import ro from '@/locales/ro';
 import { getServerT } from '@/lib/i18n-server';
+import { getServerThemeInit } from '@/lib/server-theme';
 import en from '@/locales/en';
 import '@/styles/globals.css';
 import '@fontsource-variable/plus-jakarta-sans';
@@ -67,11 +68,13 @@ export default async function RootLayout({
   // Get nonce from middleware for CSP
   const headersList = await headers();
   const nonce = headersList.get('x-nonce') || '';
+  const { initialTheme, initialResolvedTheme } = await getServerThemeInit();
 
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${roboto_mono.variable}`}
+      className={`${plusJakartaSans.variable} ${roboto_mono.variable} ${initialResolvedTheme}`}
+      data-theme={initialResolvedTheme}
       suppressHydrationWarning
     >
       <head>
@@ -101,6 +104,14 @@ export default async function RootLayout({
                   document.documentElement.classList.remove('light', 'dark');
                   document.documentElement.classList.add(resolvedTheme);
                   document.documentElement.setAttribute('data-theme', resolvedTheme);
+                  // Defer enabling the bg-color transition until AFTER the
+                  // first frame is painted with the resolved theme. Without
+                  // this, the SSR-rendered `class="light"` → `dark` flip
+                  // animates the body bg on every first visit. See the
+                  // `html.theme-ready` rule in `styles/globals.css`.
+                  requestAnimationFrame(function() {
+                    document.documentElement.classList.add('theme-ready');
+                  });
                 } catch (e) {}
               })();
             `,
@@ -113,7 +124,10 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <ErrorBoundaryWrapper>
-          <ThemeProvider>
+          <ThemeProvider
+            initialTheme={initialTheme}
+            initialResolvedTheme={initialResolvedTheme}
+          >
             <I18nProvider initialLocale="en" initialMessages={{ en, ro }}>
               <ClerkThemeWrapper>
                 <ClientLayout>

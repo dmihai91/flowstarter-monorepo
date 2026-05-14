@@ -108,7 +108,6 @@ body {
   --wizard-header-text: hsl(0, 0%, 100%);
   --wizard-content-bg: hsla(0, 0%, 100%, 0.4);
   --wizard-steps-bg: hsl(240, 10%, 29%);
-  --purple: hsl(233, 65%, 58%);
   --blue: hsl(211, 93%, 61%);
   --green: hsl(119, 54%, 41%);
   --dashboard-sidebar-bg: hsl(0, 0%, 100%);
@@ -244,7 +243,6 @@ body {
   --wizard-header-text: hsl(240, 10%, 20%);
   --wizard-content-bg: hsl(240, 9%, 22%);
   --wizard-steps-bg: hsl(240, 10%, 29%);
-  --purple: hsl(233, 65%, 58%);
   --blue: hsl(211, 93%, 61%);
   --green: hsl(119, 100%, 89%);
 
@@ -503,8 +501,41 @@ body {
 @import './glassmorphism.css';
 @import './landing-effects.css';
 
+/*
+ * Dashboard atmosphere overlays — defined in CSS (not React inline styles) so SSR and
+ * hydration serialize identical markup; multi-line template literals in JS differ by env.
+ */
+.dashboard-atmosphere-light {
+  background: radial-gradient(ellipse 70% 55% at 8% 0%, rgba(78, 94, 218, 0.10) 0%, transparent 62%),
+    radial-gradient(ellipse 56% 50% at 96% 108%, rgba(180, 83, 9, 0.07) 0%, transparent 64%),
+    linear-gradient(180deg, rgba(251, 247, 239, 0) 0%, rgba(243, 236, 219, 0.32) 100%);
+}
+
+.dashboard-atmosphere-dark {
+  background: linear-gradient(
+    165deg,
+    rgba(12, 11, 18, 0.52) 0%,
+    rgba(5, 4, 10, 0.28) 48%,
+    rgba(2, 2, 5, 0.62) 100%
+  );
+}
+
+.dashboard-atmosphere-grain {
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+
 /* ── Smooth theme transition ─────────────────────────────── */
-html, body {
+/* Only animate the background AFTER the first paint. Otherwise the
+   inline theme-init script in `app/layout.tsx` (which flips
+   `<html class="light">` → `dark` to match the cookie / system
+   preference) triggers this transition during page load and the user
+   sees the body fade from light to dark on every first visit.
+   `theme-ready` is added by the layout's inline script via
+   `requestAnimationFrame` after the initial frame, so the transition
+   is registered only when the user explicitly toggles the theme. */
+html.theme-ready,
+html.theme-ready body {
   transition: background-color 0.2s ease;
 }
 

@@ -6,23 +6,18 @@ import {
 } from '@flowstarter/flow-design-system';
 import { useSidebar } from '@/contexts/SidebarContext';
 import { AppHeader } from '@/components/ui/app-header';
-import {
-  dashboardDarkOverlay,
-  dashboardGrainBackground,
-  dashboardLightOverlay,
-} from '@/lib/glass';
 import { useEffect, type ReactNode } from 'react';
 
 type DashboardBaseLayoutProps = {
   children: ReactNode;
   sidebar?: ReactNode;
   hideSidebar?: boolean;
-  /** FlowBackground variant. Defaults to "dashboard". Use "landing" to match the
-   * marketing site atmosphere on operator-facing surfaces. */
+  /** FlowBackground variant. Defaults to "landing" so admin pages
+   *  inherit the same brand orb intensities as auth + editor. Override
+   *  to "dashboard" only when an editorial surface needs the orbs
+   *  whisper-quiet behind dense data tables. */
   bgVariant?: FlowBackgroundVariant;
-  /** Suppress the dashboard radial-gradient overlays so the FlowBackground
-   * carries all of the atmosphere itself. The legacy overlays add a soft
-   * purple/blue/pink wash that competes with the editorial glass aesthetic. */
+  /** Suppress the dashboard gradient film + grain so FlowBackground is sole atmosphere. */
   quietOverlays?: boolean;
 };
 
@@ -30,7 +25,7 @@ export function DashboardBaseLayout({
   children,
   sidebar,
   hideSidebar = false,
-  bgVariant = 'dashboard',
+  bgVariant = 'landing',
   quietOverlays = false,
 }: DashboardBaseLayoutProps) {
   const { isCollapsed } = useSidebar();
@@ -44,31 +39,31 @@ export function DashboardBaseLayout({
     };
   }, []);
 
+  // The dashboard atmosphere overlays were tuned to compensate for the
+  // muted "dashboard" FlowBackground variant. When the brighter "landing"
+  // variant is in play the overlays fight the orbs — auto-quiet them so
+  // admin reads like the editor + auth pages.
+  const effectiveQuietOverlays = quietOverlays || bgVariant === 'landing';
+
   return (
     <div className="h-[100dvh] flex flex-col overflow-hidden">
       <FlowBackground
         variant={bgVariant}
         style={{ position: 'fixed', inset: 0, zIndex: 0 }}
       />
-      {!quietOverlays && (
+      {!effectiveQuietOverlays && (
         <>
           <div
             aria-hidden
-            className="fixed inset-0 z-[1] pointer-events-none dark:hidden"
-            style={{ background: dashboardLightOverlay }}
+            className="dashboard-atmosphere-light fixed inset-0 z-[1] pointer-events-none dark:hidden"
           />
           <div
             aria-hidden
-            className="fixed inset-0 z-[1] pointer-events-none hidden dark:block"
-            style={{ background: dashboardDarkOverlay }}
+            className="dashboard-atmosphere-dark fixed inset-0 z-[1] pointer-events-none hidden dark:block"
           />
           <div
             aria-hidden
-            className="fixed inset-0 z-[2] pointer-events-none opacity-[0.035] mix-blend-overlay dark:opacity-[0.06]"
-            style={{
-              backgroundImage: dashboardGrainBackground,
-              backgroundSize: '160px 160px',
-            }}
+            className="dashboard-atmosphere-grain fixed inset-0 z-[2] pointer-events-none opacity-[0.035] mix-blend-overlay dark:opacity-[0.06]"
           />
         </>
       )}

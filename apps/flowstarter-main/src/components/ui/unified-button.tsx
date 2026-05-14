@@ -9,10 +9,14 @@ interface UnifiedButtonProps extends ButtonProps {
 }
 
 const toneClasses: Record<UnifiedButtonTone, string> = {
+  // Primary — solid `--purple` brand gradient. Top-left is the canonical
+  // `--purple` hue, bottom-right is the same hue darkened so the button
+  // reads as one unmistakably-brand surface rather than the previous
+  // navy-leaning mix with `--fs-accent-hot`.
   primary:
-    'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-[var(--purple-primary)]/25 hover:opacity-90',
+    'bg-[linear-gradient(135deg,var(--purple)_0%,color-mix(in_oklab,var(--purple)_82%,#0f0520)_100%)] text-white shadow-lg shadow-[var(--purple)]/30 hover:brightness-110 hover:shadow-xl hover:shadow-[var(--purple)]/50 hover:-translate-y-px',
   secondary:
-    'border border-[var(--fs-rule-strong)] bg-[color-mix(in_oklab,var(--fs-bg-elevated)_86%,transparent)] text-[var(--fs-ink)] hover:bg-[color-mix(in_oklab,var(--fs-bg-elevated)_72%,transparent)]',
+    'border border-[var(--fs-rule-strong)] bg-[color-mix(in_oklab,var(--fs-bg-elevated)_86%,transparent)] text-[var(--fs-ink)] hover:bg-[var(--fs-bg-elevated)] hover:border-[var(--purple)] hover:text-[var(--purple)] hover:shadow-md hover:shadow-[var(--purple)]/15 hover:-translate-y-px',
 };
 
 export const Button = forwardRef<HTMLButtonElement, UnifiedButtonProps>(

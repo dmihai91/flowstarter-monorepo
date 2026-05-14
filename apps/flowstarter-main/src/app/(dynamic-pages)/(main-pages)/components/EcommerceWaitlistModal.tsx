@@ -51,6 +51,12 @@ export function EcommerceWaitlistModal() {
 
   if (!isOpen) return null;
 
+  // Mirror the server-side z.email() check so the submit button is
+  // disabled until the field actually contains a valid address. Same
+  // shape as the validator in `apps/.../api/ecommerce-waitlist/route.ts`.
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const submitDisabled = status === 'submitting' || !isValidEmail;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (status === 'submitting') return;
@@ -146,7 +152,7 @@ export function EcommerceWaitlistModal() {
               {t('landing.waitlist.body')}
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-5 space-y-3">
+            <form onSubmit={handleSubmit} className="mt-5">
               <label className="block">
                 <span className="block text-xs font-medium text-[var(--fs-ink-dim)] mb-1.5">
                   {t('landing.waitlist.emailLabel')}
@@ -164,15 +170,18 @@ export function EcommerceWaitlistModal() {
               </label>
 
               {status === 'error' && (
-                <p className="text-sm text-red-600 dark:text-red-400">
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                   {errorMessage}
                 </p>
               )}
 
+              {/* Wider gap between input and CTA — the previous
+                  `space-y-3` felt cramped now that the button is
+                  disabled-by-default and reads as a separate action. */}
               <Button
                 type="submit"
-                disabled={status === 'submitting'}
-                className="w-full"
+                disabled={submitDisabled}
+                className="mt-7 w-full"
               >
                 {status === 'submitting'
                   ? t('landing.waitlist.submitting')

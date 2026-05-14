@@ -11,23 +11,15 @@ import { UserMenu } from '@/components/ui/user-menu';
 import { useI18n } from '@/lib/i18n';
 import { useHeaderState } from '@/app/(dynamic-pages)/(main-pages)/components/hooks/useHeaderState';
 import { useBookingModal } from '@/app/(dynamic-pages)/(main-pages)/components/booking-modal-store';
-import { useTheme } from '@/contexts/ThemeContext';
-
 type SiteHeaderMode = 'landing' | 'public' | 'auth' | 'app';
 
 interface SiteHeaderProps {
   mode: SiteHeaderMode;
-  showTeamBadge?: boolean;
   onOpenAppMenu?: () => void;
 }
 
-export function SiteHeader({
-  mode,
-  showTeamBadge = false,
-  onOpenAppMenu,
-}: SiteHeaderProps) {
+export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
   const openBookingModal = useBookingModal((s) => s.open);
-  const { resolvedTheme } = useTheme();
   const { t: tLanding } = useI18n();
   const {
     isLoaded: headerLoaded,
@@ -123,9 +115,16 @@ export function SiteHeader({
               </nav>
 
               <div className="flex items-center gap-2 sm:gap-4">
-                <div className="hidden lg:block">
+                <div className="hidden sm:block">
                   <ThemeToggle />
                 </div>
+                <Button
+                  asChild
+                  tone="secondary"
+                  className="!hidden h-10 px-4 py-2 text-sm lg:!inline-flex"
+                >
+                  <Link href="/login">{tLanding('nav.signIn')}</Link>
+                </Button>
                 <Button
                   className="!hidden h-10 px-4 py-2 text-sm lg:!inline-flex"
                   onClick={openBookingModal}
@@ -218,8 +217,15 @@ export function SiteHeader({
                 >
                   {tLanding('nav.faq')}
                 </a>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mt-3 flex h-12 w-full items-center justify-center rounded-lg border border-[var(--fs-rule-strong)] text-base font-medium text-[var(--fs-ink)] hover:bg-[var(--fs-glass-bg)] transition-colors"
+                >
+                  {tLanding('nav.signIn')}
+                </Link>
                 <Button
-                  className="ls-cta-hero mt-3 h-14 w-full px-8 text-[1.02rem]"
+                  className="ls-cta-hero mt-2 h-14 w-full px-8 text-[1.02rem]"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     openBookingModal();
@@ -236,22 +242,21 @@ export function SiteHeader({
   }
 
   if (mode === 'auth') {
+    const showAdminAuthBadge = pathname?.startsWith('/admin') ?? false;
+    // Mirror the Footer aesthetic so the chrome reads as a single, cohesive
+    // frame around the auth card (same translucent background + hairline rule).
     return (
       <header
-        className={`sticky top-0 z-50 shrink-0 transition-all duration-500 ${
+        className={`sticky top-0 z-50 shrink-0 border-b border-gray-200 dark:border-white/5 bg-white/50 dark:bg-transparent backdrop-blur-sm transition-opacity duration-500 ${
           headerLoaded ? 'opacity-100' : 'opacity-0'
-        } ${
-          scrolled
-            ? 'border-b border-[var(--fs-rule)]/60 bg-white/90 dark:bg-[var(--fs-bg-base)]/85 backdrop-blur-2xl backdrop-saturate-180 shadow-[0_2px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_2px_16px_rgba(0,0,0,0.4),0_1px_0_rgba(255,255,255,0.06)_inset]'
-            : 'border-b border-transparent bg-transparent backdrop-blur-0 shadow-none'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-14 sm:h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <Logo size="md" />
-            {showTeamBadge && (
+            {showAdminAuthBadge && (
               <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full">
-                Team
+                {tLanding('admin.shell.headerBadge')}
               </span>
             )}
           </Link>
@@ -262,29 +267,22 @@ export function SiteHeader({
   }
 
   if (mode === 'app') {
-    const isTeam = pathname?.startsWith('/team');
-    const homeHref = isTeam ? '/team/dashboard' : '/dashboard';
-    const appChromeStyle = {
-      background:
-        resolvedTheme === 'dark'
-          ? 'rgba(20, 22, 34, 0.82)'
-          : 'rgba(255, 255, 255, 0.86)',
-      borderBottom:
-        resolvedTheme === 'dark'
-          ? '1px solid rgba(255, 255, 255, 0.08)'
-          : '1px solid rgba(18, 10, 34, 0.08)',
-      boxShadow:
-        resolvedTheme === 'dark'
-          ? '0 8px 20px rgba(2, 6, 23, 0.24)'
-          : '0 10px 28px rgba(18, 10, 34, 0.06)',
-      backdropFilter: 'blur(20px) saturate(160%)',
-      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-    } as const;
-
+    const isTeam = pathname?.startsWith('/admin');
+    const homeHref = isTeam ? '/admin/dashboard' : '/dashboard';
+    // Use Tailwind dark: variants instead of an inline style derived from
+    // useTheme().resolvedTheme — the inline boot script in app/layout.tsx
+    // sets html.dark synchronously before hydration, so CSS-class theming
+    // paints correctly on first frame and avoids the SSR ('light') →
+    // hydration ('dark') swap that left this header stuck on the light
+    // chrome. Equivalent to the prior tokens; nothing else changes.
     return (
       <header
-        className="fixed top-0 left-0 right-0 z-[100] h-16"
-        style={appChromeStyle}
+        className="fixed top-0 left-0 right-0 z-[100] h-16 border-b
+          border-[rgba(18,10,34,0.08)] bg-[rgba(255,255,255,0.86)]
+          shadow-[0_10px_28px_rgba(18,10,34,0.06)]
+          backdrop-blur-[20px] backdrop-saturate-[160%]
+          dark:border-white/[0.08] dark:bg-[rgba(20,22,34,0.82)]
+          dark:shadow-[0_8px_20px_rgba(2,6,23,0.24)]"
       >
         <div className="w-full h-full px-4 lg:px-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -305,18 +303,20 @@ export function SiteHeader({
               </span>
               {isTeam && (
                 <span className="px-2 py-0.5 text-[0.625rem] font-medium bg-[var(--purple)]/10 text-[var(--purple)] rounded-full hidden sm:block">
-                  Team
+                  {tLanding('admin.shell.headerBadge')}
                 </span>
               )}
             </Link>
-            <a
-              href="https://library.flowstarter.dev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-[var(--fs-ink)]/50 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors no-underline"
-            >
-              Templates
-            </a>
+            {!isTeam && (
+              <a
+                href="https://library.flowstarter.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-[var(--fs-ink)]/50 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-white/5 transition-colors no-underline"
+              >
+                Templates
+              </a>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
@@ -350,6 +350,13 @@ export function SiteHeader({
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>
+          <Button
+            asChild
+            tone="secondary"
+            className="hidden h-9 px-4 py-2 text-xs sm:inline-flex sm:h-10 sm:text-sm"
+          >
+            <Link href="/login">{tLanding('nav.signIn')}</Link>
+          </Button>
           <Button
             onClick={openBookingModal}
             className="h-9 px-4 py-2 text-xs sm:h-10 sm:text-sm"

@@ -7,7 +7,7 @@
  * @module lib/api-auth
  */
 
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { createSupabaseServerClient } from '@/supabase-clients/server';
 
@@ -73,7 +73,7 @@ export async function requireAuth(request?: Request): Promise<AuthResult> {
     const secret = request.headers.get('x-e2e-secret');
     const userId = request.headers.get('x-e2e-user-id');
     if (secret === process.env.E2E_SECRET && userId) {
-      console.log('[API Auth] E2E bypass — userId:', userId);
+      // Do not log user ids — keeps dev logs safe for screenshots / CI artifacts.
       return { authenticated: true, userId, getToken: async () => null };
     }
   }
@@ -183,10 +183,52 @@ export async function requireAuthWithSupabase(request?: Request): Promise<
 }
 
 /**
- * Require team-or-admin role for /api/team/* routes.
+ * Domains whose primary verified email auto-resolves to the `admin` role.
+ * Lets new internal hires hit /admin/* without a manual Clerk metadata edit.
+ */
+const TEAM_EMAIL_DOMAINS = new Set([
+  'flowstarter.net',
+  'flowstarter.app',
+  'flowstarter.dev',
+  'flowstarter.com',
+]);
+
+function emailDomainRole(email: string | undefined): string | undefined {
+  if (!email) return undefined;
+  const domain = email.split('@')[1]?.toLowerCase();
+  return domain && TEAM_EMAIL_DOMAINS.has(domain) ? 'admin' : undefined;
+}
+
+/**
+ * Resolve a Clerk user's effective role.
  *
- * Reads role from Clerk session claims first, falls back to publicMetadata.
- * Mirrors the inline checks in app/api/team/clients and projects/[id].
+ * Order: session-claim metadata → publicMetadata.role → flowstarter-domain
+ * email fallback. Returns undefined when the user has no team-level role.
+ */
+export async function resolveUserRole(
+  userId: string
+): Promise<string | undefined> {
+  const { sessionClaims } = await auth();
+  const claimRole = (
+    sessionClaims?.metadata as { role?: string } | undefined
+  )?.role?.toLowerCase();
+  if (claimRole) return claimRole;
+
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  const metaRole = (
+    user.publicMetadata as { role?: string } | undefined
+  )?.role?.toLowerCase();
+  if (metaRole) return metaRole;
+
+  const primaryEmail = user.emailAddresses.find(
+    (e) => e.id === user.primaryEmailAddressId
+  )?.emailAddress;
+  return emailDomainRole(primaryEmail);
+}
+
+/**
+ * Require team-or-admin role for /api/admin/* routes.
  */
 export type TeamAuthResult =
   | { authorized: true; userId: string; role: 'team' | 'admin' }
@@ -194,22 +236,12 @@ export type TeamAuthResult =
 
 export async function requireTeamAuth(): Promise<TeamAuthResult> {
   try {
-    const { userId, sessionClaims } = await auth();
+    const { userId } = await auth();
     if (!userId) {
       return { authorized: false, response: unauthorizedResponse() };
     }
 
-    let role = (
-      sessionClaims?.metadata as { role?: string } | undefined
-    )?.role?.toLowerCase();
-
-    if (!role) {
-      const user = await currentUser();
-      role = (
-        user?.publicMetadata as { role?: string } | undefined
-      )?.role?.toLowerCase();
-    }
-
+    const role = await resolveUserRole(userId);
     if (role !== 'team' && role !== 'admin') {
       return {
         authorized: false,

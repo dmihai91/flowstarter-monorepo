@@ -4,14 +4,16 @@ const CONFIG_FILE = new URL('', import.meta.url).pathname;
 export default {
   typescript: { ignoreBuildErrors: true },
   // Allow LAN access during dev (IDE browser MCP, mobile testing, etc.)
-  allowedDevOrigins: ['192.168.3.210', '127.0.0.1', 'localhost'],
+  // (see the merged allowedDevOrigins below, near turbopack config)
   async headers() {
     return [
       // Authenticated app surface — never cache, must revalidate every hit.
       {
-        source: '/:path(dashboard|team|login|sign-up|forgot-password|reset-password|verify|sso-callback)(.*)',
+        source: '/:path(dashboard|admin|login|sign-up|forgot-password|reset-password|verify)(.*)',
         headers: [
           { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+          { key: 'Accept-CH', value: 'Sec-CH-Prefers-Color-Scheme' },
+          { key: 'Critical-CH', value: 'Sec-CH-Prefers-Color-Scheme' },
         ],
       },
       // Auth/session API endpoints — never cache.
@@ -53,7 +55,30 @@ export default {
             key: 'Cache-Control',
             value: 'public, s-maxage=600, stale-while-revalidate=86400',
           },
+          {
+            key: 'Accept-CH',
+            value: 'Sec-CH-Prefers-Color-Scheme',
+          },
+          {
+            key: 'Critical-CH',
+            value: 'Sec-CH-Prefers-Color-Scheme',
+          },
         ],
+      },
+    ];
+  },
+  // Astro template previews ship as static directory bundles in
+  // /public/preview/{slug}/. Next.js doesn't auto-serve a directory's
+  // index.html, so map directory-style URLs onto their actual file. Concrete
+  // assets (anything with a file extension like _astro/*.css) are still
+  // served straight from /public because afterFiles rewrites only kick in
+  // when no static match exists.
+  async rewrites() {
+    return [
+      { source: '/preview/:slug', destination: '/preview/:slug/index.html' },
+      {
+        source: '/preview/:slug/:rest+',
+        destination: '/preview/:slug/:rest+/index.html',
       },
     ];
   },
@@ -120,7 +145,7 @@ export default {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  allowedDevOrigins: ['flowstarter.dev', 'editor.flowstarter.dev', 'library.flowstarter.dev'],
+  allowedDevOrigins: ['192.168.3.119', '127.0.0.1', 'localhost', 'flowstarter.dev', 'editor.flowstarter.dev', 'library.flowstarter.dev'],
   turbopack: {
     resolveExtensions: ['.tsx', '.ts', '.jsx', '.js'],
   },

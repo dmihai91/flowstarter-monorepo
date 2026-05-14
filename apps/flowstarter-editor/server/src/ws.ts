@@ -1,4 +1,4 @@
-import { Cause, Effect, Layer, Queue, Ref, Schema, Stream } from "effect";
+import { Cause, Effect, Layer, Queue, Ref, Schema, Stream, Option } from "effect";
 import {
   type AuthAccessStreamEvent,
   AuthSessionId,
@@ -13,6 +13,8 @@ import {
   OrchestrationGetSnapshotError,
   OrchestrationGetTurnDiffError,
   ORCHESTRATION_WS_METHODS,
+  ProjectListWorkspaceEntriesError,
+  ProjectReadWorkspaceFileError,
   ProjectSearchEntriesError,
   ProjectWriteFileError,
   OrchestrationReplayEventsError,
@@ -664,6 +666,64 @@ const makeWsRpcLayer = (currentSessionId: AuthSessionId) =>
                     message: `Failed to search workspace entries: ${cause.detail}`,
                     cause,
                   }),
+              ),
+            ),
+            { "rpc.aggregate": "workspace" },
+          ),
+        [WS_METHODS.projectsListWorkspaceEntries]: (input) =>
+          observeRpcEffect(
+            WS_METHODS.projectsListWorkspaceEntries,
+            Effect.gen(function* () {
+              const roleOpt = yield* sessions.getRoleForSession(currentSessionId);
+              if (Option.isNone(roleOpt) || roleOpt.value !== "owner") {
+                return yield* Effect.fail(
+                  new ProjectListWorkspaceEntriesError({
+                    message: "Team admin access is required to list workspace files.",
+                  }),
+                );
+              }
+              return yield* workspaceEntries.list(input);
+            }).pipe(
+              Effect.catchTag("WorkspaceEntriesError", (cause) =>
+                Effect.fail(
+                  new ProjectListWorkspaceEntriesError({
+                    message: `Failed to list workspace entries: ${cause.detail}`,
+                    cause,
+                  }),
+                ),
+              ),
+            ),
+            { "rpc.aggregate": "workspace" },
+          ),
+        [WS_METHODS.projectsReadWorkspaceFile]: (input) =>
+          observeRpcEffect(
+            WS_METHODS.projectsReadWorkspaceFile,
+            Effect.gen(function* () {
+              const roleOpt = yield* sessions.getRoleForSession(currentSessionId);
+              if (Option.isNone(roleOpt) || roleOpt.value !== "owner") {
+                return yield* Effect.fail(
+                  new ProjectReadWorkspaceFileError({
+                    message: "Team admin access is required to read workspace files.",
+                  }),
+                );
+              }
+              return yield* workspaceFileSystem.readWorkspaceFile(input);
+            }).pipe(
+              Effect.catchTag("WorkspacePathOutsideRootError", (cause) =>
+                Effect.fail(
+                  new ProjectReadWorkspaceFileError({
+                    message: "Workspace file path must stay within the project root.",
+                    cause,
+                  }),
+                ),
+              ),
+              Effect.catchTag("WorkspaceFileSystemError", (cause) =>
+                Effect.fail(
+                  new ProjectReadWorkspaceFileError({
+                    message: `Failed to read workspace file: ${cause.detail}`,
+                    cause,
+                  }),
+                ),
               ),
             ),
             { "rpc.aggregate": "workspace" },

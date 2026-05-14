@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireTeamAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
-import {
-  generateSiteCopy,
-  type SiteCopyInput,
-} from '@/lib/ai/generate-site-copy';
+import { generateSiteCopy, type SiteCopyInput } from '@/lib/ai/site-copy';
 
 /**
  * POST /api/team/projects/[id]/ai/generate-copy

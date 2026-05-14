@@ -8,6 +8,7 @@ import { normalizeModelSlug, resolveSelectableModel } from "@flowstarter/editor-
 import { getComposerProviderState } from "./components/chat/composerProviderRegistry";
 import { UnifiedSettings } from "@flowstarter/editor-contracts/settings";
 import {
+  CLAUDE_EDITOR_AUTO_MODEL_SLUG,
   getDefaultServerModel,
   getProviderModels,
   resolveSelectableProvider,
@@ -139,6 +140,13 @@ export function resolveAppModelSelection(
   selectedModel: string | null | undefined,
 ): string {
   const resolvedProvider = resolveSelectableProvider(providers, provider);
+  if (
+    resolvedProvider === "claudeAgent" &&
+    typeof selectedModel === "string" &&
+    selectedModel.trim() === CLAUDE_EDITOR_AUTO_MODEL_SLUG
+  ) {
+    return CLAUDE_EDITOR_AUTO_MODEL_SLUG;
+  }
   const options = getAppModelOptions(settings, providers, resolvedProvider, selectedModel);
   return (
     resolveSelectableModel(resolvedProvider, selectedModel, options) ??

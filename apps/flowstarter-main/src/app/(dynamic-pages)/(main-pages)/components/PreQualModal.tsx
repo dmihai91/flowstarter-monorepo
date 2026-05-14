@@ -12,6 +12,14 @@ const OPTIONS_WITH_PRICE = new Set(['starter', 'pro', 'custom']);
 type OptionId = (typeof OPTION_IDS)[number];
 type Step = 'select' | 'calendar' | 'confirmed';
 
+/** Ensures paid tiers always read with a clear qualifier (handles stale bundles / i18n drift). */
+function formatPrequalTierPrice(id: OptionId, price: string): string {
+  if (id === 'custom') return price;
+  const t = price.trim();
+  if (/^(from|starting\s+from)\s/i.test(t)) return t;
+  return `Starting from ${t}`;
+}
+
 interface PreQualModalProps {
   open: boolean;
   onClose: () => void;
@@ -38,7 +46,7 @@ export function PreQualModal({
         name: t(`landing.prequal.options.${id}.name`),
         desc: t(`landing.prequal.options.${id}.desc`),
         price: OPTIONS_WITH_PRICE.has(id)
-          ? t(`landing.prequal.options.${id}.price`)
+          ? formatPrequalTierPrice(id, t(`landing.prequal.options.${id}.price`))
           : null,
       })),
     [t]

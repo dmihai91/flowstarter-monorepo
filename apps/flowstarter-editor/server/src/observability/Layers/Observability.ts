@@ -36,7 +36,6 @@ export const ObservabilityLive = Layer.unwrap(
                   serviceName: config.otlpServiceName,
                   attributes: {
                     "service.runtime": "t3-server",
-                    "service.mode": config.mode,
                   },
                 },
               });
@@ -74,7 +73,6 @@ export const ObservabilityLive = Layer.unwrap(
               serviceName: config.otlpServiceName,
               attributes: {
                 "service.runtime": "t3-server",
-                "service.mode": config.mode,
               },
             },
           }).pipe(Layer.provideMerge(otlpSerializationLayer));

@@ -15,6 +15,8 @@ import { SessionCredentialService } from "./Services/SessionCredentialService.ts
 import { respondToAuthError } from "./http.ts";
 import { deriveAuthClientMetadata } from "./utils.ts";
 
+import { isLoopbackHostname } from "../http.ts";
+
 import {
   ClerkGateConfigError,
   ClerkGateForbidden,
@@ -44,19 +46,42 @@ type ClerkMeOutcome =
   | { kind: "config"; reason: string }
   | { kind: "error"; reason: string };
 
-function buildLoginUrl(currentUrl: string): string {
-  // Default to the satellite-hosted Clerk sign-in on the same root domain
-  // as the editor (`flowstarter.net`) so the cookie set by Clerk is
-  // visible at every `{slug}.flowstarter.net` afterwards. Override via env
-  // for staging or for the legacy `flowstarter.dev/login` flow.
-  const base =
+function buildLoginUrl(currentUrl: string, editorRequestUrl: string): string {
+  let base =
     process.env.CLERK_SIGN_IN_URL ?? "https://flowstarter.net/sign-in";
+  if (process.env.EDITOR_ASSUME_MAIN_ON_SAME_HOST === "true") {
+    base = rewriteLoopbackClerkSignInUrlForLanDevice(base, editorRequestUrl);
+  }
   try {
     const target = new URL(base);
     target.searchParams.set("redirect_url", currentUrl);
     return target.toString();
   } catch {
     return base;
+  }
+}
+
+/**
+ * When the sign-in URL targets loopback but the browser reached the editor on a
+ * LAN hostname, rewrite the sign-in host to match the editor request. Gated by
+ * `EDITOR_ASSUME_MAIN_ON_SAME_HOST` so we never do this accidentally in prod.
+ *
+ * @internal Exported for unit tests.
+ */
+export function rewriteLoopbackClerkSignInUrlForLanDevice(
+  signInUrlOrBase: string,
+  editorRequestUrl: string,
+): string {
+  try {
+    const signIn = new URL(signInUrlOrBase);
+    const req = new URL(editorRequestUrl);
+    if (!isLoopbackHostname(signIn.hostname) || isLoopbackHostname(req.hostname)) {
+      return signInUrlOrBase;
+    }
+    signIn.hostname = req.hostname;
+    return signIn.toString();
+  } catch {
+    return signInUrlOrBase;
   }
 }
 
@@ -82,6 +107,98 @@ function reconstructRequestUrl(
   return `${proto}://${host}${request.url}`;
 }
 
+/**
+ * Lowercase header name as stored by {@link clerkHeadersToRecord}.
+ * The SPA sends the canonical `X-Editor-Return-Url` form.
+ */
+export const EDITOR_CLERK_LOGIN_RETURN_HEADER = "x-editor-return-url";
+
+function firstHeaderTrimmed(
+  headers: Record<string, string | undefined>,
+  name: string,
+): string | undefined {
+  const raw = headers[name];
+  if (typeof raw !== "string") return undefined;
+  const v = raw.trim();
+  if (!v.length) return undefined;
+  const comma = v.indexOf(",");
+  return comma >= 0 ? v.slice(0, comma).trim() : v;
+}
+
+function effectivePort(url: URL): string {
+  if (url.port) return url.port;
+  return url.protocol === "https:" ? "443" : "80";
+}
+
+function originsMatchForSafeReturn(request: URL, candidate: URL): boolean {
+  if (request.origin === candidate.origin) return true;
+  if (request.protocol !== candidate.protocol) return false;
+  if (effectivePort(request) !== effectivePort(candidate)) return false;
+  if (!isLoopbackHostname(request.hostname) || !isLoopbackHostname(candidate.hostname)) {
+    return false;
+  }
+  return true;
+}
+
+function isUnderApiPath(pathname: string): boolean {
+  return pathname === "/api" || pathname.startsWith("/api/");
+}
+
+function tryParseSafeHttpReturnUrl(raw: string): URL | null {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return null;
+  }
+  if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+  if (!u.hostname) return null;
+  return u;
+}
+
+function pickFirstSafeReturnUrl(
+  request: URL,
+  rawCandidate: string | undefined,
+): URL | null {
+  if (!rawCandidate) return null;
+  const parsed = tryParseSafeHttpReturnUrl(rawCandidate);
+  if (!parsed) return null;
+  if (!originsMatchForSafeReturn(request, parsed)) return null;
+  if (isUnderApiPath(parsed.pathname)) return null;
+  return parsed;
+}
+
+/**
+ * Resolves the absolute URL used as Clerk `redirect_url` after sign-in.
+ * Never trusts cross-origin values: only the request origin (or matching
+ * loopback hostnames with the same port) and a non-`/api/*` path.
+ */
+export function resolveEditorClerkLoginReturnUrl(
+  requestFullUrl: string,
+  headers: Record<string, string | undefined>,
+): string {
+  let request: URL;
+  try {
+    request = new URL(requestFullUrl);
+  } catch {
+    return "http://localhost/";
+  }
+
+  const fromClientHeader = pickFirstSafeReturnUrl(
+    request,
+    firstHeaderTrimmed(headers, EDITOR_CLERK_LOGIN_RETURN_HEADER),
+  );
+  if (fromClientHeader) return fromClientHeader.href;
+
+  const fromReferer = pickFirstSafeReturnUrl(
+    request,
+    firstHeaderTrimmed(headers, "referer"),
+  );
+  if (fromReferer) return fromReferer.href;
+
+  return new URL("/", request).href;
+}
+
 function clerkHeadersToRecord(
   request: HttpServerRequest.HttpServerRequest,
 ): Record<string, string | undefined> {
@@ -100,6 +217,7 @@ async function runClerkMe(
   url: string,
   headers: Record<string, string | undefined>,
   currentSlug: string | null,
+  loginReturnUrl: string,
 ): Promise<ClerkMeOutcome> {
   try {
     const { userId } = await verifyClerkRequest({ headers, url, method: "GET" });
@@ -110,7 +228,7 @@ async function runClerkMe(
       return {
         kind: "unauthenticated",
         reason: error.message,
-        loginUrl: buildLoginUrl(url),
+        loginUrl: buildLoginUrl(loginReturnUrl, url),
       };
     }
     if (error instanceof ClerkGateForbidden) {
@@ -143,8 +261,11 @@ export const clerkMeRouteLayer = HttpRouter.add(
     const url = reconstructRequestUrl(request);
     const headers = clerkHeadersToRecord(request);
     const currentSlug = resolveCurrentSlug(request);
+    const loginReturnUrl = resolveEditorClerkLoginReturnUrl(url, headers);
 
-    const outcome = yield* Effect.promise(() => runClerkMe(url, headers, currentSlug));
+    const outcome = yield* Effect.promise(() =>
+      runClerkMe(url, headers, currentSlug, loginReturnUrl),
+    );
 
     if (outcome.kind === "ok") {
       const body: ClerkMeOk = {
@@ -194,6 +315,7 @@ async function runAutoPairIdentity(
   url: string,
   headers: Record<string, string | undefined>,
   currentSlug: string | null,
+  loginReturnUrl: string,
 ): Promise<AutoPairOutcome> {
   try {
     const { userId } = await verifyClerkRequest({ headers, url, method: "POST" });
@@ -211,7 +333,7 @@ async function runAutoPairIdentity(
       return {
         kind: "unauthenticated",
         reason: error.message,
-        loginUrl: buildLoginUrl(url),
+        loginUrl: buildLoginUrl(loginReturnUrl, url),
       };
     }
     if (error instanceof ClerkGateForbidden) {
@@ -254,9 +376,10 @@ export const clerkAutoPairRouteLayer = HttpRouter.add(
     const url = reconstructRequestUrl(request);
     const headers = clerkHeadersToRecord(request);
     const currentSlug = resolveCurrentSlug(request);
+    const loginReturnUrl = resolveEditorClerkLoginReturnUrl(url, headers);
 
     const outcome = yield* Effect.promise(() =>
-      runAutoPairIdentity(url, headers, currentSlug),
+      runAutoPairIdentity(url, headers, currentSlug, loginReturnUrl),
     );
 
     if (outcome.kind === "unauthenticated") {

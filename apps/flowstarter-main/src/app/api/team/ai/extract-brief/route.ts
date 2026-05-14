@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireTeamAuth } from '@/lib/api-auth';
-import { enrichProject } from '@/lib/ai/enrich-project';
+import { enrichProject } from '@/lib/ai/extract-brief';
 
 /**
  * POST /api/team/ai/extract-brief

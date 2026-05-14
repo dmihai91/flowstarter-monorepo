@@ -1,4 +1,4 @@
-import type { CompleteResult } from '@/lib/ai/enrich-project';
+import type { CompleteResult } from '@/lib/ai/extract-brief';
 import type { IntakeInput, ProjectBrief } from './contracts';
 
 function normalizeOfferings(offerings: string): string[] {

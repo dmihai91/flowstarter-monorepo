@@ -8,7 +8,7 @@ const ASSETS_BASE =
 
 /**
  * Returns the R2 URL for a template thumbnail.
- * @param slug  e.g. 'local-business-1' or 'coach-pro'
+ * @param slug  e.g. 'dorin-portfolio'
  * @param dark  whether to use the dark variant (if available)
  */
 export function templateThumbnailUrl(slug: string, dark = false): string {

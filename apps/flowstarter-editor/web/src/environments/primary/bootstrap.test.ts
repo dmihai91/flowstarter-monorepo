@@ -60,7 +60,6 @@ describe("environmentBootstrap", () => {
       location: {
         origin: "http://localhost:3773",
       },
-      desktopBridge: undefined,
     });
     writePrimaryEnvironmentDescriptor({
       environmentId: EnvironmentId.make("environment-local"),
@@ -145,26 +144,4 @@ describe("environmentBootstrap", () => {
     expect(fetchMock).toHaveBeenCalledWith("http://localhost:5735/.well-known/t3/environment");
   });
 
-  it("uses the vite proxy for desktop-managed loopback descriptor requests during local dev", async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(BASE_ENVIRONMENT));
-    vi.stubGlobal("fetch", fetchMock);
-    vi.stubEnv("VITE_DEV_SERVER_URL", "http://127.0.0.1:5733");
-    vi.stubGlobal("window", {
-      location: new URL("http://127.0.0.1:5733/"),
-      history: {
-        replaceState: vi.fn(),
-      },
-      desktopBridge: {
-        getLocalEnvironmentBootstrap: () => ({
-          label: "Local environment",
-          httpBaseUrl: "http://127.0.0.1:3773",
-          wsBaseUrl: "ws://127.0.0.1:3773",
-          bootstrapToken: "desktop-bootstrap-token",
-        }),
-      },
-    });
-
-    await expect(resolveInitialPrimaryEnvironmentDescriptor()).resolves.toEqual(BASE_ENVIRONMENT);
-    expect(fetchMock).toHaveBeenCalledWith("http://127.0.0.1:5733/.well-known/t3/environment");
-  });
 });

@@ -1,0 +1,123 @@
+{
+  "brand": {
+    "name": "Maya Okafor Coaching",
+    "initial": "M",
+    "tagline": "Executive coaching for senior product leaders.",
+    "accent": "#4D5DD9",
+    "accentSoft": "#8794ed",
+    "ink": "#120a22"
+  },
+  "hero": {
+    "eyebrow": "Executive coaching · By referral",
+    "headlineLead": "Senior product leaders deserve",
+    "headlineFlourish": "thinking partners,",
+    "headlineTail": "not playbooks.",
+    "lede": "I work with VPs of Product, Heads of Design, and founder-CEOs through six-month coaching engagements. Evidence-based, deeply confidential, and structured around the questions you actually can't bring into the room.",
+    "primaryCtaLabel": "Book a discovery call",
+    "primaryCtaHref": "#contact",
+    "secondaryCtaLabel": "Read the approach",
+    "secondaryCtaHref": "#approach",
+    "stats": [
+      { "label": "ICF-credentialed", "value": "PCC, since 2019" },
+      { "label": "Engagements", "value": "72 completed" },
+      { "label": "Average tenure", "value": "6 months" }
+    ]
+  },
+  "approach": {
+    "overline": "The approach",
+    "headline": "Coaching that compounds, not therapy dressed up as strategy.",
+    "items": [
+      {
+        "title": "One real question per session",
+        "body": "Each conversation starts from a single question you bring in. We sit with it. We don't triage."
+      },
+      {
+        "title": "Evidence over vibes",
+        "body": "Every framework I use has academic grounding — adult development, immunity-to-change, polarity mapping. No proprietary acronyms."
+      },
+      {
+        "title": "Confidential, on the record",
+        "body": "Sessions are private. Notes are yours. I don't carry your context into other rooms or share patterns with your employer."
+      },
+      {
+        "title": "Practice, not performance",
+        "body": "The point isn't the session — it's the four hundred hours between sessions. Small experiments, run in the wild."
+      }
+    ]
+  },
+  "engagements": {
+    "overline": "Engagements",
+    "headline": "Three shapes of working together.",
+    "items": [
+      {
+        "tag": "Six-month",
+        "title": "The full container",
+        "meta": "26 sessions · weekly · €14,400",
+        "body": "The default engagement. Twenty-six 75-minute sessions, weekly, with two review checkpoints. Best for leaders inside a real transition.",
+        "bullets": [
+          "Weekly 75-minute coaching session",
+          "Mid-engagement review (month 3)",
+          "Closing retrospective + 90-day plan",
+          "Async voice notes between sessions"
+        ]
+      },
+      {
+        "tag": "Three-month",
+        "title": "The focused container",
+        "meta": "12 sessions · weekly · €7,800",
+        "body": "For a specific question with a specific deadline — a launch, a restructure, a high-stakes negotiation. Twelve sessions, designed to close cleanly.",
+        "bullets": [
+          "Weekly 75-minute coaching session",
+          "Pre-engagement scoping call",
+          "One async-only safety net session"
+        ]
+      },
+      {
+        "tag": "By exception",
+        "title": "The single session",
+        "meta": "1 session · 90 minutes · €1,200",
+        "body": "Single 90-minute deep-dive for past clients only. Bring one stuck question. You leave with one experiment and a written summary inside 48 hours.",
+        "bullets": [
+          "90-minute deep-dive",
+          "Written summary within 48h",
+          "Past clients only"
+        ]
+      }
+    ]
+  },
+  "about": {
+    "overline": "About",
+    "headlineLead": "Coach, ex-operator, current",
+    "headlineFlourish": "practitioner.",
+    "paragraphs": [
+      "I spent twelve years inside product organisations — most recently as VP of Product at Helio, before that leading design at two Series-B startups. I've hired, fired, restructured, and been restructured.",
+      "I trained at the Co-Active Training Institute, hold the PCC credential from the International Coaching Federation, and continue weekly supervision with a senior coach.",
+      "I'm based in Lisbon. I work in English and (slowly) Portuguese."
+    ],
+    "facts": [
+      { "label": "Credentials", "value": "ICF PCC · CTI Certified · 2019" },
+      { "label": "Currently coaching", "value": "8 active engagements" },
+      { "label": "Past clients include", "value": "Stripe · Notion · Linear · Vercel · Pitch · Figma alumni" },
+      { "label": "Pro bono", "value": "2 places held for first-time founders of colour" },
+      { "label": "Languages", "value": "English, Portuguese (B1)" }
+    ]
+  },
+  "contact": {
+    "overline": "Discovery call",
+    "headlineLead": "Thirty minutes, free,",
+    "headlineFlourish": "no pitch.",
+    "lede": "The discovery call exists for both of us. You describe what you're sitting with; I tell you whether I'm the right coach for it. About a third of the time I'm not, and I'll point you at someone better.",
+    "email": "hello@mayaokafor.coach",
+    "calLink": "https://cal.com/mayaokafor/discovery",
+    "calLabel": "Book directly via Cal.com",
+    "footnote": "I respond inside two working days. Lisbon time, GMT+0."
+  },
+  "footer": {
+    "tagline": "Built with care · 2026",
+    "links": [
+      { "label": "Email", "href": "mailto:hello@mayaokafor.coach" },
+      { "label": "Book a call", "href": "https://cal.com/mayaokafor/discovery" },
+      { "label": "LinkedIn", "href": "https://linkedin.com/in/mayaokafor" }
+    ]
+  }
+}

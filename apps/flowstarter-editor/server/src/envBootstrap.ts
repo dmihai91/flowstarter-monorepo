@@ -68,12 +68,51 @@ function loadKnownEnvFiles(): void {
   }
 }
 
+/**
+ * Map Next.js-style env names (NEXT_PUBLIC_*) onto the unprefixed names
+ * the editor server's @clerk/backend integration expects. We never set
+ * an alias if the canonical name is already present — explicit always
+ * wins.
+ */
+function applyEnvAliases(): void {
+  if (
+    !process.env.CLERK_PUBLISHABLE_KEY &&
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  ) {
+    process.env.CLERK_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  }
+  if (!process.env.SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    process.env.SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  }
+}
+
+/**
+ * Default CLERK_SIGN_IN_URL based on whether we're running on localhost
+ * (point clients at the main app's `/login` on the same host) or in
+ * production (Clerk-hosted satellite sign-in on flowstarter.net).
+ *
+ * Caller can always override by setting CLERK_SIGN_IN_URL explicitly.
+ */
+function applyClerkSignInDefault(): void {
+  if (process.env.CLERK_SIGN_IN_URL) return;
+  const siteUrl = [process.env.NEXT_PUBLIC_SITE_URL, process.env.NEXT_PUBLIC_APP_URL].find(
+    (u) => typeof u === "string" && u.trim().startsWith("http"),
+  )?.trim();
+  if (siteUrl) {
+    process.env.CLERK_SIGN_IN_URL = `${siteUrl.replace(/\/+$/, "")}/login`;
+  } else {
+    process.env.CLERK_SIGN_IN_URL = "http://localhost:3000/login";
+  }
+}
+
 let bootstrapped = false;
 
 export function bootstrapEditorEnv(): void {
   if (bootstrapped) return;
   bootstrapped = true;
   loadKnownEnvFiles();
+  applyEnvAliases();
+  applyClerkSignInDefault();
 }
 
 // Run on import so simply `import "./envBootstrap"` is enough.

@@ -2,7 +2,6 @@
 
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
 import { Button } from '@/components/ui/unified-button';
-import { setIsErrorPageFlag, useErrorPage } from '@/contexts/ErrorPageContext';
 import { Logo } from '@/components/ui/logo';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
@@ -16,17 +15,12 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const { setIsErrorPage } = useErrorPage();
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
-  setIsErrorPageFlag(true);
 
   useEffect(() => {
     console.error('Application error:', error);
-    return () => {
-      setIsErrorPage(false);
-    };
-  }, [error, setIsErrorPage]);
+  }, [error]);
 
   return (
     <ErrorPageLayout>
@@ -76,7 +70,7 @@ export default function Error({
             <RefreshCw className="w-4 h-4" />
             {t('errors.500.reload')}
           </Button>
-          <Button tone="secondary" asChild className="gap-2">
+          <Button asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
               {t('errors.500.goHome')}

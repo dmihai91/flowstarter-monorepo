@@ -1,9 +1,28 @@
 'use client';
 
-import { useBookingModal } from './booking-modal-store';
+import { useState } from 'react';
+import { Button } from '@/components/ui/unified-button';
+import { useI18n } from '@/lib/i18n';
+import { LANDING_COPY } from '../landing-copy';
+import { PreQualModal } from './PreQualModal';
+import { useEcommerceWaitlist } from './ecommerce-waitlist-store';
+
+// Storage tiers are not advertised on the concierge offer.
+const STORAGE_BY_PLAN: Record<string, string> = {};
 
 export function LandingPricing() {
-  const openBookingModal = useBookingModal((s) => s.open);
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+  const pricing = LANDING_COPY.pricing;
+  const openWaitlist = useEcommerceWaitlist((s) => s.open);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
+  const handlePlanClick = (planName: string) => {
+    setSelectedPlan(planName);
+    setModalOpen(true);
+  };
 
   return (
     <section id="pricing" className="ls-scope ls-section ls-section--pad">
@@ -13,54 +32,152 @@ export function LandingPricing() {
 
       <div className="ls-container">
         <div className="text-center max-w-3xl mx-auto">
-          <div className="ls-eyebrow inline-flex items-center justify-center gap-3">
-            <span className="num">06</span>
-            <span>Pricing</span>
+          <div
+            className="ls-eyebrow inline-flex items-center justify-center gap-3"
+            style={{ justifyContent: 'center' }}
+          >
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
+            <span className="num">{t('landing.pricing.eyebrow')}</span>
+            <span
+              aria-hidden
+              style={{
+                display: 'inline-block',
+                width: '28px',
+                height: '1px',
+                background: 'var(--ls-ink-faint)',
+              }}
+            />
           </div>
 
           <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
-            <span className="line">Simple pricing for service businesses.</span>
+            <span className="line">{t('landing.pricing.headlinePrefix')}</span>
+            <span className="line flourish mt-2">
+              {t('landing.pricing.headlineFlourish')}
+            </span>
           </h2>
+
+          <p className="ls-body ls-body--lead mt-7 mx-auto">
+            {pricing.subtitle}
+          </p>
         </div>
 
-        <div className="mx-auto mt-14 max-w-2xl">
-          <article className="ls-card p-7 md:p-8">
-            <h3 className="text-2xl font-semibold text-[var(--ls-ink)]">
-              Premium Website - from EUR 899 + EUR 39/month
-            </h3>
-            <ul className="mt-6 space-y-2 text-sm text-[var(--ls-ink-dim)]">
-              <li>Custom design and build</li>
-              <li>Up to 8 pages</li>
-              <li>Smart Editor access with team review</li>
-              <li>Technical setup, launch, and ongoing management</li>
-            </ul>
-            <p className="mt-6 text-sm text-[var(--ls-ink-dim)]">
-              Payment terms: 50% deposit to reserve your slot (EUR 200 is
-              refundable before build begins), 50% on launch.
-            </p>
-            <p className="mt-3 text-sm text-[var(--ls-ink-dim)]">
-              Final price depends on scope.
-            </p>
-            <button
-              type="button"
-              onClick={openBookingModal}
-              className="ls-cta-hero mt-7 inline-flex h-12 items-center justify-center px-6 text-sm"
-            >
-              Book a free 20-min call
-            </button>
-            <div className="mt-7 rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-surface-2)] p-4">
-              <p className="text-xs uppercase tracking-[0.13em] text-[var(--ls-ink-faint)]">
-                Payments - Coming Q3 2026
-              </p>
-              {/* TODO: Add final payments product details after legal and product review. */}
-              <p className="mt-2 text-sm text-[var(--ls-ink-dim)]">
-                Accept payments on your site. This feature is currently in
-                development.
-              </p>
-            </div>
-          </article>
+        <div className="ls-pricing-grid mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+          {pricing.plans.map((plan, i) => {
+            const isHighlighted = plan.recommended === true;
+            const isComingSoon = plan.status === 'coming-soon';
+            const storage = STORAGE_BY_PLAN[plan.name];
+            return (
+              <div
+                key={plan.name}
+                className={`ls-card ls-price-card ${
+                  isHighlighted ? 'ls-price-card--hi' : ''
+                } ${isComingSoon ? 'ls-price-card--soon' : ''}`}
+                style={{
+                  animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
+                    i * 110
+                  }ms both`,
+                }}
+              >
+                {plan.badge && (
+                  <div
+                    className={`ls-price-badge ${
+                      isHighlighted ? 'ls-price-badge--hi' : ''
+                    }`}
+                  >
+                    {isHighlighted && <span className="dot" />}
+                    {plan.badge}
+                  </div>
+                )}
+
+                <div className="ls-price-name">{plan.name}</div>
+                <h3 className="ls-price-label">{plan.label}</h3>
+
+                <div className="ls-price-cost">
+                  <span className="setup">{plan.setupPrice}</span>
+                  <span className="setup-label">setup</span>
+                </div>
+                <p className="ls-price-monthly">{plan.monthlyPrice}</p>
+
+                {storage && (
+                  <div className="ls-price-storage">
+                    <span className="lbl">Storage</span>
+                    <span className="val">{storage}</span>
+                  </div>
+                )}
+
+                <ul className="ls-price-features">
+                  {plan.features.map((feature) => (
+                    <li key={feature}>
+                      <span className="check" aria-hidden>
+                        <svg
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            d="M2 7.5l3 3 7-7"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                {isComingSoon ? (
+                  <Button
+                    onClick={openWaitlist}
+                    className="mt-auto h-[46px] w-full text-[0.9rem]"
+                  >
+                    {plan.cta}
+                  </Button>
+                ) : isHighlighted ? (
+                  <Button
+                    onClick={() => handlePlanClick(plan.name.toLowerCase())}
+                    className="mt-auto h-[46px] w-full text-[0.9rem]"
+                  >
+                    {plan.cta}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => handlePlanClick(plan.name.toLowerCase())}
+                    className="mt-auto h-[46px] w-full text-[0.9rem]"
+                  >
+                    {plan.cta}
+                  </Button>
+                )}
+              </div>
+            );
+          })}
         </div>
+
+        {pricing.socialProof && (
+          <p className="mt-12 mx-auto max-w-2xl text-center text-[var(--ls-ink-dim)] text-[15px] leading-relaxed">
+            {pricing.socialProof}
+          </p>
+        )}
+        <p className="ls-price-note mt-4 mx-auto max-w-2xl text-center text-[13px]">
+          {pricing.note}
+        </p>
       </div>
+
+      <PreQualModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        source="pricing-section"
+        initialPlan={selectedPlan}
+      />
     </section>
   );
 }

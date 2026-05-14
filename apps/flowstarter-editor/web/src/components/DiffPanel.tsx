@@ -10,6 +10,7 @@ import {
   Columns2Icon,
   Rows3Icon,
   TextWrapIcon,
+  XIcon,
 } from "lucide-react";
 import {
   type WheelEvent as ReactWheelEvent,
@@ -36,7 +37,9 @@ import { buildThreadRouteParams, resolveThreadRouteRef } from "../threadRoutes";
 import { useSettings } from "../hooks/useSettings";
 import { formatShortTimestamp } from "../timestampFormat";
 import { DiffPanelLoadingState, DiffPanelShell, type DiffPanelMode } from "./DiffPanelShell";
+import { Button } from "./ui/button";
 import { ToggleGroup, Toggle } from "./ui/toggle-group";
+import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
 
 type DiffRenderMode = "stacked" | "split";
 type DiffThemeType = "light" | "dark";
@@ -365,6 +368,32 @@ export default function DiffPanel({ mode = "inline" }: DiffPanelProps) {
       },
     });
   };
+
+  const closeDiffPanel = useCallback(() => {
+    if (!activeThread) return;
+    void navigate({
+      to: "/$environmentId/$threadId",
+      params: buildThreadRouteParams(scopeThreadRef(activeThread.environmentId, activeThread.id)),
+      search: (previous) => ({
+        ...stripDiffSearchParams(previous),
+        // Explicit key so route `retainSearchParams(["diff"])` does not re-inject the previous value
+        // when the stripped object omits `diff` (see TanStack `retainSearchParams` implementation).
+        diff: undefined,
+      }),
+    });
+  }, [activeThread, navigate]);
+
+  useEffect(() => {
+    if (!diffOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      closeDiffPanel();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [closeDiffPanel, diffOpen]);
   const updateTurnStripScrollState = useCallback(() => {
     const element = turnStripRef.current;
     if (!element) {
@@ -438,30 +467,30 @@ export default function DiffPanel({ mode = "inline" }: DiffPanelProps) {
         <button
           type="button"
           className={cn(
-            "absolute left-0 top-1/2 z-20 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded-md border bg-background/90 text-muted-foreground transition-colors",
+            "fs-diff-strip-nav-btn absolute left-0 top-1/2 z-20 inline-flex size-7 -translate-y-1/2 items-center justify-center transition-colors",
             canScrollTurnStripLeft
-              ? "border-border/70 hover:border-border hover:text-foreground"
-              : "cursor-not-allowed border-border/40 text-muted-foreground/40",
+              ? "text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)]"
+              : "cursor-not-allowed text-[var(--fs-ink-disabled)]",
           )}
           onClick={() => scrollTurnStripBy(-180)}
           disabled={!canScrollTurnStripLeft}
           aria-label="Scroll turn list left"
         >
-          <ChevronLeftIcon className="size-3.5" />
+          <ChevronLeftIcon className="size-3.5" strokeWidth={1.75} />
         </button>
         <button
           type="button"
           className={cn(
-            "absolute right-0 top-1/2 z-20 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded-md border bg-background/90 text-muted-foreground transition-colors",
+            "fs-diff-strip-nav-btn absolute right-0 top-1/2 z-20 inline-flex size-7 -translate-y-1/2 items-center justify-center transition-colors",
             canScrollTurnStripRight
-              ? "border-border/70 hover:border-border hover:text-foreground"
-              : "cursor-not-allowed border-border/40 text-muted-foreground/40",
+              ? "text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)]"
+              : "cursor-not-allowed text-[var(--fs-ink-disabled)]",
           )}
           onClick={() => scrollTurnStripBy(180)}
           disabled={!canScrollTurnStripRight}
           aria-label="Scroll turn list right"
         >
-          <ChevronRightIcon className="size-3.5" />
+          <ChevronRightIcon className="size-3.5" strokeWidth={1.75} />
         </button>
         <div
           ref={turnStripRef}
@@ -476,13 +505,15 @@ export default function DiffPanel({ mode = "inline" }: DiffPanelProps) {
           >
             <div
               className={cn(
-                "rounded-md border px-2 py-1 text-left transition-colors",
+                "fs-diff-turn-chip-inner rounded-[10px] border px-2 py-1 text-left transition-colors",
                 selectedTurnId === null
-                  ? "border-border bg-accent text-accent-foreground"
-                  : "border-border/70 bg-background/70 text-muted-foreground/80 hover:border-border hover:text-foreground/80",
+                  ? "border-[var(--fs-rule-strong)] bg-[var(--fs-accent-bg-strong)] text-[var(--fs-ink)] shadow-[inset_2px_0_0_var(--fs-accent)]"
+                  : "border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)] hover:border-[var(--fs-rule-strong)] hover:text-[var(--fs-ink)]",
               )}
             >
-              <div className="text-[10px] leading-tight font-medium">All turns</div>
+              <div className="fs-diff-turn-chip-label text-[10px] leading-tight font-semibold tracking-tight">
+                All turns
+              </div>
             </div>
           </button>
           {orderedTurnDiffSummaries.map((summary) => (
@@ -496,20 +527,20 @@ export default function DiffPanel({ mode = "inline" }: DiffPanelProps) {
             >
               <div
                 className={cn(
-                  "rounded-md border px-2 py-1 text-left transition-colors",
+                  "fs-diff-turn-chip-inner rounded-[10px] border px-2 py-1 text-left transition-colors",
                   summary.turnId === selectedTurn?.turnId
-                    ? "border-border bg-accent text-accent-foreground"
-                    : "border-border/70 bg-background/70 text-muted-foreground/80 hover:border-border hover:text-foreground/80",
+                    ? "border-[var(--fs-rule-strong)] bg-[var(--fs-accent-bg-strong)] text-[var(--fs-ink)] shadow-[inset_2px_0_0_var(--fs-accent)]"
+                    : "border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)] hover:border-[var(--fs-rule-strong)] hover:text-[var(--fs-ink)]",
                 )}
               >
                 <div className="flex items-center gap-1">
-                  <span className="text-[10px] leading-tight font-medium">
+                  <span className="fs-diff-turn-chip-label text-[10px] leading-tight font-semibold tracking-tight">
                     Turn{" "}
                     {summary.checkpointTurnCount ??
                       inferredCheckpointTurnCountByTurnId[summary.turnId] ??
                       "?"}
                   </span>
-                  <span className="text-[9px] leading-tight opacity-70">
+                  <span className="text-[9px] leading-tight text-[var(--fs-ink-faint)]">
                     {formatShortTimestamp(summary.completedAt, settings.timestampFormat)}
                   </span>
                 </div>
@@ -518,7 +549,7 @@ export default function DiffPanel({ mode = "inline" }: DiffPanelProps) {
           ))}
         </div>
       </div>
-      <div className="flex shrink-0 items-center gap-1 [-webkit-app-region:no-drag]">
+      <div className="fs-diff-toolbar-actions flex shrink-0 items-center gap-1 [-webkit-app-region:no-drag]">
         <ToggleGroup
           className="shrink-0"
           variant="outline"
@@ -532,10 +563,10 @@ export default function DiffPanel({ mode = "inline" }: DiffPanelProps) {
           }}
         >
           <Toggle aria-label="Stacked diff view" value="stacked">
-            <Rows3Icon className="size-3" />
+            <Rows3Icon className="size-3.5" strokeWidth={1.75} />
           </Toggle>
           <Toggle aria-label="Split diff view" value="split">
-            <Columns2Icon className="size-3" />
+            <Columns2Icon className="size-3.5" strokeWidth={1.75} />
           </Toggle>
         </ToggleGroup>
         <Toggle
@@ -548,15 +579,38 @@ export default function DiffPanel({ mode = "inline" }: DiffPanelProps) {
             setDiffWordWrap(Boolean(pressed));
           }}
         >
-          <TextWrapIcon className="size-3" />
+          <TextWrapIcon className="size-3.5" strokeWidth={1.75} />
         </Toggle>
+        <Tooltip>
+          <TooltipTrigger
+            delay={250}
+            render={
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-xs"
+                aria-label="Close diff panel"
+                className="fs-diff-close-btn border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)] hover:border-[var(--fs-rule-strong)] hover:bg-[var(--fs-accent-bg)] hover:text-[var(--fs-ink)] dark:bg-[rgba(255,255,255,0.04)]"
+                disabled={!activeThread}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  closeDiffPanel();
+                }}
+              >
+                <XIcon className="size-3.5 opacity-90" strokeWidth={1.75} />
+              </Button>
+            }
+          />
+          <TooltipPopup side="bottom">Close (Esc)</TooltipPopup>
+        </Tooltip>
       </div>
     </>
   );
 
   return (
-    <DiffPanelShell mode={mode} header={headerRow}>
-      {!activeThread ? (
+    <div className="fs-diff-panel-scope flex h-full min-h-0 min-w-0 flex-col">
+      <DiffPanelShell mode={mode} header={headerRow}>
+        {!activeThread ? (
         <div className="flex flex-1 items-center justify-center px-5 text-center text-xs text-muted-foreground/70">
           Select a thread to inspect turn diffs.
         </div>
@@ -654,6 +708,7 @@ export default function DiffPanel({ mode = "inline" }: DiffPanelProps) {
           </div>
         </>
       )}
-    </DiffPanelShell>
+      </DiffPanelShell>
+    </div>
   );
 }

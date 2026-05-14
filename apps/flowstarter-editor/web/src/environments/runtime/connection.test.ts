@@ -76,6 +76,13 @@ function createTestClient(options?: {
     },
     projects: {
       searchEntries: vi.fn(async () => []),
+      listWorkspaceEntries: vi.fn(async () => ({ entries: [], truncated: false })),
+      readWorkspaceFile: vi.fn(async () => ({
+        relativePath: "",
+        kind: "text" as const,
+        content: "",
+        truncated: false,
+      })),
       writeFile: vi.fn(async () => undefined),
     },
     shell: {

@@ -4,7 +4,7 @@ import type {
   AuthSessionId,
   ServerAuthSessionMethod,
 } from "@flowstarter/editor-contracts";
-import { Data, DateTime, Duration, Context } from "effect";
+import { Data, DateTime, Duration, Context, Option } from "effect";
 import type { Effect, Stream } from "effect";
 
 export type SessionRole = "owner" | "client";
@@ -79,6 +79,13 @@ export interface SessionCredentialServiceShape {
   ) => Effect.Effect<number, SessionCredentialError>;
   readonly markConnected: (sessionId: AuthSessionId) => Effect.Effect<void, never>;
   readonly markDisconnected: (sessionId: AuthSessionId) => Effect.Effect<void, never>;
+  /**
+   * Read the persisted role for a session (if active and not revoked).
+   * Used by admin-only WebSocket RPC paths.
+   */
+  readonly getRoleForSession: (
+    sessionId: AuthSessionId,
+  ) => Effect.Effect<Option.Option<SessionRole>, SessionCredentialError>;
 }
 
 export class SessionCredentialService extends Context.Service<

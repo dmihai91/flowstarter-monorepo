@@ -23,17 +23,33 @@ procs:
     autostart: true
 
   "📦 Deploy Agent":
-    # Bun service used on each Caddy host in production. Only start locally
-    # when testing /api/team/projects/[id]/site/deploy. Requires bun.
+    # Bun service that emulates the on-host deploy agent. Auto-starts so
+    # `/api/team/projects/[id]/site/deploy` works end-to-end in dev. Logs
+    # are noisy because the Caddy reload command is a no-op (`echo
+    # reloaded`); ignore those.
     shell: "DEPLOY_AGENT_SHARED_SECRET=dev-secret DEPLOY_AGENT_SITES_ROOT=/tmp/fs-sites DEPLOY_AGENT_CADDY_SITES_DIR=/tmp/fs-caddy-sites DEPLOY_AGENT_CADDY_RELOAD_CMD='echo reloaded' pnpm --dir apps/deploy-agent dev"
-    autostart: false
+    autostart: true
 
   "✏️  Editor":
-    # Flowstarter editor (forked T3 Code) — server on :3773 (Bun) and web
-    # client on :5733 (Vite), launched in parallel by the editor's own
-    # workspace dev script. Toggle on inside mprocs when working on the
-    # editor. Needs ANTHROPIC_API_KEY for the agent to do anything;
-    # CLERK_SECRET_KEY + Supabase service role only matter once the Clerk
-    # gate is wired.
+    # Flowstarter editor (forked T3 Code) — single-port dev. The script
+    # builds the web bundle once into apps/flowstarter-editor/web/dist
+    # and then runs the Bun server on :5773 (overriding T3's upstream
+    # default of 3773 to avoid colliding with the local T3 Code Electron
+    # app, which already binds 3773). The server serves both the API and
+    # the bundled UI from that origin. For web hot-reload while actively
+    # editing React/CSS, run `pnpm dev:editor:full` separately (parallel
+    # server :5773 + Vite :5733, with the vite proxy pointing at 5773).
+    #
+    # Needs ANTHROPIC_API_KEY (already in editor/server/.env); Clerk +
+    # Supabase keys are optional during dev — without them, append
+    # ?clerk-skip=true to the URL to fall back to T3's manual pairing.
     shell: "pnpm dev:editor"
+    autostart: true
+
+  "🎨 Dorin Portfolio":
+    # The canonical demo client site — Dorin's hand-crafted Astro
+    # portfolio template. Served by Astro dev on :4321, used as the
+    # editor's demo workspace and as the live preview captured for the
+    # landing showcase.
+    shell: "pnpm --dir apps/flowstarter-templates/dorin-portfolio dev"
     autostart: false

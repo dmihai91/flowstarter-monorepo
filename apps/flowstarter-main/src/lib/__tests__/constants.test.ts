@@ -27,7 +27,7 @@ describe('ROUTES', () => {
 
   it('has required routes', () => {
     expect(ROUTES.dashboard).toBe('/dashboard');
-    expect(ROUTES.teamDashboard).toBe('/team/dashboard');
+    expect(ROUTES.teamDashboard).toBe('/admin/dashboard');
     expect(ROUTES.login).toBe('/login');
   });
 });

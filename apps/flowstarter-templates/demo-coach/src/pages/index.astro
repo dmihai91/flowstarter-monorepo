@@ -1,0 +1,168 @@
+---
+import site from '../data/site.json';
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{site.brand.name} — {site.brand.tagline}</title>
+    <meta name="description" content={site.hero.lede} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400..700&display=swap"
+      rel="stylesheet"
+    />
+    <style is:inline define:vars={{
+      brandAccent: site.brand.accent,
+      brandSoft: site.brand.accentSoft,
+      brandInk: site.brand.ink,
+    }}>
+      :root {
+        --brand-accent: var(--brandAccent);
+        --brand-soft: var(--brandSoft);
+        --brand-ink: var(--brandInk);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="#top" class="brand" aria-label={`${site.brand.name}, home`}>
+        <span class="brand-mark" aria-hidden="true">{site.brand.initial}</span>
+        <span class="brand-name">{site.brand.name}</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#approach">Approach</a>
+        <a href="#engagements">Engagements</a>
+        <a href="#about">About</a>
+        <a href="#contact" class="nav-cta">Book a call</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <!-- ── HERO ──────────────────────────────────────── -->
+      <section class="hero">
+        <p class="eyebrow">{site.hero.eyebrow}</p>
+        <h1 class="display">
+          {site.hero.headlineLead}<br />
+          <em>{site.hero.headlineFlourish}</em> {site.hero.headlineTail}
+        </h1>
+        <p class="lede">{site.hero.lede}</p>
+        <div class="hero-actions">
+          <a href={site.hero.primaryCtaHref} class="cta">
+            {site.hero.primaryCtaLabel}
+          </a>
+          <a href={site.hero.secondaryCtaHref} class="link">
+            {site.hero.secondaryCtaLabel}
+          </a>
+        </div>
+        <dl class="hero-stats">
+          {site.hero.stats.map((stat) => (
+            <div>
+              <dt>{stat.label}</dt>
+              <dd>{stat.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <hr class="rule" />
+
+      <!-- ── APPROACH ──────────────────────────────────── -->
+      <section id="approach" class="section">
+        <p class="overline">{site.approach.overline}</p>
+        <h2 class="display display--mid">{site.approach.headline}</h2>
+        <div class="approach-grid">
+          {site.approach.items.map((item) => (
+            <article>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <hr class="rule" />
+
+      <!-- ── ENGAGEMENTS ───────────────────────────────── -->
+      <section id="engagements" class="section">
+        <p class="overline">{site.engagements.overline}</p>
+        <h2 class="display display--mid">{site.engagements.headline}</h2>
+        <div class="engagements-grid">
+          {site.engagements.items.map((item) => (
+            <article class="engagement">
+              <p class="engagement-tag">{item.tag}</p>
+              <h3>{item.title}</h3>
+              <p class="engagement-meta">{item.meta}</p>
+              <p>{item.body}</p>
+              <ul>
+                {item.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <hr class="rule" />
+
+      <!-- ── ABOUT ─────────────────────────────────────── -->
+      <section id="about" class="section about">
+        <div class="about-text">
+          <p class="overline">{site.about.overline}</p>
+          <h2 class="display display--mid">
+            {site.about.headlineLead}<br />
+            <em>{site.about.headlineFlourish}</em>
+          </h2>
+          {site.about.paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+        <aside class="about-card">
+          <dl>
+            {site.about.facts.map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </aside>
+      </section>
+
+      <hr class="rule" />
+
+      <!-- ── CONTACT ───────────────────────────────────── -->
+      <section id="contact" class="section contact">
+        <p class="overline">{site.contact.overline}</p>
+        <h2 class="display display--mid">
+          {site.contact.headlineLead}<br />
+          <em>{site.contact.headlineFlourish}</em>
+        </h2>
+        <p class="contact-lede">{site.contact.lede}</p>
+        <div class="contact-actions">
+          <a href={`mailto:${site.contact.email}`} class="cta">
+            {site.contact.email}
+          </a>
+          <a href={site.contact.calLink} class="link" target="_blank" rel="noopener">
+            {site.contact.calLabel} →
+          </a>
+        </div>
+        <p class="contact-meta">{site.contact.footnote}</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© {site.brand.name} · {site.footer.tagline}</p>
+      <p>
+        {site.footer.links.map((link, i) => (
+          <>
+            {i > 0 && <span aria-hidden="true"> · </span>}
+            <a href={link.href}>{link.label}</a>
+          </>
+        ))}
+      </p>
+    </footer>
+  </body>
+</html>

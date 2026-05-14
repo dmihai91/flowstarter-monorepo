@@ -21,11 +21,11 @@ vi.mock('@/components/SiteHeader', () => ({
   SiteHeader: ({
     onOpenAppMenu,
   }: PropsWithChildren<{ onOpenAppMenu?: () => void }>) => {
-    const isTeam = mockPathname.startsWith('/team');
+    const isTeam = mockPathname.startsWith('/admin');
     return (
       <header className="z-[100]" data-testid="header">
-        <a href={isTeam ? '/team/dashboard' : '/dashboard'}>logo</a>
-        {isTeam ? <span>Team</span> : null}
+        <a href={isTeam ? '/admin/dashboard' : '/dashboard'}>logo</a>
+        {isTeam ? <span>Admin</span> : null}
         <div data-testid="theme-toggle" />
         <div data-testid="user-menu" />
         <button aria-label="Open menu" onClick={onOpenAppMenu}>
@@ -66,23 +66,23 @@ describe('AppHeader', () => {
     expect(link).toBeInTheDocument();
   });
 
-  it('renders logo linking to /team/dashboard for team', () => {
-    mockPathname = '/team/dashboard';
+  it('renders logo linking to /admin/dashboard for team', () => {
+    mockPathname = '/admin/dashboard';
     render(<AppHeader />);
-    const link = document.querySelector('a[href="/team/dashboard"]');
+    const link = document.querySelector('a[href="/admin/dashboard"]');
     expect(link).toBeInTheDocument();
   });
 
-  it('shows Team badge on team pages', () => {
-    mockPathname = '/team/dashboard';
+  it('shows Admin badge on admin pages', () => {
+    mockPathname = '/admin/dashboard';
     render(<AppHeader />);
-    expect(screen.getByText('Team')).toBeInTheDocument();
+    expect(screen.getByText('Admin')).toBeInTheDocument();
   });
 
-  it('does NOT show Team badge on client pages', () => {
+  it('does NOT show Admin badge on client pages', () => {
     mockPathname = '/dashboard';
     render(<AppHeader />);
-    expect(screen.queryByText('Team')).not.toBeInTheDocument();
+    expect(screen.queryByText('Admin')).not.toBeInTheDocument();
   });
 
   it('renders theme toggle', () => {

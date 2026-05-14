@@ -1,6 +1,6 @@
 export const metadata = {
   title: {
-    default: 'Flowstarter | Your website. Your bookings. Done.',
+    default: 'Flowstarter | Done-for-you websites for coaches',
     template: '%s | Flowstarter',
   },
   description:

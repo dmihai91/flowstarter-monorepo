@@ -15,7 +15,7 @@ interface ThemeToggleProps {
  * Maps between main platform's 'auto' and shared component's 'system'.
  */
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   // Map main platform's 'auto' → design system's 'system'
   const sharedTheme: Theme = theme === 'auto' ? 'system' : theme;
@@ -30,6 +30,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       theme={sharedTheme}
       onThemeChange={handleThemeChange}
       className={className}
+      resolvedTheme={resolvedTheme}
     />
   );
 }

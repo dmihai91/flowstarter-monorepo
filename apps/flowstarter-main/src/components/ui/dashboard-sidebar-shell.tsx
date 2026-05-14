@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getSidebarChromeStyle, sidebarFooterToggleClass } from '@/lib/glass';
+import { sidebarFooterToggleClass } from '@/lib/glass';
 import {
   Tooltip,
   TooltipContent,
@@ -15,7 +15,6 @@ type DashboardSidebarShellProps = {
   onToggleCollapsed: () => void;
   isMobileOpen: boolean;
   setIsMobileOpen: (open: boolean) => void;
-  resolvedTheme: 'light' | 'dark' | undefined;
   renderContent: (showLabel: boolean) => ReactNode;
   mobileTopArea?: ReactNode;
   mobileTopOffsetClass?: string;
@@ -30,7 +29,6 @@ export function DashboardSidebarShell({
   onToggleCollapsed,
   isMobileOpen,
   setIsMobileOpen,
-  resolvedTheme,
   renderContent,
   mobileTopArea,
   mobileTopOffsetClass = 'top-16',
@@ -39,7 +37,8 @@ export function DashboardSidebarShell({
   expandedWidthClass = 'w-52 lg:w-60',
   mobileWidthClass = 'w-72',
 }: DashboardSidebarShellProps) {
-  const sidebarChromeStyle = getSidebarChromeStyle(resolvedTheme);
+  const sidebarChromeClass =
+    'bg-[var(--fs-chrome-bg)] shadow-[var(--fs-chrome-shadow)] backdrop-blur-[16px] backdrop-saturate-[120%] dark:backdrop-blur-[14px] dark:backdrop-saturate-[125%]';
 
   return (
     <>
@@ -54,8 +53,8 @@ export function DashboardSidebarShell({
       )}
 
       <aside
-        style={sidebarChromeStyle}
         className={cn(
+          sidebarChromeClass,
           'md:hidden fixed bottom-0 left-0 z-[160] rounded-r-xl border-r border-[var(--fs-chrome-border)]',
           mobileTopOffsetClass,
           mobileWidthClass,
@@ -68,8 +67,8 @@ export function DashboardSidebarShell({
       </aside>
 
       <aside
-        style={sidebarChromeStyle}
         className={cn(
+          sidebarChromeClass,
           'hidden md:flex fixed left-0 bottom-0 z-40 flex-col border-r border-[var(--fs-chrome-border)] transition-all duration-300',
           desktopTopOffsetClass,
           collapsed ? collapsedWidthClass : expandedWidthClass

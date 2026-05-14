@@ -153,8 +153,8 @@ export const launchStartupHeartbeat = recordStartupHeartbeat.pipe(
 );
 
 export const getAutoBootstrapDefaultModelSelection = (): ModelSelection => ({
-  provider: "codex",
-  model: DEFAULT_MODEL_BY_PROVIDER.codex,
+  provider: "claudeAgent",
+  model: DEFAULT_MODEL_BY_PROVIDER.claudeAgent,
 });
 
 const autoBootstrapWelcome = Effect.gen(function* () {
@@ -235,17 +235,17 @@ const autoBootstrapWelcome = Effect.gen(function* () {
 const resolveStartupBrowserTarget = Effect.gen(function* () {
   const serverConfig = yield* ServerConfig;
   const serverAuth = yield* ServerAuth;
-  const localUrl = `http://localhost:${serverConfig.port}`;
+  const envPublicBase = process.env.T3CODE_BROWSER_BASE_URL?.trim();
+  const localUrl =
+    envPublicBase?.startsWith("http") && !envPublicBase.includes("*")
+      ? envPublicBase.replace(/\/+$/, "")
+      : `http://localhost:${serverConfig.port}`;
   const bindUrl =
     serverConfig.host && !isWildcardHost(serverConfig.host)
       ? `http://${formatHostForUrl(serverConfig.host)}:${serverConfig.port}`
       : localUrl;
   const baseTarget = serverConfig.devUrl?.toString() ?? bindUrl;
-  return yield* Effect.succeed(serverConfig.mode === "desktop" ? baseTarget : undefined).pipe(
-    Effect.flatMap((target) =>
-      target ? Effect.succeed(target) : serverAuth.issueStartupPairingUrl(baseTarget),
-    ),
-  );
+  return yield* serverAuth.issueStartupPairingUrl(baseTarget);
 });
 
 const maybeOpenBrowser = (target: string) =>
@@ -345,7 +345,6 @@ const makeServerRuntimeStartup = Effect.gen(function* () {
     );
   }).pipe(
     Effect.annotateSpans({
-      "server.mode": serverConfig.mode,
       "server.port": serverConfig.port,
       "server.host": serverConfig.host ?? "default",
     }),
@@ -394,11 +393,9 @@ const makeServerRuntimeStartup = Effect.gen(function* () {
       } else {
         yield* Effect.logDebug("startup phase: browser open check");
         const startupBrowserTarget = yield* resolveStartupBrowserTarget;
-        if (serverConfig.mode !== "desktop") {
-          yield* Effect.logInfo(
-            "Authentication required. Open Flowstarter Editor using the pairing URL.",
-          ).pipe(Effect.annotateLogs({ pairingUrl: startupBrowserTarget }));
-        }
+        yield* Effect.logInfo(
+          "Authentication required. Open Flowstarter Editor using the pairing URL.",
+        ).pipe(Effect.annotateLogs({ pairingUrl: startupBrowserTarget }));
         yield* runStartupPhase("browser.open", maybeOpenBrowser(startupBrowserTarget));
       }
       yield* Effect.logDebug("startup phase: complete");

@@ -43,44 +43,44 @@ export interface DifferentiationCard {
 
 export const LANDING_COPY = {
   hero: {
-    headlinePrefix: 'The right clients are out there looking for you.',
-    headlineHighlight: "Let's make sure they find you.",
+    headlinePrefix: 'The clients you want are already searching.',
+    headlineHighlight: "Let's aim them your way.",
     subheadlineBold: '',
     subheadline:
-      "Starting from scratch or tired of a site that isn't working? One call. Starter sites go live in 5–7 days. You stay in control with a smart editor. No code, no waiting, no back and forth.",
-    primaryCta: 'Start getting clients',
+      'New build or a tired site? One call—we shape the site around your business. You steer it with the smart editor: no code pile-up, no endless email chains.',
+    primaryCta: 'Book a free discovery call',
     secondaryCta: 'See plans and pricing',
     trustLine:
-      "For coaches, consultants, therapists, freelancers and founders — whether you're starting from scratch or ready to relaunch.",
+      'Coaches, consultants, therapists, freelancers, founders—fresh launch or overdue relaunch.',
     guarantee:
       'First month free. Not happy in 30 days? We refund 50% of your setup fee. No questions asked.',
   },
   process: {
-    title: 'From conversation to launch in two weeks.',
+    title: 'From conversation to launch, hand-crafted.',
     steps: [
       {
         number: '01',
         title: 'Discovery call (30 minutes)',
         description:
-          'We talk about your business, brand, and goals. You ask questions. We tell you honestly if we are the right fit.',
+          'We unpack your offer, positioning, and must-haves. Ask anything—we will tell you plainly if someone else should do the job.',
       },
       {
         number: '02',
-        title: 'Design and build (7 to 14 days)',
+        title: 'Design and build',
         description:
-          'We hand-craft your site using your brand and content. You review progress along the way.',
+          'We design and build with your assets and tone. Drafts arrive on a predictable rhythm—no blackout periods.',
       },
       {
         number: '03',
         title: 'Review and launch',
         description:
-          'Final adjustments based on your feedback. Then we deploy your site on your domain, ready for the world.',
+          'Polish passes from your feedback, then DNS, SSL, inbox—the boring bits handled before anyone visits.',
       },
       {
         number: '04',
         title: 'Maintain and grow',
         description:
-          'Update anytime with the smart editor. We are here when you need us, for changes, advice, or your next chapter.',
+          'Iterate in the editor between calls—we stay reachable for heavier lifts when you hit a ceiling.',
       },
     ],
   },
@@ -90,7 +90,7 @@ export const LANDING_COPY = {
       {
         icon: 'puzzle',
         title: 'DIY builders',
-        body: 'Easy to start, but they make you look amateur and hurt your credibility.',
+        body: 'Friendly to spin up—hard to make look like a serious practice once someone compares you to competitors.',
       },
       {
         icon: 'wallet',
@@ -100,10 +100,10 @@ export const LANDING_COPY = {
       {
         icon: 'sparkles',
         title: 'AI generators',
-        body: 'Fast and cheap, but they spit out generic, soulless sites that all look the same.',
+        body: "Fast drafts, shallow structure—thin pages that read like everybody else's MVP.",
       },
     ],
-    closing: 'There is a fourth way.',
+    closing: 'Flowstarter skips that triangle.',
   },
   included: {
     title: 'Everything wired up before you touch a thing.',
@@ -112,37 +112,37 @@ export const LANDING_COPY = {
         icon: 'globe',
         title: 'A premium site, designed and built for you',
         description:
-          'Concierge design and build, tailored to your brand and your service. Live before you touch anything.',
+          'Design and build tailored to your offer—live on your domain before you wrestle DNS alone.',
       },
       {
         icon: 'calendar',
         title: 'Cal.com booking, integrated',
         description:
-          'Clients self-schedule on your terms. No inbox tag-of-war, no scheduling tools to wire up later.',
+          'Clients book without the email tennis match—Cal.com already wired to your rules.',
       },
       {
         icon: 'briefcase',
         title: 'Newsletter service ready to send',
         description:
-          'Capture subscribers and send your first campaign on day one. No separate platform to set up.',
+          'List + first send ready on day one—no extra SaaS stack to babysit.',
       },
       {
         icon: 'sparkles',
         title: 'Leads collector wired up from the start',
         description:
-          'Forms route directly to a structured leads inbox so you never lose a prospect.',
+          'Inbound hits a structured inbox so opportunities do not dissolve in Slack threads.',
       },
       {
         icon: 'layout',
         title: 'Your editor, included with the subscription',
         description:
-          'Edit your site on demand, whenever you want. The subscription bundles your editor, ongoing maintenance, and support. Cancel anytime, your site keeps running.',
+          'Revise copy or sections when you need to—editor access, maintenance, and support stay bundled. Cancel anytime; the site keeps running on your infrastructure.',
       },
       {
         icon: 'layers',
         title: 'Domain and professional email',
         description:
-          'Custom domain connected and email at your domain set up before launch. We handle the DNS work.',
+          'Domain, SSL, inbox at your hostname—routing handled before visitors arrive.',
       },
     ],
   },
@@ -150,7 +150,7 @@ export const LANDING_COPY = {
     title: 'Simple, transparent pricing.',
     subtitle: 'Two ways to work with us. Both start with a discovery call.',
     socialProof:
-      'We work with just 8 new clients each month to ensure dedicated craft and quality on every project.',
+      'Only a handful of new builds open each month so nothing turns into conveyor-belt shipping.',
     note: 'Need something custom? We also handle site relaunches, e-commerce storefronts, and bespoke projects. Just mention your needs in the discovery call.',
     plans: [
       {
@@ -163,9 +163,8 @@ export const LANDING_COPY = {
           'Hosting and domain included',
           'smart editor (50 edits per month)',
           'Discovery call and ongoing support',
-          '7 to 14 day delivery',
         ],
-        cta: 'Book Discovery Call',
+        cta: 'Book a free discovery call',
         status: 'available',
       },
       {
@@ -179,9 +178,8 @@ export const LANDING_COPY = {
           'Stripe integration for digital products',
           'smart editor (150 edits per month)',
           'Priority support',
-          '10 to 21 day delivery',
         ],
-        cta: 'Book Discovery Call',
+        cta: 'Book a free discovery call',
         badge: 'Most Popular',
         recommended: true,
         status: 'available',
@@ -192,7 +190,7 @@ export const LANDING_COPY = {
         setupPrice: 'Coming soon',
         monthlyPrice: '',
         features: [
-          'Full Shopify-style storefront, hand-built',
+          'Full Shopify-style storefront, hand-crafted',
           'Physical and digital products',
           'Inventory, shipping, and tax sorted',
           'Order emails and customer notifications',
@@ -213,17 +211,17 @@ export const LANDING_COPY = {
       {
         label: 'Hand-crafted, not template-spammed',
         description:
-          'Every site is built for you, not generated from a stock theme. No two Flowstarter sites look the same.',
+          'No marketplace theme swaps—layouts are authored for one business at a time.',
       },
       {
         label: 'smart editor for life',
         description:
-          'Update content with natural language. Change copy, swap photos, add testimonials. All without touching code or paying a developer.',
+          'Describe tweaks in plain English—copy, imagery, testimonials—without opening a codebase or begging a freelancer.',
       },
       {
-        label: '8 clients per month',
+        label: 'Limited spots, by design',
         description:
-          'We work with a limited number of clients each month to ensure dedicated craft on every project. Quality over volume, always.',
+          'Small monthly intake keeps every roadmap human-sized—fewer spreadsheets, more listening.',
         highlighted: true,
       },
     ],
@@ -246,7 +244,8 @@ export const LANDING_COPY = {
         slug: 'ux-journey',
         title: 'UX Journey',
         meta: 'Coaching · Live · 2026',
-        kicker: 'A senior UX coach. Hand-built, live since early 2026.',
+        kicker:
+          'Senior UX coaching practice—shipping copy, calendar, credibility on the same domain.',
         thumbnail: '/showcase/ux-journey.png',
         thumbnailDark: null,
         placeholder: 'ux-journey.com',
@@ -255,59 +254,27 @@ export const LANDING_COPY = {
         status: 'live' as const,
       },
       {
-        slug: 'coach-pro',
-        title: 'Coach Pro',
-        meta: 'Coaching · Starter · Live',
+        slug: 'lebadusul',
+        title: 'Lebădușul',
+        meta: 'Retail · Live · 2026',
         kicker:
-          'Measured, hand-built starter for ICF-certified coaches and consultants.',
-        thumbnail: '/showcase/coach-pro.png',
-        thumbnailDark: '/showcase/coach-pro-dark.png',
-        href: '/library/templates/coach-pro',
-        external: false,
+          'Danube-side tackle shop—catalog, checkout, and logistics language tuned for serious anglers.',
+        thumbnail: '/showcase/lebadusul.png',
+        thumbnailDark: null,
+        placeholder: 'lebadusularticoledepescuit.ro',
+        href: 'https://lebadusularticoledepescuit.ro/',
+        external: true,
         status: 'live' as const,
       },
       {
-        slug: 'therapist-care',
-        title: 'Therapist Care',
-        meta: 'Mental health · Starter · Live',
-        kicker:
-          'Quiet, trust-first design for therapists and clinical practices.',
-        thumbnail: '/showcase/therapist-care.png',
-        thumbnailDark: '/showcase/therapist-care-dark.png',
-        href: '/library/templates/therapist-care',
-        external: false,
-        status: 'live' as const,
-      },
-      {
-        slug: 'freelancer-portfolio',
-        title: 'Freelancer Portfolio',
+        slug: 'dorin-portfolio',
+        title: 'Portfolio Template',
         meta: 'Portfolio · Starter · Live',
-        kicker: 'A serious portfolio for serious work — not a Dribbble shot.',
-        thumbnail: '/showcase/freelancer-portfolio.png',
-        thumbnailDark: '/showcase/freelancer-portfolio-dark.png',
-        href: '/library/templates/freelancer-portfolio',
-        external: false,
-        status: 'live' as const,
-      },
-      {
-        slug: 'fitness-coach',
-        title: 'Fitness Trainer Pro',
-        meta: 'Fitness · Starter · Live',
-        kicker: 'Confident starter for personal trainers and small studios.',
-        thumbnail: '/showcase/fitness-coach.png',
-        thumbnailDark: '/showcase/fitness-coach-dark.png',
-        href: '/library/templates/fitness-coach',
-        external: false,
-        status: 'live' as const,
-      },
-      {
-        slug: 'creative-portfolio',
-        title: 'Creative Portfolio',
-        meta: 'Creative · Starter · Live',
-        kicker: 'Editorial portfolio for photographers and studios.',
-        thumbnail: '/showcase/creative-portfolio.png',
-        thumbnailDark: '/showcase/creative-portfolio-dark.png',
-        href: '/library/templates/creative-portfolio',
+        kicker:
+          "Dorin's portfolio starter—grab it from the library when you need a credible launch fast.",
+        thumbnail: '/showcase/dorin-portfolio.png',
+        thumbnailDark: null,
+        href: '/library/templates/dorin-portfolio',
         external: false,
         status: 'live' as const,
       },
@@ -319,7 +286,7 @@ export const LANDING_COPY = {
       {
         question: 'How long does it take to build my site?',
         answer:
-          'Most Starter projects are delivered in 7 to 14 days. Pro projects take 10 to 21 days depending on scope. We agree on the timeline together during the discovery call.',
+          'We agree on a realistic timeline together during the discovery call, then keep you in the loop the whole way. We aim to ship faster than traditional agencies, without rushing the craft.',
       },
       {
         question: 'Do I own my website?',
@@ -347,9 +314,9 @@ export const LANDING_COPY = {
           "Yes. Pro includes Stripe integration for digital products, courses, bookings, and memberships. Full Shopify-style storefronts are coming soon. Let us know in the discovery call if that's what you need.",
       },
       {
-        question: 'Why only 8 clients per month?',
+        question: 'Why limit how many clients you take on?',
         answer:
-          'Because every site is hand-crafted by us, Darius and Dorin, with AI as our assistant. We work with a small number of clients monthly to ensure each project gets the attention it deserves. We choose craft over volume, every time.',
+          'Because every site is hand-crafted by us, Darius and Dorin, with AI as our assistant. We take a limited number of new clients each month so every project gets the attention it deserves. We choose craft over volume, every time.',
       },
       {
         question: 'What if I need more AI edits than my plan includes?',

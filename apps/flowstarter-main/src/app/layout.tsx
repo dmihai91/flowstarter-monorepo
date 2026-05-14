@@ -78,6 +78,17 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Critical anti-flicker: cover both explicit class + system preference */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: [
+              // Explicit dark class (set by server or inline script)
+              'html.dark,html.dark body{background-color:#0a0a0f!important}',
+              // System dark preference fallback (before JS runs on cached pages)
+              '@media(prefers-color-scheme:dark){html:not(.light),html:not(.light) body{background-color:#0a0a0f!important}}',
+            ].join(''),
+          }}
+        />
         <script
           nonce={nonce}
           suppressHydrationWarning
@@ -106,9 +117,9 @@ export default async function RootLayout({
                   document.documentElement.setAttribute('data-theme', resolvedTheme);
                   // Defer enabling the bg-color transition until AFTER the
                   // first frame is painted with the resolved theme. Without
-                  // this, the SSR-rendered `class="light"` → `dark` flip
+                  // this, the SSR-rendered class="light" to "dark" flip
                   // animates the body bg on every first visit. See the
-                  // `html.theme-ready` rule in `styles/globals.css`.
+                  // html.theme-ready rule in styles/globals.css.
                   requestAnimationFrame(function() {
                     document.documentElement.classList.add('theme-ready');
                   });
@@ -119,7 +130,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className="font-sans min-h-screen bg-[var(--landing-bg)] dark:bg-[var(--landing-dark-surface,#0a0a0f)]"
+        className="font-sans min-h-screen"
         style={{ fontFamily: 'var(--font-jakarta)' }}
         suppressHydrationWarning
       >

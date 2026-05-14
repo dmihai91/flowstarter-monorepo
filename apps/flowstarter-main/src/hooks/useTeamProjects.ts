@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
  * humans who read them.
  */
 export interface ProjectWithOwner extends Table<'workspaces'> {
-  /** Derived from concierge_stage by GET /api/team/projects. */
+  /** Derived from concierge_stage by GET /api/admin/projects. */
   status?: string;
   thumbnailUrl?: string | null;
 }
@@ -19,7 +19,7 @@ export function useTeamProjects() {
   return useQuery({
     queryKey: ['team-projects'],
     queryFn: async (): Promise<Array<ProjectWithOwner>> => {
-      const res = await fetch('/api/team/projects', { cache: 'no-store' });
+      const res = await fetch('/api/admin/projects', { cache: 'no-store' });
       if (!res.ok) {
         if (res.status === 403)
           throw new Error('Not authorized as team member');
@@ -38,7 +38,7 @@ export function useTeamDeleteProject() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/team/projects/${id}`, {
+      const res = await fetch(`/api/admin/projects/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) {
@@ -78,11 +78,63 @@ export function useTeamDeleteProject() {
   });
 }
 
+/**
+ * Optimistic stage update used by the Kanban board.
+ *
+ * On drag-end we patch the workspace's `concierge_stage`, immediately moving
+ * the card in the local cache so there's no flicker. Failures roll back.
+ */
+export function useUpdateProjectStage() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, stage }: { id: string; stage: string }) => {
+      const res = await fetch(`/api/admin/projects/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ concierge_stage: stage }),
+      });
+      if (!res.ok) {
+        const err = await res
+          .json()
+          .catch(() => ({ error: 'Failed to update stage' }));
+        throw new Error(err.error || 'Failed to update stage');
+      }
+      return res.json();
+    },
+    onMutate: async ({ id, stage }) => {
+      await qc.cancelQueries({ queryKey: ['team-projects'] });
+      const previous = qc.getQueryData<ProjectWithOwner[]>(['team-projects']);
+      qc.setQueryData<ProjectWithOwner[]>(
+        ['team-projects'],
+        (old) =>
+          old?.map((p) =>
+            p.id === id
+              ? {
+                  ...p,
+                  concierge_stage: stage as ProjectWithOwner['concierge_stage'],
+                }
+              : p
+          ) ?? []
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        qc.setQueryData(['team-projects'], context.previous);
+      }
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: ['team-projects'] });
+      qc.invalidateQueries({ queryKey: teamDashboardStatsQueryKey });
+    },
+  });
+}
+
 export function useTeamRenameProject() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, name }: { id: string; name: string }) => {
-      const res = await fetch(`/api/team/projects/${id}`, {
+      const res = await fetch(`/api/admin/projects/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
@@ -137,7 +189,7 @@ export function useTeamProject(id: string | undefined) {
     queryKey: ['team-project', id],
     enabled: !!id,
     queryFn: async (): Promise<ProjectWithOwner> => {
-      const res = await fetch(`/api/team/projects/${id}`, {
+      const res = await fetch(`/api/admin/projects/${id}`, {
         cache: 'no-store',
       });
       if (!res.ok) {
@@ -156,7 +208,7 @@ export function useTeamUpdateProject(id: string | undefined) {
   return useMutation({
     mutationFn: async (patch: Record<string, unknown>) => {
       if (!id) throw new Error('Missing project id');
-      const res = await fetch(`/api/team/projects/${id}`, {
+      const res = await fetch(`/api/admin/projects/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch),
@@ -183,7 +235,7 @@ export function useTeamUpdateProjectPricing() {
       id,
       ...data
     }: { id: string } & ProjectPricingData) => {
-      const res = await fetch(`/api/team/projects/${id}`, {
+      const res = await fetch(`/api/admin/projects/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

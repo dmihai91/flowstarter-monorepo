@@ -22,7 +22,7 @@ test.describe('Concierge Flow — Platform Smoke', () => {
     });
 
     test('Team dashboard redirects to auth when unauthenticated', async ({ page }) => {
-      await page.goto('/team/dashboard');
+      await page.goto('/admin/dashboard');
       await page.waitForTimeout(2000);
       const url = page.url();
       const isAuthPage =

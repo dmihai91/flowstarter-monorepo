@@ -20,7 +20,7 @@
 
 /* Gradient text */
 .flow-gradient-text {
-  background: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%);
+  background: linear-gradient(135deg, var(--purple) 0%, #06b6d4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

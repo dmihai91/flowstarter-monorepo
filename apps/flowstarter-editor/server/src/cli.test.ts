@@ -63,7 +63,6 @@ const makeCliTestServerConfig = (baseDir: string) =>
       otlpMetricsUrl: undefined,
       otlpExportIntervalMs: 10_000,
       otlpServiceName: "t3-server",
-      mode: "web",
       port: 0,
       host: "127.0.0.1",
       cwd: process.cwd(),
@@ -73,7 +72,6 @@ const makeCliTestServerConfig = (baseDir: string) =>
       devUrl: undefined,
       noBrowser: true,
       startupPresentation: "browser",
-      desktopBootstrapToken: undefined,
       autoBootstrapProjectFromCwd: false,
       logWebSocketEvents: false,
     } satisfies ServerConfigShape;

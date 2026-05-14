@@ -1,0 +1,69 @@
+---
+interface Props {
+  name: string;
+  role: string;
+  image?: string;
+  className?: string;
+}
+
+const { name, role, image, className = '' } = Astro.props;
+---
+
+<div class={`ds-testimonial-author ${className}`.trim()}>
+  <div class="ds-testimonial-author__avatar">
+    {image
+      ? <img src={image} alt={name} width="48" height="48" />
+      : <span>{name.charAt(0)}</span>
+    }
+  </div>
+  <div>
+    <p class="ds-testimonial-author__name">{name}</p>
+    <p class="ds-testimonial-author__role">{role}</p>
+  </div>
+</div>
+
+<style>
+  .ds-testimonial-author {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+
+  .ds-testimonial-author__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--bg-dark);
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ds-testimonial-author__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 1;
+  }
+
+  .ds-testimonial-author__avatar span {
+    color: var(--text-on-dark);
+    font-weight: var(--fw-bold);
+    font-size: 1.1rem;
+  }
+
+  .ds-testimonial-author__name {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    text-align: left;
+  }
+
+  .ds-testimonial-author__role {
+    font-size: var(--fs-small);
+    color: var(--text-secondary);
+    text-align: left;
+  }
+</style>

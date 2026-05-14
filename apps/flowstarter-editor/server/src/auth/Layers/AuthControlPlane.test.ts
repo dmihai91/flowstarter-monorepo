@@ -2,7 +2,6 @@ import * as NodeServices from "@effect/platform-node/NodeServices";
 import { expect, it } from "@effect/vitest";
 import { Effect, Layer } from "effect";
 
-import { ServerConfigShape } from "../../config.ts";
 import { ServerConfig } from "../../config.ts";
 import { BootstrapCredentialServiceLive } from "./BootstrapCredentialService.ts";
 import { ServerSecretStoreLive } from "./ServerSecretStore.ts";
@@ -12,31 +11,16 @@ import { AuthControlPlane } from "../Services/AuthControlPlane.ts";
 import { makeAuthControlPlane } from "./AuthControlPlane.ts";
 import { SessionCredentialService } from "../Services/SessionCredentialService.ts";
 
-const makeServerConfigLayer = (
-  overrides?: Partial<Pick<ServerConfigShape, "desktopBootstrapToken">>,
-) =>
-  Layer.effect(
-    ServerConfig,
-    Effect.gen(function* () {
-      const config = yield* ServerConfig;
-      return {
-        ...config,
-        ...overrides,
-      } satisfies ServerConfigShape;
-    }),
-  ).pipe(
-    Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "t3-auth-control-plane-test-" })),
-  );
+const makeServerConfigLayer = () =>
+  ServerConfig.layerTest(process.cwd(), { prefix: "t3-auth-control-plane-test-" });
 
-const makeAuthControlPlaneLayer = (
-  overrides?: Partial<Pick<ServerConfigShape, "desktopBootstrapToken">>,
-) =>
+const makeAuthControlPlaneLayer = () =>
   Layer.effect(AuthControlPlane, makeAuthControlPlane).pipe(
     Layer.provideMerge(BootstrapCredentialServiceLive),
     Layer.provideMerge(SessionCredentialServiceLive),
     Layer.provideMerge(ServerSecretStoreLive),
     Layer.provideMerge(SqlitePersistenceMemory),
-    Layer.provide(makeServerConfigLayer(overrides)),
+    Layer.provide(makeServerConfigLayer()),
   );
 
 it.layer(NodeServices.layer)("AuthControlPlane", (it) => {

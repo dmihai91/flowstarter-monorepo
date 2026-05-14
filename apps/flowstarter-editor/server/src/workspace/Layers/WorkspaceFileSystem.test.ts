@@ -133,4 +133,65 @@ it.layer(TestLayer)("WorkspaceFileSystemLive", (it) => {
       }),
     );
   });
+
+  describe("readWorkspaceFile", () => {
+    it.effect("reads utf-8 text within the workspace", () =>
+      Effect.gen(function* () {
+        const workspaceFileSystem = yield* WorkspaceFileSystem;
+        const cwd = yield* makeTempDir;
+        yield* writeTextFile(cwd, "src/hi.ts", "ok\n");
+
+        const result = yield* workspaceFileSystem.readWorkspaceFile({
+          cwd,
+          relativePath: "src/hi.ts",
+        });
+
+        expect(result).toEqual({
+          kind: "text",
+          relativePath: "src/hi.ts",
+          content: "ok\n",
+          truncated: false,
+        });
+      }),
+    );
+
+    it.effect("rejects reads outside the workspace root", () =>
+      Effect.gen(function* () {
+        const workspaceFileSystem = yield* WorkspaceFileSystem;
+        const cwd = yield* makeTempDir;
+
+        const error = yield* workspaceFileSystem
+          .readWorkspaceFile({
+            cwd,
+            relativePath: "../escape.md",
+          })
+          .pipe(Effect.flip);
+
+        expect(error.message).toContain("Workspace file path must be relative to the project root");
+      }),
+    );
+
+    it.effect("classifies binary files with null bytes", () =>
+      Effect.gen(function* () {
+        const workspaceFileSystem = yield* WorkspaceFileSystem;
+        const cwd = yield* makeTempDir;
+        const path = yield* Path.Path;
+        const fileSystem = yield* FileSystem.FileSystem;
+        yield* fileSystem.writeFile(path.join(cwd, "x.bin"), new Uint8Array([9, 0, 9])).pipe(
+          Effect.orDie,
+        );
+
+        const result = yield* workspaceFileSystem.readWorkspaceFile({
+          cwd,
+          relativePath: "x.bin",
+        });
+
+        expect(result).toEqual({
+          kind: "binary",
+          relativePath: "x.bin",
+          truncated: false,
+        });
+      }),
+    );
+  });
 });

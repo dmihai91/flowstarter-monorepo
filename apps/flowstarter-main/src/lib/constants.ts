@@ -14,15 +14,15 @@ export const EXTERNAL_URLS = {
  */
 export const ROUTES = {
   dashboard: '/dashboard',
-  teamDashboard: '/team/dashboard',
+  teamDashboard: '/admin/dashboard',
   profile: '/profile',
-  teamProfile: '/team/dashboard/profile',
+  teamProfile: '/admin/dashboard/profile',
   settings: '/profile',
-  teamSettings: '/team/dashboard/services',
+  teamSettings: '/admin/dashboard/services',
   help: '/help',
   pricing: '/pricing',
   contact: '/contact',
   login: '/login',
-  teamLogin: '/team/login',
+  teamLogin: '/admin/login',
   editor: '/editor',
 } as const;

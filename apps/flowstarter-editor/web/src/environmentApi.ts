@@ -3,6 +3,8 @@ import type { EnvironmentId, EnvironmentApi } from "@flowstarter/editor-contract
 import type { WsRpcClient } from "./rpc/wsRpcClient";
 import { readEnvironmentConnection } from "./environments/runtime";
 
+export type WorkspaceFilesRpcRouteKind = "draft" | "server";
+
 export function createEnvironmentApi(rpcClient: WsRpcClient): EnvironmentApi {
   return {
     terminal: {
@@ -16,6 +18,8 @@ export function createEnvironmentApi(rpcClient: WsRpcClient): EnvironmentApi {
     },
     projects: {
       searchEntries: rpcClient.projects.searchEntries,
+      listWorkspaceEntries: rpcClient.projects.listWorkspaceEntries,
+      readWorkspaceFile: rpcClient.projects.readWorkspaceFile,
       writeFile: rpcClient.projects.writeFile,
     },
     git: {
@@ -57,6 +61,44 @@ export function readEnvironmentApi(environmentId: EnvironmentId): EnvironmentApi
 
   const connection = readEnvironmentConnection(environmentId);
   return connection ? createEnvironmentApi(connection.client) : undefined;
+}
+
+/**
+ * File-browser RPC (`listWorkspaceEntries`, `readWorkspaceFile`) requires an active
+ * `WsRpcClient` registered for {@link EnvironmentId}. Draft threads occasionally retain a
+ * {@link EnvironmentId} that does not match the primary websocket registration (descriptor /
+ * bootstrap timing). When the thread id has **no** registered API but the **primary**
+ * connection is live — typical single-workspace dev — fall through so Files preview/list RPC
+ * still routes correctly on `/draft/...`.
+ */
+export function resolveRegisteredWorkspaceRpcEnvironmentId(input: {
+  readonly threadEnvironmentId: EnvironmentId;
+  readonly primaryEnvironmentId: EnvironmentId | null;
+  readonly routeKind: WorkspaceFilesRpcRouteKind;
+  readonly activeProjectEnvironmentId: EnvironmentId | undefined;
+}): EnvironmentId {
+  if (typeof window === "undefined") {
+    return input.threadEnvironmentId;
+  }
+  if (readEnvironmentApi(input.threadEnvironmentId)) {
+    return input.threadEnvironmentId;
+  }
+
+  const primary = input.primaryEnvironmentId;
+  if (!primary || !readEnvironmentApi(primary)) {
+    return input.threadEnvironmentId;
+  }
+
+  if (input.routeKind === "draft") {
+    return primary;
+  }
+
+  const projectEnv = input.activeProjectEnvironmentId;
+  if (projectEnv !== undefined && projectEnv === primary) {
+    return primary;
+  }
+
+  return input.threadEnvironmentId;
 }
 
 export function ensureEnvironmentApi(environmentId: EnvironmentId): EnvironmentApi {

@@ -1,0 +1,54 @@
+---
+import type { TitleLine } from '../../lib/site-data';
+
+interface Props {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
+  lines: TitleLine[];
+  className?: string;
+}
+
+const { as = 'h2', lines = [], className = '' } = Astro.props;
+const Tag = as;
+---
+
+<Tag class={`multi-line-title ${className}`.trim()}>
+  {lines.map((line) => (
+    <span class="multi-line-title__line">
+      {line.text}
+      {line.accent && <> <span class="multi-line-title__accent">{line.accent}</span></>}
+      {line.suffix && (
+        <span
+          class="multi-line-title__suffix"
+          style={line.suffixColor ? `color:${line.suffixColor};` : undefined}
+        >
+          {line.suffix}
+        </span>
+      )}
+    </span>
+  ))}
+</Tag>
+
+<style>
+  .multi-line-title {
+    display: grid;
+    gap: 0;
+    align-content: start;
+    text-transform: uppercase;
+    color: var(--bg-dark);
+  }
+
+  .multi-line-title__line {
+    line-height: inherit;
+  }
+
+  .multi-line-title__accent {
+    display: inline-block;
+    white-space: nowrap;
+    color: var(--brand-primary);
+  }
+
+  .multi-line-title__suffix {
+    display: inline-block;
+    white-space: nowrap;
+  }
+</style>

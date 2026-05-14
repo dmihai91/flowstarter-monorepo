@@ -1,5 +1,5 @@
 import 'server-only';
-import { models } from '@/lib/ai/openrouter-client';
+import { models } from './client';
 import { MVP_INDUSTRIES, type IndustryId } from '@/lib/industries';
 import type { PlatformType } from '@/types/project-config';
 import { generateText } from 'ai';

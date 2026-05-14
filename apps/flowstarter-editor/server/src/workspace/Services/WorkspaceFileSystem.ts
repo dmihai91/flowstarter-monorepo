@@ -9,7 +9,12 @@
 import { Schema, Context } from "effect";
 import type { Effect } from "effect";
 
-import type { ProjectWriteFileInput, ProjectWriteFileResult } from "@flowstarter/editor-contracts";
+import type {
+  ProjectReadWorkspaceFileInput,
+  ProjectReadWorkspaceFileResult,
+  ProjectWriteFileInput,
+  ProjectWriteFileResult,
+} from "@flowstarter/editor-contracts";
 import { WorkspacePathOutsideRootError } from "./WorkspacePaths.ts";
 
 export class WorkspaceFileSystemError extends Schema.TaggedErrorClass<WorkspaceFileSystemError>()(
@@ -37,6 +42,17 @@ export interface WorkspaceFileSystemShape {
     input: ProjectWriteFileInput,
   ) => Effect.Effect<
     ProjectWriteFileResult,
+    WorkspaceFileSystemError | WorkspacePathOutsideRootError
+  >;
+
+  /**
+   * Read file contents under the workspace root for admin preview.
+   * Returns at most ~512 KiB; reports `truncated` when the file is larger.
+   */
+  readonly readWorkspaceFile: (
+    input: ProjectReadWorkspaceFileInput,
+  ) => Effect.Effect<
+    ProjectReadWorkspaceFileResult,
     WorkspaceFileSystemError | WorkspacePathOutsideRootError
   >;
 }

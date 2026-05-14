@@ -57,6 +57,14 @@ interface ClerkMeFailure {
 const CLERK_ME_PATH = "/api/clerk/me";
 const CLERK_AUTO_PAIR_PATH = "/api/clerk/auto-pair";
 
+/** Must match server `EDITOR_CLERK_LOGIN_RETURN_HEADER` (`clerkHttp.ts`). */
+const CLERK_LOGIN_RETURN_URL_HEADER = "X-Editor-Return-Url";
+
+function editorClerkReturnHeaders(): HeadersInit | undefined {
+  if (typeof window === "undefined") return undefined;
+  return { [CLERK_LOGIN_RETURN_URL_HEADER]: window.location.href };
+}
+
 /**
  * Fetch the current identity from the editor server. Resolves to one of
  * four outcomes; never throws for ordinary unauthenticated cases. Network
@@ -71,6 +79,7 @@ export async function fetchClerkSession(
       method: "GET",
       credentials: "include",
       cache: "no-store",
+      headers: editorClerkReturnHeaders(),
       ...(signal ? { signal } : {}),
     });
   } catch (error) {
@@ -161,6 +170,7 @@ export async function autoPairWithEditor(
       method: "POST",
       credentials: "include",
       cache: "no-store",
+      headers: editorClerkReturnHeaders(),
       ...(signal ? { signal } : {}),
     });
   } catch (error) {
@@ -208,22 +218,76 @@ export async function autoPairWithEditor(
   return { status: "paired", identity: body.identity };
 }
 
+function isApiReturnPath(pathname: string): boolean {
+  return pathname === "/api" || pathname.startsWith("/api/");
+}
+
+function parseRedirectUrlParam(raw: string | null): URL | null {
+  if (!raw?.trim()) return null;
+  const trimmed = raw.trim();
+  try {
+    return new URL(decodeURIComponent(trimmed));
+  } catch {
+    try {
+      return new URL(trimmed);
+    } catch {
+      return null;
+    }
+  }
+}
+
+/**
+ * Returns sign-in URL with `redirect_url` set to the editor return address when
+ * the server did not already attach one. Used for anchor `href`s (direct
+ * clicks) as well as `redirectToLogin()`.
+ *
+ * If `redirect_url` already points at `/api/*` (e.g. a stale `/api/clerk/me`
+ * from an earlier hop), it is replaced so Clerk never lands the browser on a
+ * JSON API route after sign-in.
+ */
+export function withEditorReturnUrl(loginUrl: string, currentHref: string): string {
+  try {
+    const target = new URL(loginUrl);
+    const existing = parseRedirectUrlParam(target.searchParams.get("redirect_url"));
+    const existingIsUnusable =
+      !existing ||
+      (existing.protocol !== "http:" && existing.protocol !== "https:") ||
+      isApiReturnPath(existing.pathname);
+
+    if (!existingIsUnusable) {
+      return target.toString();
+    }
+
+    let next: string | undefined;
+    try {
+      const cur = new URL(currentHref);
+      if (cur.protocol === "http:" || cur.protocol === "https:") {
+        next = isApiReturnPath(cur.pathname) ? `${cur.origin}/` : currentHref;
+      }
+    } catch {
+      /* leave next unset */
+    }
+    if (next) {
+      target.searchParams.set("redirect_url", next);
+    }
+    return target.toString();
+  } catch {
+    return loginUrl;
+  }
+}
+
 /**
  * Hard-redirect the browser to the given login URL, augmenting it with the
  * current page so the user lands back here after signing in.
  */
-export function redirectToLogin(loginUrl: string, currentHref: string = window.location.href): void {
-  let target: URL;
-  try {
-    target = new URL(loginUrl);
-  } catch {
+export function redirectToLogin(
+  loginUrl: string,
+  currentHref: string = typeof window !== "undefined" ? window.location.href : "",
+): void {
+  if (typeof window === "undefined") return;
+  if (!currentHref) {
     window.location.href = loginUrl;
     return;
   }
-  // Server-side already sets `redirect_url`, but if it didn't (e.g. the env
-  // override pointed at a bare URL), fall through to setting it here.
-  if (!target.searchParams.has("redirect_url")) {
-    target.searchParams.set("redirect_url", currentHref);
-  }
-  window.location.href = target.toString();
+  window.location.href = withEditorReturnUrl(loginUrl, currentHref);
 }

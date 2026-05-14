@@ -3,10 +3,9 @@ import { adminKeys } from './en/admin';
 const en = {
   // General
   'app.name': 'Flowstarter',
-  'app.title':
-    'Flowstarter | Professional websites for coaches, consultants & therapists',
+  'app.title': 'Flowstarter | Done-for-you websites for coaches',
   'app.description':
-    'We design, build, and launch your professional website by hand. Update it yourself with AI. Starting at €499.',
+    'We design, build, and launch your professional website by hand. Update it yourself with AI. Starting at €499',
   'app.back': 'Back',
   'app.saveContinue': 'Continue',
   'app.createProject': 'Create Project',
@@ -17,8 +16,7 @@ const en = {
   'app.keepEditing': 'Keep editing',
   'app.loadingExperience': 'Loading your experience...',
   'app.error': 'Error',
-  'app.failedToFetchIndustries':
-    'Failed to fetch industries. Please try again.',
+  'app.failedToFetchIndustries': 'Failed to fetch industries. Please try again',
   'app.needHelp': 'Need help or a custom solution?',
   'app.bookCallWithUs': 'Book a free discovery call',
   'app.saveFailed': 'Save failed',
@@ -30,7 +28,7 @@ const en = {
   'app.signOut': 'Sign out',
   'app.sigOutTitle': 'Are you sure you want to sign out?',
   'app.signOutDescription':
-    'You will need to sign in again to access your dashboard.',
+    'You will need to sign in again to access your dashboard',
   'app.redirectingToDashboard': 'Redirecting to dashboard...',
   'app.loading': 'Loading...',
   'app.clear': 'Clear',
@@ -42,14 +40,14 @@ const en = {
   // Auth
   'auth.signUp.title': 'Create your account',
   'auth.signUp.subtitle':
-    'Let Flowstarter guide you in building your online presence, from stunning websites to powerful analytics, all in one place.',
+    'Let Flowstarter guide you in building your online presence, from stunning websites to powerful analytics, all in one place',
   'auth.marketing.signup.easyStart': 'Your assistant helps you start securely',
   'auth.marketing.signup.noCreditCard':
     'Enterprise-grade security protects your data',
   'auth.marketing.signup.getOnlineFast': 'Smart guidance every step of the way',
   'auth.signUp.fullName': 'Full name',
   'auth.signUp.passwordRequirements':
-    'Must be {min}-{max} characters and contain numbers and letters.',
+    'Must be {min}-{max} characters and contain numbers and letters',
   'auth.signUp.creatingAccount': 'Creating account...',
   'auth.signUp.createFreeAccount': 'Create free account',
   'auth.signUp.byContinuing':
@@ -63,7 +61,7 @@ const en = {
   'auth.forgotPassword': 'Forgot password?',
   'auth.forgotPassword.title': 'Reset your password',
   'auth.forgotPassword.description':
-    'Enter your email address and we will send you a password reset code.',
+    'Enter your email address and we will send you a password reset code',
   'auth.forgotPassword.sendCode': 'Send reset code',
   'auth.forgotPassword.sendingCode': 'Sending code...',
   'auth.forgotPassword.backToSignIn': 'Back to sign in',
@@ -77,6 +75,22 @@ const en = {
   'auth.forgotPassword.passwordsDoNotMatch': 'Passwords do not match',
   'auth.forgotPassword.invalidCode': 'Invalid or expired reset code',
   'auth.forgotPassword.resendCode': 'Resend code',
+
+  'auth.mfa.title': 'Two-factor authentication',
+  'auth.mfa.totpHint': 'Enter the 6-digit code from your authenticator app',
+  'auth.mfa.backupHint': 'Enter one of your backup codes',
+  'auth.mfa.codeLabel': 'Verification code',
+  'auth.mfa.codePlaceholder.totp': '123456',
+  'auth.mfa.codePlaceholder.backup': 'Backup code',
+  'auth.mfa.verify': 'Verify',
+  'auth.mfa.verifying': 'Verifying…',
+  'auth.mfa.useAuthenticatorApp': 'Authenticator app',
+  'auth.mfa.useBackupCode': 'Backup code',
+  'auth.mfa.invalidCode': 'Invalid code. Try again',
+  'auth.mfa.back': 'Back',
+  'auth.mfa.unsupportedFactor':
+    'This account uses a second step we can’t complete here (for example a text or email code). Use an authenticator app or backup codes in Clerk, or contact an admin',
+
   'auth.email.placeholder': 'e.g johnatan@doe.com',
   'auth.password.placeholder': 'Enter your password',
   'auth.signUp.fullName.placeholder': 'e.g Johnatan Doe',
@@ -114,53 +128,53 @@ const en = {
   // Auth notices
   'auth.notice.unauthenticated.title': 'Please sign in to continue',
   'auth.notice.unauthenticated.desc':
-    'You tried to access a protected page. Sign in to continue.',
+    'You tried to access a protected page. Sign in to continue',
   'auth.notice.unauthorized.title': "You don't have access to that page",
   'auth.notice.unauthorized.desc':
-    'Try signing in with a different account or contact support if you believe this is a mistake.',
+    'Try signing in with a different account or contact support if you believe this is a mistake',
   'auth.notice.accountCreated.title': 'Account created successfully!',
   'auth.notice.accountCreated.desc':
-    'Your account has been created. Please check your email for a verification link to activate your account.',
+    'Your account has been created. Please check your email for a verification link to activate your account',
   'auth.notice.accountCreatedVerified.title': 'Account created and verified!',
   'auth.notice.accountCreatedVerified.desc':
-    'Your account has been created and your email is verified. You can now sign in below.',
+    'Your account has been created and your email is verified. You can now sign in below',
   'auth.notice.accountCreatedVerifyNeeded.title': 'Account created',
   'auth.notice.accountCreatedVerifyNeeded.desc':
-    'Your account has been created. Please verify your email address before signing in.',
+    'Your account has been created. Please verify your email address before signing in',
   'auth.notice.verificationSent.title':
     'Account created! Please verify your email',
   'auth.notice.verificationSent.desc':
-    "We've sent a verification email to your inbox. You must verify your email address before you can sign in. Please check your email and click the verification link, then return here to sign in.",
+    "We've sent a verification email to your inbox. You must verify your email address before you can sign in. Please check your email and click the verification link, then return here to sign in",
 
   // Clerk error messages
   'auth.errors.somethingWentWrong': 'Something went wrong',
+  'auth.errors.signInInvalid':
+    'Incorrect email or password. Try again, or reset your password',
   'auth.errors.formIdentifierNotFound':
-    'No account found with this email. Please check your email or sign up for a new account.',
+    'No account found with this email. Please check your email or sign up for a new account',
   'auth.errors.formPasswordIncorrect':
-    'Incorrect credentials. Please check and try again.',
+    'Incorrect credentials. Please check and try again',
   'auth.errors.formParamFormatInvalidIdentifier':
-    'Please enter a valid email address.',
+    'Please enter a valid email address',
   'auth.errors.formParamFormatInvalidEmail':
-    'Please enter a valid email address.',
-  'auth.errors.formParamFormatInvalid': 'Invalid format provided.',
+    'Please enter a valid email address',
+  'auth.errors.formParamFormatInvalid': 'Invalid format provided',
   'auth.errors.verificationFailed':
-    'Please verify your email address before signing in.',
-  'auth.errors.checkCredentials':
-    'Please check your credentials and try again.',
+    'Please verify your email address before signing in',
+  'auth.errors.checkCredentials': 'Please check your credentials and try again',
   'auth.errors.formIdentifierExists':
-    'An account with this email already exists. Please try signing in instead.',
+    'An account with this email already exists. Please try signing in instead',
   'auth.errors.formPasswordPwned':
-    'This password has been found in a data breach. Please choose a different password.',
+    'This password has been found in a data breach. Please choose a different password',
   'auth.errors.formPasswordNotStrongEnough':
-    'Password is not strong enough. Please choose a stronger password.',
+    'Password is not strong enough. Please choose a stronger password',
   'auth.errors.formPasswordTooCommon':
-    'This password is too common. Please choose a more unique password.',
-  'auth.errors.checkInformation':
-    'Please check your information and try again.',
+    'This password is too common. Please choose a more unique password',
+  'auth.errors.checkInformation': 'Please check your information and try again',
   'auth.errors.invalidOrExpiredCode':
-    'Invalid or expired code. Please try again.',
+    'Invalid or expired code. Please try again',
   'auth.errors.failedToResendCode':
-    'Failed to resend code. Please wait a moment and try again.',
+    'Failed to resend code. Please wait a moment and try again',
 
   // Wizard sections
   'wizard.loading': 'Loading wizard...',
@@ -228,9 +242,9 @@ const en = {
     'You can change it later until you publish your website',
 
   // Wizard – Details Chat (ProjectDetailsChat component)
-  'wizard.detailsChat.greeting': "Hi {name}, I'm your Flowstarter assistant.",
+  'wizard.detailsChat.greeting': "Hi {name}, I'm your Flowstarter assistant",
   'wizard.detailsChat.greetingSubtext':
-    "I'll help you shape your idea into a beautiful website, fast and easy.",
+    "I'll help you shape your idea into a beautiful website, fast and easy",
 
   // Generate with AI assistant
   'ai.generateWithAI': 'Start with Smart Setup',
@@ -249,7 +263,7 @@ const en = {
     'Please provide business information first',
   'ai.appliedToFieldsTitle': 'Applied smart suggestions',
   'ai.appliedToFieldsDescription':
-    'We filled empty fields. Please review and adjust as needed before continuing.',
+    'We filled empty fields. Please review and adjust as needed before continuing',
   'ai.makeItShorter': 'Make it shorter',
   'ai.exploreAlternatives': 'Explore alternatives',
   'ai.makeItPunchy': 'Make it punchy',
@@ -302,11 +316,11 @@ const en = {
   'domain.customOption.useExisting': 'Use your existing domain',
   'domain.customOption.note': 'Use your own address. Requires DNS setup',
   'domain.customOption.useSuggested': 'Use',
-  'domain.customOption.helpIntro': 'Enter your custom domain name.',
+  'domain.customOption.helpIntro': 'Enter your custom domain name',
   'domain.customOption.helpOwns':
-    "You'll need to configure DNS settings after deployment.",
+    "You'll need to configure DNS settings after deployment",
   'domain.customOption.helpWantsToBuy':
-    "We can help you check if it's available for purchase.",
+    "We can help you check if it's available for purchase",
   'domain.buy.available': 'Suggested domains',
   'domain.buy.refresh': 'Refresh suggestions',
   'domain.buy.inputLabel': 'Enter a domain to check availability',
@@ -320,9 +334,9 @@ const en = {
   'domain.buy.enterName':
     'Enter a project name above to see domain suggestions',
   'domain.buy.postPurchaseHint':
-    'After purchasing, return here and choose “My Custom Domain” to connect it.',
+    'After purchasing, return here and choose “My Custom Domain” to connect it',
   'domain.buy.pleaseTryAgainOrCheckWithYourRegistrar':
-    'Please try again or check with your registrar.',
+    'Please try again or check with your registrar',
   'domain.buy.couldNotVerifyAvailability': 'Could not verify availability',
   'domain.preview.availableAt': 'Your site will be available at:',
   'domain.preview.customConfigured': 'Custom domain configured',
@@ -331,34 +345,34 @@ const en = {
   'domain.validation.invalid': 'Invalid domain format',
   'domain.validation.didYouMean': 'Did you mean:',
   'domain.config.subtitle2':
-    'A domain is your website’s address (for example, mybusiness.com). You can start with a free hosted subdomain or connect your own.',
+    'A domain is your website’s address (for example, mybusiness.com). You can start with a free hosted subdomain or connect your own',
   'domain.config.subtitle3':
-    'Get a free subdomain today. You can connect your own domain later.',
+    'Get a free subdomain today. You can connect your own domain later',
   'domain.config.hintChangeToCustomOrBuy':
     'Have a custom domain or want to purchase one? Click “Change selection” above and choose “My Custom Domain” or “Help me buy a domain.”',
   'domain.config.subdomain': 'subdomain',
   'domain.config.subtitle4':
-    'Connect your own domain. You’ll verify ownership and update DNS after launch.',
+    'Connect your own domain. You’ll verify ownership and update DNS after launch',
   'domain.autoSuggested': 'Auto-suggested from project name "{name}"',
   'domain.continueWithThisDomain': 'Use this domain',
   'domain.config.bestOption':
-    'This will help us configure the best option for your project.',
+    'This will help us configure the best option for your project',
 
   // Domain ownership verification helper
 
   // Draft banners / dialogs
   'draft.inProgressDesc':
-    'You have an ongoing draft. Pick up where you left off or start fresh.',
+    'You have an ongoing draft. Pick up where you left off or start fresh',
   'draft.discardProgressTitle': 'Discard your progress?',
   'draft.discardProgressDesc':
-    'This will delete your current draft and you will lose all unsaved changes.',
+    'This will delete your current draft and you will lose all unsaved changes',
   'draft.saveDraftFailed': 'Failed to save draft',
   'draft.saveDraftSuccess': 'Draft saved successfully',
   'draft.restoringDraft': 'Loading your dashboard…',
   'draft.saveDraftSuccessDescription':
-    'You can continue anytime from your dashboard. Pick up where you left off or start a new project.',
+    'You can continue anytime from your dashboard. Pick up where you left off or start a new project',
   'draft.saveDraftFailedDescription':
-    'We could not save your progress. Please try again.',
+    'We could not save your progress. Please try again',
   'draft.discardingDraft': 'Discarding draft…',
 
   'dashboard.analytics.prospectSingular': 'prospect',
@@ -397,7 +411,7 @@ const en = {
   'dashboard.stats.notStarted': 'Awaiting kickoff',
   'dashboard.stats.bookDiscovery': 'Schedule your kickoff call to begin',
   'dashboard.stats.buildingMessage':
-    "Your website is being built. We'll notify you at each milestone.",
+    "Your website is being built. We'll notify you at each milestone",
   'dashboard.stats.edit': 'Edit',
   'dashboard.stats.view': 'View',
   'dashboard.stats.trafficAppears': 'Traffic data activates at launch',
@@ -447,7 +461,7 @@ const en = {
   // Premium dashboard - build phase
   'dashboard.action.kickoffTitle': "Let's get your website started",
   'dashboard.action.kickoffDesc':
-    'A 30-minute call to define your goals. We handle the rest.',
+    'A 30-minute call to define your goals. We handle the rest',
   'dashboard.stats.buildPhase': 'Build in progress',
   'dashboard.stats.buildPhaseActive': 'In progress',
   'dashboard.stats.currentMilestone': 'Current phase: {phase}',
@@ -472,10 +486,10 @@ const en = {
   // Team / admin login
   'team.login.title': 'Admin Login',
   'team.login.subtitle':
-    'Sign in to manage client projects and configure services.',
+    'Sign in to manage client projects and configure services',
   'team.login.signInTitle': 'Sign in to your account',
   'team.login.signInSubtitle':
-    'Team access only. Contact admin for credentials.',
+    'Team access only. Contact admin for credentials',
   'team.login.emailLabel': 'Email address',
   'team.login.emailPlaceholder': 'you@flowstarter.net',
   'team.login.passwordLabel': 'Password',
@@ -509,7 +523,7 @@ const en = {
     'View and manage all client projects',
   'team.dashboard.noProjects': 'No projects yet',
   'team.dashboard.statsLoadError':
-    'Could not load dashboard stats. Refresh the page or try again shortly.',
+    'Could not load dashboard stats. Refresh the page or try again shortly',
   'team.dashboard.lastEdit': 'Last edit: {time}',
   'team.dashboard.countLive': '{count} live',
   'team.dashboard.countBuilding': '{count} building',
@@ -527,7 +541,7 @@ const en = {
   'team.dashboard.unknownOwner': 'Unknown',
   'team.dashboard.deleteProject': 'Delete Project',
   'team.dashboard.deleteConfirm':
-    'Are you sure you want to delete "{name}"? This action cannot be undone.',
+    'Are you sure you want to delete "{name}"? This action cannot be undone',
   'team.dashboard.renameProject': 'Rename Project',
   'team.dashboard.projectNamePlaceholder': 'Project name',
   'team.dashboard.projectPricing': 'Project Pricing',
@@ -576,88 +590,8 @@ const en = {
   'app.delete': 'Delete',
   'app.deleting': 'Deleting...',
 
-  // Dashboard cards (legacy keys)
-
-  // Generate step
-
-  // Basic Info form
-  'basic.name.label': 'Project name',
-  'basic.name.placeholder': 'Enter your project name',
-  'basic.name.available': 'is available!',
-  'basic.name.taken': 'is already taken',
-  'basic.name.invalid': 'Invalid name',
-
-  'basic.description.label': 'Project description',
-  'basic.description.placeholder':
-    'Summarize your business and website goals in 1-4 sentences',
-  'basic.description.required': 'Description is required',
-  'basic.description.minLength':
-    'Description must be at least {characters} characters',
-  'basic.description.maxLength':
-    'Description must be at most {characters} characters',
-  'basic.description.sentenceCount':
-    'Description must be between {min} and {max} sentences long',
-  'basic.userDescription.required': 'Prompt is required',
-
-  'basic.audience.label': 'Audience',
-  'basic.audience.placeholder': 'e.g., entrepreneurs, SMBs, students ',
-  'basic.audience.required': 'Audience is required',
-  'basic.audience.hint': '(separate values by comma)',
+  // UI components
   'tagsInput.noSuggestions': 'No suggestions',
-
-  'basic.uvp.minLength':
-    'UVP must be at least {characters} characters if provided',
-  'basic.uvp.maxLength': 'UVP must be at most {characters} characters',
-  'basic.uvp.label': 'Unique value proposition (UVP)',
-  'basic.uvp.placeholder':
-    'A short description about what makes your business to stand out',
-  'basic.uvp.required': 'UVP is required',
-
-  'basic.goals.label': 'Main goals',
-  'basic.goals.placeholder': 'e.g., leads, sales, signups',
-  'basic.goals.hint': '(separate values by comma)',
-
-  'basic.industry.loadingPlaceholder': 'Loading industries…',
-  'basic.industry.selectIndustryDescription':
-    'Tell us more about your type of business',
-  'basic.industry.selectPlaceholder': 'Select an industry',
-  'basic.industry.searchPlaceholder': 'Search industries…',
-  'basic.industry.emptyMessage': 'No industries found',
-  'basic.suggestions.useThis': 'Use this',
-  'basic.suggestions.availableAlternatives': 'Available alternatives:',
-
-  // Goal presets (SMART goals) with placeholders
-  'goals.preset.mau': 'Reach {count} monthly active users in {months} months',
-  'goals.preset.mrr': 'Grow MRR to {amount} within {months} months',
-  'goals.preset.convRate':
-    'Increase website conversion rate to {percent}% within {months} months',
-  'goals.preset.churn':
-    'Reduce churn to under {percent}% within {months} months',
-  'goals.preset.nps': 'Achieve an NPS of {score} within {months} months',
-  'goals.preset.payingCustomers':
-    'Acquire {count} paying customers within {months} months',
-  'goals.preset.content':
-    'Publish {count} high-quality content pieces within {months} months',
-  'goals.preset.b2bDeals': 'Close {count} new B2B deals within {months} months',
-  'goals.preset.trials':
-    'Reach {count} trial sign-ups per month within {months} months',
-  'goals.preset.gmv': 'Reach {amount} monthly GMV within {months} months',
-  'goals.preset.appointments':
-    'Book {count} qualified appointments per month within {months} months',
-  'goals.preset.reviews':
-    'Reach {rating} average rating with {count} Google reviews within {months} months',
-  'goals.preset.leads':
-    'Generate {count} website leads per month within {months} months',
-  'goals.preset.monthlyRevenue':
-    'Reach {amount} monthly revenue within {months} months',
-  'goals.preset.repeatPurchase':
-    'Increase repeat purchase rate to {percent}% within {months} months',
-  'goals.preset.emailList':
-    'grow email list to {count} subscribers within {months} months',
-  'goals.preset.cartAbandonment':
-    'reduce cart abandonment to {percent}% or less within {months} months',
-  'goals.preset.trialToPaid':
-    'Increase trial-to-paid conversion to {percent}% within {months} months',
 
   // Navigation
   'nav.create': 'Create',
@@ -683,7 +617,7 @@ const en = {
   'projects.delete': 'Delete Project',
   'projects.deleteDialog.title': 'Delete Project',
   'projects.deleteDialog.description':
-    'Are you sure you want to delete "{name}"? This action cannot be undone and all project data will be permanently removed.',
+    'Are you sure you want to delete "{name}"? This action cannot be undone and all project data will be permanently removed',
   'projects.deleteDialog.cancel': 'Cancel',
   'projects.deleteDialog.delete': 'Delete Project',
   'projects.deleteDialog.deleting': 'Deleting...',
@@ -753,7 +687,7 @@ const en = {
   // Google Analytics Integration
   'integrations.googleAnalytics.name': 'Google Analytics',
   'integrations.googleAnalytics.description':
-    'Track visitor behavior, traffic sources, and conversions on your generated websites.',
+    'Track visitor behavior, traffic sources, and conversions on your generated websites',
 
   // Help - Overview
 
@@ -792,18 +726,16 @@ const en = {
 
   // Footer
   'footer.links.helpCenter': 'Help Center',
-  'footer.links.blog': 'Blog',
   'footer.links.privacyPolicy': 'Privacy Policy',
   'footer.links.termsOfService': 'Terms of Service',
   'footer.social.twitterAria': 'Follow us on Twitter',
   'footer.social.linkedinAria': 'Follow us on LinkedIn',
   'footer.social.githubAria': 'Follow us on GitHub',
   'footer.social.discordAria': 'Join our Discord',
-  'footer.copyright': '© {year} Flowstarter, Inc. All rights reserved.',
+  'footer.copyright': '© {year} Flowstarter, Inc. All rights reserved',
   'footer.buildWith': 'Built with',
   'footer.byTeam': 'by the Flowstarter team',
   'footer.nav.help': 'Help',
-  'footer.nav.blog': 'Blog',
   'footer.nav.privacy': 'Privacy',
   'footer.nav.terms': 'Terms',
   'footer.nav.contact': 'Contact',
@@ -813,7 +745,6 @@ const en = {
   'footer.nav.cookies': 'Cookie settings',
   'footer.nav.about': 'About',
   'footer.nav.faq': 'FAQ',
-  'footer.nav.status': 'Status',
 
   // Landing page
 
@@ -832,7 +763,7 @@ const en = {
   // Error page
   'error.title': 'Something went wrong',
   'error.subtitle':
-    "We encountered an unexpected error. Don't worry, we've been notified and are working to fix it.",
+    "We encountered an unexpected error. Don't worry, we've been notified and are working to fix it",
   'error.reload': 'Reload Page',
   'error.goHome': 'Go to Homepage',
   'error.whatHappened': 'What happened?',
@@ -841,7 +772,7 @@ const en = {
   'error.reason1': 'A temporary server issue',
   'error.reason2': 'A network connectivity problem',
   'error.reason3': 'An unexpected application error',
-  'error.contactSupport': 'If this continues, please contact our support team.',
+  'error.contactSupport': 'If this continues, please contact our support team',
 
   // Not Found page
 
@@ -852,7 +783,7 @@ const en = {
   // Database offline
   'database.offline.title': 'Database Offline',
   'database.offline.subtitle':
-    "We're having trouble connecting to our database. This might be temporary.",
+    "We're having trouble connecting to our database. This might be temporary",
   'database.offline.connectionStatus': 'Connection Status:',
   'database.offline.offlineSince': 'Offline since {time}',
   'database.offline.retryConnection': 'Retry Connection',
@@ -893,14 +824,14 @@ const en = {
   // Examples Page
   'examples.title': 'Example Sites Gallery',
   'examples.subtitle':
-    "Get inspired by real websites built with Flowstarter. See what's possible and start building your own.",
+    "Get inspired by real websites built with Flowstarter. See what's possible and start building your own",
   'examples.searchPlaceholder': 'Search example sites...',
   'examples.featured': 'Featured',
   'examples.categoryLabel': 'Category',
   'examples.industryLabel': 'Industry',
   'examples.pleaseTryAgain': 'Please try again later',
-  'examples.noSitesFound': 'No example sites found matching your criteria.',
-  'examples.noSitesAvailable': 'No example sites available yet.',
+  'examples.noSitesFound': 'No example sites found matching your criteria',
+  'examples.noSitesAvailable': 'No example sites available yet',
   'examples.clearFilters': 'Clear Filters',
   'examples.sitesFound': 'site{plural} found',
   'examples.cta.browseTemplates': 'Browse Templates',
@@ -910,7 +841,7 @@ const en = {
   // Profile Page
   'profile.userNotFound': 'User not found',
   'profile.userNotFound.description':
-    'Please try refreshing the page or signing in again.',
+    'Please try refreshing the page or signing in again',
   'profile.personalInformation.title': 'Personal Information',
   'profile.personalInformation.firstName': 'First Name',
   'profile.personalInformation.lastName': 'Last Name',
@@ -946,7 +877,7 @@ const en = {
   'assistant.toast.successDescription':
     'Taking you to customize your project...',
   'assistant.toast.error': 'Failed to process your request',
-  'assistant.toast.errorDescription': 'Please try again.',
+  'assistant.toast.errorDescription': 'Please try again',
   // Assistant prompt suggestions
   'assistant.prompts.greeting':
     'Hi {user}, here are some prompt examples you can use (click to use):  ',
@@ -1037,7 +968,7 @@ const en = {
   // Feedback
   'feedback.title': 'Send Feedback',
   'feedback.description':
-    "We'd love to hear your thoughts! Share your ideas, report bugs, or suggest improvements.",
+    "We'd love to hear your thoughts! Share your ideas, report bugs, or suggest improvements",
   'feedback.category.label': 'Category',
   'feedback.category.placeholder': 'Select a category',
   'feedback.category.bug': 'Bug Report',
@@ -1055,7 +986,7 @@ const en = {
   'feedback.success': 'Thank you for your feedback!',
   'feedback.error.required': 'Please select a category and enter a message',
   'feedback.error.tooShort': 'Message must be at least 10 characters',
-  'feedback.error.submit': 'Failed to submit feedback. Please try again.',
+  'feedback.error.submit': 'Failed to submit feedback. Please try again',
   'sidebar.feedback': 'Feedback',
 
   'editor.attachImage': 'Attach Image',
@@ -1099,62 +1030,25 @@ const en = {
 
   // CTA section
 
-  // Waitlist
-  'waitlist.badge': 'Early Access',
-  'waitlist.title': 'Join the Waitlist',
-  'waitlist.description':
-    "Be the first to know when {plan} launches. We'll notify you as soon as it's available.",
-  'waitlist.descriptionGeneric':
-    "Be among the first to experience Flowstarter. We'll notify you when we launch.",
-  'waitlist.form.name': 'Your name',
-  'waitlist.form.namePlaceholder': 'John Doe',
-  'waitlist.form.email': 'Email address',
-  'waitlist.form.emailPlaceholder': 'you@example.com',
-  'waitlist.form.submit': 'Join Waitlist',
-  'waitlist.form.submitting': 'Joining...',
-  'waitlist.success.title': "You're on the list!",
-  'waitlist.success.description':
-    "Thanks for joining! We'll send you an email when {plan} is ready.",
-  'waitlist.success.descriptionGeneric':
-    "Thanks for joining! We'll send you an email when Flowstarter launches.",
-  'waitlist.already.title': 'Already registered!',
-  'waitlist.already.description':
-    "You're already on our waitlist. We'll notify you soon!",
-  'waitlist.error.description': 'Please try again or contact support.',
-  'waitlist.error.invalidEmail': 'Please enter a valid email address',
-  'waitlist.close': 'Close',
-  'waitlist.cta.joinWaitlist': 'Join Waitlist',
-
-  // Landing page waitlist
-  'waitlist.landing.title': 'Be the First to Know',
-  'waitlist.landing.description':
-    'Join our early access list and be among the first to experience AI-powered website editing.',
-  'waitlist.landing.emailPlaceholder': 'Enter your email',
-  'waitlist.landing.cta': 'Get Early Access',
-  'waitlist.landing.submitting': 'Joining...',
-  'waitlist.landing.successInline': "You're in! We'll be in touch soon.",
-  'waitlist.landing.alreadyInline': "You're already on the list!",
-  'waitlist.landing.privacy': 'No spam. Unsubscribe anytime.',
-
   // Landing Page - Hero
-  'landing.hero.badge': 'Done for you. Managed by you.',
+  'landing.hero.badge': 'Done for you. Managed by you',
   'landing.hero.headline1': 'Launch your online business',
-  'landing.hero.headline2': 'without tech skills or expensive agencies.',
+  'landing.hero.headline2': 'without tech skills or expensive agencies',
   'landing.hero.audience':
-    'Built for creators, freelancers, and small businesses who want to get online and monetize faster.',
+    'Built for creators, freelancers, and small businesses who want to get online and monetize faster',
   'landing.hero.pain':
-    'We build your initial setup for you, then you manage and grow everything from one AI-powered dashboard.',
+    'We build your initial setup for you, then you manage and grow everything from one AI-powered dashboard',
   'landing.hero.subheadline': '',
   'landing.hero.cta': 'Launch my business',
   'landing.hero.ctaNote':
-    "One call. We handle everything. We agree the timeline together.",
+    'One call. We handle everything. We agree the timeline together',
   'landing.hero.priceBuild': '€499',
   'landing.hero.priceMonthly': '€39',
 
   // What's Included section
-  'landing.included.title': 'Everything you need to get found and get booked.',
+  'landing.included.title': 'Everything you need to get found and get booked',
   'landing.included.subtitle':
-    'One setup. No subscriptions to manage. No tech to figure out.',
+    'One setup. No subscriptions to manage. No tech to figure out',
   'landing.included.setup.title': 'Setup',
   'landing.included.setup.label': '(one-time)',
   'landing.included.setup.desc': 'What we build for you',
@@ -1181,34 +1075,34 @@ const en = {
   // FAQ Section
   'landing.faq.q1': 'What happens on the discovery call?',
   'landing.faq.a1':
-    "We spend up to 30 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours.",
+    "We spend up to 30 minutes learning about your business, your goals, and your clients. You don't need to prepare anything, just show up and tell us about what you do. After the call, we start building your site within 24 hours",
   'landing.faq.q2': 'How long until my site is live?',
   'landing.faq.a2':
-    'We agree a realistic timeline together during the discovery call, then keep you in the loop the whole way. We aim to ship faster than traditional agencies, without rushing the craft.',
+    'We agree a realistic timeline together during the discovery call, then keep you in the loop the whole way. We aim to ship faster than traditional agencies, without rushing the craft',
   'landing.faq.q3': 'Can I make changes after the site is built?',
   'landing.faq.a3':
-    "Yes. Your subscription includes updates handled for you. Get in touch and we'll take care of it.",
+    "Yes. Your subscription includes updates handled for you. Get in touch and we'll take care of it",
   'landing.faq.q4': 'What if I want to cancel?',
   'landing.faq.a4':
-    "No lock-in. Cancel anytime. If you share feedback, we'll refund 50% of your setup fee. Either way, you get all your site files to keep.",
+    "No lock-in. Cancel anytime. If you share feedback, we'll refund 50% of your setup fee. Either way, you get all your site files to keep",
   'landing.faq.q5': 'Do I need any technical skills?',
   'landing.faq.a5':
-    'Zero. We handle the entire setup. You just review and approve.',
+    'Zero. We handle the entire setup. You just review and approve',
   'landing.faq.q6': 'What happens when the beta ends?',
   'landing.faq.a6':
-    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €699 setup + €49/month. You get 30 days notice before anything changes.',
+    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €699 setup + €49/month. You get 30 days notice before anything changes',
   'landing.faq.q7': "What's included in the email?",
   'landing.faq.a7':
-    'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes.',
+    'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes',
   'landing.faq.q8': 'What kind of businesses do you work with?',
   'landing.faq.a8':
-    'We specialize in websites for service businesses: coaches, therapists, consultants, clinics, barbers, beauty salons, and similar. If you rely on appointments and local clients, we are the right fit.',
+    'We specialize in websites for service businesses: coaches, therapists, consultants, clinics, barbers, beauty salons, and similar. If you rely on appointments and local clients, we are the right fit',
   'landing.faq.q9': 'Can I use my existing domain?',
   'landing.faq.a9':
-    "Yes. We connect your existing domain to your new site at no extra cost. If you don't have one yet, we help you set it up during the discovery call.",
+    "Yes. We connect your existing domain to your new site at no extra cost. If you don't have one yet, we help you set it up during the discovery call",
   'landing.faq.q10': 'What if I need more than 7 pages?',
   'landing.faq.a10':
-    'The Starter plan includes up to 7 pages, which covers most service business websites. If you need more, we discuss options during the discovery call.',
+    'The Starter plan includes up to 7 pages, which covers most service business websites. If you need more, we discuss options during the discovery call',
 
   // Nav
   'nav.faq': 'FAQ',
@@ -1224,37 +1118,37 @@ const en = {
   'landing.stats.techSkillsLabel': 'TECH WORK ON YOUR SIDE',
 
   // Landing Page - How it works
-  'landing.howItWorks.title': 'Three steps to a website that gets you booked.',
+  'landing.howItWorks.title': 'Three steps to a website that gets you booked',
 
   // How it works - 3 steps
   'landing.steps.step1.num': '01',
   'landing.steps.step1.title': 'We talk',
   'landing.steps.step1.desc':
-    'One call. You tell us about your business. We handle everything from there.',
+    'One call. You tell us about your business. We handle everything from there',
   'landing.steps.step2.num': '02',
   'landing.steps.step2.title': 'We build',
   'landing.steps.step2.desc':
-    'We build your website, set up booking, email, and analytics. You get a polished site ready to customize with our AI editor.',
+    'We build your website, set up booking, email, and analytics. You get a polished site ready to customize with our AI editor',
   'landing.steps.step3.num': '03',
   'landing.steps.step3.title': 'Clients find you and book',
   'landing.steps.step3.desc':
-    'Your site goes live. New clients can find you, see what you do, and book directly. No calls needed to schedule.',
+    'Your site goes live. New clients can find you, see what you do, and book directly. No calls needed to schedule',
 
   // Landing Page - Editor
   'landing.editor.title': 'Update your site anytime',
   'landing.editor.subtitle':
-    'Just type what you want to change. Our AI editor does the rest.',
+    'Just type what you want to change. Our AI editor does the rest',
 
   // Landing Page - Pricing Card
   'landing.pricing.heading1': 'Clear',
   'landing.pricing.heading2': 'pricing',
   'landing.pricing.badge': 'Simple pricing',
-  'landing.pricing.title': 'No surprises.',
+  'landing.pricing.title': 'No surprises',
   'landing.pricing.subtitle':
-    'One fee to build. One fee to maintain. Cancel anytime.',
+    'One fee to build. One fee to maintain. Cancel anytime',
   'landing.pricing.limitedBadge': 'Launch pricing',
   'landing.pricing.limitedNote':
-    'Prices go up after launch (€699 + €49/mo). Lock in current rates.',
+    'Prices go up after launch (€699 + €49/mo). Lock in current rates',
   'landing.pricing.buildLabel': 'Setup:',
   'landing.pricing.buildOriginalPrice': '€699',
   'landing.pricing.buildPrice': '€499',
@@ -1264,14 +1158,14 @@ const en = {
   'landing.pricing.carePrice': '€39',
   'landing.pricing.carePeriod': '/month',
   'landing.pricing.firstMonthFree': 'First month free',
-  'landing.pricing.note': 'First month free. Cancel anytime.',
+  'landing.pricing.note': 'First month free. Cancel anytime',
   'landing.pricing.refund': '50% setup refund if you change your mind',
-  'landing.pricing.assets': 'All your site assets downloadable. You own them.',
+  'landing.pricing.assets': 'All your site assets downloadable. You own them',
 
   // Landing Page - Pricing Features
   'landing.pricing.websiteTitle': 'Setup (€499)',
   'landing.pricing.websiteDesc':
-    'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included.',
+    'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included',
   'landing.pricing.websiteFeature1': 'Strategy call to clarify your offer',
   'landing.pricing.websiteFeature2': 'Up to 7 pages, designed to convert',
   'landing.pricing.websiteFeature3': 'Your domain and professional email',
@@ -1280,19 +1174,18 @@ const en = {
 
   'landing.pricing.careTitle': 'Monthly (€39)',
   'landing.pricing.careDesc':
-    'Hosting, security, updates, and small edits. Bigger changes are quoted separately.',
+    'Hosting, security, updates, and small edits. Bigger changes are quoted separately',
   'landing.pricing.careFeature1': '1,000 AI credits for edits each month',
   'landing.pricing.careFeature2': 'AI editor: update text, images, pages',
   'landing.pricing.careFeature3': 'Hosting and security included',
   'landing.pricing.careFeature4': 'Bigger changes quoted separately',
   'landing.pricing.guaranteeTitle': "Pay only when you're happy",
   'landing.pricing.guaranteeDesc':
-    "We collect 50% upfront to start your project. You only pay the remaining 50% when you're happy with the result.",
+    "We collect 50% upfront to start your project. You only pay the remaining 50% when you're happy with the result",
   'landing.pricing.guaranteeNote':
-    'The initial 50% deposit is non-refundable and covers design, setup, and infrastructure costs.',
-  'landing.pricing.footerNote': 'No lock-in. Cancel anytime. No hidden fees.',
-  'landing.pricing.finePrint':
-    'No contracts. Cancel anytime. First month free.',
+    'The initial 50% deposit is non-refundable and covers design, setup, and infrastructure costs',
+  'landing.pricing.footerNote': 'No lock-in. Cancel anytime. No hidden fees',
+  'landing.pricing.finePrint': 'No contracts. Cancel anytime. First month free',
   'landing.pricing.cta': 'Claim Your Spot',
   'landing.header.cta': 'Book free discovery call',
 
@@ -1301,7 +1194,7 @@ const en = {
   // Landing Page - CTA
   'landing.cta.title': 'Ready to get online?',
   'landing.cta.subtitle':
-    'Get your business foundation hand-built, then manage and grow it with Flowstarter.',
+    'Get your business foundation hand-crafted, then manage and grow it with Flowstarter',
   'landing.cta.button': 'Launch my business',
 
   // Landing Page - Footer CTA
@@ -1312,35 +1205,35 @@ const en = {
   // Three Pillars
   'landing.pillars.title': 'Why experts choose Flowstarter',
   'landing.pillars.subtitle':
-    'Three things every real professional needs online.',
+    'Three things every real professional needs online',
   'landing.pillars.differentiate.title': 'Differentiate',
   'landing.pillars.differentiate.subtitle': 'Stand out from the noise',
   'landing.pillars.differentiate.body':
-    'We build your site around what actually makes you different: your real experience, your results, your approach. Not stock photos and buzzwords.',
+    'We build your site around what actually makes you different: your real experience, your results, your approach. Not stock photos and buzzwords',
   'landing.pillars.attract.title': 'Attract',
   'landing.pillars.attract.subtitle':
     'Get found by clients who value expertise',
   'landing.pillars.attract.body':
-    'The right clients are searching for someone they can trust. We make sure they find you first.',
+    'The right clients are searching for someone they can trust. We make sure they find you first',
   'landing.pillars.convert.title': 'Convert',
   'landing.pillars.convert.subtitle': 'Turn visitors into booked appointments',
   'landing.pillars.convert.body':
-    'Visitors see your work, understand your value, and book directly. No forms that go nowhere. All set up for you.',
+    'Visitors see your work, understand your value, and book directly. No forms that go nowhere. All set up for you',
 
   // Team Section
   'landing.team.title': 'Built by people, not algorithms',
   'landing.team.subtitle':
-    'We started Flowstarter because we needed it ourselves.',
+    'We started Flowstarter because we needed it ourselves',
   'landing.team.darius.name': 'Darius',
   'landing.team.darius.role': 'Co-founder & Engineer',
   'landing.team.darius.bio':
-    '10+ years building software for companies big and small.',
-  'landing.team.darius.quote': 'I build what I wished existed.',
+    '10+ years building software for companies big and small',
+  'landing.team.darius.quote': 'I build what I wished existed',
   'landing.team.dorin.name': 'Dorin',
   'landing.team.dorin.role': 'Co-founder & Designer',
   'landing.team.dorin.bio':
-    'Turns complexity into clarity, one pixel at a time.',
-  'landing.team.dorin.quote': 'Good design is invisible.',
+    'Turns complexity into clarity, one pixel at a time',
+  'landing.team.dorin.quote': 'Good design is invisible',
   'landing.team.linkedin': 'LinkedIn',
 
   // Landing Hero - Price Pill
@@ -1349,8 +1242,7 @@ const en = {
   'landing.hero.buildSetupLabel': 'setup',
   'landing.hero.careOriginalPrice': '€49',
   'landing.hero.monthlyLabel': '/mo',
-  'landing.hero.urgency':
-    "This price won't last. Lock it in before it goes up.",
+  'landing.hero.urgency': "This price won't last. Lock it in before it goes up",
 
   // Landing - Process Heading
   'landing.process.heading1': 'How it',
@@ -1358,12 +1250,12 @@ const en = {
 
   // Landing - FAQ Heading
   'landing.faq.heading1': 'Questions?',
-  'landing.faq.heading2': 'Answered.',
+  'landing.faq.heading2': 'Answered',
 
   // Landing - Trust Section
-  'landing.trust.title': "Everything's included. No hidden extras.",
+  'landing.trust.title': "Everything's included. No hidden extras",
   'landing.trust.subtitle':
-    'Every website comes with everything you need to look professional and get found.',
+    'Every website comes with everything you need to look professional and get found',
   'landing.trust.hosting.label': 'Fast & secure hosting',
   'landing.trust.hosting.desc': 'Global CDN, lightning-fast pages',
   'landing.trust.email.label': 'Professional email',
@@ -1389,7 +1281,7 @@ const en = {
   // Cookie Consent
   'cookie.title': 'We use cookies',
   'cookie.description':
-    'Essential cookies to make Flowstarter work, plus analytics to improve your experience. No advertising or cross-site tracking.',
+    'Essential cookies to make Flowstarter work, plus analytics to improve your experience. No advertising or cross-site tracking',
   'cookie.learnMore': 'Learn more',
   'cookie.acceptAll': 'Accept all',
   'cookie.essentialOnly': 'Essential only',
@@ -1408,7 +1300,7 @@ const en = {
   'error.backToHome': '\u2190 Back to home',
 
   // Mock Editor Preview
-  'mockEditor.chatTitle': '\u2728 Smart AI Editor',
+  'mockEditor.chatTitle': '\u2728 Site assistant',
   'mockEditor.assistantName': 'Flowstarter Assistant',
   'mockEditor.inputPlaceholder': 'Try: Add form...',
   'mockEditor.quickPrompt.pricing': 'Add pricing',
@@ -1439,54 +1331,76 @@ const en = {
   'mockEditor.floatingDraft': 'Draft',
   'mockEditor.floatingTime': 'Just saved',
 
-  // Contact Page
-  'contact.badge': 'Get in Touch',
-  'contact.title': "We'd love to hear from you",
-  'contact.description':
-    "Whether you have a question about our service or want to discuss your project, we're here to help.",
-  'contact.form.title': 'Send us a message',
-  'contact.form.successTitle': 'Message sent!',
-  'contact.form.successDesc': "We'll get back to you within 24 hours.",
+  // Contact Page (editorial redesign)
+  'contact.eyebrow': 'Contact',
+  'contact.headlinePrefix': "Let's talk.",
+  'contact.headlineFlourish': 'Properly. No sales script.',
+  'contact.sub':
+    "Send a message, book a call, or write to us directly. You'll always get one of the two founders \u2014 never a queue.",
+  'contact.form.kicker': 'Send a message',
+  'contact.form.title': 'Write to the founders.',
+  'contact.form.replyGuarantee':
+    'A 1-business-day reply guarantee on every message \u2014 weekends excluded.',
+  'contact.form.successTitle': 'Message sent.',
+  'contact.form.successBody':
+    'We will reply within one business day. Keep an eye on your inbox.',
   'contact.form.sendAnother': 'Send another message',
   'contact.form.nameLabel': 'Your name',
-  'contact.form.namePlaceholder': 'John Doe',
-  'contact.form.emailLabel': 'Email address',
-  'contact.form.emailPlaceholder': 'john@example.com',
-  'contact.form.subjectLabel': 'Subject',
-  'contact.form.subjectDefault': 'Select a topic',
-  'contact.form.subjectGeneral': 'General inquiry',
-  'contact.form.subjectProject': 'I want a website built',
-  'contact.form.subjectSupport': 'Support with my site',
-  'contact.form.subjectBilling': 'Billing question',
-  'contact.form.subjectFeedback': 'Feedback',
+  'contact.form.namePlaceholder': 'Sarah Smith',
+  'contact.form.emailLabel': 'Email',
+  'contact.form.emailPlaceholder': 'you@example.com',
+  'contact.form.subjectLabel': 'What is this about?',
+  'contact.form.subjectDefault': 'Pick a topic',
+  'contact.form.subjectGeneral': 'General question',
+  'contact.form.subjectProject': 'New project',
+  'contact.form.subjectSupport': 'Support for an existing site',
+  'contact.form.subjectBilling': 'Billing',
+  'contact.form.subjectPress': 'Press',
   'contact.form.subjectOther': 'Other',
-  'contact.form.messageLabel': 'Message',
+  'contact.form.messageLabel': 'Your message',
   'contact.form.messagePlaceholder':
-    'Tell us about your project or question...',
-  'contact.form.defaultError': 'Something went wrong',
-  'contact.form.sending': 'Sending...',
-  'contact.form.sendButton': 'Send Message',
-  'contact.talk.title': 'Prefer to talk?',
-  'contact.talk.description':
-    "Book a free discovery call. We'll learn about your business and figure out the best approach together.",
-  'contact.talk.button': 'Book a free discovery call',
-  'contact.other.title': 'Other ways to reach us',
-  'contact.other.emailLabel': 'Email',
-  'contact.other.emailValue': 'hello@flowstarter.net',
-  'contact.other.twitterLabel': 'Twitter',
-  'contact.other.twitterValue': '@flowstarter',
-  'contact.other.linkedinLabel': 'LinkedIn',
-  'contact.other.linkedinValue': 'Flowstarter',
-  'contact.response.title': 'Response within 24 hours',
-  'contact.response.description': 'Usually much faster!',
+    'Tell us what you need. The more concrete, the better.',
+  'contact.form.defaultError': 'Something went wrong. Please try again.',
+  'contact.form.sending': 'Sending\u2026',
+  'contact.form.send': 'Send message',
+  'contact.call.kicker': 'Discovery call',
+  'contact.call.title': '30 minutes with the founders.',
+  'contact.call.body':
+    'The fastest way to find out if Flowstarter is right for you. We come prepared, no slides, no script.',
+  'contact.call.cta': 'Book a free discovery call',
+  'contact.direct.kicker': 'Direct lines',
+  'contact.direct.title': 'Reach us in one click.',
+  'contact.direct.emailLabel': 'Email',
+  'contact.direct.twitterLabel': 'X / Twitter',
+  'contact.direct.linkedinLabel': 'LinkedIn',
+  'contact.responseTime.label': 'Response time',
+  'contact.responseTime.value': 'Within one business day, Mon\u2013Fri.',
 
-  // Help Content
-  'help.badge': 'Help Center',
-  'help.title': 'How can we help?',
-  'help.description':
-    'Everything you need to know about getting your website built and customized.',
-  'help.loggedInTitle': 'Help & Support',
-  'help.loggedInDescription': 'Everything you need to know about your project.',
+  // Help Page (editorial redesign)
+  'help.eyebrow': 'Help Center',
+  'help.headlinePrefix': 'Need a hand?',
+  'help.headlineFlourish': "We're right here.",
+  'help.sub':
+    'Search the answers below, browse our most-asked topics, or grab a free 30-minute call with us.',
+  'help.card1.title': 'Book a free discovery call',
+  'help.card1.body':
+    "30 minutes, no commitment. We answer questions, walk you through the build process, and tell you honestly if we're a fit.",
+  'help.card1.cta': 'Book a free discovery call',
+  'help.card2.title': 'Email us directly',
+  'help.card2.body':
+    'For account, billing, or technical questions. We reply within one business day.',
+  'help.card3.title': 'Chat with the assistant',
+  'help.card3.body':
+    'Pop open the floating chat in the bottom-right corner \u2014 it answers most common questions instantly, no wait.',
+  'help.card3.badge': 'Live \u00b7 bottom-right',
+  'help.faq.eyebrow': 'Q&A',
+  'help.faq.headlinePrefix': 'The questions we hear most,',
+  'help.faq.headlineFlourish': 'answered honestly.',
+  'help.stillStuck': 'Still stuck?',
+  'help.stillStuckBody':
+    'The fastest way to get unblocked is a 30-minute call. We come prepared, no slides, just answers.',
+  'help.bookCall': 'Book a free discovery call',
+  'help.sendMessage': 'Send a longer message \u2192',
   'help.quickAction.discovery.title': 'Book a free discovery call',
   'help.quickAction.discovery.desc':
     'Free 30-minute call to discuss your project',
@@ -1496,57 +1410,52 @@ const en = {
   'help.step1.number': '01',
   'help.step1.title': 'We talk',
   'help.step1.description':
-    'Book a free discovery call. We learn about your business, your brand, and your goals.',
+    'Book a free discovery call. We learn about your business, your brand, and your goals',
   'help.step2.number': '02',
   'help.step2.title': 'We build',
   'help.step2.description':
-    'Our team designs and builds your site from scratch, tailored to your brand. You review progress along the way.',
+    'Our team designs and builds your site from scratch, tailored to your brand. You review progress along the way',
   'help.step3.number': '03',
   'help.step3.title': 'You own it',
   'help.step3.description':
-    'Your site goes live. Use the AI editor to update content, add pages, and tweak your design anytime.',
-  'help.faqTitle': 'Frequently Asked Questions',
-  'help.faq1.question': 'How does the process work?',
-  'help.faq1.answer':
-    "It's simple! Book a free discovery call with our team. We'll learn about your business, goals, and design preferences. Then we hand-craft your professional website around your brand. Once it's live, you can customize it anytime using our AI editor.",
-  'help.faq2.question': 'How long does it take to build my website?',
-  'help.faq2.answer':
-    "We agree a realistic timeline together during your discovery call, then keep you in the loop the whole way. We'll send you a preview link when it's ready for your review.",
-  'help.faq3.question': 'What happens during the discovery call?',
-  'help.faq3.answer':
-    "We spend 30 minutes learning about your business, your goals, and your brand. You don't need to prepare anything, just show up and tell us about what you do. After the call, we'll send you a summary and get started on your site.",
-  'help.faq4.question': 'Can I make changes after my site is live?',
-  'help.faq4.answer':
-    "That's the whole point! Your subscription includes our AI editor: update text, add pages, change your branding, improve your SEO. All without writing a single line of code.",
-  'help.faq5.question': "What's included in my website?",
-  'help.faq5.answer':
-    'Every website includes: professionally designed pages tailored to your business, custom domain setup, mobile-responsive design, fast hosting, SSL certificate, professional email, contact form, analytics, and AI credits each month so you can keep your site fresh.',
-  'help.faq6.question': 'Do I need any technical skills?',
-  'help.faq6.answer':
-    "Zero. We handle the technical setup. The AI editor is built for people who've never touched code. Just describe what you want to change, and the AI handles the rest.",
-  'help.faq7.question': 'What are AI credits?',
-  'help.faq7.answer':
-    'AI credits let you make changes to your live site through the AI editor: update text, swap images, add sections, tweak layouts, and more. Your plan includes credits each month, which is more than enough for regular updates.',
-  'help.faq8.question': 'What if I want to cancel?',
-  'help.faq8.answer':
-    'No lock-in contracts. You can cancel your monthly subscription anytime. You keep your domain and we can help you export your content if needed.',
-  'help.faq9.question': 'Can I use my existing domain?',
-  'help.faq9.answer':
-    "Absolutely. We'll help you connect your existing domain to your new site at no extra cost. If you don't have a domain yet, we can help you pick and set one up during the discovery call.",
-  'help.faq10.question': 'What kind of websites can you build?',
-  'help.faq10.answer':
-    "We specialize in professional websites for freelancers, consultants, small businesses, restaurants, agencies, coaches, and creators. Whether you need a portfolio, a service page, a landing page, or a multi-page business site, we've got you covered.",
-  'help.cta.title': 'Ready to get started?',
-  'help.cta.description':
-    "Book a free discovery call and let's build your website together.",
-  'help.cta.button': 'Book a free discovery call',
+    'Your site goes live. Use the AI editor to update content, add pages, and tweak your design anytime',
+  'help.faq1.question': 'How long does it take to launch a website with Flowstarter?',
+  'help.faq1.answer': 'We agree a realistic timeline together during the discovery call, based on scope, then keep you in the loop the whole way. Relaunches of existing sites usually move faster \u2014 there is less to invent. We aim to ship faster than traditional agencies, without rushing the craft.',
+  'help.faq2.question': "What's included in the monthly subscription?",
+  'help.faq2.answer': 'Hosting on EU infrastructure, your domain renewal, SSL, automated backups, ongoing support, and your monthly allowance of smart-editor edits. Starter includes 50 edits, Pro includes 150. See the breakdown on the pricing page.',
+  'help.faq2.linkLabel': 'See pricing',
+  'help.faq3.question': 'Can I edit the site myself after launch?',
+  'help.faq3.answer': 'Yes \u2014 that is the whole point of the smart editor. Type plain English instructions like \u201cchange the hero headline to X\u201d or \u201cadd a testimonial from Sarah,\u201d and the editor handles the rest. No CMS to learn, no developer required.',
+  'help.faq4.question': 'Do I own my website? Can I take it elsewhere?',
+  'help.faq4.answer': 'Your domain stays in your name. Your content stays yours. If you ever want to leave, we hand over a static export of the site at no charge. No lock-in, no platform tax.',
+  'help.faq4.linkLabel': 'Read the terms',
+  'help.faq5.question': 'What happens during the discovery call?',
+  'help.faq5.answer': '30 minutes, no commitment. We talk about your business, your goals, and what is or is not working today. You ask questions. We tell you honestly if we are the right fit, and if so we agree on a concrete plan and timeline.',
+  'help.faq6.question': 'How does pricing work? Are there hidden fees?',
+  'help.faq6.answer': 'A one-time setup fee (50% upfront, 50% on launch) plus a monthly subscription that covers hosting and the smart editor. Your first month is free. No hidden retainer fees, no per-change pricing, no surprise invoices. Founding rates are locked for 12 months.',
+  'help.faq6.linkLabel': 'See pricing',
+  'help.faq7.question': 'Do you handle e-commerce or just brochure sites?',
+  'help.faq7.answer': 'Pro plans include Stripe integration for digital products, paid bookings, courses, and memberships. Full Shopify-style storefronts with inventory and shipping are on the roadmap \u2014 mention it on the discovery call and we will tell you if your case fits today or needs the next release.',
+  'help.faq8.question': 'What if I need a change after launch \u2014 small or large?',
+  'help.faq8.answer': 'Small changes are instant via the smart editor. Larger work (new sections, new pages, integrations) is quoted on the call \u2014 usually a small fixed fee, never a long retainer. We do not charge for normal upkeep covered by your plan.',
+  'help.faq9.question': 'How do I cancel? Is there a contract?',
+  'help.faq9.answer': 'Monthly subscriptions are month-to-month. Cancel any time with 30 days notice by emailing hello@flowstarter.net. Your site stays online through the end of the paid period. We can quote standalone hosting if you want to keep it up afterwards.',
+  'help.faq9.linkLabel': 'Cancellation terms',
+  'help.faq10.question': 'Where is my site hosted? Is my data safe?',
+  'help.faq10.answer': 'Hosted in the European Union on Hetzner, with daily encrypted backups and TLS everywhere. We use a small, vetted set of subprocessors (Clerk, Supabase, Stripe, Cloudflare) and never sell your data. Full details on our privacy and security pages.',
+  'help.faq10.linkLabel': 'Privacy policy',
 
-  // Pricing Page
+  // Pricing Page (editorial redesign)
+  'pricing.eyebrow': 'Pricing',
+  'pricing.headlinePrefix': 'One setup fee.',
+  'pricing.headlineFlourish': 'A monthly that earns its keep.',
+  'pricing.sub':
+    'No retainer games, no per-change pricing, no surprise invoices. The setup gets you launched; the subscription keeps the lights on and the editor unlocked.',
   'pricing.badge': 'Beta Pricing - 50% Off Everything',
   'pricing.title1': 'Simple, transparent ',
   'pricing.title2': 'pricing',
   'pricing.description':
-    'Get your professional website built by our team. 50% off setup + 50% off subscription for your first year.',
+    'Get your professional website built by our team. 50% off setup + 50% off subscription for your first year',
   'pricing.betaSpots': 'Limited beta spots available',
   'pricing.starter.name': 'Starter',
   'pricing.starter.subtitle': 'Everything you need',
@@ -1568,8 +1477,8 @@ const en = {
   'pricing.starter.feature7': 'First month free',
   'pricing.starter.cta': 'Book a free discovery call',
   'pricing.starter.disclaimer':
-    'No lock-in. Cancel anytime. 50% setup fee refund if you share feedback.',
-  'pricing.details.heading': "Everything you need. Nothing you don't.",
+    'No lock-in. Cancel anytime. 50% setup fee refund if you share feedback',
+  'pricing.details.heading': "Everything you need. Nothing you don't",
   'pricing.details.description':
     "Clear breakdown of what's included in setup vs. your monthly subscription",
   'pricing.setup.title': 'Setup (one-time)',
@@ -1614,7 +1523,7 @@ const en = {
   'pricing.monthly.note':
     'First month free - billing starts 30 days after launch',
   'pricing.comingSoon.heading': 'More plans coming soon',
-  'pricing.comingSoon.description': "Growing? We'll grow with you.",
+  'pricing.comingSoon.description': "Growing? We'll grow with you",
   'pricing.pro.name': 'Pro',
   'pricing.pro.badge': 'Coming Soon',
   'pricing.pro.price': 'Starting at \u20AC499 setup + \u20AC49/month',
@@ -1634,75 +1543,45 @@ const en = {
   'pricing.earlyAccess.badge': 'Early Access',
   'pricing.earlyAccess.title': 'Launching beta - early adopters get 50% off',
   'pricing.earlyAccess.description':
-    'Lock in beta pricing (\u20AC150 setup + \u20AC15/month) until v1.0. Regular pricing will be \u20AC299 setup + \u20AC29/month.',
+    'Lock in beta pricing (\u20AC150 setup + \u20AC15/month) until v1.0. Regular pricing will be \u20AC299 setup + \u20AC29/month',
   'pricing.earlyAccess.cta': 'Book a free discovery call',
   'pricing.earlyAccess.noCreditCard': 'No credit card required',
   'pricing.earlyAccess.consultation': '30-min consultation',
   'pricing.earlyAccess.cancelAnytime': 'Cancel anytime',
 
-  // About Page
-  'about.title': 'About Flowstarter',
-  'about.description':
-    'Empowering small businesses to build their digital presence with AI-powered solutions',
-  'about.mission.heading': 'Our Mission',
-  'about.mission.description':
-    'We believe that every small business deserves a professional digital presence. Our mission is to make it easy and affordable for entrepreneurs to establish and grow their online business with cutting-edge AI technology.',
-  'about.mission.simplify':
-    'Simplify digital presence creation for small businesses',
-  'about.mission.leverage':
-    'Leverage AI to make professional design accessible',
-  'about.mission.grow': 'Help businesses grow and succeed online',
-  'about.mission.imageAlt': 'Team collaboration',
-  'about.values.heading': 'Our Values',
-  'about.values.description':
-    'These core values guide everything we do at Flowstarter',
-  'about.values.innovation.title': 'Innovation',
-  'about.values.innovation.description':
-    "We constantly push the boundaries of what's possible with AI technology to provide the best solutions for our customers.",
-  'about.values.accessibility.title': 'Accessibility',
-  'about.values.accessibility.description':
-    'We believe in making professional digital tools accessible to businesses of all sizes, regardless of technical expertise.',
-  'about.values.customerSuccess.title': 'Customer Success',
-  'about.values.customerSuccess.description':
-    "Your success is our success. We're committed to helping you achieve your business goals through our platform and support.",
-  'about.joinTeam.heading': 'Join Our Team',
-  'about.joinTeam.description':
-    "We're always looking for talented individuals who share our passion for helping small businesses succeed.",
-  'about.joinTeam.button': 'View Open Positions',
-
   // Cookies Page
   'cookies.badge': 'Transparency First',
   'cookies.title': 'Cookie Policy',
   'cookies.description':
-    "We use cookies to make Flowstarter work and to understand how you use it. Here's exactly what we use and why.",
+    "We use cookies to make Flowstarter work and to understand how you use it. Here's exactly what we use and why",
   'cookies.lastUpdated': 'Last updated: {date}',
   'cookies.shortVersion.title': 'The Short Version',
   'cookies.shortVersion.essential': 'Essential cookies',
   'cookies.shortVersion.essentialDesc':
-    " keep you logged in and the site working. Can't be disabled.",
+    " keep you logged in and the site working. Can't be disabled",
   'cookies.shortVersion.analytics': 'Analytics cookies',
   'cookies.shortVersion.analyticsDesc':
-    ' help us improve. Privacy-focused, no personal tracking.',
-  'cookies.shortVersion.noAds': 'No advertising cookies.',
+    ' help us improve. Privacy-focused, no personal tracking',
+  'cookies.shortVersion.noAds': 'No advertising cookies',
   'cookies.shortVersion.noAdsDesc':
-    " We don't serve ads or track you across sites.",
-  'cookies.shortVersion.control': "You're in control.",
+    " We don't serve ads or track you across sites",
+  'cookies.shortVersion.control': "You're in control",
   'cookies.shortVersion.controlDesc':
-    ' Manage preferences anytime via browser settings.',
+    ' Manage preferences anytime via browser settings',
   'cookies.whatAreCookies.title': 'What Are Cookies?',
   'cookies.whatAreCookies.p1':
-    'Cookies are small text files stored on your device when you visit a website. They help websites remember your preferences, keep you logged in, and understand how you use the site.',
+    'Cookies are small text files stored on your device when you visit a website. They help websites remember your preferences, keep you logged in, and understand how you use the site',
   'cookies.whatAreCookies.p2':
-    "We use cookies to provide you with a better experience on Flowstarter. We don't use cookies to track you across other websites or serve you advertisements.",
+    "We use cookies to provide you with a better experience on Flowstarter. We don't use cookies to track you across other websites or serve you advertisements",
   'cookies.type.essential.name': 'Essential Cookies',
   'cookies.type.essential.description':
-    'These cookies are necessary for the website to function and cannot be switched off. They are usually set in response to actions you take, such as setting your privacy preferences, logging in, or filling in forms.',
+    'These cookies are necessary for the website to function and cannot be switched off. They are usually set in response to actions you take, such as setting your privacy preferences, logging in, or filling in forms',
   'cookies.type.analytics.name': 'Analytics Cookies',
   'cookies.type.analytics.description':
-    'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our service.',
+    'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously. This helps us improve our service',
   'cookies.type.functional.name': 'Functional Cookies',
   'cookies.type.functional.description':
-    'These cookies enable enhanced functionality and personalization, such as remembering your preferences and settings.',
+    'These cookies enable enhanced functionality and personalization, such as remembering your preferences and settings',
   'cookies.label.required': 'Required',
   'cookies.label.optional': 'Optional',
   'cookies.table.cookie': 'Cookie',
@@ -1729,15 +1608,15 @@ const en = {
     'Some features may involve third-party services that set their own cookies:',
   'cookies.thirdParty.stripe': 'Stripe',
   'cookies.thirdParty.stripeDesc':
-    ' (payments) - Sets cookies for fraud prevention and secure checkout.',
+    ' (payments) - Sets cookies for fraud prevention and secure checkout',
   'cookies.thirdParty.supabase': 'Supabase',
   'cookies.thirdParty.supabaseDesc':
-    ' (authentication) - Sets cookies to maintain your login session.',
+    ' (authentication) - Sets cookies to maintain your login session',
   'cookies.thirdParty.cloudflare': 'Cloudflare',
   'cookies.thirdParty.cloudflareDesc':
-    ' (security) - May set cookies for bot protection and performance.',
+    ' (security) - May set cookies for bot protection and performance',
   'cookies.thirdParty.footer':
-    'These providers have their own cookie policies. We only work with trusted, privacy-respecting services.',
+    'These providers have their own cookie policies. We only work with trusted, privacy-respecting services',
   'cookies.managing.title': 'Managing Your Cookie Preferences',
   'cookies.managing.description':
     'You can control cookies through your browser settings:',
@@ -1752,40 +1631,40 @@ const en = {
   'cookies.managing.edge': 'Edge:',
   'cookies.managing.edgeDesc': ' Settings \u2192 Cookies and Site Permissions',
   'cookies.managing.warning':
-    'Note: Blocking essential cookies may prevent you from using Flowstarter properly.',
+    'Note: Blocking essential cookies may prevent you from using Flowstarter properly',
   'cookies.changes.title': 'Changes to This Policy',
   'cookies.changes.description':
-    "We may update this Cookie Policy from time to time. We'll notify you of significant changes by updating the date at the top of this page. For major changes, we may also show you a new consent banner.",
+    "We may update this Cookie Policy from time to time. We'll notify you of significant changes by updating the date at the top of this page. For major changes, we may also show you a new consent banner",
   'cookies.contact.title': 'Questions about cookies?',
-  'cookies.contact.description': 'Read our full {link} or contact us.',
+  'cookies.contact.description': 'Read our full {link} or contact us',
   'cookies.contact.privacyLink': 'Privacy Policy',
 
   // Privacy Page
   'privacy.badge': 'GDPR Compliant',
   'privacy.title': 'Privacy Policy',
   'privacy.description':
-    'We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and safeguard your information.',
+    'We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and safeguard your information',
   'privacy.effective': 'Effective: {date}',
   'privacy.lastUpdated': 'Last updated: {date}',
   'privacy.glance.title': 'Privacy at a Glance',
   'privacy.glance.dataProtected.title': 'Your data is protected',
   'privacy.glance.dataProtected.desc':
-    'Enterprise-grade encryption, secure infrastructure, strict access controls.',
+    'Enterprise-grade encryption, secure infrastructure, strict access controls',
   'privacy.glance.aiTransparent.title': 'AI is transparent',
   'privacy.glance.aiTransparent.desc':
-    'We tell you exactly what data goes to AI providers and how.',
+    'We tell you exactly what data goes to AI providers and how',
   'privacy.glance.ownContent.title': 'You own your content',
   'privacy.glance.ownContent.desc':
-    'Download your assets anytime. Your content is never used for AI training without consent.',
+    'Download your assets anytime. Your content is never used for AI training without consent',
   'privacy.glance.noTracking.title': 'No tracking for ads',
   'privacy.glance.noTracking.desc':
-    'We use privacy-focused analytics. No advertising cookies. We never sell your data.',
+    'We use privacy-focused analytics. No advertising cookies. We never sell your data',
   'privacy.glance.retention.title': 'You control retention',
   'privacy.glance.retention.desc':
-    'Request deletion anytime. We keep data only as long as needed.',
+    'Request deletion anytime. We keep data only as long as needed',
   'privacy.glance.gdpr.title': 'GDPR compliant',
   'privacy.glance.gdpr.desc':
-    'Full data subject rights. EU-based company with proper safeguards.',
+    'Full data subject rights. EU-based company with proper safeguards',
   'privacy.contents': 'Contents',
   'privacy.aiNotice.title': 'Important: AI & Your Data',
   'privacy.aiNotice.description':
@@ -1797,209 +1676,209 @@ const en = {
   'privacy.aiNotice.item3':
     'We will NEVER use your personal content for AI training without consent',
   'privacy.aiNotice.item4': 'You can opt out of anonymized data collection',
-  'privacy.aiNotice.footer': 'See Sections 5 and 6 for full details.',
+  'privacy.aiNotice.footer': 'See Sections 5 and 6 for full details',
   'privacy.s1.title': '1. Who We Are',
   'privacy.s1.c1.subtitle': '1.1 About Flowstarter',
   'privacy.s1.c1.text':
-    'Flowstarter is a premium website building service operated from Romania, European Union. We design and build professional websites for coaches, consultants, therapists, and small businesses. After launch, clients can update their sites using our AI-powered editor. Our registered address and company details are available upon request.',
+    'Flowstarter is a premium website building service operated from Romania, European Union. We design and build professional websites for coaches, consultants, therapists, and small businesses. After launch, clients can update their sites using our AI-powered editor. Our registered address and company details are available upon request',
   'privacy.s1.c2.subtitle': '1.2 Data Controller',
   'privacy.s1.c2.text':
-    'Flowstarter acts as the Data Controller for the personal data we collect from our clients (you). This means we determine the purposes and means of processing your personal data.',
+    'Flowstarter acts as the Data Controller for the personal data we collect from our clients (you). This means we determine the purposes and means of processing your personal data',
   'privacy.s1.c3.subtitle': '1.3 Contact for Privacy Matters',
   'privacy.s1.c3.text':
-    'For any privacy-related questions, concerns, or to exercise your data rights, contact us at: {email}. We aim to respond to all privacy inquiries within 48 hours and will address formal requests within 30 days as required by GDPR.',
+    'For any privacy-related questions, concerns, or to exercise your data rights, contact us at: {email}. We aim to respond to all privacy inquiries within 48 hours and will address formal requests within 30 days as required by GDPR',
   'privacy.s2.title': '2. Lawful Basis for Processing',
   'privacy.s2.c1.subtitle': '2.1 Contract Performance',
   'privacy.s2.c1.text':
-    'We process your data to fulfill our contract with you: building your website, providing dashboard access, hosting your site, and delivering the services you paid for. This includes processing your business information, content, and project data.',
+    'We process your data to fulfill our contract with you: building your website, providing dashboard access, hosting your site, and delivering the services you paid for. This includes processing your business information, content, and project data',
   'privacy.s2.c2.subtitle': '2.2 Legitimate Interest',
   'privacy.s2.c2.text':
-    'We process certain data based on our legitimate business interests, including: improving our platform and AI systems using anonymized/aggregated data, preventing fraud and ensuring security, and communicating service updates. We balance these interests against your rights and only proceed where our interests do not override yours.',
+    'We process certain data based on our legitimate business interests, including: improving our platform and AI systems using anonymized/aggregated data, preventing fraud and ensuring security, and communicating service updates. We balance these interests against your rights and only proceed where our interests do not override yours',
   'privacy.s2.c3.subtitle': '2.3 Consent',
   'privacy.s2.c3.text':
-    'Where required, we obtain your explicit consent before processing. This includes: marketing communications, use of non-essential cookies, and any use of identifiable content for AI training (which we do not do without asking). You can withdraw consent at any time.',
+    'Where required, we obtain your explicit consent before processing. This includes: marketing communications, use of non-essential cookies, and any use of identifiable content for AI training (which we do not do without asking). You can withdraw consent at any time',
   'privacy.s2.c4.subtitle': '2.4 Legal Obligation',
   'privacy.s2.c4.text':
-    'We retain certain data (e.g., invoices, payment records) to comply with tax, accounting, and other legal requirements.',
+    'We retain certain data (e.g., invoices, payment records) to comply with tax, accounting, and other legal requirements',
   'privacy.s3.title': '3. Information We Collect',
   'privacy.s3.c1.subtitle': '3.1 Discovery Call & Onboarding Data',
   'privacy.s3.c1.text':
-    'When you book a discovery call, we collect: business name, industry/niche, branding preferences (colors, fonts, tone of voice), content you provide (text, images, logos), contact information (name, email, phone), target audience description, and competitor references.',
+    'When you book a discovery call, we collect: business name, industry/niche, branding preferences (colors, fonts, tone of voice), content you provide (text, images, logos), contact information (name, email, phone), target audience description, and competitor references',
   'privacy.s3.c2.subtitle': '3.2 Account & Platform Data',
   'privacy.s3.c2.text':
     'When using our platform: account credentials (email, name, authentication method), project data (site structure, pages, components, design choices), AI editor interactions (prompts, edits, customization history), and platform usage data (features used, session information).',
   'privacy.s3.c3.subtitle': '3.3 Payment Information',
   'privacy.s3.c3.text':
-    'Payments are processed by Stripe. We receive confirmation of payment, subscription status, and billing history. We do NOT store credit card numbers, CVVs, or full payment credentials on our servers. Stripe handles all sensitive payment data under PCI-DSS compliance.',
+    'Payments are processed by Stripe. We receive confirmation of payment, subscription status, and billing history. We do NOT store credit card numbers, CVVs, or full payment credentials on our servers. Stripe handles all sensitive payment data under PCI-DSS compliance',
   'privacy.s3.c4.subtitle': '3.4 Automatically Collected Data',
   'privacy.s3.c4.text':
     'We automatically collect: IP address (anonymized for analytics), browser type and version, device type and operating system, pages visited and time spent, referral source, and general geographic region (country/city level).',
   'privacy.s4.title': '4. How We Use Your Information',
   'privacy.s4.c1.subtitle': '4.1 Service Delivery',
   'privacy.s4.c1.text':
-    'Primary uses: building and hosting your website, providing dashboard and editor access, enabling AI-powered editing features, processing payments and managing subscriptions, and providing customer support.',
+    'Primary uses: building and hosting your website, providing dashboard and editor access, enabling AI-powered editing features, processing payments and managing subscriptions, and providing customer support',
   'privacy.s4.c2.subtitle': '4.2 Communication',
   'privacy.s4.c2.text':
     'We contact you for: service notifications and important updates, project progress and deliverables, security alerts, and marketing (only with consent, easy opt-out).',
   'privacy.s4.c3.subtitle': '4.3 Platform Improvement',
   'privacy.s4.c3.text':
-    'We use aggregated, anonymized data to: improve platform performance and features, fix bugs and issues, understand usage patterns, and develop new features.',
+    'We use aggregated, anonymized data to: improve platform performance and features, fix bugs and issues, understand usage patterns, and develop new features',
   'privacy.s4.c4.subtitle': '4.4 Security & Fraud Prevention',
   'privacy.s4.c4.text':
-    'We process data to: detect and prevent fraud, protect against unauthorized access, ensure platform integrity, and comply with legal requirements.',
+    'We process data to: detect and prevent fraud, protect against unauthorized access, ensure platform integrity, and comply with legal requirements',
   'privacy.s5.title': '5. AI Technology & Data Processing',
   'privacy.s5.c1.subtitle': '5.1 How We Use AI',
   'privacy.s5.c1.text':
-    'Flowstarter uses AI technology for: generating website code and components, powering the AI editor for content changes, providing design suggestions, and automating repetitive development tasks. When you use AI features, data is sent to AI providers for real-time processing.',
+    'Flowstarter uses AI technology for: generating website code and components, powering the AI editor for content changes, providing design suggestions, and automating repetitive development tasks. When you use AI features, data is sent to AI providers for real-time processing',
   'privacy.s5.c2.subtitle': '5.2 Third-Party AI Providers',
   'privacy.s5.c2.text':
-    'We currently use Anthropic (Claude) for AI processing. We may integrate additional providers in the future. These providers process data under their own privacy policies and our data processing agreements (DPAs). They are contractually prohibited from using your data for their own training purposes.',
+    'We currently use Anthropic (Claude) for AI processing. We may integrate additional providers in the future. These providers process data under their own privacy policies and our data processing agreements (DPAs). They are contractually prohibited from using your data for their own training purposes',
   'privacy.s5.c3.subtitle': '5.3 What Data Goes to AI Providers',
   'privacy.s5.c3.text':
-    'When you use AI features, we send: your prompts and instructions, relevant page/component context needed for the task, and design preferences. We minimize data transmission to only what is necessary. We do NOT send: your personal contact information, payment details, or unrelated project data.',
+    'When you use AI features, we send: your prompts and instructions, relevant page/component context needed for the task, and design preferences. We minimize data transmission to only what is necessary. We do NOT send: your personal contact information, payment details, or unrelated project data',
   'privacy.s5.c4.subtitle': '5.4 AI Compute Infrastructure',
   'privacy.s5.c4.text':
-    'We use Daytona cloud workspaces for AI code execution. Code is executed in isolated, secure environments. No persistent storage of your data occurs on compute infrastructure beyond the active session.',
+    'We use Daytona cloud workspaces for AI code execution. Code is executed in isolated, secure environments. No persistent storage of your data occurs on compute infrastructure beyond the active session',
   'privacy.s6.title': '6. Anonymized Data for AI Improvement',
   'privacy.s6.c1.subtitle': '6.1 What We May Use (Anonymized Only)',
   'privacy.s6.c1.text':
-    'We may use anonymized, aggregated data to improve our AI systems: website structure patterns by industry, common editing workflows, prompt effectiveness patterns (anonymized), template usage statistics, and design preference trends. This data cannot be traced back to you or your business.',
+    'We may use anonymized, aggregated data to improve our AI systems: website structure patterns by industry, common editing workflows, prompt effectiveness patterns (anonymized), template usage statistics, and design preference trends. This data cannot be traced back to you or your business',
   'privacy.s6.c2.subtitle':
     '6.2 What We Will NEVER Use Without Explicit Consent',
   'privacy.s6.c2.text':
-    'We will never use for AI training: your business name, branding, or identifiable content, your images, logos, or creative assets, your personal information, individual project data in identifiable form, or any data that could identify you or your clients.',
+    'We will never use for AI training: your business name, branding, or identifiable content, your images, logos, or creative assets, your personal information, individual project data in identifiable form, or any data that could identify you or your clients',
   'privacy.s6.c3.subtitle': '6.3 Opt-Out Rights',
   'privacy.s6.c3.text':
-    'You can opt out of anonymized data collection for AI improvement by emailing {email}. Opting out will not affect your service but may limit certain AI features that rely on aggregated learning. Opt-out requests are processed within 30 days.',
+    'You can opt out of anonymized data collection for AI improvement by emailing {email}. Opting out will not affect your service but may limit certain AI features that rely on aggregated learning. Opt-out requests are processed within 30 days',
   'privacy.s6.c4.subtitle': '6.4 Future AI Development',
   'privacy.s6.c4.text':
-    'We may develop proprietary AI models using aggregated platform data. Any such development will follow these principles: strict anonymization, no identifiable content, transparency about methods, and continued opt-out availability.',
+    'We may develop proprietary AI models using aggregated platform data. Any such development will follow these principles: strict anonymization, no identifiable content, transparency about methods, and continued opt-out availability',
   'privacy.s7.title': '7. Data Sharing & Third Parties',
   'privacy.s7.c1.subtitle': '7.1 Service Providers',
   'privacy.s7.c1.text':
     'We share data with trusted providers who help us operate: Stripe (payment processing), Supabase (database, authentication), Cloudflare (hosting, CDN, security), AWS S3 (asset storage), Anthropic (AI processing), Daytona (compute infrastructure), Convex (real-time editor data), and Analytics provider (Plausible or PostHog, privacy-focused).',
   'privacy.s7.c2.subtitle': '7.2 Authentication Providers',
   'privacy.s7.c2.text':
-    'If you sign in via Google, GitHub, Apple, or Facebook, we receive basic profile data (name, email) from these providers. We do not receive your passwords. Each provider has its own privacy policy governing their data practices.',
+    'If you sign in via Google, GitHub, Apple, or Facebook, we receive basic profile data (name, email) from these providers. We do not receive your passwords. Each provider has its own privacy policy governing their data practices',
   'privacy.s7.c3.subtitle': '7.3 Legal Requirements',
   'privacy.s7.c3.text':
-    'We may disclose data if required by law, court order, or government request. We will notify you unless legally prohibited.',
+    'We may disclose data if required by law, court order, or government request. We will notify you unless legally prohibited',
   'privacy.s7.c4.subtitle': '7.4 Business Transfers',
   'privacy.s7.c4.text':
-    'If Flowstarter is acquired or merged, your data may transfer to the new entity. We will notify you before any such transfer and your rights under this policy will continue.',
+    'If Flowstarter is acquired or merged, your data may transfer to the new entity. We will notify you before any such transfer and your rights under this policy will continue',
   'privacy.s7.c5.subtitle': '7.5 No Data Sales',
   'privacy.s7.c5.text':
-    'We do NOT sell your personal information to anyone. We do NOT share data with advertisers. Your data is used solely to provide and improve our service.',
+    'We do NOT sell your personal information to anyone. We do NOT share data with advertisers. Your data is used solely to provide and improve our service',
   'privacy.s8.title': '8. Client Websites & End Users',
   'privacy.s8.c1.subtitle': '8.1 Our Role',
   'privacy.s8.c1.text':
-    'When we host your website, we act as a Data Processor on your behalf. You (our client) are the Data Controller for any data your website collects from your visitors.',
+    'When we host your website, we act as a Data Processor on your behalf. You (our client) are the Data Controller for any data your website collects from your visitors',
   'privacy.s8.c2.subtitle': '8.2 Your Responsibilities',
   'privacy.s8.c2.text':
-    'You are responsible for: having your own privacy policy for your website, obtaining necessary consents from your visitors, complying with applicable privacy laws for your audience, and configuring any forms or data collection appropriately.',
+    'You are responsible for: having your own privacy policy for your website, obtaining necessary consents from your visitors, complying with applicable privacy laws for your audience, and configuring any forms or data collection appropriately',
   'privacy.s8.c3.subtitle': '8.3 What We Collect from Hosted Sites',
   'privacy.s8.c3.text':
-    'We collect minimal technical data from visitors to sites we host: aggregated traffic statistics (page views, visitor counts), server logs for security and performance (IP addresses retained for 30 days), and error logs for debugging. We do NOT access or process personal data submitted to your website (form submissions, customer data) except as necessary for hosting.',
+    'We collect minimal technical data from visitors to sites we host: aggregated traffic statistics (page views, visitor counts), server logs for security and performance (IP addresses retained for 30 days), and error logs for debugging. We do NOT access or process personal data submitted to your website (form submissions, customer data) except as necessary for hosting',
   'privacy.s8.c4.subtitle': '8.4 Data Processing Agreement',
   'privacy.s8.c4.text':
-    'Enterprise clients may request a formal Data Processing Agreement (DPA) for their hosted websites. Contact us to arrange this.',
+    'Enterprise clients may request a formal Data Processing Agreement (DPA) for their hosted websites. Contact us to arrange this',
   'privacy.s9.title': '9. Data Security',
   'privacy.s9.c1.subtitle': '9.1 Encryption',
   'privacy.s9.c1.text':
-    'All data in transit is encrypted using TLS 1.3. Data at rest is encrypted using AES-256. Database connections use encrypted channels. Payment data is handled entirely by PCI-DSS compliant Stripe.',
+    'All data in transit is encrypted using TLS 1.3. Data at rest is encrypted using AES-256. Database connections use encrypted channels. Payment data is handled entirely by PCI-DSS compliant Stripe',
   'privacy.s9.c2.subtitle': '9.2 Access Controls',
   'privacy.s9.c2.text':
-    'Strict role-based access controls limit who can access data. All access is logged and auditable. Employees with data access undergo background checks and security training. Multi-factor authentication required for all internal systems.',
+    'Strict role-based access controls limit who can access data. All access is logged and auditable. Employees with data access undergo background checks and security training. Multi-factor authentication required for all internal systems',
   'privacy.s9.c3.subtitle': '9.3 Infrastructure Security',
   'privacy.s9.c3.text':
-    'We use SOC 2 compliant infrastructure providers. Regular security assessments and penetration testing. Automated vulnerability scanning. DDoS protection via Cloudflare.',
+    'We use SOC 2 compliant infrastructure providers. Regular security assessments and penetration testing. Automated vulnerability scanning. DDoS protection via Cloudflare',
   'privacy.s9.c4.subtitle': '9.4 Incident Response',
   'privacy.s9.c4.text':
-    'We maintain an incident response plan. In case of a data breach affecting your personal data, we will: notify affected users within 72 hours, notify relevant supervisory authorities as required, document the breach and remediation steps, and take immediate action to contain and resolve the incident.',
+    'We maintain an incident response plan. In case of a data breach affecting your personal data, we will: notify affected users within 72 hours, notify relevant supervisory authorities as required, document the breach and remediation steps, and take immediate action to contain and resolve the incident',
   'privacy.s10.title': '10. Your Rights (GDPR)',
   'privacy.s10.c1.subtitle': '10.1 Right to Access',
   'privacy.s10.c1.text':
-    'You can request a copy of all personal data we hold about you. We will provide this in a commonly used electronic format within 30 days.',
+    'You can request a copy of all personal data we hold about you. We will provide this in a commonly used electronic format within 30 days',
   'privacy.s10.c2.subtitle': '10.2 Right to Rectification',
   'privacy.s10.c2.text':
-    'You can correct inaccurate personal data through your account settings or by contacting us.',
+    'You can correct inaccurate personal data through your account settings or by contacting us',
   'privacy.s10.c3.subtitle': '10.3 Right to Erasure ("Right to be Forgotten")',
   'privacy.s10.c3.text':
     'You can request deletion of your personal data. We will comply within 30 days, except for data we must retain for legal purposes (e.g., invoices).',
   'privacy.s10.c4.subtitle': '10.4 Right to Data Portability',
   'privacy.s10.c4.text':
-    'You can download your website files, assets, and content at any time. You own your content. We provide data export in standard formats.',
+    'You can download your website files, assets, and content at any time. You own your content. We provide data export in standard formats',
   'privacy.s10.c5.subtitle': '10.5 Right to Object',
   'privacy.s10.c5.text':
-    'You can object to processing based on legitimate interest, including anonymized data collection for AI improvement.',
+    'You can object to processing based on legitimate interest, including anonymized data collection for AI improvement',
   'privacy.s10.c6.subtitle': '10.6 Right to Restrict Processing',
   'privacy.s10.c6.text':
-    'You can request we limit how we use your data while a complaint or request is being resolved.',
+    'You can request we limit how we use your data while a complaint or request is being resolved',
   'privacy.s10.c7.subtitle': '10.7 Right to Withdraw Consent',
   'privacy.s10.c7.text':
-    'Where we process data based on consent, you can withdraw that consent anytime. This does not affect the lawfulness of prior processing.',
+    'Where we process data based on consent, you can withdraw that consent anytime. This does not affect the lawfulness of prior processing',
   'privacy.s10.c8.subtitle': '10.8 Right to Lodge a Complaint',
   'privacy.s10.c8.text':
     'You have the right to lodge a complaint with your local data protection authority. In Romania, this is ANSPDCP (Autoritatea Na\u021Bional\u0103 de Supraveghere a Prelucr\u0103rii Datelor cu Caracter Personal).',
   'privacy.s10.c9.subtitle': '10.9 Exercising Your Rights',
   'privacy.s10.c9.text':
-    'To exercise any of these rights, email {email} with your request. We may need to verify your identity before processing. We respond to all requests within 30 days.',
+    'To exercise any of these rights, email {email} with your request. We may need to verify your identity before processing. We respond to all requests within 30 days',
   'privacy.s11.title': '11. Data Retention',
   'privacy.s11.c1.subtitle': '11.1 Active Subscriptions',
   'privacy.s11.c1.text':
-    'While your subscription is active, we retain all data necessary to provide the service: account information, project data, and usage history.',
+    'While your subscription is active, we retain all data necessary to provide the service: account information, project data, and usage history',
   'privacy.s11.c2.subtitle': '11.2 After Cancellation',
   'privacy.s11.c2.text':
-    'When you cancel: project data and website files are retained for 90 days (in case you reactivate), after 90 days, project data is permanently deleted, account information is retained for 30 days then deleted.',
+    'When you cancel: project data and website files are retained for 90 days (in case you reactivate), after 90 days, project data is permanently deleted, account information is retained for 30 days then deleted',
   'privacy.s11.c3.subtitle': '11.3 Upon Account Deletion Request',
   'privacy.s11.c3.text':
-    'When you request account deletion: personal data deleted within 30 days, anonymized/aggregated data may be retained indefinitely (it cannot identify you), and backup copies purged within 90 days.',
+    'When you request account deletion: personal data deleted within 30 days, anonymized/aggregated data may be retained indefinitely (it cannot identify you), and backup copies purged within 90 days',
   'privacy.s11.c4.subtitle': '11.4 Legal Retention',
   'privacy.s11.c4.text':
-    'Certain data retained as legally required: invoices and payment records (7 years for tax purposes), data relevant to disputes (until resolution), and data subject to legal holds.',
+    'Certain data retained as legally required: invoices and payment records (7 years for tax purposes), data relevant to disputes (until resolution), and data subject to legal holds',
   'privacy.s11.c5.subtitle': '11.5 Anonymized Data',
   'privacy.s11.c5.text':
-    'Truly anonymized, aggregated data (which cannot identify any individual) may be retained indefinitely for analytics and AI improvement purposes.',
+    'Truly anonymized, aggregated data (which cannot identify any individual) may be retained indefinitely for analytics and AI improvement purposes',
   'privacy.s12.title': '12. International Data Transfers',
   'privacy.s12.c1.subtitle': '12.1 Where Data Is Processed',
   'privacy.s12.c1.text':
     'Your data may be processed in: European Union (primary), United States (some infrastructure providers, AI processing).',
   'privacy.s12.c2.subtitle': '12.2 Safeguards for US Transfers',
   'privacy.s12.c2.text':
-    'For transfers to the US, we rely on: Standard Contractual Clauses (SCCs) with providers, EU-US Data Privacy Framework certification where applicable, and provider-specific security commitments.',
+    'For transfers to the US, we rely on: Standard Contractual Clauses (SCCs) with providers, EU-US Data Privacy Framework certification where applicable, and provider-specific security commitments',
   'privacy.s12.c3.subtitle': '12.3 Provider Locations',
   'privacy.s12.c3.text':
-    'Supabase: US and EU regions available. Cloudflare: Global CDN with EU presence. AWS S3: EU region (eu-central-1). Anthropic: US-based processing. Stripe: Global with EU entity.',
+    'Supabase: US and EU regions available. Cloudflare: Global CDN with EU presence. AWS S3: EU region (eu-central-1). Anthropic: US-based processing. Stripe: Global with EU entity',
   'privacy.s13.title': '13. Cookies & Tracking',
   'privacy.s13.c1.subtitle': '13.1 Essential Cookies',
   'privacy.s13.c1.text':
-    'Required for the service to function: authentication/session cookies, security tokens, and preference cookies (theme, language). These cannot be disabled.',
+    'Required for the service to function: authentication/session cookies, security tokens, and preference cookies (theme, language). These cannot be disabled',
   'privacy.s13.c2.subtitle': '13.2 Analytics Cookies',
   'privacy.s13.c2.text':
-    'We use privacy-focused analytics (Plausible or PostHog) to understand platform usage. These do not track you across other sites and can be blocked via browser settings.',
+    'We use privacy-focused analytics (Plausible or PostHog) to understand platform usage. These do not track you across other sites and can be blocked via browser settings',
   'privacy.s13.c3.subtitle': '13.3 No Advertising Cookies',
   'privacy.s13.c3.text':
-    'We do NOT use advertising or tracking cookies. We do NOT participate in ad networks. We do NOT build advertising profiles.',
+    'We do NOT use advertising or tracking cookies. We do NOT participate in ad networks. We do NOT build advertising profiles',
   'privacy.s13.c4.subtitle': '13.4 Managing Cookies',
   'privacy.s13.c4.text':
-    'Most browsers allow you to manage cookie preferences. Blocking essential cookies may prevent you from using the service.',
+    'Most browsers allow you to manage cookie preferences. Blocking essential cookies may prevent you from using the service',
   'privacy.s14.title': "14. Children's Privacy",
   'privacy.s14.c1.subtitle': '14.1 Age Requirement',
   'privacy.s14.c1.text':
-    'Flowstarter is intended for users aged 18 and older. We do not knowingly collect personal data from anyone under 18.',
+    'Flowstarter is intended for users aged 18 and older. We do not knowingly collect personal data from anyone under 18',
   'privacy.s14.c2.subtitle': '14.2 Parental Notice',
   'privacy.s14.c2.text':
     'If we learn we have collected data from someone under 18, we will delete it promptly. If you believe a minor has provided us data, please contact {email}.',
   'privacy.s15.title': '15. Changes to This Policy',
   'privacy.s15.c1.subtitle': '15.1 Updates',
   'privacy.s15.c1.text':
-    'We may update this policy to reflect changes in our practices, technology, legal requirements, or business operations.',
+    'We may update this policy to reflect changes in our practices, technology, legal requirements, or business operations',
   'privacy.s15.c2.subtitle': '15.2 Notification',
   'privacy.s15.c2.text':
-    'For significant changes, we will: email registered users, display a notice on the platform, and update the "Last Updated" date. Continued use after changes indicates acceptance.',
+    'For significant changes, we will: email registered users, display a notice on the platform, and update the "Last Updated" date. Continued use after changes indicates acceptance',
   'privacy.s15.c3.subtitle': '15.3 Review',
   'privacy.s15.c3.text':
-    'We encourage periodic review of this policy. Material changes will be highlighted.',
+    'We encourage periodic review of this policy. Material changes will be highlighted',
   'privacy.s16.title': '16. Contact Us',
   'privacy.s16.c1.subtitle': '16.1 Privacy Inquiries',
   'privacy.s16.c1.text':
@@ -2008,101 +1887,101 @@ const en = {
   'privacy.s16.c2.text': 'For general questions about our service: {email}',
   'privacy.s16.c3.subtitle': '16.3 Response Time',
   'privacy.s16.c3.text':
-    'We aim to respond to privacy inquiries within 48 hours. Formal data subject requests will be completed within 30 days.',
+    'We aim to respond to privacy inquiries within 48 hours. Formal data subject requests will be completed within 30 days',
   'privacy.termsRef':
-    'This Privacy Policy should be read alongside our {link}, which governs your use of Flowstarter.',
+    'This Privacy Policy should be read alongside our {link}, which governs your use of Flowstarter',
   'privacy.termsRefLink': 'Terms of Service',
   'privacy.contact.title': 'Questions about your privacy?',
-  'privacy.contact.description': "We're here to help. Reach out anytime.",
+  'privacy.contact.description': "We're here to help. Reach out anytime",
 
   // Terms Page
   'terms.badge': 'Legal Agreement',
   'terms.title': 'Terms of Service',
   'terms.description':
-    'By using Flowstarter, you agree to these terms. Please read them carefully.',
+    'By using Flowstarter, you agree to these terms. Please read them carefully',
   'terms.lastUpdated': 'Last updated: {date}',
   'terms.summary.pricing.title': 'Simple Pricing',
-  'terms.summary.pricing.desc': 'Setup fee + monthly subscription.',
+  'terms.summary.pricing.desc': 'Setup fee + monthly subscription',
   'terms.summary.content.title': 'Your Content',
-  'terms.summary.content.desc': 'You own what you create.',
+  'terms.summary.content.desc': 'You own what you create',
   'terms.summary.cancel.title': 'Cancel Anytime',
-  'terms.summary.cancel.desc': 'No lock-in contracts.',
+  'terms.summary.cancel.desc': 'No lock-in contracts',
   'terms.s1.title': 'Agreement to Terms',
   'terms.s1.i1.subtitle': 'Acceptance',
   'terms.s1.i1.text':
-    'By accessing or using Flowstarter, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service.',
+    'By accessing or using Flowstarter, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service',
   'terms.s1.i2.subtitle': 'Eligibility',
   'terms.s1.i2.text':
-    'You must be at least 18 years old to use our services. By using Flowstarter, you represent that you meet this requirement.',
+    'You must be at least 18 years old to use our services. By using Flowstarter, you represent that you meet this requirement',
   'terms.s1.i3.subtitle': 'Account Responsibility',
   'terms.s1.i3.text':
-    'You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account.',
+    'You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account',
   'terms.s2.title': 'Our Services',
   'terms.s2.i1.subtitle': 'Website Building',
   'terms.s2.i1.text':
-    'Flowstarter provides website design, development, and hosting services. Our team builds your website based on a discovery call, and after launch you can customize it using our AI editor.',
+    'Flowstarter provides website design, development, and hosting services. Our team builds your website based on a discovery call, and after launch you can customize it using our AI editor',
   'terms.s2.i2.subtitle': 'Hosting and Email',
   'terms.s2.i2.text':
-    'Your subscription includes website hosting, SSL certificate, and professional email. These are provided as part of your monthly plan.',
+    'Your subscription includes website hosting, SSL certificate, and professional email. These are provided as part of your monthly plan',
   'terms.s2.i3.subtitle': 'Service Availability',
   'terms.s2.i3.text':
-    'We strive for 99.9% uptime but cannot guarantee uninterrupted service. We will notify you of planned maintenance when possible.',
+    'We strive for 99.9% uptime but cannot guarantee uninterrupted service. We will notify you of planned maintenance when possible',
   'terms.s3.title': 'Payments and Billing',
   'terms.s3.i1.subtitle': 'Setup Fee',
   'terms.s3.i1.text':
-    'A one-time setup fee is charged for the initial website build. 50% is due upfront to start the project (non-refundable deposit), and 50% is due upon your approval of the final site. This covers the discovery call, design, development, and domain/email setup.',
+    'A one-time setup fee is charged for the initial website build. 50% is due upfront to start the project (non-refundable deposit), and 50% is due upon your approval of the final site. This covers the discovery call, design, development, and domain/email setup',
   'terms.s3.i2.subtitle': 'Monthly Subscription',
   'terms.s3.i2.text':
-    'Your first month is free. After that, your subscription is billed monthly. You can cancel anytime, and your site will remain active until the end of your billing period.',
+    'Your first month is free. After that, your subscription is billed monthly. You can cancel anytime, and your site will remain active until the end of your billing period',
   'terms.s3.i3.subtitle': 'AI Credits',
   'terms.s3.i3.text':
-    'Your plan includes monthly AI credits for site customization. Additional credits can be purchased as needed. Unused credits do not roll over to the next month.',
+    'Your plan includes monthly AI credits for site customization. Additional credits can be purchased as needed. Unused credits do not roll over to the next month',
   'terms.s3.i4.subtitle': 'Price Changes',
   'terms.s3.i4.text':
-    'We may change our prices with 30 days notice. Early adopter pricing is locked for the duration of your subscription, as long as it remains active.',
+    'We may change our prices with 30 days notice. Early adopter pricing is locked for the duration of your subscription, as long as it remains active',
   'terms.s4.title': 'Your Content',
   'terms.s4.i1.subtitle': 'Ownership',
   'terms.s4.i1.text':
-    'You retain all rights to the content you create and upload to your website. You can download your site assets at any time.',
+    'You retain all rights to the content you create and upload to your website. You can download your site assets at any time',
   'terms.s4.i2.subtitle': 'License to Us',
   'terms.s4.i2.text':
-    'You grant us a license to host, display, and transmit your content as necessary to provide our services. This license ends when you delete your content or close your account.',
+    'You grant us a license to host, display, and transmit your content as necessary to provide our services. This license ends when you delete your content or close your account',
   'terms.s4.i3.subtitle': 'Prohibited Content',
   'terms.s4.i3.text':
-    "You may not use our service to host illegal content, malware, spam, or content that infringes on others' intellectual property rights.",
+    "You may not use our service to host illegal content, malware, spam, or content that infringes on others' intellectual property rights",
   'terms.s5.title': 'Intellectual Property',
   'terms.s5.i1.subtitle': 'Our Platform',
   'terms.s5.i1.text':
-    'Flowstarter, our logo, and our platform are protected by intellectual property laws. You may not copy, modify, or distribute our software or branding.',
+    'Flowstarter, our logo, and our platform are protected by intellectual property laws. You may not copy, modify, or distribute our software or branding',
   'terms.s5.i2.subtitle': 'Templates',
   'terms.s5.i2.text':
-    'Our website templates are licensed for use within Flowstarter. You may not extract, resell, or redistribute template code.',
+    'Our website templates are licensed for use within Flowstarter. You may not extract, resell, or redistribute template code',
   'terms.s6.title': 'Termination',
   'terms.s6.i1.subtitle': 'By You',
   'terms.s6.i1.text':
-    'You can cancel your subscription at any time from your account settings. Your site will remain active until the end of your current billing period.',
+    'You can cancel your subscription at any time from your account settings. Your site will remain active until the end of your current billing period',
   'terms.s6.i2.subtitle': 'By Us',
   'terms.s6.i2.text':
-    'We may suspend or terminate your account if you violate these terms, engage in fraudulent activity, or fail to pay for services.',
+    'We may suspend or terminate your account if you violate these terms, engage in fraudulent activity, or fail to pay for services',
   'terms.s6.i3.subtitle': 'Effect of Termination',
   'terms.s6.i3.text':
-    'Upon termination, you can download your site assets for 90 days. After that, your data will be deleted.',
+    'Upon termination, you can download your site assets for 90 days. After that, your data will be deleted',
   'terms.s7.title': 'Limitation of Liability',
   'terms.s7.i1.subtitle': 'No Warranty',
   'terms.s7.i1.text':
-    'Our services are provided "as is" without warranties of any kind. We do not guarantee that our service will meet your specific requirements.',
+    'Our services are provided "as is" without warranties of any kind. We do not guarantee that our service will meet your specific requirements',
   'terms.s7.i2.subtitle': 'Liability Cap',
   'terms.s7.i2.text':
-    'Our total liability to you for any claims arising from our services is limited to the amount you paid us in the 12 months before the claim.',
+    'Our total liability to you for any claims arising from our services is limited to the amount you paid us in the 12 months before the claim',
   'terms.s8.title': 'Changes to Terms',
   'terms.s8.i1.subtitle': 'Updates',
   'terms.s8.i1.text':
-    'We may update these terms from time to time. We will notify you of significant changes via email or through our platform.',
+    'We may update these terms from time to time. We will notify you of significant changes via email or through our platform',
   'terms.s8.i2.subtitle': 'Continued Use',
   'terms.s8.i2.text':
-    'Your continued use of Flowstarter after changes to the terms constitutes acceptance of the new terms.',
+    'Your continued use of Flowstarter after changes to the terms constitutes acceptance of the new terms',
   'terms.contact.title': 'Questions about our terms?',
-  'terms.contact.description': "We're happy to clarify anything.",
+  'terms.contact.description': "We're happy to clarify anything",
 
   // Common labels
   'app.close': 'Close',
@@ -2113,8 +1992,8 @@ const en = {
   'app.userFallback': 'User',
   'app.yourProfile': 'Your Profile',
   'app.noPreviewAvailable': 'No preview available',
-  'app.somethingWentWrong': 'Something went wrong.',
-  'app.failedToUpdatePhoto': 'Failed to update photo.',
+  'app.somethingWentWrong': 'Something went wrong',
+  'app.failedToUpdatePhoto': 'Failed to update photo',
   'app.projectLabel': 'Project',
   'app.chatPlaceholder': 'Describe what you want to build...',
 
@@ -2133,7 +2012,8 @@ const en = {
   'team.join.repeatPassword': 'Repeat your password',
   'team.dashboard.namePlaceholder': 'John Smith',
   'team.invite.failedToSend': 'Failed to send invitation',
-  'team.login.invalidCredentials': 'Invalid credentials',
+  'team.login.invalidCredentials':
+    'Incorrect email or password. Try again, or reset your password',
 
   // Scaffold - Quick Draft Generator
   'scaffold.client.title': 'Client Details',
@@ -2217,17 +2097,17 @@ const en = {
 
   // Manifesto
   'landing.manifesto.title': 'Our mission',
-  'landing.manifesto.headline': 'Every real expert deserves to be found.',
+  'landing.manifesto.headline': 'Every real expert deserves to be found',
   'landing.manifesto.p1':
-    'The internet rewards volume over depth. Real expertise gets buried under louder voices and shinier packaging. Flowstarter exists to fix that.',
+    'The internet rewards volume over depth. Real expertise gets buried under louder voices and shinier packaging. Flowstarter exists to fix that',
   'landing.manifesto.p2': '',
   'landing.manifesto.p3': '',
   'landing.manifesto.p4': '',
   'landing.manifesto.closing':
-    'Your expertise changed lives. Now let people find you.',
+    'Your expertise changed lives. Now let people find you',
 
   // Storage promise (shared across hero, included, pricing)
-  'landing.storage.tagline': 'Generous storage on every plan.',
+  'landing.storage.tagline': 'Generous storage on every plan',
   'landing.storage.starter.tier': 'Starter',
   'landing.storage.starter.amount': '10 GB',
   'landing.storage.growth.tier': 'Growth',
@@ -2235,32 +2115,32 @@ const en = {
   'landing.storage.pro.tier': 'Pro',
   'landing.storage.pro.amount': '150 GB',
   'landing.storage.includedNote':
-    'Room for images, video, downloads, and client assets. Starter starts at 10 GB, Growth 50 GB, Pro 150 GB.',
+    'Room for images, video, downloads, and client assets. Starter starts at 10 GB, Growth 50 GB, Pro 150 GB',
 
   // Landing Hero — editorial redesign
   'landing.hero.displayPrefix': 'Premium websites,',
-  'landing.hero.displayFlourish': 'hand-crafted for service professionals.',
+  'landing.hero.displayFlourish': 'hand-crafted for service professionals',
   'landing.hero.subhead':
-    'Designed and built by hand, with a smart editor included so you can keep updating yours on demand. Hosting, domain, and ongoing support all in. From €799 + €49 a month.',
+    'Designed and built by hand, with a smart editor included so you can keep updating yours on demand. Hosting, domain, and ongoing support all in. From €799 + €49 a month',
   'landing.hero.primaryCta': 'Build my site',
   'landing.hero.secondaryCta': 'See how it works',
   'landing.hero.eyebrowSerial': 'Built for you',
   'landing.hero.eyebrowLabel': 'Yours forever',
   'landing.hero.eyebrowTagline': 'Limited spots',
   'landing.hero.guaranteeShort':
-    'Limited capacity. We take a small number of new clients each month.',
+    'Limited capacity. We take a small number of new clients each month',
   'landing.hero.stat1Value': 'Limited',
   'landing.hero.stat1Label': 'Spots each month',
-  'landing.hero.stat2Value': '€799',
+  'landing.hero.stat2Value': 'Starting from €799',
   'landing.hero.stat2Label': 'Starter, one-time setup',
-  'landing.hero.stat3Value': 'Hand-built',
+  'landing.hero.stat3Value': 'Hand-crafted',
   'landing.hero.stat3Label': 'Every site, by us',
   'landing.hero.stat4Value': '100%',
   'landing.hero.stat4Label': 'Yours forever',
   'landing.hero.brief.live': 'Live',
   'landing.hero.brief.serial': 'Starter build',
-  'landing.hero.brief.title': 'Your premium build.',
-  'landing.hero.brief.subtitle': 'Crafted for service professionals.',
+  'landing.hero.brief.title': 'Your premium build',
+  'landing.hero.brief.subtitle': 'Crafted for service professionals',
   'landing.hero.brief.field1Label': 'For',
   'landing.hero.brief.field1Value':
     'Coaches, consultants, therapists, photographers',
@@ -2275,7 +2155,7 @@ const en = {
   'landing.hero.brief.progressBuilding': 'Drafting',
   'landing.hero.brief.progressReady': 'Brief ready',
   'landing.hero.brief.ctaPending': 'Build my site',
-  'landing.hero.brief.ctaReady': 'Brief ready. Build my site.',
+  'landing.hero.brief.ctaReady': 'Brief ready. Build my site',
   'landing.hero.scrollHint': 'Scroll',
   'landing.hero.pills.label': 'Included from day one',
   'landing.hero.pills.booking': 'Cal.com booking',
@@ -2286,42 +2166,42 @@ const en = {
   // Templates — editorial redesign
   'landing.templates.eyebrow': 'A design for every industry',
   'landing.templates.headlinePrefix': 'Your site,',
-  'landing.templates.headlineFlourish': 'ready to launch.',
+  'landing.templates.headlineFlourish': 'ready to launch',
   'landing.templates.sub':
-    'Pick the one that fits. We customize it to your brand, your copy, and the clients you want to reach.',
+    'Pick the one that fits. We customize it to your brand, your copy, and the clients you want to reach',
   'landing.templates.ctaBrowse': 'Browse the library',
   'landing.templates.preview': 'Preview',
 
   // Editor showcase — editorial redesign
   'landing.editorShowcase.eyebrow': 'Your site, your words',
-  'landing.editorShowcase.headlinePrefix': 'Type what you want.',
-  'landing.editorShowcase.headlineFlourish': 'Watch it change.',
+  'landing.editorShowcase.headlinePrefix': 'Type what you want',
+  'landing.editorShowcase.headlineFlourish': 'Watch it change',
   'landing.editorShowcase.sub':
-    'No drag-and-drop, no code, no waiting on a developer. Talk to your site in plain language, it updates instantly.',
+    'No drag-and-drop, no code, no waiting on a developer. Talk to your site in plain language, it updates instantly',
 
   // Problem — editorial redesign
   'landing.problem.eyebrow': 'The choices you have today',
   'landing.problem.headlinePrefix': 'Forget about',
-  'landing.problem.headlineFlourish': 'frustrating choices like these.',
+  'landing.problem.headlineFlourish': 'frustrating choices like these',
   'landing.problem.sub':
-    'Most service professionals end up with one of these. None of them work.',
+    'Most service professionals end up with one of these. None of them work',
 
   // Pillars — editorial redesign
   'landing.pillars.eyebrow': 'What you actually get',
-  'landing.pillars.headlinePrefix': 'Launch. Manage.',
-  'landing.pillars.headlineFlourish': 'Keep improving.',
+  'landing.pillars.headlinePrefix': 'Launch. Manage',
+  'landing.pillars.headlineFlourish': 'Keep improving',
   'landing.pillars.sub':
-    'Flowstarter combines done-for-you setup with the flexibility to keep moving on your own.',
+    'Flowstarter combines done-for-you setup with the flexibility to keep moving on your own',
 
   // Included — editorial redesign
   'landing.included.eyebrow': "What's in Starter (€799 + €49/mo)",
   'landing.included.headlinePrefix': 'A premium site,',
-  'landing.included.headlineFlourish': 'wired up before launch.',
+  'landing.included.headlineFlourish': 'wired up before launch',
   'landing.included.sub':
-    'Cal.com booking, your newsletter, a leads form, and your editor, all set up in your own name. Subscription includes editor, maintenance, and support. Your site keeps running even if you cancel.',
-  'landing.included.ownership.title': 'You own everything from day one.',
+    'Cal.com booking, your newsletter, a leads form, and your editor, all set up in your own name. Subscription includes editor, maintenance, and support. Your site keeps running even if you cancel',
+  'landing.included.ownership.title': 'You own everything from day one',
   'landing.included.ownership.body':
-    'We set up a private server for you and install your site on it. Site, content, and hosting are all registered in your name, never ours. Cancel your subscription anytime. Your site keeps running on your own server.',
+    'We set up a private server for you and install your site on it. Site, content, and hosting are all registered in your name, never ours. Cancel your subscription anytime. Your site keeps running on your own server',
   'landing.included.ownership.chip1Label': 'Site',
   'landing.included.ownership.chip1Value': 'Yours',
   'landing.included.ownership.chip2Label': 'Content',
@@ -2332,131 +2212,111 @@ const en = {
   // Differentiation — editorial redesign
   'landing.differentiation.eyebrow': 'Why Flowstarter',
   'landing.differentiation.headlinePrefix': 'What makes Flowstarter',
-  'landing.differentiation.headlineFlourish': 'different.',
+  'landing.differentiation.headlineFlourish': 'different',
   'landing.differentiation.sub':
-    'A small studio, hand-crafted work, and an editor that grows with you.',
+    'A small studio, hand-crafted work, and an editor that grows with you',
 
   // Pricing — editorial redesign
   'landing.pricing.eyebrow': 'Pricing',
   'landing.pricing.headlinePrefix': 'Simple, transparent',
-  'landing.pricing.headlineFlourish': 'pricing.',
+  'landing.pricing.headlineFlourish': 'pricing',
   'landing.pricing.sub':
-    'Two ways to work with us. Both start with a discovery call.',
+    'Two ways to work with us. Both start with a discovery call',
 
   // Testimonials — editorial redesign
   'landing.testimonials.eyebrow': 'The work speaks',
-  'landing.testimonials.headlinePrefix': 'Real launches.',
-  'landing.testimonials.headlineFlourish': 'Real clients found.',
+  'landing.testimonials.headlinePrefix': 'Real launches',
+  'landing.testimonials.headlineFlourish': 'Real clients found',
 
   // Manifesto — editorial redesign
   'landing.manifesto.eyebrow': 'What we believe',
   'landing.manifesto.headlinePrefix': 'Every real expert',
-  'landing.manifesto.headlineFlourish': 'deserves to be found.',
+  'landing.manifesto.headlineFlourish': 'deserves to be found',
 
   // Team — editorial redesign
   'landing.team.eyebrow': 'Who builds it',
-  'landing.team.headlinePrefix': 'Two people.',
-  'landing.team.headlineFlourish': 'Obsessed with the craft.',
+  'landing.team.headlinePrefix': 'Two people',
+  'landing.team.headlineFlourish': 'Obsessed with the craft',
 
   // FAQ — editorial redesign
   'landing.faq.eyebrow': 'Questions',
   'landing.faq.headlinePrefix': 'Before you book,',
-  'landing.faq.headlineFlourish': 'here is what people ask.',
+  'landing.faq.headlineFlourish': 'here is what people ask',
 
   // Proof — the shelf
   'landing.proof.eyebrow': 'Selected work',
-  'landing.proof.headlinePrefix': 'Two clients live, one starter ready —',
-  'landing.proof.headlineFlourish': 'all hand-built.',
+  'landing.proof.headlinePrefix': 'Real sites, real businesses —',
+  'landing.proof.headlineFlourish': 'every site made the long way',
   'landing.proof.sub':
-    'Open any card to see the full interactive preview at library.flowstarter.net.',
-  'landing.proof.cta': 'Browse the library',
+    'Premium sites already delivered, more on the way. Open any card for the full interactive build — including the hand-crafted starter we use as the foundation for every site that follows.',
+  'landing.proof.cta': 'See the work',
   'landing.proof.statusLive': 'live',
   'landing.proof.statusSoon': 'in development',
 
   // Audience — editorial redesign
   'landing.audience.eyebrow': "Who it's for",
   'landing.audience.headlinePrefix': 'Built for service professionals',
-  'landing.audience.headlineFlourish': 'who value craft.',
+  'landing.audience.headlineFlourish': 'who value craft',
   'landing.audience.sub':
-    "If you're an expert in your field and want a website that reflects that expertise, we should talk.",
+    "If you're an expert in your field and want a website that reflects that expertise, we should talk",
 
   // Process — editorial redesign
   'landing.process.eyebrow': 'How it works',
   'landing.process.headlinePrefix': 'From conversation to launch,',
-  'landing.process.headlineFlourish': 'hand-crafted.',
+  'landing.process.headlineFlourish': 'hand-crafted',
   'landing.process.sub':
-    'A tight, four-step process from the first call to a site you can keep growing on your own.',
+    'A tight, four-step process from the first call to a site you can keep growing on your own',
 
   // Solution — editorial redesign
   'landing.solution.eyebrow': 'Our approach',
-  'landing.solution.headlinePrefix': 'We hand-craft your site.',
-  'landing.solution.headlineFlourish': 'You keep editing it forever.',
+  'landing.solution.headlinePrefix': 'We hand-craft your site',
+  'landing.solution.headlineFlourish': 'You keep editing it forever',
   'landing.solution.paragraph1':
-    'We hand-craft your website using modern tools, not drag-and-drop builders or template marketplaces. Every site is built specifically for your business.',
+    'We hand-craft your website using modern tools, not drag-and-drop builders or template marketplaces. Every site is built specifically for your business',
   'landing.solution.paragraph2':
-    'Then we hand you a smart editor so you can update copy, swap images, and refresh content with natural language. No system to learn. Your website grows with you.',
+    'Then we hand you a smart editor so you can update copy, swap images, and refresh content with natural language. No system to learn. Your website grows with you',
 
   // Support bot (floating widget on landing)
   'supportBot.openLabel': 'Open support chat',
   'supportBot.closeLabel': 'Close support chat',
   'supportBot.title': 'Ask anything',
-  'supportBot.subtitle': "Quick answers, or we'll book a call.",
-  'supportBot.greeting': 'Hi! Ask about pricing, timelines, or how we work.',
+  'supportBot.subtitle': "Quick answers, or we'll book a call",
+  'supportBot.greeting': 'Hi! Ask about pricing, timelines, or how we work',
   'supportBot.placeholder': 'Type your question...',
   'supportBot.send': 'Send',
   'supportBot.contactOperator': 'Contact an operator',
   'supportBot.replyPrice':
     'Starter is €799 setup + €49/month. Pro starts at €1,499 + €99/month. Both include hosting, domain, and the smart editor. Want a personal walkthrough?',
   'supportBot.replyTimeline':
-    'We agree on the timeline together during the discovery call. You see drafts before launch, and we keep you in the loop the whole way.',
+    'We agree on the timeline together during the discovery call. You see drafts before launch, and we keep you in the loop the whole way',
   'supportBot.replyEditor':
-    'You get a smart editor installed with your site. Update copy, swap images, add sections, all in plain English, no code.',
+    'You get a smart editor installed with your site. Update copy, swap images, add sections, all in plain English, no code',
   'supportBot.replyOwnership':
-    'Yes, you own everything. Site, content, hosting are all in your name from day one. No platform lock-in.',
+    'Yes, you own everything. Site, content, hosting are all in your name from day one. No platform lock-in',
   'supportBot.replyCapacity':
-    "We take a limited number of new clients each month so every project gets dedicated craft. If yours is a fit, we'll find a slot together on the call.",
+    "We take a limited number of new clients each month so every project gets dedicated craft. If yours is a fit, we'll find a slot together on the call",
   'supportBot.replyDefault':
-    'Good question. The fastest way to get a real answer is a 30-minute discovery call. Book one and we will cover it properly.',
+    'Good question. The fastest way to get a real answer is a 30-minute discovery call. Book one and we will cover it properly',
   'supportBot.replyDomain':
-    'Yes, we set up your custom domain and a professional email address at that domain. If you already own one, we connect it. If not, we register it for you.',
+    'Yes, we set up your custom domain and a professional email address at that domain. If you already own one, we connect it. If not, we register it for you',
   'supportBot.replyDiscovery':
-    "The discovery call runs up to 30 minutes. We'll cover your business, brand, and goals, and confirm honestly whether we're the right fit.",
+    "The discovery call runs up to 30 minutes. We'll cover your business, brand, and goals, and confirm honestly whether we're the right fit",
   'supportBot.replyEcommerce':
-    'Full storefronts are coming soon. The Pro tier covers digital products via Stripe today. Drop your email on the Ecommerce card to be the first to know when full ecommerce ships.',
+    'Full storefronts are coming soon. The Pro tier covers digital products via Stripe today. Drop your email on the Ecommerce card to be the first to know when full ecommerce ships',
   'supportBot.replyIncluded':
-    'Starter (€799 + €49/mo) gets you a 5-7 page custom site, hosting, domain, smart editor (50 edits/mo), and ongoing support. Pro adds extended pages, integrations, Stripe for digital products, and 150 edits/mo.',
+    'Starter (€799 + €49/mo) gets you a 5-7 page custom site, hosting, domain, smart editor (50 edits/mo), and ongoing support. Pro adds extended pages, integrations, Stripe for digital products, and 150 edits/mo',
   'supportBot.replySupport':
-    "We're with you after launch. The smart editor handles most updates. For bigger changes, your monthly subscription includes priority support.",
+    "We're with you after launch. The smart editor handles most updates. For bigger changes, your monthly subscription includes priority support",
   'supportBot.replyHandoff':
-    "This one needs a human. Reach out to an operator and they'll handle it directly.",
+    "This one needs a human. Reach out to an operator and they'll handle it directly",
   'supportBot.replyError':
-    "Something went wrong reaching me. Contact an operator below and we'll get you sorted.",
+    "Something went wrong reaching me. Contact an operator below and we'll get you sorted",
   'supportBot.typing': 'Typing...',
 
-  // About page
-  'about.eyebrow': 'About Flowstarter',
-  'about.headline': 'We build it. You run it.',
-  'about.body':
-    'Flowstarter is a small team that hand-crafts premium websites for solo founders, coaches, consultants, and small service businesses. We do the work for you, install everything on a private server we set up in your name, and hand you the keys. You own your site. You run it. Forever.',
-  'about.stat1.value': 'By hand',
-  'about.stat1.label': 'Every site crafted by the founders, never outsourced.',
-  'about.stat2.value': '8 a month',
-  'about.stat2.label': 'Capacity-limited so the work stays premium.',
-  'about.stat3.value': 'You own it',
-  'about.stat3.label': 'Site, content, and hosting are all yours from day one.',
-  'about.cta.pricing': 'See plans and pricing',
-  'about.cta.contact': 'Contact us',
-
-  // FAQ page (standalone)
-  'faqPage.eyebrow': 'Frequently Asked Questions',
-  'faqPage.headline': 'Answers before you book.',
-  'faqPage.cta.pricing': 'See plans and pricing',
-  'faqPage.cta.contact': 'Still have questions?',
-
   // Error pages (404, 500)
-  'errors.404.headline': 'This page moved on.',
+  'errors.404.headline': 'This page moved on',
   'errors.404.body':
-    "Whatever you were looking for isn't here anymore, but we've got you covered.",
+    "Whatever you were looking for isn't here anymore, but we've got you covered",
   'errors.404.quickNav': 'Quick navigation',
   'errors.404.linkHome': 'Home',
   'errors.404.linkPricing': 'Pricing',
@@ -2464,9 +2324,9 @@ const en = {
   'errors.404.linkContact': 'Contact',
   'errors.404.goHome': 'Go Home',
   'errors.404.goBack': 'Go Back',
-  'errors.500.headline': 'Something went wrong.',
+  'errors.500.headline': 'Something went wrong',
   'errors.500.body':
-    "We've been notified. Try reloading the page, or head back home.",
+    "We've been notified. Try reloading the page, or head back home",
   'errors.500.errorIdLabel': 'Error ID',
   'errors.500.reload': 'Reload',
   'errors.500.goHome': 'Go Home',
@@ -2474,20 +2334,20 @@ const en = {
   // PreQual modal
   'landing.prequal.eyebrow': 'Free discovery call',
   'landing.prequal.title': 'Which best describes your situation?',
-  'landing.prequal.subtitle': "We'll tailor the call based on your answer.",
+  'landing.prequal.subtitle': "We'll tailor the call based on your answer",
   'landing.prequal.cta': 'Book a free discovery call',
   'landing.prequal.footnote':
-    'No commitment. 30-minute call. Limited spots each month.',
+    'No commitment. 30-minute call. Limited spots each month',
   'landing.prequal.calendar.back': 'Back',
   'landing.prequal.calendar.planSelected': 'plan selected',
   'landing.prequal.calendar.title': 'Pick a time that works for you',
   'landing.prequal.calendar.subtitle':
-    "Choose a 30-minute slot below. We'll confirm via email.",
+    "Choose a 30-minute slot below. We'll confirm via email",
   'landing.prequal.confirmed.title': "You're all set!",
   'landing.prequal.confirmed.body':
-    'Your discovery call is booked. Check your email for the confirmation and calendar invite.',
+    'Your discovery call is booked. Check your email for the confirmation and calendar invite',
   'landing.prequal.confirmed.note':
-    "We're looking forward to learning about your project.",
+    "We're looking forward to learning about your project",
   'landing.prequal.confirmed.cta': 'Done',
   'landing.prequal.close': 'Close',
   'landing.prequal.options.starter.name': 'Starter',
@@ -2496,7 +2356,7 @@ const en = {
   'landing.prequal.options.starter.price': '€799 + €49/mo',
   'landing.prequal.options.pro.name': 'Pro',
   'landing.prequal.options.pro.desc': "I'm ready to grow with digital products",
-  'landing.prequal.options.pro.price': 'from €1,499 + €99/mo',
+  'landing.prequal.options.pro.price': '€1,499 + €99/mo',
   'landing.prequal.options.custom.name': 'Custom',
   'landing.prequal.options.custom.desc':
     'Relaunch, custom integrations, or something bigger',
@@ -2507,28 +2367,170 @@ const en = {
 
   // Ecommerce waitlist modal
   'landing.waitlist.eyebrow': 'Coming soon',
-  'landing.waitlist.title': 'Be the first to know.',
+  'landing.waitlist.title': 'Be the first to know',
   'landing.waitlist.body':
-    'The Ecommerce package is in the works. Drop your email and we will tell you the moment it is ready. We will not share or spam your inbox.',
+    'The Ecommerce package is in the works. Drop your email and we will tell you the moment it is ready. We will not share or spam your inbox',
   'landing.waitlist.emailLabel': 'Email',
   'landing.waitlist.emailPlaceholder': 'you@yourbusiness.com',
   'landing.waitlist.submit': 'Notify me when ready',
   'landing.waitlist.submitting': 'Adding you…',
-  'landing.waitlist.error': 'Could not save your email. Please try again.',
-  'landing.waitlist.successTitle': 'You are on the list.',
+  'landing.waitlist.error': 'Could not save your email. Please try again',
+  'landing.waitlist.successTitle': 'You are on the list',
   'landing.waitlist.successBody':
-    'We will email you as soon as the Ecommerce package is ready. No spam, just one quiet announcement.',
+    'We will email you as soon as the Ecommerce package is ready. No spam, just one quiet announcement',
   'landing.waitlist.successCta': 'Close',
   'landing.waitlist.close': 'Close',
 
   // Final CTA — editorial redesign
   'landing.finalCta.eyebrow': 'Ready when you are',
   'landing.finalCta.headlinePrefix': "Let's build something",
-  'landing.finalCta.headlineFlourish': "you'll be proud of.",
+  'landing.finalCta.headlineFlourish': "you'll be proud of",
   'landing.finalCta.subhead':
-    "Book a free discovery call. We'll talk about your business, show you what's possible, and tell you honestly if we're the right fit.",
+    "Book a free discovery call. We'll talk about your business, show you what's possible, and tell you honestly if we're the right fit",
   'landing.finalCta.primaryCta': 'Book a free discovery call',
-  'landing.finalCta.microNote': 'Limited spots each month.',
+  'landing.finalCta.microNote': 'Limited spots each month',
+
+  // About page
+  'about.eyebrow': 'About Flowstarter',
+  'about.headlinePrefix': 'Two founders.',
+  'about.headlineFlourish': 'One job: get you online.',
+  'about.sub':
+    "We're a small studio that hand-builds premium websites for service professionals \u2014 designed by Dorin, engineered by Darius, supported by both of us. No agency, no funnel, no hand-off to a junior.",
+  'about.darius.name': 'Darius',
+  'about.darius.role': 'Engineering & ops',
+  'about.darius.bio1':
+    'Ten years of writing software for the web, most of it spent on the unglamorous parts \u2014 hosting, email, billing, backups, the things that quietly fail at 3am if nobody owns them.',
+  'about.darius.bio2':
+    'I care about sites that work. I am not in love with frameworks, I am in love with reliability. My job at Flowstarter is to make the engineering invisible so you can forget the platform exists and focus on your clients.',
+  'about.darius.meta': 'Europe-based \u00b7 CET hours',
+  'about.dorin.name': 'Dorin',
+  'about.dorin.role': 'Design & craft',
+  'about.dorin.bio1':
+    'A decade designing for the web, mostly for small studios and independent professionals who needed to look as serious as they actually are. Typography, restraint, and the difference between clean and bland.',
+  'about.dorin.bio2':
+    'I will not ship a hero I do not believe in. I treat every brand as a small editorial project \u2014 masthead first, then voice, then system, then page. Your site should look like it was made on purpose, by people, for you.',
+  'about.dorin.meta': 'Europe-based \u00b7 CET hours',
+  'about.manifesto.eyebrow': 'Why we built this',
+  'about.manifesto.headlinePrefix': 'Real expertise',
+  'about.manifesto.headlineFlourish': 'should be easier to find.',
+  'about.manifesto.p1':
+    'Too many skilled service professionals are invisible online \u2014 not because they lack talent, but because the tools are built for developers, not for them. Templates feel generic. Agencies are slow and expensive. AI generators feel hollow the moment a real customer reads them.',
+  'about.manifesto.p2':
+    'Flowstarter is the alternative we wanted to exist. A real team builds you a real site, fast. A smart editor lets you keep evolving it without ever opening code. We make the trade-off the other way around \u2014 small batches, hand-crafted, built to last.',
+  'about.manifesto.closing':
+    '\u2014 Your work is good. Your website should say so.',
+  'about.principles.eyebrow': 'How we work',
+  'about.principles.headlinePrefix': 'Three principles',
+  'about.principles.headlineFlourish': "we don't bend on.",
+  'about.principle1.title': 'Speed.',
+  'about.principle1.body':
+    'We move with intent. The brief becomes a live site faster than most agencies return your first email, without skipping the craft.',
+  'about.principle2.title': 'Craft.',
+  'about.principle2.body':
+    'Hand-crafted every time. No template recycling, no AI slop, no "we will fix it later." The site goes out the way it deserves.',
+  'about.principle3.title': 'Honesty.',
+  'about.principle3.body':
+    'Transparent pricing, direct conversation, no agency theatre. You always know what you are getting and what it costs.',
+  'about.steps.eyebrow': 'What to expect',
+  'about.steps.headlinePrefix': 'From the first email',
+  'about.steps.headlineFlourish': 'to your launch day.',
+  'about.step1.title': 'You write to us.',
+  'about.step1.body':
+    'Or you book the call directly. We do not have a sales team \u2014 you will talk to one of us, every time.',
+  'about.step2.title': 'We design and build.',
+  'about.step2.body':
+    'Together. Dorin runs design, brand, and copy direction. Darius runs engineering, integrations, and deploy. You see progress, not silence.',
+  'about.step3.title': 'You run it.',
+  'about.step3.body':
+    'With the smart editor and our ongoing support. We are a message away when you need us \u2014 for changes, advice, or the next chapter.',
+  'about.cta.eyebrow': 'Want to talk?',
+  'about.cta.headlinePrefix': 'No slides. No sales team.',
+  'about.cta.headlineFlourish': 'Just us, and your plan.',
+  'about.cta.sub':
+    "A 30-minute call is the easiest way to see if we're the right team for what you need.",
+  'about.cta.button': 'Book a free discovery call',
+  'about.cta.note':
+    '30 minutes \u00b7 no commitment \u00b7 first month free on signup',
+
+  // FAQ standalone page
+  'faq.eyebrow': 'FAQ',
+  'faq.headlinePrefix': "Everything you've",
+  'faq.headlineFlourish': 'asked us so far.',
+  'faq.sub':
+    'The questions we hear most often, answered honestly and at length. If your question is not here, write to us \u2014 we will add it.',
+  'faq.stillWondering': 'Still wondering?',
+  'faq.stillWonderingBody':
+    'The fastest answer is a 30-minute call. We come prepared, no slides, no sales script.',
+  'faq.bookCall': 'Book a free discovery call',
+  'faq.sendMessage': 'Send a longer message \u2192',
+
+  // Relaunch page
+  'relaunch.eyebrow': 'Relaunch',
+  'relaunch.headlinePrefix': 'Your site exists.',
+  'relaunch.headlineFlourish': "It just isn't getting you customers.",
+  'relaunch.sub':
+    "We audit what's not working, migrate your content, and rebuild your site around converting visitors. You keep your Google rankings.",
+  'relaunch.pain.eyebrow': 'Sound familiar?',
+  'relaunch.pain.headlinePrefix': 'The four reasons',
+  'relaunch.pain.headlineFlourish': 'most sites quietly leak revenue.',
+  'relaunch.pain1.title': 'Visitors leave without contacting you',
+  'relaunch.pain1.body':
+    'Your site gets traffic but nobody books, buys, or reaches out. The structure is not built to convert.',
+  'relaunch.pain2.title': 'It looks outdated or unfinished',
+  'relaunch.pain2.body':
+    'Your site does not reflect the quality of your work. First impressions happen in seconds \u2014 and you are losing them.',
+  'relaunch.pain3.title': "You can't update it yourself",
+  'relaunch.pain3.body':
+    'Every small change means emailing a developer or fighting a clunky builder. So nothing gets updated.',
+  'relaunch.pain4.title': "No idea what is or isn't working",
+  'relaunch.pain4.body':
+    'No analytics, no tracking. You have no way of knowing where visitors come from or why they leave.',
+  'relaunch.included.eyebrow': "What's included",
+  'relaunch.included.headlinePrefix': 'Everything rebuilt to convert \u2014',
+  'relaunch.included.headlineFlourish': 'starting at \u20ac799.',
+  'relaunch.included.sub':
+    'Final price depends on scope and complexity. We assess it together on the discovery call, so the number we send you is the number you pay.',
+  'relaunch.included.item1':
+    'Full audit of your current site \u2014 what is costing you leads.',
+  'relaunch.included.item2':
+    'Content migration \u2014 your existing copy, images, and pages carried over.',
+  'relaunch.included.item3':
+    'SEO redirect mapping \u2014 keep your Google rankings.',
+  'relaunch.included.item4':
+    'New structure built to convert visitors into customers.',
+  'relaunch.included.item5':
+    'Booking, contact form, and analytics all connected.',
+  'relaunch.included.item6':
+    'Smart editor \u2014 update anything yourself after launch, no code.',
+  'relaunch.included.item7': 'Your own business dashboard.',
+  'relaunch.included.item8':
+    'First month free. 50% setup refund if not happy in 30 days.',
+  'relaunch.form.titlePending': 'Tell us about your site.',
+  'relaunch.form.titleDone': "Great \u2014 let's talk.",
+  'relaunch.form.subPending':
+    "Share your URL and we'll come prepared to your discovery call.",
+  'relaunch.form.subDone':
+    "Book a free discovery call and we'll review your site together.",
+  'relaunch.form.urlLabel': 'Your current website URL',
+  'relaunch.form.problemsLabel': "What's not working? (optional)",
+  'relaunch.form.problemsPlaceholder':
+    "E.g. visitors don't contact me, the design looks dated, I can't update anything myself\u2026",
+  'relaunch.form.submit': 'Book my free audit call',
+  'relaunch.form.note':
+    'Free \u00b7 no commitment \u00b7 30 minutes \u00b7 we come prepared',
+  'relaunch.form.reviewPrefix': 'We will review',
+  'relaunch.form.reviewSuffix': 'before the call.',
+  'relaunch.form.pickTime': 'Pick a time for your call',
+  'relaunch.guarantee':
+    '50% upfront to start. The rest only when you love the result. First month free. Not happy within 30 days? We refund 50% of the setup fee. No questions asked.',
+
+  // Cookies page hero
+  'cookies.heroEyebrow': 'Cookies',
+  'cookies.heroHeadlinePrefix': 'A small handful',
+  'cookies.heroHeadlineFlourish': 'of well-behaved cookies.',
+  'cookies.heroSub':
+    'We only use cookies that keep the site working and remember your basic preferences. No advertising trackers, no third-party fingerprinting.',
+  'cookies.lastUpdatedLabel': 'Last updated',
 
   ...adminKeys,
 } as const;

@@ -11,16 +11,17 @@ interface AuthLayoutProps {
   subtitle?: string;
   children: React.ReactNode;
   marketingKeys?: Array<TranslationKeys>;
-  showTeamBadge?: boolean;
   showStats?: boolean;
+  /** Matches marketing landing atmosphere (FlowBackground + editorial type). */
+  teamLandingVisual?: boolean;
 }
 
 export default function AuthLayout({
   title,
   subtitle,
   children,
-  showTeamBadge = false,
   showStats = false,
+  teamLandingVisual = false,
 }: AuthLayoutProps) {
   useTheme();
   const { t } = useTranslations();
@@ -30,7 +31,7 @@ export default function AuthLayout({
       data-density="comfortable"
     >
       <FlowBackground
-        variant="auth"
+        variant={teamLandingVisual ? 'landing' : 'auth'}
         style={{
           position: 'fixed',
           top: 0,
@@ -41,34 +42,66 @@ export default function AuthLayout({
         }}
       />
 
-      <SiteHeader mode="auth" showTeamBadge={showTeamBadge} />
+      <SiteHeader mode="auth" />
 
       {/* Content — fills remaining space, scrolls if needed */}
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 pt-8 pb-16 sm:pt-10 sm:pb-20">
         <div className="w-full max-w-lg my-auto">
           {title && (
             <div className="text-center mb-6">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-                <span
-                  style={{
-                    backgroundImage:
-                      'linear-gradient(110deg, var(--fs-accent-hot), var(--fs-accent))',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                >
-                  {title.split(' ')[0]}
-                </span>
-                {title.split(' ').length > 1 && (
-                  <span className="text-[var(--fs-ink)]">
-                    {' '}
-                    {title.split(' ').slice(1).join(' ')}
-                  </span>
-                )}
-              </h1>
-              {subtitle && (
-                <p className="text-[var(--fs-ink-faint)] text-sm">{subtitle}</p>
+              {teamLandingVisual ? (
+                <>
+                  <h1 className="ls-display ls-display--sm mb-3">
+                    {(() => {
+                      const parts = title.trim().split(/\s+/);
+                      const first = parts[0] ?? title;
+                      const rest = parts.slice(1).join(' ');
+                      return (
+                        <span className="line block">
+                          <span className="flourish">{first}</span>
+                          {rest ? (
+                            <span className="text-[var(--ls-ink)]">
+                              {' '}
+                              {rest}
+                            </span>
+                          ) : null}
+                        </span>
+                      );
+                    })()}
+                  </h1>
+                  {subtitle ? (
+                    <p className="ls-body text-[0.92rem] max-w-[40ch] mx-auto">
+                      {subtitle}
+                    </p>
+                  ) : null}
+                </>
+              ) : (
+                <>
+                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
+                    <span
+                      style={{
+                        backgroundImage:
+                          'linear-gradient(110deg, var(--fs-accent-hot), var(--fs-accent))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      {title.split(' ')[0]}
+                    </span>
+                    {title.split(' ').length > 1 && (
+                      <span className="text-[var(--fs-ink)]">
+                        {' '}
+                        {title.split(' ').slice(1).join(' ')}
+                      </span>
+                    )}
+                  </h1>
+                  {subtitle && (
+                    <p className="text-[var(--fs-ink-faint)] text-sm">
+                      {subtitle}
+                    </p>
+                  )}
+                </>
               )}
             </div>
           )}
@@ -120,7 +153,13 @@ export default function AuthLayout({
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 shrink-0">
+      <footer
+        className={
+          teamLandingVisual
+            ? 'relative z-10 shrink-0 admin-team-login-footer-chrome'
+            : 'relative z-10 shrink-0'
+        }
+      >
         <Footer />
       </footer>
     </div>

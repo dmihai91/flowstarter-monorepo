@@ -174,12 +174,7 @@ export const TEMPLATES: readonly TemplateEntry[] = [
       'Client success stories',
       'Dark mode',
     ],
-    tags: [
-      'life coach',
-      'business coach',
-      'executive coach',
-      'transformation',
-    ],
+    tags: ['life coach', 'business coach', 'executive coach', 'transformation'],
     repoUrl: null,
     liveUrl: null,
     thumbnail: 'coach-pro',
@@ -241,7 +236,7 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     kicker:
       'Editorial dark/light portfolio for designers, developers, and independent creatives.',
     blurb:
-      'A premium portfolio for the freelancer who treats their site like a publication, not a brochure. Editorial typography, dedicated case-study pages, a services section that doesn\'t over-explain, and a booking flow that respects how busy the visitor is. Light and dark modes share the same restraint so the brand reads the same in either.',
+      "A premium portfolio for the freelancer who treats their site like a publication, not a brochure. Editorial typography, dedicated case-study pages, a services section that doesn't over-explain, and a booking flow that respects how busy the visitor is. Light and dark modes share the same restraint so the brand reads the same in either.",
     built: ['Case-study showcase', 'Services', 'Booking', 'Dark mode'],
     tags: ['freelancer', 'portfolio', 'ux designer', 'developer'],
     repoUrl: null,

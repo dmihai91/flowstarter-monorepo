@@ -28,13 +28,6 @@ export default function FooterCompact() {
               </CustomNavLink>
               <span className="text-gray-300 dark:text-gray-700">•</span>
               <CustomNavLink
-                href="/blog"
-                className="hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
-              >
-                {t('footer.links.blog')}
-              </CustomNavLink>
-              <span className="text-gray-300 dark:text-gray-700">•</span>
-              <CustomNavLink
                 href="/privacy"
                 className="hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
               >

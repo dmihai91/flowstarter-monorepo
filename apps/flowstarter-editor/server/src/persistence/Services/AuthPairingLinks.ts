@@ -6,7 +6,7 @@ import type { AuthPairingLinkRepositoryError } from "../Errors.ts";
 export const AuthPairingLinkRecord = Schema.Struct({
   id: Schema.String,
   credential: Schema.String,
-  method: Schema.Literals(["desktop-bootstrap", "one-time-token"]),
+  method: Schema.Literals(["one-time-token"]),
   role: Schema.Literals(["owner", "client"]),
   subject: Schema.String,
   label: Schema.NullOr(Schema.String),
@@ -20,7 +20,7 @@ export type AuthPairingLinkRecord = typeof AuthPairingLinkRecord.Type;
 export const CreateAuthPairingLinkInput = Schema.Struct({
   id: Schema.String,
   credential: Schema.String,
-  method: Schema.Literals(["desktop-bootstrap", "one-time-token"]),
+  method: Schema.Literals(["one-time-token"]),
   role: Schema.Literals(["owner", "client"]),
   subject: Schema.String,
   label: Schema.NullOr(Schema.String),

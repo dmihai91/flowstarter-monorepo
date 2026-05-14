@@ -1,27 +1,66 @@
 'use client';
 
-import { Button } from '@/components/ui/unified-button';
-import { useContactForm } from '@/hooks/useContactForm';
 import { useState } from 'react';
 import {
-  MessageCircle,
+  Calendar,
   Check,
   Loader2,
-  Send,
-  Calendar,
   Mail,
+  Send,
   Twitter,
   Linkedin,
-  Clock,
-  Bot,
-  Headphones,
 } from 'lucide-react';
-import { useTranslations } from '@/lib/i18n';
-import { PublicPageLayout } from '@/components/PublicPageLayout';
-import { PreQualModal } from '@/app/(dynamic-pages)/(main-pages)/components/PreQualModal';
+import { MarketingShell, PageHero } from '@/components/marketing';
+import { useI18n } from '@/lib/i18n';
+import { useBookingModal } from '@/app/(dynamic-pages)/(main-pages)/components/booking-modal-store';
+import { useContactForm } from '@/hooks/useContactForm';
+
+const cardPadding = '1.75rem 1.65rem 1.65rem';
+
+const labelStyle = {
+  display: 'block',
+  fontFamily: 'var(--ls-mono)',
+  fontSize: '10.5px',
+  letterSpacing: '0.2em',
+  textTransform: 'uppercase' as const,
+  color: 'var(--ls-ink-faint)',
+  marginBottom: '0.55rem',
+};
+
+const inputStyle = {
+  width: '100%',
+  fontFamily: 'var(--ls-sans)',
+  fontSize: '0.95rem',
+  padding: '0.85rem 1rem',
+  borderRadius: '12px',
+  border: '1px solid var(--ls-rule)',
+  background: 'var(--ls-glass-bg)',
+  color: 'var(--ls-ink)',
+  outline: 'none',
+  transition: 'border-color 200ms ease, box-shadow 200ms ease',
+};
+
+const cardTitleStyle = {
+  fontFamily: 'var(--ls-sans)',
+  fontWeight: 600,
+  fontSize: '1.15rem',
+  letterSpacing: '-0.015em',
+  color: 'var(--ls-ink)',
+  lineHeight: 1.2,
+} as const;
+
+const cardKickerStyle = {
+  fontFamily: 'var(--ls-mono)',
+  fontSize: '10.5px',
+  letterSpacing: '0.22em',
+  textTransform: 'uppercase' as const,
+  color: 'var(--ls-accent)',
+} as const;
 
 export default function ContactPage() {
-  const { t } = useTranslations();
+  const { t: tStrict } = useI18n();
+  const t = tStrict as (key: string) => string;
+  const openBookingModal = useBookingModal((s) => s.open);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,18 +68,6 @@ export default function ContactPage() {
     message: '',
   });
 
-  const [discoveryModalOpen, setDiscoveryModalOpen] = useState(false);
-  const [supportOpen, setSupportOpen] = useState(false);
-  const [supportMode, setSupportMode] = useState<'ai' | 'operator'>('ai');
-  const [supportInput, setSupportInput] = useState('');
-  const [supportMessages, setSupportMessages] = useState<
-    { role: 'assistant' | 'user'; text: string }[]
-  >([
-    {
-      role: 'assistant',
-      text: "Hi, I'm Flowstarter AI support. I can answer quick questions or route you to a human operator.",
-    },
-  ]);
   const contactMutation = useContactForm();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,7 +76,7 @@ export default function ContactPage() {
       {
         name: formData.name,
         email: formData.email,
-        message: `[${formData.subject}] ${formData.message}`,
+        message: `[${formData.subject || 'General'}] ${formData.message}`,
       },
       {
         onSuccess: () => {
@@ -68,380 +95,494 @@ export default function ContactPage() {
     : 'idle';
 
   const errorMessage =
-    contactMutation.error?.message || t('contact.form.defaultError');
-
-  const aiReplyFor = (text: string): string => {
-    const lower = text.toLowerCase();
-    if (lower.includes('price') || lower.includes('cost')) {
-      return 'Pricing depends on scope and timeline. I can help you pick a plan quickly, or switch you to an operator for a direct recommendation.';
-    }
-    if (lower.includes('time') || lower.includes('how long')) {
-      return 'Typical turnaround is fast for focused projects. If you share your goal, I can suggest the best path right now.';
-    }
-    if (lower.includes('operator') || lower.includes('human')) {
-      return 'Switch to Operator mode and leave your question. Our team usually replies within 1 business day.';
-    }
-    return 'Got it. I can help with pricing, timeline, integrations, and setup. If you prefer human support, switch to Operator mode.';
-  };
-
-  const submitSupportMessage = () => {
-    const message = supportInput.trim();
-    if (!message) return;
-    setSupportMessages((prev) => [...prev, { role: 'user', text: message }]);
-    setSupportInput('');
-    const response =
-      supportMode === 'ai'
-        ? aiReplyFor(message)
-        : 'Operator request received. We will follow up on hello@flowstarter.net. For urgent questions, include your project URL and deadline.';
-    window.setTimeout(() => {
-      setSupportMessages((prev) => [
-        ...prev,
-        { role: 'assistant', text: response },
-      ]);
-    }, 320);
-  };
+    contactMutation.error?.message ?? t('contact.form.defaultError');
 
   return (
-    <PublicPageLayout>
-      <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16">
-        <div className="text-center mb-12 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-5">
-            <MessageCircle className="w-4 h-4" />
-            {t('contact.badge')}
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-[var(--fs-ink)] mb-3">
-            {t('contact.title')}
-          </h1>
-          <p className="text-lg text-[var(--fs-ink-faint)] max-w-2xl mx-auto">
-            {t('contact.description')}
-          </p>
-        </div>
+    <MarketingShell>
+      <main id="main-content" className="flex-1">
+        <PageHero
+          eyebrow={t('contact.eyebrow')}
+          headlinePrefix={t('contact.headlinePrefix')}
+          headlineFlourish={t('contact.headlineFlourish')}
+          sub={t('contact.sub')}
+        />
 
-        <div className="grid lg:grid-cols-[1.12fr_0.88fr] gap-6 sm:gap-8 items-start">
-          <section className="p-5 sm:p-7 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
-            <h2 className="text-2xl font-bold text-[var(--fs-ink)] mb-6">
-              {t('contact.form.title')}
-            </h2>
-
-            {status === 'success' ? (
-              <div className="text-center py-10">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <Check className="w-8 h-8 text-emerald-500" />
-                </div>
-                <h3 className="text-xl font-semibold text-[var(--fs-ink)] mb-2">
-                  {t('contact.form.successTitle')}
-                </h3>
-                <p className="text-[var(--fs-ink-faint)] mb-6">
-                  {t('contact.form.successDesc')}
-                </p>
-                <Button
-                  tone="secondary"
-                  onClick={() => contactMutation.reset()}
-                >
-                  {t('contact.form.sendAnother')}
-                </Button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                    {t('contact.form.nameLabel')}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    placeholder={t('contact.form.namePlaceholder')}
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-[var(--fs-rule)] text-[var(--fs-ink)] placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                    {t('contact.form.emailLabel')}
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    placeholder={t('contact.form.emailPlaceholder')}
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-[var(--fs-rule)] text-[var(--fs-ink)] placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                    {t('contact.form.subjectLabel')}
-                  </label>
-                  <select
-                    required
-                    value={formData.subject}
-                    onChange={(e) =>
-                      setFormData({ ...formData, subject: e.target.value })
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-[var(--fs-rule)] text-[var(--fs-ink)] focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all"
-                  >
-                    <option value="">{t('contact.form.subjectDefault')}</option>
-                    <option value="general">
-                      {t('contact.form.subjectGeneral')}
-                    </option>
-                    <option value="project">
-                      {t('contact.form.subjectProject')}
-                    </option>
-                    <option value="support">
-                      {t('contact.form.subjectSupport')}
-                    </option>
-                    <option value="billing">
-                      {t('contact.form.subjectBilling')}
-                    </option>
-                    <option value="feedback">
-                      {t('contact.form.subjectFeedback')}
-                    </option>
-                    <option value="other">
-                      {t('contact.form.subjectOther')}
-                    </option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-white/70 mb-2">
-                    {t('contact.form.messageLabel')}
-                  </label>
-                  <textarea
-                    required
-                    rows={5}
-                    value={formData.message}
-                    onChange={(e) =>
-                      setFormData({ ...formData, message: e.target.value })
-                    }
-                    placeholder={t('contact.form.messagePlaceholder')}
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-white/5 border border-[var(--fs-rule)] text-[var(--fs-ink)] placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[var(--purple)]/20 focus:border-[var(--purple)] transition-all resize-none"
-                  />
-                </div>
-
-                {status === 'error' && (
-                  <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm">
-                    {errorMessage}
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  className="w-full"
-                >
-                  {status === 'loading' ? (
-                    <span className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      {t('contact.form.sending')}
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      {t('contact.form.sendButton')}
-                      <Send className="w-4 h-4" />
-                    </span>
-                  )}
-                </Button>
-              </form>
-            )}
-          </section>
-
-          <div className="space-y-6">
-            <section className="p-5 sm:p-6 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
-              <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6">
-                {t('contact.talk.title')}
-              </h2>
-              <p className="text-[var(--fs-ink-faint)] mb-6">
-                {t('contact.talk.description')}
-              </p>
-              <Button
-                className="w-full"
-                onClick={() => setDiscoveryModalOpen(true)}
+        <section className="ls-section ls-section--pad">
+          <div className="ls-container">
+            <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              {/* Contact form */}
+              <div
+                className="ls-card"
+                style={{
+                  padding: cardPadding,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.25rem',
+                }}
               >
-                <Calendar className="w-4 h-4 mr-2" />
-                {t('contact.talk.button')}
-              </Button>
-            </section>
+                <div>
+                  <span style={cardKickerStyle}>{t('contact.form.kicker')}</span>
+                  <h2 style={{ ...cardTitleStyle, marginTop: '0.45rem' }}>
+                    {t('contact.form.title')}
+                  </h2>
+                  <p
+                    className="ls-body"
+                    style={{
+                      fontSize: '0.92rem',
+                      marginTop: '0.5rem',
+                    }}
+                  >
+                    {t('contact.form.replyGuarantee')}
+                  </p>
+                </div>
 
-            <section className="p-5 sm:p-6 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
-              <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-6">
-                {t('contact.other.title')}
-              </h2>
-              <div className="mb-5">
-                {!supportOpen ? (
-                  <div className="flex justify-start">
-                    <Button
-                      type="button"
-                      onClick={() => setSupportOpen(true)}
-                      className="h-12 px-5 py-3 text-base"
+                {status === 'success' ? (
+                  <div
+                    style={{
+                      borderRadius: '14px',
+                      border:
+                        '1px solid color-mix(in oklab, var(--ls-accent) 30%, var(--ls-rule))',
+                      background:
+                        'color-mix(in oklab, var(--ls-accent) 6%, transparent)',
+                      padding: '1.75rem 1.25rem',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '999px',
+                        background:
+                          'color-mix(in oklab, var(--ls-accent) 14%, transparent)',
+                        color: 'var(--ls-accent)',
+                        marginBottom: '0.9rem',
+                      }}
                     >
-                      <Headphones className="h-5 w-5" />
-                      Open support chat
-                    </Button>
+                      <Check className="h-6 w-6" />
+                    </span>
+                    <h3 style={cardTitleStyle}>{t('contact.form.successTitle')}</h3>
+                    <p
+                      className="ls-body"
+                      style={{
+                        fontSize: '0.92rem',
+                        marginTop: '0.5rem',
+                      }}
+                    >
+                      {t('contact.form.successBody')}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => contactMutation.reset()}
+                      className="ls-link"
+                      style={{
+                        marginTop: '1.1rem',
+                        color: 'var(--ls-ink)',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {t('contact.form.sendAnother')}
+                    </button>
                   </div>
                 ) : (
-                  <div className="rounded-xl border border-[var(--fs-rule)] bg-white/70 dark:bg-white/[0.03] p-3">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <p className="text-sm font-semibold text-[var(--fs-ink)]">
-                        Support chat
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => setSupportOpen(false)}
-                        className="rounded-md px-2 py-1 text-xs text-[var(--fs-ink-faint)] hover:bg-black/5 dark:hover:bg-white/10"
-                      >
-                        Close
-                      </button>
-                    </div>
-                    <div className="mb-3 inline-flex rounded-lg border border-[var(--fs-rule)] bg-white/70 dark:bg-white/[0.04] p-0.5">
-                      <button
-                        type="button"
-                        onClick={() => setSupportMode('ai')}
-                        className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                          supportMode === 'ai'
-                            ? 'bg-[var(--purple)] text-white'
-                            : 'text-[var(--fs-ink-faint)]'
-                        }`}
-                      >
-                        <Bot className="h-3.5 w-3.5" />
-                        AI
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSupportMode('operator')}
-                        className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                          supportMode === 'operator'
-                            ? 'bg-[var(--purple)] text-white'
-                            : 'text-[var(--fs-ink-faint)]'
-                        }`}
-                      >
-                        <Headphones className="h-3.5 w-3.5" />
-                        Operator
-                      </button>
-                    </div>
-                    <div className="mb-3 max-h-40 space-y-2 overflow-y-auto rounded-lg border border-[var(--fs-rule)] bg-white/75 dark:bg-black/10 p-2.5">
-                      {supportMessages.slice(-5).map((msg, idx) => (
-                        <div
-                          key={idx}
-                          className={`max-w-[92%] rounded-lg px-2.5 py-2 text-xs leading-relaxed ${
-                            msg.role === 'user'
-                              ? 'ml-auto bg-[var(--purple)] text-white'
-                              : 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink-dim)]'
-                          }`}
-                        >
-                          {msg.text}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2">
+                  <form
+                    onSubmit={handleSubmit}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '1rem',
+                    }}
+                  >
+                    <div>
+                      <label htmlFor="contact-name" style={labelStyle}>
+                        {t('contact.form.nameLabel')}
+                      </label>
                       <input
-                        value={supportInput}
-                        onChange={(e) => setSupportInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') submitSupportMessage();
-                        }}
-                        placeholder={
-                          supportMode === 'ai'
-                            ? 'Ask the AI support assistant...'
-                            : 'Leave a message for an operator...'
+                        id="contact-name"
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
                         }
-                        className="h-9 w-full rounded-lg border border-[var(--fs-rule)] bg-white dark:bg-white/[0.03] px-3 text-xs text-[var(--fs-ink)] outline-none focus:ring-2 focus:ring-[var(--purple)]/20"
+                        placeholder={t('contact.form.namePlaceholder')}
+                        style={inputStyle}
                       />
-                      <Button
-                        type="button"
-                        onClick={submitSupportMessage}
-                        className="h-9 px-3 py-2 text-xs"
-                      >
-                        Send
-                      </Button>
                     </div>
-                  </div>
+
+                    <div>
+                      <label htmlFor="contact-email" style={labelStyle}>
+                        {t('contact.form.emailLabel')}
+                      </label>
+                      <input
+                        id="contact-email"
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
+                        placeholder={t('contact.form.emailPlaceholder')}
+                        style={inputStyle}
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="contact-subject" style={labelStyle}>
+                        {t('contact.form.subjectLabel')}
+                      </label>
+                      <select
+                        id="contact-subject"
+                        required
+                        value={formData.subject}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            subject: e.target.value,
+                          })
+                        }
+                        style={inputStyle}
+                      >
+                        <option value="">{t('contact.form.subjectDefault')}</option>
+                        <option value="General">{t('contact.form.subjectGeneral')}</option>
+                        <option value="Project">{t('contact.form.subjectProject')}</option>
+                        <option value="Support">{t('contact.form.subjectSupport')}</option>
+                        <option value="Billing">{t('contact.form.subjectBilling')}</option>
+                        <option value="Press">{t('contact.form.subjectPress')}</option>
+                        <option value="Other">{t('contact.form.subjectOther')}</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label htmlFor="contact-message" style={labelStyle}>
+                        {t('contact.form.messageLabel')}
+                      </label>
+                      <textarea
+                        id="contact-message"
+                        required
+                        rows={5}
+                        value={formData.message}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            message: e.target.value,
+                          })
+                        }
+                        placeholder={t('contact.form.messagePlaceholder')}
+                        style={{
+                          ...inputStyle,
+                          resize: 'vertical' as const,
+                          minHeight: '8rem',
+                        }}
+                      />
+                    </div>
+
+                    {status === 'error' && (
+                      <div
+                        role="alert"
+                        style={{
+                          padding: '0.85rem 1rem',
+                          borderRadius: '12px',
+                          border:
+                            '1px solid color-mix(in oklab, #b45309 40%, var(--ls-rule))',
+                          background:
+                            'color-mix(in oklab, #b45309 10%, transparent)',
+                          color: 'var(--ls-accent-warm)',
+                          fontFamily: 'var(--ls-sans)',
+                          fontSize: '0.88rem',
+                        }}
+                      >
+                        {errorMessage}
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={status === 'loading'}
+                      className="ls-cta"
+                      style={{ alignSelf: 'flex-start' }}
+                    >
+                      {status === 'loading' ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          {t('contact.form.sending')}
+                        </>
+                      ) : (
+                        <>
+                          {t('contact.form.send')}
+                          <Send className="ml-1 h-4 w-4" />
+                        </>
+                      )}
+                    </button>
+                  </form>
                 )}
               </div>
-              <div className="space-y-4">
-                <a
-                  href="mailto:hello@flowstarter.net"
-                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
-                    <Mail className="w-5 h-5 text-[var(--purple)]" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-[var(--fs-ink)] group-hover:text-[var(--purple)] transition-colors">
-                      {t('contact.other.emailLabel')}
-                    </p>
-                    <p className="text-sm text-[var(--fs-ink-faint)]">
-                      {t('contact.other.emailValue')}
-                    </p>
-                  </div>
-                </a>
-                <a
-                  href="https://twitter.com/flowstarter"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
-                    <Twitter className="w-5 h-5 text-[var(--purple)]" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-[var(--fs-ink)] group-hover:text-[var(--purple)] transition-colors">
-                      {t('contact.other.twitterLabel')}
-                    </p>
-                    <p className="text-sm text-[var(--fs-ink-faint)]">
-                      {t('contact.other.twitterValue')}
-                    </p>
-                  </div>
-                </a>
-                <a
-                  href="https://linkedin.com/company/flowstarter"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-[var(--purple)]/10 flex items-center justify-center">
-                    <Linkedin className="w-5 h-5 text-[var(--purple)]" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-[var(--fs-ink)] group-hover:text-[var(--purple)] transition-colors">
-                      {t('contact.other.linkedinLabel')}
-                    </p>
-                    <p className="text-sm text-[var(--fs-ink-faint)]">
-                      {t('contact.other.linkedinValue')}
-                    </p>
-                  </div>
-                </a>
-              </div>
-            </section>
 
-            <section className="p-5 sm:p-6 rounded-xl bg-white/60 dark:bg-white/[0.02] border border-[var(--fs-rule)] flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                <Clock className="w-5 h-5 text-emerald-500" />
+              {/* Right rail */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.25rem',
+                }}
+              >
+                {/* Discovery call */}
+                <div
+                  className="ls-card"
+                  style={{
+                    padding: cardPadding,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.9rem',
+                  }}
+                >
+                  <span style={cardKickerStyle}>{t('contact.call.kicker')}</span>
+                  <h3 style={cardTitleStyle}>{t('contact.call.title')}</h3>
+                  <p
+                    className="ls-body"
+                    style={{ fontSize: '0.92rem', margin: 0 }}
+                  >
+                    {t('contact.call.body')}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={openBookingModal}
+                    className="ls-cta ls-cta--sm"
+                    style={{ alignSelf: 'flex-start' }}
+                  >
+                    <Calendar className="h-3.5 w-3.5" />
+                    {t('contact.call.cta')}
+                  </button>
+                </div>
+
+                {/* Email + socials */}
+                <div
+                  className="ls-card"
+                  style={{
+                    padding: cardPadding,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.95rem',
+                  }}
+                >
+                  <span style={cardKickerStyle}>{t('contact.direct.kicker')}</span>
+                  <h3 style={cardTitleStyle}>{t('contact.direct.title')}</h3>
+
+                  <a
+                    href="mailto:hello@flowstarter.net"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.85rem',
+                      padding: '0.85rem 0',
+                      borderTop: '1px solid var(--ls-rule)',
+                      color: 'var(--ls-ink)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '10px',
+                        background:
+                          'color-mix(in oklab, var(--ls-accent) 12%, transparent)',
+                        color: 'var(--ls-accent)',
+                      }}
+                    >
+                      <Mail className="h-4 w-4" />
+                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span
+                        style={{
+                          fontFamily: 'var(--ls-mono)',
+                          fontSize: '10.5px',
+                          letterSpacing: '0.2em',
+                          textTransform: 'uppercase',
+                          color: 'var(--ls-ink-faint)',
+                        }}
+                      >
+                        {t('contact.direct.emailLabel')}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: 'var(--ls-sans)',
+                          fontSize: '0.95rem',
+                          color: 'var(--ls-ink)',
+                        }}
+                      >
+                        hello@flowstarter.net
+                      </span>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://twitter.com/flowstarter"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.85rem',
+                      padding: '0.85rem 0',
+                      borderTop: '1px solid var(--ls-rule)',
+                      color: 'var(--ls-ink)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '10px',
+                        background:
+                          'color-mix(in oklab, var(--ls-accent) 12%, transparent)',
+                        color: 'var(--ls-accent)',
+                      }}
+                    >
+                      <Twitter className="h-4 w-4" />
+                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span
+                        style={{
+                          fontFamily: 'var(--ls-mono)',
+                          fontSize: '10.5px',
+                          letterSpacing: '0.2em',
+                          textTransform: 'uppercase',
+                          color: 'var(--ls-ink-faint)',
+                        }}
+                      >
+                        {t('contact.direct.twitterLabel')}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: 'var(--ls-sans)',
+                          fontSize: '0.95rem',
+                          color: 'var(--ls-ink)',
+                        }}
+                      >
+                        @flowstarter
+                      </span>
+                    </div>
+                  </a>
+
+                  <a
+                    href="https://linkedin.com/company/flowstarter"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.85rem',
+                      padding: '0.85rem 0',
+                      borderTop: '1px solid var(--ls-rule)',
+                      color: 'var(--ls-ink)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '10px',
+                        background:
+                          'color-mix(in oklab, var(--ls-accent) 12%, transparent)',
+                        color: 'var(--ls-accent)',
+                      }}
+                    >
+                      <Linkedin className="h-4 w-4" />
+                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span
+                        style={{
+                          fontFamily: 'var(--ls-mono)',
+                          fontSize: '10.5px',
+                          letterSpacing: '0.2em',
+                          textTransform: 'uppercase',
+                          color: 'var(--ls-ink-faint)',
+                        }}
+                      >
+                        {t('contact.direct.linkedinLabel')}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: 'var(--ls-sans)',
+                          fontSize: '0.95rem',
+                          color: 'var(--ls-ink)',
+                        }}
+                      >
+                        /company/flowstarter
+                      </span>
+                    </div>
+                  </a>
+                </div>
+
+                {/* Response time */}
+                <div
+                  className="ls-card"
+                  style={{
+                    padding: '1.25rem 1.35rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.95rem',
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '999px',
+                      background: '#22c55e',
+                      boxShadow: '0 0 0 4px rgba(34, 197, 94, 0.18)',
+                    }}
+                  />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span
+                      style={{
+                        fontFamily: 'var(--ls-mono)',
+                        fontSize: '10.5px',
+                        letterSpacing: '0.2em',
+                        textTransform: 'uppercase',
+                        color: 'var(--ls-ink-faint)',
+                      }}
+                    >
+                      {t('contact.responseTime.label')}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--ls-sans)',
+                        fontSize: '0.95rem',
+                        color: 'var(--ls-ink)',
+                      }}
+                    >
+                      {t('contact.responseTime.value')}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="font-medium text-[var(--fs-ink)]">
-                  {t('contact.response.title')}
-                </p>
-                <p className="text-sm text-[var(--fs-ink-faint)]">
-                  {t('contact.response.description')}
-                </p>
-              </div>
-            </section>
+            </div>
           </div>
-        </div>
+        </section>
       </main>
-
-      <PreQualModal
-        open={discoveryModalOpen}
-        onClose={() => setDiscoveryModalOpen(false)}
-        source="contact"
-      />
-    </PublicPageLayout>
+    </MarketingShell>
   );
 }

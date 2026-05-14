@@ -31,53 +31,6 @@ export const glassHoverClass =
 /** Skeleton pulse placeholder using token colors */
 export const skeletonClass = 'bg-[var(--fs-rule)] rounded animate-pulse';
 
-/**
- * Dashboard atmosphere — editorial dual-tone wash using landing tokens
- * (`--ls-accent` indigo + `--ls-accent-warm` rust). Two low-opacity radials
- * (cool top-left, warm bottom-right) sit on the FlowBackground orbs; a soft
- * mid vignette and bottom fade darken the canvas without swallowing the wash.
- * `.ls-card` glass remains the only strong surface treatment so the depth
- * reads as "glass on paper" instead of stacked glass shells.
- */
-export const dashboardLightOverlay = `
-  radial-gradient(ellipse 70% 55% at 8% 0%, rgba(78, 94, 218, 0.10) 0%, transparent 62%),
-  radial-gradient(ellipse 56% 50% at 96% 108%, rgba(180, 83, 9, 0.07) 0%, transparent 64%),
-  linear-gradient(180deg, rgba(251, 247, 239, 0) 0%, rgba(243, 236, 219, 0.32) 100%)
-`;
-
-export const dashboardDarkOverlay = `
-  radial-gradient(ellipse 64% 52% at 6% 2%, rgba(78, 94, 218, 0.22) 0%, transparent 58%),
-  radial-gradient(ellipse 54% 46% at 98% 104%, rgba(180, 83, 9, 0.12) 0%, transparent 62%),
-  radial-gradient(ellipse 110% 70% at 50% 56%, rgba(10, 7, 20, 0) 0%, rgba(4, 3, 8, 0.32) 78%),
-  linear-gradient(180deg, rgba(10, 7, 20, 0) 0%, rgba(4, 3, 8, 0.42) 100%)
-`;
-
-/**
- * Editorial paper grain — same SVG fractal noise the landing uses in
- * `.ls-grain`. Layered above the wash to break up gradients and avoid the
- * flat "AI gradient" feel. Tile size kept at 160px to match the landing.
- */
-export const dashboardGrainBackground =
-  "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
-
-/** Sidebar chrome (shared by client + team sidebars) */
-export function getSidebarChromeStyle(
-  resolvedTheme: 'light' | 'dark' | undefined
-): CSSProperties {
-  const isDark = resolvedTheme === 'dark';
-  return {
-    background: isDark ? 'var(--fs-chrome-bg)' : 'var(--fs-chrome-bg)',
-    borderRight: `1px solid var(--fs-chrome-border)`,
-    boxShadow: 'var(--fs-chrome-shadow)',
-    backdropFilter: isDark
-      ? 'blur(14px) saturate(125%)'
-      : 'blur(16px) saturate(120%)',
-    WebkitBackdropFilter: isDark
-      ? 'blur(14px) saturate(125%)'
-      : 'blur(16px) saturate(120%)',
-  };
-}
-
 export const sidebarNavBaseClass =
   'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150';
 export const sidebarNavActiveClass =

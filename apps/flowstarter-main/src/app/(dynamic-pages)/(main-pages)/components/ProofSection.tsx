@@ -154,8 +154,7 @@ export function ProofSection() {
 
         <div className="ls-proof-cta-row">
           <span className="ls-proof-foot">
-            {String(proof.items.length).padStart(2, '0')} entries · the shelf
-            grows as we ship
+            {proof.items.length} entries · the shelf grows as we ship
           </span>
           <Link
             href={proof.libraryUrl}

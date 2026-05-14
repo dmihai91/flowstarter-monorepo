@@ -18,7 +18,8 @@ import {
   ThreadId,
 } from "@flowstarter/editor-contracts";
 import { assert, describe, it } from "@effect/vitest";
-import { Effect, Fiber, Layer, Random, Stream } from "effect";
+import { Duration, Effect, Fiber, Layer, Option, Random, Schedule, Stream } from "effect";
+import { TestClock } from "effect/testing";
 
 import { attachmentRelativePath } from "../../attachmentStore.ts";
 import { ServerConfig } from "../../config.ts";
@@ -136,6 +137,8 @@ function makeHarness(config?: {
   readonly nativeEventLogger?: ClaudeAdapterLiveOptions["nativeEventLogger"];
   readonly cwd?: string;
   readonly baseDir?: string;
+  readonly idleTimeoutMs?: number;
+  readonly idleCheckIntervalMs?: number;
 }) {
   const query = new FakeClaudeQuery();
   let createInput:
@@ -159,6 +162,10 @@ function makeHarness(config?: {
       ? {
           nativeEventLogPath: config.nativeEventLogPath,
         }
+      : {}),
+    ...(config?.idleTimeoutMs !== undefined ? { idleTimeoutMs: config.idleTimeoutMs } : {}),
+    ...(config?.idleCheckIntervalMs !== undefined
+      ? { idleCheckIntervalMs: config.idleCheckIntervalMs }
       : {}),
   };
 
@@ -3074,4 +3081,118 @@ describe("ClaudeAdapterLive", () => {
       Effect.provide(harness.layer),
     );
   });
+
+  it.effect(
+    "auto-stops idle session after turn completes and idle timeout expires",
+    () => {
+      // Use a 0ms idle timeout and a 10ms check interval.
+      // We use TestClock so that Effect.sleep in the watchdog is virtual and
+      // controllable: TestClock.adjust advances the virtual clock and fires all
+      // due sleep fibers synchronously without waiting for real time to pass.
+      const harness = makeHarness({ idleTimeoutMs: 0, idleCheckIntervalMs: 10 });
+
+      return Effect.gen(function* () {
+        const adapter = yield* ClaudeAdapter;
+
+        // Subscribe for turn.completed BEFORE starting the session so that no
+        // events are missed. streamEvents is a Queue so only one consumer at a
+        // time should read from it (items are destructively removed).
+        const turnCompletedFiber = yield* Stream.filter(
+          adapter.streamEvents,
+          (event) => event.type === "turn.completed",
+        ).pipe(Stream.runHead, Effect.forkChild);
+
+        const session = yield* adapter.startSession({
+          threadId: THREAD_ID,
+          provider: "claudeAgent",
+          runtimeMode: "full-access",
+        });
+
+        yield* adapter.sendTurn({
+          threadId: session.threadId,
+          input: "hello",
+          attachments: [],
+        });
+
+        // Complete the turn — session returns to "ready" and lastActivityAt is reset.
+        harness.query.emit({
+          type: "result",
+          subtype: "success",
+          is_error: false,
+          errors: [],
+          session_id: "sdk-session-idle-timeout",
+          uuid: "result-idle-timeout",
+        } as unknown as SDKMessage);
+
+        // Block until turn.completed so lastActivityAt is stamped and status is "ready".
+        yield* Fiber.join(turnCompletedFiber);
+
+        // Advance the virtual clock past the watchdog's check interval (10ms).
+        // TestClock.adjust fires all scheduled Effect.sleep fibers that are now
+        // due, including the idle watchdog. After this call, the watchdog has
+        // already run stopSessionInternal and the session is stopped.
+        yield* TestClock.adjust(Duration.millis(20));
+
+        // Session must be gone — stopped by the idle watchdog.
+        assert.equal(
+          yield* adapter.hasSession(THREAD_ID),
+          false,
+          "Expected session to be stopped by idle timeout",
+        );
+        assert.equal((yield* adapter.listSessions()).length, 0);
+        assert.equal(harness.query.closeCalls, 1, "Expected query.close() to be called once");
+      }).pipe(
+        Effect.provideService(Random.Random, makeDeterministicRandomService()),
+        Effect.provide(Layer.merge(harness.layer, TestClock.layer())),
+      );
+    },
+  );
+
+  it.effect(
+    "does not stop session while a turn is in progress — watchdog skips running sessions",
+    () => {
+      // Even with a 0ms timeout the watchdog must not interrupt an active turn
+      // because the idle condition checks status === "ready".
+      const harness = makeHarness({ idleTimeoutMs: 0, idleCheckIntervalMs: 10 });
+
+      return Effect.gen(function* () {
+        const adapter = yield* ClaudeAdapter;
+
+        yield* adapter.startSession({
+          threadId: THREAD_ID,
+          provider: "claudeAgent",
+          runtimeMode: "full-access",
+        });
+
+        // Send a turn but do NOT complete it — session stays in "running" status.
+        yield* adapter.sendTurn({
+          threadId: THREAD_ID,
+          input: "long running task",
+          attachments: [],
+        });
+
+        // Wait for several watchdog ticks; the session must still be alive.
+        yield* Effect.promise(() => new Promise((resolve) => setTimeout(resolve, 80)));
+
+        assert.equal(
+          yield* adapter.hasSession(THREAD_ID),
+          true,
+          "Session should remain alive while a turn is in progress",
+        );
+
+        // Complete the turn so the layer scope cleanup doesn't try to interrupt mid-turn.
+        harness.query.emit({
+          type: "result",
+          subtype: "success",
+          is_error: false,
+          errors: [],
+          session_id: "sdk-session-idle-running",
+          uuid: "result-idle-running",
+        } as unknown as SDKMessage);
+      }).pipe(
+        Effect.provideService(Random.Random, makeDeterministicRandomService()),
+        Effect.provide(harness.layer),
+      );
+    },
+  );
 });

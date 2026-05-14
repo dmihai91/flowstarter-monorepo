@@ -14,9 +14,12 @@ export default function MainPagesLayout({ children }: { children: ReactNode }) {
     pathname?.startsWith('/profile') ||
     pathname?.startsWith('/projects/') ||
     pathname?.startsWith('/help');
+  // /relaunch renders its own chrome (SiteHeader + Footer) via MarketingShell,
+  // so the route-group layout must not stack a second Footer on top.
+  const isRelaunchPage = pathname?.startsWith('/relaunch');
 
   // Hide footer on landing page (has its own) and logged-in pages
-  const hideFooter = isLandingPage || isLoggedInPage;
+  const hideFooter = isLandingPage || isLoggedInPage || isRelaunchPage;
 
   return (
     <>

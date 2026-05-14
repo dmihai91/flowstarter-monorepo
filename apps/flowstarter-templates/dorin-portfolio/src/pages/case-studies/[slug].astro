@@ -1,0 +1,99 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import { getCaseStudyProjects } from '../../lib/site-data';
+
+interface Project {
+  title: string;
+  category: string;
+  color: string;
+  href?: string;
+}
+
+export function getStaticPaths() {
+  const slugify = (value: string) =>
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  const slugFromHref = (href?: string) => {
+    if (!href) return '';
+    const segments = href.split('/').filter(Boolean);
+    return segments[segments.length - 1] ?? '';
+  };
+
+  return getCaseStudyProjects().map((project: Project) => {
+    const slug = slugFromHref(project.href) || slugify(project.title);
+    return {
+      params: { slug },
+      props: { project },
+    };
+  });
+}
+
+const { project } = Astro.props as { project: Project };
+---
+
+<Layout title={`${project.title} — Case Study`}>
+  <Header activeIndex={1} ctaLabel="Let's Work Together" ctaHref="/contact" />
+  <main class="case-study-page">
+    <section class="case-study-page__hero">
+      <div class="container">
+        <a class="case-study-page__back" href="/work">&#8598; Back to work</a>
+        <p class="case-study-page__category">{project.category}</p>
+        <h1 class="case-study-page__title">{project.title}</h1>
+        <div class="case-study-page__cover" style={`background-color:${project.color};`} aria-hidden="true"></div>
+        <p class="case-study-page__summary">
+          This individual case study page is ready for full project details, process notes, and outcomes.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .case-study-page__hero {
+    padding: 140px 0 96px;
+  }
+
+  .case-study-page__back {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-size: var(--fs-small);
+    color: var(--bg-dark);
+  }
+
+  .case-study-page__category {
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .case-study-page__title {
+    margin-bottom: 28px;
+    color: var(--bg-dark);
+  }
+
+  .case-study-page__cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--border-color);
+    margin-bottom: 28px;
+  }
+
+  .case-study-page__summary {
+    max-width: 780px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    .case-study-page__hero {
+      padding: 110px 0 72px;
+    }
+  }
+</style>

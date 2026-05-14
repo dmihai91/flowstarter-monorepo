@@ -130,7 +130,6 @@ beforeEach(() => {
         port: "3020",
         protocol: "http:",
       },
-      desktopBridge: undefined,
     },
   });
   Object.defineProperty(globalThis, "navigator", {

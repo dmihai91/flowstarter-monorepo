@@ -1,27 +1,34 @@
 'use client';
 
 import { AuthSubmitButton } from './AuthSubmitButton';
+import { EmailInput, isValidEmail } from '@/components/ui/email-input';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslations } from '@/lib/i18n';
 import { useSignIn } from '@clerk/nextjs/legacy';
-import { Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import {
-  useClerkErrorHandler,
-  useEdgeBrowserDetection,
-  useSocialAuth,
-} from './hooks';
-import { SocialAuth } from './SocialAuth';
-import { TOTPStep } from './TOTPStep';
+import { useClerkErrorHandler, useEdgeBrowserDetection } from './hooks';
 import { ForgotPasswordSend, ForgotPasswordReset } from './ForgotPasswordFlow';
 import { isTrustedHost, isTeamEmail } from '@flowstarter/platform-config';
 
-type FlowStep = 'credentials' | 'totp' | 'forgot' | 'forgot-code';
+type FlowStep = 'credentials' | 'forgot' | 'forgot-code' | 'mfa';
+
+type MfaReturnStep = 'credentials' | 'forgot-code';
+
+function supportedMfaStrategies(
+  factors: Array<{ strategy: string }> | null | undefined
+): { totp: boolean; backup: boolean } {
+  const list = factors ?? [];
+  return {
+    totp: list.some((f) => f.strategy === 'totp'),
+    backup: list.some((f) => f.strategy === 'backup_code'),
+  };
+}
 
 interface LoginFormProps {
-  /** Controls social auth, 2FA, forgot password, and redirect behaviour. */
+  /** Controls forgot password and redirect behaviour. */
   variant: 'client' | 'team';
 }
 
@@ -38,8 +45,13 @@ function clerkErrorMessage(error: unknown, fallback: string) {
 /**
  * Unified login form used by both the client and team login pages.
  *
- * client variant  → social auth, forgot-password flow
- * team variant    → TOTP 2FA step, team-specific redirect logic
+ * Both variants share the same email + password + forgot-password UI. The
+ * `variant` prop only changes redirect behaviour (team accounts go to
+ * `/admin/dashboard`, client accounts to `/dashboard`).
+ *
+ * Social auth (Google / Apple) is not shown here. When Clerk requires a second
+ * factor after password or password-reset, TOTP and backup codes are supported;
+ * other factors (e.g. SMS/email code) show a short explanation.
  */
 export function LoginForm({ variant }: LoginFormProps) {
   const { signIn, setActive } = useSignIn();
@@ -48,7 +60,6 @@ export function LoginForm({ variant }: LoginFormProps) {
   const isEdgeBrowser = useEdgeBrowserDetection();
   const searchParams = useSearchParams();
 
-  const isClient = variant === 'client';
   const isTeam = variant === 'team';
 
   /* ------------------------------------------------------------------ */
@@ -78,12 +89,12 @@ export function LoginForm({ variant }: LoginFormProps) {
       const nextUrl = searchParams.get('next');
       if (nextUrl && nextUrl.startsWith('/'))
         return { url: nextUrl, external: false };
-      return { url: '/team/dashboard', external: false };
+      return { url: '/admin/dashboard', external: false };
     }
 
-    // Client: route team-domain emails to team dashboard
+    // Client: route team-domain emails to the admin dashboard
     if (userEmail && isTeamEmail(userEmail)) {
-      return { url: '/team/dashboard', external: false };
+      return { url: '/admin/dashboard', external: false };
     }
     return { url: '/dashboard', external: false };
   };
@@ -118,16 +129,6 @@ export function LoginForm({ variant }: LoginFormProps) {
   };
 
   /* ------------------------------------------------------------------ */
-  /*  Social auth (client only)                                          */
-  /* ------------------------------------------------------------------ */
-
-  const defaultRedirect = getRedirectTarget().url;
-  const { isGoogleLoading, isAppleLoading, handleGoogleAuth, handleAppleAuth } =
-    useSocialAuth(isClient ? signIn : undefined, {
-      redirectUrlComplete: defaultRedirect,
-    });
-
-  /* ------------------------------------------------------------------ */
   /*  Local state                                                        */
   /* ------------------------------------------------------------------ */
 
@@ -138,23 +139,82 @@ export function LoginForm({ variant }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // 2FA (team)
-  const [code, setCode] = useState('');
-
-  // Forgot-password (client)
+  // Forgot-password (shared between client + team)
   const [resetEmail, setResetEmail] = useState('');
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isResetLoading, setIsResetLoading] = useState(false);
 
+  const [mfaReturnStep, setMfaReturnStep] =
+    useState<MfaReturnStep>('credentials');
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaStrategy, setMfaStrategy] = useState<'totp' | 'backup_code'>(
+    'totp'
+  );
+  const [mfaChoices, setMfaChoices] = useState({ totp: false, backup: false });
+  const [isMfaLoading, setIsMfaLoading] = useState(false);
+
+  const goBackFromMfa = () => {
+    setError('');
+    setMfaCode('');
+    setStep(mfaReturnStep);
+  };
+
+  const enterMfaStep = (returnStep: MfaReturnStep) => {
+    if (!signIn) return;
+    const { totp, backup } = supportedMfaStrategies(
+      signIn.supportedSecondFactors
+    );
+    if (!totp && !backup) {
+      setError(t('auth.mfa.unsupportedFactor'));
+      return;
+    }
+    setError('');
+    setMfaChoices({ totp, backup });
+    setMfaStrategy(totp ? 'totp' : 'backup_code');
+    setMfaCode('');
+    setMfaReturnStep(returnStep);
+    setStep('mfa');
+  };
+
   const goBack = () => {
     setError('');
-    setCode('');
     setResetCode('');
     setNewPassword('');
     setConfirmPassword('');
     setStep('credentials');
+  };
+
+  const handleMfaSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signIn || !mfaCode.trim()) return;
+    setIsMfaLoading(true);
+    setError('');
+    try {
+      const result = await signIn.attemptSecondFactor({
+        strategy: mfaStrategy,
+        code: mfaCode.trim(),
+      });
+      if (result.status === 'complete') {
+        const userEmail = mfaReturnStep === 'credentials' ? email : resetEmail;
+        await navigate(result.createdSessionId, userEmail);
+      } else if (result.status === 'needs_second_factor') {
+        setError(t('auth.mfa.invalidCode'));
+      } else {
+        setError(t('auth.errors.signInInvalid'));
+      }
+    } catch (err: unknown) {
+      const message = handleError(err, 'signIn');
+      if (message === '__SESSION_EXISTS__') {
+        const userEmail = mfaReturnStep === 'credentials' ? email : resetEmail;
+        window.location.href = getRedirectTarget(userEmail).url;
+        return;
+      }
+      setError(clerkErrorMessage(err, t('auth.mfa.invalidCode')));
+    } finally {
+      setIsMfaLoading(false);
+    }
   };
 
   /* ------------------------------------------------------------------ */
@@ -172,67 +232,27 @@ export function LoginForm({ variant }: LoginFormProps) {
 
       if (result.status === 'complete') {
         await navigate(result.createdSessionId, email);
-      } else if (isTeam && result.status === 'needs_second_factor') {
-        const hasTOTP = result.supportedSecondFactors?.some(
-          (f) => f.strategy === 'totp'
-        );
-        if (hasTOTP) {
-          setStep('totp');
-        } else {
-          setError('Two-factor authentication required. Please contact admin.');
-        }
+      } else if (result.status === 'needs_second_factor') {
+        enterMfaStep('credentials');
       } else if (result.status === 'needs_first_factor') {
-        setError('Password sign-in not available for this account');
+        setError(t('auth.errors.signInInvalid'));
       } else {
-        setError(`Sign in incomplete: ${result.status}`);
+        setError(t('auth.errors.signInInvalid'));
       }
     } catch (err: unknown) {
-      if (isClient) {
-        const message = handleError(err, 'signIn');
-        if (message === '__SESSION_EXISTS__') {
-          window.location.href = getRedirectTarget(email).url;
-          return;
-        }
-        setError(message);
-      } else {
-        const ce = err as { errors?: Array<{ message?: string }> };
-        setError(ce.errors?.[0]?.message || t('team.login.invalidCredentials'));
+      const message = handleError(err, 'signIn');
+      if (message === '__SESSION_EXISTS__') {
+        window.location.href = getRedirectTarget(email).url;
+        return;
       }
+      setError(message);
     } finally {
       setIsLoading(false);
     }
   };
 
   /* ------------------------------------------------------------------ */
-  /*  TOTP submit (team)                                                 */
-  /* ------------------------------------------------------------------ */
-
-  const handleTotpSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!signIn || !code) return;
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const result = await signIn.attemptSecondFactor({
-        strategy: 'totp',
-        code,
-      });
-      if (result.status === 'complete') {
-        await navigate(result.createdSessionId, email);
-      } else {
-        setError('Verification failed');
-      }
-    } catch (err: unknown) {
-      const ce = err as { errors?: Array<{ message?: string }> };
-      setError(ce.errors?.[0]?.message || t('team.login.invalidCode'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  /* ------------------------------------------------------------------ */
-  /*  Forgot-password handlers (client)                                  */
+  /*  Forgot-password handlers (shared)                                  */
   /* ------------------------------------------------------------------ */
 
   const handleForgotSend = async () => {
@@ -268,6 +288,8 @@ export function LoginForm({ variant }: LoginFormProps) {
       });
       if (result.status === 'complete') {
         await navigate(result.createdSessionId, resetEmail);
+      } else if (result.status === 'needs_second_factor') {
+        enterMfaStep('forgot-code');
       }
     } catch (err: unknown) {
       setError(clerkErrorMessage(err, t('auth.forgotPassword.invalidCode')));
@@ -296,30 +318,127 @@ export function LoginForm({ variant }: LoginFormProps) {
   /*  Shared input classes                                               */
   /* ------------------------------------------------------------------ */
 
-  const inputCls =
-    'h-12 rounded-lg bg-white/80 border border-white/40 dark:border-white/10 text-foreground placeholder:text-muted-foreground/50 dark:bg-[var(--surface-2)]/80 dark:text-white backdrop-blur-sm';
+  /* Team login is only `/admin/login` — stronger dark borders/fill vs glass card. */
+  const inputCls = [
+    'h-12 rounded-lg bg-white/80 border border-white/40 text-foreground backdrop-blur-sm',
+    'placeholder:text-muted-foreground/50',
+    isTeam
+      ? 'dark:border-white/24 dark:bg-[var(--surface-2)]/92 dark:text-white dark:placeholder:text-muted-foreground/60'
+      : 'dark:border-white/10 dark:bg-[var(--surface-2)]/80 dark:text-white',
+  ].join(' ');
 
   /* ================================================================== */
   /*  RENDER                                                             */
   /* ================================================================== */
 
-  /* ---- TOTP step (team) ---- */
-  if (isTeam && step === 'totp') {
+  /* ---- Second factor (TOTP / backup code) ---- */
+  if (step === 'mfa') {
+    const hint =
+      mfaStrategy === 'totp'
+        ? t('auth.mfa.totpHint')
+        : t('auth.mfa.backupHint');
+    const fieldCls = `${inputCls} focus:ring-2 focus:ring-[var(--purple)]/30 focus:border-[var(--purple)]/50 transition-all`;
+    const showToggle = mfaChoices.totp && mfaChoices.backup;
+
     return (
-      <TOTPStep
-        code={code}
-        onCodeChange={setCode}
-        error={error}
-        isLoading={isLoading}
-        onSubmit={handleTotpSubmit}
-        onBack={goBack}
-        t={t}
-      />
+      <div className="w-full">
+        <div id="clerk-captcha" />
+
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <h2 className="text-2xl font-semibold">{t('auth.mfa.title')}</h2>
+            <p className="text-sm text-muted-foreground">{hint}</p>
+          </div>
+
+          {showToggle ? (
+            <div className="flex rounded-lg border border-white/40 p-1 bg-white/50 dark:border-white/15 dark:bg-[var(--surface-2)]/60">
+              <button
+                type="button"
+                onClick={() => {
+                  setMfaStrategy('totp');
+                  setMfaCode('');
+                  setError('');
+                }}
+                className={
+                  mfaStrategy === 'totp'
+                    ? 'flex-1 rounded-md bg-[var(--purple)]/15 py-2 text-sm font-medium text-foreground transition-colors'
+                    : 'flex-1 rounded-md py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground'
+                }
+              >
+                {t('auth.mfa.useAuthenticatorApp')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMfaStrategy('backup_code');
+                  setMfaCode('');
+                  setError('');
+                }}
+                className={
+                  mfaStrategy === 'backup_code'
+                    ? 'flex-1 rounded-md bg-[var(--purple)]/15 py-2 text-sm font-medium text-foreground transition-colors'
+                    : 'flex-1 rounded-md py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground'
+                }
+              >
+                {t('auth.mfa.useBackupCode')}
+              </button>
+            </div>
+          ) : null}
+
+          <form onSubmit={handleMfaSubmit} className="flex flex-col gap-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="mfa-code"
+                className="text-sm text-muted-foreground"
+              >
+                {t('auth.mfa.codeLabel')}
+              </Label>
+              <Input
+                id="mfa-code"
+                type="text"
+                inputMode={mfaStrategy === 'totp' ? 'numeric' : 'text'}
+                autoComplete={mfaStrategy === 'totp' ? 'one-time-code' : 'off'}
+                placeholder={
+                  mfaStrategy === 'totp'
+                    ? t('auth.mfa.codePlaceholder.totp')
+                    : t('auth.mfa.codePlaceholder.backup')
+                }
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+                className={fieldCls}
+                autoFocus
+              />
+            </div>
+            {error ? (
+              <p
+                role="alert"
+                className="text-xs leading-snug text-red-600 dark:text-red-400"
+              >
+                {error}
+              </p>
+            ) : null}
+            <AuthSubmitButton
+              type="submit"
+              disabled={isMfaLoading || !mfaCode.trim()}
+            >
+              {isMfaLoading ? t('auth.mfa.verifying') : t('auth.mfa.verify')}
+            </AuthSubmitButton>
+            <button
+              type="button"
+              onClick={goBackFromMfa}
+              className="inline-flex items-center justify-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors hover:underline"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              {t('auth.mfa.back')}
+            </button>
+          </form>
+        </div>
+      </div>
     );
   }
 
-  /* ---- Forgot-password: send code (client) ---- */
-  if (isClient && step === 'forgot') {
+  /* ---- Forgot-password: send code (shared) ---- */
+  if (step === 'forgot') {
     return (
       <ForgotPasswordSend
         email={resetEmail}
@@ -329,12 +448,13 @@ export function LoginForm({ variant }: LoginFormProps) {
         onSend={handleForgotSend}
         onBack={goBack}
         t={t}
+        fieldClassName={`${inputCls} focus:ring-2 focus:ring-[var(--purple)]/30 focus:border-[var(--purple)]/50 transition-all`}
       />
     );
   }
 
-  /* ---- Forgot-password: enter code + new password (client) ---- */
-  if (isClient && step === 'forgot-code') {
+  /* ---- Forgot-password: enter code + new password (shared) ---- */
+  if (step === 'forgot-code') {
     return (
       <ForgotPasswordReset
         code={resetCode}
@@ -349,37 +469,26 @@ export function LoginForm({ variant }: LoginFormProps) {
         onResend={handleForgotResend}
         onBack={goBack}
         t={t}
+        fieldClassName={`${inputCls} focus:ring-2 focus:ring-[var(--purple)]/30 focus:border-[var(--purple)]/50 transition-all`}
       />
     );
   }
 
   /* ---- Credentials step (shared) ---- */
+  const emailIsValid = isValidEmail(email);
+
   return (
     <div className="w-full">
-      {/* Social auth (client only) */}
-      {isClient && (
-        <SocialAuth
-          onGoogleClick={handleGoogleAuth}
-          onAppleClick={handleAppleAuth}
-          isGoogleLoading={isGoogleLoading}
-          isAppleLoading={isAppleLoading}
-        />
-      )}
-
       {/* CAPTCHA Element for Clerk */}
       <div id="clerk-captcha" />
 
-      <form
-        onSubmit={handleCredentialsSubmit}
-        className="flex flex-col space-y-5"
-      >
+      <form onSubmit={handleCredentialsSubmit} className="flex flex-col gap-4">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm text-muted-foreground">
             {isTeam ? t('team.login.emailLabel') : t('auth.email')}
           </Label>
-          <Input
+          <EmailInput
             id="email"
-            type="email"
             placeholder={
               isTeam
                 ? t('team.login.emailPlaceholder')
@@ -426,29 +535,32 @@ export function LoginForm({ variant }: LoginFormProps) {
               </button>
             )}
           </div>
-          {/* Forgot password (client only) */}
-          {isClient && (
-            <div className="flex justify-end mt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setStep('forgot');
-                  setResetEmail(email);
-                }}
-                className="text-sm text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)] transition-colors hover:underline"
-              >
-                {t('auth.forgotPassword')}
-              </button>
-            </div>
-          )}
+          {/* Forgot password — available to both client and team accounts. */}
+          <div className="flex justify-end mt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setStep('forgot');
+                setResetEmail(email);
+              }}
+              className="text-sm text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)] transition-colors hover:underline"
+            >
+              {t('auth.forgotPassword')}
+            </button>
+          </div>
+          {error ? (
+            <p
+              role="alert"
+              className="text-xs leading-snug text-red-600 dark:text-red-400"
+            >
+              {error}
+            </p>
+          ) : null}
         </div>
-
-        {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
 
         <AuthSubmitButton
           type="submit"
-          disabled={isLoading || !email || !password}
-          className="mt-4"
+          disabled={isLoading || !emailIsValid || !password}
         >
           {isLoading
             ? isTeam

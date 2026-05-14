@@ -17,12 +17,14 @@ export async function GET(req: Request) {
   const redirectUrl = url.searchParams.get('redirect_url');
 
   if (!redirectUrl || !isSafeRedirectUrl(redirectUrl)) {
-    return NextResponse.redirect(new URL('/team/dashboard', req.url));
+    return NextResponse.redirect(new URL('/admin/dashboard', req.url));
   }
 
   const { userId } = await auth();
   if (!userId) {
-    return NextResponse.redirect(new URL('/team/login', req.url));
+    const login = new URL('/admin/login', req.url);
+    login.searchParams.set('redirect_url', redirectUrl);
+    return NextResponse.redirect(login);
   }
 
   try {

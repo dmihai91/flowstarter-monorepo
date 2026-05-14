@@ -1,53 +1,117 @@
 'use client';
 
-import { PublicPageLayout } from '@/components/PublicPageLayout';
-import { Button } from '@/components/ui/unified-button';
-import { useI18n } from '@/lib/i18n';
-import { LANDING_COPY } from '@/app/(dynamic-pages)/(main-pages)/landing-copy';
 import Link from 'next/link';
+import { useI18n } from '@/lib/i18n';
+import { MarketingShell, PageHero } from '@/components/marketing';
+import { useFAQAccordion } from '@/app/(dynamic-pages)/(main-pages)/components/hooks/useFAQAccordion';
+import { useBookingModal } from '@/app/(dynamic-pages)/(main-pages)/components/booking-modal-store';
+import { LANDING_COPY } from '@/app/(dynamic-pages)/(main-pages)/landing-copy';
 
 export default function FAQPage() {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
+  const { openIndex, toggle } = useFAQAccordion(0);
+  const openBookingModal = useBookingModal((s) => s.open);
   const items = LANDING_COPY.faq.items;
 
   return (
-    <PublicPageLayout>
-      <main className="relative z-10 px-4 pb-20 pt-28 sm:px-6">
-        <section className="mx-auto w-full max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--fs-ink-faint)]">
-            {t('faqPage.eyebrow')}
-          </p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-[var(--fs-ink)] sm:text-5xl">
-            {t('faqPage.headline')}
-          </h1>
+    <MarketingShell>
+      <main id="main-content" className="flex-1">
+        <PageHero
+          eyebrow={t('faq.eyebrow')}
+          headlinePrefix={t('faq.headlinePrefix')}
+          headlineFlourish={t('faq.headlineFlourish')}
+          sub={t('faq.sub')}
+        />
 
-          <div className="mt-10 space-y-3">
-            {items.map((item) => (
-              <article
-                key={item.question}
-                className="rounded-2xl border border-[var(--fs-rule)] bg-[var(--fs-glass-bg)] p-5"
+        <section className="ls-section ls-section--pad">
+          <div className="ls-container">
+            <div className="ls-faq-list mx-auto max-w-3xl">
+              {items.map((item, i) => {
+                const isOpen = openIndex === i;
+                return (
+                  <div
+                    key={item.question}
+                    className={`ls-faq-item ${isOpen ? 'open' : ''}`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggle(i)}
+                      className="ls-faq-trigger"
+                      aria-expanded={isOpen}
+                    >
+                      <span className="ls-faq-q">{item.question}</span>
+                      <span className="ls-faq-chev" aria-hidden>
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            d="M6 9l6 6 6-6"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                    <div className="ls-faq-body">
+                      <p>{item.answer}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div
+              className="ls-callout mx-auto mt-12 max-w-3xl"
+              style={{ textAlign: 'center' }}
+            >
+              <p
+                style={{
+                  fontFamily: 'var(--ls-mono)',
+                  fontSize: '11px',
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase',
+                  color: 'var(--ls-ink-faint)',
+                  marginBottom: '0.6rem',
+                }}
               >
-                <h2 className="text-lg font-semibold text-[var(--fs-ink)]">
-                  {item.question}
-                </h2>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--fs-ink-dim)]">
-                  {item.answer}
-                </p>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Button asChild>
-              <Link href="/#pricing">{t('faqPage.cta.pricing')}</Link>
-            </Button>
-            <Button tone="secondary" asChild>
-              <Link href="/contact">{t('faqPage.cta.contact')}</Link>
-            </Button>
+                {t('faq.stillWondering')}
+              </p>
+              <p>
+                {t('faq.stillWonderingBody')}
+              </p>
+              <div
+                style={{
+                  marginTop: '1.1rem',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.8rem 1.2rem',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={openBookingModal}
+                  className="ls-cta ls-cta--sm"
+                >
+                  {t('faq.bookCall')}
+                </button>
+                <Link
+                  href="/contact"
+                  className="ls-link"
+                  style={{ color: 'var(--ls-ink)' }}
+                >
+                  {t('faq.sendMessage')}
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </main>
-    </PublicPageLayout>
+    </MarketingShell>
   );
 }

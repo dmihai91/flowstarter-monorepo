@@ -12,15 +12,15 @@ export default function Footer(props: FooterProps) {
   const { t } = useTranslations();
 
   const translatedLinks: FooterLink[] = [
+    { label: t('footer.nav.about'), href: '/about' },
+    { label: t('footer.nav.faq'), href: '/faq' },
     { label: t('footer.nav.help'), href: '/help' },
+    { label: t('footer.nav.contact'), href: '/contact' },
     { label: t('footer.nav.privacy'), href: '/privacy' },
     { label: t('footer.nav.terms'), href: '/terms' },
     { label: t('footer.nav.cookies'), href: '/cookies' },
-    { label: t('footer.nav.contact'), href: '/contact' },
-    { label: t('footer.nav.about'), href: '/about' },
-    { label: t('footer.nav.faq'), href: '/faq' },
     // TODO(Dorin): hidden before launch — internal tooling links not for public marketing site
-    // { label: t('footer.nav.teamDashboard'), href: '/team/dashboard' },
+    // { label: t('footer.nav.teamDashboard'), href: '/admin/dashboard' },
     // { label: t('footer.nav.editor'), href: 'https://editor.flowstarter.dev', external: true },
     // { label: 'Template Library', href: 'https://library.flowstarter.dev', external: true },
   ];

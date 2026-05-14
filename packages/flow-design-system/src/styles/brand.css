@@ -360,12 +360,15 @@
    Keep until all surfaces are migrated, then remove.
    ───────────────────────────────────────────── */
 :root {
-  /* Brand color aliases */
-  --purple:                    var(--fs-accent);
-  --purple-primary:            var(--fs-accent);
-  --purple-primary-light:      color-mix(in oklab, var(--fs-accent) 80%, transparent);
-  --purple-primary-lighter:    color-mix(in oklab, var(--fs-accent) 60%, transparent);
-  --purple-primary-lightest:   color-mix(in oklab, var(--fs-accent) 10%, transparent);
+  /* Brand color aliases — `--purple` is the canonical brand hue (same as
+     platform marketing + CTAs). Mid primitive keeps light/dark consistent
+     with apps/flowstarter-main; `--fs-accent` stays the interactive default
+     (dim in light, pale in dark). */
+  --purple:                    var(--fs-primitive-accent-mid);
+  --purple-primary:            var(--purple);
+  --purple-primary-light:      color-mix(in oklab, var(--purple) 80%, transparent);
+  --purple-primary-lighter:    color-mix(in oklab, var(--purple) 60%, transparent);
+  --purple-primary-lightest:   color-mix(in oklab, var(--purple) 10%, transparent);
   --purple-primary-dark:       var(--fs-accent-hot);
   --accent-primary:            var(--fs-accent);
   --accent-light:              color-mix(in oklab, var(--fs-accent) 80%, transparent);

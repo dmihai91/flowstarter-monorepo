@@ -21,6 +21,16 @@ export function AuthRedirectWrapper({ children }: AuthRedirectWrapperProps) {
   useEffect(() => {
     // If Clerk has loaded and user is signed in, show loading and redirect
     if (isLoaded && isSignedIn) {
+      // The team login page renders a "this account isn't an admin" sign-out
+      // UI when middleware bounces a non-team user to /admin/login?reason=not_admin.
+      // Auto-redirecting in that state would push the user to /admin/dashboard,
+      // which the middleware rejects right back to /admin/login?reason=not_admin —
+      // an infinite loop. Skip the redirect and let the host page render its own UI.
+      if (searchParams.get('reason') === 'not_admin') {
+        setShowLoading(false);
+        return;
+      }
+
       setShowLoading(true);
 
       // Check for redirect_url parameter (e.g., from editor satellite app)
@@ -55,7 +65,7 @@ export function AuthRedirectWrapper({ children }: AuthRedirectWrapperProps) {
           window.location.href = targetUrl;
         } else {
           // Default: go to team dashboard
-          router.push('/team/dashboard');
+          router.push('/admin/dashboard');
         }
       }, 150);
 

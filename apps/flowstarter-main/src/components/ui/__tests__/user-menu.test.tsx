@@ -140,11 +140,11 @@ describe('UserMenu', () => {
     expect(screen.queryByText('app.settings')).not.toBeInTheDocument();
   });
 
-  it('shows Security link for team pages', () => {
-    mockPathname = '/team/dashboard';
+  it('shows Profile for team pages and no Security link (MFA disabled for MVP)', () => {
+    mockPathname = '/admin/dashboard';
     render(<UserMenu />);
-    expect(screen.getByText('team.sidebar.security')).toBeInTheDocument();
     expect(screen.getByText('app.profile')).toBeInTheDocument();
+    expect(screen.queryByText('team.sidebar.security')).not.toBeInTheDocument();
   });
 
   it('has sign-out button with red styling', () => {
@@ -162,13 +162,13 @@ describe('UserMenu', () => {
     expect(mockPush).toHaveBeenCalledWith('/profile');
   });
 
-  it('navigates to /team/dashboard/profile on profile click (team)', async () => {
-    mockPathname = '/team/dashboard';
+  it('navigates to /admin/dashboard/profile on profile click (team)', async () => {
+    mockPathname = '/admin/dashboard';
     const { default: userEvent } = await import('@testing-library/user-event');
     const user = userEvent.setup();
     render(<UserMenu />);
     const profileBtn = screen.getByText('app.profile').closest('button');
     if (profileBtn) await user.click(profileBtn);
-    expect(mockPush).toHaveBeenCalledWith('/team/dashboard/profile');
+    expect(mockPush).toHaveBeenCalledWith('/admin/dashboard/profile');
   });
 });

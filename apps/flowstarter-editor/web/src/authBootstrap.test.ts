@@ -1,4 +1,3 @@
-import type { DesktopBridge } from "@flowstarter/editor-contracts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 function jsonResponse(body: unknown, init?: ResponseInit) {
@@ -16,7 +15,6 @@ type TestWindow = {
   history: {
     replaceState: (_data: unknown, _unused: string, url: string) => void;
   };
-  desktopBridge?: DesktopBridge;
 };
 
 function installTestBrowser(url: string) {
@@ -30,7 +28,7 @@ function installTestBrowser(url: string) {
   };
 
   vi.stubGlobal("window", testWindow);
-  vi.stubGlobal("document", { title: "Flowstarter Editor" });
+  vi.stubGlobal("document", { title: "Flowstarter | Smart AI Editor" });
 
   return testWindow;
 }
@@ -54,60 +52,44 @@ describe("resolveInitialServerAuthGateState", () => {
     vi.restoreAllMocks();
   });
 
-  it("reuses an in-flight silent bootstrap attempt", async () => {
+  it("reuses an in-flight bootstrap attempt", async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(
         sessionResponse({
           authenticated: false,
           auth: {
-            policy: "desktop-managed-local",
-            bootstrapMethods: ["desktop-bootstrap"],
+            policy: "loopback-browser",
+            bootstrapMethods: ["one-time-token"],
             sessionMethods: ["browser-session-cookie"],
             sessionCookieName: "t3_session",
           },
         }),
       )
       .mockResolvedValueOnce(
-        jsonResponse({
-          authenticated: true,
-          sessionMethod: "browser-session-cookie",
-          expiresAt: "2026-04-05T00:00:00.000Z",
-        }),
-      )
-      .mockResolvedValueOnce(
         sessionResponse({
-          authenticated: true,
+          authenticated: false,
           auth: {
             policy: "loopback-browser",
             bootstrapMethods: ["one-time-token"],
             sessionMethods: ["browser-session-cookie"],
             sessionCookieName: "t3_session",
           },
-          sessionMethod: "browser-session-cookie",
-          expiresAt: "2026-04-05T00:00:00.000Z",
         }),
       );
     vi.stubGlobal("fetch", fetchMock);
-
-    const testWindow = installTestBrowser("http://localhost/");
-    testWindow.desktopBridge = {
-      getLocalEnvironmentBootstrap: () => ({
-        label: "Local environment",
-        httpBaseUrl: "http://localhost:3773",
-        wsBaseUrl: "ws://localhost:3773",
-        bootstrapToken: "desktop-bootstrap-token",
-      }),
-    } as DesktopBridge;
+    installTestBrowser("http://localhost/");
 
     const { resolveInitialServerAuthGateState } = await import("./environments/primary");
 
-    await Promise.all([resolveInitialServerAuthGateState(), resolveInitialServerAuthGateState()]);
+    const [first, second] = await Promise.all([
+      resolveInitialServerAuthGateState(),
+      resolveInitialServerAuthGateState(),
+    ]);
 
-    expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://localhost:3773/api/auth/session");
-    expect(fetchMock.mock.calls[1]?.[0]).toBe("http://localhost:3773/api/auth/bootstrap");
-    expect(fetchMock.mock.calls[2]?.[0]).toBe("http://localhost:3773/api/auth/session");
+    // Both calls share the same in-flight promise, so fetch is called once.
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(first).toEqual(second);
   });
 
   it("uses https fetch urls when the primary environment uses wss", async () => {
@@ -171,47 +153,6 @@ describe("resolveInitialServerAuthGateState", () => {
     });
 
     expect(fetchMock).toHaveBeenCalledWith("http://localhost:5735/api/auth/session", {
-      credentials: "include",
-    });
-  });
-
-  it("uses the vite proxy for desktop-managed loopback auth requests during local dev", async () => {
-    const fetchMock = vi.fn<typeof fetch>().mockResolvedValueOnce(
-      sessionResponse({
-        authenticated: false,
-        auth: {
-          policy: "desktop-managed-local",
-          bootstrapMethods: ["desktop-bootstrap"],
-          sessionMethods: ["browser-session-cookie"],
-          sessionCookieName: "t3_session",
-        },
-      }),
-    );
-    vi.stubGlobal("fetch", fetchMock);
-    vi.stubEnv("VITE_DEV_SERVER_URL", "http://127.0.0.1:5733");
-
-    const testWindow = installTestBrowser("http://127.0.0.1:5733/");
-    testWindow.desktopBridge = {
-      getLocalEnvironmentBootstrap: () => ({
-        label: "Local environment",
-        httpBaseUrl: "http://127.0.0.1:3773",
-        wsBaseUrl: "ws://127.0.0.1:3773",
-      }),
-    } as DesktopBridge;
-
-    const { resolveInitialServerAuthGateState } = await import("./environments/primary");
-
-    await expect(resolveInitialServerAuthGateState()).resolves.toEqual({
-      status: "requires-auth",
-      auth: {
-        policy: "desktop-managed-local",
-        bootstrapMethods: ["desktop-bootstrap"],
-        sessionMethods: ["browser-session-cookie"],
-        sessionCookieName: "t3_session",
-      },
-    });
-
-    expect(fetchMock).toHaveBeenCalledWith("http://127.0.0.1:5733/api/auth/session", {
       credentials: "include",
     });
   });
@@ -351,77 +292,6 @@ describe("resolveInitialServerAuthGateState", () => {
       status: "authenticated",
     });
     expect(fetchMock).toHaveBeenCalledTimes(3);
-  });
-
-  it("waits for the authenticated session to become observable after silent desktop bootstrap", async () => {
-    vi.useFakeTimers();
-    const fetchMock = vi
-      .fn<typeof fetch>()
-      .mockResolvedValueOnce(
-        sessionResponse({
-          authenticated: false,
-          auth: {
-            policy: "desktop-managed-local",
-            bootstrapMethods: ["desktop-bootstrap"],
-            sessionMethods: ["browser-session-cookie"],
-            sessionCookieName: "t3_session",
-          },
-        }),
-      )
-      .mockResolvedValueOnce(
-        jsonResponse({
-          authenticated: true,
-          sessionMethod: "browser-session-cookie",
-          expiresAt: "2026-04-05T00:00:00.000Z",
-        }),
-      )
-      .mockResolvedValueOnce(
-        sessionResponse({
-          authenticated: false,
-          auth: {
-            policy: "desktop-managed-local",
-            bootstrapMethods: ["desktop-bootstrap"],
-            sessionMethods: ["browser-session-cookie"],
-            sessionCookieName: "t3_session",
-          },
-        }),
-      )
-      .mockResolvedValueOnce(
-        sessionResponse({
-          authenticated: true,
-          auth: {
-            policy: "desktop-managed-local",
-            bootstrapMethods: ["desktop-bootstrap"],
-            sessionMethods: ["browser-session-cookie"],
-            sessionCookieName: "t3_session",
-          },
-          sessionMethod: "browser-session-cookie",
-          expiresAt: "2026-04-05T00:00:00.000Z",
-        }),
-      );
-    vi.stubGlobal("fetch", fetchMock);
-
-    const testWindow = installTestBrowser("http://localhost/");
-    testWindow.desktopBridge = {
-      getLocalEnvironmentBootstrap: () => ({
-        label: "Local environment",
-        httpBaseUrl: "http://localhost:3773",
-        wsBaseUrl: "ws://localhost:3773",
-        bootstrapToken: "desktop-bootstrap-token",
-      }),
-    } as DesktopBridge;
-
-    const { resolveInitialServerAuthGateState } = await import("./environments/primary");
-
-    const gateStatePromise = resolveInitialServerAuthGateState();
-    await vi.advanceTimersByTimeAsync(100);
-
-    await expect(gateStatePromise).resolves.toEqual({
-      status: "authenticated",
-    });
-    expect(fetchMock).toHaveBeenCalledTimes(4);
-    expect(fetchMock.mock.calls[2]?.[0]).toBe("http://localhost:3773/api/auth/session");
-    expect(fetchMock.mock.calls[3]?.[0]).toBe("http://localhost:3773/api/auth/session");
   });
 
   it("revalidates the server session state after a previous authenticated result", async () => {

@@ -10,7 +10,7 @@ import {
 import { useEffect, useRef } from "react";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
-import { APP_DISPLAY_NAME } from "../branding";
+import { APP_DISPLAY_NAME, APP_SITE_TITLE } from "../branding";
 import { AppSidebarLayout } from "../components/AppSidebarLayout";
 import {
   SlowRpcAckToastCoordinator,
@@ -60,7 +60,13 @@ export const Route = createRootRouteWithContext<{
   component: RootRouteView,
   errorComponent: RootRouteErrorView,
   head: () => ({
-    meta: [{ name: "title", content: APP_DISPLAY_NAME }],
+    meta: [
+      { title: APP_DISPLAY_NAME },
+      { name: "application-name", content: APP_SITE_TITLE },
+      { property: "og:title", content: APP_SITE_TITLE },
+      { name: "twitter:title", content: APP_SITE_TITLE },
+      { name: "apple-mobile-web-app-title", content: APP_SITE_TITLE },
+    ],
   }),
 });
 

@@ -246,6 +246,11 @@
   font-size: clamp(2.25rem, 4.5vw, 3.9rem);
   line-height: 1.04;
 }
+.ls-display--sm {
+  font-size: clamp(1.7rem, 2.6vw, 2.7rem);
+  line-height: 1.06;
+}
+.ls-display--sm .flourish { font-size: clamp(1.45rem, 2.55vw, 2.5rem); }
 .ls-display .line { display: block; }
 .ls-display--hero .line { max-width: none; }
 .ls-display .flourish,
@@ -446,6 +451,157 @@
   background: linear-gradient(90deg, transparent, rgba(244, 238, 228, 0.55), transparent);
   opacity: 1;
 }
+
+/* Team admin dashboard — slightly stronger glass on dark (scoped; does not change marketing). */
+.dark .ls-admin-dashboard.ls-scope {
+  --ls-glass-bg: rgba(255, 255, 255, 0.058);
+  --ls-glass-edge: rgba(255, 255, 255, 0.12);
+  /* Calmer lift than marketing .ls-scope: neutral depth, no indigo bloom on cards */
+  --ls-card-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.38),
+    0 14px 44px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Admin dashboard — operator micro-labels (stat caps row, kanban columns, card eyebrows, table heads). */
+.ls-admin-dashboard .ls-admin-label {
+  font-family: var(--ls-mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ls-ink-faint);
+}
+
+/* Stat strip cells — dual-stop washes (referenced from admin/dashboard/page.tsx). */
+.ls-stat-cell {
+  background: transparent;
+}
+.ls-stat-tone-workspaces {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, hsl(233 65% 50%) 14%, var(--ls-glass-bg)) 0%,
+    var(--ls-glass-bg) 68%
+  );
+}
+.ls-stat-tone-live {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, hsl(152 55% 38%) 12%, var(--ls-glass-bg)) 0%,
+    var(--ls-glass-bg) 68%
+  );
+}
+.ls-stat-tone-clients {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, hsl(173 60% 38%) 12%, var(--ls-glass-bg)) 0%,
+    var(--ls-glass-bg) 68%
+  );
+}
+.ls-stat-tone-paid {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, hsl(38 92% 40%) 12%, var(--ls-glass-bg)) 0%,
+    var(--ls-glass-bg) 68%
+  );
+}
+.ls-stat-tone-mrr {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, hsl(263 55% 48%) 12%, var(--ls-glass-bg)) 0%,
+    var(--ls-glass-bg) 68%
+  );
+}
+/* Revenue (MRR + setup) — violet forward tint with warm undertone */
+.ls-stat-tone-revenue {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, hsl(263 55% 48%) 11%, var(--ls-glass-bg)) 0%,
+    color-mix(in oklab, hsl(38 88% 42%) 7%, var(--ls-glass-bg)) 52%,
+    var(--ls-glass-bg) 72%
+  );
+}
+.ls-stat-tone-ai {
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, hsl(199 75% 42%) 12%, var(--ls-glass-bg)) 0%,
+    var(--ls-glass-bg) 68%
+  );
+}
+/* Dark stat tiles (admin): restrained surfaces — flat tint + soft top light,
+   no diagonal corner splashes; hue cues stay in icon shells (page.tsx). */
+.dark .ls-stat-tone-workspaces {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.038) 0%,
+      transparent 40%
+    ),
+    color-mix(in oklab, var(--ls-accent) 5.5%, var(--ls-glass-bg));
+}
+.dark .ls-stat-tone-live {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.038) 0%,
+      transparent 40%
+    ),
+    color-mix(in oklab, hsl(152 56% 46%) 5%, var(--ls-glass-bg));
+}
+.dark .ls-stat-tone-clients {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.038) 0%,
+      transparent 40%
+    ),
+    color-mix(in oklab, hsl(173 58% 46%) 5%, var(--ls-glass-bg));
+}
+.dark .ls-stat-tone-paid {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.038) 0%,
+      transparent 40%
+    ),
+    color-mix(in oklab, var(--ls-accent-warm) 5%, var(--ls-glass-bg));
+}
+.dark .ls-stat-tone-mrr {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.038) 0%,
+      transparent 40%
+    ),
+    color-mix(in oklab, hsl(263 48% 52%) 5%, var(--ls-glass-bg));
+}
+.dark .ls-stat-tone-revenue {
+  /* One violet family only — avoids violet + warm competing on one tile */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.038) 0%,
+      transparent 40%
+    ),
+    color-mix(in oklab, hsl(263 48% 52%) 5.5%, var(--ls-glass-bg));
+}
+.dark .ls-stat-tone-ai {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.038) 0%,
+      transparent 40%
+    ),
+    color-mix(in oklab, hsl(199 65% 48%) 5%, var(--ls-glass-bg));
+}
+
+.dark .ls-admin-dashboard .ls-stat-cell {
+  border-color: color-mix(in oklab, var(--ls-glass-edge) 62%, var(--ls-rule));
+}
+
+/* Kanban: no inner wash — atmosphere comes from FlowBackground + dashboard overlay;
+   column separation is borders (see KanbanBoard). */
 
 /* Pills */
 .ls-pill {
@@ -894,7 +1050,10 @@
 .ls-proof-thumb--dark {
   opacity: 0;
 }
-.dark .ls-proof-thumb--light {
+/* Hide the light variant in dark mode ONLY when a dark variant is rendered
+   alongside it. Live-client cards (ux-journey, lebadusul) have no dark
+   capture, so without this guard the card would go blank in dark mode. */
+.dark .ls-proof-frame:has(.ls-proof-thumb--dark) .ls-proof-thumb--light {
   opacity: 0;
 }
 .dark .ls-proof-thumb--dark {
@@ -2259,4 +2418,69 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--ls-ink-faint);
+}
+
+/* ── Admin: new project wizard (/admin/dashboard/new) — stronger muted text in light mode only */
+.ls-scope.admin-new-project-wizard .npw-body-muted,
+.ls-scope.admin-new-project-wizard .npw-step-idle {
+  color: var(--ls-ink-dim);
+}
+.dark .ls-scope.admin-new-project-wizard .npw-body-muted,
+.dark .ls-scope.admin-new-project-wizard .npw-step-idle {
+  color: var(--ls-ink-faint);
+}
+
+.ls-scope.admin-new-project-wizard .mx-auto > a.mb-6 {
+  color: var(--ls-ink-dim);
+}
+.ls-scope.admin-new-project-wizard .mx-auto > a.mb-6:hover {
+  color: var(--ls-ink);
+}
+.dark .ls-scope.admin-new-project-wizard .mx-auto > a.mb-6 {
+  color: var(--ls-ink-faint);
+}
+.dark .ls-scope.admin-new-project-wizard .mx-auto > a.mb-6:hover {
+  color: var(--ls-ink);
+}
+
+/* Placeholder: ~4.5:1 on white / glass in light; keep faint in dark */
+.ls-scope.admin-new-project-wizard .npw-input::placeholder {
+  color: rgba(18, 10, 34, 0.52);
+  opacity: 1;
+}
+.dark .ls-scope.admin-new-project-wizard .npw-input::placeholder {
+  color: var(--ls-ink-faint);
+}
+
+/* "Enhance with AI" — deeper accent on light for readable link contrast */
+.ls-scope.admin-new-project-wizard .npw-ai-link:not(:disabled) {
+  color: var(--ls-accent-hot) !important;
+}
+.ls-scope.admin-new-project-wizard .npw-ai-link:not(:disabled):hover {
+  color: var(--ls-accent) !important;
+}
+.dark .ls-scope.admin-new-project-wizard .npw-ai-link:not(:disabled) {
+  color: var(--purple) !important;
+}
+.dark .ls-scope.admin-new-project-wizard .npw-ai-link:not(:disabled):hover {
+  color: var(--purple) !important;
+}
+
+/* Muted when disabled (empty notes or insufficient text); keep accent while enhancing */
+.ls-scope.admin-new-project-wizard .npw-ai-link:disabled:not(.npw-ai-link--busy) {
+  color: var(--ls-ink-faint) !important;
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.ls-scope.admin-new-project-wizard .npw-ai-link:disabled:not(.npw-ai-link--busy):hover {
+  color: var(--ls-ink-faint) !important;
+}
+
+.ls-scope.admin-new-project-wizard .npw-ai-link.npw-ai-link--busy:disabled {
+  color: var(--ls-accent-hot) !important;
+  opacity: 1 !important;
+  cursor: wait;
+}
+.dark .ls-scope.admin-new-project-wizard .npw-ai-link.npw-ai-link--busy:disabled {
+  color: var(--purple) !important;
 }

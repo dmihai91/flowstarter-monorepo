@@ -37,7 +37,6 @@ import {
   ensureServerDirectories,
   resolveStaticDir,
   ServerConfig,
-  RuntimeMode,
   type ServerConfigShape,
   type StartupPresentation,
 } from "./config";
@@ -68,23 +67,17 @@ import { WorkspacePathsLive } from "./workspace/Layers/WorkspacePaths";
 const PortSchema = Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: 65535 }));
 
 const BootstrapEnvelopeSchema = Schema.Struct({
-  mode: Schema.optional(RuntimeMode),
   port: Schema.optional(PortSchema),
   host: Schema.optional(Schema.String),
   t3Home: Schema.optional(Schema.String),
   devUrl: Schema.optional(Schema.URLFromString),
   noBrowser: Schema.optional(Schema.Boolean),
-  desktopBootstrapToken: Schema.optional(Schema.String),
   autoBootstrapProjectFromCwd: Schema.optional(Schema.Boolean),
   logWebSocketEvents: Schema.optional(Schema.Boolean),
   otlpTracesUrl: Schema.optional(Schema.String),
   otlpMetricsUrl: Schema.optional(Schema.String),
 });
 
-const modeFlag = Flag.choice("mode", RuntimeMode.literals).pipe(
-  Flag.withDescription("Runtime mode. `desktop` keeps loopback defaults unless overridden."),
-  Flag.optional,
-);
 const portFlag = Flag.integer("port").pipe(
   Flag.withSchema(PortSchema),
   Flag.withDescription("Port for the HTTP/WebSocket server."),
@@ -149,10 +142,6 @@ const EnvServerConfig = Config.all({
     Config.withDefault(10_000),
   ),
   otlpServiceName: Config.string("T3CODE_OTLP_SERVICE_NAME").pipe(Config.withDefault("t3-server")),
-  mode: Config.schema(RuntimeMode, "T3CODE_MODE").pipe(
-    Config.option,
-    Config.map(Option.getOrUndefined),
-  ),
   port: Config.port("T3CODE_PORT").pipe(Config.option, Config.map(Option.getOrUndefined)),
   host: Config.string("T3CODE_HOST").pipe(Config.option, Config.map(Option.getOrUndefined)),
   t3Home: Config.string("T3CODE_HOME").pipe(Config.option, Config.map(Option.getOrUndefined)),
@@ -176,7 +165,6 @@ const EnvServerConfig = Config.all({
 });
 
 interface CliServerFlags {
-  readonly mode: Option.Option<RuntimeMode>;
   readonly port: Option.Option<number>;
   readonly host: Option.Option<string>;
   readonly baseDir: Option.Option<string>;
@@ -222,7 +210,6 @@ export const resolveServerConfig = (
     const fs = yield* FileSystem.FileSystem;
     const env = yield* EnvServerConfig;
     const normalizedFlags = {
-      mode: flags.mode ?? Option.none(),
       port: flags.port ?? Option.none(),
       host: flags.host ?? Option.none(),
       baseDir: flags.baseDir ?? Option.none(),
@@ -240,15 +227,6 @@ export const resolveServerConfig = (
         : Option.none();
     const bootstrap = Option.getOrUndefined(bootstrapEnvelope);
 
-    const mode: RuntimeMode = Option.getOrElse(
-      resolveOptionPrecedence(
-        normalizedFlags.mode,
-        Option.fromUndefinedOr(env.mode),
-        Option.fromUndefinedOr(bootstrap?.mode),
-      ),
-      () => "web",
-    );
-
     const port = yield* Option.match(
       resolveOptionPrecedence(
         normalizedFlags.port,
@@ -257,12 +235,7 @@ export const resolveServerConfig = (
       ),
       {
         onSome: (value) => Effect.succeed(value),
-        onNone: () => {
-          if (mode === "desktop") {
-            return Effect.succeed(DEFAULT_PORT);
-          }
-          return findAvailablePort(DEFAULT_PORT);
-        },
+        onNone: () => findAvailablePort(DEFAULT_PORT),
       },
     );
     const devUrl = Option.getOrElse(
@@ -301,9 +274,8 @@ export const resolveServerConfig = (
         Option.fromUndefinedOr(env.noBrowser),
         Option.fromUndefinedOr(bootstrap?.noBrowser),
       ),
-      () => mode === "desktop",
+      () => false,
     );
-    const desktopBootstrapToken = bootstrap?.desktopBootstrapToken;
     const autoBootstrapProjectFromCwd = Option.getOrElse(
       resolveOptionPrecedence(
         Option.fromUndefinedOr(options?.forceAutoBootstrapProjectFromCwd),
@@ -312,7 +284,7 @@ export const resolveServerConfig = (
         Option.fromUndefinedOr(env.autoBootstrapProjectFromCwd),
         Option.fromUndefinedOr(bootstrap?.autoBootstrapProjectFromCwd),
       ),
-      () => mode === "web",
+      () => true,
     );
     const logWebSocketEvents = Option.getOrElse(
       resolveOptionPrecedence(
@@ -329,7 +301,7 @@ export const resolveServerConfig = (
         Option.fromUndefinedOr(env.host),
         Option.fromUndefinedOr(bootstrap?.host),
       ),
-      () => (mode === "desktop" ? "127.0.0.1" : undefined),
+      () => undefined,
     );
     const logLevel = Option.getOrElse(cliLogLevel, () => env.logLevel);
 
@@ -350,7 +322,6 @@ export const resolveServerConfig = (
         persistedObservabilitySettings.otlpMetricsUrl,
       otlpExportIntervalMs: env.otlpExportIntervalMs,
       otlpServiceName: env.otlpServiceName,
-      mode,
       port,
       cwd,
       baseDir,
@@ -361,7 +332,6 @@ export const resolveServerConfig = (
       devUrl,
       noBrowser,
       startupPresentation,
-      desktopBootstrapToken,
       autoBootstrapProjectFromCwd,
       logWebSocketEvents,
     };
@@ -375,7 +345,6 @@ const resolveCliAuthConfig = (
 ) =>
   resolveServerConfig(
     {
-      mode: Option.none(),
       port: Option.none(),
       host: Option.none(),
       baseDir: flags.baseDir,
@@ -750,7 +719,6 @@ const projectLocationFlags = {
 } as const;
 
 const sharedServerCommandFlags = {
-  mode: modeFlag,
   port: portFlag,
   host: hostFlag,
   baseDir: baseDirFlag,

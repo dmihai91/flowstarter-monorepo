@@ -1,5 +1,14 @@
-import { describe, expect, it } from 'vitest';
-import { formatDate, formatTime, timeAgo, truncateText } from '../format-utils';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import {
+  formatDate,
+  formatTime,
+  timeAgo,
+  truncateText,
+  compactRelative,
+  formatTokenCount,
+  formatEuro,
+  getInitials,
+} from '../format-utils';
 
 describe('formatDate', () => {
   it('returns empty string for null', () => {
@@ -68,6 +77,154 @@ describe('timeAgo', () => {
     const result = timeAgo(oldDate);
     expect(result).not.toContain('ago');
     expect(result).toBeTruthy();
+  });
+});
+
+describe('compactRelative', () => {
+  const BASE = '2025-06-15T12:00:00.000Z';
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(BASE));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('returns "<1m" for timestamps less than a minute ago', () => {
+    const iso = new Date(new Date(BASE).getTime() - 10_000).toISOString();
+    expect(compactRelative(iso)).toBe('<1m');
+  });
+
+  it('formats minutes without suffix', () => {
+    const iso = new Date(new Date(BASE).getTime() - 5 * 60_000).toISOString();
+    expect(compactRelative(iso)).toBe('5m');
+  });
+
+  it('formats hours without suffix', () => {
+    const iso = new Date(
+      new Date(BASE).getTime() - 3 * 3_600_000
+    ).toISOString();
+    expect(compactRelative(iso)).toBe('3h');
+  });
+
+  it('formats days without suffix', () => {
+    const iso = new Date(
+      new Date(BASE).getTime() - 3 * 86_400_000
+    ).toISOString();
+    expect(compactRelative(iso)).toBe('3d');
+  });
+
+  it('formats months without suffix', () => {
+    const iso = new Date('2025-04-15T12:00:00.000Z').toISOString();
+    expect(compactRelative(iso)).toBe('2mo');
+  });
+
+  it('formats years without suffix', () => {
+    const iso = new Date('2023-06-15T12:00:00.000Z').toISOString();
+    expect(compactRelative(iso)).toBe('2y');
+  });
+
+  it('strips filler words (about, almost, over)', () => {
+    const result = compactRelative(
+      new Date(new Date(BASE).getTime() - 5 * 60_000).toISOString()
+    );
+    expect(result).not.toContain('about');
+    expect(result).not.toContain('almost');
+    expect(result).not.toContain('over');
+    expect(result).not.toContain('ago');
+  });
+});
+
+describe('formatTokenCount', () => {
+  it('formats millions to 2 decimal places', () => {
+    expect(formatTokenCount(1_234_567)).toBe('1.23M');
+  });
+
+  it('formats tens-of-thousands to 1 decimal place', () => {
+    expect(formatTokenCount(12_345)).toBe('12.3k');
+  });
+
+  it('formats thousands to 2 decimal places', () => {
+    expect(formatTokenCount(1_234)).toBe('1.23k');
+  });
+
+  it('formats sub-thousands with locale string', () => {
+    expect(formatTokenCount(999)).toMatch(/999/);
+  });
+
+  it('boundary: exactly 1_000 uses thousand format', () => {
+    expect(formatTokenCount(1_000)).toBe('1.00k');
+  });
+
+  it('boundary: exactly 10_000 uses tens-of-thousands format', () => {
+    expect(formatTokenCount(10_000)).toBe('10.0k');
+  });
+
+  it('boundary: exactly 1_000_000 uses million format', () => {
+    expect(formatTokenCount(1_000_000)).toBe('1.00M');
+  });
+});
+
+describe('formatEuro', () => {
+  it('formats a positive integer as Euro', () => {
+    const result = formatEuro(1234);
+    expect(result).toContain('1,234');
+    expect(result).toContain('€');
+  });
+
+  it('formats zero', () => {
+    const result = formatEuro(0);
+    expect(result).toContain('0');
+    expect(result).toContain('€');
+  });
+
+  it('rounds to zero decimal places', () => {
+    const result = formatEuro(1234);
+    expect(result).not.toMatch(/\d\.\d/);
+  });
+});
+
+describe('getInitials', () => {
+  it('returns "?" for null', () => {
+    expect(getInitials(null)).toBe('?');
+  });
+
+  it('returns "?" for undefined', () => {
+    expect(getInitials(undefined)).toBe('?');
+  });
+
+  it('returns "?" for empty string', () => {
+    expect(getInitials('')).toBe('?');
+  });
+
+  it('extracts initials from a full name', () => {
+    expect(getInitials('Jane Doe')).toBe('JD');
+  });
+
+  it('handles a single word (only first letter)', () => {
+    expect(getInitials('Acme')).toBe('A');
+  });
+
+  it('caps at 2 characters for multi-word names', () => {
+    expect(getInitials('John Paul George Ringo')).toBe('JP');
+  });
+
+  it('extracts initials from an email address (splits on @)', () => {
+    expect(getInitials('jane@example.com')).toBe('JE');
+  });
+
+  it('splits on dots as well', () => {
+    expect(getInitials('first.last')).toBe('FL');
+  });
+
+  it('produces uppercase output', () => {
+    expect(getInitials('alice bob')).toBe('AB');
+  });
+
+  it('falls back to "?" for a string of separators only', () => {
+    expect(getInitials('   ')).toBe('?');
   });
 });
 

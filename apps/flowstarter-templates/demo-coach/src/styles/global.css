@@ -1,0 +1,463 @@
+/* ──────────────────────────────────────────────────────────────────────
+   Demo Coach — visual system
+
+   Editable hot-spots for the editor agent:
+     --brand-accent     primary brand colour
+     --brand-soft       lighter accent for hover, chips
+     --brand-ink        body text colour
+     --brand-paper      page background
+
+   The whole page is themed off these four tokens; change them once and
+   the whole site retunes. No frameworks, no Tailwind — pure CSS so the
+   agent can read + edit without learning a system.
+   ────────────────────────────────────────────────────────────────── */
+
+:root {
+  --brand-accent: #4d5dd9;
+  --brand-accent-hot: #2f3fb8;
+  --brand-soft: #8794ed;
+  --brand-ink: #120a22;
+  --brand-ink-dim: rgba(18, 10, 34, 0.66);
+  --brand-ink-faint: rgba(18, 10, 34, 0.42);
+  --brand-paper: #fbf7ef;
+  --brand-rule: rgba(18, 10, 34, 0.1);
+  --brand-card: rgba(255, 255, 255, 0.7);
+  --content-max: 980px;
+  --section-y: clamp(72px, 10vh, 120px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--brand-paper);
+  background-image:
+    radial-gradient(900px 600px at 0% -8%, color-mix(in oklab, var(--brand-accent) 22%, transparent), transparent 62%),
+    radial-gradient(720px 520px at 100% 4%, rgba(180, 83, 9, 0.16), transparent 65%),
+    radial-gradient(900px 720px at 50% 110%, color-mix(in oklab, var(--brand-soft) 28%, transparent), transparent 70%);
+  background-attachment: fixed;
+  color: var(--brand-ink);
+  font-family: "Onest", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-feature-settings: "ss01", "ss02";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+}
+
+a {
+  color: var(--brand-accent);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+a:hover {
+  color: var(--brand-accent-hot);
+}
+
+hr.rule {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  border: 0;
+  border-top: 1px solid var(--brand-rule);
+}
+
+/* ── Header ──────────────────────────────────────────── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px clamp(20px, 5vw, 48px);
+  background: color-mix(in oklab, var(--brand-paper) 75%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid var(--brand-rule);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--brand-ink);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--brand-accent), var(--brand-soft));
+  color: white;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 4px 12px color-mix(in oklab, var(--brand-accent) 35%, transparent);
+}
+.brand-name {
+  font-size: 15px;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2.6vw, 32px);
+  font-size: 14px;
+}
+.site-nav a {
+  color: var(--brand-ink-dim);
+  font-weight: 500;
+}
+.site-nav a:hover {
+  color: var(--brand-ink);
+}
+.site-nav .nav-cta {
+  color: white;
+  background: var(--brand-accent);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid var(--brand-accent-hot);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 4px 12px color-mix(in oklab, var(--brand-accent) 32%, transparent);
+}
+.site-nav .nav-cta:hover {
+  color: white;
+  background: var(--brand-accent-hot);
+}
+@media (max-width: 720px) {
+  .site-nav a:not(.nav-cta) {
+    display: none;
+  }
+}
+
+/* ── Sections ────────────────────────────────────────── */
+.section,
+.hero {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--section-y) clamp(20px, 5vw, 48px);
+}
+
+.eyebrow,
+.overline {
+  margin: 0 0 18px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brand-ink-faint);
+}
+
+.display {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+}
+.display em {
+  font-style: normal;
+  color: var(--brand-accent);
+  font-weight: 600;
+}
+.display--mid {
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+}
+
+.lede {
+  margin-top: 24px;
+  max-width: 60ch;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  color: var(--brand-ink-dim);
+  line-height: 1.55;
+}
+
+/* ── Hero ────────────────────────────────────────────── */
+.hero {
+  padding-top: clamp(80px, 12vh, 140px);
+  padding-bottom: clamp(60px, 9vh, 100px);
+}
+
+.hero-actions {
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 22px;
+  background: var(--brand-accent);
+  color: white;
+  border: 1px solid var(--brand-accent-hot);
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.005em;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 6px 18px color-mix(in oklab, var(--brand-accent) 30%, transparent);
+}
+.cta:hover {
+  background: var(--brand-accent-hot);
+  color: white;
+}
+
+.link {
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--brand-ink);
+  border-bottom: 1px solid var(--brand-rule);
+  padding-bottom: 2px;
+}
+.link:hover {
+  color: var(--brand-accent);
+  border-color: var(--brand-accent);
+}
+
+.hero-stats {
+  margin: 56px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 28px;
+  padding-top: 32px;
+  border-top: 1px solid var(--brand-rule);
+}
+.hero-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hero-stats dt {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brand-ink-faint);
+  font-weight: 500;
+}
+.hero-stats dd {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--brand-ink);
+}
+
+/* ── Approach ────────────────────────────────────────── */
+.approach-grid {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+.approach-grid article {
+  padding: 28px;
+  background: var(--brand-card);
+  border: 1px solid var(--brand-rule);
+  border-radius: 16px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.approach-grid h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.approach-grid p {
+  margin: 0;
+  color: var(--brand-ink-dim);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* ── Engagements ─────────────────────────────────────── */
+.engagements-grid {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+.engagement {
+  padding: 32px;
+  background: var(--brand-card);
+  border: 1px solid var(--brand-rule);
+  border-radius: 18px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+}
+.engagement-tag {
+  margin: 0 0 16px;
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 10px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  background: color-mix(in oklab, var(--brand-accent) 10%, transparent);
+  border-radius: 999px;
+  font-weight: 600;
+}
+.engagement h3 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.engagement-meta {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--brand-ink-faint);
+  font-weight: 500;
+}
+.engagement > p {
+  margin: 0 0 18px;
+  color: var(--brand-ink-dim);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.engagement ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.engagement li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--brand-ink-dim);
+}
+.engagement li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-accent);
+}
+
+/* ── About ───────────────────────────────────────────── */
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+}
+@media (max-width: 820px) {
+  .about {
+    grid-template-columns: 1fr;
+  }
+}
+.about-text p {
+  margin-top: 18px;
+  color: var(--brand-ink-dim);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.about-card {
+  padding: 28px;
+  background: var(--brand-card);
+  border: 1px solid var(--brand-rule);
+  border-radius: 16px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  position: sticky;
+  top: 90px;
+}
+.about-card dl {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.about-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--brand-rule);
+}
+.about-card div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.about-card dt {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brand-ink-faint);
+  font-weight: 500;
+}
+.about-card dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--brand-ink);
+  line-height: 1.5;
+}
+
+/* ── Contact ─────────────────────────────────────────── */
+.contact {
+  text-align: left;
+}
+.contact-lede {
+  margin: 24px 0 0;
+  max-width: 56ch;
+  color: var(--brand-ink-dim);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.contact-actions {
+  margin: 36px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.contact-meta {
+  margin: 24px 0 0;
+  font-size: 13px;
+  color: var(--brand-ink-faint);
+}
+
+/* ── Footer ──────────────────────────────────────────── */
+.site-footer {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 32px clamp(20px, 5vw, 48px) 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--brand-ink-faint);
+  border-top: 1px solid var(--brand-rule);
+}
+.site-footer p {
+  margin: 0;
+}
+.site-footer a {
+  color: var(--brand-ink-dim);
+}
+.site-footer a:hover {
+  color: var(--brand-accent);
+}

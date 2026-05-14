@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { generateText } from 'ai';
-import { models, isOpenRouterConfigured } from '@/lib/ai/openrouter-client';
+import { models, isOpenRouterConfigured } from '@/lib/ai/client';
 
 const SupportChatSchema = z.object({
   message: z.string().min(1).max(600),

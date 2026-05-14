@@ -20,6 +20,17 @@ import {
 import { isMacPlatform, isWindowsPlatform } from "~/lib/utils";
 import { readLocalApi } from "~/localApi";
 
+/** In the hosted web editor, "open in Cursor/VS Code" is redundant; keep server folder reveal only. */
+const EDITOR_WEB_OPEN_IN_ALLOWED = new Set<EditorId>(["file-manager"]);
+
+export function filterAvailableEditorsForOpenInPicker(
+  variant: "default" | "editor" | undefined,
+  availableEditors: ReadonlyArray<EditorId>,
+): ReadonlyArray<EditorId> {
+  if (variant !== "editor") return availableEditors;
+  return availableEditors.filter((id) => EDITOR_WEB_OPEN_IN_ALLOWED.has(id));
+}
+
 const resolveOptions = (platform: string, availableEditors: ReadonlyArray<EditorId>) => {
   const baseOptions: ReadonlyArray<{ label: string; Icon: Icon; value: EditorId }> = [
     {
@@ -79,15 +90,21 @@ export const OpenInPicker = memo(function OpenInPicker({
   keybindings,
   availableEditors,
   openInCwd,
+  variant = "default",
 }: {
   keybindings: ResolvedKeybindingsConfig;
   availableEditors: ReadonlyArray<EditorId>;
   openInCwd: string | null;
+  variant?: "default" | "editor";
 }) {
-  const [preferredEditor, setPreferredEditor] = usePreferredEditor(availableEditors);
+  const effectiveEditors = useMemo(
+    () => filterAvailableEditorsForOpenInPicker(variant, availableEditors),
+    [variant, availableEditors],
+  );
+  const [preferredEditor, setPreferredEditor] = usePreferredEditor(effectiveEditors);
   const options = useMemo(
-    () => resolveOptions(navigator.platform, availableEditors),
-    [availableEditors],
+    () => resolveOptions(navigator.platform, effectiveEditors),
+    [effectiveEditors],
   );
   const primaryOption = options.find(({ value }) => value === preferredEditor) ?? null;
 
@@ -122,26 +139,68 @@ export const OpenInPicker = memo(function OpenInPicker({
     return () => window.removeEventListener("keydown", handler);
   }, [preferredEditor, keybindings, openInCwd]);
 
+  if (effectiveEditors.length === 0) {
+    return null;
+  }
+
+  const primaryOpenAriaLabel =
+    !openInCwd
+      ? variant === "editor"
+        ? "Reveal folder (no folder path)"
+        : "Open in editor (no folder path)"
+      : !preferredEditor
+        ? variant === "editor"
+          ? "Reveal folder"
+          : "Open in editor"
+        : variant === "editor"
+          ? `Reveal folder with ${primaryOption?.label ?? "selected app"}`
+          : `Open in ${primaryOption?.label ?? "selected editor"}`;
+
+  const primaryOpenTitle =
+    !openInCwd || !preferredEditor
+      ? undefined
+      : variant === "editor"
+        ? `Reveal folder (${primaryOption?.label})`
+        : `Open in ${primaryOption?.label}`;
+
   return (
-    <Group aria-label="Subscription actions">
+    <Group aria-label="Open project folder">
       <Button
         size="xs"
         variant="outline"
         disabled={!preferredEditor || !openInCwd}
         onClick={() => openInEditor(preferredEditor)}
+        aria-label={primaryOpenAriaLabel}
+        title={primaryOpenTitle}
       >
         {primaryOption?.Icon && <primaryOption.Icon aria-hidden="true" className="size-3.5" />}
-        <span className="sr-only @3xl/header-actions:not-sr-only @3xl/header-actions:ml-0.5">
-          Open
+        <span className="sr-only @3xl/chrome-tools:not-sr-only @3xl/chrome-tools:ml-0.5">
+          {variant === "editor" ? "Reveal" : "Open"}
         </span>
       </Button>
-      <GroupSeparator className="hidden @3xl/header-actions:block" />
+      <GroupSeparator className="hidden @3xl/chrome-tools:block" />
       <Menu>
-        <MenuTrigger render={<Button aria-label="Copy options" size="icon-xs" variant="outline" />}>
-          <ChevronDownIcon aria-hidden="true" className="size-4" />
+        <MenuTrigger
+          render={
+            <Button
+              aria-label="Choose app or folder reveal option"
+              title="Choose app or folder reveal option"
+              className="fs-chat-submenu-chevron-trigger"
+              size="icon-xs"
+              variant="outline"
+            />
+          }
+        >
+          <ChevronDownIcon aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
         </MenuTrigger>
         <MenuPopup align="end">
-          {options.length === 0 && <MenuItem disabled>No installed editors found</MenuItem>}
+          {options.length === 0 && (
+            <MenuItem disabled>
+              {variant === "editor"
+                ? "Folder reveal is unavailable on this host."
+                : "No installed editors found"}
+            </MenuItem>
+          )}
           {options.map(({ label, Icon, value }) => (
             <MenuItem key={value} onClick={() => openInEditor(value)}>
               <Icon aria-hidden="true" className="text-muted-foreground" />

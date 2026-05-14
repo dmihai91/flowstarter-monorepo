@@ -653,6 +653,10 @@ export const ClaudeProviderLive = Layer.effect(
       ),
       haveSettingsChanged: (previous, next) => !Equal.equals(previous, next),
       checkProvider,
+      // Align the background refresh with the subscription probe cache TTL
+      // (5 min) to avoid spawning `claude --version` + `claude auth status`
+      // every 60 s when nothing has changed.
+      refreshInterval: Duration.minutes(5),
     });
   }),
 );

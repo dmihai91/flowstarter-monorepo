@@ -8,7 +8,7 @@ export function LandingMinimalFooter() {
               Flowstarter
             </p>
             <p className="mt-2 max-w-xl text-sm text-[var(--ls-ink-dim)]">
-              Premium websites for service businesses. Live in 5 days.
+              Premium websites for service businesses. Hand-crafted, every site.
             </p>
           </div>
           <nav

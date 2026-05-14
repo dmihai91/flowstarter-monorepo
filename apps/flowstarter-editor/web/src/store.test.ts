@@ -526,6 +526,26 @@ describe("incremental orchestration updates", () => {
     expect(localEnvironmentStateOf(next).bootstrapComplete).toBe(false);
   });
 
+  it("updates project display name on project.meta-updated", () => {
+    const projectId = ProjectId.make("project-1");
+    const state = makeState(makeThread());
+    const next = applyOrchestrationEvent(
+      state,
+      makeEvent(
+        "project.meta-updated",
+        {
+          projectId,
+          title: "Renamed project",
+          updatedAt: "2026-02-27T00:00:02.000Z",
+        },
+        { aggregateKind: "project", aggregateId: projectId },
+      ),
+      localEnvironmentId,
+    );
+
+    expect(localEnvironmentStateOf(next).projectById[projectId]?.name).toBe("Renamed project");
+  });
+
   it("preserves state identity for no-op project and thread deletes", () => {
     const thread = makeThread();
     const state = makeState(thread);

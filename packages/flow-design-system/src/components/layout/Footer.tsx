@@ -25,7 +25,7 @@ const defaultLinks: FooterLink[] = [
   { label: 'Privacy', href: '/privacy' },
   { label: 'Terms', href: '/terms' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Team Dashboard', href: '/team/dashboard' },
+  { label: 'Team Dashboard', href: '/admin/dashboard' },
   { label: 'Editor', href: 'https://editor.flowstarter.dev', external: true },
 ];
 

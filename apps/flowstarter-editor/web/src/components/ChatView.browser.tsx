@@ -794,6 +794,12 @@ function resolveWsRpc(body: NormalizedWsRpcRequestBody): unknown {
       truncated: false,
     };
   }
+  if (tag === WS_METHODS.projectsListWorkspaceEntries) {
+    return {
+      entries: [],
+      truncated: false,
+    };
+  }
   if (tag === WS_METHODS.shellOpenInEditor) {
     return null;
   }

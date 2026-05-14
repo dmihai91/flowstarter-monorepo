@@ -58,10 +58,10 @@
   --landing-card-border:     var(--fs-glass-edge);
   --landing-glow:            rgba(96, 165, 250, 0.05);
   --landing-text-accent:     var(--fs-accent);
-  --landing-btn-from:        var(--fs-accent);
-  --landing-btn-via:         var(--fs-accent);
-  --landing-btn-hover-from:  var(--fs-accent-hot);
-  --landing-btn-hover-via:   hsl(280, 70%, 40%);
+  --landing-btn-from:        var(--purple);
+  --landing-btn-via:         color-mix(in oklab, var(--purple) 58%, var(--fs-accent-hot) 42%);
+  --landing-btn-hover-from:  color-mix(in oklab, var(--purple) 35%, var(--fs-accent-hot) 65%);
+  --landing-btn-hover-via:   var(--purple);
 
   /* Hero washes — light */
   --hero-wash-from: var(--fs-bg-elevated);
@@ -122,8 +122,10 @@
   --landing-card-bg:   var(--fs-glass-bg);
   --landing-card-border: var(--fs-glass-edge);
   --landing-glow:      rgba(96, 165, 250, 0.08);
-  --landing-btn-from:  var(--fs-accent-hot);
-  --landing-btn-via:   var(--fs-accent);
+  --landing-btn-from:  color-mix(in oklab, var(--purple) 42%, var(--fs-accent-hot) 58%);
+  --landing-btn-via:   var(--purple);
+  --landing-btn-hover-from: var(--fs-accent-hot);
+  --landing-btn-hover-via:  color-mix(in oklab, var(--purple) 55%, white 45%);
 
   /* Hero washes — dark */
   --hero-wash-from: var(--fs-bg-base);

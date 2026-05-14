@@ -25,7 +25,7 @@ declare global {
   }
 }
 
-type Theme = 'light' | 'dark' | 'auto';
+export type Theme = 'light' | 'dark' | 'auto';
 
 interface ThemeContextType {
   theme: Theme;
@@ -64,22 +64,21 @@ const getSystemThemePreference = (): 'light' | 'dark' => {
   }
 };
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Read initial state from the DOM (already set by the blocking inline script)
-  // This eliminates the flash between SSR default and client hydration
+export function ThemeProvider({
+  children,
+  initialTheme = 'auto',
+  initialResolvedTheme = 'light',
+}: {
+  children: React.ReactNode;
+  /** From getServerThemeInit() so SSR matches first client render (see app/layout.tsx). */
+  initialTheme?: Theme;
+  initialResolvedTheme?: 'light' | 'dark';
+}) {
   const [mounted, setMounted] = useState(false);
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'auto';
-    const stored = getStoredTheme();
-    return stored || 'auto';
-  });
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'light';
-    // Trust what the inline script already applied to <html>
-    return document.documentElement.classList.contains('dark')
-      ? 'dark'
-      : 'light';
-  });
+  const [theme, setTheme] = useState<Theme>(initialTheme);
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(
+    initialResolvedTheme
+  );
 
   // Function to get system theme preference
   const getSystemTheme = useCallback((): 'light' | 'dark' => {
@@ -98,19 +97,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     [getSystemTheme]
   );
 
-  // Initial client-side setup
+  // Reconcile stored preference + DOM after hydration (localStorage migration, script edge cases).
   useEffect(() => {
     setMounted(true);
 
-    // Only run theme detection and updates on the client side
     const storedTheme = getStoredTheme();
+    const fromDom = document.documentElement.classList.contains('dark')
+      ? 'dark'
+      : ('light' as const);
 
     if (storedTheme) {
       setTheme(storedTheme);
       updateResolvedTheme(storedTheme);
     } else {
       setTheme('auto');
-      setResolvedTheme(getSystemTheme());
+      setResolvedTheme(fromDom);
     }
   }, [getSystemTheme, updateResolvedTheme]);
 

@@ -12,7 +12,7 @@ export function SignUpClient() {
   // Client redirect if already signed in (keeps route static)
   if (isLoaded && isSignedIn) {
     if (typeof window !== 'undefined') {
-      window.location.replace('/team/dashboard');
+      window.location.replace('/admin/dashboard');
     }
   }
   return (

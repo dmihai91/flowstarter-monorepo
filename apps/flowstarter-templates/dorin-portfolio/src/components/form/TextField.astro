@@ -1,0 +1,54 @@
+---
+interface Props {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+  className?: string;
+}
+
+const { label, name, type = 'text', placeholder = '', required = false, className = '' } = Astro.props;
+---
+
+<label class={`form-field ${className}`.trim()}>
+  <span class="form-field__label">{label}</span>
+  <input type={type} name={name} placeholder={placeholder} required={required} />
+</label>
+
+<style>
+  .form-field {
+    display: grid;
+    gap: var(--form-field-gap, 10px);
+  }
+
+  .form-field__label {
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    color: var(--bg-dark);
+  }
+
+  .form-field input {
+    width: 100%;
+    min-height: var(--field-height, 58px);
+    padding: 0 18px;
+    border: 1px solid var(--surface-field-border);
+    border-radius: 8px;
+    background: var(--surface-field);
+    color: var(--bg-dark);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.4;
+  }
+
+  .form-field input::placeholder {
+    color: var(--surface-placeholder);
+  }
+
+  .form-field input:focus {
+    outline: none;
+    border: 1.5px solid var(--bg-dark);
+  }
+</style>

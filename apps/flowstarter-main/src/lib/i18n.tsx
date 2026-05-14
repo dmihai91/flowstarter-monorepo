@@ -54,8 +54,6 @@ export function I18nProvider({
       Record<TranslationKeys, string>
     >;
     // Merge: English as base, locale overrides only the keys it defines.
-    // Prevents partially-translated locales (e.g. ro with a single key) from
-    // wiping out unrelated English strings and showing raw key IDs.
     const messages = { ...enMessages, ...localeOverlay } as Record<
       TranslationKeys,
       string
@@ -74,7 +72,7 @@ export function I18nProvider({
   const value: I18nContextValue = {
     locale,
     messages: {
-      ...(initialMessages.en || {}),
+      ...((initialMessages.en || {}) as Record<string, string>),
       ...((initialMessages[locale] || {}) as Partial<
         Record<TranslationKeys, string>
       >),

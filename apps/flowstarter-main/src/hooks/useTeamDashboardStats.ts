@@ -9,7 +9,7 @@ export function useTeamDashboardStats() {
   return useQuery({
     queryKey: teamDashboardStatsQueryKey,
     queryFn: async (): Promise<TeamDashboardStatsPayload> => {
-      const res = await fetch('/api/team/dashboard/stats', {
+      const res = await fetch('/api/admin/dashboard/stats', {
         cache: 'no-store',
       });
       if (!res.ok) {

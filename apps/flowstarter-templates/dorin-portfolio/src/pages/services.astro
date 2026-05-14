@@ -1,0 +1,37 @@
+---
+import Expertise from '../components/Expertise.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import ServicesFaqSection from '../components/services/ServicesFaqSection.astro';
+import ServicesHeroSection from '../components/services/ServicesHeroSection.astro';
+import Layout from '../layouts/Layout.astro';
+import Services from '../components/Services.astro';
+import CTASection from '../components/CTASection.astro';
+import { getServicesPageData } from '../lib/site-data';
+
+const servicesPage = getServicesPageData();
+---
+
+<Layout title="Services — Portfolio">
+  <Header activeIndex={3} />
+  <main class="services-page">
+    <ServicesHeroSection
+      heroLines={servicesPage.heroLines}
+      heroImages={servicesPage.heroImages}
+    />
+    <Services showCta={false} />
+    <Expertise />
+    <ServicesFaqSection title={servicesPage.faq.title} items={servicesPage.faq.items} />
+  </main>
+  <CTASection />
+  <Footer />
+</Layout>
+
+<style>
+  .services-page {
+    padding-top: 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 72px;
+  }
+</style>

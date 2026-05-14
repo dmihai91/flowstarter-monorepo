@@ -2,6 +2,7 @@
  * Pure formatting utilities.
  * No React dependencies - usable anywhere (components, API routes, tests).
  */
+import { formatDistanceToNow } from 'date-fns';
 
 /**
  * Format a date for display. Uses the existing `formatDateString` from useFormatDate
@@ -76,9 +77,70 @@ export function timeAgo(date: Date | string | null | undefined): string {
 }
 
 /**
+ * Extract up to 2 uppercase initials from a name, email, or any string.
+ * Splits on whitespace, '@', and '.' so both names and email addresses work.
+ * e.g. "Jane Doe" → "JD", "jane@example.com" → "JE", null → "?"
+ */
+export function getInitials(name: string | null | undefined): string {
+  if (!name) return '?';
+  return (
+    name
+      .split(/[\s@.]+/)
+      .filter(Boolean)
+      .map((w) => w[0]!)
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || '?'
+  );
+}
+
+/**
  * Truncate text with ellipsis.
  */
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength).trimEnd() + '…';
+}
+
+/**
+ * Compact relative time without an "ago" suffix, backed by date-fns.
+ * e.g. "2m", "3h", "5d", "2mo", "1y"
+ */
+export function compactRelative(iso: string): string {
+  return formatDistanceToNow(new Date(iso), { addSuffix: false })
+    .replace('about ', '')
+    .replace('almost ', '')
+    .replace('over ', '')
+    .replace('less than a minute', '<1m')
+    .replace(/ minutes?/, 'm')
+    .replace(/ hours?/, 'h')
+    .replace(/ days?/, 'd')
+    .replace(/ months?/, 'mo')
+    .replace(/ years?/, 'y');
+}
+
+/**
+ * Format a raw AI token count as a compact string.
+ * e.g. 1_234_567 → "1.23M", 12_345 → "12.3k", 1_234 → "1.23k", 999 → "999"
+ */
+export function formatTokenCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 10_000) return `${(n / 1_000).toFixed(1)}k`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(2)}k`;
+  return n.toLocaleString('en-IE');
+}
+
+const _euroFormatter = new Intl.NumberFormat('en-IE', {
+  style: 'currency',
+  currency: 'EUR',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+});
+
+/**
+ * Format a number as Euro currency (Irish locale, no decimals).
+ * e.g. 1234 → "€1,234"
+ */
+export function formatEuro(n: number): string {
+  return _euroFormatter.format(n);
 }

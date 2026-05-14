@@ -54,7 +54,7 @@ function GlobalErrorContent({
             <RefreshCw className="w-4 h-4" />
             {t('errors.500.reload')}
           </Button>
-          <Button tone="secondary" asChild className="gap-2">
+          <Button asChild className="gap-2">
             <Link href="/">
               <Home className="w-4 h-4" />
               {t('errors.500.goHome')}

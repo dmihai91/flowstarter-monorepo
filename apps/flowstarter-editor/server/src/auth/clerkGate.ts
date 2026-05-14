@@ -87,6 +87,19 @@ export class ClerkGateConfigError extends Error {
 let cachedClerk: ClerkClient | null = null;
 let cachedSupabase: SupabaseClient | null = null;
 
+/**
+ * Short-lived in-memory identity cache.
+ * The editor's usage endpoint polls every 60 s, and each call was triggering
+ * `clerk.users.getUser()` + Supabase workspace queries. Caching the resolved
+ * identity for 2 minutes eliminates ~29/30 of those roundtrips.
+ */
+const _identityCache = new Map<
+  string,
+  { identity: ResolvedIdentity; exp: number }
+>();
+const IDENTITY_CACHE_TTL_MS = 120_000;
+const IDENTITY_CACHE_MAX = 200;
+
 function getClerkClient(): ClerkClient {
   if (cachedClerk) return cachedClerk;
   const secretKey = process.env.CLERK_SECRET_KEY;
@@ -122,12 +135,13 @@ function getSupabaseClient(): SupabaseClient {
 export function resetClerkGateForTesting(): void {
   cachedClerk = null;
   cachedSupabase = null;
+  _identityCache.clear();
 }
 
 /** @internal — exposed so tests can inject fakes. */
 export function setClerkGateForTesting(opts: {
-  clerk?: ClerkClient;
-  supabase?: SupabaseClient;
+  clerk?: ClerkClient | undefined;
+  supabase?: SupabaseClient | undefined;
 }): void {
   cachedClerk = opts.clerk ?? cachedClerk;
   cachedSupabase = opts.supabase ?? cachedSupabase;
@@ -250,12 +264,65 @@ export function parseWorkspaceSlugFromHost(host: string | null | undefined): str
 }
 
 /**
+ * Auto-promote a Clerk user to admin if their primary email is on a
+ * Flowstarter-owned domain or in the explicit owner-email allowlist.
+ *
+ * Mirrors the role-resolution rule in `flowstarter-main`'s middleware
+ * (publicMetadata.role wins, but verified emails on @flowstarter.{net,
+ * dev,com,app} count as admin too) so a freshly-signed-in team member
+ * isn't blocked behind a manual Clerk dashboard click. The owner-email
+ * env var (`EDITOR_ADMIN_EMAILS`, comma-separated) extends the
+ * allowlist for individuals on personal domains.
+ */
+function isAdminByEmailFallback(user: {
+  primaryEmailAddressId?: string | null;
+  emailAddresses?: ReadonlyArray<{
+    id?: string;
+    emailAddress?: string;
+    verification?: { status?: string | null } | null;
+  }>;
+}): boolean {
+  const emails = user.emailAddresses ?? [];
+  if (emails.length === 0) return false;
+  const candidates = new Set<string>();
+  for (const entry of emails) {
+    const value = entry.emailAddress?.trim().toLowerCase();
+    if (!value) continue;
+    if (entry.verification?.status && entry.verification.status !== "verified") {
+      continue;
+    }
+    candidates.add(value);
+  }
+  if (candidates.size === 0) return false;
+
+  const domainSuffixes = ["@flowstarter.net", "@flowstarter.dev", "@flowstarter.com", "@flowstarter.app"];
+  for (const email of candidates) {
+    if (domainSuffixes.some((suffix) => email.endsWith(suffix))) return true;
+  }
+
+  const overrideRaw = process.env.EDITOR_ADMIN_EMAILS;
+  if (overrideRaw) {
+    const allowlist = overrideRaw
+      .split(",")
+      .map((entry) => entry.trim().toLowerCase())
+      .filter((entry) => entry.length > 0);
+    for (const email of candidates) {
+      if (allowlist.includes(email)) return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Resolve a user's editor role + tier + allowed workspaces.
  *
- * Adminship comes from Clerk publicMetadata.role. Membership comes from
- * Supabase. Tier defaults to 'custom' for admins. For clients the tier
- * is the `currentWorkspace.tier_name` if a slug was supplied; otherwise
- * the highest tier across their memberships (back-compat).
+ * Adminship comes from Clerk publicMetadata.role OR a verified email on
+ * a Flowstarter-owned domain (or `EDITOR_ADMIN_EMAILS`). Membership
+ * comes from Supabase. Tier defaults to 'custom' for admins. For
+ * clients the tier is the `currentWorkspace.tier_name` if a slug was
+ * supplied; otherwise the highest tier across their memberships
+ * (back-compat).
  *
  * If `currentSlug` is provided, this function ALSO verifies that the
  * user is allowed to open that specific workspace — admins always pass,
@@ -265,6 +332,12 @@ export async function resolveAuthorization(
   userId: string,
   options: { currentSlug?: string | null } = {},
 ): Promise<ResolvedIdentity> {
+  // Check in-memory cache first to avoid Clerk + Supabase roundtrips
+  // on every polled request (usage endpoint hits this every 60 s).
+  const cacheKey = `${userId}:${options.currentSlug ?? ""}`;
+  const cached = _identityCache.get(cacheKey);
+  if (cached && Date.now() < cached.exp) return cached.identity;
+
   const clerk = getClerkClient();
   const supabase = getSupabaseClient();
 
@@ -279,7 +352,8 @@ export async function resolveAuthorization(
 
   const rawRole = (user.publicMetadata as { role?: unknown } | null)?.role;
   const normalisedRole = typeof rawRole === "string" ? rawRole.toLowerCase() : null;
-  const isAdmin = normalisedRole === "team" || normalisedRole === "admin";
+  const explicitlyAdmin = normalisedRole === "team" || normalisedRole === "admin";
+  const isAdmin = explicitlyAdmin || isAdminByEmailFallback(user);
   const currentSlug = options.currentSlug ?? null;
 
   // Always resolve the workspace addressed by the current Host (if any),
@@ -376,13 +450,21 @@ export async function resolveAuthorization(
         (workspaces ?? []).map((row) => row.tier_name as string | null),
       );
 
-  return {
+  const resolvedClient: ResolvedIdentity = {
     userId,
     role: "client",
     tier,
     allowedWorkspaceIds: allowedIds,
     currentWorkspace,
   };
+
+  // Populate cache for this user + slug.
+  if (_identityCache.size >= IDENTITY_CACHE_MAX) {
+    const oldest = _identityCache.keys().next().value;
+    if (oldest !== undefined) _identityCache.delete(oldest);
+  }
+  _identityCache.set(cacheKey, { identity: resolvedClient, exp: Date.now() + IDENTITY_CACHE_TTL_MS });
+  return resolvedClient;
 }
 
 const TIER_RANK: Record<EditorTier, number> = {

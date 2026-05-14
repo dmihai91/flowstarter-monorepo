@@ -1,8 +1,7 @@
 import type { AuthPairingLink } from "@flowstarter/editor-contracts";
-import { DateTime, Duration, Effect, Layer, PubSub, Ref, Stream } from "effect";
+import { DateTime, Duration, Effect, Layer, PubSub, Stream } from "effect";
 import { Option } from "effect";
 
-import { ServerConfig } from "../../config.ts";
 import { AuthPairingLinkRepositoryLive } from "../../persistence/Layers/AuthPairingLinks.ts";
 import { AuthPairingLinkRepository } from "../../persistence/Services/AuthPairingLinks.ts";
 import {
@@ -10,24 +9,8 @@ import {
   BootstrapCredentialService,
   type BootstrapCredentialChange,
   type BootstrapCredentialServiceShape,
-  type BootstrapGrant,
   type IssuedBootstrapCredential,
 } from "../Services/BootstrapCredentialService.ts";
-
-interface StoredBootstrapGrant extends BootstrapGrant {
-  readonly remainingUses: number | "unbounded";
-}
-
-type ConsumeResult =
-  | {
-      readonly _tag: "error";
-      readonly reason: "not-found" | "expired";
-      readonly error: BootstrapCredentialError;
-    }
-  | {
-      readonly _tag: "success";
-      readonly grant: BootstrapGrant;
-    };
 
 const DEFAULT_ONE_TIME_TOKEN_TTL_MINUTES = Duration.minutes(5);
 const PAIRING_TOKEN_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -40,9 +23,7 @@ const generatePairingToken = (): string => {
 };
 
 export const makeBootstrapCredentialService = Effect.gen(function* () {
-  const config = yield* ServerConfig;
   const pairingLinks = yield* AuthPairingLinkRepository;
-  const seededGrantsRef = yield* Ref.make(new Map<string, StoredBootstrapGrant>());
   const changesPubSub = yield* PubSub.unbounded<BootstrapCredentialChange>();
 
   const invalidBootstrapCredentialError = (message: string) =>
@@ -58,13 +39,6 @@ export const makeBootstrapCredentialService = Effect.gen(function* () {
       cause,
     });
 
-  const seedGrant = (credential: string, grant: StoredBootstrapGrant) =>
-    Ref.update(seededGrantsRef, (current) => {
-      const next = new Map(current);
-      next.set(credential, grant);
-      return next;
-    });
-
   const emitUpsert = (pairingLink: AuthPairingLink) =>
     PubSub.publish(changesPubSub, {
       type: "pairingLinkUpserted",
@@ -76,19 +50,6 @@ export const makeBootstrapCredentialService = Effect.gen(function* () {
       type: "pairingLinkRemoved",
       id,
     }).pipe(Effect.asVoid);
-
-  if (config.desktopBootstrapToken) {
-    const now = yield* DateTime.now;
-    yield* seedGrant(config.desktopBootstrapToken, {
-      method: "desktop-bootstrap",
-      role: "owner",
-      subject: "desktop-bootstrap",
-      expiresAt: DateTime.add(now, {
-        milliseconds: Duration.toMillis(DEFAULT_ONE_TIME_TOKEN_TTL_MINUTES),
-      }),
-      remainingUses: 1,
-    });
-  }
 
   const toBootstrapCredentialError = (message: string) => (cause: unknown) =>
     internalBootstrapCredentialError(message, cause);
@@ -171,68 +132,6 @@ export const makeBootstrapCredentialService = Effect.gen(function* () {
   const consume: BootstrapCredentialServiceShape["consume"] = (credential) =>
     Effect.gen(function* () {
       const now = yield* DateTime.now;
-      const seededResult: ConsumeResult = yield* Ref.modify(
-        seededGrantsRef,
-        (current): readonly [ConsumeResult, Map<string, StoredBootstrapGrant>] => {
-          const grant = current.get(credential);
-          if (!grant) {
-            return [
-              {
-                _tag: "error",
-                reason: "not-found",
-                error: invalidBootstrapCredentialError("Unknown bootstrap credential."),
-              },
-              current,
-            ];
-          }
-
-          const next = new Map(current);
-          if (DateTime.isGreaterThanOrEqualTo(now, grant.expiresAt)) {
-            next.delete(credential);
-            return [
-              {
-                _tag: "error",
-                reason: "expired",
-                error: invalidBootstrapCredentialError("Bootstrap credential expired."),
-              },
-              next,
-            ];
-          }
-
-          const remainingUses = grant.remainingUses;
-          if (typeof remainingUses === "number") {
-            if (remainingUses <= 1) {
-              next.delete(credential);
-            } else {
-              next.set(credential, {
-                ...grant,
-                remainingUses: remainingUses - 1,
-              });
-            }
-          }
-
-          return [
-            {
-              _tag: "success",
-              grant: {
-                method: grant.method,
-                role: grant.role,
-                subject: grant.subject,
-                ...(grant.label ? { label: grant.label } : {}),
-                expiresAt: grant.expiresAt,
-              } satisfies BootstrapGrant,
-            },
-            next,
-          ];
-        },
-      );
-
-      if (seededResult._tag === "success") {
-        return seededResult.grant;
-      }
-      if (seededResult.reason !== "not-found") {
-        return yield* seededResult.error;
-      }
 
       const consumed = yield* pairingLinks.consumeAvailable({
         credential,
@@ -248,7 +147,7 @@ export const makeBootstrapCredentialService = Effect.gen(function* () {
           subject: consumed.value.subject,
           ...(consumed.value.label ? { label: consumed.value.label } : {}),
           expiresAt: consumed.value.expiresAt,
-        } satisfies BootstrapGrant;
+        };
       }
 
       const matching = yield* pairingLinks.getByCredential({ credential });

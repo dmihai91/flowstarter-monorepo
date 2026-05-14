@@ -3,26 +3,12 @@
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
-import { setIsErrorPageFlag, useErrorPage } from '@/contexts/ErrorPageContext';
 import { useTranslations } from '@/lib/i18n';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
-import { useEffect } from 'react';
 
 // Now can use translations because ErrorBoundary wraps this with providers
 export function ErrorFallback() {
   const { t } = useTranslations();
-  const { setIsErrorPage } = useErrorPage();
-
-  // Set error page flag synchronously to hide navbar immediately
-  // This ensures NavigationWrapper sees it on first render
-  setIsErrorPageFlag(true);
-
-  useEffect(() => {
-    // Cleanup when component unmounts
-    return () => {
-      setIsErrorPage(false);
-    };
-  }, [setIsErrorPage]);
 
   return (
     <ErrorPageLayout>
@@ -76,9 +62,9 @@ export function ErrorFallback() {
             </Button>
             <Button
               onClick={() => (window.location.href = '/')}
-              variant="outline"
+              variant="default"
               size="lg"
-              className="w-full sm:w-auto h-12 border-2 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-lg transition-all duration-200 font-semibold"
+              className="w-full sm:w-auto h-12 rounded-lg font-semibold"
             >
               <Home className="h-4 w-4" />
               {t('error.goHome')}

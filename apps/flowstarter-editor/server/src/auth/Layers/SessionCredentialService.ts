@@ -471,6 +471,17 @@ export const makeSessionCredentialService = Effect.gen(function* () {
       return revokedSessionIds.length;
     }).pipe(Effect.mapError(toSessionCredentialError("Failed to revoke other sessions.")));
 
+  const getRoleForSession: SessionCredentialServiceShape["getRoleForSession"] = (sessionId) =>
+    authSessions.getById({ sessionId }).pipe(
+      Effect.map((row) => {
+        if (Option.isNone(row) || row.value.revokedAt !== null) {
+          return Option.none();
+        }
+        return Option.some(row.value.role);
+      }),
+      Effect.mapError(toSessionCredentialError("Failed to read session role.")),
+    );
+
   return {
     cookieName: SESSION_COOKIE_NAME,
     issue,
@@ -485,6 +496,7 @@ export const makeSessionCredentialService = Effect.gen(function* () {
     revokeAllExcept,
     markConnected,
     markDisconnected,
+    getRoleForSession,
   } satisfies SessionCredentialServiceShape;
 });
 

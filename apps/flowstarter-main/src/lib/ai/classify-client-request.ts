@@ -1,5 +1,5 @@
 import 'server-only';
-import { models } from '@/lib/ai/openrouter-client';
+import { models } from './client';
 import { generateText } from 'ai';
 
 /**

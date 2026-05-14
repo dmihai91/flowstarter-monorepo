@@ -123,7 +123,9 @@ describe('Loading Architecture (DRY)', () => {
       const usesUnified =
         content.includes('PageLoader') ||
         content.includes('AppLoader') ||
-        content.includes('LoadingScreen');
+        content.includes('LoadingScreen') ||
+        content.includes('AdminShellLoadingChrome') ||
+        content.includes('AdminDashboardLoadingChrome');
       expect(usesUnified).toBe(true);
     }
   });

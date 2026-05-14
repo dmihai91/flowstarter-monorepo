@@ -42,6 +42,16 @@ export type TeamDashboardRecentProject = {
   created_at: string;
 };
 
+export type StageBreakdown = {
+  intake: number;
+  brief: number;
+  build: number;
+  internal_review: number;
+  client_review: number;
+  launched: number;
+  care: number;
+};
+
 export type TeamDashboardStatsPayload = {
   totalProjects: number;
   draftCount: number;
@@ -51,6 +61,18 @@ export type TeamDashboardStatsPayload = {
   monthlyRevenue: number;
   paidCount: number;
   outstandingCount: number;
+  /** Sum of editor_sessions.tokens_in + tokens_out since the 1st of this UTC month. */
+  aiTokensThisMonth: number;
+  /** Number of projects created in the last 7 days. */
+  newThisWeek: number;
+  /** Forecasted ARR: total setup fees collected + active monthly recurring × 12. */
+  pipelineValue: number;
+  /** Count per concierge_stage — feeds the pipeline visualization. */
+  stageBreakdown: StageBreakdown;
+  /** Distinct `editor_sessions` rows since the first of this UTC month (same window as aiTokensThisMonth). */
+  aiSessionsThisMonth: number;
+  /** Leads captured since the 1st of this UTC month. */
+  leadsThisMonth: number;
   recentProject: TeamDashboardRecentProject | null;
 };
 
@@ -74,14 +96,29 @@ export function computeTeamDashboardStats(
   let monthlyRevenue = 0;
   let paidCount = 0;
   let outstandingCount = 0;
+  let newThisWeek = 0;
   let recentProject: TeamDashboardRecentProject | null = null;
   let recentTs = -1;
+  const stageBreakdown: StageBreakdown = {
+    intake: 0,
+    brief: 0,
+    build: 0,
+    internal_review: 0,
+    client_review: 0,
+    launched: 0,
+    care: 0,
+  };
+
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
   for (const p of rows) {
     const st = deriveProjectStatus(p);
     if (isLive(st)) liveCount += 1;
     else if (isBuilding(st)) inProgressCount += 1;
     else draftCount += 1;
+
+    const stage = (p.concierge_stage as keyof StageBreakdown) ?? 'intake';
+    if (stage in stageBreakdown) stageBreakdown[stage] += 1;
 
     totalSetupFees += p.setup_fee || 0;
     const setupPaid = p.deposit_status === 'paid' && p.final_status === 'paid';
@@ -95,6 +132,10 @@ export function computeTeamDashboardStats(
       monthlyRevenue += p.monthly_fee || 0;
     }
     if (p.outstanding_payment) outstandingCount += 1;
+
+    if (new Date(p.created_at).getTime() >= weekAgo) {
+      newThisWeek += 1;
+    }
 
     const ts = activityTimestamp(p);
     if (ts >= recentTs) {
@@ -118,6 +159,12 @@ export function computeTeamDashboardStats(
     monthlyRevenue,
     paidCount,
     outstandingCount,
+    aiTokensThisMonth: 0,
+    newThisWeek,
+    pipelineValue: totalSetupFees + monthlyRevenue * 12,
+    stageBreakdown,
+    aiSessionsThisMonth: 0,
+    leadsThisMonth: 0,
     recentProject,
   };
 }

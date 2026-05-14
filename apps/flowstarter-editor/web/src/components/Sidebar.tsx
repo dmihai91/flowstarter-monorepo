@@ -5,11 +5,10 @@ import {
   CloudIcon,
   FolderIcon,
   GitPullRequestIcon,
+  MoreHorizontalIcon,
   PlusIcon,
-  SettingsIcon,
   SquarePenIcon,
   TerminalIcon,
-  TriangleAlertIcon,
 } from "lucide-react";
 import { ProjectFavicon } from "./ProjectFavicon";
 import { autoAnimate } from "@formkit/auto-animate";
@@ -32,7 +31,6 @@ import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from "@dnd-
 import { CSS } from "@dnd-kit/utilities";
 import {
   DEFAULT_MODEL_BY_PROVIDER,
-  type DesktopUpdateState,
   type EnvironmentId,
   ProjectId,
   type ScopedProjectRef,
@@ -53,10 +51,9 @@ import {
   type SidebarThreadSortOrder,
 } from "@flowstarter/editor-contracts/settings";
 import { usePrimaryEnvironmentId } from "../environments/primary";
-import { isElectron } from "../env";
-import { APP_STAGE_LABEL, APP_VERSION } from "../branding";
+import { APP_VERSION } from "../branding";
 import { isTerminalFocused } from "../lib/terminalFocus";
-import { isLinuxPlatform, isMacPlatform, newCommandId, newProjectId } from "../lib/utils";
+import { isMacPlatform, newCommandId, newProjectId } from "../lib/utils";
 import {
   selectProjectByRef,
   selectProjectsAcrossEnvironments,
@@ -88,20 +85,29 @@ import {
   resolveThreadRouteTarget,
 } from "../threadRoutes";
 import { toastManager } from "./ui/toast";
+import {
+  Dialog,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogPanel,
+  DialogPopup,
+  DialogTitle,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { formatRelativeTimeLabel } from "../timestampFormat";
 import { SettingsSidebarNav } from "./settings/SettingsSidebarNav";
-import {
-  getArm64IntelBuildWarningDescription,
-  getDesktopUpdateActionError,
-  getDesktopUpdateInstallConfirmationMessage,
-  isDesktopUpdateButtonDisabled,
-  resolveDesktopUpdateButtonAction,
-  shouldShowArm64IntelBuildWarning,
-  shouldToastDesktopUpdateActionResult,
-} from "./desktopUpdate.logic";
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "./ui/alert";
 import { Button } from "./ui/button";
-import { Menu, MenuGroup, MenuPopup, MenuRadioGroup, MenuRadioItem, MenuTrigger } from "./ui/menu";
+import {
+  Menu,
+  MenuGroup,
+  MenuItem,
+  MenuPopup,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuTrigger,
+} from "./ui/menu";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
 import {
   SidebarContent,
@@ -114,7 +120,6 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarSeparator,
   SidebarTrigger,
 } from "./ui/sidebar";
 import { useThreadSelectionStore } from "../threadSelectionStore";
@@ -134,8 +139,8 @@ import {
   useThreadJumpHintVisibility,
   ThreadStatusPill,
 } from "./Sidebar.logic";
-import { SidebarUpdatePill } from "./sidebar/SidebarUpdatePill";
 import { UsageChip } from "./UsageChip";
+import { PowerUserOnly } from "./auth/TierGate";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { readEnvironmentApi } from "../environmentApi";
 import { useSettings, useUpdateSettings } from "~/hooks/useSettings";
@@ -146,6 +151,11 @@ import {
   useSavedEnvironmentRuntimeStore,
 } from "../environments/runtime";
 import type { Project, SidebarThreadSummary } from "../types";
+import {
+  PROJECT_DISPLAY_NAME_MAX_LENGTH,
+  projectDisplayNameValidationError,
+} from "~/lib/projectDisplayName";
+
 const THREAD_PREVIEW_LIMIT = 6;
 const SIDEBAR_SORT_LABELS: Record<SidebarProjectSortOrder, string> = {
   updated_at: "Last user message",
@@ -1117,10 +1127,20 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
   );
   const [renamingThreadKey, setRenamingThreadKey] = useState<string | null>(null);
   const [renamingTitle, setRenamingTitle] = useState("");
+  const [projectRenameOpen, setProjectRenameOpen] = useState(false);
+  const [projectRenameDraft, setProjectRenameDraft] = useState("");
+  const [projectRenameError, setProjectRenameError] = useState<string | null>(null);
+  const [projectRenameSaving, setProjectRenameSaving] = useState(false);
   const [confirmingArchiveThreadKey, setConfirmingArchiveThreadKey] = useState<string | null>(null);
   const renamingCommittedRef = useRef(false);
   const renamingInputRef = useRef<HTMLInputElement | null>(null);
   const confirmArchiveButtonRefs = useRef(new Map<string, HTMLButtonElement>());
+
+  const beginProjectRename = useCallback(() => {
+    setProjectRenameDraft(project.name);
+    setProjectRenameError(null);
+    setProjectRenameOpen(true);
+  }, [project.name]);
 
   const { projectStatus, visibleProjectThreads, orderedProjectThreadKeys } = useMemo(() => {
     const lastVisitedAtByThreadKey = new Map(
@@ -1249,12 +1269,26 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
         event.stopPropagation();
         return;
       }
+      if (event.detail > 1) {
+        event.preventDefault();
+        event.stopPropagation();
+        const titleNode = event.currentTarget.querySelector("[data-sidebar-project-title]");
+        if (
+          event.detail === 2 &&
+          titleNode instanceof Element &&
+          titleNode.contains(event.target as Node)
+        ) {
+          beginProjectRename();
+        }
+        return;
+      }
       if (selectedThreadCount > 0) {
         clearSelection();
       }
       toggleProject(project.projectKey);
     },
     [
+      beginProjectRename,
       clearSelection,
       dragInProgressRef,
       project.projectKey,
@@ -1306,6 +1340,7 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
         const clicked = await api.contextMenu.show(
           [
             { id: "copy-path", label: "Copy Project Path" },
+            { id: "rename-project", label: "Rename project…" },
             { id: "delete", label: "Remove project", destructive: true },
           ],
           {
@@ -1315,6 +1350,10 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
         );
         if (clicked === "copy-path") {
           copyPathToClipboard(project.cwd, { path: project.cwd });
+          return;
+        }
+        if (clicked === "rename-project") {
+          beginProjectRename();
           return;
         }
         if (clicked !== "delete") return;
@@ -1361,6 +1400,7 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
       })();
     },
     [
+      beginProjectRename,
       clearComposerDraftForThread,
       clearProjectDraftThreadId,
       copyPathToClipboard,
@@ -1601,6 +1641,60 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
     [],
   );
 
+  const commitProjectRename = useCallback(async () => {
+    const validationError = projectDisplayNameValidationError(projectRenameDraft);
+    if (validationError) {
+      setProjectRenameError(validationError);
+      return;
+    }
+    const trimmed = projectRenameDraft.trim();
+    if (trimmed === project.name) {
+      setProjectRenameOpen(false);
+      setProjectRenameError(null);
+      return;
+    }
+    const api = readEnvironmentApi(project.environmentId);
+    if (!api) {
+      toastManager.add({
+        type: "error",
+        title: "Rename failed",
+        description: "Connection unavailable.",
+      });
+      return;
+    }
+    setProjectRenameSaving(true);
+    setProjectRenameError(null);
+    try {
+      await api.orchestration.dispatchCommand({
+        type: "project.meta.update",
+        commandId: newCommandId(),
+        projectId: project.id,
+        title: trimmed,
+      });
+      setProjectRenameOpen(false);
+    } catch (error) {
+      toastManager.add({
+        type: "error",
+        title: "Failed to rename project",
+        description: error instanceof Error ? error.message : "An error occurred.",
+      });
+    } finally {
+      setProjectRenameSaving(false);
+    }
+  }, [project.environmentId, project.id, project.name, projectRenameDraft]);
+
+  useEffect(() => {
+    if (!projectRenameOpen) return;
+    const inputId = `project-rename-${project.id}`;
+    const frame = window.requestAnimationFrame(() => {
+      const node = document.getElementById(inputId);
+      if (!(node instanceof HTMLInputElement)) return;
+      node.focus();
+      node.select();
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [projectRenameOpen, project.id]);
+
   const handleThreadContextMenu = useCallback(
     async (threadRef: ScopedThreadRef, position: { x: number; y: number }) => {
       const api = readLocalApi();
@@ -1679,6 +1773,74 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
 
   return (
     <>
+      <Dialog
+        open={projectRenameOpen}
+        onOpenChange={(open) => {
+          setProjectRenameOpen(open);
+          if (!open) {
+            setProjectRenameError(null);
+            setProjectRenameSaving(false);
+          }
+        }}
+      >
+        <DialogPopup className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename project</DialogTitle>
+            <DialogDescription>
+              This label appears in the sidebar and chat header. The folder on disk and project id
+              stay the same.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogPanel className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor={`project-rename-${project.id}`}>Display name</Label>
+              <Input
+                id={`project-rename-${project.id}`}
+                value={projectRenameDraft}
+                maxLength={PROJECT_DISPLAY_NAME_MAX_LENGTH}
+                disabled={projectRenameSaving}
+                onChange={(e) => {
+                  setProjectRenameDraft(e.target.value);
+                  if (projectRenameError) {
+                    setProjectRenameError(null);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    void commitProjectRename();
+                  }
+                }}
+              />
+              {projectRenameError ? (
+                <p className="text-destructive text-xs" role="alert">
+                  {projectRenameError}
+                </p>
+              ) : null}
+            </div>
+          </DialogPanel>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={projectRenameSaving}
+              onClick={() => setProjectRenameOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={projectRenameSaving}
+              onClick={() => {
+                void commitProjectRename();
+              }}
+            >
+              {projectRenameSaving ? "Saving…" : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogPopup>
+      </Dialog>
+
       <div className="group/project-header relative">
         <SidebarMenuButton
           ref={isManualProjectSorting ? dragHandleProps?.setActivatorNodeRef : undefined}
@@ -1716,7 +1878,10 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
             />
           )}
           <ProjectFavicon environmentId={project.environmentId} cwd={project.cwd} />
-          <span className="flex-1 truncate text-xs font-medium text-foreground/90">
+          <span
+            data-sidebar-project-title
+            className="flex-1 truncate text-xs font-medium text-foreground/90"
+          >
             {project.name}
           </span>
         </SidebarMenuButton>
@@ -1744,10 +1909,10 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
             </TooltipPopup>
           </Tooltip>
         )}
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <div className="pointer-events-none absolute top-1 right-1.5 opacity-0 transition-opacity duration-150 group-hover/project-header:pointer-events-auto group-hover/project-header:opacity-100 group-focus-within/project-header:pointer-events-auto group-focus-within/project-header:opacity-100">
+        <div className="pointer-events-none absolute top-1 right-1.5 flex flex-row-reverse items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover/project-header:pointer-events-auto group-hover/project-header:opacity-100 group-focus-within/project-header:pointer-events-auto group-focus-within/project-header:opacity-100">
+          <Tooltip>
+            <TooltipTrigger
+              render={
                 <button
                   type="button"
                   aria-label={`Create new thread in ${project.name}`}
@@ -1757,13 +1922,44 @@ const SidebarProjectItem = memo(function SidebarProjectItem(props: SidebarProjec
                 >
                   <SquarePenIcon className="size-3.5" />
                 </button>
-              </div>
-            }
-          />
-          <TooltipPopup side="top">
-            {newThreadShortcutLabel ? `New thread (${newThreadShortcutLabel})` : "New thread"}
-          </TooltipPopup>
-        </Tooltip>
+              }
+            />
+            <TooltipPopup side="top">
+              {newThreadShortcutLabel ? `New thread (${newThreadShortcutLabel})` : "New thread"}
+            </TooltipPopup>
+          </Tooltip>
+          <Menu>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <MenuTrigger
+                    type="button"
+                    aria-label={`Project actions for ${project.name}`}
+                    className="inline-flex size-5 cursor-pointer items-center justify-center rounded-md text-muted-foreground/70 hover:bg-secondary hover:text-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                    }}
+                  >
+                    <MoreHorizontalIcon className="size-3.5" />
+                  </MenuTrigger>
+                }
+              />
+              <TooltipPopup side="top">Project actions</TooltipPopup>
+            </Tooltip>
+            <MenuPopup align="end" side="bottom" className="min-w-44">
+              <MenuGroup>
+                <MenuItem
+                  className="sm:text-xs"
+                  onClick={() => {
+                    beginProjectRename();
+                  }}
+                >
+                  Rename project…
+                </MenuItem>
+              </MenuGroup>
+            </MenuPopup>
+          </Menu>
+        </div>
       </div>
 
       <SidebarProjectThreadList
@@ -1813,19 +2009,45 @@ const SidebarProjectListRow = memo(function SidebarProjectListRow(props: Sidebar
   );
 });
 
-function T3Wordmark() {
+function FlowstarterWordmark() {
   return (
-    <svg
-      aria-label="T3"
-      className="h-2.5 w-auto shrink-0 text-foreground"
-      viewBox="15.5309 37 94.3941 56.96"
-      xmlns="http://www.w3.org/2000/svg"
+    <span
+      aria-label="Flowstarter"
+      className="flex shrink-0 items-center gap-2.5"
+      style={{ color: "var(--fs-ink)" }}
     >
-      <path
-        d="M33.4509 93V47.56H15.5309V37H64.3309V47.56H46.4109V93H33.4509ZM86.7253 93.96C82.832 93.96 78.9653 93.4533 75.1253 92.44C71.2853 91.3733 68.032 89.88 65.3653 87.96L70.4053 78.04C72.5386 79.5867 75.0186 80.8133 77.8453 81.72C80.672 82.6267 83.5253 83.08 86.4053 83.08C89.6586 83.08 92.2186 82.44 94.0853 81.16C95.952 79.88 96.8853 78.12 96.8853 75.88C96.8853 73.7467 96.0586 72.0667 94.4053 70.84C92.752 69.6133 90.0853 69 86.4053 69H80.4853V60.44L96.0853 42.76L97.5253 47.4H68.1653V37H107.365V45.4L91.8453 63.08L85.2853 59.32H89.0453C95.9253 59.32 101.125 60.8667 104.645 63.96C108.165 67.0533 109.925 71.0267 109.925 75.88C109.925 79.0267 109.099 81.9867 107.445 84.76C105.792 87.48 103.259 89.6933 99.8453 91.4C96.432 93.1067 92.0586 93.96 86.7253 93.96Z"
-        fill="currentColor"
-      />
-    </svg>
+      <span
+        aria-hidden
+        className="flex size-7 items-center justify-center"
+        style={{
+          borderRadius: 8,
+          background:
+            "linear-gradient(135deg, hsl(233, 65%, 50%) 0%, hsl(233, 75%, 60%) 50%, hsl(180, 65%, 55%) 100%)",
+          boxShadow:
+            "0 1px 0 rgba(255,255,255,0.32) inset, 0 3px 8px rgba(78,94,218,0.24)",
+        }}
+      >
+        <svg
+          aria-hidden="true"
+          width="17"
+          height="17"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M13 10 L13 30" stroke="white" strokeWidth="3" strokeLinecap="round" />
+          <path d="M13 11 C17 10, 22 10, 27 11" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+          <path d="M13 20 C16 19, 20 19, 24 20" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+          <path d="M13 30 C16 30, 20 29, 25 28" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        </svg>
+      </span>
+      <span
+        className="flex items-baseline leading-none"
+        style={{ letterSpacing: "-0.02em" }}
+      >
+        <span className="text-[15px] font-semibold">Flowstarter</span>
+      </span>
+    </span>
   );
 }
 
@@ -1938,11 +2160,7 @@ function SortableProjectItem({
   );
 }
 
-const SidebarChromeHeader = memo(function SidebarChromeHeader({
-  isElectron,
-}: {
-  isElectron: boolean;
-}) {
+const SidebarChromeHeader = memo(function SidebarChromeHeader() {
   const wordmark = (
     <div className="flex items-center gap-2">
       <SidebarTrigger className="shrink-0 md:hidden" />
@@ -1954,13 +2172,7 @@ const SidebarChromeHeader = memo(function SidebarChromeHeader({
               className="ml-1 flex min-w-0 flex-1 cursor-pointer items-center gap-1 rounded-md outline-hidden ring-ring transition-colors hover:text-foreground focus-visible:ring-2"
               to="/"
             >
-              <T3Wordmark />
-              <span className="truncate text-sm font-medium tracking-tight text-muted-foreground">
-                Code
-              </span>
-              <span className="rounded-full bg-muted/50 px-1.5 py-0.5 text-[8px] font-medium uppercase tracking-[0.18em] text-muted-foreground/60">
-                {APP_STAGE_LABEL}
-              </span>
+              <FlowstarterWordmark />
             </Link>
           }
         />
@@ -1971,55 +2183,27 @@ const SidebarChromeHeader = memo(function SidebarChromeHeader({
     </div>
   );
 
-  return isElectron ? (
-    <SidebarHeader className="drag-region h-[52px] flex-row items-center gap-2 px-4 py-0 pl-[90px]">
-      {wordmark}
-    </SidebarHeader>
-  ) : (
+  return (
     <SidebarHeader className="gap-3 px-3 py-2 sm:gap-2.5 sm:px-4 sm:py-3">{wordmark}</SidebarHeader>
   );
 });
 
 const SidebarChromeFooter = memo(function SidebarChromeFooter() {
-  const navigate = useNavigate();
-  const handleSettingsClick = useCallback(() => {
-    void navigate({ to: "/settings" });
-  }, [navigate]);
-
   return (
-    <SidebarFooter className="p-2">
-      <div className="px-1 pb-1">
+    <SidebarFooter className="px-3 py-2">
+      <div className="flex min-h-0 justify-center">
         <UsageChip />
       </div>
-      <SidebarUpdatePill />
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            size="sm"
-            className="gap-2 px-2 py-1.5 text-muted-foreground/70 hover:bg-accent hover:text-foreground"
-            onClick={handleSettingsClick}
-          >
-            <SettingsIcon className="size-3.5" />
-            <span className="text-xs">Settings</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
     </SidebarFooter>
   );
 });
 
 interface SidebarProjectsContentProps {
-  showArm64IntelBuildWarning: boolean;
-  arm64IntelBuildWarningDescription: string | null;
-  desktopUpdateButtonAction: "download" | "install" | "none";
-  desktopUpdateButtonDisabled: boolean;
-  handleDesktopUpdateButtonClick: () => void;
   projectSortOrder: SidebarProjectSortOrder;
   threadSortOrder: SidebarThreadSortOrder;
   updateSettings: ReturnType<typeof useUpdateSettings>["updateSettings"];
   shouldShowProjectPathEntry: boolean;
   handleStartAddProject: () => void;
-  isElectron: boolean;
   isPickingFolder: boolean;
   isAddingProject: boolean;
   handlePickFolder: () => Promise<void>;
@@ -2060,17 +2244,11 @@ const SidebarProjectsContent = memo(function SidebarProjectsContent(
   props: SidebarProjectsContentProps,
 ) {
   const {
-    showArm64IntelBuildWarning,
-    arm64IntelBuildWarningDescription,
-    desktopUpdateButtonAction,
-    desktopUpdateButtonDisabled,
-    handleDesktopUpdateButtonClick,
     projectSortOrder,
     threadSortOrder,
     updateSettings,
     shouldShowProjectPathEntry,
     handleStartAddProject,
-    isElectron,
     isPickingFolder,
     isAddingProject,
     handlePickFolder,
@@ -2142,29 +2320,6 @@ const SidebarProjectsContent = memo(function SidebarProjectsContent(
 
   return (
     <SidebarContent className="gap-0">
-      {showArm64IntelBuildWarning && arm64IntelBuildWarningDescription ? (
-        <SidebarGroup className="px-2 pt-2 pb-0">
-          <Alert variant="warning" className="rounded-2xl border-warning/40 bg-warning/8">
-            <TriangleAlertIcon />
-            <AlertTitle>Intel build on Apple Silicon</AlertTitle>
-            <AlertDescription>{arm64IntelBuildWarningDescription}</AlertDescription>
-            {desktopUpdateButtonAction !== "none" ? (
-              <AlertAction>
-                <Button
-                  size="xs"
-                  variant="outline"
-                  disabled={desktopUpdateButtonDisabled}
-                  onClick={handleDesktopUpdateButtonClick}
-                >
-                  {desktopUpdateButtonAction === "download"
-                    ? "Download ARM build"
-                    : "Install ARM build"}
-                </Button>
-              </AlertAction>
-            ) : null}
-          </Alert>
-        </SidebarGroup>
-      ) : null}
       <SidebarGroup className="px-2 py-2">
         <div className="mb-1 flex items-center justify-between pl-2 pr-1.5">
           <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
@@ -2177,43 +2332,14 @@ const SidebarProjectsContent = memo(function SidebarProjectsContent(
               onProjectSortOrderChange={handleProjectSortOrderChange}
               onThreadSortOrderChange={handleThreadSortOrderChange}
             />
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <button
-                    type="button"
-                    aria-label={shouldShowProjectPathEntry ? "Cancel add project" : "Add project"}
-                    aria-pressed={shouldShowProjectPathEntry}
-                    className="inline-flex size-5 cursor-pointer items-center justify-center rounded-md text-muted-foreground/60 transition-colors hover:bg-accent hover:text-foreground"
-                    onClick={handleStartAddProject}
-                  />
-                }
-              >
-                <PlusIcon
-                  className={`size-3.5 transition-transform duration-150 ${
-                    shouldShowProjectPathEntry ? "rotate-45" : "rotate-0"
-                  }`}
-                />
-              </TooltipTrigger>
-              <TooltipPopup side="right">
-                {shouldShowProjectPathEntry ? "Cancel add project" : "Add project"}
-              </TooltipPopup>
-            </Tooltip>
+            {/* "Add project" hidden — Flowstarter ships the editor as a
+                single-project surface bound to the workspace's site repo.
+                Clients shouldn't be picking arbitrary folders. Restore by
+                rendering <Tooltip>...handleStartAddProject...</Tooltip>. */}
           </div>
         </div>
         {shouldShowProjectPathEntry && (
           <div className="mb-2 px-1">
-            {isElectron && (
-              <button
-                type="button"
-                className="mb-1.5 flex w-full items-center justify-center gap-2 rounded-md border border-border bg-secondary py-1.5 text-xs text-foreground/80 transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
-                onClick={handleBrowseForFolderClick}
-                disabled={isPickingFolder || isAddingProject}
-              >
-                <FolderIcon className="size-3.5" />
-                {isPickingFolder ? "Picking folder..." : "Browse for folder"}
-              </button>
-            )}
             <div className="flex gap-1.5">
               <input
                 ref={addProjectInputRef}
@@ -2363,14 +2489,11 @@ export default function Sidebar() {
   const dragInProgressRef = useRef(false);
   const suppressProjectClickAfterDragRef = useRef(false);
   const suppressProjectClickForContextMenuRef = useRef(false);
-  const [desktopUpdateState, setDesktopUpdateState] = useState<DesktopUpdateState | null>(null);
   const selectedThreadCount = useThreadSelectionStore((s) => s.selectedThreadKeys.size);
   const clearSelection = useThreadSelectionStore((s) => s.clearSelection);
   const setSelectionAnchor = useThreadSelectionStore((s) => s.setAnchor);
-  const isLinuxDesktop = isElectron && isLinuxPlatform(navigator.platform);
   const platform = navigator.platform;
-  const shouldBrowseForProjectImmediately = isElectron && !isLinuxDesktop;
-  const shouldShowProjectPathEntry = addingProject && !shouldBrowseForProjectImmediately;
+  const shouldShowProjectPathEntry = addingProject;
   const primaryEnvironmentId = usePrimaryEnvironmentId();
   const savedEnvironmentRegistry = useSavedEnvironmentRegistryStore((s) => s.byId);
   const savedEnvironmentRuntimeById = useSavedEnvironmentRuntimeStore((s) => s.byId);
@@ -2603,15 +2726,7 @@ export default function Sidebar() {
         const description =
           error instanceof Error ? error.message : "An error occurred while adding the project.";
         setIsAddingProject(false);
-        if (shouldBrowseForProjectImmediately) {
-          toastManager.add({
-            type: "error",
-            title: "Failed to add project",
-            description,
-          });
-        } else {
-          setAddProjectError(description);
-        }
+        setAddProjectError(description);
         return;
       }
       finishAddingProject();
@@ -2622,7 +2737,6 @@ export default function Sidebar() {
       handleNewThread,
       isAddingProject,
       projects,
-      shouldBrowseForProjectImmediately,
       defaultThreadEnvMode,
     ],
   );
@@ -2645,7 +2759,7 @@ export default function Sidebar() {
     }
     if (pickedPath) {
       await addProjectFromPath(pickedPath);
-    } else if (!shouldBrowseForProjectImmediately) {
+    } else {
       addProjectInputRef.current?.focus();
     }
     setIsPickingFolder(false);
@@ -2653,10 +2767,6 @@ export default function Sidebar() {
 
   const handleStartAddProject = () => {
     setAddProjectError(null);
-    if (shouldBrowseForProjectImmediately) {
-      void handlePickFolder();
-      return;
-    }
     setAddingProject((prev) => !prev);
   };
 
@@ -3001,111 +3111,6 @@ export default function Sidebar() {
     };
   }, [clearSelection, selectedThreadCount]);
 
-  useEffect(() => {
-    if (!isElectron) return;
-    const bridge = window.desktopBridge;
-    if (
-      !bridge ||
-      typeof bridge.getUpdateState !== "function" ||
-      typeof bridge.onUpdateState !== "function"
-    ) {
-      return;
-    }
-
-    let disposed = false;
-    let receivedSubscriptionUpdate = false;
-    const unsubscribe = bridge.onUpdateState((nextState) => {
-      if (disposed) return;
-      receivedSubscriptionUpdate = true;
-      setDesktopUpdateState(nextState);
-    });
-
-    void bridge
-      .getUpdateState()
-      .then((nextState) => {
-        if (disposed || receivedSubscriptionUpdate) return;
-        setDesktopUpdateState(nextState);
-      })
-      .catch(() => undefined);
-
-    return () => {
-      disposed = true;
-      unsubscribe();
-    };
-  }, []);
-
-  const desktopUpdateButtonDisabled = isDesktopUpdateButtonDisabled(desktopUpdateState);
-  const desktopUpdateButtonAction = desktopUpdateState
-    ? resolveDesktopUpdateButtonAction(desktopUpdateState)
-    : "none";
-  const showArm64IntelBuildWarning =
-    isElectron && shouldShowArm64IntelBuildWarning(desktopUpdateState);
-  const arm64IntelBuildWarningDescription =
-    desktopUpdateState && showArm64IntelBuildWarning
-      ? getArm64IntelBuildWarningDescription(desktopUpdateState)
-      : null;
-  const handleDesktopUpdateButtonClick = useCallback(() => {
-    const bridge = window.desktopBridge;
-    if (!bridge || !desktopUpdateState) return;
-    if (desktopUpdateButtonDisabled || desktopUpdateButtonAction === "none") return;
-
-    if (desktopUpdateButtonAction === "download") {
-      void bridge
-        .downloadUpdate()
-        .then((result) => {
-          if (result.completed) {
-            toastManager.add({
-              type: "success",
-              title: "Update downloaded",
-              description: "Restart the app from the update button to install it.",
-            });
-          }
-          if (!shouldToastDesktopUpdateActionResult(result)) return;
-          const actionError = getDesktopUpdateActionError(result);
-          if (!actionError) return;
-          toastManager.add({
-            type: "error",
-            title: "Could not download update",
-            description: actionError,
-          });
-        })
-        .catch((error) => {
-          toastManager.add({
-            type: "error",
-            title: "Could not start update download",
-            description: error instanceof Error ? error.message : "An unexpected error occurred.",
-          });
-        });
-      return;
-    }
-
-    if (desktopUpdateButtonAction === "install") {
-      const confirmed = window.confirm(
-        getDesktopUpdateInstallConfirmationMessage(desktopUpdateState),
-      );
-      if (!confirmed) return;
-      void bridge
-        .installUpdate()
-        .then((result) => {
-          if (!shouldToastDesktopUpdateActionResult(result)) return;
-          const actionError = getDesktopUpdateActionError(result);
-          if (!actionError) return;
-          toastManager.add({
-            type: "error",
-            title: "Could not install update",
-            description: actionError,
-          });
-        })
-        .catch((error) => {
-          toastManager.add({
-            type: "error",
-            title: "Could not install update",
-            description: error instanceof Error ? error.message : "An unexpected error occurred.",
-          });
-        });
-    }
-  }, [desktopUpdateButtonAction, desktopUpdateButtonDisabled, desktopUpdateState]);
-
   const expandThreadListForProject = useCallback((projectKey: string) => {
     setExpandedThreadListsByProject((current) => {
       if (current.has(projectKey)) return current;
@@ -3126,24 +3131,18 @@ export default function Sidebar() {
 
   return (
     <>
-      <SidebarChromeHeader isElectron={isElectron} />
+      <SidebarChromeHeader />
 
       {isOnSettings ? (
         <SettingsSidebarNav pathname={pathname} />
       ) : (
         <>
           <SidebarProjectsContent
-            showArm64IntelBuildWarning={showArm64IntelBuildWarning}
-            arm64IntelBuildWarningDescription={arm64IntelBuildWarningDescription}
-            desktopUpdateButtonAction={desktopUpdateButtonAction}
-            desktopUpdateButtonDisabled={desktopUpdateButtonDisabled}
-            handleDesktopUpdateButtonClick={handleDesktopUpdateButtonClick}
             projectSortOrder={sidebarProjectSortOrder}
             threadSortOrder={sidebarThreadSortOrder}
             updateSettings={updateSettings}
             shouldShowProjectPathEntry={shouldShowProjectPathEntry}
             handleStartAddProject={handleStartAddProject}
-            isElectron={isElectron}
             isPickingFolder={isPickingFolder}
             isAddingProject={isAddingProject}
             handlePickFolder={handlePickFolder}
@@ -3180,7 +3179,6 @@ export default function Sidebar() {
             projectsLength={projects.length}
           />
 
-          <SidebarSeparator />
           <SidebarChromeFooter />
         </>
       )}

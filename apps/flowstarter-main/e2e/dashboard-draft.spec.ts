@@ -1,121 +1,64 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { signInToAdminDashboardIfNeeded } from './helpers/adminSignIn';
 
-const TEAM_EMAIL = process.env.E2E_USER_EMAIL || 'test@flowstarter.app';
-const TEAM_PASSWORD = process.env.E2E_USER_PASSWORD || '';
-
-async function signInIfNeeded(page: Page) {
-  const dashboardHeading = page.getByText('New client project');
-  const loginHeading = page.getByRole('heading', { name: 'Team Login' });
-
-  await Promise.race([
-    dashboardHeading
-      .waitFor({ state: 'visible', timeout: 15000 })
-      .catch(() => null),
-    loginHeading
-      .waitFor({ state: 'visible', timeout: 15000 })
-      .catch(() => null),
-  ]);
-
-  if (await dashboardHeading.isVisible().catch(() => false)) {
-    return;
-  }
-
-  const needsLogin = await loginHeading.isVisible().catch(() => false);
-
-  if (!needsLogin) {
-    await page.waitForURL(/\/team\/dashboard\/new/, { timeout: 15000 });
-    return;
-  }
-
-  if (!TEAM_PASSWORD) {
-    throw new Error(
-      'E2E_USER_PASSWORD is required to sign in the automation account'
-    );
-  }
-
-  const emailInput = page.getByPlaceholder('you@flowstarter.app');
-  const passwordInput = page.getByPlaceholder('Enter your password');
-  const signInButton = page.getByRole('button', { name: 'Sign in' });
-
-  await emailInput.fill(TEAM_EMAIL);
-  await passwordInput.fill(TEAM_PASSWORD);
-  await expect(signInButton).toBeEnabled({ timeout: 10000 });
-  await signInButton.click();
-  await Promise.race([
-    page
-      .waitForURL(/\/team\/dashboard\/new/, { timeout: 30000 })
-      .catch(() => null),
-    page
-      .waitForURL(/\/team\/dashboard(?:\?.*)?$/, { timeout: 30000 })
-      .catch(() => null),
-  ]);
-
-  if (!/\/team\/dashboard\/new(?:\?.*)?$/.test(page.url())) {
-    await page.goto('/team/dashboard/new');
-    await page.waitForURL(/\/team\/dashboard\/new/, { timeout: 15000 });
-  }
-}
-
-test.describe('Dashboard draft flow', () => {
-  test('supports the new dashboard project flow without wizard routes', async ({
+test.describe('Admin new-project wizard', () => {
+  test('walks the discovery → client → brief → setup flow (no /wizard routes)', async ({
     page,
   }) => {
-    await page.goto('/team/dashboard/new');
-    await signInIfNeeded(page);
+    await signInToAdminDashboardIfNeeded(page);
+    await page.goto('/admin/dashboard/new');
 
-    await expect(page.getByText('New client project')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'New project' })
+    ).toBeVisible();
 
-    await page.getByLabel(/name/i).fill('My Test Project');
-    await page.getByLabel(/email/i).fill('operator@example.com');
-    await page.getByLabel(/phone/i).fill('+40 722 000 111');
-    await page.locator('select').selectOption({ label: 'Technology & SaaS' });
+    await expect(
+      page.getByRole('heading', { name: 'Discovery notes' })
+    ).toBeVisible();
 
-    await page.getByRole('button', { name: 'Fill in manually' }).click();
+    await expect(page.getByRole('button', { name: 'Continue' })).toBeDisabled();
+
+    await page.getByRole('textbox').fill(
+      'E2E discovery: local bakery wants online orders, friendly tone, budget mid-range, prefers minimal admin, and simple checkout with email receipts for regulars.'
+    );
+
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(
+      page.getByRole('heading', { name: 'Client details' })
+    ).toBeVisible();
+
+    await page.getByLabel(/full name/i).fill('E2E Test Client');
+    await page.getByLabel(/^email \*$/i).fill('client-e2e@example.com');
+    await page.getByRole('button', { name: 'Continue' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: 'Business brief' })
+    ).toBeVisible();
     await page
-      .getByRole('button', { name: 'Continue to brief editor' })
-      .click();
-
-    await expect(page.getByRole('heading', { name: 'Business' })).toBeVisible();
-    await page.getByPlaceholder('e.g. Milano Bistro').fill('My Test Project');
-    await page
-      .getByPlaceholder('What does this business do and who does it serve?')
+      .getByLabel(/business description/i)
       .fill(
-        'A SaaS landing page for small teams that need lightweight workflow automation.'
+        'A concierge web presence for a local service business; needs clear CTAs and booking.'
       );
-    await page
-      .getByPlaceholder('e.g. Young professionals in urban areas')
-      .fill('Operations managers at small software companies');
+    await page.getByRole('button', { name: 'Continue' }).click();
 
-    await page.getByRole('button', { name: /^Next$/ }).click();
-    await expect(page.getByRole('heading', { name: 'Offer' })).toBeVisible();
-    await page
-      .getByPlaceholder('What makes this business stand out?')
-      .fill('Automate repetitive operations work in minutes');
-    await page.getByRole('button', { name: /Generate leads/i }).click();
-    await page.getByRole('button', { name: 'Professional' }).click();
-    await page
-      .getByPlaceholder('e.g. Book more consultations')
-      .fill('Book more demos');
-    await page
-      .getByPlaceholder('e.g. Schedule a discovery call')
-      .fill('Schedule a demo');
-
-    await page.getByRole('button', { name: /^Next$/ }).click();
     await expect(
-      page.getByRole('heading', { name: 'Structure' })
+      page.getByRole('heading', { name: 'Tier & commerce' })
     ).toBeVisible();
-    await page.getByRole('button', { name: /Single page/i }).click();
+    await page.getByRole('button', { name: 'Essential' }).click();
 
-    await page.getByRole('button', { name: /^Next$/ }).click();
-    await expect(page.getByRole('heading', { name: 'Contact' })).toBeVisible();
-    await page.getByPlaceholder('hello@business.com').fill('hello@example.com');
+    await page.getByRole('button', { name: 'Create project' }).click();
 
-    await page.getByRole('button', { name: /Done — pick template/i }).click();
-    await expect(
-      page.getByText('Choose a template, palette, and font')
-    ).toBeVisible();
-
-    await expect(page).toHaveURL(/\/team\/dashboard\/new/);
+    await expect(page).toHaveURL(/\/admin\/dashboard\/projects\/[^/]+/, {
+      timeout: 60000,
+    });
     await expect(page).not.toHaveURL(/\/wizard/);
+  });
+
+  test('reuses dashboard auth when starting from home', async ({ page }) => {
+    await signInToAdminDashboardIfNeeded(page);
+    await page.goto('/admin/dashboard/new');
+    await expect(
+      page.getByRole('heading', { name: 'New project' })
+    ).toBeVisible();
   });
 });

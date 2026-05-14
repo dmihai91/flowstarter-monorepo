@@ -4,7 +4,7 @@ const generateTextMock = vi.fn();
 vi.mock('ai', () => ({
   generateText: (args: unknown) => generateTextMock(args),
 }));
-vi.mock('@/lib/ai/openrouter-client', () => ({
+vi.mock('@/lib/ai/client', () => ({
   models: { projectDetails: { id: 'mock-model' } },
 }));
 

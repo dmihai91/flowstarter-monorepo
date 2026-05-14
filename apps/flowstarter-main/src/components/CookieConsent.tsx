@@ -86,7 +86,7 @@ export function CookieConsent() {
 
                 {/* Buttons */}
                 <div className="flex items-center gap-2">
-                  <Button onClick={handleAccept} variant="accent" size="sm">
+                  <Button onClick={handleAccept} variant="default" size="sm">
                     {t('cookie.acceptAll')}
                   </Button>
                   <Button

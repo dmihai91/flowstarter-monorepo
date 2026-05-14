@@ -1,6 +1,6 @@
 /**
  * Columns we read for the team admin "projects list" view of workspaces.
- * The URL stays /team/dashboard/projects but the underlying table is workspaces.
+ * The URL stays /admin/dashboard/projects but the underlying table is workspaces.
  */
 export const PROJECT_LIST_SELECT = `
   id,

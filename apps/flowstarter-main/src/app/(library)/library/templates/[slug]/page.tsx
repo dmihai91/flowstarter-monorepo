@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Footnote } from '../../_components/Mast';
 import { DeferredPreviewFrame } from '../../_components/DeferredPreviewFrame';
+import { BookingTrigger } from '../../_components/BookingTrigger';
 import {
   TEMPLATES,
   getTemplate,
@@ -46,6 +47,19 @@ export default async function TemplateDetailPage({ params }: PageProps) {
   const prev =
     TEMPLATES[(indexInList - 1 + TEMPLATES.length) % TEMPLATES.length];
 
+  // Live preview source: prefer the self-hosted static preview bundle, fall back to the
+  // client's external production URL. Either qualifies the page for the
+  // "Live template" iframe section below.
+  const livePreviewUrl =
+    template.previewPath ?? template.externalPreviewUrl ?? null;
+  const isExternalPreview =
+    !!template.externalPreviewUrl && !template.previewPath;
+  const previewToolbarLabel = isExternalPreview
+    ? new URL(template.externalPreviewUrl!).host
+    : template.previewPath
+    ? `/preview/${template.slug}/`
+    : '';
+
   return (
     <>
       {/* ── PRODUCT HEADER ──────────────────────────────────────────────── */}
@@ -68,9 +82,9 @@ export default async function TemplateDetailPage({ params }: PageProps) {
             <h1 className="display detail-title">{template.title}</h1>
             <p className="lede detail-kicker">{template.kicker}</p>
             <div className="detail-actions">
-              {template.previewPath ? (
+              {livePreviewUrl ? (
                 <Link
-                  href={template.previewPath}
+                  href={livePreviewUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="cta-block"
@@ -78,9 +92,9 @@ export default async function TemplateDetailPage({ params }: PageProps) {
                   Open full template
                 </Link>
               ) : null}
-              <Link href="https://flowstarter.net#pricing" className="action">
+              <BookingTrigger className="action">
                 Build one like this
-              </Link>
+              </BookingTrigger>
             </div>
           </div>
 
@@ -114,16 +128,16 @@ export default async function TemplateDetailPage({ params }: PageProps) {
       </section>
 
       {/* ── LIVE INTERACTIVE PREVIEW ────────────────────────────────────── */}
-      {template.previewPath ? (
+      {livePreviewUrl ? (
         <section
           className="frame frame--wide detail-preview-section"
           aria-labelledby="live-preview-heading"
         >
           <div className="preview-toolbar">
             <h2 id="live-preview-heading">Live template</h2>
-            <span className="preview-url">/preview/{template.slug}/</span>
+            <span className="preview-url">{previewToolbarLabel}</span>
             <Link
-              href={template.previewPath}
+              href={livePreviewUrl}
               target="_blank"
               rel="noreferrer"
               className="preview-open"
@@ -132,10 +146,16 @@ export default async function TemplateDetailPage({ params }: PageProps) {
             </Link>
           </div>
           <DeferredPreviewFrame
-            previewPath={template.previewPath}
+            previewUrl={livePreviewUrl}
+            isExternal={isExternalPreview}
             title={template.title}
             thumbnailPath={
               template.thumbnail ? `/showcase/${template.thumbnail}.png` : null
+            }
+            thumbnailPathDark={
+              template.thumbnail && template.hasDarkThumbnail !== false
+                ? `/showcase/${template.thumbnail}-dark.png`
+                : null
             }
           />
         </section>
@@ -177,9 +197,9 @@ export default async function TemplateDetailPage({ params }: PageProps) {
                   Available on request
                 </span>
               )}
-              <Link href="https://flowstarter.net#pricing" className="action">
-                Want a site like this? Book a call
-              </Link>
+              <BookingTrigger className="action">
+                Want a site like this? Book a free discovery call
+              </BookingTrigger>
             </div>
           </div>
 
@@ -246,7 +266,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
       <nav id="pricing" className="frame frame--wide detail-pagination-wrap">
         <div className="detail-pagination">
           <Link
-            href={`../${prev.slug}`}
+            href={`/library/templates/${prev.slug}`}
             className="detail-pagination-link detail-pagination-link-prev"
           >
             <span className="meta">← previous</span>
@@ -255,7 +275,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
             </span>
           </Link>
           <Link
-            href={`../${next.slug}`}
+            href={`/library/templates/${next.slug}`}
             className="detail-pagination-link detail-pagination-link-next"
           >
             <span className="meta">next →</span>

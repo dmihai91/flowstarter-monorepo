@@ -1,0 +1,56 @@
+/* Static layout/position in CSS so SSR and client markup match (avoids inline-style hydration drift). */
+/* `role="radiogroup"` is correct for a11y; some global stylesheets style radiogroups as vertical
+   stacks — keep an explicit row + intrinsic min width so the pill never reads as three loose icons. */
+.fs-theme-toggle[role='radiogroup'] {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  min-width: calc(
+    var(--fs-theme-toggle-pad, 4px) * 2 + var(--fs-theme-toggle-btn-w, 36px) * 3
+  );
+  border-radius: 9999px;
+  padding: var(--fs-theme-toggle-pad, 4px);
+  box-sizing: border-box;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.fs-theme-toggle[role='radiogroup'][data-appearance='light'] {
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.fs-theme-toggle[role='radiogroup'][data-appearance='dark'] {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.fs-theme-toggle__indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: var(--fs-theme-toggle-btn-h, 32px);
+  width: var(--fs-theme-toggle-btn-w, 36px);
+  border-radius: 9999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition:
+    left 300ms ease-out,
+    transform 300ms ease-out;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.fs-theme-toggle__indicator[data-appearance='light'] {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.85);
+}
+
+.fs-theme-toggle__indicator[data-appearance='dark'] {
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+}

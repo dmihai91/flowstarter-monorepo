@@ -1,7 +1,6 @@
 packages:
   - apps/*
-  - apps/flowstarter-library/*
-  - apps/flowstarter-library/templates/*
+  - apps/flowstarter-templates/*
   - apps/flowstarter-editor/server
   - apps/flowstarter-editor/web
   - apps/flowstarter-editor/packages/*

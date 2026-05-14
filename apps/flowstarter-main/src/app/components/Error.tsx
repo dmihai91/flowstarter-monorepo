@@ -3,7 +3,6 @@
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
-import { setIsErrorPageFlag, useErrorPage } from '@/contexts/ErrorPageContext';
 import { useTranslations } from '@/lib/i18n';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
@@ -17,21 +16,10 @@ export default function Error({
   reset: () => void;
 }) {
   const { t } = useTranslations();
-  const { setIsErrorPage } = useErrorPage();
-
-  // Set error page flag synchronously to hide navbar immediately
-  // This ensures NavigationWrapper sees it on first render
-  setIsErrorPageFlag(true);
 
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error('Application error:', error);
-
-    // Cleanup when component unmounts
-    return () => {
-      setIsErrorPage(false);
-    };
-  }, [error, setIsErrorPage]);
+  }, [error]);
 
   return (
     <ErrorPageLayout>
@@ -72,9 +60,9 @@ export default function Error({
             </Button>
             <Button
               asChild
-              variant="outline"
+              variant="default"
               size="lg"
-              className="w-full sm:w-auto h-12 border-2 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-xl transition-all duration-200 font-semibold"
+              className="w-full sm:w-auto h-12 rounded-xl font-semibold"
             >
               <Link href="/">
                 <Home className="h-4 w-4" />

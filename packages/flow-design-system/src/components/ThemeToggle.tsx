@@ -2,33 +2,70 @@
  * Theme Toggle
  *
  * Shared three-way theme toggle (light / dark / system).
- * Uses inline styles for pixel-perfect rendering across all CSS frameworks.
+ * Layout and chrome use ThemeToggle.css; inline styles only for dynamic `left` and CSS variables.
  */
 
-import { useEffect, useState } from 'react';
-import type { Theme } from '../utils/theme';
-import { getEffectiveTheme } from '../utils/theme';
+import { useEffect, useState, type CSSProperties } from "react";
+import type { Theme } from "../utils/theme";
+import { getEffectiveTheme } from "../utils/theme";
+import "./ThemeToggle.css";
 
-const SunIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="5" />
-    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-  </svg>
-);
+function SunIcon({ size }: { size: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="5" />
+      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+    </svg>
+  );
+}
 
-const MoonIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-  </svg>
-);
+function MoonIcon({ size }: { size: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+    </svg>
+  );
+}
 
-const MonitorIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-    <line x1="8" y1="21" x2="16" y2="21" />
-    <line x1="12" y1="17" x2="12" y2="21" />
-  </svg>
-);
+function MonitorIcon({ size }: { size: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
+    </svg>
+  );
+}
 
 export interface ThemeToggleProps {
   /** Current theme value */
@@ -37,102 +74,138 @@ export interface ThemeToggleProps {
   onThemeChange: (theme: Theme) => void;
   /** Additional CSS class */
   className?: string;
+  /**
+   * Resolved light/dark appearance for the control chrome.
+   * When omitted, uses the shared cookie + system preference (`getEffectiveTheme`),
+   * matching the marketing app. Pass from standalone stores (e.g. editor
+   * localStorage) so the pill stays visually aligned with `document.documentElement`.
+   */
+  resolvedTheme?: "light" | "dark";
+  /**
+   * Dense sizing (padding / hit targets). Reuses the same border, glass, and
+   * indicator chrome as the default control — only dimensions change. Prefer
+   * scaling the wrapper in the app if you need main-platform pixel parity.
+   */
+  compact?: boolean;
 }
 
-export function ThemeToggle({ theme, onThemeChange, className }: ThemeToggleProps) {
+export function ThemeToggle({
+  theme,
+  onThemeChange,
+  className,
+  resolvedTheme,
+  compact = false,
+}: ThemeToggleProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const isDark = isMounted ? getEffectiveTheme() === 'dark' : false;
+  const pad = compact ? 2 : 4;
+  const btnW = compact ? 28 : 36;
+  const btnH = compact ? 28 : 32;
+  const halfSlot = btnW / 2;
+  const trailing = pad + btnW;
+  const iconSize = compact ? 14 : 16;
+
+  // Prefer `resolvedTheme` from the app shell (SSR + ThemeProvider) so chrome
+  // matches `getServerThemeInit` / blocking script without reading cookie/MediaQuery
+  // during the first client pass. Fall back to getEffectiveTheme after mount when omitted.
+  const appearance =
+    resolvedTheme ?? (isMounted ? getEffectiveTheme() : "light");
+  const isDark = appearance === "dark";
 
   const getIndicatorLeft = (): string => {
-    if (theme === 'light') return '4px';
-    if (theme === 'dark') return 'calc(50% - 18px)';
-    return 'calc(100% - 40px)';
+    if (theme === "light") return `${pad}px`;
+    if (theme === "dark") return `calc(50% - ${halfSlot}px)`;
+    return `calc(100% - ${trailing}px)`;
   };
 
-  const containerStyle: React.CSSProperties = {
-    position: 'relative',
-    display: 'inline-flex',
-    alignItems: 'center',
-    borderRadius: '9999px',
-    padding: '4px',
-    backdropFilter: 'blur(16px)',
-    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-    background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
-    border: isDark ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(0,0,0,0.12)',
+  /** Only sizing vars + optional fixed height — chrome lives in CSS (`.fs-theme-toggle`) for hydration stability. */
+  const rootStyle: CSSProperties = {
+    ...(compact ? { height: "var(--fs-chrome-control-h, 32px)" } : {}),
+    ["--fs-theme-toggle-pad" as string]: `${pad}px`,
+    ["--fs-theme-toggle-btn-h" as string]: `${btnH}px`,
+    ["--fs-theme-toggle-btn-w" as string]: `${btnW}px`,
   };
 
-  const indicatorStyle: React.CSSProperties = {
-    position: 'absolute',
-    height: '32px',
-    width: '36px',
-    borderRadius: '9999px',
-    background: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.9)',
-    border: isDark ? '2px solid rgba(255,255,255,0.9)' : '2px solid rgba(0,0,0,0.85)',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-    transition: 'left 0.3s ease-out',
-    left: isMounted ? getIndicatorLeft() : '4px',
+  const indicatorStyle: CSSProperties = {
+    left: getIndicatorLeft(),
   };
 
-  const buttonStyle = (isActive: boolean): React.CSSProperties => ({
-    position: 'relative',
+  const buttonStyle = (isActive: boolean): CSSProperties => ({
+    position: "relative",
     zIndex: 10,
-    height: '32px',
-    width: '36px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '9999px',
-    border: 'none',
-    background: 'transparent',
-    cursor: 'pointer',
+    height: btnH,
+    width: btnW,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 9999,
+    border: "none",
+    background: "transparent",
+    cursor: "pointer",
     padding: 0,
-    transition: 'color 0.2s',
+    flexShrink: 0,
+    transition: "color 200ms ease",
     color: isActive
-      ? (isDark ? 'rgba(255,255,255,0.95)' : 'rgba(0,0,0,0.85)')
-      : (isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)'),
+      ? isDark
+        ? "rgba(255,255,255,0.95)"
+        : "rgba(0,0,0,0.85)"
+      : isDark
+        ? "rgba(255,255,255,0.35)"
+        : "rgba(0,0,0,0.35)",
   });
 
-  // Placeholder during SSR
-  if (!isMounted) {
-    return (
-      <div
-        className={className}
-        style={{ ...containerStyle, width: '120px', height: '40px' }}
-      />
-    );
-  }
+  const appearanceAttr = isDark ? "dark" : "light";
 
   return (
-    <div className={className} style={containerStyle}>
-      <div style={indicatorStyle} />
+    <div
+      role="radiogroup"
+      aria-label="Theme"
+      className={["fs-theme-toggle", className].filter(Boolean).join(" ")}
+      data-appearance={appearanceAttr}
+      style={rootStyle}
+    >
+      <div
+        aria-hidden
+        className="fs-theme-toggle__indicator"
+        data-appearance={appearanceAttr}
+        style={indicatorStyle}
+      />
 
       <button
-        onClick={() => onThemeChange('light')}
-        style={buttonStyle(theme === 'light')}
+        type="button"
+        role="radio"
+        aria-checked={theme === "light"}
+        onClick={() => onThemeChange("light")}
+        style={buttonStyle(theme === "light")}
         aria-label="Light theme"
       >
-        <SunIcon />
+        <SunIcon size={iconSize} />
       </button>
 
       <button
-        onClick={() => onThemeChange('dark')}
-        style={buttonStyle(theme === 'dark')}
+        type="button"
+        role="radio"
+        aria-checked={theme === "dark"}
+        onClick={() => onThemeChange("dark")}
+        style={buttonStyle(theme === "dark")}
         aria-label="Dark theme"
       >
-        <MoonIcon />
+        <MoonIcon size={iconSize} />
       </button>
 
       <button
-        onClick={() => onThemeChange('system')}
-        style={buttonStyle(theme === 'system')}
+        type="button"
+        role="radio"
+        aria-checked={theme === "system"}
+        onClick={() => onThemeChange("system")}
+        style={buttonStyle(theme === "system")}
         aria-label="System theme"
       >
-        <MonitorIcon />
+        <MonitorIcon size={iconSize} />
       </button>
     </div>
   );

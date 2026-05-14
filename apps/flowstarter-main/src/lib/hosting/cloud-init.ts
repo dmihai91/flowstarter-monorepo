@@ -7,6 +7,8 @@
  *
  *   - Updates packages
  *   - Installs Caddy (auto-https), Docker, jq, curl, ufw
+ *   - Installs Node.js 22 + the Claude Code CLI globally so the editor's
+ *     coding agent can run on the host (uses ANTHROPIC_API_KEY)
  *   - Hardens SSH (disables root password login, keeps key auth)
  *   - Opens 22/80/443 in ufw
  *   - Drops a systemd unit for the deploy-agent (Bun service, Slice 2.8)
@@ -20,7 +22,14 @@
  * agent, we'll fill the ExecStart in.
  */
 
-const CLOUD_INIT_VERSION = 1;
+const CLOUD_INIT_VERSION = 2;
+
+/**
+ * Pinned versions for the host's coding-agent stack. Bump these together
+ * with CLOUD_INIT_VERSION when upgrading.
+ */
+const NODE_MAJOR = 22;
+const CLAUDE_CODE_NPM_PACKAGE = '@anthropic-ai/claude-code';
 
 export interface CloudInitOptions {
   /** SSH public key(s) to add to the server's root account */
@@ -40,6 +49,14 @@ export interface CloudInitOptions {
   deployAgentArtifactUrl?: string | null;
   /** Email address Caddy uses for Let's Encrypt registration */
   caddyAcmeEmail: string;
+  /**
+   * Anthropic API key the on-host Claude Code CLI uses. Written to
+   * /etc/flowstarter/anthropic.env (mode 0600, root-only) so any
+   * editor-spawned subprocess can read it. Optional during early
+   * provisioning — when omitted the CLI is still installed but the env
+   * file is left empty so an operator can drop the key in later.
+   */
+  anthropicApiKey?: string | null;
 }
 
 export function getCloudInitVersion(): number {
@@ -112,6 +129,13 @@ write_files:
       DEPLOY_AGENT_PORT=8443
     owner: root:root
     permissions: '0600'
+  - path: /etc/flowstarter/anthropic.env
+    content: |
+      # Anthropic credentials for the on-host Claude Code CLI. Sourced by
+      # any editor-spawned subprocess that runs the agent on this host.
+      ANTHROPIC_API_KEY=${opts.anthropicApiKey ?? ''}
+    owner: root:root
+    permissions: '0600'
   - path: /etc/caddy/Caddyfile
     content: |
       # Base Caddyfile — per-site vhosts live in /etc/caddy/sites/*.caddy
@@ -151,6 +175,15 @@ runcmd:
   - systemctl enable docker
   - systemctl start docker
 
+  # ─── Node.js ${NODE_MAJOR} + Claude Code CLI ──────────────────────────
+  # NodeSource ships current LTS; Debian's own apt is too stale for the
+  # CLI's engine requirement. Globally installs ${CLAUDE_CODE_NPM_PACKAGE}
+  # so editor-spawned subprocesses on the host can run \`claude\` directly.
+  - curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash -
+  - apt-get install -y nodejs
+  - npm install -g ${CLAUDE_CODE_NPM_PACKAGE}
+  - claude --version || true
+
   # ─── Sites dir + Caddy reload ─────────────────────────────────────────
   - mkdir -p /etc/caddy/sites
   - mkdir -p /var/www/sites
@@ -178,8 +211,12 @@ ${
   - systemctl daemon-reload`
 }
 
-final_message: "Flowstarter host bootstrap complete (cloud_init_version=${CLOUD_INIT_VERSION}). Caddy + Docker installed. Deploy-agent ${
+final_message: "Flowstarter host bootstrap complete (cloud_init_version=${CLOUD_INIT_VERSION}). Caddy + Docker + Node ${NODE_MAJOR} + Claude Code CLI installed. Deploy-agent ${
     artifactUrl ? 'started' : 'disabled (no artifact url)'
+  }. Anthropic env ${
+    opts.anthropicApiKey
+      ? 'wired'
+      : 'placeholder (drop key in /etc/flowstarter/anthropic.env)'
   }."
 `;
 }

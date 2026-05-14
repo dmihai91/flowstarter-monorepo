@@ -121,6 +121,12 @@ export const env = createEnv({
 
     // Site Config
     NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
+    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+    /**
+     * Comma-separated absolute origins for LAN / multi-port dev (Clerk + CORS).
+     * Example: `http://192.168.1.5:3000,http://192.168.1.5:5733`
+     */
+    NEXT_PUBLIC_EXTRA_REDIRECT_ORIGINS: z.string().optional(),
     NEXT_PUBLIC_VERCEL_URL: z.string().optional(),
   },
 
@@ -189,6 +195,9 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_EXTRA_REDIRECT_ORIGINS:
+      process.env.NEXT_PUBLIC_EXTRA_REDIRECT_ORIGINS,
     NEXT_PUBLIC_VERCEL_URL: process.env.NEXT_PUBLIC_VERCEL_URL,
   },
 

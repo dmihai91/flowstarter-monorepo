@@ -1,0 +1,53 @@
+/**
+ * Clerk UserButton — hide built-in sign-out row when using a custom MenuItems
+ * action. Selector is exported as `FLOWSTARTER_CLERK_BUILTIN_SIGN_OUT_ROW_SELECTOR`
+ * from `@flowstarter/flow-design-system/clerk`.
+ *
+ * Development-instance banner: use `appearance.layout.unsafe_disableDevelopmentModeWarnings`
+ * (`flowstarterClerkAppearanceLayoutHideDevWarnings` from `@flowstarter/flow-design-system/clerk`).
+ */
+.cl-userButtonPopoverActionButton__signOut {
+  display: none !important;
+}
+
+/* Editor SPA only (this sheet is imported from `flowstarter-editor/web`):
+   Match `buildFlowstarterClerkUserButtonElements` (`editorChrome`) maxWidth;
+   Clerk internals can ignore `appearance.elements` alone. Upward caret sits in
+   reserved top padding (does not extend past overflow:hidden on the card). */
+.cl-userButtonPopoverCard {
+  position: relative;
+  max-width: min(280px, calc(100vw - 24px));
+  min-width: 0;
+  /* Space for ::before caret; keeps inner rows below the nib */
+  padding-top: 12px;
+}
+
+/*
+ * Inset nib: sits in `padding-top` band (card keeps overflow:hidden). z-index
+ * above preview strip. Fill contrasts with the card top sheen (near-white
+ * triangles vanish on light glass). `filter` only on this pseudo — never on
+ * `userButtonPopoverRootBox`.
+ */
+.cl-userButtonPopoverCard::before {
+  content: "";
+  position: absolute;
+  z-index: 12;
+  left: 50%;
+  top: 4px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 6px 7px 6px;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  /* Slightly cool tint — reads against white frosted sheen */
+  border-bottom-color: rgba(78, 94, 218, 0.22);
+  filter: drop-shadow(0 0.5px 0 rgba(18, 10, 34, 0.12));
+  pointer-events: none;
+}
+
+.dark .cl-userButtonPopoverCard::before {
+  border-bottom-color: rgba(148, 163, 184, 0.42);
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35));
+}

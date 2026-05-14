@@ -201,7 +201,7 @@ export function HelpContent({
             {t('help.cta.description')}
           </p>
           <Button
-            variant="brand-gradient"
+            variant="default"
             className="rounded-xl px-8 h-12 shadow-lg"
             onClick={() => setDiscoveryModalOpen(true)}
           >

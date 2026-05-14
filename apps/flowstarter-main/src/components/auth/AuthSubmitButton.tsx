@@ -11,7 +11,7 @@ interface AuthSubmitButtonProps {
 
 /**
  * Shared submit button for all auth forms (team login, client login, password reset).
- * Uses the design-system brand token: var(--purple).
+ * Uses the landing primary CTA styling via `unified-button` (default tone).
  */
 export function AuthSubmitButton({
   children,

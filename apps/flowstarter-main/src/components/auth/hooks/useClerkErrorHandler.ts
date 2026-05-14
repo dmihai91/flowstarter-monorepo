@@ -28,9 +28,9 @@ export function useClerkErrorHandler() {
       // Default error message
       let message = t('auth.errors.somethingWentWrong');
 
-      // Handle string errors
+      // Handle string errors — never pass through raw Clerk strings on sign-in
       if (typeof err === 'string') {
-        return err;
+        return context === 'signIn' ? t('auth.errors.signInInvalid') : err;
       }
 
       // Handle non-object errors
@@ -63,19 +63,31 @@ export function useClerkErrorHandler() {
               context,
               t
             );
+          } else if (context === 'signIn') {
+            message = t('auth.errors.signInInvalid');
+          } else {
+            message =
+              firstError?.message || t('auth.errors.somethingWentWrong');
           }
         } else {
           message =
             context === 'signIn'
-              ? t('auth.errors.checkCredentials')
+              ? t('auth.errors.signInInvalid')
               : t('auth.errors.checkInformation');
         }
       } else if (clerkError.errors && Array.isArray(clerkError.errors)) {
-        // Handle other Clerk errors with errors array
+        // Never surface Clerk's raw sign-in messages (they often reveal whether
+        // the password vs identifier failed).
         message =
-          clerkError.errors[0]?.message || t('auth.errors.somethingWentWrong');
+          context === 'signIn'
+            ? t('auth.errors.signInInvalid')
+            : clerkError.errors[0]?.message ||
+              t('auth.errors.somethingWentWrong');
       } else if (clerkError.message) {
-        message = clerkError.message;
+        message =
+          context === 'signIn'
+            ? t('auth.errors.signInInvalid')
+            : clerkError.message;
       }
 
       return message;
@@ -97,9 +109,8 @@ function getErrorMessageForCode(
   if (context === 'signIn') {
     switch (code) {
       case 'form_identifier_not_found':
-        return t('auth.errors.formIdentifierNotFound');
       case 'form_password_incorrect':
-        return t('auth.errors.formPasswordIncorrect');
+        return t('auth.errors.signInInvalid');
       case 'verification_failed':
         return t('auth.errors.verificationFailed');
     }
@@ -131,11 +142,9 @@ function getErrorMessageForCode(
       }
       return fallbackMessage || t('auth.errors.formParamFormatInvalid');
     default:
-      return (
-        fallbackMessage ||
-        (context === 'signIn'
-          ? t('auth.errors.checkCredentials')
-          : t('auth.errors.checkInformation'))
-      );
+      if (context === 'signIn') {
+        return t('auth.errors.signInInvalid');
+      }
+      return fallbackMessage || t('auth.errors.checkInformation');
   }
 }

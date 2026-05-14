@@ -42,7 +42,7 @@ export function Footnote() {
       <div className="frame frame--wide footnote-content-wrap">
         <div className="footnote-row">
           <p className="meta">
-            Hand-built by Darius &amp; Dorin. Eight clients per month.
+            Hand-crafted by Darius &amp; Dorin. Limited spots, by design.
           </p>
           <p className="meta">
             <Link className="link" href="https://flowstarter.net">

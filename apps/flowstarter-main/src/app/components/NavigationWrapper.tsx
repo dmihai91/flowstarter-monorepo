@@ -19,18 +19,18 @@ const publicRoutes = [
   '/about',
   '/login',
   '/sign-up',
-  '/team',
-  '/team/login',
+  '/admin',
+  '/admin/login',
 ];
 
 // Routes where we hide the default navbar (they have their own header)
 const noNavbarRoutes = [
   '/',
   '/404',
-  '/team',
-  '/team/login',
-  '/team/dashboard',
-  '/team/dashboard/new',
+  '/admin',
+  '/admin/login',
+  '/admin/dashboard',
+  '/admin/dashboard/new',
   // Support pages with SupportHeader
   '/help',
   '/contact',
@@ -47,7 +47,7 @@ export function NavigationWrapper() {
   const pathname = usePathname() || '';
 
   // Check for team routes early - they have their own layout
-  const isTeamRoute = pathname.startsWith('/team');
+  const isTeamRoute = pathname.startsWith('/admin');
 
   const { isLoaded } = useAuth();
   const [isMounted, setIsMounted] = useState(false);

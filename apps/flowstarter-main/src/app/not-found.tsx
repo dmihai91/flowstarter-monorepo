@@ -2,23 +2,13 @@
 
 import { ErrorPageLayout } from '@/components/ErrorPageLayout';
 import { Button } from '@/components/ui/unified-button';
-import { setIsErrorPageFlag, useErrorPage } from '@/contexts/ErrorPageContext';
 import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import { Home, ArrowLeft, ArrowRight } from 'lucide-react';
 
 export default function NotFound() {
-  const { setIsErrorPage } = useErrorPage();
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
-  setIsErrorPageFlag(true);
-
-  useEffect(() => {
-    return () => {
-      setIsErrorPage(false);
-    };
-  }, [setIsErrorPage]);
 
   const navLinks = [
     { href: '/', label: t('errors.404.linkHome') },
@@ -91,11 +81,7 @@ export default function NotFound() {
               {t('errors.404.goHome')}
             </Link>
           </Button>
-          <Button
-            tone="secondary"
-            onClick={() => window.history.back()}
-            className="gap-2"
-          >
+          <Button onClick={() => window.history.back()} className="gap-2">
             <ArrowLeft className="w-4 h-4" />
             {t('errors.404.goBack')}
           </Button>

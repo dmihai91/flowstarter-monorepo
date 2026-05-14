@@ -19,6 +19,9 @@ import type {
   GitCreateBranchResult,
 } from "./git";
 import type {
+  ProjectListWorkspaceEntriesInput,
+  ProjectReadWorkspaceFileInput,
+  ProjectReadWorkspaceFileResult,
   ProjectSearchEntriesInput,
   ProjectSearchEntriesResult,
   ProjectWriteFileInput,
@@ -60,59 +63,6 @@ export interface ContextMenuItem<T extends string = string> {
   disabled?: boolean;
 }
 
-export type DesktopUpdateStatus =
-  | "disabled"
-  | "idle"
-  | "checking"
-  | "up-to-date"
-  | "available"
-  | "downloading"
-  | "downloaded"
-  | "error";
-
-export type DesktopRuntimeArch = "arm64" | "x64" | "other";
-export type DesktopTheme = "light" | "dark" | "system";
-
-export interface DesktopRuntimeInfo {
-  hostArch: DesktopRuntimeArch;
-  appArch: DesktopRuntimeArch;
-  runningUnderArm64Translation: boolean;
-}
-
-export interface DesktopUpdateState {
-  enabled: boolean;
-  status: DesktopUpdateStatus;
-  currentVersion: string;
-  hostArch: DesktopRuntimeArch;
-  appArch: DesktopRuntimeArch;
-  runningUnderArm64Translation: boolean;
-  availableVersion: string | null;
-  downloadedVersion: string | null;
-  downloadPercent: number | null;
-  checkedAt: string | null;
-  message: string | null;
-  errorContext: "check" | "download" | "install" | null;
-  canRetry: boolean;
-}
-
-export interface DesktopUpdateActionResult {
-  accepted: boolean;
-  completed: boolean;
-  state: DesktopUpdateState;
-}
-
-export interface DesktopUpdateCheckResult {
-  checked: boolean;
-  state: DesktopUpdateState;
-}
-
-export interface DesktopEnvironmentBootstrap {
-  label: string;
-  httpBaseUrl: string | null;
-  wsBaseUrl: string | null;
-  bootstrapToken?: string;
-}
-
 export interface PersistedSavedEnvironmentRecord {
   environmentId: EnvironmentId;
   label: string;
@@ -122,52 +72,15 @@ export interface PersistedSavedEnvironmentRecord {
   lastConnectedAt: string | null;
 }
 
-export type DesktopServerExposureMode = "local-only" | "network-accessible";
-
-export interface DesktopServerExposureState {
-  mode: DesktopServerExposureMode;
-  endpointUrl: string | null;
-  advertisedHost: string | null;
-}
-
-export interface DesktopBridge {
-  getLocalEnvironmentBootstrap: () => DesktopEnvironmentBootstrap | null;
-  getClientSettings: () => Promise<ClientSettings | null>;
-  setClientSettings: (settings: ClientSettings) => Promise<void>;
-  getSavedEnvironmentRegistry: () => Promise<readonly PersistedSavedEnvironmentRecord[]>;
-  setSavedEnvironmentRegistry: (
-    records: readonly PersistedSavedEnvironmentRecord[],
-  ) => Promise<void>;
-  getSavedEnvironmentSecret: (environmentId: EnvironmentId) => Promise<string | null>;
-  setSavedEnvironmentSecret: (environmentId: EnvironmentId, secret: string) => Promise<boolean>;
-  removeSavedEnvironmentSecret: (environmentId: EnvironmentId) => Promise<void>;
-  getServerExposureState: () => Promise<DesktopServerExposureState>;
-  setServerExposureMode: (mode: DesktopServerExposureMode) => Promise<DesktopServerExposureState>;
-  pickFolder: () => Promise<string | null>;
-  confirm: (message: string) => Promise<boolean>;
-  setTheme: (theme: DesktopTheme) => Promise<void>;
-  showContextMenu: <T extends string>(
-    items: readonly ContextMenuItem<T>[],
-    position?: { x: number; y: number },
-  ) => Promise<T | null>;
-  openExternal: (url: string) => Promise<boolean>;
-  onMenuAction: (listener: (action: string) => void) => () => void;
-  getUpdateState: () => Promise<DesktopUpdateState>;
-  checkForUpdate: () => Promise<DesktopUpdateCheckResult>;
-  downloadUpdate: () => Promise<DesktopUpdateActionResult>;
-  installUpdate: () => Promise<DesktopUpdateActionResult>;
-  onUpdateState: (listener: (state: DesktopUpdateState) => void) => () => void;
-}
-
 /**
- * APIs bound to the local app shell, not to any particular backend environment.
+ * APIs bound to the local browser shell, not to any particular backend
+ * environment.
  *
- * These capabilities describe the desktop/browser host that the user is
- * currently running: dialogs, editor/external-link opening, context menus, and
- * app-level settings/config access. They must not be used as a proxy for
- * "whatever environment the user is targeting", because in a multi-environment
- * world the local shell and a selected backend environment are distinct
- * concepts.
+ * These capabilities describe the browser host that the user is currently
+ * running: dialogs, editor/external-link opening, context menus, and app-level
+ * settings/config access. They must not be used as a proxy for "whatever
+ * environment the user is targeting", because in a multi-environment world the
+ * local shell and a selected backend environment are distinct concepts.
  */
 export interface LocalApi {
   dialogs: {
@@ -211,7 +124,7 @@ export interface LocalApi {
  * They represent remote stateful capabilities such as orchestration, terminal,
  * project, and git operations. In multi-environment mode, each environment gets
  * its own instance of this surface, and callers should resolve it by
- * `environmentId` rather than reaching through the local desktop bridge.
+ * `environmentId` rather than reaching through any ambient local shell.
  */
 export interface EnvironmentApi {
   terminal: {
@@ -225,6 +138,12 @@ export interface EnvironmentApi {
   };
   projects: {
     searchEntries: (input: ProjectSearchEntriesInput) => Promise<ProjectSearchEntriesResult>;
+    listWorkspaceEntries: (
+      input: ProjectListWorkspaceEntriesInput,
+    ) => Promise<ProjectSearchEntriesResult>;
+    readWorkspaceFile: (
+      input: ProjectReadWorkspaceFileInput,
+    ) => Promise<ProjectReadWorkspaceFileResult>;
     writeFile: (input: ProjectWriteFileInput) => Promise<ProjectWriteFileResult>;
   };
   git: {

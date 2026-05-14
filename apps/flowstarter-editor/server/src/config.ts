@@ -10,9 +10,6 @@ import { Effect, FileSystem, Layer, LogLevel, Path, Schema, Context } from "effe
 
 export const DEFAULT_PORT = 3773;
 
-export const RuntimeMode = Schema.Literals(["web", "desktop"]);
-export type RuntimeMode = typeof RuntimeMode.Type;
-
 export const StartupPresentation = Schema.Literals(["browser", "headless"]);
 export type StartupPresentation = typeof StartupPresentation.Type;
 
@@ -52,7 +49,6 @@ export interface ServerConfigShape extends ServerDerivedPaths {
   readonly otlpMetricsUrl: string | undefined;
   readonly otlpExportIntervalMs: number;
   readonly otlpServiceName: string;
-  readonly mode: RuntimeMode;
   readonly port: number;
   readonly host: string | undefined;
   readonly cwd: string;
@@ -61,7 +57,6 @@ export interface ServerConfigShape extends ServerDerivedPaths {
   readonly devUrl: URL | undefined;
   readonly noBrowser: boolean;
   readonly startupPresentation: StartupPresentation;
-  readonly desktopBootstrapToken: string | undefined;
   readonly autoBootstrapProjectFromCwd: boolean;
   readonly logWebSocketEvents: boolean;
 }
@@ -151,12 +146,10 @@ export class ServerConfig extends Context.Service<ServerConfig, ServerConfigShap
           cwd,
           baseDir,
           ...derivedPaths,
-          mode: "web",
           autoBootstrapProjectFromCwd: false,
           logWebSocketEvents: false,
           port: 0,
           host: undefined,
-          desktopBootstrapToken: undefined,
           staticDir: undefined,
           devUrl,
           noBrowser: false,

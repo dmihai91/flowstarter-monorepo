@@ -277,12 +277,12 @@ describe('StripeBilling.createBillingPortalSession', () => {
     });
     const out = await billing.createBillingPortalSession({
       customerId: 'cus_1',
-      returnUrl: 'https://flowstarter.dev/team/dashboard/projects/ws_1',
+      returnUrl: 'https://flowstarter.dev/admin/dashboard/projects/ws_1',
     });
     expect(out.url).toBe('https://billing.stripe.com/p/session/xyz');
     expect(billingPortal.sessions.create).toHaveBeenCalledWith({
       customer: 'cus_1',
-      return_url: 'https://flowstarter.dev/team/dashboard/projects/ws_1',
+      return_url: 'https://flowstarter.dev/admin/dashboard/projects/ws_1',
     });
   });
 });

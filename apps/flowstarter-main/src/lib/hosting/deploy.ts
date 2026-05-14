@@ -198,7 +198,7 @@ export async function deploySite(opts: {
   if (!workspace.hosting_server_id) {
     throw new DeployError(
       'workspace_unallocated',
-      'Workspace has no hosting_server_id assigned. Allocate first via /api/team/projects/[id]/site.'
+      'Workspace has no hosting_server_id assigned. Allocate first via /api/admin/projects/[id]/site.'
     );
   }
 

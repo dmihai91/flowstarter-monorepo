@@ -7,30 +7,13 @@ import {
   stripPairingTokenFromUrl,
   submitServerAuthCredential,
 } from "../../environments/primary";
+import { EditorBootstrapLoader } from "./EditorBootstrapLoader";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 export function PairingPendingSurface() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10 text-foreground sm:px-6">
-      <div className="pointer-events-none absolute inset-0 opacity-80">
-        <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(44rem_16rem_at_top,color-mix(in_srgb,var(--color-emerald-500)_14%,transparent),transparent)]" />
-        <div className="absolute inset-y-0 left-0 w-72 bg-[radial-gradient(28rem_18rem_at_left,color-mix(in_srgb,var(--color-sky-500)_10%,transparent),transparent)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(145deg,color-mix(in_srgb,var(--background)_90%,var(--color-black))_0%,var(--background)_55%)]" />
-      </div>
-
-      <section className="relative w-full max-w-xl rounded-2xl border border-border/80 bg-card/90 p-6 shadow-2xl shadow-black/20 backdrop-blur-md sm:p-8">
-        <p className="text-[11px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
-          {APP_DISPLAY_NAME}
-        </p>
-        <h1 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-          Pairing with this environment
-        </h1>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Validating the pairing link and preparing your session.
-        </p>
-      </section>
-    </div>
+    <EditorBootstrapLoader statusLabel="Pairing with this environment. Validating the pairing link and preparing your session." />
   );
 }
 
@@ -44,6 +27,8 @@ export function PairingRouteSurface({
   onAuthenticated: () => void;
 }) {
   const autoPairTokenRef = useRef<string | null>(peekPairingTokenFromUrl());
+  /** First paint after a pairing link opens `/pair` — keep a single loader until the token POST settles. */
+  const preferFullPagePairingLoaderRef = useRef(!!autoPairTokenRef.current);
   const [credential, setCredential] = useState(() => autoPairTokenRef.current ?? "");
   const [errorMessage, setErrorMessage] = useState(initialErrorMessage ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,6 +47,7 @@ export function PairingRouteSurface({
       setIsSubmitting(false);
 
       if (submitError) {
+        preferFullPagePairingLoaderRef.current = false;
         setErrorMessage(submitError);
         return;
       }
@@ -92,15 +78,21 @@ export function PairingRouteSurface({
     void submitCredential(token);
   }, [submitCredential]);
 
+  if (isSubmitting && preferFullPagePairingLoaderRef.current) {
+    return (
+      <EditorBootstrapLoader statusLabel="Pairing with this environment. Validating the pairing link and preparing your session." />
+    );
+  }
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10 text-foreground sm:px-6">
-      <div className="pointer-events-none absolute inset-0 opacity-80">
-        <div className="absolute inset-x-0 top-0 h-44 bg-[radial-gradient(44rem_16rem_at_top,color-mix(in_srgb,var(--color-emerald-500)_14%,transparent),transparent)]" />
-        <div className="absolute inset-y-0 left-0 w-72 bg-[radial-gradient(28rem_18rem_at_left,color-mix(in_srgb,var(--color-sky-500)_10%,transparent),transparent)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(145deg,color-mix(in_srgb,var(--background)_90%,var(--color-black))_0%,var(--background)_55%)]" />
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(56rem_20rem_at_top,color-mix(in_srgb,var(--purple)_30%,transparent),transparent)]" />
+        <div className="absolute inset-y-0 right-0 w-96 bg-[radial-gradient(36rem_22rem_at_right,color-mix(in_srgb,var(--blue)_24%,transparent),transparent)]" />
+        <div className="absolute inset-x-0 bottom-0 h-72 bg-[radial-gradient(56rem_20rem_at_bottom,color-mix(in_srgb,var(--purple)_18%,transparent),transparent)]" />
       </div>
 
-      <section className="relative w-full max-w-xl rounded-2xl border border-border/80 bg-card/90 p-6 shadow-2xl shadow-black/20 backdrop-blur-md sm:p-8">
+      <section className="relative w-full max-w-xl rounded-2xl border border-[color:var(--fs-glass-edge)] bg-[color:var(--fs-glass-bg)] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-8">
         <p className="text-[11px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
           {APP_DISPLAY_NAME}
         </p>

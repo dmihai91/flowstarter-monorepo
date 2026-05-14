@@ -12,7 +12,7 @@ import {
   getAllowedRedirectOrigins,
   isSafeRedirectUrl,
 } from '@flowstarter/platform-config';
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { applySecurityHeaders } from './utils/security-headers';
 
 /**
@@ -65,6 +65,129 @@ async function _timingSafeCompare(a: string, b: string): Promise<boolean> {
  * Log security event (Edge Runtime compatible - console only)
  * Full database logging happens in API routes, not middleware
  */
+/**
+ * @flowstarter.* primary emails auto-resolve to admin so internal hires
+ * don't need a manual Clerk metadata edit before they can use /admin/*.
+ */
+const TEAM_EMAIL_DOMAINS = new Set([
+  'flowstarter.net',
+  'flowstarter.app',
+  'flowstarter.dev',
+  'flowstarter.com',
+]);
+
+function emailDomainRole(email: string | undefined): string | undefined {
+  if (!email) return undefined;
+  const domain = email.split('@')[1]?.toLowerCase();
+  return domain && TEAM_EMAIL_DOMAINS.has(domain) ? 'admin' : undefined;
+}
+
+/**
+ * Short-lived in-memory cache for resolved user roles.
+ * Prevents a Clerk Backend API roundtrip (`users.getUser`) on every
+ * middleware invocation when the role is absent from session claims.
+ * TTL = 120 s; evicts the oldest entry when the map exceeds 500 users.
+ */
+const _roleCache = new Map<string, { role: string | undefined; exp: number }>();
+const ROLE_CACHE_TTL_MS = 120_000;
+const ROLE_CACHE_MAX = 500;
+
+/**
+ * Resolve the effective role for a Clerk user. Used by middleware to gate
+ * /admin/* routes. Mirrors `resolveUserRole` in src/lib/api-auth.ts —
+ * keep them in sync.
+ */
+async function resolveRoleEdge(
+  userId: string,
+  sessionClaims:
+    | { metadata?: { role?: string }; email?: string }
+    | null
+    | undefined
+): Promise<string | undefined> {
+  const claimRole = sessionClaims?.metadata?.role?.toLowerCase();
+  if (claimRole) return claimRole;
+
+  // Check in-memory cache before hitting the Clerk Backend API.
+  const cached = _roleCache.get(userId);
+  if (cached && Date.now() < cached.exp) return cached.role;
+
+  try {
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const metaRole = (
+      user.publicMetadata as { role?: string } | undefined
+    )?.role?.toLowerCase();
+    let resolved: string | undefined = metaRole;
+
+    if (!resolved) {
+      const primaryEmail = user.emailAddresses.find(
+        (e) => e.id === user.primaryEmailAddressId
+      )?.emailAddress;
+      resolved = emailDomainRole(primaryEmail);
+    }
+
+    // Evict oldest entry when cache is full.
+    if (_roleCache.size >= ROLE_CACHE_MAX) {
+      const oldest = _roleCache.keys().next().value;
+      if (oldest !== undefined) _roleCache.delete(oldest);
+    }
+    _roleCache.set(userId, {
+      role: resolved,
+      exp: Date.now() + ROLE_CACHE_TTL_MS,
+    });
+    return resolved;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * When a team member is already signed in but hits `/admin/login`, send them
+ * onward without dropping `redirect_url` or `next` (editor deep-links, return
+ * paths after middleware bounced them to login).
+ */
+function redirectAuthenticatedTeamFromAdminLogin(
+  req: NextRequest
+): NextResponse {
+  const hostHeader = req.headers.get('host') ?? '';
+  const host = hostHeader.split(':')[0] ?? '';
+
+  const redirectParam = req.nextUrl.searchParams.get('redirect_url');
+  if (redirectParam && isSafeRedirectUrl(redirectParam, host)) {
+    try {
+      const parsed = new URL(redirectParam);
+      const isCrossDomain = parsed.hostname !== host;
+      if (isCrossDomain) {
+        const transferUrl = req.nextUrl.clone();
+        transferUrl.pathname = '/api/auth/transfer-redirect';
+        transferUrl.search = '';
+        transferUrl.searchParams.set('redirect_url', redirectParam);
+        return NextResponse.redirect(transferUrl);
+      }
+      return NextResponse.redirect(redirectParam);
+    } catch {
+      /* fall through */
+    }
+  }
+
+  const nextParam = req.nextUrl.searchParams.get('next');
+  if (nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//')) {
+    try {
+      const dest = new URL(nextParam, req.nextUrl.origin);
+      if (dest.origin === req.nextUrl.origin) {
+        return NextResponse.redirect(dest);
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+
+  const fallback = req.nextUrl.clone();
+  fallback.pathname = '/admin/dashboard';
+  fallback.search = '';
+  return NextResponse.redirect(fallback);
+}
+
 function logSecurityEventEdge(
   event: string,
   context?: { route?: string; method?: string }
@@ -94,7 +217,6 @@ const isPublicRoute = createRouteMatcher([
   '/forgot-password(.*)',
   '/reset-password(.*)',
   '/verify(.*)',
-  '/sso-callback(.*)',
   '/api/webhooks(.*)',
   '/api/health(.*)',
   '/api/auth/session(.*)', // Session check
@@ -108,7 +230,6 @@ const isPublicRoute = createRouteMatcher([
   '/terms(.*)', // Public terms of service
   '/pricing(.*)', // Public pricing page
   '/cookies(.*)', // Public cookie policy
-  '/blog(.*)', // Public blog
   '/guides(.*)',
   '/blogs(.*)',
   '/cookie-policy(.*)',
@@ -116,10 +237,9 @@ const isPublicRoute = createRouteMatcher([
   '/privacy-policy(.*)',
   '/sitemap(.*)',
   '/accessibility(.*)',
-  '/security(.*)',
-  '/team', // Team index (redirects to login)
-  '/team/login(.*)', // Team login page (public, auth handled by Clerk)
-  '/team/join(.*)', // Team join/invitation page (public)
+  '/admin', // Admin index (redirects to login)
+  '/admin/login(.*)', // Admin login page (public, auth handled by Clerk)
+  '/admin/join(.*)', // Admin join/invitation page (public)
 
   // Public static pages — landing sections, legal, support
   '/about(.*)',
@@ -138,7 +258,6 @@ const isKnownAppRoute = createRouteMatcher([
   '/forgot-password(.*)',
   '/reset-password(.*)',
   '/verify(.*)',
-  '/sso-callback(.*)',
   '/gdpr(.*)',
   '/contact(.*)',
   '/help(.*)',
@@ -146,7 +265,6 @@ const isKnownAppRoute = createRouteMatcher([
   '/terms(.*)',
   '/pricing(.*)',
   '/cookies(.*)',
-  '/blog(.*)',
   '/guides(.*)',
   '/blogs(.*)',
   '/cookie-policy(.*)',
@@ -154,10 +272,9 @@ const isKnownAppRoute = createRouteMatcher([
   '/privacy-policy(.*)',
   '/sitemap(.*)',
   '/accessibility(.*)',
-  '/security(.*)',
   '/faq(.*)',
   '/relaunch(.*)',
-  '/team(.*)',
+  '/admin(.*)',
   '/dashboard(.*)',
   '/new(.*)',
   '/api(.*)',
@@ -247,6 +364,7 @@ export default clerkMiddleware(async (auth, req) => {
       const siteOrigin = req.nextUrl.origin;
       const allowedOrigins = [
         process.env.NEXT_PUBLIC_SITE_URL,
+        process.env.NEXT_PUBLIC_APP_URL,
         process.env.NEXT_PUBLIC_VERCEL_URL
           ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
           : undefined,
@@ -288,7 +406,7 @@ export default clerkMiddleware(async (auth, req) => {
 
       // CSRF: rely on same-origin checks; block cross-origin unsafe methods
       // Skip CSRF for team API routes, AI routes, and integration routes (protected by Clerk auth)
-      const isTeamApi = pathname.startsWith('/api/team/');
+      const isTeamApi = pathname.startsWith('/api/admin/');
       const isAiApi = pathname.startsWith('/api/ai/');
       const isAuthApi = pathname.startsWith('/api/auth/'); // Protected by Clerk auth
       const isIntegrationsApi = pathname.startsWith('/api/integrations/'); // Protected by Clerk auth
@@ -392,23 +510,18 @@ export default clerkMiddleware(async (auth, req) => {
     try {
       const { userId, sessionClaims } = await auth();
       if (userId) {
-        // Prefer the role from sessionClaims (already in the request) so we
-        // don't pay a Clerk API roundtrip on every cold landing-page hit.
-        let role = (
-          sessionClaims?.metadata as { role?: string } | undefined
-        )?.role?.toLowerCase();
-
-        // Fallback: only when the claim is missing, fetch the user object.
-        if (!role) {
-          const client = await clerkClient();
-          const user = await client.users.getUser(userId);
-          role = ((user.publicMetadata?.role as string) || '').toLowerCase();
-        }
-
+        // Reuse the cached resolveRoleEdge helper so the landing page
+        // redirect doesn't burn a Clerk Backend API call on every hit.
+        const role = await resolveRoleEdge(
+          userId,
+          sessionClaims as
+            | { metadata?: { role?: string }; email?: string }
+            | undefined
+        );
         const isTeamMember = role === 'team' || role === 'admin';
 
-        // Team users → /team/dashboard, Clients → /dashboard
-        const targetPath = isTeamMember ? '/team/dashboard' : '/dashboard';
+        // Team users → /admin/dashboard, Clients → /dashboard
+        const targetPath = isTeamMember ? '/admin/dashboard' : '/dashboard';
 
         const url = req.nextUrl.clone();
         url.pathname = targetPath;
@@ -431,7 +544,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (
       pathname.startsWith('/login') ||
       pathname.startsWith('/sign-up') ||
-      pathname.startsWith('/team/login')
+      pathname.startsWith('/admin/login')
     ) {
       try {
         const { userId, sessionClaims } = await auth();
@@ -466,19 +579,31 @@ export default clerkMiddleware(async (auth, req) => {
           }
 
           const url = req.nextUrl.clone();
-          // /team/login always goes to team dashboard — avoids stale session claims
-          // causing team members to land on client dashboard right after login.
-          if (pathname.startsWith('/team/login')) {
-            url.pathname = '/team/dashboard';
+          const role = await resolveRoleEdge(
+            userId,
+            sessionClaims as
+              | { metadata?: { role?: string }; email?: string }
+              | undefined
+          );
+          const isTeamMember = role === 'team' || role === 'admin';
+
+          // /admin/login: only team members may proceed to /admin/dashboard.
+          // Non-admins stay on the page with reason=not_admin so the form can
+          // render an error state and offer a sign-out.
+          if (pathname.startsWith('/admin/login')) {
+            if (isTeamMember) {
+              return redirectAuthenticatedTeamFromAdminLogin(req);
+            }
+            if (req.nextUrl.searchParams.get('reason') !== 'not_admin') {
+              url.searchParams.set('reason', 'not_admin');
+              return NextResponse.redirect(url);
+            }
+            // Already on /admin/login?reason=not_admin — fall through and
+            // render the page with the rejection state.
+          } else {
+            url.pathname = isTeamMember ? '/admin/dashboard' : '/dashboard';
             return NextResponse.redirect(url);
           }
-          // For /login and /sign-up check role
-          const role = (
-            sessionClaims?.metadata as { role?: string }
-          )?.role?.toLowerCase();
-          const isTeamMember = role === 'team' || role === 'admin';
-          url.pathname = isTeamMember ? '/team/dashboard' : '/dashboard';
-          return NextResponse.redirect(url);
         }
       } catch {
         // ignore auth errors for public routes
@@ -543,13 +668,50 @@ export default clerkMiddleware(async (auth, req) => {
       const next = req.nextUrl.pathname + (req.nextUrl.search || '');
       // /new?template= is an operator flow — send to team login
       const isTeamRoute =
-        req.nextUrl.pathname.startsWith('/team/') ||
+        req.nextUrl.pathname.startsWith('/admin/') ||
         (req.nextUrl.pathname === '/new' &&
           req.nextUrl.searchParams.has('template'));
-      url.pathname = isTeamRoute ? '/team/login' : '/login';
+      url.pathname = isTeamRoute ? '/admin/login' : '/login';
       url.searchParams.set('reason', 'unauthenticated');
       url.searchParams.set('next', next);
       return NextResponse.redirect(url);
+    }
+
+    // Authenticated /admin/* (page routes only — API routes do their own
+    // role checks) requires team-or-admin role. Non-admins get bounced to
+    // /admin/login with a rejection notice.
+    if (
+      pathname.startsWith('/admin/') &&
+      !pathname.startsWith('/admin/login') &&
+      !pathname.startsWith('/admin/join') &&
+      !pathname.startsWith('/api')
+    ) {
+      const sessionClaims = authResult?.sessionClaims as
+        | { metadata?: { role?: string }; email?: string }
+        | undefined;
+      const role = await resolveRoleEdge(userId, sessionClaims);
+      if (role !== 'team' && role !== 'admin') {
+        const redirectParam = req.nextUrl.searchParams.get('redirect_url');
+        const hostHeader = req.headers.get('host') ?? '';
+        const host = hostHeader.split(':')[0] ?? '';
+
+        const url = req.nextUrl.clone();
+        url.pathname = '/admin/login';
+        url.search = '';
+        url.searchParams.set('reason', 'not_admin');
+        if (redirectParam && isSafeRedirectUrl(redirectParam, host)) {
+          url.searchParams.set('redirect_url', redirectParam);
+        }
+        const returnTo = pathname + (req.nextUrl.search || '');
+        if (
+          returnTo.startsWith('/admin/') &&
+          !returnTo.startsWith('/admin/login') &&
+          !returnTo.startsWith('/admin/join')
+        ) {
+          url.searchParams.set('next', returnTo);
+        }
+        return NextResponse.redirect(url);
+      }
     }
 
     // User is authenticated, allow the request

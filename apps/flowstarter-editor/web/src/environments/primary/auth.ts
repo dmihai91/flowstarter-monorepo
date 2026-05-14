@@ -74,13 +74,6 @@ export function takePairingTokenFromUrl(): string | null {
   return token;
 }
 
-function getDesktopBootstrapCredential(): string | null {
-  const bootstrap = window.desktopBridge?.getLocalEnvironmentBootstrap();
-  return typeof bootstrap?.bootstrapToken === "string" && bootstrap.bootstrapToken.length > 0
-    ? bootstrap.bootstrapToken
-    : null;
-}
-
 export async function fetchSessionState(): Promise<AuthSessionState> {
   return retryTransientBootstrap(async () => {
     const response = await fetch(resolvePrimaryEnvironmentHttpUrl("/api/auth/session"), {
@@ -194,30 +187,15 @@ function isTransientBootstrapError(error: unknown): boolean {
 }
 
 async function bootstrapServerAuth(): Promise<ServerAuthGateState> {
-  const bootstrapCredential = getDesktopBootstrapCredential();
   const currentSession = await fetchSessionState();
   if (currentSession.authenticated) {
     return { status: "authenticated" };
   }
 
-  if (!bootstrapCredential) {
-    return {
-      status: "requires-auth",
-      auth: currentSession.auth,
-    };
-  }
-
-  try {
-    await exchangeBootstrapCredential(bootstrapCredential);
-    await waitForAuthenticatedSessionAfterBootstrap();
-    return { status: "authenticated" };
-  } catch (error) {
-    return {
-      status: "requires-auth",
-      auth: currentSession.auth,
-      errorMessage: error instanceof Error ? error.message : "Authentication failed.",
-    };
-  }
+  return {
+    status: "requires-auth",
+    auth: currentSession.auth,
+  };
 }
 
 export async function submitServerAuthCredential(credential: string): Promise<void> {

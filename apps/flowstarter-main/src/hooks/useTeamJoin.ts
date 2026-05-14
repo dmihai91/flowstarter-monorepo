@@ -18,7 +18,7 @@ export function useTeamJoinValidation(token: string | null) {
     queryKey: teamJoinKeys.validate(token || ''),
     enabled: !!token,
     queryFn: async (): Promise<TeamJoinValidation> => {
-      const res = await fetch('/api/team/join/validate', {
+      const res = await fetch('/api/admin/join/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
@@ -35,7 +35,7 @@ export function useTeamJoinValidation(token: string | null) {
 export function useTeamJoin() {
   return useMutation({
     mutationFn: async (token: string): Promise<{ success: boolean }> => {
-      const res = await fetch('/api/team/join', {
+      const res = await fetch('/api/admin/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),

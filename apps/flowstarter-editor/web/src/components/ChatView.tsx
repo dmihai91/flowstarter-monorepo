@@ -33,8 +33,8 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useShallow } from "zustand/react/shallow";
 import { useGitStatus } from "~/lib/gitStatusState";
 import { usePrimaryEnvironmentId } from "../environments/primary";
-import { readEnvironmentApi } from "../environmentApi";
-import { isElectron } from "../env";
+import { readEnvironmentApi, resolveRegisteredWorkspaceRpcEnvironmentId } from "../environmentApi";
+import { useEnvironmentConnectionEpoch } from "~/hooks/useEnvironmentConnectionEpoch";
 import { readLocalApi } from "../localApi";
 import { parseDiffRouteSearch, stripDiffSearchParams } from "../diffRouteSearch";
 import {
@@ -879,6 +879,22 @@ export default function ChatView(props: ChatViewProps) {
     savedEnvironmentRegistry,
     savedEnvironmentRuntimeById,
   ]);
+  const environmentConnectionEpoch = useEnvironmentConnectionEpoch();
+  const filesPanelRpcEnvironmentId = useMemo(() => {
+    void environmentConnectionEpoch;
+    return resolveRegisteredWorkspaceRpcEnvironmentId({
+      threadEnvironmentId: activeThread.environmentId,
+      primaryEnvironmentId,
+      routeKind,
+      activeProjectEnvironmentId: activeProject?.environmentId,
+    });
+  }, [
+    environmentConnectionEpoch,
+    activeThread.environmentId,
+    primaryEnvironmentId,
+    routeKind,
+    activeProject?.environmentId,
+  ]);
   const hasMultipleEnvironments = logicalProjectEnvironments.length > 1;
 
   const openPullRequestDialog = useCallback(
@@ -1023,9 +1039,11 @@ export default function ChatView(props: ChatViewProps) {
   const providerStatuses = serverConfig?.providers ?? EMPTY_PROVIDERS;
   const unlockedSelectedProvider = resolveSelectableProvider(
     providerStatuses,
-    selectedProviderByThreadId ?? threadProvider ?? "codex",
+    selectedProviderByThreadId ?? threadProvider ?? "claudeAgent",
   );
-  const selectedProvider: ProviderKind = lockedProvider ?? unlockedSelectedProvider;
+  const selectedProvider: ProviderKind =
+    lockedProvider ??
+    (unlockedSelectedProvider === "codex" ? "claudeAgent" : unlockedSelectedProvider);
   const phase = derivePhase(activeThread?.session ?? null);
   const threadActivities = activeThread?.activities ?? EMPTY_ACTIVITIES;
   const workLogEntries = useMemo(
@@ -1410,6 +1428,12 @@ export default function ChatView(props: ChatViewProps) {
       : (storeServerTerminalLaunchContext ?? null);
   // Default true while loading to avoid toolbar flicker.
   const isGitRepo = gitStatusQuery.data?.isRepo ?? true;
+  const publishEnabled = useMemo(() => {
+    if (!activeProject) return false;
+    const d = gitStatusQuery.data;
+    if (d == null || !d.isRepo) return false;
+    return d.hasWorkingTreeChanges || d.aheadCount > 0;
+  }, [activeProject, gitStatusQuery.data]);
   const terminalShortcutLabelOptions = useMemo(
     () => ({
       context: {
@@ -1727,13 +1751,6 @@ export default function ChatView(props: ChatViewProps) {
         command: input.keybindingCommand,
       });
 
-      if (isElectron && keybindingRule) {
-        const localApi = readLocalApi();
-        if (!localApi) {
-          throw new Error("Local API unavailable.");
-        }
-        await localApi.server.upsertKeybinding(keybindingRule);
-      }
     },
     [environmentId],
   );
@@ -3260,39 +3277,25 @@ export default function ChatView(props: ChatViewProps) {
   }
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden bg-background">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-transparent">
       {/* Top bar */}
       <header
         className={cn(
           "border-b border-border px-3 sm:px-5",
-          isElectron ? "drag-region flex h-[52px] items-center" : "py-2 sm:py-3",
+          "py-2 sm:py-3",
         )}
       >
         <ChatHeader
           activeThreadEnvironmentId={activeThread.environmentId}
+          filesPanelRpcEnvironmentId={filesPanelRpcEnvironmentId}
           activeThreadId={activeThread.id}
           activeThreadTitle={activeThread.title}
           activeProjectName={activeProject?.name}
           isGitRepo={isGitRepo}
           openInCwd={gitCwd}
-          activeProjectScripts={activeProject?.scripts}
-          preferredScriptId={
-            activeProject ? (lastInvokedScriptByProjectId[activeProject.id] ?? null) : null
-          }
-          keybindings={keybindings}
-          availableEditors={availableEditors}
-          terminalAvailable={activeProject !== undefined}
-          terminalOpen={terminalState.terminalOpen}
-          terminalToggleShortcutLabel={terminalToggleShortcutLabel}
-          diffToggleShortcutLabel={diffPanelShortcutLabel}
+          filesPanelCwd={activeWorkspaceRoot ?? null}
           gitCwd={gitCwd}
-          diffOpen={diffOpen}
-          onRunProjectScript={runProjectScript}
-          onAddProjectScript={saveProjectScript}
-          onUpdateProjectScript={updateProjectScript}
-          onDeleteProjectScript={deleteProjectScript}
-          onToggleTerminal={toggleTerminalVisibility}
-          onToggleDiff={onToggleDiff}
+          publishEnabled={publishEnabled}
         />
       </header>
 
@@ -3302,16 +3305,16 @@ export default function ChatView(props: ChatViewProps) {
         error={activeThread.error}
         onDismiss={() => setThreadError(activeThread.id, null)}
       />
-      {/* Main content area with optional plan sidebar */}
-      <div className="flex min-h-0 min-w-0 flex-1">
+      {/* Main content area — overflow-x clipped here so header + banners stay outside and avoid clipping toolbar focus rings */}
+      <div className="flex min-h-0 min-w-0 flex-1 overflow-x-hidden">
         {/* Chat column */}
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="fs-chat-thread-column flex min-h-0 min-w-0 flex-1 flex-col">
           {/* Messages Wrapper */}
           <div className="relative flex min-h-0 flex-1 flex-col">
             {/* Messages */}
             <div
               ref={setMessagesScrollContainerRef}
-              className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-3 py-3 sm:px-5 sm:py-4"
+              className="fs-chat-messages-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-3 py-3 sm:px-5 sm:py-4"
               onScroll={onMessagesScroll}
               onClickCapture={onMessagesClickCapture}
               onWheel={onMessagesWheel}
@@ -3356,7 +3359,7 @@ export default function ChatView(props: ChatViewProps) {
                 <button
                   type="button"
                   onClick={() => scrollMessagesToBottom("smooth")}
-                  className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-3 py-1 text-muted-foreground text-xs shadow-sm transition-colors hover:border-border hover:text-foreground hover:cursor-pointer"
+                  className="fs-scroll-to-bottom pointer-events-auto flex items-center gap-1.5 px-3 py-1 text-xs transition-colors hover:text-foreground hover:cursor-pointer"
                 >
                   <ChevronDownIcon className="size-3.5" />
                   Scroll to bottom
@@ -3496,22 +3499,24 @@ export default function ChatView(props: ChatViewProps) {
       </div>
       {/* end horizontal flex container */}
 
-      {mountedTerminalThreadRefs.map(({ key: mountedThreadKey, threadRef: mountedThreadRef }) => (
-        <PersistentThreadTerminalDrawer
-          key={mountedThreadKey}
-          threadRef={mountedThreadRef}
-          threadId={mountedThreadRef.threadId}
-          visible={mountedThreadKey === activeThreadKey && terminalState.terminalOpen}
-          launchContext={
-            mountedThreadKey === activeThreadKey ? (activeTerminalLaunchContext ?? null) : null
-          }
-          focusRequestId={mountedThreadKey === activeThreadKey ? terminalFocusRequestId : 0}
-          splitShortcutLabel={splitTerminalShortcutLabel ?? undefined}
-          newShortcutLabel={newTerminalShortcutLabel ?? undefined}
-          closeShortcutLabel={closeTerminalShortcutLabel ?? undefined}
-          onAddTerminalContext={addTerminalContextToDraft}
-        />
-      ))}
+      <PowerUserOnly>
+        {mountedTerminalThreadRefs.map(({ key: mountedThreadKey, threadRef: mountedThreadRef }) => (
+          <PersistentThreadTerminalDrawer
+            key={mountedThreadKey}
+            threadRef={mountedThreadRef}
+            threadId={mountedThreadRef.threadId}
+            visible={mountedThreadKey === activeThreadKey && terminalState.terminalOpen}
+            launchContext={
+              mountedThreadKey === activeThreadKey ? (activeTerminalLaunchContext ?? null) : null
+            }
+            focusRequestId={mountedThreadKey === activeThreadKey ? terminalFocusRequestId : 0}
+            splitShortcutLabel={splitTerminalShortcutLabel ?? undefined}
+            newShortcutLabel={newTerminalShortcutLabel ?? undefined}
+            closeShortcutLabel={closeTerminalShortcutLabel ?? undefined}
+            onAddTerminalContext={addTerminalContextToDraft}
+          />
+        ))}
+      </PowerUserOnly>
 
       {expandedImage && (
         <ExpandedImageDialog preview={expandedImage} onClose={closeExpandedImage} />

@@ -2,7 +2,7 @@
   "name": "@flowstarter/editor",
   "version": "0.1.0",
   "private": true,
-  "description": "Flowstarter editor — multitenant web GUI for the concierge service, forked from T3 Code (Electron stripped). Server + web + shared packages.",
+  "description": "Flowstarter editor — multitenant web GUI for the done-for-you service, forked from T3 Code (Electron stripped). Server + web + shared packages.",
   "type": "module",
   "scripts": {
     "dev": "pnpm run build:web && pnpm --filter @flowstarter/editor-server run dev",

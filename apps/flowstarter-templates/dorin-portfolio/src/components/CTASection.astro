@@ -1,0 +1,41 @@
+---
+import SectionBlock from './design-system/SectionBlock.astro';
+import ActionButton from './design-system/ActionButton.astro';
+---
+
+<SectionBlock className="cta-section" tone="accent" padding="none">
+  <div class="cta-section__inner container">
+    <h1 class="cta-section__heading">Ready to turn your complex business requirements into a seamless user experience?</h1>
+    <ActionButton
+      href="/book"
+      label="Book a strategic call"
+      variant="outline"
+      className="cta-section__btn ds-action-button--outline-dark"
+    />
+  </div>
+</SectionBlock>
+
+<style>
+  .cta-section__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .cta-section__heading {
+    max-width: 780px;
+    line-height: 1.1;
+  }
+
+  @media (max-width: 768px) {
+    .cta-section__inner {
+      padding-top: 60px;
+      padding-bottom: 60px;
+      gap: 32px;
+    }
+  }
+</style>

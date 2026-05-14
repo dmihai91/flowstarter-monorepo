@@ -20,9 +20,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTranslations } from '@/lib/i18n';
 import { useClerk, useUser } from '@clerk/nextjs';
-import { LogOut, Shield, User } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getInitials } from '@/lib/user-utils';
@@ -36,7 +35,7 @@ export function UserMenu() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isTeam = pathname?.startsWith('/team');
+  const isTeam = pathname?.startsWith('/admin');
 
   useEffect(() => {
     setMounted(true);
@@ -50,7 +49,7 @@ export function UserMenu() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push(isTeam ? '/team/login' : '/');
+    router.push(isTeam ? '/admin/login' : '/');
   };
 
   return (
@@ -107,17 +106,11 @@ export function UserMenu() {
           {isTeam ? (
             <>
               <DropdownMenuItem
-                onSelect={() => router.push('/team/dashboard/profile')}
+                onSelect={() => router.push('/admin/dashboard/profile')}
               >
                 <User className="h-4 w-4" />
                 {t('app.profile')}
               </DropdownMenuItem>
-              <Link href="/team/dashboard/security">
-                <DropdownMenuItem>
-                  <Shield className="h-4 w-4" />
-                  {t('team.sidebar.security')}
-                </DropdownMenuItem>
-              </Link>
             </>
           ) : (
             <>

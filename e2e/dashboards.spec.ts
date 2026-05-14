@@ -1,0 +1,84 @@
+/**
+ * Admin + client dashboard breadth check.
+ *
+ * Walks every team-dashboard route and the client `/dashboard` to confirm
+ * each one returns HTTP 200 (or a 30x to login) and renders without
+ * runtime crashes. We don't assert authenticated behaviour — that needs
+ * Clerk creds — but we DO catch:
+ *   - 5xx (server-side throw),
+ *   - blank shells (length < 200 chars),
+ *   - hard React error boundary text.
+ */
+
+import { test, expect, type Page } from "@playwright/test";
+
+const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+
+const TEAM_ROUTES = [
+  "/admin/dashboard",
+  "/admin/dashboard/clients",
+  "/admin/dashboard/projects",
+  "/admin/dashboard/hosting",
+  "/admin/dashboard/ai-usage",
+  "/admin/dashboard/analytics",
+  "/admin/dashboard/domains",
+  "/admin/dashboard/email",
+  "/admin/dashboard/invite",
+  "/admin/dashboard/profile",
+  "/admin/dashboard/services",
+  "/admin/dashboard/team",
+];
+
+const CLIENT_ROUTES = ["/dashboard", "/account", "/login"];
+
+async function assertNoRuntimeCrash(page: Page, path: string) {
+  const consoleErrors: string[] = [];
+  page.on("pageerror", (error) => consoleErrors.push(`pageerror: ${error.message}`));
+  page.on("console", (msg) => {
+    if (msg.type() === "error") {
+      const text = msg.text();
+      // Filter out the noisy 401-from-Clerk warnings; we expect those when
+      // unauthenticated. Real React error boundaries surface different
+      // messages.
+      if (
+        !text.includes("Failed to load resource") &&
+        !text.includes("status of 401") &&
+        !text.includes("status of 403") &&
+        !text.includes("net::ERR")
+      ) {
+        consoleErrors.push(`console.error: ${text}`);
+      }
+    }
+  });
+
+  const response = await page.goto(`${BASE}${path}`, {
+    waitUntil: "domcontentloaded",
+    timeout: 20000,
+  });
+  expect(response, `no response for ${path}`).not.toBeNull();
+  const status = response!.status();
+  expect(status, `${path} returned ${status}`).toBeLessThan(500);
+  await page.waitForTimeout(800);
+  const html = await page.content();
+  expect(html.length, `${path} returned suspiciously short HTML`).toBeGreaterThan(200);
+  expect(html, `${path} renders an error boundary`).not.toMatch(
+    /Application error: a (server|client)-side exception has occurred/i,
+  );
+  expect(consoleErrors, `${path} has runtime errors:\n${consoleErrors.join("\n")}`).toEqual([]);
+}
+
+test.describe("Admin team dashboards (unauthenticated)", () => {
+  for (const route of TEAM_ROUTES) {
+    test(`route ${route} renders without crash`, async ({ page }) => {
+      await assertNoRuntimeCrash(page, route);
+    });
+  }
+});
+
+test.describe("Client surfaces (unauthenticated)", () => {
+  for (const route of CLIENT_ROUTES) {
+    test(`route ${route} renders without crash`, async ({ page }) => {
+      await assertNoRuntimeCrash(page, route);
+    });
+  }
+});

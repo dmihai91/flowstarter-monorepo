@@ -37,6 +37,13 @@ const PROVIDER_ICON_BY_PROVIDER: Record<ProviderPickerKind, Icon> = {
 };
 
 export const AVAILABLE_PROVIDER_OPTIONS = PROVIDER_OPTIONS.filter(isAvailableProviderOption);
+/**
+ * Flowstarter editor composer hides OpenAI/Codex in the model menu unless the
+ * active thread is locked to Codex (existing Codex session).
+ */
+export const EDITOR_ANTHROPIC_ONLY_PROVIDER_OPTIONS = AVAILABLE_PROVIDER_OPTIONS.filter(
+  (option) => option.value === "claudeAgent",
+);
 const UNAVAILABLE_PROVIDER_OPTIONS = PROVIDER_OPTIONS.filter((option) => !option.available);
 const COMING_SOON_PROVIDER_OPTIONS = [
   { id: "opencode", label: "OpenCode", icon: OpenCodeIcon },
@@ -56,6 +63,8 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
   lockedProvider: ProviderKind | null;
   providers?: ReadonlyArray<ServerProvider>;
   modelOptionsByProvider: Record<ProviderKind, ReadonlyArray<{ slug: string; name: string }>>;
+  /** Defaults to all shipped providers (`AVAILABLE_PROVIDER_OPTIONS`). */
+  visibleProviderOptions?: ReadonlyArray<(typeof AVAILABLE_PROVIDER_OPTIONS)[number]>;
   activeProviderIconClassName?: string;
   compact?: boolean;
   disabled?: boolean;
@@ -64,6 +73,7 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
   onProviderModelChange: (provider: ProviderKind, model: string) => void;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuProviderOptions = props.visibleProviderOptions ?? AVAILABLE_PROVIDER_OPTIONS;
   const activeProvider = props.lockedProvider ?? props.provider;
   const selectedProviderOptions = props.modelOptionsByProvider[activeProvider];
   const selectedModelLabel =
@@ -146,7 +156,7 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
           </MenuGroup>
         ) : (
           <>
-            {AVAILABLE_PROVIDER_OPTIONS.map((option) => {
+            {menuProviderOptions.map((option) => {
               const OptionIcon = PROVIDER_ICON_BY_PROVIDER[option.value];
               const liveProvider = props.providers
                 ? getProviderSnapshot(props.providers, option.value)
@@ -206,35 +216,10 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
                 </MenuSub>
               );
             })}
-            {UNAVAILABLE_PROVIDER_OPTIONS.length > 0 && <MenuDivider />}
-            {UNAVAILABLE_PROVIDER_OPTIONS.map((option) => {
-              const OptionIcon = PROVIDER_ICON_BY_PROVIDER[option.value];
-              return (
-                <MenuItem key={option.value} disabled>
-                  <OptionIcon
-                    aria-hidden="true"
-                    className="size-4 shrink-0 text-muted-foreground/85 opacity-80"
-                  />
-                  <span>{option.label}</span>
-                  <span className="ms-auto text-[11px] text-muted-foreground/80 uppercase tracking-[0.08em]">
-                    Coming soon
-                  </span>
-                </MenuItem>
-              );
-            })}
-            {UNAVAILABLE_PROVIDER_OPTIONS.length === 0 && <MenuDivider />}
-            {COMING_SOON_PROVIDER_OPTIONS.map((option) => {
-              const OptionIcon = option.icon;
-              return (
-                <MenuItem key={option.id} disabled>
-                  <OptionIcon aria-hidden="true" className="size-4 shrink-0 opacity-80" />
-                  <span>{option.label}</span>
-                  <span className="ms-auto text-[11px] text-muted-foreground/80 uppercase tracking-[0.08em]">
-                    Coming soon
-                  </span>
-                </MenuItem>
-              );
-            })}
+            {/* Flowstarter ships Claude-only — the upstream T3 Code
+                "Codex / OpenCode / Gemini coming soon" rows are hidden
+                entirely so the picker doesn't tease providers we don't
+                use. Bring them back if we ever ship multi-provider. */}
           </>
         )}
       </MenuPopup>

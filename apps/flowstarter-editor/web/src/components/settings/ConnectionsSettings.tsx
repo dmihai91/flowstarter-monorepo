@@ -752,13 +752,10 @@ function SavedBackendListRow({
 }
 
 export function ConnectionsSettings() {
-  const desktopBridge = window.desktopBridge;
-  const [currentSessionRole, setCurrentSessionRole] = useState<"owner" | "client" | null>(
-    desktopBridge ? "owner" : null,
-  );
+  const [currentSessionRole, setCurrentSessionRole] = useState<"owner" | "client" | null>(null);
   const [currentAuthPolicy, setCurrentAuthPolicy] = useState<
     "desktop-managed-local" | "loopback-browser" | "remote-reachable" | "unsafe-no-auth" | null
-  >(desktopBridge ? null : null);
+  >(null);
   const savedEnvironmentsById = useSavedEnvironmentRegistryStore((state) => state.byId);
   const savedEnvironmentIds = useMemo(
     () =>
@@ -807,36 +804,14 @@ export function ConnectionsSettings() {
     DesktopServerExposureState["mode"] | null
   >(null);
   const canManageLocalBackend = currentSessionRole === "owner";
-  const isLocalBackendNetworkAccessible = desktopBridge
-    ? desktopServerExposureState?.mode === "network-accessible"
-    : currentAuthPolicy === "remote-reachable";
+  const isLocalBackendNetworkAccessible = currentAuthPolicy === "remote-reachable";
 
   const handleDesktopServerExposureChange = useCallback(
-    async (checked: boolean) => {
-      if (!desktopBridge) return;
-      setIsUpdatingDesktopServerExposure(true);
-      setDesktopServerExposureError(null);
-      try {
-        const nextState = await desktopBridge.setServerExposureMode(
-          checked ? "network-accessible" : "local-only",
-        );
-        setDesktopServerExposureState(nextState);
-        setPendingDesktopServerExposureMode(null);
-        setIsUpdatingDesktopServerExposure(false);
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Failed to update network exposure.";
-        setPendingDesktopServerExposureMode(null);
-        setDesktopServerExposureError(message);
-        toastManager.add({
-          type: "error",
-          title: "Could not update network access",
-          description: message,
-        });
-        setIsUpdatingDesktopServerExposure(false);
-      }
+    async (_checked: boolean) => {
+      // Desktop bridge was removed — network exposure changes are no longer
+      // supported from within the editor UI.
     },
-    [desktopBridge],
+    [],
   );
 
   const handleConfirmDesktopServerExposureChange = useCallback(() => {
@@ -986,11 +961,6 @@ export function ConnectionsSettings() {
   }, []);
 
   useEffect(() => {
-    if (desktopBridge) {
-      setCurrentSessionRole("owner");
-      return;
-    }
-
     let cancelled = false;
     void fetchSessionState()
       .then((session) => {
@@ -1007,7 +977,7 @@ export function ConnectionsSettings() {
     return () => {
       cancelled = true;
     };
-  }, [desktopBridge]);
+  }, []);
 
   useEffect(() => {
     if (!canManageLocalBackend) return;
@@ -1074,29 +1044,14 @@ export function ConnectionsSettings() {
           },
         },
       );
-    if (desktopBridge) {
-      void desktopBridge
-        .getServerExposureState()
-        .then((state) => {
-          if (cancelled) return;
-          setDesktopServerExposureState(state);
-        })
-        .catch((error: unknown) => {
-          if (cancelled) return;
-          const message =
-            error instanceof Error ? error.message : "Failed to load network exposure state.";
-          setDesktopServerExposureError(message);
-        });
-    } else {
-      setDesktopServerExposureState(null);
-      setDesktopServerExposureError(null);
-    }
+    setDesktopServerExposureState(null);
+    setDesktopServerExposureError(null);
 
     return () => {
       cancelled = true;
       unsubscribeAuthAccess();
     };
-  }, [canManageLocalBackend, desktopBridge]);
+  }, [canManageLocalBackend]);
 
   useEffect(() => {
     if (canManageLocalBackend) return;
@@ -1116,117 +1071,33 @@ export function ConnectionsSettings() {
       {canManageLocalBackend ? (
         <>
           <SettingsSection title="Manage local backend">
-            {desktopBridge ? (
-              <SettingsRow
-                title="Network access"
-                description={
-                  desktopServerExposureState?.endpointUrl
-                    ? `Reachable at ${desktopServerExposureState.endpointUrl}`
-                    : desktopServerExposureState?.mode === "network-accessible"
-                      ? desktopServerExposureState.advertisedHost
-                        ? `Exposed on all interfaces. Pairing links use ${desktopServerExposureState.advertisedHost}.`
-                        : "Exposed on all interfaces."
-                      : desktopServerExposureState
-                        ? "Limited to this machine."
-                        : "Loading…"
-                }
-                status={
-                  desktopServerExposureError ? (
-                    <span className="block text-destructive">{desktopServerExposureError}</span>
-                  ) : null
-                }
-                control={
-                  <AlertDialog
-                    open={pendingDesktopServerExposureMode !== null}
-                    onOpenChange={(open) => {
-                      if (isUpdatingDesktopServerExposure) return;
-                      if (!open) setPendingDesktopServerExposureMode(null);
-                    }}
-                  >
-                    <Switch
-                      checked={desktopServerExposureState?.mode === "network-accessible"}
-                      disabled={!desktopServerExposureState || isUpdatingDesktopServerExposure}
-                      onCheckedChange={(checked) => {
-                        setPendingDesktopServerExposureMode(
-                          checked ? "network-accessible" : "local-only",
-                        );
-                      }}
-                      aria-label="Enable network access"
-                    />
-                    <AlertDialogPopup>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          {pendingDesktopServerExposureMode === "network-accessible"
-                            ? "Enable network access?"
-                            : "Disable network access?"}
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          {pendingDesktopServerExposureMode === "network-accessible"
-                            ? "Flowstarter Editor will restart to expose this environment over the network."
-                            : "Flowstarter Editor will restart and limit this environment back to this machine."}
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogClose
-                          disabled={isUpdatingDesktopServerExposure}
-                          render={
-                            <Button variant="outline" disabled={isUpdatingDesktopServerExposure} />
-                          }
-                        >
-                          Cancel
-                        </AlertDialogClose>
-                        <Button
-                          onClick={handleConfirmDesktopServerExposureChange}
-                          disabled={
-                            pendingDesktopServerExposureMode === null ||
-                            isUpdatingDesktopServerExposure
-                          }
-                        >
-                          {isUpdatingDesktopServerExposure ? (
-                            <>
-                              <Spinner className="size-3.5" />
-                              Restarting…
-                            </>
-                          ) : pendingDesktopServerExposureMode === "network-accessible" ? (
-                            "Restart and enable"
-                          ) : (
-                            "Restart and disable"
-                          )}
-                        </Button>
-                      </AlertDialogFooter>
-                    </AlertDialogPopup>
-                  </AlertDialog>
-                }
-              />
-            ) : (
-              <SettingsRow
-                title="Network access"
-                description={
-                  currentAuthPolicy === "remote-reachable"
-                    ? "This backend is already configured for remote access. Network exposure changes must be made where the server is launched."
-                    : "This backend is only reachable on this machine. Restart it with a non-loopback host to enable remote pairing."
-                }
-                control={
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <span className="inline-flex">
-                          <Switch
-                            checked={isLocalBackendNetworkAccessible}
-                            disabled
-                            aria-label="Enable network access"
-                          />
-                        </span>
-                      }
-                    />
-                    <TooltipPopup side="top">
-                      Network exposure changes restart the backend and must be controlled where the
-                      server process is launched.
-                    </TooltipPopup>
-                  </Tooltip>
-                }
-              />
-            )}
+            <SettingsRow
+              title="Network access"
+              description={
+                currentAuthPolicy === "remote-reachable"
+                  ? "This backend is already configured for remote access. Network exposure changes must be made where the server is launched."
+                  : "This backend is only reachable on this machine. Restart it with a non-loopback host to enable remote pairing."
+              }
+              control={
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <span className="inline-flex">
+                        <Switch
+                          checked={isLocalBackendNetworkAccessible}
+                          disabled
+                          aria-label="Enable network access"
+                        />
+                      </span>
+                    }
+                  />
+                  <TooltipPopup side="top">
+                    Network exposure changes restart the backend and must be controlled where the
+                    server process is launched.
+                  </TooltipPopup>
+                </Tooltip>
+              }
+            />
           </SettingsSection>
 
           {isLocalBackendNetworkAccessible ? (

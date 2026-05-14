@@ -26,6 +26,21 @@ export const ProjectSearchEntriesResult = Schema.Struct({
 });
 export type ProjectSearchEntriesResult = typeof ProjectSearchEntriesResult.Type;
 
+/** List indexed workspace paths (sorted) for admin tooling — no search query. */
+export const ProjectListWorkspaceEntriesInput = Schema.Struct({
+  cwd: TrimmedNonEmptyString,
+  limit: PositiveInt.check(Schema.isLessThanOrEqualTo(PROJECT_SEARCH_ENTRIES_MAX_LIMIT)),
+});
+export type ProjectListWorkspaceEntriesInput = typeof ProjectListWorkspaceEntriesInput.Type;
+
+export class ProjectListWorkspaceEntriesError extends Schema.TaggedErrorClass<ProjectListWorkspaceEntriesError>()(
+  "ProjectListWorkspaceEntriesError",
+  {
+    message: TrimmedNonEmptyString,
+    cause: Schema.optional(Schema.Defect),
+  },
+) {}
+
 export class ProjectSearchEntriesError extends Schema.TaggedErrorClass<ProjectSearchEntriesError>()(
   "ProjectSearchEntriesError",
   {
@@ -48,6 +63,32 @@ export type ProjectWriteFileResult = typeof ProjectWriteFileResult.Type;
 
 export class ProjectWriteFileError extends Schema.TaggedErrorClass<ProjectWriteFileError>()(
   "ProjectWriteFileError",
+  {
+    message: TrimmedNonEmptyString,
+    cause: Schema.optional(Schema.Defect),
+  },
+) {}
+
+/** Read a UTF-8 workspace file for admin preview (size-capped on the server). */
+export const ProjectReadWorkspaceFileInput = Schema.Struct({
+  cwd: TrimmedNonEmptyString,
+  relativePath: TrimmedNonEmptyString.check(Schema.isMaxLength(PROJECT_WRITE_FILE_PATH_MAX_LENGTH)),
+});
+export type ProjectReadWorkspaceFileInput = typeof ProjectReadWorkspaceFileInput.Type;
+
+const ProjectReadWorkspaceFileKind = Schema.Literals(["text", "binary"]);
+
+export const ProjectReadWorkspaceFileResult = Schema.Struct({
+  relativePath: TrimmedNonEmptyString,
+  kind: ProjectReadWorkspaceFileKind,
+  /** Present when `kind` is `"text"`. */
+  content: Schema.optional(Schema.String),
+  truncated: Schema.Boolean,
+});
+export type ProjectReadWorkspaceFileResult = typeof ProjectReadWorkspaceFileResult.Type;
+
+export class ProjectReadWorkspaceFileError extends Schema.TaggedErrorClass<ProjectReadWorkspaceFileError>()(
+  "ProjectReadWorkspaceFileError",
   {
     message: TrimmedNonEmptyString,
     cause: Schema.optional(Schema.Defect),

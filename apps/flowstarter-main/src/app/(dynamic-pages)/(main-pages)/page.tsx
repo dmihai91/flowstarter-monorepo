@@ -1,16 +1,18 @@
 import nextDynamic from 'next/dynamic';
 
 import { SiteHeader } from '@/components/SiteHeader';
+import Footer from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
 
-import { AddOnsSection } from './components/AddOnsSection';
 import { LandingHero } from './components/LandingHero';
 import { EditorShowcase } from './components/EditorShowcase';
 import { ProblemSection } from './components/ProblemSection';
+import { SolutionSection } from './components/SolutionSection';
+import { DifferentiationSection } from './components/DifferentiationSection';
 import { ProcessSection } from './components/ProcessSection';
+import { AudienceSection } from './components/AudienceSection';
+import { ProofSection } from './components/ProofSection';
 import { ScrollFab } from './components/ScrollFab';
-import { IncludedSection } from './components/IncludedSection';
-import { LandingMinimalFooter } from './components/LandingMinimalFooter';
 import { BookingModalProvider } from './components/BookingModalProvider';
 
 // Below-the-fold client islands — code-split into separate chunks so they
@@ -28,8 +30,14 @@ const FinalCTASection = nextDynamic(() =>
     default: m.FinalCTASection,
   }))
 );
-
-export const dynamic = 'force-static';
+const SupportBot = nextDynamic(() =>
+  import('./components/SupportBot').then((m) => ({ default: m.SupportBot }))
+);
+const EcommerceWaitlistModal = nextDynamic(() =>
+  import('./components/EcommerceWaitlistModal').then((m) => ({
+    default: m.EcommerceWaitlistModal,
+  }))
+);
 
 export default function LandingPage() {
   return (
@@ -42,24 +50,30 @@ export default function LandingPage() {
         <LandingHero />
         <BookingModalProvider />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <EditorShowcase />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <ProblemSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <SolutionSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <DifferentiationSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <ProcessSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
-        <EditorShowcase />
+        <AudienceSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
-        <IncludedSection />
+        <ProofSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <LandingPricing />
-        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
-        <AddOnsSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <FAQSection />
         <FinalCTASection />
       </main>
-      <LandingMinimalFooter />
+      <Footer />
       <CookieConsent />
       <ScrollFab />
+      <SupportBot />
+      <EcommerceWaitlistModal />
     </div>
   );
 }

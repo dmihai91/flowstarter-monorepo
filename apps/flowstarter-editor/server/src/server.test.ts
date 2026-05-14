@@ -16,6 +16,8 @@ import {
   type OrchestrationEvent,
   ORCHESTRATION_WS_METHODS,
   ProjectId,
+  ProjectListWorkspaceEntriesError,
+  ProjectReadWorkspaceFileError,
   ResolvedKeybindingRule,
   ThreadId,
   WS_METHODS,
@@ -48,6 +50,7 @@ import { vi } from "vitest";
 
 import type { ServerConfigShape } from "./config.ts";
 import { deriveServerPaths, ServerConfig } from "./config.ts";
+import { ServerAuth } from "./auth/Services/ServerAuth.ts";
 import { makeRoutesLayer } from "./server.ts";
 import { resolveAttachmentRelativePath } from "./attachmentPaths.ts";
 import {
@@ -103,7 +106,12 @@ import { ServerAuthLive } from "./auth/Layers/ServerAuth.ts";
 
 const defaultProjectId = ProjectId.make("project-default");
 const defaultThreadId = ThreadId.make("thread-default");
-const defaultDesktopBootstrapToken = "test-desktop-bootstrap-token";
+
+const issueOwnerBootstrapCredential = Effect.gen(function* () {
+  const serverAuth = yield* ServerAuth;
+  const issued = yield* serverAuth.issuePairingCredential({ role: "owner" });
+  return issued.credential;
+});
 const defaultModelSelection = {
   provider: "codex",
   model: "gpt-5-codex",
@@ -322,7 +330,6 @@ const buildAppUnderTest = (options?: {
       otlpMetricsUrl: undefined,
       otlpExportIntervalMs: 10_000,
       otlpServiceName: "t3-server",
-      mode: "desktop",
       port: 0,
       host: "127.0.0.1",
       cwd: process.cwd(),
@@ -332,7 +339,6 @@ const buildAppUnderTest = (options?: {
       devUrl,
       noBrowser: true,
       startupPresentation: "browser",
-      desktopBootstrapToken: defaultDesktopBootstrapToken,
       autoBootstrapProjectFromCwd: false,
       logWebSocketEvents: false,
       ...options?.config,
@@ -536,12 +542,13 @@ const getHttpServerUrl = (pathname = "") =>
   });
 
 const bootstrapBrowserSession = (
-  credential = defaultDesktopBootstrapToken,
+  credential?: string,
   options?: {
     readonly headers?: Record<string, string>;
   },
 ) =>
   Effect.gen(function* () {
+    const resolvedCredential = credential ?? (yield* issueOwnerBootstrapCredential);
     const bootstrapUrl = yield* getHttpServerUrl("/api/auth/bootstrap");
     const response = yield* Effect.promise(() =>
       fetch(bootstrapUrl, {
@@ -551,7 +558,7 @@ const bootstrapBrowserSession = (
           ...options?.headers,
         },
         body: JSON.stringify({
-          credential,
+          credential: resolvedCredential,
         }),
       }),
     );
@@ -567,8 +574,9 @@ const bootstrapBrowserSession = (
     };
   });
 
-const bootstrapBearerSession = (credential = defaultDesktopBootstrapToken) =>
+const bootstrapBearerSession = (credential?: string) =>
   Effect.gen(function* () {
+    const resolvedCredential = credential ?? (yield* issueOwnerBootstrapCredential);
     const bootstrapUrl = yield* getHttpServerUrl("/api/auth/bootstrap/bearer");
     const response = yield* Effect.promise(() =>
       fetch(bootstrapUrl, {
@@ -577,7 +585,7 @@ const bootstrapBearerSession = (credential = defaultDesktopBootstrapToken) =>
           "content-type": "application/json",
         },
         body: JSON.stringify({
-          credential,
+          credential: resolvedCredential,
         }),
       }),
     );
@@ -594,7 +602,7 @@ const bootstrapBearerSession = (credential = defaultDesktopBootstrapToken) =>
     };
   });
 
-const getAuthenticatedSessionCookieHeader = (credential = defaultDesktopBootstrapToken) =>
+const getAuthenticatedSessionCookieHeader = (credential?: string) =>
   Effect.gen(function* () {
     const { response, cookie } = yield* bootstrapBrowserSession(credential);
     if (!response.ok) {
@@ -610,7 +618,7 @@ const getAuthenticatedSessionCookieHeader = (credential = defaultDesktopBootstra
     return cookie.split(";")[0] ?? cookie;
   });
 
-const getAuthenticatedBearerSessionToken = (credential = defaultDesktopBootstrapToken) =>
+const getAuthenticatedBearerSessionToken = (credential?: string) =>
   Effect.gen(function* () {
     const { response, body } = yield* bootstrapBearerSession(credential);
     if (!response.ok) {
@@ -783,8 +791,8 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
 
       assert.equal(response.status, 200);
       assert.equal(body.authenticated, false);
-      assert.equal(body.auth.policy, "desktop-managed-local");
-      assert.deepEqual(body.auth.bootstrapMethods, ["desktop-bootstrap"]);
+      assert.equal(body.auth.policy, "loopback-browser");
+      assert.deepEqual(body.auth.bootstrapMethods, ["one-time-token"]);
       assert.deepEqual(body.auth.sessionMethods, [
         "browser-session-cookie",
         "bearer-session-token",
@@ -1287,7 +1295,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
       );
 
       assert.equal(response.environment.environmentId, testEnvironmentDescriptor.environmentId);
-      assert.equal(response.auth.policy, "desktop-managed-local");
+      assert.equal(response.auth.policy, "loopback-browser");
     }).pipe(Effect.provide(NodeHttpServer.layerTest)),
   );
 
@@ -1337,7 +1345,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
         );
 
         assert.equal(response.environment.environmentId, testEnvironmentDescriptor.environmentId);
-        assert.equal(response.auth.policy, "desktop-managed-local");
+        assert.equal(response.auth.policy, "loopback-browser");
       }).pipe(Effect.provide(NodeHttpServer.layerTest)),
   );
 
@@ -1959,6 +1967,197 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
         result.failure.message,
         "Workspace root does not exist: /definitely/not/a/real/workspace/path",
       );
+    }).pipe(Effect.provide(NodeHttpServer.layerTest)),
+  );
+
+  it.effect("routes websocket rpc projects.listWorkspaceEntries for owner session", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-list-" });
+      yield* fs.writeFileString(path.join(workspaceDir, "alpha.ts"), "export const a = 1;");
+      yield* fs.writeFileString(path.join(workspaceDir, "beta.ts"), "export const b = 2;");
+
+      yield* buildAppUnderTest();
+
+      const wsUrl = yield* getWsServerUrl("/ws");
+      const response = yield* Effect.scoped(
+        withWsRpcClient(wsUrl, (client) =>
+          client[WS_METHODS.projectsListWorkspaceEntries]({
+            cwd: workspaceDir,
+            limit: 50,
+          }),
+        ),
+      );
+
+      assert.isAtLeast(response.entries.length, 2);
+      const paths = response.entries.map((e) => e.path);
+      assert.deepEqual([...paths].sort((a, b) => a.localeCompare(b)), paths);
+      assert.isTrue(paths.includes("alpha.ts"));
+      assert.isTrue(paths.includes("beta.ts"));
+    }).pipe(Effect.provide(NodeHttpServer.layerTest)),
+  );
+
+  it.effect("routes websocket rpc projects.listWorkspaceEntries rejects client session", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-list-deny-" });
+      yield* fs.writeFileString(path.join(workspaceDir, "only.ts"), "x");
+
+      yield* buildAppUnderTest();
+
+      const clientCredential = yield* Effect.gen(function* () {
+        const serverAuth = yield* ServerAuth;
+        const issued = yield* serverAuth.issuePairingCredential({ role: "client" });
+        return issued.credential;
+      });
+      const wsUrl = yield* getWsServerUrl("/ws", { credential: clientCredential });
+      const result = yield* Effect.scoped(
+        withWsRpcClient(wsUrl, (client) =>
+          client[WS_METHODS.projectsListWorkspaceEntries]({
+            cwd: workspaceDir,
+            limit: 10,
+          }),
+        ).pipe(Effect.result),
+      );
+
+      assertTrue(result._tag === "Failure");
+      assertTrue(result.failure._tag === "ProjectListWorkspaceEntriesError");
+      assertInclude(result.failure.message, "Team admin access");
+    }).pipe(Effect.provide(NodeHttpServer.layerTest)),
+  );
+
+  it.effect("routes websocket rpc projects.readWorkspaceFile for owner session", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-read-" });
+      yield* fs.writeFileString(path.join(workspaceDir, "foo.ts"), "export const x = 1;\n");
+
+      yield* buildAppUnderTest();
+
+      const wsUrl = yield* getWsServerUrl("/ws");
+      const response = yield* Effect.scoped(
+        withWsRpcClient(wsUrl, (client) =>
+          client[WS_METHODS.projectsReadWorkspaceFile]({
+            cwd: workspaceDir,
+            relativePath: "foo.ts",
+          }),
+        ),
+      );
+
+      assert.equal(response.kind, "text");
+      assert.equal(response.content, "export const x = 1;\n");
+      assert.equal(response.truncated, false);
+    }).pipe(Effect.provide(NodeHttpServer.layerTest)),
+  );
+
+  it.effect("routes websocket rpc projects.readWorkspaceFile truncates large text files", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-read-big-" });
+      const big = "a".repeat(512 * 1024 + 80);
+      yield* fs.writeFileString(path.join(workspaceDir, "huge.txt"), big);
+
+      yield* buildAppUnderTest();
+
+      const wsUrl = yield* getWsServerUrl("/ws");
+      const response = yield* Effect.scoped(
+        withWsRpcClient(wsUrl, (client) =>
+          client[WS_METHODS.projectsReadWorkspaceFile]({
+            cwd: workspaceDir,
+            relativePath: "huge.txt",
+          }),
+        ),
+      );
+
+      assert.equal(response.kind, "text");
+      assert.equal(response.truncated, true);
+      assert.equal(response.content?.length, 512 * 1024);
+    }).pipe(Effect.provide(NodeHttpServer.layerTest)),
+  );
+
+  it.effect("routes websocket rpc projects.readWorkspaceFile detects binary", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-read-bin-" });
+      yield* fs.writeFile(path.join(workspaceDir, "x.bin"), new Uint8Array([0x00, 0xff, 0x00]));
+
+      yield* buildAppUnderTest();
+
+      const wsUrl = yield* getWsServerUrl("/ws");
+      const response = yield* Effect.scoped(
+        withWsRpcClient(wsUrl, (client) =>
+          client[WS_METHODS.projectsReadWorkspaceFile]({
+            cwd: workspaceDir,
+            relativePath: "x.bin",
+          }),
+        ),
+      );
+
+      assert.equal(response.kind, "binary");
+      assert.equal(response.truncated, false);
+    }).pipe(Effect.provide(NodeHttpServer.layerTest)),
+  );
+
+  it.effect("routes websocket rpc projects.readWorkspaceFile rejects path outside root", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-read-out-" });
+      yield* fs.writeFileString(path.join(workspaceDir, "only.ts"), "x");
+
+      yield* buildAppUnderTest();
+
+      const wsUrl = yield* getWsServerUrl("/ws");
+      const result = yield* Effect.scoped(
+        withWsRpcClient(wsUrl, (client) =>
+          client[WS_METHODS.projectsReadWorkspaceFile]({
+            cwd: workspaceDir,
+            relativePath: "../escape.ts",
+          }),
+        ).pipe(Effect.result),
+      );
+
+      assertTrue(result._tag === "Failure");
+      assertTrue(result.failure._tag === "ProjectReadWorkspaceFileError");
+      assertInclude(
+        result.failure.message,
+        "Workspace file path must stay within the project root.",
+      );
+    }).pipe(Effect.provide(NodeHttpServer.layerTest)),
+  );
+
+  it.effect("routes websocket rpc projects.readWorkspaceFile rejects client session", () =>
+    Effect.gen(function* () {
+      const fs = yield* FileSystem.FileSystem;
+      const path = yield* Path.Path;
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-read-deny-" });
+      yield* fs.writeFileString(path.join(workspaceDir, "only.ts"), "x");
+
+      yield* buildAppUnderTest();
+
+      const clientCredential = yield* Effect.gen(function* () {
+        const serverAuth = yield* ServerAuth;
+        const issued = yield* serverAuth.issuePairingCredential({ role: "client" });
+        return issued.credential;
+      });
+      const wsUrl = yield* getWsServerUrl("/ws", { credential: clientCredential });
+      const result = yield* Effect.scoped(
+        withWsRpcClient(wsUrl, (client) =>
+          client[WS_METHODS.projectsReadWorkspaceFile]({
+            cwd: workspaceDir,
+            relativePath: "only.ts",
+          }),
+        ).pipe(Effect.result),
+      );
+
+      assertTrue(result._tag === "Failure");
+      assertTrue(result.failure._tag === "ProjectReadWorkspaceFileError");
+      assertInclude(result.failure.message, "Team admin access");
     }).pipe(Effect.provide(NodeHttpServer.layerTest)),
   );
 

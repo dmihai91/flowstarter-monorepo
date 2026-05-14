@@ -33,7 +33,7 @@ It enqueues those jobs and reads their state.
 Cross-app shared code:
 - `@flowstarter/platform-config` — domain/URL helpers (no hardcoded domains)
 - `@flowstarter/flow-design-system` — design tokens
-- `apps/flowstarter-library` — site templates
+- `apps/flowstarter-templates/*` — client site templates (`dorin-portfolio` is the canonical demo)
 
 ## Setup
 

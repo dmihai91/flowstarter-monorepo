@@ -9,7 +9,11 @@
 import { Schema, Context } from "effect";
 import type { Effect } from "effect";
 
-import type { ProjectSearchEntriesInput, ProjectSearchEntriesResult } from "@flowstarter/editor-contracts";
+import type {
+  ProjectListWorkspaceEntriesInput,
+  ProjectSearchEntriesInput,
+  ProjectSearchEntriesResult,
+} from "@flowstarter/editor-contracts";
 
 export class WorkspaceEntriesError extends Schema.TaggedErrorClass<WorkspaceEntriesError>()(
   "WorkspaceEntriesError",
@@ -32,6 +36,13 @@ export interface WorkspaceEntriesShape {
    */
   readonly search: (
     input: ProjectSearchEntriesInput,
+  ) => Effect.Effect<ProjectSearchEntriesResult, WorkspaceEntriesError>;
+
+  /**
+   * Return indexed workspace entries sorted by path (admin file browser).
+   */
+  readonly list: (
+    input: ProjectListWorkspaceEntriesInput,
   ) => Effect.Effect<ProjectSearchEntriesResult, WorkspaceEntriesError>;
 
   /**

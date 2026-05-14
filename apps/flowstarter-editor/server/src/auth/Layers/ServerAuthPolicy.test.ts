@@ -26,40 +26,7 @@ const makeServerAuthPolicyLayer = (overrides?: Partial<ServerConfigShape>) =>
   );
 
 it.layer(NodeServices.layer)("ServerAuthPolicyLive", (it) => {
-  it.effect("uses desktop-managed-local policy for desktop mode", () =>
-    Effect.gen(function* () {
-      const policy = yield* ServerAuthPolicy;
-      const descriptor = yield* policy.getDescriptor();
-
-      expect(descriptor.policy).toBe("desktop-managed-local");
-      expect(descriptor.bootstrapMethods).toEqual(["desktop-bootstrap"]);
-    }).pipe(
-      Effect.provide(
-        makeServerAuthPolicyLayer({
-          mode: "desktop",
-        }),
-      ),
-    ),
-  );
-
-  it.effect("uses remote-reachable policy for desktop mode when bound beyond loopback", () =>
-    Effect.gen(function* () {
-      const policy = yield* ServerAuthPolicy;
-      const descriptor = yield* policy.getDescriptor();
-
-      expect(descriptor.policy).toBe("remote-reachable");
-      expect(descriptor.bootstrapMethods).toEqual(["desktop-bootstrap", "one-time-token"]);
-    }).pipe(
-      Effect.provide(
-        makeServerAuthPolicyLayer({
-          mode: "desktop",
-          host: "0.0.0.0",
-        }),
-      ),
-    ),
-  );
-
-  it.effect("uses loopback-browser policy for loopback web hosts", () =>
+  it.effect("uses loopback-browser policy for loopback hosts", () =>
     Effect.gen(function* () {
       const policy = yield* ServerAuthPolicy;
       const descriptor = yield* policy.getDescriptor();
@@ -69,14 +36,13 @@ it.layer(NodeServices.layer)("ServerAuthPolicyLive", (it) => {
     }).pipe(
       Effect.provide(
         makeServerAuthPolicyLayer({
-          mode: "web",
           host: "127.0.0.1",
         }),
       ),
     ),
   );
 
-  it.effect("uses remote-reachable policy for wildcard web hosts", () =>
+  it.effect("uses remote-reachable policy for wildcard hosts", () =>
     Effect.gen(function* () {
       const policy = yield* ServerAuthPolicy;
       const descriptor = yield* policy.getDescriptor();
@@ -86,14 +52,13 @@ it.layer(NodeServices.layer)("ServerAuthPolicyLive", (it) => {
     }).pipe(
       Effect.provide(
         makeServerAuthPolicyLayer({
-          mode: "web",
           host: "0.0.0.0",
         }),
       ),
     ),
   );
 
-  it.effect("uses remote-reachable policy for non-loopback web hosts", () =>
+  it.effect("uses remote-reachable policy for non-loopback hosts", () =>
     Effect.gen(function* () {
       const policy = yield* ServerAuthPolicy;
       const descriptor = yield* policy.getDescriptor();
@@ -102,7 +67,6 @@ it.layer(NodeServices.layer)("ServerAuthPolicyLive", (it) => {
     }).pipe(
       Effect.provide(
         makeServerAuthPolicyLayer({
-          mode: "web",
           host: "192.168.1.50",
         }),
       ),

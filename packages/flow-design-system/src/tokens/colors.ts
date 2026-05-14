@@ -11,13 +11,13 @@ export const colors = {
     primary: 'hsl(233, 65%, 58%)',      // Main brand indigo
     primaryLight: 'hsl(233, 65%, 68%)',
     primaryDark: 'hsl(233, 65%, 48%)',
-    gradient: 'linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%)',
+    gradient: 'linear-gradient(135deg, hsl(233, 65%, 48%) 0%, hsl(233, 65%, 58%) 100%)',
     gradientHover: 'linear-gradient(135deg, var(--purple) 0%, #0891B2 100%)',
   },
 
   // Accent colors
   accent: {
-    purple: '#8B5CF6',
+    purple: 'hsl(233, 65%, 58%)',
     cyan: '#06B6D4',
     blue: '#3B82F6',
     green: '#10B981',

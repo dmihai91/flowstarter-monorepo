@@ -4,6 +4,7 @@ import AuthLayout from '@/components/auth/AuthLayout';
 import { AuthFormCard } from '@/components/auth/AuthFormCard';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { AuthRedirectWrapper } from '@/components/AuthRedirectWrapper';
+import { buildTeamLoginHref } from '@/lib/teamLoginHref';
 import { useTranslations } from '@/lib/i18n';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -85,7 +86,7 @@ export function LoginClient() {
   const noticeContent = getNoticeContent();
 
   useEffect(() => {
-    router.prefetch('/team/dashboard');
+    router.prefetch('/admin/dashboard');
   }, [router]);
 
   return (
@@ -124,10 +125,10 @@ export function LoginClient() {
         <AuthFormCard
           footer={
             <a
-              href="/team/login"
+              href={buildTeamLoginHref(searchParams)}
               className="text-sm text-[var(--fs-ink-faint)] hover:text-[var(--purple)] transition-colors"
             >
-              Team member? Sign in here →
+              Admin? Sign in here →
             </a>
           }
         >

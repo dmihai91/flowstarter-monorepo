@@ -28,7 +28,6 @@ beforeAll(() => {
     matchMedia,
     addEventListener: () => {},
     removeEventListener: () => {},
-    desktopBridge: undefined,
   });
   vi.stubGlobal("document", {
     documentElement: {

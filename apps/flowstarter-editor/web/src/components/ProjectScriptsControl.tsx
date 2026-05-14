@@ -275,18 +275,27 @@ export default function ProjectScriptsControl({
             variant="outline"
             onClick={() => onRunScript(primaryScript)}
             title={`Run ${primaryScript.name}`}
+            aria-label={`Run ${primaryScript.name}`}
           >
             <ScriptIcon icon={primaryScript.icon} />
-            <span className="sr-only @3xl/header-actions:not-sr-only @3xl/header-actions:ml-0.5">
+            <span className="sr-only @3xl/chrome-tools:not-sr-only @3xl/chrome-tools:ml-0.5">
               {primaryScript.name}
             </span>
           </Button>
-          <GroupSeparator className="hidden @3xl/header-actions:block" />
+          <GroupSeparator className="hidden @3xl/chrome-tools:block" />
           <Menu highlightItemOnHover={false}>
             <MenuTrigger
-              render={<Button size="icon-xs" variant="outline" aria-label="Script actions" />}
+              render={
+                <Button
+                  className="fs-chat-submenu-chevron-trigger"
+                  size="icon-xs"
+                  variant="outline"
+                  aria-label="More scripts and add action"
+                  title="More scripts and add action"
+                />
+              }
             >
-              <ChevronDownIcon className="size-4" />
+              <ChevronDownIcon className="size-4 shrink-0" strokeWidth={2} />
             </MenuTrigger>
             <MenuPopup align="end">
               {scripts.map((script) => {
@@ -340,9 +349,15 @@ export default function ProjectScriptsControl({
           </Menu>
         </Group>
       ) : (
-        <Button size="xs" variant="outline" onClick={openAddDialog} title="Add action">
+        <Button
+          size="xs"
+          variant="outline"
+          onClick={openAddDialog}
+          title="Add action"
+          aria-label="Add action"
+        >
           <PlusIcon className="size-3.5" />
-          <span className="sr-only @3xl/header-actions:not-sr-only @3xl/header-actions:ml-0.5">
+          <span className="sr-only @3xl/chrome-tools:not-sr-only @3xl/chrome-tools:ml-0.5">
             Add action
           </span>
         </Button>

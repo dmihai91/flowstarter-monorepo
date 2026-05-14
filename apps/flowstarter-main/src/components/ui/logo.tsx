@@ -7,16 +7,39 @@ import {
 } from '@flowstarter/flow-design-system';
 import Link from 'next/link';
 
+import { cn } from '@/lib/utils';
+
 const textSizes = { xs: 16, sm: 20, md: 24, lg: 30, xl: 36 };
+
+/** Beside the wordmark, the default mark size reads taller than the type; step down one notch. */
+const markSizeBesideWordmark: Record<
+  NonNullable<DesignSystemLogoProps['size']>,
+  DesignSystemLogoProps['size']
+> = {
+  xs: 'xs',
+  sm: 'xs',
+  md: 'sm',
+  lg: 'md',
+  xl: 'lg',
+};
 
 interface LogoProps extends DesignSystemLogoProps {
   href?: string;
 }
 
-function LogoWordmark({ size = 'md' }: { size?: LogoProps['size'] }) {
+function LogoWordmark({
+  size = 'md',
+  className,
+}: {
+  size?: LogoProps['size'];
+  className?: string;
+}) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <LogoMark size={size} />
+    <div className={cn('flex shrink-0 items-center gap-2.5', className)}>
+      <LogoMark
+        size={markSizeBesideWordmark[size!]}
+        className="shrink-0 self-center"
+      />
       <span
         style={{
           fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif",
@@ -49,14 +72,14 @@ export function Logo({
   className,
 }: LogoProps) {
   const content = showText ? (
-    <LogoWordmark size={size} />
+    <LogoWordmark size={size} className={className} />
   ) : (
     <LogoMark size={size} className={className} />
   );
 
   if (href) {
     return (
-      <Link href={href} style={{ display: 'flex', alignItems: 'center' }}>
+      <Link href={href} className="flex items-center">
         {content}
       </Link>
     );

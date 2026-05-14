@@ -1,331 +1,281 @@
-'use client';
+import {
+  LegalDraftNotice,
+  MarketingShell,
+  PageHero,
+  ProseSection,
+} from '@/components/marketing';
+import { tServer } from '@/lib/i18n-server';
 
-import { Cookie, Shield, BarChart3, Settings, Check } from 'lucide-react';
-import { useTranslations } from '@/lib/i18n';
-import { PublicPageLayout } from '@/components/PublicPageLayout';
-import { Button } from '@/components/ui/unified-button';
+export const metadata = {
+  title: 'Cookie Policy',
+  description:
+    'What cookies Flowstarter uses, why we use them, and how to control them.',
+};
 
-export default function CookiePolicyPage() {
-  const { t } = useTranslations();
-  const lastUpdated = 'February 27, 2026';
+const LAST_UPDATED = 'May 2026';
 
-  const cookieTypes = [
-    {
-      icon: Shield,
-      name: t('cookies.type.essential.name'),
-      required: true,
-      description: t('cookies.type.essential.description'),
-      examples: [
-        {
-          name: 'session_id',
-          purpose: t('cookies.cookie.sessionId.purpose'),
-          duration: t('cookies.cookie.sessionId.duration'),
-        },
-        {
-          name: 'csrf_token',
-          purpose: t('cookies.cookie.csrfToken.purpose'),
-          duration: t('cookies.cookie.csrfToken.duration'),
-        },
-        {
-          name: 'cookie_consent',
-          purpose: t('cookies.cookie.cookieConsent.purpose'),
-          duration: t('cookies.cookie.cookieConsent.duration'),
-        },
-        {
-          name: 'theme',
-          purpose: t('cookies.cookie.theme.purpose'),
-          duration: t('cookies.cookie.theme.duration'),
-        },
-      ],
-    },
-    {
-      icon: BarChart3,
-      name: t('cookies.type.analytics.name'),
-      required: false,
-      description: t('cookies.type.analytics.description'),
-      examples: [
-        {
-          name: 'plausible_*',
-          purpose: t('cookies.cookie.plausible.purpose'),
-          duration: t('cookies.cookie.plausible.duration'),
-        },
-      ],
-    },
-    {
-      icon: Settings,
-      name: t('cookies.type.functional.name'),
-      required: false,
-      description: t('cookies.type.functional.description'),
-      examples: [
-        {
-          name: 'language',
-          purpose: t('cookies.cookie.language.purpose'),
-          duration: t('cookies.cookie.language.duration'),
-        },
-        {
-          name: 'sidebar_collapsed',
-          purpose: t('cookies.cookie.sidebar.purpose'),
-          duration: t('cookies.cookie.sidebar.duration'),
-        },
-      ],
-    },
-  ];
+type CookieRow = {
+  name: string;
+  purpose: string;
+  type: 'Strictly necessary' | 'Functional' | 'Analytics';
+  duration: string;
+};
 
+const COOKIE_TABLE: CookieRow[] = [
+  {
+    name: '__session',
+    purpose: 'Keeps you signed in. Set by Clerk after a successful sign-in.',
+    type: 'Strictly necessary',
+    duration: 'Session (up to 7 days)',
+  },
+  {
+    name: '__client_uat',
+    purpose:
+      'Used by Clerk to detect that a user has previously authenticated.',
+    type: 'Strictly necessary',
+    duration: '1 year',
+  },
+  {
+    name: 'flowstarter_theme',
+    purpose: 'Remembers your light / dark theme preference.',
+    type: 'Functional',
+    duration: '1 year',
+  },
+  {
+    name: 'flowstarter_cookie_consent',
+    purpose:
+      'Stores your cookie-banner choice so we do not ask again on every visit.',
+    type: 'Strictly necessary',
+    duration: '1 year',
+  },
+  {
+    name: 'NEXT_LOCALE',
+    purpose:
+      'Remembers your preferred language so the next visit loads in the same locale.',
+    type: 'Functional',
+    duration: '1 year',
+  },
+];
+
+const cellStyle = {
+  padding: '0.7rem 0.85rem',
+  borderBottom: '1px solid var(--ls-rule)',
+  fontFamily: 'var(--ls-sans)',
+  fontSize: '0.9rem',
+  lineHeight: 1.5,
+  color: 'var(--ls-ink-dim)',
+  verticalAlign: 'top' as const,
+};
+
+const headerCellStyle = {
+  ...cellStyle,
+  fontFamily: 'var(--ls-mono)',
+  fontSize: '10.5px',
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase' as const,
+  color: 'var(--ls-ink-faint)',
+  background: 'transparent',
+  borderBottom: '1px solid var(--ls-rule-strong)',
+  fontWeight: 500,
+  textAlign: 'left' as const,
+};
+
+export default function CookiesPage() {
+  const t = tServer as (key: string) => string;
   return (
-    <PublicPageLayout>
-      {/* Content */}
-      <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16 overflow-hidden">
-        {/* Hero */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--purple)]/10 text-[var(--purple)] text-sm font-medium mb-6">
-            <Cookie className="w-4 h-4" />
-            {t('cookies.badge')}
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--fs-ink)] mb-4">
-            {t('cookies.title')}
-          </h1>
-          <p className="text-base sm:text-lg text-[var(--fs-ink-faint)] max-w-lg mx-auto mb-4 px-2">
-            {t('cookies.description')}
-          </p>
-          <p className="text-sm text-[var(--fs-ink-faint)]">
-            {t('cookies.lastUpdated', { date: lastUpdated })}
-          </p>
-        </div>
+    <MarketingShell>
+      <main id="main-content" className="flex-1">
+        <PageHero
+          eyebrow={t('cookies.heroEyebrow')}
+          headlinePrefix={t('cookies.heroHeadlinePrefix')}
+          headlineFlourish={t('cookies.heroHeadlineFlourish')}
+          sub={t('cookies.heroSub')}
+          meta={
+            <span className="ls-page-meta">
+              <span>{t('cookies.lastUpdatedLabel')}</span>
+              <span className="dot" aria-hidden="true" />
+              <span>{LAST_UPDATED}</span>
+            </span>
+          }
+        />
 
-        {/* Quick Summary */}
-        <div className="mb-12 p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-[var(--purple)]/5 via-white to-blue-500/5 dark:from-[var(--purple)]/10 dark:via-[#0f0f12] dark:to-blue-500/10 border border-[var(--purple)]/20">
-          <h2 className="text-lg font-bold text-[var(--fs-ink)] mb-4 flex items-center gap-2">
-            <Cookie className="w-5 h-5 text-[var(--purple)]" />
-            {t('cookies.shortVersion.title')}
-          </h2>
-          <ul className="space-y-2 text-sm text-[var(--fs-ink-dim)]">
-            <li className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-              <span>
-                <strong>{t('cookies.shortVersion.essential')}</strong>
-                {t('cookies.shortVersion.essentialDesc')}
-              </span>
+        <ProseSection>
+          <LegalDraftNotice />
+
+          <h2>1. What is a cookie?</h2>
+          <p>
+            A cookie is a small text file that a website stores in your browser.
+            It can hold a session token, a preference, or a counter. Cookies
+            cannot run code or read other files on your device.
+          </p>
+
+          <h2>2. The categories we use</h2>
+          <ul>
+            <li>
+              <strong>Strictly necessary</strong> — required for the site to
+              function. These keep you signed in, remember your consent choice,
+              and protect against cross-site request forgery. They are set
+              whether or not you accept the cookie banner.
             </li>
-            <li className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-              <span>
-                <strong>{t('cookies.shortVersion.analytics')}</strong>
-                {t('cookies.shortVersion.analyticsDesc')}
-              </span>
+            <li>
+              <strong>Functional</strong> — small comforts such as your
+              light/dark theme preference and your chosen language. Optional; if
+              you decline, the site falls back to system defaults.
             </li>
-            <li className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-              <span>
-                <strong>{t('cookies.shortVersion.noAds')}</strong>
-                {t('cookies.shortVersion.noAdsDesc')}
-              </span>
+            <li>
+              <strong>Analytics</strong> — we currently use Plausible, a
+              privacy-friendly analytics tool that does <em>not</em> set
+              cookies. We do not run Google Analytics, Facebook Pixel, or any
+              cross-site advertising tracker.
             </li>
-            <li className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-              <span>
-                <strong>{t('cookies.shortVersion.control')}</strong>
-                {t('cookies.shortVersion.controlDesc')}
-              </span>
+            <li>
+              <strong>Advertising</strong> — we do not use advertising cookies
+              of any kind.
             </li>
           </ul>
-        </div>
 
-        {/* What Are Cookies */}
-        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
-          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-4">
-            {t('cookies.whatAreCookies.title')}
-          </h2>
-          <p className="text-[var(--fs-ink-dim)] leading-relaxed mb-4">
-            {t('cookies.whatAreCookies.p1')}
+          <h2>3. The full list</h2>
+          <p>
+            The table below is the complete inventory of cookies served by
+            flowstarter.net and our authenticated app.
           </p>
-          <p className="text-[var(--fs-ink-dim)] leading-relaxed">
-            {t('cookies.whatAreCookies.p2')}
-          </p>
-        </section>
 
-        {/* Cookie Types */}
-        <div className="space-y-8 mb-10">
-          {cookieTypes.map((type, index) => (
-            <section
-              key={index}
-              className="p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]"
-            >
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-[var(--purple)]/10 flex items-center justify-center flex-shrink-0">
-                  <type.icon className="w-6 h-6 text-[var(--purple)]" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h2 className="text-xl font-bold text-[var(--fs-ink)]">
-                      {type.name}
-                    </h2>
-                    {type.required ? (
-                      <span className="px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-white/10 text-[var(--fs-ink-dim)] rounded">
-                        {t('cookies.label.required')}
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 text-xs font-medium bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded">
-                        {t('cookies.label.optional')}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[var(--fs-ink-dim)] leading-relaxed">
-                    {type.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* Cookie list — cards on mobile, table on sm+ */}
-              <div className="sm:hidden space-y-3 mt-2">
-                {type.examples.map((cookie, i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl bg-gray-50 dark:bg-[var(--fs-bg-elevated)] border border-[var(--fs-rule)] p-3"
-                  >
-                    <p className="font-mono text-xs text-[var(--purple)] mb-1">
-                      {cookie.name}
-                    </p>
-                    <p className="text-xs text-[var(--fs-ink-dim)] mb-1">
-                      {cookie.purpose}
-                    </p>
-                    <p className="text-xs text-[var(--fs-ink-faint)]">
-                      {t('cookies.table.duration')}: {cookie.duration}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="hidden sm:block overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--fs-rule)]">
-                      <th className="text-left py-3 px-4 font-semibold text-[var(--fs-ink)]">
-                        {t('cookies.table.cookie')}
-                      </th>
-                      <th className="text-left py-3 px-4 font-semibold text-[var(--fs-ink)]">
-                        {t('cookies.table.purpose')}
-                      </th>
-                      <th className="text-left py-3 px-4 font-semibold text-[var(--fs-ink)]">
-                        {t('cookies.table.duration')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {type.examples.map((cookie, i) => (
-                      <tr
-                        key={i}
-                        className="border-b border-gray-100 dark:border-white/5 last:border-0"
+          <div
+            style={{
+              marginTop: '1.2rem',
+              border: '1px solid var(--ls-rule)',
+              borderRadius: '14px',
+              overflow: 'hidden',
+              background: 'var(--ls-glass-bg)',
+            }}
+          >
+            <div style={{ overflowX: 'auto' }}>
+              <table
+                style={{
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  fontFamily: 'var(--ls-sans)',
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th style={headerCellStyle}>Name</th>
+                    <th style={headerCellStyle}>Purpose</th>
+                    <th style={headerCellStyle}>Category</th>
+                    <th style={headerCellStyle}>Duration</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COOKIE_TABLE.map((row, i) => (
+                    <tr key={row.name}>
+                      <td
+                        style={{
+                          ...cellStyle,
+                          fontFamily: 'var(--ls-mono)',
+                          fontSize: '0.82rem',
+                          color: 'var(--ls-ink)',
+                          borderBottom:
+                            i === COOKIE_TABLE.length - 1
+                              ? 'none'
+                              : cellStyle.borderBottom,
+                        }}
                       >
-                        <td className="py-3 px-4 font-mono text-xs text-[var(--purple)]">
-                          {cookie.name}
-                        </td>
-                        <td className="py-3 px-4 text-[var(--fs-ink-dim)]">
-                          {cookie.purpose}
-                        </td>
-                        <td className="py-3 px-4 text-[var(--fs-ink-faint)]">
-                          {cookie.duration}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          ))}
-        </div>
+                        {row.name}
+                      </td>
+                      <td
+                        style={{
+                          ...cellStyle,
+                          borderBottom:
+                            i === COOKIE_TABLE.length - 1
+                              ? 'none'
+                              : cellStyle.borderBottom,
+                        }}
+                      >
+                        {row.purpose}
+                      </td>
+                      <td
+                        style={{
+                          ...cellStyle,
+                          color: 'var(--ls-ink)',
+                          borderBottom:
+                            i === COOKIE_TABLE.length - 1
+                              ? 'none'
+                              : cellStyle.borderBottom,
+                        }}
+                      >
+                        {row.type}
+                      </td>
+                      <td
+                        style={{
+                          ...cellStyle,
+                          fontFamily: 'var(--ls-mono)',
+                          fontSize: '0.82rem',
+                          color: 'var(--ls-ink-faint)',
+                          borderBottom:
+                            i === COOKIE_TABLE.length - 1
+                              ? 'none'
+                              : cellStyle.borderBottom,
+                        }}
+                      >
+                        {row.duration}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-        {/* Third-Party Cookies */}
-        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
-          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-4">
-            {t('cookies.thirdParty.title')}
-          </h2>
-          <p className="text-[var(--fs-ink-dim)] leading-relaxed mb-4">
-            {t('cookies.thirdParty.description')}
+          <h2>4. How to control your cookies</h2>
+          <p>
+            The cookie banner at the bottom of the page lets you accept or
+            decline non-essential cookies on your first visit. You can change
+            your choice at any time by clearing the
+            <code> flowstarter_cookie_consent </code> cookie in your browser
+            settings — the banner will reappear on the next visit.
           </p>
-          <ul className="space-y-3 text-sm text-[var(--fs-ink-dim)]">
-            <li className="flex items-start gap-2">
-              <span className="text-[var(--purple)]">•</span>
-              <span>
-                <strong>{t('cookies.thirdParty.stripe')}</strong>
-                {t('cookies.thirdParty.stripeDesc')}
-              </span>
+          <p>You can also manage cookies directly in your browser:</p>
+          <ul>
+            <li>
+              <strong>Chrome</strong> — Settings → Privacy and security →
+              Cookies and other site data.
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[var(--purple)]">•</span>
-              <span>
-                <strong>{t('cookies.thirdParty.supabase')}</strong>
-                {t('cookies.thirdParty.supabaseDesc')}
-              </span>
+            <li>
+              <strong>Firefox</strong> — Settings → Privacy &amp; Security →
+              Cookies and Site Data.
             </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[var(--purple)]">•</span>
-              <span>
-                <strong>{t('cookies.thirdParty.cloudflare')}</strong>
-                {t('cookies.thirdParty.cloudflareDesc')}
-              </span>
+            <li>
+              <strong>Safari</strong> — Settings → Privacy → Manage Website
+              Data.
+            </li>
+            <li>
+              <strong>Edge</strong> — Settings → Cookies and site permissions →
+              Manage and delete cookies and site data.
             </li>
           </ul>
-          <p className="text-[var(--fs-ink-faint)] text-sm mt-4">
-            {t('cookies.thirdParty.footer')}
+          <p>
+            If you block strictly-necessary cookies, parts of the site (sign-in,
+            billing) will not work.
           </p>
-        </section>
 
-        {/* Managing Cookies */}
-        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
-          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-4">
-            {t('cookies.managing.title')}
-          </h2>
-          <p className="text-[var(--fs-ink-dim)] leading-relaxed mb-4">
-            {t('cookies.managing.description')}
+          <h2>5. Updates to this policy</h2>
+          <p>
+            We refresh this page whenever we add or remove a cookie. The
+            &ldquo;last updated&rdquo; date at the top always reflects the
+            latest revision.
           </p>
-          <ul className="space-y-2 text-sm text-[var(--fs-ink-dim)] mb-4">
-            <li>
-              • <strong>{t('cookies.managing.chrome')}</strong>
-              {t('cookies.managing.chromeDesc')}
-            </li>
-            <li>
-              • <strong>{t('cookies.managing.firefox')}</strong>
-              {t('cookies.managing.firefoxDesc')}
-            </li>
-            <li>
-              • <strong>{t('cookies.managing.safari')}</strong>
-              {t('cookies.managing.safariDesc')}
-            </li>
-            <li>
-              • <strong>{t('cookies.managing.edge')}</strong>
-              {t('cookies.managing.edgeDesc')}
-            </li>
-          </ul>
-          <p className="text-amber-600 dark:text-amber-400 text-sm">
-            {t('cookies.managing.warning')}
-          </p>
-        </section>
 
-        {/* Updates */}
-        <section className="mb-10 p-5 sm:p-8 rounded-2xl bg-white/55 dark:bg-white/[0.02] border border-[var(--fs-rule)]">
-          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-4">
-            {t('cookies.changes.title')}
-          </h2>
-          <p className="text-[var(--fs-ink-dim)] leading-relaxed">
-            {t('cookies.changes.description')}
-          </p>
-        </section>
-
-        {/* Contact */}
-        <div className="p-5 sm:p-8 rounded-2xl bg-gradient-to-r from-[var(--purple)]/5 via-blue-500/5 to-cyan-500/5 border border-[var(--purple)]/10 dark:border-[var(--purple)]/20 text-center">
-          <h2 className="text-xl font-bold text-[var(--fs-ink)] mb-2">
-            {t('cookies.contact.title')}
-          </h2>
-          <p className="text-[var(--fs-ink-faint)] mb-4">
-            {t('cookies.contact.description', { link: '' })}
-            <a href="/privacy" className="text-[var(--purple)] hover:underline">
-              {t('cookies.contact.privacyLink')}
-            </a>
-          </p>
-          <Button asChild>
-            <a href="mailto:privacy@flowstarter.net">privacy@flowstarter.net</a>
-          </Button>
-        </div>
+          <div className="ls-callout">
+            <p>
+              Questions about cookies? Write to{' '}
+              <a href="mailto:privacy@flowstarter.net">
+                privacy@flowstarter.net
+              </a>{' '}
+              or read the full <a href="/privacy">privacy policy</a>.
+            </p>
+          </div>
+        </ProseSection>
       </main>
-    </PublicPageLayout>
+    </MarketingShell>
   );
 }

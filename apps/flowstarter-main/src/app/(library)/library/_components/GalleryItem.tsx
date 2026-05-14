@@ -12,9 +12,10 @@ interface GalleryItemProps {
 export function GalleryItem({ template, index, total }: GalleryItemProps) {
   const ord = String(index + 1).padStart(2, '0');
   const tot = String(total).padStart(2, '0');
-  const darkThumb = template.thumbnail
-    ? `/showcase/${template.thumbnail}-dark.png`
-    : null;
+  const darkThumb =
+    template.thumbnail && template.hasDarkThumbnail !== false
+      ? `/showcase/${template.thumbnail}-dark.png`
+      : null;
 
   return (
     <Link

@@ -4,9 +4,21 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
+  useLayoutEffect,
   type ReactNode,
 } from 'react';
+
+const SIDEBAR_STORAGE_KEY = 'dashboard-sidebar-collapsed-v2';
+const SIDEBAR_COOKIE = SIDEBAR_STORAGE_KEY;
+const SIDEBAR_COOKIE_MAX_AGE_SEC = 60 * 60 * 24 * 365;
+
+function writeSidebarCookie(collapsed: boolean) {
+  if (typeof document === 'undefined') return;
+  const value = JSON.stringify(collapsed);
+  document.cookie = `${SIDEBAR_COOKIE}=${encodeURIComponent(
+    value
+  )}; Path=/; Max-Age=${SIDEBAR_COOKIE_MAX_AGE_SEC}; SameSite=Lax`;
+}
 
 interface SidebarContextType {
   isCollapsed: boolean;
@@ -17,44 +29,48 @@ interface SidebarContextType {
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
-export function SidebarProvider({ children }: { children: ReactNode }) {
-  const [isCollapsed, setIsCollapsedState] = useState(false); // Start expanded
+export function SidebarProvider({
+  children,
+  initialCollapsed = false,
+}: {
+  children: ReactNode;
+  /** From server cookie so first paint matches persisted preference (SSR + hydration). */
+  initialCollapsed?: boolean;
+}) {
+  const [isCollapsed, setIsCollapsedState] = useState(initialCollapsed);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    setMounted(true);
+  // If localStorage differs from the server-provided cookie (e.g. legacy LS-only
+  // sessions), reconcile before paint to avoid a width flash.
+  useLayoutEffect(() => {
     try {
-      const stored = localStorage.getItem('dashboard-sidebar-collapsed-v2');
-      if (stored !== null) {
-        setIsCollapsedState(JSON.parse(stored));
+      const stored = localStorage.getItem(SIDEBAR_STORAGE_KEY);
+      if (stored === null) return;
+      const parsed = JSON.parse(stored);
+      if (typeof parsed !== 'boolean') return;
+      if (parsed !== initialCollapsed) {
+        setIsCollapsedState(parsed);
+        writeSidebarCookie(parsed);
       }
-    } catch (e) {
+    } catch {
       // Ignore localStorage errors
     }
-  }, []);
+  }, [initialCollapsed]);
 
-  // Persist to localStorage
   const setIsCollapsed = (value: boolean) => {
     setIsCollapsedState(value);
     try {
-      localStorage.setItem(
-        'dashboard-sidebar-collapsed-v2',
-        JSON.stringify(value)
-      );
-    } catch (e) {
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, JSON.stringify(value));
+    } catch {
       // Ignore localStorage errors
     }
+    writeSidebarCookie(value);
   };
-
-  // Prevent hydration mismatch by using default until mounted
-  const effectiveCollapsed = mounted ? isCollapsed : false;
 
   return (
     <SidebarContext.Provider
       value={{
-        isCollapsed: effectiveCollapsed,
+        isCollapsed,
         setIsCollapsed,
         isMobileOpen,
         setIsMobileOpen,

@@ -50,6 +50,7 @@ import {
   Cause,
   DateTime,
   Deferred,
+  Duration,
   Effect,
   Exit,
   FileSystem,
@@ -77,6 +78,23 @@ import { ClaudeAdapter, type ClaudeAdapterShape } from "../Services/ClaudeAdapte
 import { type EventNdjsonLogger, makeEventNdjsonLogger } from "./EventNdjsonLogger.ts";
 
 const PROVIDER = "claudeAgent" as const;
+
+/**
+ * How long a Claude session may remain idle (no completed turns, no pending
+ * approvals) before it is automatically stopped.  The session can be resumed
+ * transparently on the next user turn via the persisted resumeCursor.
+ *
+ * Override with FLOWSTARTER_EDITOR_CLAUDE_IDLE_TIMEOUT_MINUTES (integer > 0).
+ * Defaults to 10 minutes.
+ */
+const CLAUDE_SESSION_IDLE_TIMEOUT_MS = (() => {
+  const envMinutes = parseInt(
+    process.env.FLOWSTARTER_EDITOR_CLAUDE_IDLE_TIMEOUT_MINUTES ?? "",
+    10,
+  );
+  const minutes = Number.isFinite(envMinutes) && envMinutes > 0 ? envMinutes : 10;
+  return minutes * 60 * 1_000;
+})();
 type ClaudeTextStreamKind = Extract<RuntimeContentStreamKind, "assistant_text" | "reasoning_text">;
 type ClaudeToolResultStreamKind = Extract<
   RuntimeContentStreamKind,
@@ -163,6 +181,8 @@ interface ClaudeSessionContext {
   lastAssistantUuid: string | undefined;
   lastThreadStartedId: string | undefined;
   stopped: boolean;
+  /** Epoch-ms timestamp of the last turn completion; used for idle-timeout. */
+  lastActivityAt: number;
 }
 
 interface ClaudeQueryRuntime extends AsyncIterable<SDKMessage> {
@@ -180,6 +200,18 @@ export interface ClaudeAdapterLiveOptions {
   }) => ClaudeQueryRuntime;
   readonly nativeEventLogPath?: string;
   readonly nativeEventLogger?: EventNdjsonLogger;
+  /**
+   * Override the idle session timeout in milliseconds. Defaults to
+   * CLAUDE_SESSION_IDLE_TIMEOUT_MS (env-controlled, default 10 min).
+   * Intended for tests only — pass a small value to trigger the watchdog fast.
+   */
+  readonly idleTimeoutMs?: number;
+  /**
+   * Override how often the idle watchdog wakes to check activity, in
+   * milliseconds. Defaults to 60_000 (1 minute).
+   * Intended for tests only.
+   */
+  readonly idleCheckIntervalMs?: number;
 }
 
 function isUuid(value: string): boolean {
@@ -503,6 +535,44 @@ const SUPPORTED_CLAUDE_IMAGE_MIME_TYPES = new Set([
   "image/png",
   "image/webp",
 ]);
+/**
+ * Flowstarter client-mode guardrail. Appended to the SDK's default system
+ * prompt for any session NOT running in `bypassPermissions` mode (i.e. the
+ * default approval-required + auto-accept-edits flows that clients use).
+ *
+ * The intent: keep clients on the rails — copy edits, image swaps, colour
+ * tweaks, link updates — and route anything structural back to the
+ * Flowstarter team instead of letting the agent freelance a redesign or
+ * scaffold a new page.
+ *
+ * Edit this string to retune client guidance; admins running with
+ * `runtimeMode: "full-access"` (→ `bypassPermissions`) skip it entirely.
+ */
+const FLOWSTARTER_CLIENT_GUARDRAIL = `You are the in-editor coding assistant for a Flowstarter client.
+Flowstarter is a hand-crafted website concierge service — clients pay us to ship and maintain a polished site, then use this editor for *small, content-level edits* between deliveries.
+
+Allowed edits (do these confidently):
+- Copy changes (headlines, body copy, navigation labels, button text, FAQ entries)
+- Image swaps and alt-text updates
+- Brand colour or accent tweaks within the existing palette
+- Link updates (URLs, social handles, contact info, booking URLs)
+- Adding/removing items in already-existing lists (services, testimonials, FAQ)
+- Minor layout polish that does not change the page structure
+
+Out of scope — politely decline and ask the client to contact their Flowstarter team:
+- New pages, new sections, or new components from scratch
+- Restructuring the layout, navigation, or information architecture
+- Backend / database / auth / payment / hosting changes
+- Installing new dependencies, frameworks, or build tooling
+- Anything that would require a designer-level decision (typography swap, brand identity, redesign)
+- Multi-file refactors, performance work, accessibility audits as a project
+- Anything ambiguous where you would normally ask many clarifying questions
+
+When declining, do it warmly. Suggested response shape:
+> "That one's a bigger change than the editor is set up to handle — the Flowstarter team usually picks these up directly. Email support@flowstarter.dev or reply to your project thread and they'll scope it for you. Anything else I can tweak right now?"
+
+Always prefer the smallest possible change. If you are about to touch more than three files for a single request, stop and ask: is this really an in-scope edit?`;
+
 const CLAUDE_SETTING_SOURCES = [
   "user",
   "project",
@@ -928,6 +998,9 @@ const makeClaudeAdapter = Effect.fn("makeClaudeAdapter")(function* (
       readonly prompt: AsyncIterable<SDKUserMessage>;
       readonly options: ClaudeQueryOptions;
     }) => query({ prompt: input.prompt, options: input.options }) as ClaudeQueryRuntime);
+
+  const effectiveIdleTimeoutMs = options?.idleTimeoutMs ?? CLAUDE_SESSION_IDLE_TIMEOUT_MS;
+  const effectiveIdleCheckIntervalMs = options?.idleCheckIntervalMs ?? 60_000;
 
   const sessions = new Map<ThreadId, ClaudeSessionContext>();
   const runtimeEventQueue = yield* Queue.unbounded<ProviderRuntimeEvent>();
@@ -1488,6 +1561,9 @@ const makeClaudeAdapter = Effect.fn("makeClaudeAdapter")(function* (
       updatedAt,
       ...(status === "failed" && errorMessage ? { lastError: errorMessage } : {}),
     };
+    // Reset the idle clock whenever a turn completes so background compaction
+    // turns (which also call completeTurn) extend the idle window naturally.
+    context.lastActivityAt = Date.now();
     yield* updateResumeCursor(context);
   });
 
@@ -2337,6 +2413,10 @@ const makeClaudeAdapter = Effect.fn("makeClaudeAdapter")(function* (
     }
 
     sessions.delete(context.session.threadId);
+
+    // The idle-timeout watchdog fiber is NOT interrupted here to avoid a
+    // self-interrupt deadlock (when the watchdog itself calls stopSessionInternal).
+    // It exits naturally on its next tick once context.stopped === true.
   });
 
   const requireSession = (
@@ -2720,6 +2800,12 @@ const makeClaudeAdapter = Effect.fn("makeClaudeAdapter")(function* (
         canUseTool,
         env: process.env,
         ...(input.cwd ? { additionalDirectories: [input.cwd] } : {}),
+        // Flowstarter client guardrail. Bypass with permissionMode
+        // === "bypassPermissions" (admins running in full-access mode) so
+        // operators aren't nagged by their own copy-prompts.
+        ...(permissionMode === "bypassPermissions"
+          ? {}
+          : { appendSystemPrompt: FLOWSTARTER_CLIENT_GUARDRAIL }),
       };
 
       const queryRuntime = yield* Effect.try({
@@ -2774,6 +2860,7 @@ const makeClaudeAdapter = Effect.fn("makeClaudeAdapter")(function* (
         lastAssistantUuid: resumeState?.resumeSessionAt,
         lastThreadStartedId: undefined,
         stopped: false,
+        lastActivityAt: Date.now(),
       };
       yield* Ref.set(contextRef, context);
       sessions.set(threadId, context);
@@ -2841,6 +2928,47 @@ const makeClaudeAdapter = Effect.fn("makeClaudeAdapter")(function* (
           context.streamFiber = undefined;
         }
       });
+
+      // Idle-timeout watchdog: stop the session if it remains idle (status
+      // "ready", no pending approvals) for longer than effectiveIdleTimeoutMs.
+      // The session can be transparently resumed on the next user turn via the
+      // persisted resumeCursor, so stopping it here is safe.
+      const idleTimeoutFiber = runFork(
+        Effect.forever(
+          Effect.sleep(Duration.millis(effectiveIdleCheckIntervalMs)).pipe(
+            Effect.flatMap(() => {
+              // If already stopped (e.g. by the user), exit the watchdog.
+              if (context.stopped) {
+                return Effect.interrupt;
+              }
+              if (
+                context.session.status === "ready" &&
+                context.pendingApprovals.size === 0 &&
+                Date.now() - context.lastActivityAt >= effectiveIdleTimeoutMs
+              ) {
+                const idleMs = Date.now() - context.lastActivityAt;
+                return Effect.logInfo(
+                  "Claude session idle timeout — stopping session",
+                  {
+                    threadId: context.session.threadId,
+                    idleMinutes: Math.round(idleMs / 60_000),
+                    timeoutMinutes: Math.round(effectiveIdleTimeoutMs / 60_000),
+                  },
+                ).pipe(
+                  Effect.flatMap(() =>
+                    stopSessionInternal(context, { emitExitEvent: true }),
+                  ),
+                );
+              }
+              return Effect.void;
+            }),
+          ),
+        ).pipe(Effect.ignoreCause({ log: true })),
+      );
+      // The fiber is not tracked on the context since we don't interrupt it
+      // from stopSessionInternal (to avoid self-interrupt deadlock). It exits
+      // naturally once context.stopped === true.
+      void idleTimeoutFiber;
 
       return {
         ...session,

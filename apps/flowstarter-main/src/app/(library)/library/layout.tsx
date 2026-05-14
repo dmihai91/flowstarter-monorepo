@@ -11,11 +11,11 @@ export const metadata: Metadata = {
     template: '%s — Flowstarter Library',
   },
   description:
-    'A curated shelf of sites we have shipped and starter templates we have hand-built. Restraint over decoration. Craft over volume.',
+    'A curated shelf of sites we have shipped and starter templates we have hand-crafted. Restraint over decoration. Craft over volume.',
   openGraph: {
     title: 'Flowstarter Library',
     description:
-      'A curated shelf of sites we have shipped and starter templates we have hand-built.',
+      'A curated shelf of sites we have shipped and starter templates we have hand-crafted.',
     type: 'website',
     siteName: 'Flowstarter Library',
   },
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Flowstarter Library',
     description:
-      'A curated shelf of sites we have shipped and starter templates we have hand-built.',
+      'A curated shelf of sites we have shipped and starter templates we have hand-crafted.',
   },
 };
 

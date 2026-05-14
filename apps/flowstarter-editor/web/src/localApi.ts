@@ -25,87 +25,40 @@ import {
 } from "./clientPersistenceStorage";
 
 let cachedApi: LocalApi | undefined;
+let testOverrideApi: LocalApi | undefined;
 
 export function createLocalApi(rpcClient: WsRpcClient): LocalApi {
   return {
     dialogs: {
-      pickFolder: async () => {
-        if (!window.desktopBridge) return null;
-        return window.desktopBridge.pickFolder();
-      },
-      confirm: async (message) => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.confirm(message);
-        }
-        return window.confirm(message);
-      },
+      pickFolder: async () => null,
+      confirm: async (message) => window.confirm(message),
     },
     shell: {
       openInEditor: (cwd, editor) => rpcClient.shell.openInEditor({ cwd, editor }),
       openExternal: async (url) => {
-        if (window.desktopBridge) {
-          const opened = await window.desktopBridge.openExternal(url);
-          if (!opened) {
-            throw new Error("Unable to open link.");
-          }
-          return;
-        }
-
         window.open(url, "_blank", "noopener,noreferrer");
       },
     },
     contextMenu: {
-      show: async <T extends string>(
+      show: <T extends string>(
         items: readonly ContextMenuItem<T>[],
         position?: { x: number; y: number },
-      ): Promise<T | null> => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.showContextMenu(items, position) as Promise<T | null>;
-        }
-        return showContextMenuFallback(items, position);
-      },
+      ): Promise<T | null> => showContextMenuFallback(items, position),
     },
     persistence: {
-      getClientSettings: async () => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.getClientSettings();
-        }
-        return readBrowserClientSettings();
-      },
+      getClientSettings: async () => readBrowserClientSettings(),
       setClientSettings: async (settings) => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.setClientSettings(settings);
-        }
         writeBrowserClientSettings(settings);
       },
-      getSavedEnvironmentRegistry: async () => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.getSavedEnvironmentRegistry();
-        }
-        return readBrowserSavedEnvironmentRegistry();
-      },
+      getSavedEnvironmentRegistry: async () => readBrowserSavedEnvironmentRegistry(),
       setSavedEnvironmentRegistry: async (records) => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.setSavedEnvironmentRegistry(records);
-        }
         writeBrowserSavedEnvironmentRegistry(records);
       },
-      getSavedEnvironmentSecret: async (environmentId) => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.getSavedEnvironmentSecret(environmentId);
-        }
-        return readBrowserSavedEnvironmentSecret(environmentId);
-      },
-      setSavedEnvironmentSecret: async (environmentId, secret) => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.setSavedEnvironmentSecret(environmentId, secret);
-        }
-        return writeBrowserSavedEnvironmentSecret(environmentId, secret);
-      },
+      getSavedEnvironmentSecret: async (environmentId) =>
+        readBrowserSavedEnvironmentSecret(environmentId),
+      setSavedEnvironmentSecret: async (environmentId, secret) =>
+        writeBrowserSavedEnvironmentSecret(environmentId, secret),
       removeSavedEnvironmentSecret: async (environmentId) => {
-        if (window.desktopBridge) {
-          return window.desktopBridge.removeSavedEnvironmentSecret(environmentId);
-        }
         removeBrowserSavedEnvironmentSecret(environmentId);
       },
     },
@@ -121,12 +74,8 @@ export function createLocalApi(rpcClient: WsRpcClient): LocalApi {
 
 export function readLocalApi(): LocalApi | undefined {
   if (typeof window === "undefined") return undefined;
+  if (testOverrideApi) return testOverrideApi;
   if (cachedApi) return cachedApi;
-
-  if (window.nativeApi) {
-    cachedApi = window.nativeApi;
-    return cachedApi;
-  }
 
   cachedApi = createLocalApi(getPrimaryEnvironmentConnection().client);
   return cachedApi;
@@ -140,8 +89,20 @@ export function ensureLocalApi(): LocalApi {
   return api;
 }
 
+/**
+ * Test-only injection point. Lets browser test harnesses swap in a
+ * partial LocalApi (typically just the persistence or shell surface
+ * the test under inspection touches) without going through the full
+ * RPC/browser-fallback construction in createLocalApi.
+ */
+export function __setLocalApiForTests(api: LocalApi | undefined) {
+  testOverrideApi = api;
+  cachedApi = undefined;
+}
+
 export async function __resetLocalApiForTests() {
   cachedApi = undefined;
+  testOverrideApi = undefined;
   const { __resetClientSettingsPersistenceForTests } = await import("./hooks/useSettings");
   __resetClientSettingsPersistenceForTests();
   await resetEnvironmentServiceForTests();

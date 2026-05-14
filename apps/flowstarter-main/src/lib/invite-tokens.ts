@@ -83,5 +83,5 @@ export async function validateInviteToken(
  */
 export function getInviteUrl(token: string): string {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://flowstarter.dev';
-  return `${baseUrl}/team/join?token=${encodeURIComponent(token)}`;
+  return `${baseUrl}/admin/join?token=${encodeURIComponent(token)}`;
 }

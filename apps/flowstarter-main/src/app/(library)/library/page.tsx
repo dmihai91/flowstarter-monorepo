@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Footnote } from './_components/Mast';
 import { GalleryItem } from './_components/GalleryItem';
+import { BookingTrigger } from './_components/BookingTrigger';
 import { TEMPLATES } from './_data/templates';
 
 export const dynamic = 'force-static';
@@ -26,7 +27,7 @@ export default async function GalleryPage() {
 
         <div className="gallery-hero-copy">
           <p className="lede reveal" data-delay="1">
-            Hand-built sites and starter templates for service professionals.
+            Hand-crafted sites and starter templates for service professionals.
             Each one is the product of a real conversation with a real person —
             no template-spam, no AI slurry, no &ldquo;premium&rdquo; gradient
             stand-ins for taste. Some of these are live for clients today.
@@ -47,7 +48,7 @@ export default async function GalleryPage() {
             number={String(inDev).padStart(2, '0')}
             label="starters in build"
           />
-          <Stat number="08" label="new clients per month, by design" />
+          <Stat number="—" label="limited spots each month, by design" />
         </div>
       </section>
 
@@ -74,7 +75,8 @@ export default async function GalleryPage() {
         <div className="gallery-cta-card">
           <p className="meta">A note to whoever is reading</p>
           <h3 className="display display--mid">
-            We take eight new clients a month. <em>By design.</em>
+            We take a limited number of new clients each month.{' '}
+            <em>By design.</em>
           </h3>
           <p className="lede gallery-cta-copy">
             If something here looks like the kind of site you want to send
@@ -84,10 +86,10 @@ export default async function GalleryPage() {
           </p>
 
           <div className="gallery-cta-actions">
-            <Link href="https://flowstarter.net#pricing" className="cta-block">
-              Book a discovery call
-            </Link>
-            <Link href="https://flowstarter.net" className="action">
+            <BookingTrigger className="cta-block">
+              Book a free discovery call
+            </BookingTrigger>
+            <Link href="/" className="action">
               Read the case for craft
             </Link>
           </div>

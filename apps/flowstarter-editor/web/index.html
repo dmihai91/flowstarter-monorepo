@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#101014" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#101014" />
+    <meta name="theme-color" content="#fbf7ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#040308" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#040308" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
@@ -13,8 +13,9 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script>
       (() => {
-        const LIGHT_BACKGROUND = "#ffffff";
-        const DARK_BACKGROUND = "#101014";
+        /* Match `--fs-bg-base` in index.css so first paint + html canvas align with FlowBackground. */
+        const LIGHT_BACKGROUND = "#fbf7ef";
+        const DARK_BACKGROUND = "#040308";
         const themeColorMeta = document.querySelector('meta[name="theme-color"]');
         try {
           const storedTheme = window.localStorage.getItem("flowstarter-editor:theme");
@@ -45,7 +46,7 @@
       }
 
       body {
-        background: #ffffff;
+        background: #fbf7ef;
         color: #262626;
         font-family:
           "Plus Jakarta Sans",
@@ -58,7 +59,7 @@
       }
 
       html.dark body {
-        background: #101014;
+        background: #040308;
         color: rgba(255, 255, 255, 0.92);
       }
 
@@ -103,12 +104,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Onest:wght@300..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Onest:wght@300..800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:wght@400..700&display=swap"
       rel="stylesheet"
     />
-    <title>Flowstarter Editor</title>
+    <meta name="application-name" content="Flowstarter | Smart AI Editor" />
+    <meta property="og:title" content="Flowstarter | Smart AI Editor" />
+    <meta name="twitter:title" content="Flowstarter | Smart AI Editor" />
+    <meta name="apple-mobile-web-app-title" content="Flowstarter | Smart AI Editor" />
+    <title>Flowstarter | Smart AI Editor</title>
   </head>
   <body>
+    <!-- React portals FlowstarterFlowBg here so mesh sits under #root (whole shell, not inset-only). -->
+    <div id="fs-flow-bg-mount"></div>
     <div id="root">
       <div id="boot-shell">
         <div id="boot-shell-card" aria-label="Flowstarter loading">

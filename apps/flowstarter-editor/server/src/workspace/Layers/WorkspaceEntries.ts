@@ -74,6 +74,14 @@ function toSearchableWorkspaceEntry(entry: ProjectEntry): SearchableWorkspaceEnt
   };
 }
 
+function toProjectEntry(entry: SearchableWorkspaceEntry): ProjectEntry {
+  const base: ProjectEntry = {
+    path: entry.path,
+    kind: entry.kind,
+  };
+  return entry.parentPath !== undefined ? { ...base, parentPath: entry.parentPath } : base;
+}
+
 function normalizeQuery(input: string): string {
   return input
     .trim()
@@ -496,9 +504,29 @@ export const makeWorkspaceEntries = Effect.gen(function* () {
     },
   );
 
+  const list: WorkspaceEntriesShape["list"] = Effect.fn("WorkspaceEntries.list")(function* (
+    input,
+  ) {
+    const normalizedCwd = yield* normalizeWorkspaceRoot(input.cwd);
+    return yield* Cache.get(workspaceIndexCache, normalizedCwd).pipe(
+      Effect.map((index) => {
+        const limit = Math.max(0, Math.floor(input.limit));
+        const sorted = [...index.entries]
+          .map((entry) => toProjectEntry(entry))
+          .toSorted((a, b) => a.path.localeCompare(b.path));
+        const sliced = sorted.slice(0, limit);
+        return {
+          entries: sliced,
+          truncated: index.truncated || sorted.length > limit,
+        };
+      }),
+    );
+  });
+
   return {
     invalidate,
     search,
+    list,
   } satisfies WorkspaceEntriesShape;
 });
 

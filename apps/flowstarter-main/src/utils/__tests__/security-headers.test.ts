@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock next-secure-headers and next/server before importing
 vi.mock('next-secure-headers', () => ({
@@ -55,7 +55,11 @@ describe('security-headers', () => {
       expect(buildCSPHeader()).toContain("object-src 'none'");
     });
 
-    it('includes upgrade-insecure-requests in production', () => {
+    it('includes upgrade-insecure-requests in production when the site URL is https', () => {
+      // `buildCSPHeader` only emits this directive when production AND
+      // `NEXT_PUBLIC_SITE_URL` is https — otherwise staging / LAN HTTP
+      // access silently breaks (see `utils/security-headers.ts`).
+      vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://flowstarter.net');
       expect(buildCSPHeader()).toContain('upgrade-insecure-requests');
     });
 
@@ -75,6 +79,11 @@ describe('security-headers', () => {
         vi.stubEnv('NODE_ENV', 'development');
       });
 
+      afterEach(() => {
+        delete process.env.NEXT_PUBLIC_SITE_URL;
+        delete process.env.NEXT_PUBLIC_EDITOR_URL;
+      });
+
       it('includes unsafe-eval in dev', () => {
         const csp = buildCSPHeader();
         expect(csp).toContain("'unsafe-eval'");
@@ -83,6 +92,13 @@ describe('security-headers', () => {
       it('includes localhost connect-src in dev', () => {
         const csp = buildCSPHeader();
         expect(csp).toContain('ws://localhost:*');
+      });
+
+      it('includes NEXT_PUBLIC_SITE_URL http and ws in dev connect-src', () => {
+        process.env.NEXT_PUBLIC_SITE_URL = 'http://192.168.55.2:3000';
+        const csp = buildCSPHeader();
+        expect(csp).toContain('http://192.168.55.2:3000');
+        expect(csp).toContain('ws://192.168.55.2:3000');
       });
 
       it('does not include upgrade-insecure-requests in dev', () => {

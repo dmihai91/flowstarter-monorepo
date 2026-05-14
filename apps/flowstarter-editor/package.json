@@ -5,10 +5,13 @@
   "description": "Flowstarter editor — multitenant web GUI for the concierge service, forked from T3 Code (Electron stripped). Server + web + shared packages.",
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter @flowstarter/editor-server --filter @flowstarter/editor-web --parallel run dev",
+    "dev": "pnpm run build:web && pnpm --filter @flowstarter/editor-server run dev",
+    "dev:full": "pnpm --filter @flowstarter/editor-server --filter @flowstarter/editor-web --parallel run dev",
     "dev:server": "pnpm --filter @flowstarter/editor-server run dev",
     "dev:web": "pnpm --filter @flowstarter/editor-web run dev",
     "build": "pnpm --filter @flowstarter/editor-server --filter @flowstarter/editor-web run build",
+    "build:web": "pnpm --filter @flowstarter/editor-web run build",
+    "build:web:watch": "pnpm --filter @flowstarter/editor-web run build:watch",
     "typecheck": "pnpm --filter './server' --filter './web' --filter './packages/*' run typecheck",
     "test": "pnpm --filter './server' --filter './web' --filter './packages/*' run test"
   },

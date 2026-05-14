@@ -28,6 +28,7 @@ function MenuPopup({
   alignOffset,
   side = "bottom",
   anchor,
+  showArrow = false,
   ...props
 }: MenuPrimitive.Popup.Props & {
   align?: MenuPrimitive.Positioner.Props["align"];
@@ -35,6 +36,7 @@ function MenuPopup({
   alignOffset?: MenuPrimitive.Positioner.Props["alignOffset"];
   side?: MenuPrimitive.Positioner.Props["side"];
   anchor?: MenuPrimitive.Positioner.Props["anchor"];
+  showArrow?: boolean;
 }) {
   return (
     <MenuPrimitive.Portal>
@@ -55,6 +57,20 @@ function MenuPopup({
           data-slot="menu-popup"
           {...props}
         >
+          {showArrow ? (
+            <MenuPrimitive.Arrow
+              data-slot="menu-arrow"
+              className="flex transition-[transform] data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180"
+            >
+              <svg width="16" height="8" viewBox="0 0 16 8" fill="none" aria-hidden>
+                <path
+                  d="M8 0L0 8H16L8 0Z"
+                  className="fill-popover stroke-border"
+                  strokeWidth="1"
+                />
+              </svg>
+            </MenuPrimitive.Arrow>
+          ) : null}
           <div className="max-h-(--available-height) w-full overflow-y-auto p-1">{children}</div>
         </MenuPrimitive.Popup>
       </MenuPrimitive.Positioner>

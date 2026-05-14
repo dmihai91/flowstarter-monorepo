@@ -61,7 +61,11 @@ import {
   shouldUseCompactComposerFooter,
 } from "../composerFooterLayout";
 import { type ComposerPromptEditorHandle, ComposerPromptEditor } from "../ComposerPromptEditor";
-import { AVAILABLE_PROVIDER_OPTIONS, ProviderModelPicker } from "./ProviderModelPicker";
+import {
+  AVAILABLE_PROVIDER_OPTIONS,
+  EDITOR_ANTHROPIC_ONLY_PROVIDER_OPTIONS,
+  ProviderModelPicker,
+} from "./ProviderModelPicker";
 import { type ComposerCommandItem, ComposerCommandMenu } from "./ComposerCommandMenu";
 import { ComposerPendingApprovalActions } from "./ComposerPendingApprovalActions";
 import { CompactComposerControlsMenu } from "./CompactComposerControlsMenu";
@@ -94,7 +98,13 @@ import {
   XIcon,
 } from "lucide-react";
 import { proposedPlanTitle } from "../../proposedPlan";
-import { resolveSelectableProvider, getProviderModels } from "../../providerModels";
+import {
+  CLAUDE_EDITOR_AUTO_MODEL_SLUG,
+  filterClaudeEditorCatalogModels,
+  getProviderModels,
+  resolveClaudeEditorModelForTurn,
+  resolveSelectableProvider,
+} from "../../providerModels";
 import type { UnifiedSettings } from "@flowstarter/editor-contracts/settings";
 import type { SessionPhase, Thread } from "../../types";
 import type { PendingUserInputDraftAnswer } from "../../pendingUserInput";
@@ -102,6 +112,13 @@ import type { PendingApproval, PendingUserInput } from "../../session-logic";
 import { deriveLatestContextWindowSnapshot } from "../../lib/contextWindow";
 
 const IMAGE_SIZE_LIMIT_LABEL = `${Math.round(PROVIDER_SEND_TURN_MAX_IMAGE_BYTES / (1024 * 1024))}MB`;
+
+const AUTO_CLAUDE_PICKER_MODEL = {
+  slug: CLAUDE_EDITOR_AUTO_MODEL_SLUG,
+  name: "Auto",
+  isCustom: false,
+  capabilities: null,
+} satisfies ServerProvider["models"][number];
 
 const runtimeModeConfig: Record<
   RuntimeMode,
@@ -174,7 +191,7 @@ const ComposerFooterModeControls = memo(function ComposerFooterModeControls(prop
 
       <Button
         variant="ghost"
-        className="shrink-0 whitespace-nowrap px-2 text-muted-foreground/70 hover:text-foreground/80 sm:px-3"
+        className="fs-composer-footer-chip shrink-0 whitespace-nowrap px-2 text-muted-foreground/70 hover:text-foreground/80 sm:px-3"
         size="sm"
         type="button"
         onClick={props.onToggleInteractionMode}
@@ -184,7 +201,7 @@ const ComposerFooterModeControls = memo(function ComposerFooterModeControls(prop
             : "Default mode — click to enter plan mode"
         }
       >
-        <BotIcon />
+        <BotIcon className="size-3.5 shrink-0 opacity-90" strokeWidth={1.75} />
         <span className="sr-only sm:not-sr-only">
           {props.interactionMode === "plan" ? "Plan" : "Build"}
         </span>
@@ -235,7 +252,7 @@ const ComposerFooterModeControls = memo(function ComposerFooterModeControls(prop
             className={cn(
               "shrink-0 whitespace-nowrap px-2 sm:px-3",
               props.planSidebarOpen
-                ? "text-blue-400 hover:text-blue-300"
+                ? "text-primary hover:text-primary/85"
                 : "text-muted-foreground/70 hover:text-foreground/80",
             )}
             size="sm"
@@ -243,7 +260,7 @@ const ComposerFooterModeControls = memo(function ComposerFooterModeControls(prop
             onClick={props.onTogglePlanSidebar}
             title={props.planSidebarOpen ? "Hide plan sidebar" : "Show plan sidebar"}
           >
-            <ListTodoIcon />
+            <ListTodoIcon className="size-3.5 shrink-0" strokeWidth={1.75} />
             <span className="sr-only sm:not-sr-only">Plan</span>
           </Button>
         </>
@@ -546,9 +563,11 @@ export const ChatComposer = memo(
 
     const unlockedSelectedProvider = resolveSelectableProvider(
       providerStatuses,
-      selectedProviderByThreadId ?? threadProvider ?? "codex",
+      selectedProviderByThreadId ?? threadProvider ?? "claudeAgent",
     );
-    const selectedProvider: ProviderKind = lockedProvider ?? unlockedSelectedProvider;
+    const selectedProvider: ProviderKind =
+      lockedProvider ??
+      (unlockedSelectedProvider === "codex" ? "claudeAgent" : unlockedSelectedProvider);
 
     const { modelOptions: composerModelOptions, selectedModel } = useEffectiveComposerModelState({
       threadRef: composerDraftTarget,
@@ -561,16 +580,30 @@ export const ChatComposer = memo(
 
     const selectedProviderModels = getProviderModels(providerStatuses, selectedProvider);
 
+    const resolvedModelForTurn = useMemo(
+      () =>
+        selectedProvider === "claudeAgent"
+          ? resolveClaudeEditorModelForTurn(selectedModel, providerStatuses)
+          : selectedModel,
+      [providerStatuses, selectedModel, selectedProvider],
+    );
+
     const composerProviderState = useMemo(
       () =>
         getComposerProviderState({
           provider: selectedProvider,
-          model: selectedModel,
+          model: resolvedModelForTurn,
           models: selectedProviderModels,
           prompt,
           modelOptions: composerModelOptions,
         }),
-      [composerModelOptions, prompt, selectedModel, selectedProvider, selectedProviderModels],
+      [
+        composerModelOptions,
+        prompt,
+        resolvedModelForTurn,
+        selectedProvider,
+        selectedProviderModels,
+      ],
     );
 
     const selectedPromptEffort = composerProviderState.promptEffort;
@@ -578,22 +611,35 @@ export const ChatComposer = memo(
     const selectedModelSelection = useMemo<ModelSelection>(
       () => ({
         provider: selectedProvider,
-        model: selectedModel,
+        model: resolvedModelForTurn,
         ...(selectedModelOptionsForDispatch ? { options: selectedModelOptionsForDispatch } : {}),
       }),
-      [selectedModel, selectedModelOptionsForDispatch, selectedProvider],
+      [
+        resolvedModelForTurn,
+        selectedModelOptionsForDispatch,
+        selectedProvider,
+      ],
     );
     const selectedModelForPicker = selectedModel;
+
+    const showCodexInPicker = lockedProvider === "codex";
+    const pickerVisibleProviderOptions = showCodexInPicker
+      ? AVAILABLE_PROVIDER_OPTIONS
+      : EDITOR_ANTHROPIC_ONLY_PROVIDER_OPTIONS;
+
     const modelOptionsByProvider = useMemo<
       Record<ProviderKind, ReadonlyArray<ServerProvider["models"][number]>>
-    >(
-      () => ({
-        codex: providerStatuses.find((provider) => provider.provider === "codex")?.models ?? [],
-        claudeAgent:
-          providerStatuses.find((provider) => provider.provider === "claudeAgent")?.models ?? [],
-      }),
-      [providerStatuses],
-    );
+    >(() => {
+      const codexRaw = providerStatuses.find((provider) => provider.provider === "codex")?.models ?? [];
+      const claudeRaw =
+        providerStatuses.find((provider) => provider.provider === "claudeAgent")?.models ?? [];
+      const claudeFiltered = filterClaudeEditorCatalogModels(claudeRaw);
+      return {
+        codex: showCodexInPicker ? codexRaw : [],
+        claudeAgent: [AUTO_CLAUDE_PICKER_MODEL, ...claudeFiltered],
+      };
+    }, [providerStatuses, showCodexInPicker]);
+
     const selectedModelForPickerWithCustomFallback = useMemo(() => {
       const currentOptions = modelOptionsByProvider[selectedProvider];
       return currentOptions.some((option) => option.slug === selectedModelForPicker)
@@ -602,20 +648,20 @@ export const ChatComposer = memo(
     }, [modelOptionsByProvider, selectedModelForPicker, selectedProvider]);
     const searchableModelOptions = useMemo(
       () =>
-        AVAILABLE_PROVIDER_OPTIONS.filter(
-          (option) => lockedProvider === null || option.value === lockedProvider,
-        ).flatMap((option) =>
-          modelOptionsByProvider[option.value].map(({ slug, name }) => ({
-            provider: option.value,
-            providerLabel: option.label,
-            slug,
-            name,
-            searchSlug: slug.toLowerCase(),
-            searchName: name.toLowerCase(),
-            searchProvider: option.label.toLowerCase(),
-          })),
-        ),
-      [lockedProvider, modelOptionsByProvider],
+        pickerVisibleProviderOptions
+          .filter((option) => lockedProvider === null || option.value === lockedProvider)
+          .flatMap((option) =>
+            modelOptionsByProvider[option.value].map(({ slug, name }) => ({
+              provider: option.value,
+              providerLabel: option.label,
+              slug,
+              name,
+              searchSlug: slug.toLowerCase(),
+              searchName: name.toLowerCase(),
+              searchProvider: option.label.toLowerCase(),
+            })),
+          ),
+      [lockedProvider, modelOptionsByProvider, pickerVisibleProviderOptions],
     );
 
     // ------------------------------------------------------------------
@@ -1587,7 +1633,7 @@ export const ChatComposer = memo(
           selectedModelOptionsForDispatch,
           selectedModelSelection,
           selectedProvider,
-          selectedModel,
+          selectedModel: resolvedModelForTurn,
           selectedProviderModels,
         }),
       }),
@@ -1601,7 +1647,7 @@ export const ChatComposer = memo(
         composerImagesRef,
         composerTerminalContextsRef,
         readComposerSnapshot,
-        selectedModel,
+        resolvedModelForTurn,
         selectedModelOptionsForDispatch,
         selectedModelSelection,
         selectedPromptEffort,
@@ -1616,10 +1662,11 @@ export const ChatComposer = memo(
       <form
         ref={composerFormRef}
         onSubmit={onSend}
-        className="mx-auto w-full min-w-0 max-w-208"
+        className="mx-auto w-full min-w-0 max-w-4xl"
         data-chat-composer-form="true"
       >
         <div
+          data-fs="chat-composer-frame"
           className={cn(
             "group rounded-[22px] p-px transition-colors duration-200",
             composerProviderState.composerFrameClassName,
@@ -1630,8 +1677,10 @@ export const ChatComposer = memo(
           onDrop={onComposerDrop}
         >
           <div
+            data-fs="chat-composer-surface"
             className={cn(
-              "rounded-[20px] border bg-card transition-colors duration-200 has-focus-visible:border-ring/45",
+              "rounded-[20px] border border-border bg-transparent transition-[box-shadow,colors,border-color] duration-200",
+              "focus-within:border-ring/50 focus-within:ring-1 focus-within:ring-ring/30 focus-within:ring-offset-1 focus-within:ring-offset-transparent",
               isDragOverComposer ? "border-primary/70 bg-accent/30" : "border-border",
               composerProviderState.composerSurfaceClassName,
             )}
@@ -1819,6 +1868,7 @@ export const ChatComposer = memo(
                     lockedProvider={lockedProvider}
                     providers={providerStatuses}
                     modelOptionsByProvider={modelOptionsByProvider}
+                    visibleProviderOptions={pickerVisibleProviderOptions}
                     {...(composerProviderState.modelPickerIconClassName
                       ? {
                           activeProviderIconClassName:

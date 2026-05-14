@@ -1,20 +1,25 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
-import { createHashHistory, createBrowserHistory } from "@tanstack/react-router";
+import { createBrowserHistory } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ClerkProvider } from "@clerk/clerk-react";
+import { FlowBackground } from "@flowstarter/flow-design-system";
 
 import "@xterm/xterm/css/xterm.css";
 import "./index.css";
 
-import { isElectron } from "./env";
 import { getRouter } from "./router";
 import { APP_DISPLAY_NAME } from "./branding";
+import { AdminFilesPanel } from "./components/AdminFilesPanel";
 import { ClerkSessionGate } from "./components/auth/ClerkSessionGate";
+import { PreviewPanel } from "./components/PreviewPanel";
 
-// Electron loads the app from a file-backed shell, so hash history avoids path resolution issues.
-const history = isElectron ? createHashHistory() : createBrowserHistory();
+const history = createBrowserHistory();
+const queryClient = new QueryClient();
 
-const router = getRouter(history);
+const router = getRouter(history, queryClient);
 
 document.title = APP_DISPLAY_NAME;
 
@@ -40,10 +45,123 @@ function shouldBypassClerkGate(): boolean {
   return false;
 }
 
+// Optional Clerk SDK on the web side. When the publishable key is set we
+// mount <ClerkProvider> so components can use useUser / <UserButton /> /
+// <SignedIn> directly. When it's missing (or the dev override is on) we
+// skip it — the editor server still has its own Clerk JWT validation
+// path via /api/clerk/me, so legacy / pairing-only flows keep working.
+const clerkPublishableKey =
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY?.trim() || undefined;
+
+function resolveClerkSignInUrl(): string {
+  const explicit = import.meta.env.VITE_CLERK_SIGN_IN_URL?.trim();
+  if (explicit) return explicit;
+  const fromMain = import.meta.env.VITE_MAIN_APP_LOGIN_URL?.trim();
+  if (fromMain) return fromMain;
+  if (
+    typeof window !== "undefined" &&
+    import.meta.env.DEV &&
+    import.meta.env.VITE_ASSUME_MAIN_ON_SAME_HOST === "true"
+  ) {
+    const host = window.location.hostname.trim().toLowerCase();
+    if (host && host !== "localhost" && host !== "127.0.0.1" && host !== "::1") {
+      return `http://${window.location.hostname}:3000/login`;
+    }
+  }
+  return "http://localhost:3000/login";
+}
+
+const clerkSignInUrl = resolveClerkSignInUrl();
+
+/**
+ * FlowBackground — imported directly from the shared design-system
+ * package so the editor inherits the EXACT atmospheric stack the admin
+ * dashboard uses (`variant="dashboard"` — see the same call in
+ * `apps/flowstarter-main/src/components/ui/dashboard-base-layout.tsx`).
+ * The CSS that styles `.fs-bg__*` lives in `brand.css`, which the
+ * editor already imports at the top of `index.css`.
+ *
+ * The layer is portaled into `#fs-flow-bg-mount` (sibling of `#root`
+ * in `index.html`) so it sits under the full chrome stack — the React
+ * component normally relies on `z-index: -1`, which doesn't escape a
+ * stacking context, hence the portal to a body-level mount.
+ */
+function FlowstarterFlowBgPortal() {
+  if (typeof document === "undefined") return null;
+  const mount = document.getElementById("fs-flow-bg-mount");
+  const tree = (
+    <>
+      {/* `landing` variant — same orbs the marketing site uses, with
+          enough intensity that they actually read through the chrome
+          glass. `dashboard` was too whisper-quiet for a workspace
+          surface; the editor wants character, not just whitespace. */}
+      <FlowBackground
+        variant="landing"
+        style={{ position: "absolute", inset: 0, zIndex: 0 }}
+      />
+      {/* Dual-tone editorial wash + film grain — direct port of the admin
+          dashboard's `.dashboard-atmosphere-*` overlays (see
+          apps/flowstarter-main/src/styles/globals.css). Layered above the
+          orbs and below the chrome glass so the cool-indigo / warm-rust
+          horizon reads through the sidebar + chat surfaces. */}
+      <div className="fs-dashboard-atmosphere-light" aria-hidden />
+      <div className="fs-dashboard-atmosphere-dark" aria-hidden />
+      <div className="fs-dashboard-atmosphere-grain" aria-hidden />
+    </>
+  );
+  if (!mount) return tree;
+  return createPortal(tree, mount);
+}
+
+/**
+ * Wrap the editor in `.ls-scope` so every --ls-* token from the
+ * marketing site's landing-design.css cascades through the React
+ * tree. Components can use `.ls-cta`, `.ls-display`, `.ls-flourish`,
+ * `.ls-eyebrow`, `.ls-link`, etc. directly.
+ *
+ * The class also sets `color: var(--ls-ink); font-family: var(--ls-sans)`
+ * — that's the entire marketing-site type/colour stack on top of
+ * everything inside.
+ */
+const tree = (
+  <QueryClientProvider client={queryClient}>
+    <FlowstarterFlowBgPortal />
+    <div className="ls-scope" style={{ minHeight: "100vh" }}>
+      <ClerkSessionGate bypass={shouldBypassClerkGate()}>
+        <>
+          <RouterProvider router={router} />
+          {/* Side panels — require TierProvider from ClerkSessionGate */}
+          <PreviewPanel />
+          <AdminFilesPanel />
+        </>
+      </ClerkSessionGate>
+    </div>
+  </QueryClientProvider>
+);
+
+// Whole-page navigation router functions for Clerk. The editor doesn't
+// run Clerk-hosted pages inside its own SPA — sign-in/up bounce to the
+// main app, so window.location is the right primitive.
+const clerkRouterPush = (to: string) => {
+  if (typeof window !== "undefined") window.location.href = to;
+};
+const clerkRouterReplace = (to: string) => {
+  if (typeof window !== "undefined") window.location.replace(to);
+};
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ClerkSessionGate bypass={shouldBypassClerkGate()}>
-      <RouterProvider router={router} />
-    </ClerkSessionGate>
+    {clerkPublishableKey ? (
+      <ClerkProvider
+        publishableKey={clerkPublishableKey}
+        signInUrl={clerkSignInUrl}
+        routerPush={clerkRouterPush}
+        routerReplace={clerkRouterReplace}
+      >
+        {tree}
+      </ClerkProvider>
+    ) : (
+      tree
+    )}
   </React.StrictMode>,
 );

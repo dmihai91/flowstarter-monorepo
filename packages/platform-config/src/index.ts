@@ -21,12 +21,34 @@
  *   "flowstarter.app"       → "flowstarter.app"
  *   "localhost"              → undefined
  */
+function isIpv4DottedQuad(hostname: string): boolean {
+  return /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname);
+}
+
+/**
+ * True for bracketed or unbracketed IPv6-looking hostnames (not domain names).
+ */
+function isLikelyIpLiteral(hostname: string): boolean {
+  const h = hostname.trim().toLowerCase();
+  if (h.startsWith('[')) return true;
+  if (isIpv4DottedQuad(h)) return true;
+  // Unbracketed IPv6 contains colons without dots-as-TLD ambiguity
+  if (h.includes(':') && !h.includes('.')) return true;
+  return false;
+}
+
 export function getRootDomain(hostname: string): string | undefined {
+  const normalized = hostname.trim().toLowerCase();
+
   if (
-    hostname === 'localhost' ||
-    hostname === '127.0.0.1' ||
+    normalized === 'localhost' ||
+    normalized === '127.0.0.1' ||
     hostname.startsWith('[')
   ) {
+    return undefined;
+  }
+
+  if (isLikelyIpLiteral(normalized)) {
     return undefined;
   }
 
@@ -99,7 +121,7 @@ export function getTeamLoginUrl(
   redirectUrl?: string,
   hostname?: string,
 ): string {
-  const base = `${getMainUrl(hostname)}/team/login`;
+  const base = `${getMainUrl(hostname)}/admin/login`;
   if (!redirectUrl) return base;
   const url = new URL(base);
   url.searchParams.set('redirect_url', redirectUrl);
@@ -143,6 +165,76 @@ export function getSharedCookieDomainFromUrl(requestUrl: string): string | undef
 }
 
 // ---------------------------------------------------------------------------
+// Dev / LAN redirect origins (explicit env — never a hostname wildcard)
+// ---------------------------------------------------------------------------
+
+type RedirectEnvSource = Record<string, string | undefined>;
+
+function readRedirectEnv(): RedirectEnvSource {
+  if (typeof process === 'undefined' || !process.env) return {};
+  return process.env;
+}
+
+const DEV_REDIRECT_URL_ENV_KEYS = [
+  'NEXT_PUBLIC_SITE_URL',
+  'NEXT_PUBLIC_APP_URL',
+  'NEXT_PUBLIC_EDITOR_URL',
+] as const;
+
+const EXTRA_REDIRECT_ORIGINS_ENV = 'NEXT_PUBLIC_EXTRA_REDIRECT_ORIGINS';
+
+/**
+ * Absolute origins (scheme + host + port) parsed from env. Used for Clerk
+ * `allowedRedirectOrigins`, CORS allowlists, and `isSafeRedirectUrl` when you
+ * dev from a LAN host (e.g. iPad → `http://192.168.x.x:3000`).
+ *
+ * Sources: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_EDITOR_URL`,
+ * plus comma-separated `NEXT_PUBLIC_EXTRA_REDIRECT_ORIGINS`.
+ * Clerk Dashboard must still list the same origins for satellite flows.
+ */
+export function collectDevRedirectOriginsFromEnv(
+  env: RedirectEnvSource = readRedirectEnv(),
+): string[] {
+  const origins = new Set<string>();
+  for (const key of DEV_REDIRECT_URL_ENV_KEYS) {
+    const raw = env[key]?.trim();
+    if (!raw?.startsWith('http')) continue;
+    try {
+      origins.add(new URL(raw).origin);
+    } catch {
+      /* skip malformed */
+    }
+  }
+  const csv = env[EXTRA_REDIRECT_ORIGINS_ENV]?.trim();
+  if (csv) {
+    for (const piece of csv.split(',')) {
+      const t = piece.trim();
+      if (!t.startsWith('http')) continue;
+      try {
+        origins.add(new URL(t).origin);
+      } catch {
+        /* skip */
+      }
+    }
+  }
+  return Array.from(origins);
+}
+
+function trustedDevRedirectHostnamesFromEnv(
+  env: RedirectEnvSource = readRedirectEnv(),
+): Set<string> {
+  const hosts = new Set<string>();
+  for (const o of collectDevRedirectOriginsFromEnv(env)) {
+    try {
+      hosts.add(new URL(o).hostname.toLowerCase());
+    } catch {
+      /* skip */
+    }
+  }
+  return hosts;
+}
+
+// ---------------------------------------------------------------------------
 // Trust checks
 // ---------------------------------------------------------------------------
 
@@ -153,12 +245,19 @@ export function getSharedCookieDomainFromUrl(requestUrl: string): string | undef
  * Checks:
  *   - Same root domain as current platform
  *   - Localhost (always trusted in dev)
+ *   - Hostnames appearing in `NEXT_PUBLIC_*` / `NEXT_PUBLIC_EXTRA_REDIRECT_ORIGINS`
+ *     (so LAN IP dev matches any port you configured in those URLs)
  */
 export function isTrustedHost(
   hostname: string,
   currentHostname?: string,
 ): boolean {
-  if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
+  const hn = hostname.trim().toLowerCase();
+  if (hn === 'localhost' || hn === '127.0.0.1') return true;
+
+  if (typeof process !== 'undefined' && trustedDevRedirectHostnamesFromEnv().has(hn)) {
+    return true;
+  }
 
   const platformDomain = getPlatformDomain(currentHostname);
   const targetRoot = getRootDomain(hostname);
@@ -175,6 +274,10 @@ export function isSafeRedirectUrl(
 ): boolean {
   try {
     const parsed = new URL(url);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return false;
+    if (collectDevRedirectOriginsFromEnv().includes(parsed.origin)) {
+      return true;
+    }
     return isTrustedHost(parsed.hostname, currentHostname);
   } catch {
     return false;
@@ -229,11 +332,12 @@ export function isTeamEmail(
 
 /**
  * Returns the list of allowed redirect origins for auth providers.
- * Includes common subdomains + localhost for dev.
+ * Includes common subdomains + localhost for dev, plus any origins from
+ * `collectDevRedirectOriginsFromEnv()` (LAN / alternate dev hosts).
  */
 export function getAllowedRedirectOrigins(hostname?: string): string[] {
   const domain = getPlatformDomain(hostname);
-  return [
+  const base = [
     `https://${domain}`,
     `https://code.${domain}`,
     `https://editor.${domain}`,
@@ -241,5 +345,9 @@ export function getAllowedRedirectOrigins(hostname?: string): string[] {
     'http://localhost:3000',
     'http://localhost:3100',
     'http://localhost:5173',
+    'http://localhost:5733',
+    'http://localhost:5773',
   ];
+  const extra = collectDevRedirectOriginsFromEnv();
+  return Array.from(new Set([...base, ...extra]));
 }

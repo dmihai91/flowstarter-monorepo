@@ -1,6 +1,38 @@
 @import "tailwindcss";
+@import "@flowstarter/flow-design-system/styles";
+@import "@flowstarter/flow-design-system/clerk-account.css";
+
+/* Marketing-site design system, ported wholesale. Defines every
+   --ls-* token, the .ls-scope wrapper, atmospheric layers
+   (.ls-mesh / .ls-grain / .ls-orb / .ls-streak), typography
+   (.ls-display / .ls-flourish / .ls-eyebrow / .ls-heading / .ls-body),
+   buttons (.ls-cta / .ls-cta-hero / .ls-cta--sm), links (.ls-link),
+   and dark-mode overrides. Apply `.ls-scope` to the editor root and
+   every chrome surface inherits the marketing site's exact treatment. */
+@import "./landing-design.css";
 
 @custom-variant dark (&:is(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Flowstarter Editor — design system port
+
+   This file mirrors the @flowstarter/flow-design-system tokens used by
+   the marketing app (see packages/flow-design-system/src/styles/brand.css)
+   so the editor reads as the same product family. Three axes:
+
+     1. Typography: Onest Variable as primary, Plus Jakarta Sans fallback,
+        JetBrains Mono for code.
+     2. Color: cream-on-indigo light theme, deep-indigo dark theme. Brand
+        accent is hsl(233, 65%, 50%) for interactive chrome; `--purple`
+        comes from @flowstarter/flow-design-system (primitive accent mid).
+     3. Surfaces: layered glass — 68% white for cards, 82% for chrome
+        (sidebar + header), 11% ink hairlines — over a soft accent aura
+        at the page level, never on individual surfaces.
+
+   Wired into shadcn's --background / --card / --sidebar / etc. tokens
+   below, so every Tailwind utility (`bg-card`, `border-border`, etc.)
+   gets the brand palette without a single component rewrite.
+   ─────────────────────────────────────────────────────────────────────── */
 
 @theme inline {
   --animate-skeleton: skeleton 2s -1s infinite linear;
@@ -43,134 +75,385 @@
   }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────
+   1. Brand tokens — light theme
+   ─────────────────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --radius: 0.625rem; /* 10px — restrained */
+
+  /* Shared chrome control geometry — header pills, preview toggle, CTA row */
+  --fs-chrome-control-h: 32px;
+  --fs-chrome-control-radius: 10px;
+
+  /* Type — Onest first; Plus Jakarta Sans is fallback so existing
+     callsites that still spell that name keep rendering correctly. */
+  --fs-font-sans:
+    "Onest Variable", "Onest", "Plus Jakarta Sans Variable",
+    "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    system-ui, sans-serif;
+  --fs-font-mono:
+    "JetBrains Mono", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
+
+  /* Brand primitives */
+  --fs-accent-rgb: 78, 94, 218;
+  --fs-accent: hsl(233, 65%, 50%);
+  --fs-accent-soft: hsl(233, 70%, 74%);
+  --fs-accent-hot: hsl(233, 70%, 40%);
+  --fs-accent-bg: rgba(78, 94, 218, 0.06);
+  --fs-accent-bg-strong: rgba(78, 94, 218, 0.12);
+  --fs-accent-ring: rgba(78, 94, 218, 0.4);
+  --fs-warm: #b45309;
+
+  /* `--purple` — canonical brand token from flow-design-system brand.css
+     (`var(--fs-primitive-accent-mid)`); do not override here. */
+
+  /* Paper ladder — marketing landing parity (`landing-design.css` --ls-bg / --ls-bg-2).
+     Warm cream column; sidebar stays cool-violet glass over this base. */
+  --fs-bg-base: #fbf7ef;
+  --fs-bg-paper: #f3ecdb;
+  --fs-bg-elevated: #ffffff;
+
+  /* Ink ladder — `mono` is for mono micro-labels; slightly warmer
+     than `dim` so they catalogue rather than disappear. */
+  --fs-ink: #120a22;
+  --fs-ink-dim: rgba(18, 10, 34, 0.62);
+  --fs-ink-mono: rgba(18, 10, 34, 0.5);
+  --fs-ink-faint: rgba(18, 10, 34, 0.36);
+  --fs-ink-disabled: rgba(18, 10, 34, 0.2);
+
+  /* Glass surfaces — mirrored exactly off the landing's
+     `--ls-glass-bg` / `--ls-glass-edge` / `--ls-card-shadow`. The
+     editor's chrome reads identically to a marketing-site card. */
+  --fs-glass-bg: rgba(255, 255, 255, 0.55);
+  --fs-glass-edge: rgba(18, 10, 34, 0.1);
+  --fs-glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(18, 10, 34, 0.04),
+    0 24px 60px rgba(78, 94, 218, 0.06),
+    0 8px 22px rgba(18, 10, 34, 0.05);
+
+  /* Chrome (sidebar + chat header). */
+  --fs-chrome-bg: rgba(255, 255, 255, 0.82);
+  --fs-chrome-border: rgba(15, 23, 42, 0.1);
+  --fs-chrome-shadow:
+    1px 0 0 rgba(15, 23, 42, 0.06),
+    0 10px 28px rgba(15, 23, 42, 0.08);
+
+  /* Hairline rules — landing parity. */
+  --fs-rule: rgba(18, 10, 34, 0.1);
+  --fs-rule-strong: rgba(18, 10, 34, 0.18);
+  --fs-rule-accent: rgba(78, 94, 218, 0.22);
+
+  /* Sidebar-only lavender glass (§4). Low chroma ~260° — **tint washes**
+     for layered radials; the visible “body” is translucent + backdrop-blur,
+     not an opaque lavender slab. */
+  --fs-sidebar-lavender-mist: hsla(262, 28%, 62%, 0.11);
+  --fs-sidebar-lavender-veil: hsla(268, 24%, 74%, 0.13);
+  --fs-sidebar-lavender-deep: hsla(255, 20%, 50%, 0.09);
+  --fs-sidebar-lavender-ice: hsla(248, 44%, 54%, 0.095);
+  --fs-sidebar-lavender-base-a: color-mix(in oklab, hsl(268 30% 95%) 46%, transparent);
+  --fs-sidebar-lavender-base-b: color-mix(in oklab, hsl(258 24% 93%) 30%, transparent);
+
+  /* FlowBackground orb tokens — light mode (multiply blend).
+     Kept quieter than hero landing so chrome + sidebar stay editorial. */
+  --fs-bloom-core: rgba(78, 94, 218, 0.38);
+  --fs-bloom-mid: rgba(78, 94, 218, 0.1);
+  --fs-warm-core: rgba(180, 83, 9, 0.28);
+  --fs-warm-mid: rgba(180, 83, 9, 0.08);
+  --fs-secondary-bloom: rgba(78, 94, 218, 0.12);
+  --fs-orb-blend: multiply;
+  --fs-orb-opacity: 0.55;
+  --fs-grain-blend: multiply;
+  --fs-grain-opacity: 0.045;
+
+  /* Primary CTA — DEEP NAVY in light mode, mirroring the landing's
+     `--ls-cta-bg`. This is the single most distinctive Flowstarter
+     visual signature: navy buttons on cream surfaces. Don't swap it
+     out for indigo; the indigo lives in the brand mark + dark mode
+     CTAs only. */
+  --fs-cta-bg:
+    linear-gradient(135deg, #0f1a3d 0%, #1e2d6b 50%, #0f1a3d 100%);
+  --fs-cta-fg: #f6f5f2;
+  --fs-cta-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    0 10px 28px rgba(78, 94, 218, 0.28),
+    0 2px 8px rgba(18, 10, 34, 0.14);
+
+  /* Header / glass chrome CTA (Publish) — same geometry as `.fs-cta` but
+     brand violet (`--purple`) fill + glow; not the navy hero `.fs-cta`. */
+  --fs-cta-toolbar-bg:
+    linear-gradient(
+      145deg,
+      color-mix(in oklab, var(--purple) 88%, #0f0520) 0%,
+      var(--purple) 46%,
+      color-mix(in oklab, var(--purple) 52%, var(--fs-accent-hot)) 100%
+    );
+  --fs-cta-toolbar-fg: rgba(255, 255, 255, 0.98);
+  --fs-cta-toolbar-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 color-mix(in oklab, var(--purple) 42%, black),
+    0 1px 2px rgba(15, 5, 34, 0.07),
+    0 4px 18px color-mix(in oklab, var(--purple) 44%, transparent);
+  --fs-cta-toolbar-border: color-mix(
+    in oklab,
+    var(--purple) 30%,
+    rgba(18, 10, 34, 0.22)
+  );
+
+  /* Aura — VIVID radial pools so the glass-blur backdrop actually has
+     colour to pick up. Light mode lifts the brand indigo to ~36% and
+     adds a warm bloom on the right; the chrome's 58% white mutes it
+     to a tasteful tint, but it's never invisible. */
+  --fs-aura:
+    radial-gradient(
+      900px 620px at 0% -8%,
+      rgba(78, 94, 218, 0.22),
+      transparent 62%
+    ),
+    radial-gradient(
+      780px 540px at 100% 4%,
+      rgba(180, 83, 9, 0.12),
+      transparent 65%
+    ),
+    radial-gradient(
+      720px 540px at 18% 100%,
+      rgba(102, 119, 235, 0.14),
+      transparent 70%
+    ),
+    radial-gradient(
+      640px 460px at 90% 90%,
+      rgba(78, 94, 218, 0.11),
+      transparent 70%
+    );
+
+  /* shadcn semantic tokens — wire every existing Tailwind utility into
+     the brand palette in one place. Colour-mix gives us derivatives
+     (hover, muted, etc.) without authoring extra primitives. */
+  --background: var(--fs-bg-base);
+  --foreground: var(--fs-ink);
+  --card: var(--fs-glass-bg);
+  --card-foreground: var(--fs-ink);
+  --popover: var(--fs-chrome-bg);
+  --popover-foreground: var(--fs-ink);
+  --primary: var(--fs-accent);
+  --primary-foreground: #fbf7ef;
+  --sidebar: var(--fs-chrome-bg);
+  --sidebar-foreground: var(--fs-ink);
+  --sidebar-border: var(--fs-chrome-border);
+  --secondary: rgba(18, 10, 34, 0.04);
+  --secondary-foreground: var(--fs-ink);
+  --muted: rgba(18, 10, 34, 0.04);
+  --muted-foreground: var(--fs-ink-dim);
+  --accent: var(--fs-accent-bg);
+  --accent-foreground: var(--fs-ink);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 84%, 28%);
+  --border: var(--fs-rule);
+  --input: var(--fs-rule-strong);
+  --ring: var(--fs-accent-ring);
+  --info: hsl(211, 93%, 61%);
+  --info-foreground: hsl(211, 93%, 28%);
+  --success: hsl(142, 71%, 45%);
+  --success-foreground: hsl(142, 71%, 22%);
+  --warning: hsl(38, 92%, 50%);
+  --warning-foreground: hsl(38, 92%, 26%);
+
+  /* Editor-specific extensions */
+  --app-chrome-background: var(--fs-bg-base);
+
+  @variant dark {
+    color-scheme: dark;
+
+    /* Tokens ported directly from packages/flow-design-system/src/styles/brand.css `.dark`. */
+    --fs-accent: hsl(233, 70%, 74%);    /* primitive-accent-pale */
+    --fs-accent-soft: hsl(233, 75%, 80%);
+    --fs-accent-hot: hsl(233, 65%, 58%); /* primitive-accent-mid */
+    --fs-accent-bg: rgba(123, 138, 240, 0.12);
+    --fs-accent-bg-strong: rgba(123, 138, 240, 0.2);
+    --fs-accent-ring: rgba(123, 138, 240, 0.45);
+    --fs-warm: #ffb27a;                  /* primitive-accent-warm-dark */
+
+    /* Keep canonical `--purple` from design-system (same as light). */
+    --fs-bg-base: #040308;
+    --fs-bg-paper: #0a0714;
+    --fs-bg-elevated: #100e1c;
+
+    /* Ink ladder — match marketing `.dark .ls-theme` / `.dark .ls-scope`
+       (slightly softer dim/faint than brand.css 0.72/0.5 so chrome is less harsh). */
+    --fs-ink: #f4eee4;
+    --fs-ink-dim: rgba(244, 238, 228, 0.58);
+    --fs-ink-mono: rgba(244, 238, 228, 0.48);
+    --fs-ink-faint: rgba(244, 238, 228, 0.32);
+    --fs-ink-disabled: rgba(244, 238, 228, 0.28);
+
+    /* Flow mesh — landing dark uses `screen` + full orb stack; slightly
+       softer cores keep violet readable without neon overload on `#040308`. */
+    --fs-orb-blend: screen;
+    --fs-grain-blend: overlay;
+
+    --fs-bloom-core: rgba(88, 106, 240, 0.62);
+    --fs-bloom-mid: rgba(78, 94, 218, 0.26);
+    --fs-warm-core: rgba(255, 160, 80, 0.52);
+    --fs-warm-mid: rgba(255, 160, 80, 0.18);
+    --fs-secondary-bloom: rgba(130, 148, 255, 0.26);
+
+    /* Direct port — design system dark glass + chrome tokens. */
+    --fs-glass-bg: rgba(22, 28, 45, 0.64);
+    --fs-glass-edge: rgba(148, 163, 184, 0.3);
+    --fs-glass-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.34),
+      0 20px 50px rgba(2, 6, 23, 0.38),
+      0 8px 24px rgba(56, 97, 182, 0.14);
+
+    /* Slightly lifted indigo-graphite + a touch more transparency so the
+       flow field reads through — avoids a flat `#121218`-style slab. */
+    --fs-chrome-bg: rgba(16, 18, 36, 0.78);
+    --fs-chrome-border: rgba(148, 163, 184, 0.24);
+    --fs-chrome-shadow:
+      1px 0 0 rgba(148, 163, 184, 0.1),
+      0 14px 34px rgba(2, 6, 23, 0.5);
+
+    --fs-rule: rgba(244, 238, 228, 0.12);
+    --fs-rule-strong: rgba(244, 238, 228, 0.2);
+    --fs-rule-accent: rgba(123, 138, 240, 0.32);
+
+    /* Sidebar — dark: graphite floor + low-chroma indigo mist (reads closer
+       to main landing mesh; still subdued vs a saturated purple slab). */
+    --fs-sidebar-lavender-mist: hsla(248, 28%, 52%, 0.095);
+    --fs-sidebar-lavender-veil: hsla(252, 22%, 56%, 0.082);
+    --fs-sidebar-lavender-deep: hsla(240, 16%, 36%, 0.085);
+    --fs-sidebar-lavender-ice: hsla(248, 38%, 56%, 0.095);
+    --fs-sidebar-lavender-base-a: color-mix(in oklab, hsl(250 18% 13%) 58%, transparent);
+    --fs-sidebar-lavender-base-b: color-mix(in oklab, hsl(244 14% 10%) 46%, transparent);
+
+    /* Dark-mode CTA flips to the indigo gradient — landing parity. */
+    --fs-cta-bg:
+      linear-gradient(
+        135deg,
+        hsl(233, 65%, 44%) 0%,
+        hsl(233, 70%, 58%) 50%,
+        hsl(233, 65%, 44%) 100%
+      );
+    --fs-cta-fg: #ffffff;
+    --fs-cta-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(78, 94, 218, 0.4),
+      0 8px 24px rgba(78, 94, 218, 0.45),
+      0 16px 48px rgba(78, 94, 218, 0.2);
+
+    /* Dark: toolbar CTA — violet glass, purple bloom (hero `.fs-cta` stays indigo). */
+    --fs-cta-toolbar-bg:
+      linear-gradient(
+        145deg,
+        color-mix(in oklab, var(--purple) 34%, #0a0614) 0%,
+        color-mix(in oklab, var(--purple) 58%, #1a1033) 52%,
+        color-mix(in oklab, var(--purple) 24%, #06040d) 100%
+      );
+    --fs-cta-toolbar-fg: rgba(255, 255, 255, 0.96);
+    --fs-cta-toolbar-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.42),
+      0 0 0 1px color-mix(in oklab, var(--purple) 38%, transparent),
+      0 4px 20px color-mix(in oklab, var(--purple) 32%, rgba(0, 0, 0, 0.55));
+    --fs-cta-toolbar-border: color-mix(
+      in oklab,
+      var(--purple) 48%,
+      rgba(148, 163, 184, 0.22)
+    );
+
+    /* Dark aura — vivid indigo bloom top-left, warm orange anchor
+       top-right, secondary indigo bottom-left, periwinkle wash
+       bottom-right. Saturated enough to survive the chrome's 6% glass
+       and still read as colour through the sidebar's frosted blur. */
+    --fs-aura:
+      radial-gradient(
+        1100px 700px at -4% -10%,
+        rgba(123, 138, 240, 0.68),
+        transparent 60%
+      ),
+      radial-gradient(
+        780px 540px at 100% 4%,
+        rgba(255, 160, 80, 0.22),
+        transparent 65%
+      ),
+      radial-gradient(
+        820px 580px at 14% 105%,
+        rgba(102, 119, 235, 0.52),
+        transparent 70%
+      ),
+      radial-gradient(
+        700px 480px at 95% 92%,
+        rgba(88, 106, 240, 0.4),
+        transparent 70%
+      );
+
+    --background: var(--fs-bg-base);
+    --foreground: var(--fs-ink);
+    --card: var(--fs-glass-bg);
+    --card-foreground: var(--fs-ink);
+    --popover: var(--fs-chrome-bg);
+    --popover-foreground: var(--fs-ink);
+    --primary: var(--fs-accent);
+    --primary-foreground: var(--fs-bg-base);
+    --sidebar: var(--fs-chrome-bg);
+    --sidebar-foreground: var(--fs-ink);
+    --sidebar-border: var(--fs-chrome-border);
+    --secondary: rgba(255, 255, 255, 0.04);
+    --secondary-foreground: var(--fs-ink);
+    --muted: rgba(255, 255, 255, 0.04);
+    --muted-foreground: var(--fs-ink-dim);
+    --accent: var(--fs-accent-bg);
+    --accent-foreground: var(--fs-ink);
+    --destructive: hsl(0, 84%, 68%);
+    --destructive-foreground: hsl(0, 84%, 90%);
+    --border: var(--fs-rule);
+    --input: var(--fs-rule-strong);
+    --ring: var(--fs-accent-ring);
+    --info: hsl(211, 93%, 72%);
+    --info-foreground: hsl(211, 93%, 90%);
+    --success: hsl(142, 71%, 58%);
+    --success-foreground: hsl(142, 71%, 88%);
+    --warning: hsl(38, 92%, 62%);
+    --warning-foreground: hsl(38, 92%, 88%);
+
+    --app-chrome-background: var(--fs-bg-base);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   2. Document scaffold
+   ─────────────────────────────────────────────────────────────────────── */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   html {
-    background-color: var(--app-chrome-background);
+    background-color: var(--fs-bg-base);
   }
   body {
     @apply text-foreground relative;
-    background-color: var(--app-chrome-background);
   }
 }
 
-/* Suppress all transitions during theme changes */
-.no-transitions,
-.no-transitions *,
-.no-transitions *::before,
-.no-transitions *::after {
-  transition-duration: 0s !important;
-  animation-duration: 0s !important;
-}
-
-:root {
-  color-scheme: light;
-  --radius: 0.625rem;
-  --background: var(--color-white);
-  --app-chrome-background: var(--background);
-  --foreground: var(--color-neutral-800);
-  --card: var(--color-white);
-  --card-foreground: var(--color-neutral-800);
-  --popover: var(--color-white);
-  --popover-foreground: var(--color-neutral-800);
-  /* Flowstarter violet as primary — matches packages/flow-design-system */
-  --primary: hsl(233, 65%, 58%);
-  --primary-foreground: var(--color-white);
-
-  /* Flowstarter brand tokens (mirror of flowstarter-main + flow-design-system).
-     Components ported from the main app expect these var() names. */
-  --purple: hsl(233, 65%, 58%);
-  --blue: hsl(211, 93%, 61%);
-  --green: hsl(119, 54%, 41%);
-  --fs-accent: hsl(233, 65%, 58%);
-  --fs-accent-bg: rgba(77, 93, 217, 0.1);
-  --fs-ink: rgba(2, 6, 23, 0.92);
-  --fs-ink-dim: rgba(2, 6, 23, 0.7);
-  --fs-ink-faint: rgba(2, 6, 23, 0.5);
-  --fs-rule: rgba(2, 6, 23, 0.08);
-  --fs-rule-accent: rgba(77, 93, 217, 0.18);
-  --fs-glass-bg: rgba(255, 255, 255, 0.6);
-  --fs-glass-edge: rgba(2, 6, 23, 0.08);
-  --fs-card-shadow: 0 1px 2px rgba(2, 6, 23, 0.04), 0 4px 12px rgba(2, 6, 23, 0.04);
-  --fs-radius-md: 12px;
-  --fs-radius-2xl: 20px;
-  --secondary: --alpha(var(--color-black) / 4%);
-  --secondary-foreground: var(--color-neutral-800);
-  --muted: --alpha(var(--color-black) / 4%);
-  --muted-foreground: color-mix(in srgb, var(--color-neutral-500) 90%, var(--color-black));
-  --accent: --alpha(var(--color-black) / 4%);
-  --accent-foreground: var(--color-neutral-800);
-  --destructive: var(--color-red-500);
-  --border: --alpha(var(--color-black) / 8%);
-  --input: --alpha(var(--color-black) / 10%);
-  --ring: #4D5DD9;
-  --destructive-foreground: var(--color-red-700);
-  --info: var(--color-blue-500);
-  --info-foreground: var(--color-blue-700);
-  --success: var(--color-emerald-500);
-  --success-foreground: var(--color-emerald-700);
-  --warning: var(--color-amber-500);
-  --warning-foreground: var(--color-amber-700);
-
-  @variant dark {
-    color-scheme: dark;
-    /* Flowstarter dark palette */
-    --background: #101014;
-    --app-chrome-background: #101014;
-    --foreground: rgba(255, 255, 255, 0.92);
-    --card: #1a1a22;
-    --card-foreground: rgba(255, 255, 255, 0.92);
-    --popover: #1a1a22;
-    --popover-foreground: rgba(255, 255, 255, 0.92);
-    --primary: hsl(233, 75%, 70%);
-    --primary-foreground: var(--color-white);
-
-    /* Flowstarter brand tokens — dark mode counterparts. */
-    --purple: hsl(233, 75%, 70%);
-    --fs-accent: hsl(233, 75%, 70%);
-    --fs-accent-bg: rgba(102, 119, 235, 0.12);
-    --fs-ink: rgba(255, 255, 255, 0.92);
-    --fs-ink-dim: rgba(255, 255, 255, 0.7);
-    --fs-ink-faint: rgba(255, 255, 255, 0.5);
-    --fs-rule: rgba(255, 255, 255, 0.08);
-    --fs-rule-accent: rgba(102, 119, 235, 0.22);
-    --fs-glass-bg: rgba(58, 58, 74, 0.3);
-    --fs-glass-edge: rgba(255, 255, 255, 0.08);
-    --fs-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
-    --secondary: --alpha(var(--color-white) / 4%);
-    --secondary-foreground: rgba(255, 255, 255, 0.85);
-    --muted: --alpha(var(--color-white) / 4%);
-    --muted-foreground: rgba(255, 255, 255, 0.5);
-    --accent: --alpha(var(--color-white) / 4%);
-    --accent-foreground: rgba(255, 255, 255, 0.85);
-    --destructive: color-mix(in srgb, var(--color-red-500) 90%, var(--color-white));
-    --border: rgba(255, 255, 255, 0.06);
-    --input: rgba(255, 255, 255, 0.08);
-    --ring: #6366f1;
-    --destructive-foreground: var(--color-red-400);
-    --info: var(--color-blue-500);
-    --info-foreground: var(--color-blue-400);
-    --success: var(--color-emerald-500);
-    --success-foreground: var(--color-emerald-400);
-    --warning: var(--color-amber-500);
-    --warning-foreground: var(--color-amber-400);
-  }
+html,
+body,
+html.dark,
+html.dark body {
+  background-color: var(--fs-bg-base);
 }
 
 body {
-  font-family:
-    "Plus Jakarta Sans",
-    "Plus Jakarta Sans Variable",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    system-ui,
-    sans-serif;
+  font-family: var(--fs-font-sans);
+  font-feature-settings: "ss01", "ss02", "cv11";
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  letter-spacing: -0.005em;
 }
 
 html,
@@ -185,309 +468,1396 @@ body,
   overscroll-behavior-y: none;
 }
 
-body::after {
-  content: "";
+/* ─────────────────────────────────────────────────────────────────────────
+   3. Aura layer
+   A single fixed-position layer behind the entire app. The brand colour
+   never appears as wallpaper on individual surfaces — it lives here, and
+   bleeds through the chrome's backdrop-blur. One source of saturation
+   for the whole product.
+   ─────────────────────────────────────────────────────────────────────── */
+/* Aura — vivid radial pools painted on <html>. We don't use a pseudo
+   element because parent overflow:hidden + z-index stacks were clipping
+   it. Painting on html itself puts it under absolutely everything. */
+html {
+  background-color: var(--fs-bg-base);
+}
+html.dark {
+  background-color: var(--fs-bg-base);
+}
+
+/* ── FlowBackground (ported from packages/flow-design-system) ─────
+   Replicates the marketing site's bloom + warm + secondary + tertiary
+   radial-pool stack.    The DOM tree is rendered from `main.tsx` as
+   `<FlowstarterFlowBg/>` (portaled to `#fs-flow-bg-mount`) so we don't depend on the package import. */
+
+/* Body-level mount for FlowstarterFlowBg (see main.tsx portal) — under #root,
+   above html canvas, so sidebar + inset chrome share one mesh layer. */
+#fs-flow-bg-mount {
   position: fixed;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
+  overflow: hidden;
 }
 
-pre,
-code {
-  font-family: "SF Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+#fs-flow-bg-mount > .fs-bg {
+  z-index: 0;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
+.fs-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.25);
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.18);
-}
-
-.turn-chip-strip {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  overscroll-behavior-x: contain;
-}
-
-.turn-chip-strip::-webkit-scrollbar {
-  display: none;
-}
-
-/* Terminal drawer scrollbar parity with chat */
-.thread-terminal-drawer .xterm .xterm-scrollable-element > .scrollbar.vertical {
-  width: 6px !important;
-}
-
-.thread-terminal-drawer .xterm .xterm-scrollable-element > .scrollbar > .slider {
-  border-radius: 3px;
-}
-
-.thread-terminal-drawer .xterm .xterm-scrollable-element > .scrollbar.vertical > .slider {
-  width: 6px !important;
-  left: 0 !important;
-}
-
-/* Reasoning select -- clickable label surface */
-label:has(> select#reasoning-effort) {
-  position: relative;
-}
-label:has(> select#reasoning-effort) select {
+.fs-bg__base {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  cursor: pointer;
+  background: var(--fs-bg-base);
+}
+
+.fs-bg__bloom,
+.fs-bg__secondary,
+.fs-bg__warm,
+.fs-bg__tertiary {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  mix-blend-mode: var(--fs-orb-blend);
+}
+
+.fs-bg__bloom {
+  top: -15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 75%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--fs-bloom-core) 0%,
+    var(--fs-bloom-mid) 45%,
+    transparent 72%
+  );
+}
+.fs-bg__secondary {
+  top: 5%;
+  right: 5%;
+  width: 40%;
+  height: 45%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--fs-secondary-bloom) 0%,
+    transparent 65%
+  );
+}
+.fs-bg__warm {
+  bottom: -12%;
+  left: -5%;
+  width: 55%;
+  height: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--fs-warm-core) 0%,
+    var(--fs-warm-mid) 45%,
+    transparent 72%
+  );
+}
+.fs-bg__tertiary {
+  bottom: -8%;
+  right: 10%;
+  width: 45%;
+  height: 40%;
+  background: radial-gradient(
+    ellipse at center,
+    var(--fs-bloom-mid) 0%,
+    transparent 65%
+  );
+}
+
+.fs-bg__lines {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
 
-/* Chat markdown rendering */
-.chat-markdown {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+/* Opacities now come from `brand.css` via `.fs-bg--dashboard` (see
+   `<FlowBackground variant="dashboard" />` in main.tsx) so the editor
+   uses the exact same orb intensities as the admin dashboard. */
+
+/* Bloom drift animations — direct port. */
+@keyframes fs-bloom-drift {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.04) translateY(-12px); }
+}
+@keyframes fs-warm-drift {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06) translate(10px, -8px); }
+}
+.fs-bg--animated .fs-bg__bloom { animation: fs-bloom-drift 18s ease-in-out infinite; }
+.fs-bg--animated .fs-bg__warm  { animation: fs-warm-drift 22s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-bg--animated .fs-bg__bloom,
+  .fs-bg--animated .fs-bg__warm {
+    animation: none;
+  }
 }
 
-.chat-markdown > :first-child {
-  margin-top: 0;
+/* Subtle film grain over the aura. */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
 }
 
-.chat-markdown > :last-child {
-  margin-bottom: 0;
+html.dark::before {
+  opacity: 0.034;
+  mix-blend-mode: overlay;
 }
 
-.chat-markdown p,
-.chat-markdown ul,
-.chat-markdown ol,
-.chat-markdown blockquote,
-.chat-markdown pre,
-.chat-markdown table {
-  margin: 0.65rem 0;
-}
-
-.chat-markdown ul {
-  padding-left: 1.25rem;
-  list-style-type: disc;
-}
-
-.chat-markdown ol {
-  padding-left: 1.25rem;
-  list-style-type: decimal;
-}
-
-.chat-markdown ul ul {
-  list-style-type: circle;
-}
-
-.chat-markdown ul ul ul {
-  list-style-type: square;
-}
-
-.chat-markdown ol ol {
-  list-style-type: lower-alpha;
-}
-
-.chat-markdown ol ol ol {
-  list-style-type: lower-roman;
-}
-
-.chat-markdown li + li {
-  margin-top: 0.25rem;
-}
-
-.chat-markdown a {
-  color: var(--info-foreground);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--info-foreground) 40%, transparent);
-}
-
-.chat-markdown a:hover {
-  opacity: 0.8;
-}
-
-.chat-markdown blockquote {
-  border-left: 2px solid var(--border);
-  padding-left: 0.8rem;
-  color: var(--muted-foreground);
-}
-
-.chat-markdown :not(pre) > code {
-  border: 1px solid var(--border);
-  border-radius: 0.375rem;
-  background: var(--muted);
-  padding: 0.1rem 0.35rem;
-  color: var(--foreground);
-  font-size: 0.75rem;
-}
-
-.chat-markdown pre {
-  max-width: 100%;
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  background: var(--muted);
-  padding: 0.8rem 0.9rem;
-}
-
-.chat-markdown pre code {
-  border: none;
-  background: transparent;
-  padding: 0;
-  font-size: 0.75rem;
-}
-
-.chat-markdown .chat-markdown-codeblock {
-  position: relative;
-  margin: 0.65rem 0;
-}
-
-.chat-markdown .chat-markdown-codeblock pre {
-  margin: 0;
-}
-
-.chat-markdown .chat-markdown-copy-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+/* ── Dashboard atmosphere — dual-tone editorial wash ───────────────
+   Direct port of `.dashboard-atmosphere-light/-dark/-grain` from the
+   main platform's `apps/flowstarter-main/src/styles/globals.css` so the
+   editor inherits the same cool-indigo (top-left) + warm-rust (bottom-
+   right) wash the admin dashboard uses. Mounted by main.tsx alongside
+   `FlowstarterFlowBg`. Sits above orbs, below the chrome glass — the
+   dual-tone reads through the sidebar lavender + chat paper as a quiet
+   horizon, not a competing radial. */
+.fs-dashboard-atmosphere-light {
+  position: fixed;
+  inset: 0;
   z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 8% 0%,
+      rgba(78, 94, 218, 0.10) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 56% 50% at 96% 108%,
+      rgba(180, 83, 9, 0.07) 0%,
+      transparent 64%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(251, 247, 239, 0) 0%,
+      rgba(243, 236, 219, 0.32) 100%
+    );
+}
+
+html.dark .fs-dashboard-atmosphere-light {
+  display: none;
+}
+
+.fs-dashboard-atmosphere-dark {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* Barely-there bottom-edge vignette — the FlowBackground orbs already
+     carry dark-mode atmosphere at the `landing` variant's lifted dark
+     opacities (bloom 0.32, warm 0.18). A heavy dark wash on top mutes
+     them; this single soft floor just deepens the bottom edge. */
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 60%,
+    rgba(2, 2, 5, 0.22) 100%
+  );
+}
+
+html.dark .fs-dashboard-atmosphere-dark {
+  display: block;
+}
+
+.fs-dashboard-atmosphere-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+
+html.dark .fs-dashboard-atmosphere-grain {
+  opacity: 0.06;
+}
+
+/* The whole React tree must be transparent so the aura passes through
+   to every frosted-glass surface. SidebarProvider's wrapper paints its
+   own `bg-sidebar` when variant=inset — defeat that here too. */
+body {
+  background: transparent !important;
+}
+#root {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   4. Chrome — sidebar + main inset
+   Both surfaces are glass: semi-opaque + backdrop blur over the aura.
+   Sidebar: layered lavender-cool glass (~258–268°, low chroma via
+   `--fs-sidebar-lavender-*`). Inset chat: neutral paper (`--fs-bg-base`).
+   ─────────────────────────────────────────────────────────────────────── */
+/* ── Sidebar chrome — translucent glass with whisper-quiet diagonal
+   indigo wash. Just enough hue to feel separate from the chat column;
+   FlowBackground orbs still carry the visible color. Single hairline
+   border-right, no outer drop shadow into the chat column. */
+[data-slot="sidebar-inner"][data-sidebar="sidebar"],
+[data-slot="sidebar-inner"] {
+  position: relative !important;
+  isolation: isolate !important;
+  background:
+    linear-gradient(
+      172deg,
+      color-mix(in oklab, var(--fs-accent) 5%, transparent) 0%,
+      color-mix(in oklab, var(--fs-accent) 2%, transparent) 48%,
+      transparent 100%
+    ),
+    color-mix(in oklab, white 62%, transparent) !important;
+  border: 0 !important;
+  border-right: 1px solid var(--fs-chrome-border) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(22px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(135%) !important;
+}
+
+/* Specular halo + inner rim pseudos disabled — clean chrome surface
+   instead. Kept as `content: none` so any old selectors that targeted
+   the pseudo elsewhere short-circuit gracefully. */
+[data-slot="sidebar-inner"][data-sidebar="sidebar"]::before,
+[data-slot="sidebar-inner"]::before,
+[data-slot="sidebar-inner"][data-sidebar="sidebar"]::after,
+[data-slot="sidebar-inner"]::after {
+  content: none !important;
+}
+
+/* Lift sidebar children above the ::before / ::after pseudos. The
+   `:not([data-slot="sidebar-rail"])` exclusion is critical — the rail
+   relies on `position: absolute` + `right: -16px` to sit in the resize
+   channel; if we override its position to `relative`, the rail flows
+   into normal layout and the drag-to-resize click target ends up
+   inside the sidebar list instead of at its right edge. */
+[data-slot="sidebar-inner"][data-sidebar="sidebar"] > *:not([data-slot="sidebar-rail"]),
+[data-slot="sidebar-inner"] > *:not([data-slot="sidebar-rail"]) {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Dark variant — translucent graphite glass with a single hairline
+   indigo accent on the inner-top edge (no heavy gradient washes). The
+   FlowBackground orbs read through the panel; the surface itself just
+   needs enough body to anchor the project list. */
+html.dark [data-slot="sidebar-inner"][data-sidebar="sidebar"],
+html.dark [data-slot="sidebar-inner"] {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, hsl(248 20% 12%) 52%, transparent) 0%,
+      color-mix(in oklab, hsl(248 18% 6%) 60%, transparent) 100%
+    ) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--fs-accent) 18%, rgba(255, 255, 255, 0.08)),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+}
+
+/* Right-edge drawer sidebar (diff panel) — neutral preview-style glass,
+   not the lavender nav treatment used for the primary left rail. */
+[data-slot="sidebar"][data-side="right"] [data-slot="sidebar-inner"] {
+  background-color: transparent !important;
+  background-image:
+    linear-gradient(
+      195deg,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    ),
+    linear-gradient(
+      172deg,
+      color-mix(in oklab, var(--fs-bg-base) 82%, var(--fs-chrome-bg)) 0%,
+      color-mix(in oklab, var(--fs-bg-base) 76%, var(--fs-chrome-bg)) 100%
+    ) !important;
+  border-right: 0 !important;
+  border-left: 1px solid color-mix(in oklab, var(--fs-chrome-border) 52%, transparent) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -1px 0 rgba(18, 10, 34, 0.04),
+    -10px 0 28px -8px rgba(18, 10, 34, 0.06) !important;
+  backdrop-filter: blur(36px) saturate(150%) brightness(1.01) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(150%) brightness(1.01) !important;
+}
+
+[data-slot="sidebar"][data-side="right"] [data-slot="sidebar-inner"]::before {
+  opacity: 0.22 !important;
+  mix-blend-mode: soft-light !important;
+  background:
+    radial-gradient(
+      90% 70% at 100% 0%,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      70% 50% at 0% 100%,
+      color-mix(in oklab, var(--fs-accent) 12%, transparent) 0%,
+      transparent 60%
+    ) !important;
+}
+
+[data-slot="sidebar"][data-side="right"] [data-slot="sidebar-inner"]::after {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -18px 32px -14px rgba(18, 10, 34, 0.05) !important;
+}
+
+html.dark [data-slot="sidebar"][data-side="right"] [data-slot="sidebar-inner"] {
+  background-image:
+    linear-gradient(
+      118deg,
+      rgba(255, 255, 255, 0.035) 0%,
+      rgba(255, 255, 255, 0) 42%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--fs-bg-paper) 78%, transparent) 0%,
+      color-mix(in oklab, var(--fs-bg-base) 88%, transparent) 100%
+    ) !important;
+  border-left-color: var(--fs-chrome-border) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    -16px 0 40px rgba(0, 0, 0, 0.28) !important;
+}
+
+html.dark [data-slot="sidebar"][data-side="right"] [data-slot="sidebar-inner"]::before {
+  opacity: 0.18 !important;
+  background:
+    radial-gradient(
+      88% 65% at 100% 8%,
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      60% 45% at 0% 92%,
+      color-mix(in oklab, var(--fs-accent) 14%, transparent) 0%,
+      transparent 62%
+    ) !important;
+}
+
+html.dark [data-slot="sidebar"][data-side="right"] [data-slot="sidebar-inner"]::after {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -20px 36px -16px rgba(0, 0, 0, 0.32) !important;
+}
+
+/* Dark sidebar zones — separate chrome header/footer from scroll body. */
+html.dark [data-slot="sidebar-inner"] [data-slot="sidebar-header"] {
+  border-bottom: 1px solid color-mix(in oklab, var(--fs-rule) 62%, transparent);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.14);
+}
+
+html.dark [data-slot="sidebar-inner"] [data-slot="sidebar-footer"] {
+  border-top: 0;
+  box-shadow: none;
+}
+
+/* Main pane — translucent paper "type column" that lets the
+   FlowBackground orbs read through. Sits over the dual-tone editorial
+   wash so the cool-indigo / warm-rust horizon visibly tints the chat
+   surface instead of getting painted over. */
+[data-slot="sidebar-inset"] {
+  background:
+    linear-gradient(
+      172deg,
+      color-mix(in oklab, var(--fs-bg-base) 52%, transparent) 0%,
+      color-mix(in oklab, var(--fs-bg-base) 44%, transparent) 100%
+    ) !important;
+  box-shadow:
+    inset 1px 0 0 color-mix(in oklab, var(--fs-rule-strong) 24%, transparent) !important;
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+}
+
+html.dark [data-slot="sidebar-inset"] {
+  background: transparent !important;
+  /* Dropped well below 50% so the FlowBackground orbs (bloom + warm) read
+     through the chat column instead of getting painted over. */
+  background-image:
+    linear-gradient(
+      172deg,
+      color-mix(in oklab, hsl(248 18% 8%) 30%, transparent) 0%,
+      color-mix(in oklab, hsl(248 16% 5%) 38%, transparent) 100%
+    ) !important;
+  box-shadow:
+    inset 1px 0 0 color-mix(in oklab, var(--fs-rule) 36%, transparent) !important;
+  backdrop-filter: blur(20px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(155%) !important;
+}
+
+[data-slot="sidebar-wrapper"] {
+  background: transparent !important;
+}
+
+/* Chat header — single frosted band; light mode picks up a touch of
+   warm paper at the rim so it tucks into the main column. */
+[data-slot="sidebar-inset"] > header,
+[data-slot="sidebar-inset"] > div > header {
+  background: color-mix(in oklab, var(--fs-chrome-bg) 92%, var(--fs-bg-base)) !important;
+  border-bottom: 1px solid color-mix(in oklab, var(--fs-chrome-border) 65%, transparent) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  backdrop-filter: blur(24px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(145%) !important;
+}
+
+html.dark [data-slot="sidebar-inset"] > header,
+html.dark [data-slot="sidebar-inset"] > div > header {
+  background: var(--fs-chrome-bg) !important;
+  border-bottom: 1px solid var(--fs-chrome-border) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+}
+
+/* Composer — 3D glass stack: editor tokens + rim + soft lift (landing-adjacent). */
+[data-slot="sidebar-inset"] [data-fs="chat-composer-surface"] {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, white 52%, transparent) 0%,
+      transparent 42%
+    ),
+    linear-gradient(
+      168deg,
+      color-mix(in oklab, var(--fs-glass-bg) 78%, var(--fs-bg-elevated)) 0%,
+      color-mix(in oklab, var(--fs-glass-bg) 62%, var(--fs-bg-base)) 100%
+    ) !important;
+  border-color: color-mix(in oklab, var(--fs-glass-edge) 55%, var(--fs-rule)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 -14px 28px -12px rgba(18, 10, 34, 0.045),
+    var(--fs-glass-shadow),
+    0 18px 44px -14px rgba(18, 10, 34, 0.08) !important;
+  backdrop-filter: blur(28px) saturate(150%) brightness(1.02) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(150%) brightness(1.02) !important;
+}
+html.dark [data-slot="sidebar-inset"] [data-fs="chat-composer-surface"] {
+  /* Dark composer — quiet graphite glass with a single hairline indigo
+     top edge for the brand cue. No radial washes, no halo glow; the
+     surface sits cleanly over the FlowBackground orbs. */
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, hsl(248 22% 14%) 64%, transparent) 0%,
+      color-mix(in oklab, hsl(248 18% 7%) 74%, transparent) 100%
+    ) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--fs-accent) 22%, rgba(255, 255, 255, 0.1)),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 18px 44px -22px rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(26px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(155%) !important;
+}
+
+/* Composer shell — hairline tint ring only (no heavy accent bezel). */
+[data-slot="sidebar-inset"] [data-fs="chat-composer-frame"] {
+  background: linear-gradient(
+    168deg,
+    color-mix(in oklab, var(--fs-chrome-border) 55%, transparent) 0%,
+    color-mix(in oklab, var(--fs-bg-base) 14%, transparent) 52%,
+    color-mix(in oklab, var(--fs-rule-accent) 18%, transparent) 100%
+  ) !important;
+  box-shadow: 0 6px 20px -8px rgba(18, 10, 34, 0.06) !important;
+}
+html.dark [data-slot="sidebar-inset"] [data-fs="chat-composer-frame"] {
+  /* Outer frame — quiet 1px highlight ring, no accent glow. */
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  ) !important;
+  box-shadow: 0 12px 32px -14px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Scroll-to-bottom affordance — glass chip, not default shadcn flat card */
+[data-slot="sidebar-inset"] .fs-scroll-to-bottom {
+  background: color-mix(in oklab, var(--fs-chrome-bg) 78%, transparent) !important;
+  border: 1px solid var(--fs-chrome-border) !important;
+  color: var(--fs-ink-dim) !important;
+  border-radius: 999px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 10px 28px rgba(78, 94, 218, 0.12),
+    0 2px 8px rgba(18, 10, 34, 0.06) !important;
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+html.dark [data-slot="sidebar-inset"] .fs-scroll-to-bottom {
+  background: color-mix(in oklab, var(--fs-chrome-bg) 85%, transparent) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 12px 32px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Side preview drawer — glass shell + specular rim (landing parity) */
+.fs-preview-drawer {
+  isolation: isolate;
+  background: color-mix(in oklab, var(--fs-bg-base) 78%, var(--fs-chrome-bg)) !important;
+  border-left: 1px solid color-mix(in oklab, var(--fs-chrome-border) 55%, transparent) !important;
+  box-shadow:
+    -1px 0 0 rgba(255, 255, 255, 0.28),
+    -16px 0 36px -12px rgba(78, 94, 218, 0.06),
+    -6px 0 18px rgba(18, 10, 34, 0.05) !important;
+  backdrop-filter: blur(36px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(150%) !important;
+}
+.fs-preview-drawer::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--fs-accent) 22%, transparent),
+    transparent
+  );
+  opacity: 0.38;
+}
+html.dark .fs-preview-drawer {
+  background: color-mix(in oklab, var(--fs-bg-paper) 72%, transparent) !important;
+  border-left-color: var(--fs-chrome-border) !important;
+  box-shadow:
+    -1px 0 0 rgba(255, 255, 255, 0.06),
+    -24px 0 56px rgba(0, 0, 0, 0.45) !important;
+}
+html.dark .fs-preview-drawer::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(244, 238, 228, 0.45),
+    transparent
+  );
+}
+
+/* Right-docked drawers (Preview + admin Files): enter from +X only; chrome is `.fs-preview-drawer` alone. */
+@keyframes fs-side-drawer-slide-in {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+.fs-preview-drawer-toolbar {
+  background: color-mix(in oklab, var(--fs-chrome-bg) 70%, var(--fs-bg-base)) !important;
+  border-bottom: 1px solid var(--fs-chrome-border) !important;
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+}
+html.dark .fs-preview-drawer-toolbar {
+  background: color-mix(in oklab, var(--fs-chrome-bg) 92%, transparent) !important;
+}
+
+.fs-preview-drawer-frame {
+  margin: 10px 12px 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--fs-rule-strong);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 12px 36px rgba(18, 10, 34, 0.08);
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+html.dark .fs-preview-drawer-frame {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.fs-preview-drawer-frame iframe {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Left-edge drag handle — split-pane resize (desktop) */
+.fs-preview-drawer-resize {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  touch-action: none;
+}
+.fs-preview-drawer-resize::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: color-mix(in oklab, var(--fs-chrome-border) 70%, transparent);
+  opacity: 0.85;
+  transition: background 120ms ease, opacity 120ms ease, width 120ms ease;
+}
+.fs-preview-drawer-resize:hover::after,
+.fs-preview-drawer-resize:focus-visible::after {
+  width: 2px;
+  opacity: 1;
+  background: color-mix(in oklab, var(--fs-accent) 35%, var(--fs-chrome-border));
+}
+html.dark .fs-preview-drawer-resize::after {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.fs-files-scroll {
+  scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-preview-drawer-resize::after {
+    transition: none;
+  }
+}
+
+/* Chat header inner layout — calmer tool cluster alignment */
+.fs-chat-header-root {
+  letter-spacing: -0.012em;
+}
+
+/* Chat header typography — matches sidebar mono labels + thread title scale */
+.fs-chat-header-kicker {
+  font-family: var(--fs-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--fs-ink-mono);
+}
+
+.fs-chat-header-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--fs-ink);
+}
+
+html.dark .fs-chat-header-kicker {
+  color: color-mix(in oklab, var(--fs-ink-mono) 55%, var(--fs-ink-dim) 45%);
+}
+
+/* Center column — readable measure + faint vertical rhythm (desktop) */
+[data-slot="sidebar-inset"] .fs-chat-thread-column {
+  position: relative;
+  box-shadow: inset -1px 0 0 color-mix(in oklab, var(--fs-rule) 35%, transparent);
+}
+
+@media (min-width: 640px) {
+  [data-slot="sidebar-inset"] .fs-chat-messages-scroll {
+    max-width: min(52rem, 100%);
+    margin-inline: auto;
+    width: 100%;
+  }
+}
+
+html.dark [data-slot="sidebar-inset"] .fs-chat-thread-column {
+  box-shadow: inset -1px 0 0 color-mix(in oklab, var(--fs-rule) 45%, transparent);
+}
+
+/* Header icon toggles — align to chrome control height with inset pills */
+[data-slot="sidebar-inset"] header [data-slot="toggle"][data-variant="outline"] {
+  height: var(--fs-chrome-control-h);
+  min-height: var(--fs-chrome-control-h);
+  min-width: var(--fs-chrome-control-h);
+  border-radius: var(--fs-chrome-control-radius);
+  padding-inline: 0;
+}
+
+/* Preview | Files — recessed track + sliding pill (segmented control).
+   Padding kept minimal (1px) so the inner pill fills the 32px shell and
+   reads at the same visible height as the Publish CTA next to it. */
+[data-fs="preview-files-toggle"].fs-preview-files-segmented {
+  --fs-pf-pad: 1px;
+  --fs-pf-gap: 2px;
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: stretch;
+  height: var(--fs-chrome-control-h);
+  min-height: var(--fs-chrome-control-h);
+  max-width: 100%;
+  border-radius: var(--fs-chrome-control-radius);
+  padding: var(--fs-pf-pad);
+  border: 1px solid color-mix(in oklab, var(--fs-rule) 88%, transparent);
+  background: color-mix(in oklab, var(--fs-bg-base) 88%, var(--fs-rule) 12%);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--fs-bg-elevated) 22%, transparent),
+    inset 0 2px 5px color-mix(in oklab, var(--fs-rule) 35%, transparent);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  overflow: hidden;
+  transition: border-color 140ms ease;
+}
+
+[data-fs="preview-files-toggle"].fs-preview-files-segmented:hover {
+  border-color: color-mix(in oklab, var(--fs-rule-strong) 75%, var(--fs-rule) 25%);
+}
+
+html.dark [data-fs="preview-files-toggle"].fs-preview-files-segmented {
+  background: color-mix(in oklab, var(--fs-bg-base) 90%, rgba(255, 255, 255, 0.035));
+  border-color: color-mix(in oklab, var(--fs-rule) 90%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 2px 6px rgba(0, 0, 0, 0.42);
+}
+
+[data-fs="preview-files-toggle"] .fs-preview-files-slider-track {
+  position: relative;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: var(--fs-pf-gap);
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+}
+
+[data-fs="preview-files-toggle"] .fs-preview-files-slider-pill {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: calc((100% - var(--fs-pf-gap)) / 2);
+  border-radius: calc(var(--fs-chrome-control-radius) - 2px);
+  pointer-events: none;
+  background: color-mix(in oklab, var(--fs-bg-elevated) 92%, var(--fs-accent-bg) 8%);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--fs-rule) 38%, transparent),
+    0 1px 2px color-mix(in oklab, var(--fs-rule) 28%, transparent);
+  transition:
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1),
+    width 200ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 160ms ease;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+html.dark [data-fs="preview-files-toggle"] .fs-preview-files-slider-pill {
+  background: color-mix(in oklab, rgba(255, 255, 255, 0.09) 55%, var(--fs-bg-elevated) 45%);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--fs-rule) 32%, transparent),
+    0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+[data-fs="preview-files-toggle"][data-active-segment="files"] .fs-preview-files-slider-pill {
+  transform: translate3d(calc(100% + var(--fs-pf-gap)), 0, 0);
+}
+
+[data-fs="preview-files-toggle"][data-active-segment="none"] .fs-preview-files-slider-pill {
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1),
+    width 200ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 120ms ease;
+}
+
+[data-fs="preview-files-toggle"] .fs-preview-files-seg {
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  margin: 0;
+  padding-inline: max(0.65rem, 10px);
+  border: none;
+  border-radius: calc(var(--fs-chrome-control-radius) - 2px);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  line-height: 1;
+  color: var(--fs-ink-dim);
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  transition: color 155ms ease;
+}
+
+[data-fs="preview-files-toggle"] .fs-preview-files-seg:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+[data-fs="preview-files-toggle"] .fs-preview-files-seg .fs-preview-files-seg-label {
+  white-space: nowrap;
+}
+
+[data-fs="preview-files-toggle"] .fs-preview-files-seg[aria-checked="true"],
+[data-fs="preview-files-toggle"] .fs-preview-files-seg[aria-selected="true"] {
+  color: var(--fs-ink);
+}
+
+[data-fs="preview-files-toggle"]
+  .fs-preview-files-seg:not([aria-checked="true"]):not([aria-selected="true"]):not(:disabled):hover {
+  color: var(--fs-ink);
+}
+
+[data-fs="preview-files-toggle"] .fs-preview-files-seg:focus-visible {
+  z-index: 2;
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+@media (max-width: 479px) {
+  [data-fs="preview-files-toggle"] .fs-preview-files-seg .fs-preview-files-seg-label {
+    display: none;
+  }
+  [data-fs="preview-files-toggle"] .fs-preview-files-seg {
+    padding-inline: 0.5rem;
+  }
+}
+
+/* Solo Preview — single slot, pill spans track when active */
+[data-fs="preview-files-toggle"].fs-preview-files-segmented--solo {
+  min-width: min(100%, 7.75rem);
+}
+
+[data-fs="preview-files-toggle"].fs-preview-files-segmented--solo .fs-preview-files-slider-track {
+  grid-template-columns: 1fr;
+}
+
+[data-fs="preview-files-toggle"].fs-preview-files-segmented--solo .fs-preview-files-slider-pill {
+  width: 100%;
+  transform: none !important;
+}
+
+[data-fs="preview-files-toggle"].fs-preview-files-segmented--solo[data-active-segment="none"]
+  .fs-preview-files-slider-pill {
+  opacity: 0;
+}
+
+[data-fs="preview-files-toggle"].fs-preview-files-segmented--solo[data-active-segment="preview"]
+  .fs-preview-files-slider-pill {
+  opacity: 1;
+}
+
+[data-fs="preview-files-toggle"] .fs-preview-files-seg--solo {
+  min-width: 5.5rem;
+}
+
+/* Composer footer — same chip language as header (quiet hairlines, one height) */
+[data-slot="sidebar-inset"] [data-chat-composer-footer="true"] [data-slot="button"][data-variant="ghost"] {
+  border-radius: var(--fs-chrome-control-radius);
+  min-height: 32px;
+}
+
+[data-slot="sidebar-inset"]
+  [data-chat-composer-footer="true"]
+  [data-slot="select-trigger"] {
+  border-radius: var(--fs-chrome-control-radius);
+  min-height: 32px;
+}
+
+[data-slot="sidebar-inset"] [data-chat-composer-footer="true"] .fs-composer-footer-chip svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* Diff panel — toolbar bands + transparent shell over right rail glass */
+[data-slot="sidebar"][data-side="right"] .fs-diff-panel-scope > div.flex.h-full.min-w-0.flex-col.bg-background {
+  background: transparent !important;
+}
+
+.fs-diff-panel-scope > div.border-b.border-border {
+  border-bottom-color: color-mix(in oklab, var(--fs-chrome-border) 62%, transparent) !important;
+  background: color-mix(in oklab, var(--fs-chrome-bg) 88%, var(--fs-bg-base)) !important;
+}
+
+html.dark .fs-diff-panel-scope > div.border-b.border-border {
+  background: color-mix(in oklab, var(--fs-chrome-bg) 92%, transparent) !important;
+}
+
+.fs-diff-panel-scope > div.border-b.border-border > div.flex.items-center {
+  min-height: 40px;
+  padding-block: 6px;
+  padding-inline: 12px;
+}
+
+.fs-diff-strip-nav-btn {
+  border-radius: var(--fs-chrome-control-radius);
+  border: 1px solid var(--fs-rule);
+  background: var(--fs-bg-elevated);
+}
+.fs-diff-strip-nav-btn:hover:not(:disabled) {
+  border-color: var(--fs-rule-strong);
+  background: var(--fs-accent-bg);
+}
+
+html.dark .fs-diff-strip-nav-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--fs-rule);
+}
+
+.fs-diff-toolbar-actions [data-slot="toggle"][data-variant="outline"],
+.fs-diff-toolbar-actions [data-slot="button"][data-variant="outline"] {
+  border-radius: var(--fs-chrome-control-radius);
+}
+
+/* Action bar pills (Add action / Open / Commit, push & PR). Hairline
+   paper buttons — no glass, no fill, just an outline that reads as
+   editorial chrome. */
+[data-slot="sidebar-inset"]
+  header
+  button[class*="rounded-full"]:not([data-sidebar="trigger"]):not(.fs-cta--toolbar),
+[data-slot="sidebar-inset"] header [data-slot="button"][class*="rounded-full"]:not(.fs-cta--toolbar) {
+  border-radius: 8px !important;
+  background: var(--fs-bg-elevated) !important;
+  border: 1px solid var(--fs-rule) !important;
+  color: var(--fs-ink-dim) !important;
+  font-weight: 500 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+[data-slot="sidebar-inset"]
+  header
+  button[class*="rounded-full"]:not([data-sidebar="trigger"]):not(.fs-cta--toolbar):hover,
+[data-slot="sidebar-inset"]
+  header
+  [data-slot="button"][class*="rounded-full"]:not(.fs-cta--toolbar):hover {
+  background: var(--fs-accent-bg) !important;
+  border-color: var(--fs-rule-strong) !important;
+  color: var(--fs-ink) !important;
+}
+html.dark
+  [data-slot="sidebar-inset"]
+  header
+  button[class*="rounded-full"]:not([data-sidebar="trigger"]):not(.fs-cta--toolbar),
+html.dark
+  [data-slot="sidebar-inset"]
+  header
+  [data-slot="button"][class*="rounded-full"]:not(.fs-cta--toolbar) {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: var(--fs-rule) !important;
+}
+
+/* Popovers / dropdowns / menus — editorial cards with the same
+   shadow stack. They float, so they DO get a touch of backdrop-blur
+   so any background behind them reads through subtly. */
+[data-slot="popover-content"],
+[data-slot="dropdown-menu-content"],
+[data-slot="menu-popup"],
+[data-slot="select-content"],
+[data-slot="tooltip-content"] {
+  background: var(--fs-bg-elevated) !important;
+  border: 1px solid var(--fs-rule-strong) !important;
+  box-shadow: var(--fs-glass-shadow) !important;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-radius: 12px !important;
+}
+html.dark [data-slot="popover-content"],
+html.dark [data-slot="dropdown-menu-content"],
+html.dark [data-slot="menu-popup"],
+html.dark [data-slot="select-content"],
+html.dark [data-slot="tooltip-content"] {
+  background: var(--fs-bg-paper) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   5. Editorial typography
+   Hero moments (auth screen, empty states) use Onest italic at display
+   weights for the warm "concierge" voice. Reach for `.fs-display` /
+   `.fs-flourish` directly when you want the marketing-site treatment.
+   ─────────────────────────────────────────────────────────────────────── */
+.fs-display {
+  font-family: var(--fs-font-sans);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.fs-flourish {
+  font-family: var(--fs-font-sans);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: hsl(233, 68%, 46%);
+}
+html.dark .fs-flourish {
+  color: hsl(233, 76%, 72%);
+}
+
+/* Eyebrow / overline — mono font + wide tracking, mirrors the
+   landing's `.ls-eyebrow`. Mono gives editorial "spec sheet" voice. */
+.fs-overline,
+.fs-eyebrow {
+  font-family: var(--fs-font-mono);
+  text-transform: uppercase;
+  font-size: 0.69rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  color: var(--fs-ink-faint);
+}
+
+/* Primary CTA — drop-in for any button that needs the navy/indigo
+   landing-style gradient, white inset highlight, indigo glow drop.
+   Use `class="fs-cta"` instead of inlining gradient styles. */
+.fs-cta {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 1.5rem;
-  width: 1.5rem;
-  border-radius: 0.375rem;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--background) 82%, transparent);
-  color: var(--muted-foreground);
-  opacity: 0;
-  pointer-events: none;
+  gap: 0.5rem;
+  height: var(--fs-chrome-control-h);
+  min-height: var(--fs-chrome-control-h);
+  padding: 0 12px;
+  font-family: var(--fs-font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.005em;
+  border-radius: var(--fs-chrome-control-radius);
+  background: var(--fs-cta-bg);
+  color: var(--fs-cta-fg);
+  box-shadow: var(--fs-cta-shadow);
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  cursor: pointer;
   transition:
-    opacity 120ms ease,
-    color 120ms ease,
-    border-color 120ms ease;
+    transform 120ms ease,
+    box-shadow 200ms ease;
+  text-decoration: none;
+}
+.fs-cta:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.fs-cta:active:not(:disabled) {
+  transform: translateY(0);
+}
+.fs-cta:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+  box-shadow: none;
 }
 
-.chat-markdown .chat-markdown-codeblock:hover .chat-markdown-copy-button,
-.chat-markdown .chat-markdown-codeblock:focus-within .chat-markdown-copy-button {
-  opacity: 1;
-  pointer-events: auto;
+/* Glass chrome primary — Publish in chat header; see `--fs-cta-toolbar-*`.
+   Scoped to inset + header + button so `!important` header “pill” rules
+   (substring `rounded-full`) never override the purple toolbar CTA. */
+[data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar {
+  background: var(--fs-cta-toolbar-bg);
+  color: var(--fs-cta-toolbar-fg);
+  box-shadow: var(--fs-cta-toolbar-shadow);
+  border-color: var(--fs-cta-toolbar-border);
+  transition:
+    transform 120ms ease,
+    box-shadow 200ms ease,
+    filter 160ms ease;
 }
 
-.chat-markdown .chat-markdown-copy-button:hover {
-  color: var(--foreground);
-  border-color: color-mix(in srgb, var(--border) 70%, var(--foreground));
+/* Toolbar / header: avoid `transform` lift — it stacks over the Git cluster.
+   Use violet glow + slight brightening instead (see reduced-motion override). */
+[data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar:hover:not(:disabled) {
+  transform: none;
+  filter: brightness(1.06);
+  box-shadow:
+    var(--fs-cta-toolbar-shadow),
+    0 12px 34px color-mix(in oklab, var(--purple) 52%, transparent);
+}
+[data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar:active:not(:disabled) {
+  transform: none;
+  filter: brightness(0.93);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.2),
+    var(--fs-cta-toolbar-shadow);
+}
+html.dark [data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar:hover:not(:disabled) {
+  filter: brightness(1.07);
+  box-shadow:
+    var(--fs-cta-toolbar-shadow),
+    0 14px 40px color-mix(in oklab, var(--purple) 48%, transparent);
+}
+html.dark [data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar:active:not(:disabled) {
+  filter: brightness(0.94);
+  box-shadow:
+    inset 0 2px 10px rgba(0, 0, 0, 0.35),
+    var(--fs-cta-toolbar-shadow);
 }
 
-.chat-markdown .chat-markdown-shiki .shiki {
-  background: color-mix(in srgb, var(--muted) 78%, var(--background)) !important;
-}
-
-.chat-markdown table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.chat-markdown th,
-.chat-markdown td {
-  border: 1px solid var(--border);
-  padding: 0.35rem 0.45rem;
-  text-align: left;
-}
-
-/* Diffs theme bridge (match diff surfaces to app palette) */
-.diff-panel-viewport {
-  background: color-mix(in srgb, var(--background) 94%, var(--card));
-}
-
-.diff-render-file {
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  overflow: clip;
-  background: color-mix(in srgb, var(--card) 92%, var(--background));
-}
-
-@keyframes ultrathink-rainbow {
-  0% {
-    background-position: 0% 50%;
+@media (prefers-reduced-motion: reduce) {
+  .fs-cta {
+    transition: none;
   }
-  100% {
-    background-position: 200% 50%;
+  .fs-cta:hover:not(:disabled),
+  .fs-cta:active:not(:disabled) {
+    transform: none;
+  }
+  [data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar:hover:not(:disabled),
+  [data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar:active:not(:disabled),
+  html.dark [data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar:hover:not(:disabled),
+  html.dark [data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar:active:not(:disabled) {
+    filter: none;
+    box-shadow: var(--fs-cta-toolbar-shadow);
   }
 }
 
-@keyframes ultrathink-chroma-shift {
-  0% {
-    filter: hue-rotate(0deg) saturate(1.2);
-  }
-  100% {
-    filter: hue-rotate(360deg) saturate(1.2);
-  }
+html.dark .fs-cta {
+  border-color: rgba(78, 94, 218, 0.5);
 }
 
-.ultrathink-frame {
-  --ultrathink-spectrum: linear-gradient(
-    120deg,
-    #ff6b6b 0%,
-    #f59e0b 18%,
-    #22c55e 36%,
-    #14b8a6 54%,
-    #3b82f6 72%,
-    #ec4899 90%,
-    #ff6b6b 100%
-  );
-  background-image: var(--ultrathink-spectrum);
-  background-size: 220% 220%;
-  animation: ultrathink-rainbow 10s linear infinite;
+html.dark [data-slot="sidebar-inset"] header button.fs-cta.fs-cta--toolbar {
+  border-color: var(--fs-cta-toolbar-border);
 }
 
-.ultrathink-chroma {
-  animation: ultrathink-chroma-shift 10s linear infinite;
+/* Git cluster paints above adjacent toolbar siblings at the same stack level. */
+[data-fs="chat-header-git-cluster"] {
+  position: relative;
+  z-index: 1;
 }
 
-.ultrathink-pill {
-  background:
-    linear-gradient(var(--card), var(--card)) padding-box,
-    var(--ultrathink-spectrum) border-box;
-  background-size:
-    100% 100%,
-    220% 220%;
-  background-position:
-    0 0,
-    0% 50%;
-  animation: ultrathink-rainbow 10s linear infinite;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card) 82%, transparent);
-}
-
-.ultrathink-word {
+/* Editorial link — mirror of `.ls-link` from landing-design.css.
+   Faint underline, ink colour, brand-accent on hover. Drop on any
+   `<a>` that should read as "link" not "button". */
+.fs-link {
+  position: relative;
   display: inline-block;
-  color: transparent;
-  background-image: var(--ultrathink-spectrum);
-  background-size: 220% 220%;
-  background-position: 0% 50%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation: ultrathink-rainbow 10s linear infinite;
+  color: var(--fs-ink-dim);
+  text-decoration: none;
+  font-weight: 500;
+  padding-bottom: 1px;
+  border-bottom: 1px solid var(--fs-rule);
+  transition:
+    color 160ms ease,
+    border-color 160ms ease;
+}
+.fs-link:hover {
+  color: var(--fs-ink);
+  border-color: var(--fs-rule-strong);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   7. Landing-style component skin
+   Drop-in overrides on shadcn-flavoured T3 Code primitives so the
+   editor's interior surfaces inherit the marketing site's editorial
+   visual language (cream paper, hairline rules, subtle glass cards,
+   warm indigo accents) instead of generic shadcn defaults.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Sidebar menu items — paper rows with hairline left-edge accent
+   on active. Hover is a quiet indigo wash. The 4px inset rule on
+   the left of an active item is editorial — like a magazine bullet
+   marking the current section. */
+[data-slot="sidebar-menu-button"],
+[data-sidebar="menu-button"] {
+  font-family: var(--fs-font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--fs-ink-dim);
+  border-radius: 6px;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+[data-slot="sidebar-menu-button"]:hover,
+[data-sidebar="menu-button"]:hover {
+  background: var(--fs-accent-bg) !important;
+  color: var(--fs-ink) !important;
+}
+[data-slot="sidebar-menu-button"][data-active="true"],
+[data-sidebar="menu-button"][data-active="true"] {
+  background: var(--fs-accent-bg-strong) !important;
+  color: var(--fs-ink) !important;
+  box-shadow: inset 3px 0 0 var(--fs-accent);
+  font-weight: 600;
+}
+
+/* Dark sidebar rows — softer pill + restrained accent (still keyboard-clear). */
+html.dark [data-slot="sidebar-menu-button"],
+html.dark [data-sidebar="menu-button"] {
+  border-radius: 8px;
+}
+html.dark [data-slot="sidebar-menu-button"]:hover,
+html.dark [data-sidebar="menu-button"]:hover {
+  background: rgba(255, 255, 255, 0.042) !important;
+}
+html.dark [data-slot="sidebar-menu-button"][data-active="true"],
+html.dark [data-sidebar="menu-button"][data-active="true"] {
+  background: rgba(255, 255, 255, 0.058) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.065),
+    inset 2px 0 0 color-mix(in oklab, var(--fs-accent) 42%, transparent),
+    0 0 0 1px color-mix(in oklab, var(--fs-accent) 12%, rgba(255, 255, 255, 0.05)) !important;
+  border-radius: 10px;
+}
+
+/* Sidebar group labels — mono editorial overline, marketing parity. */
+[data-slot="sidebar-group-label"],
+[data-sidebar="group-label"] {
+  font-family: var(--fs-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--fs-ink-mono);
+  padding-left: 4px;
+}
+
+html.dark [data-slot="sidebar-inner"] [data-slot="sidebar-group-label"],
+html.dark [data-slot="sidebar-inner"] [data-sidebar="group-label"] {
+  color: color-mix(in oklab, var(--fs-ink-mono) 55%, var(--fs-ink-dim) 45%);
+}
+
+/* Inputs / textareas inside the inset (the chat composer's textarea is
+   the most visible). Editorial paper feel: hairline border, soft inner
+   bg, brand-tinted focus ring. */
+[data-slot="sidebar-inset"] textarea,
+[data-slot="sidebar-inset"] input[type="text"],
+[data-slot="sidebar-inset"] [contenteditable="true"] {
+  font-family: var(--fs-font-sans);
+  letter-spacing: -0.005em;
+  color: var(--fs-ink);
+  caret-color: var(--fs-accent);
+}
+[data-slot="sidebar-inset"] textarea::placeholder,
+[data-slot="sidebar-inset"] input[type="text"]::placeholder,
+[data-slot="sidebar-inset"] [contenteditable="true"]::before {
+  color: var(--fs-ink-faint);
+  font-style: normal;
+}
+[data-slot="sidebar-inset"] textarea:focus,
+[data-slot="sidebar-inset"] textarea:focus-visible,
+[data-slot="sidebar-inset"] [contenteditable="true"]:focus {
+  outline: none;
+}
+
+/* Outline / ghost buttons — the small toggles in the chat header
+   (terminal, diff). Match the landing's quieter button surface:
+   hairline border, ink-dim label, accent tint on hover. */
+[data-slot="button"][data-variant="outline"],
+[data-slot="toggle"][data-variant="outline"] {
+  background: var(--fs-glass-bg) !important;
+  border: 1px solid var(--fs-glass-edge) !important;
+  color: var(--fs-ink-dim) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+[data-slot="button"][data-variant="outline"]:hover:not(:disabled),
+[data-slot="toggle"][data-variant="outline"]:hover:not(:disabled) {
+  background: var(--fs-accent-bg) !important;
+  color: var(--fs-ink) !important;
+  border-color: var(--fs-rule-strong) !important;
+}
+[data-slot="toggle"][data-state="on"] {
+  background: var(--fs-accent-bg) !important;
+  color: var(--fs-accent) !important;
+  border-color: var(--fs-accent-ring) !important;
+}
+
+/* Badges — landing-style hairline outline, mono micro-caps. */
+[data-slot="badge"] {
+  font-family: var(--fs-font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 2px 8px;
+  background: transparent !important;
+  border: 1px solid var(--fs-rule) !important;
+  color: var(--fs-ink-faint) !important;
+}
+
+/* Hairline horizontal rule — drop `<hr class="fs-rule">` anywhere. */
+.fs-rule {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--fs-rule);
+}
+
+/* Selection — brand-tinted, matches landing. */
+::selection {
+  background: var(--fs-accent-bg);
+  color: var(--fs-ink);
+}
+
+/* Sidebar resize rail — sits to the right of the sidebar (`right:-16px`
+   relative to <SidebarInner/>). Neutral hairline + **inset** emphasis on
+   hover — no outward accent glow (avoids tint bleeding into the chat). */
+[data-slot="sidebar-rail"] {
+  z-index: 30 !important;
+  cursor: col-resize !important;
+}
+[data-slot="sidebar-rail"]::after {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in oklab, var(--fs-ink) 22%, transparent) 14%,
+    color-mix(in oklab, var(--fs-ink) 28%, transparent) 86%,
+    transparent 100%
+  ) !important;
+  width: 2px !important;
+  border-radius: 2px !important;
+  opacity: 0;
+  transition: opacity 160ms ease, box-shadow 160ms ease;
+}
+[data-slot="sidebar-rail"]:hover::after,
+[data-slot="sidebar-rail"]:focus-visible::after,
+[data-slot="sidebar-rail"]:active::after {
+  opacity: 1;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   6. Misc
+   ─────────────────────────────────────────────────────────────────────── */
+.no-transitions,
+.no-transitions *,
+.no-transitions *::before,
+.no-transitions *::after {
+  transition-duration: 0s !important;
+  animation-duration: 0s !important;
+}
+
+::selection {
+  background: var(--fs-accent-bg);
+  color: var(--fs-ink);
 }

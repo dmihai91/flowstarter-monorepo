@@ -17,9 +17,13 @@
     "stripe:setup:dry": "tsx scripts/stripe-setup.ts --dry-run",
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
     "dev:deploy-agent": "DEPLOY_AGENT_SHARED_SECRET=dev-secret DEPLOY_AGENT_SITES_ROOT=/tmp/fs-sites DEPLOY_AGENT_CADDY_SITES_DIR=/tmp/fs-caddy-sites DEPLOY_AGENT_CADDY_RELOAD_CMD='echo reloaded' pnpm --dir apps/deploy-agent dev",
-    "dev:editor": "pnpm --dir apps/flowstarter-editor dev",
+    "dev:editor": "bash scripts/dev-editor.sh",
+    "dev:editor:hmr": "bash scripts/dev-editor-hmr.sh",
+    "dev:editor:plain": "pnpm --dir apps/flowstarter-editor dev",
+    "dev:editor:full": "pnpm --dir apps/flowstarter-editor dev:full",
     "dev:editor:server": "pnpm --dir apps/flowstarter-editor dev:server",
     "dev:editor:web": "pnpm --dir apps/flowstarter-editor dev:web",
+    "build:editor:web": "pnpm --dir apps/flowstarter-editor build:web",
     "supabase:login": "pnpm dlx supabase login",
     "db:link": "pnpm dlx supabase link --project-ref avptvzherjxymmbtbbbr",
     "db:start": "pnpm dlx supabase start",
@@ -70,6 +74,9 @@
     "typescript-eslint": "^8.59.0"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
     "stripe": "^20.4.1"
   },

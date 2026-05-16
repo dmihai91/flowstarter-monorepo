@@ -1,5 +1,11 @@
 # Concierge Commerce Model
 
+> **Status:** the **Ecommerce build package is open to everyone** (one-time
+> build from €1,499 + a dedicated €149/mo store plan) — no longer
+> "coming soon". The provider-routing model below is current and authoritative
+> for how a storefront is delivered. Canonical pricing:
+> `docs/FLOWSTARTER_MASTER_DECISIONS.md`.
+
 Flowstarter should not become a custom ecommerce platform by default. The
 concierge product should classify each client commerce need, choose the
 lowest-risk provider, and expose only safe product/content controls to the

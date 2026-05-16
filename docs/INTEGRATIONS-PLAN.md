@@ -1,5 +1,15 @@
 # Integrations & Publishing Roadmap
 
+> **⚠️ Deployment target superseded.** This doc predates the architecture
+> finalization: publishing is **no longer Cloudflare Pages**. Sites deploy to
+> shared **Hetzner Caddy hosts via `apps/deploy-agent`**
+> (extract artifact → write Caddy snippet → reload → preview-DNS upsert via
+> Cloudflare API). Read "Cloudflare Pages" below as "Hetzner + deploy-agent".
+> Domains are derived from `@flowstarter/platform-config`, never hardcoded.
+> The €39/mo reference is the current Starter monthly plan (still accurate).
+> See `docs/CONCIERGE_PIVOT_PLAN.md` (Architecture updates) for the final
+> hosting topology.
+
 ## Current State
 - IntegrationsPanel exists (booking: Calendly/Cal.com, newsletter: Mailchimp/ConvertKit)
 - PublishDialog exists (Cloudflare Pages shell, not wired)

@@ -121,9 +121,9 @@ Browser
          • Per-client Docker sandboxes: dev server + file-ops agent
 ```
 
-Client traffic:
-- `acme.flowstarter.app/edit` → editor container (Hetzner) authenticated via magic-link or Clerk
-- `acme.preview.flowstarter.app` → that client's dev-server container (live preview)
+Client traffic (`<platform-domain>` is resolved from `@flowstarter/platform-config` — never hardcoded; the runtime domain is `flowstarter.net`):
+- `acme.<platform-domain>/edit` → editor container (Hetzner) authenticated via magic-link or Clerk
+- `acme.preview.<platform-domain>` → that client's dev-server container (live preview)
 - `acme-customdomain.com` → that client's production output
 
 DNS via Cloudflare API (called from the Hetzner operator, not from Netlify functions, to avoid the 10–26s function timeout).

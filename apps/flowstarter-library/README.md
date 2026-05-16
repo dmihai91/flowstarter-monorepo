@@ -1,6 +1,6 @@
 # Flowstarter Library
 
-The official template library for [Flowstarter](https://flowstarter.app) - an AI-powered website builder for non-technical users.
+The official template library for Flowstarter — the concierge web service where a small team builds premium sites for service businesses and small product sellers, then hands the client a constrained AI editor to maintain it. These templates are the starting point every client build is crafted from (they are not a self-serve builder).
 
 This repository contains premium, production-ready website templates built with modern web technologies. Each template features sophisticated design, smooth animations, and is optimized for conversions.
 

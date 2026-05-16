@@ -20,10 +20,7 @@ export async function GET() {
 
     const role = await resolveUserRole(userId);
     if (role !== 'team' && role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Not a team member' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Not a team member' }, { status: 403 });
     }
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -41,7 +38,7 @@ export async function GET() {
       .select(
         'id, created_at, full_name, email, business_name, industry, ' +
           'description, selected_tier, subscription, source, ' +
-          'deposit_status, deposit_amount_eur, deposit_paid_at'
+          'deposit_status, deposit_amount_eur, deposit_paid_at, project_id'
       )
       .order('created_at', { ascending: false })
       .limit(300);

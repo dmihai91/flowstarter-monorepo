@@ -20,9 +20,16 @@ interface Lead {
   deposit_status: 'none' | 'paid' | 'refunded';
   deposit_amount_eur: number | null;
   deposit_paid_at: string | null;
+  project_id: string | null;
 }
 
-function DepositBadge({ status, amount }: { status: string; amount: number | null }) {
+function DepositBadge({
+  status,
+  amount,
+}: {
+  status: string;
+  amount: number | null;
+}) {
   const map: Record<string, string> = {
     paid: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
     refunded: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
@@ -32,8 +39,8 @@ function DepositBadge({ status, amount }: { status: string; amount: number | nul
     status === 'paid'
       ? `Paid${amount ? ` · €${amount}` : ''}`
       : status === 'refunded'
-        ? 'Refunded'
-        : 'No deposit';
+      ? 'Refunded'
+      : 'No deposit';
   return (
     <span
       className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
@@ -82,8 +89,8 @@ export default function LeadsPage() {
         {leads.length > 0 && (
           <>
             <p className="mb-4 text-[13px] text-[var(--ls-ink-faint)]">
-              {leads.length} lead{leads.length === 1 ? '' : 's'} ·{' '}
-              {paidCount} with a paid deposit
+              {leads.length} lead{leads.length === 1 ? '' : 's'} · {paidCount}{' '}
+              with a paid deposit
             </p>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -95,6 +102,7 @@ export default function LeadsPage() {
                     <th className="py-2 pr-4 font-medium">Build</th>
                     <th className="py-2 pr-4 font-medium">Plan</th>
                     <th className="py-2 pr-4 font-medium">Deposit</th>
+                    <th className="py-2 pr-4 font-medium">Project</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -136,6 +144,20 @@ export default function LeadsPage() {
                           status={l.deposit_status}
                           amount={l.deposit_amount_eur}
                         />
+                      </td>
+                      <td className="py-3 pr-4">
+                        {l.project_id ? (
+                          <a
+                            href={`/admin/dashboard/projects/${l.project_id}`}
+                            className="text-[12px] font-medium text-[var(--ls-accent)] hover:underline"
+                          >
+                            View project →
+                          </a>
+                        ) : (
+                          <span className="text-[12px] text-[var(--ls-ink-faint)]">
+                            —
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}

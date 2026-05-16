@@ -145,19 +145,28 @@ async function handleBookingDepositPaid(
         typeof session.amount_total === 'number'
           ? Math.round(session.amount_total / 100)
           : m['amountEur']
-            ? Number(m['amountEur'])
-            : null;
+          ? Number(m['amountEur'])
+          : null;
       // discovery_leads isn't in generated types yet — cast through unknown.
-      await (
+      // discovery_leads isn't in generated types yet — loose accessor.
+      const leads = (
         supabase as unknown as {
           from: (t: string) => {
             update: (v: Record<string, unknown>) => {
               eq: (c: string, v: string) => Promise<unknown>;
             };
+            select: (c: string) => {
+              eq: (c: string, v: string) => {
+                maybeSingle: () => Promise<{
+                  data: { project_id: string | null } | null;
+                }>;
+              };
+            };
           };
         }
-      )
-        .from('discovery_leads')
+      ).from('discovery_leads');
+
+      await leads
         .update({
           deposit_status: 'paid',
           deposit_amount_eur: amountEur,
@@ -166,8 +175,57 @@ async function handleBookingDepositPaid(
           updated_at: new Date().toISOString(),
         })
         .eq('id', leadId);
+
+      // Auto-create the project on deposit paid — idempotent: only if this
+      // lead has no linked workspace yet (Stripe redelivers events). Lands
+      // at concierge_stage 'intake' (pre-discovery), same as the manual
+      // team draft flow; the team advances it after the call.
+      const existing = await leads
+        .select('project_id')
+        .eq('id', leadId)
+        .maybeSingle();
+      if (!existing.data?.project_id) {
+        const tier = m['tier'] || '';
+        const businessName = m['businessName'] || '';
+        const name =
+          businessName ||
+          (m['name'] ? `${m['name']}'s Project` : 'Untitled Project');
+        const slug =
+          (name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .slice(0, 40) || 'workspace') +
+          '-' +
+          Math.random().toString(36).slice(2, 8);
+
+        const { data: ws, error: wsErr } = await supabase
+          .from('workspaces')
+          .insert({
+            slug,
+            name,
+            site_kind: tier === 'commerce' ? 'shopify_liquid' : 'astro',
+            client_name: m['name'] || null,
+            client_email: m['email'] || null,
+            client_business_name: businessName || null,
+            concierge_stage: 'intake',
+          })
+          .select('id')
+          .single();
+
+        if (wsErr) {
+          console.error('[Stripe] auto-create workspace failed', wsErr);
+        } else if (ws?.id) {
+          await leads
+            .update({ project_id: ws.id, updated_at: new Date().toISOString() })
+            .eq('id', leadId);
+          console.info(
+            `[Stripe] deposit lead ${leadId} → workspace ${ws.id} (intake)`
+          );
+        }
+      }
     } catch (err) {
-      console.error('[Stripe] mark lead paid failed', err);
+      console.error('[Stripe] mark lead paid / auto-create failed', err);
     }
   }
 

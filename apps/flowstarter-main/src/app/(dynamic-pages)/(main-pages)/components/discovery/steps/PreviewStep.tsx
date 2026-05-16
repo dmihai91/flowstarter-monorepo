@@ -185,7 +185,9 @@ export function PreviewStep({
             {(subhead || audience) && (
               <p className="mx-auto mt-2 max-w-[34ch] text-[11px] opacity-60">
                 {subhead ||
-                  `${t('landing.discovery.preview.audiencePrefix')} ${audience}`}
+                  `${t(
+                    'landing.discovery.preview.audiencePrefix'
+                  )} ${audience}`}
               </p>
             )}
             <span
@@ -239,6 +241,54 @@ export function PreviewStep({
               );
             })}
           </div>
+
+          {/* About band — only when the generator returned real copy */}
+          {generated?.about?.paragraph && (
+            <div
+              className="px-6 pb-7"
+              style={{ borderTop: `1px solid ${theme.accentSoft}` }}
+            >
+              <div className="pt-6 text-center">
+                <span
+                  className="text-[9px] font-semibold uppercase tracking-[0.16em]"
+                  style={{ color: theme.accent }}
+                >
+                  {generated.about.sectionTitle}
+                </span>
+                <p className="mx-auto mt-2 max-w-[44ch] text-[11px] leading-relaxed opacity-70">
+                  {generated.about.paragraph}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Final CTA band */}
+          {generated?.finalCta?.headline && (
+            <div
+              className="px-6 py-7 text-center"
+              style={{ background: theme.accentSoft }}
+            >
+              <p className="mx-auto max-w-[24ch] text-[14px] font-bold leading-tight">
+                {generated.finalCta.headline}
+              </p>
+              {generated.finalCta.subhead && (
+                <p className="mx-auto mt-1.5 max-w-[34ch] text-[10px] opacity-60">
+                  {generated.finalCta.subhead}
+                </p>
+              )}
+              <span
+                className="mt-3 inline-block text-[11px] font-semibold"
+                style={{
+                  background: theme.accent,
+                  color: '#fff',
+                  borderRadius: theme.radius,
+                  padding: '7px 16px',
+                }}
+              >
+                {generated.finalCta.button}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

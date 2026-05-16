@@ -147,7 +147,6 @@ async function handleBookingDepositPaid(
           : m['amountEur']
           ? Number(m['amountEur'])
           : null;
-      // discovery_leads isn't in generated types yet — cast through unknown.
       // discovery_leads isn't in generated types yet — loose accessor.
       const leads = (
         supabase as unknown as {
@@ -156,7 +155,10 @@ async function handleBookingDepositPaid(
               eq: (c: string, v: string) => Promise<unknown>;
             };
             select: (c: string) => {
-              eq: (c: string, v: string) => {
+              eq: (
+                c: string,
+                v: string
+              ) => {
                 maybeSingle: () => Promise<{
                   data: { project_id: string | null } | null;
                 }>;

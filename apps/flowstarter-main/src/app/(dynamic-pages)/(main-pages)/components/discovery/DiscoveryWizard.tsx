@@ -9,6 +9,7 @@ import {
   EMPTY_DISCOVERY,
   LAST_STEP,
   STEPS,
+  bookingDepositFor,
   canProceed,
   recommendTier,
 } from './discovery.logic';
@@ -77,6 +78,36 @@ export function DiscoveryWizard({
       }).catch(() => undefined);
     } catch {
       // Swallow — capture is non-blocking
+    }
+
+    // Booking deposit: send the prospect to Stripe Checkout. On success
+    // Stripe redirects back with ?deposit=paid and the modal reopens on the
+    // calendar step. If Stripe is unconfigured or errors, the endpoint
+    // returns { skip:true } and we fall through straight to Calendly so the
+    // funnel never dead-ends.
+    try {
+      const res = await fetch('/api/discovery/deposit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier,
+          fullName: data.fullName,
+          email: data.email,
+          businessName: data.businessName,
+          subscription: data.subscription,
+          source,
+        }),
+      });
+      const json = (await res.json().catch(() => ({}))) as {
+        url?: string;
+        skip?: boolean;
+      };
+      if (res.ok && json.url) {
+        window.location.href = json.url;
+        return; // leaving the SPA — keep the spinner until navigation
+      }
+    } catch {
+      // Fail open — proceed to booking without the deposit gate
     }
 
     setSubmitting(false);
@@ -255,8 +286,10 @@ export function DiscoveryWizard({
             iconPosition="right"
           >
             {submitting
-              ? t('landing.discovery.nav.submitting')
-              : t('landing.discovery.nav.bookCall')}
+              ? t('landing.discovery.nav.redirecting')
+              : `${t('landing.discovery.nav.payPrefix')} ${bookingDepositFor(
+                  (data.selectedTier as Tier | '') || recommendTier(data).tier
+                )} · ${t('landing.discovery.nav.bookCall')}`}
           </Button>
         )}
       </div>

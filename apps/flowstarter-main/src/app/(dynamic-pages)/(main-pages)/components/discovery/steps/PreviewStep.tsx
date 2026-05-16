@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   type DiscoveryData,
   previewCtaLabel,
@@ -6,12 +6,27 @@ import {
 } from '../discovery.logic';
 
 /**
- * Inline "taste of what you'd get" demo. Renders a mini one-page site mock
- * entirely client-side from the data the wizard already collected — no
- * sandbox, no backend, instant for every prospect. It is intentionally a
- * stylised impression, not the real build (the real site is hand-made on the
- * call), so it sets expectations without overpromising.
+ * "Taste of what you'd get" demo.
+ *
+ * On entering the step we ask /api/discovery/preview to generate real
+ * first-pass copy via the same system-prompt LLM pipeline the team uses
+ * (wired locally — no Docker/sandbox yet). While it generates, and if it
+ * fails or is unconfigured, we fall back to a deterministic stylised mock
+ * derived from the wizard answers so the prospect always sees something.
+ * It is explicitly an impression, not the hand-built final site.
  */
+
+/** Mirror of the server SiteCopy shape (server-only module can't be imported here). */
+interface GeneratedCopy {
+  hero: { headline: string; subhead: string; primaryCta: string };
+  services: {
+    sectionTitle: string;
+    items: Array<{ title: string; description: string }>;
+  };
+  about: { sectionTitle: string; paragraph: string };
+  finalCta: { headline: string; subhead: string; button: string };
+}
+
 export function PreviewStep({
   data,
   t,
@@ -20,22 +35,73 @@ export function PreviewStep({
   t: (key: string) => string;
 }) {
   const theme = useMemo(() => previewTheme(data.brandTone), [data.brandTone]);
-  const cta = previewCtaLabel(data.goal);
+  const fallbackCta = previewCtaLabel(data.goal);
 
   const name =
     data.businessName.trim() ||
     data.fullName.trim() ||
     t('landing.discovery.preview.fallbackName');
   const industry = data.industry.trim();
-  const tagline =
+  const fallbackTagline =
     data.description.trim().split(/[.!?]/)[0]?.trim() ||
     t('landing.discovery.preview.fallbackTagline');
   const audience = data.targetAudience.trim();
-
   const sells =
     data.commerceMode === 'physical' ||
     data.commerceMode === 'digital' ||
     data.commerceMode === 'mixed';
+
+  const [generated, setGenerated] = useState<GeneratedCopy | null>(null);
+  const [loading, setLoading] = useState(true);
+  const requested = useRef(false);
+
+  useEffect(() => {
+    if (requested.current) return;
+    requested.current = true;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/discovery/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            businessName: data.businessName,
+            fullName: data.fullName,
+            description: data.description,
+            industry: data.industry,
+            targetAudience: data.targetAudience,
+            goal: data.goal,
+            brandTone: data.brandTone,
+          }),
+        });
+        const json = (await res.json().catch(() => ({}))) as {
+          copy?: GeneratedCopy;
+          skip?: boolean;
+        };
+        if (!cancelled && res.ok && json.copy) setGenerated(json.copy);
+      } catch {
+        // Fail open — deterministic mock below.
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    data.businessName,
+    data.fullName,
+    data.description,
+    data.industry,
+    data.targetAudience,
+    data.goal,
+    data.brandTone,
+  ]);
+
+  const headline = generated?.hero.headline ?? fallbackTagline;
+  const subhead = generated?.hero.subhead ?? '';
+  const ctaLabel = generated?.hero.primaryCta ?? fallbackCta;
+  const services = generated?.services.items?.slice(0, 3) ?? [];
 
   return (
     <div className="space-y-5">
@@ -44,12 +110,19 @@ export function PreviewStep({
           {t('landing.discovery.steps.preview.title')}
         </h3>
         <p className="text-sm text-[var(--fs-ink-faint)]">
-          {t('landing.discovery.steps.preview.subtitle')}
+          {loading
+            ? t('landing.discovery.preview.generating')
+            : t('landing.discovery.steps.preview.subtitle')}
         </p>
       </header>
 
       {/* Browser frame */}
-      <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] shadow-lg shadow-black/10">
+      <div
+        className={[
+          'overflow-hidden rounded-xl border border-[var(--fs-rule)] shadow-lg shadow-black/10 transition-opacity duration-300',
+          loading ? 'opacity-60' : 'opacity-100',
+        ].join(' ')}
+      >
         <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-3 py-2">
           <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
@@ -63,7 +136,6 @@ export function PreviewStep({
           </span>
         </div>
 
-        {/* Mock site body */}
         <div
           style={{
             background: theme.bg,
@@ -89,7 +161,7 @@ export function PreviewStep({
                   padding: '4px 9px',
                 }}
               >
-                {cta}
+                {ctaLabel}
               </span>
             </span>
           </div>
@@ -105,14 +177,15 @@ export function PreviewStep({
               </span>
             )}
             <h4
-              className="mx-auto mt-2 max-w-[22ch] text-[19px] font-bold leading-tight"
+              className="mx-auto mt-2 max-w-[24ch] text-[19px] font-bold leading-tight"
               style={{ textWrap: 'balance' }}
             >
-              {tagline}
+              {headline}
             </h4>
-            {audience && (
-              <p className="mx-auto mt-2 max-w-[30ch] text-[11px] opacity-60">
-                {t('landing.discovery.preview.audiencePrefix')} {audience}
+            {(subhead || audience) && (
+              <p className="mx-auto mt-2 max-w-[34ch] text-[11px] opacity-60">
+                {subhead ||
+                  `${t('landing.discovery.preview.audiencePrefix')} ${audience}`}
               </p>
             )}
             <span
@@ -124,31 +197,47 @@ export function PreviewStep({
                 padding: '8px 18px',
               }}
             >
-              {cta}
+              {ctaLabel}
             </span>
           </div>
 
-          {/* Section strip */}
+          {/* Services / sections */}
           <div className="grid grid-cols-3 gap-2.5 px-6 pb-7">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                style={{
-                  background: theme.panel,
-                  borderRadius: theme.radius,
-                  border: `1px solid ${theme.accentSoft}`,
-                }}
-                className="p-3"
-              >
-                <span
-                  className="block h-1.5 w-7 rounded-full"
-                  style={{ background: theme.accent, opacity: 0.85 }}
-                />
-                <span className="mt-2 block h-1 w-full rounded-full bg-current opacity-10" />
-                <span className="mt-1.5 block h-1 w-4/5 rounded-full bg-current opacity-10" />
-                <span className="mt-1.5 block h-1 w-3/5 rounded-full bg-current opacity-10" />
-              </div>
-            ))}
+            {[0, 1, 2].map((i) => {
+              const svc = services[i];
+              return (
+                <div
+                  key={i}
+                  style={{
+                    background: theme.panel,
+                    borderRadius: theme.radius,
+                    border: `1px solid ${theme.accentSoft}`,
+                  }}
+                  className="p-3"
+                >
+                  <span
+                    className="block h-1.5 w-7 rounded-full"
+                    style={{ background: theme.accent, opacity: 0.85 }}
+                  />
+                  {svc ? (
+                    <>
+                      <span className="mt-2 block text-[10px] font-semibold leading-tight">
+                        {svc.title}
+                      </span>
+                      <span className="mt-1 block text-[9px] leading-snug opacity-60">
+                        {svc.description}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="mt-2 block h-1 w-full rounded-full bg-current opacity-10" />
+                      <span className="mt-1.5 block h-1 w-4/5 rounded-full bg-current opacity-10" />
+                      <span className="mt-1.5 block h-1 w-3/5 rounded-full bg-current opacity-10" />
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

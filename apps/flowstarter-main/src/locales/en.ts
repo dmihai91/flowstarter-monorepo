@@ -2398,8 +2398,10 @@ const en = {
   'landing.discovery.eyebrow': 'Free discovery — ~30s',
   'landing.discovery.nav.back': 'Back',
   'landing.discovery.nav.continue': 'Continue',
-  'landing.discovery.nav.bookCall': 'Book my call',
+  'landing.discovery.nav.bookCall': 'book my call',
   'landing.discovery.nav.submitting': 'Saving…',
+  'landing.discovery.nav.payPrefix': 'Pay',
+  'landing.discovery.nav.redirecting': 'Redirecting to secure checkout…',
 
   // Step titles + subtitles
   'landing.discovery.steps.about.title':
@@ -2443,6 +2445,8 @@ const en = {
   'landing.discovery.preview.fallbackTagline':
     'Work worth showing off, online at last',
   'landing.discovery.preview.audiencePrefix': 'For',
+  'landing.discovery.preview.generating':
+    'Drafting copy for your business from your answers…',
   'landing.discovery.preview.disclaimer':
     'This is an instant impression, not the finished site. Yours is hand-built around your brand, content and goals after the discovery call.',
 

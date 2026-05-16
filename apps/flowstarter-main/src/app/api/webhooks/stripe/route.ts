@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
+import { sendEmail } from '@/lib/email';
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -123,6 +124,76 @@ async function handleSubscriptionEvent(subscription: Stripe.Subscription) {
   );
 }
 
+/**
+ * Booking deposit paid by a prospect at the end of the discovery wizard
+ * (Checkout Session, metadata.kind === 'booking_deposit'). No prospect table
+ * exists — Stripe is the record of truth; we just notify the team so the
+ * call can be confirmed and the deposit tracked manually.
+ */
+async function handleBookingDepositPaid(
+  session: Stripe.Checkout.Session
+): Promise<void> {
+  const m = session.metadata ?? {};
+  if (m['kind'] !== 'booking_deposit') return;
+
+  const notifyTo =
+    process.env.DISCOVERY_LEAD_NOTIFY_EMAIL || 'hello@flowstarter.net';
+  const amount =
+    typeof session.amount_total === 'number'
+      ? `€${(session.amount_total / 100).toFixed(0)}`
+      : m['amountEur']
+      ? `€${m['amountEur']}`
+      : 'unknown';
+
+  try {
+    await sendEmail({
+      to: notifyTo,
+      subject: `Deposit paid — ${m['name'] || 'prospect'} (${
+        m['tier']
+      }) ${amount}`,
+      replyTo: m['email'] || undefined,
+      html: `
+<div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:20px;">
+  <h2 style="font-size:17px;margin:0 0 12px;">Booking deposit paid</h2>
+  <p style="font-size:14px;color:#374151;margin:0 0 4px;">
+    <strong>${
+      m['name'] || ''
+    }</strong> paid <strong>${amount}</strong> to hold a discovery call.
+  </p>
+  <table style="border-collapse:collapse;font-size:13px;color:#111827;margin-top:12px;">
+    <tr><td style="padding:3px 10px;color:#6b7280;">Email</td><td style="padding:3px 10px;">${
+      m['email'] || ''
+    }</td></tr>
+    <tr><td style="padding:3px 10px;color:#6b7280;">Business</td><td style="padding:3px 10px;">${
+      m['businessName'] || ''
+    }</td></tr>
+    <tr><td style="padding:3px 10px;color:#6b7280;">Build tier</td><td style="padding:3px 10px;">${
+      m['tier'] || ''
+    }</td></tr>
+    <tr><td style="padding:3px 10px;color:#6b7280;">Monthly plan</td><td style="padding:3px 10px;">${
+      m['subscription'] || '—'
+    }</td></tr>
+    <tr><td style="padding:3px 10px;color:#6b7280;">Source</td><td style="padding:3px 10px;">${
+      m['source'] || ''
+    }</td></tr>
+    <tr><td style="padding:3px 10px;color:#6b7280;">Stripe session</td><td style="padding:3px 10px;">${
+      session.id
+    }</td></tr>
+  </table>
+  <p style="font-size:12px;color:#6b7280;margin-top:14px;">
+    Refundable after the call, before any build work starts. Refund from the Stripe dashboard if they don't proceed.
+  </p>
+</div>`,
+    });
+  } catch (err) {
+    console.error('[Stripe] booking-deposit notify failed', err);
+  }
+
+  console.info(
+    `[Stripe] booking deposit paid: ${m['email']} ${m['tier']} ${amount} (${session.id})`
+  );
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret)
@@ -162,6 +233,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted':
         await handleSubscriptionEvent(event.data.object as Stripe.Subscription);
+        break;
+      case 'checkout.session.completed':
+        await handleBookingDepositPaid(
+          event.data.object as Stripe.Checkout.Session
+        );
         break;
       default:
         break;

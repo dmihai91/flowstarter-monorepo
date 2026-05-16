@@ -223,6 +223,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/contact(.*)', // Public contact form API
   '/api/ecommerce-waitlist(.*)', // Public ecommerce waitlist signup
   '/api/support-chat(.*)', // Public support bot LLM endpoint
+  '/api/discovery(.*)', // Public discovery wizard: lead capture + booking deposit
   '/gdpr(.*)',
   '/contact(.*)',
   '/help(.*)', // Public help page

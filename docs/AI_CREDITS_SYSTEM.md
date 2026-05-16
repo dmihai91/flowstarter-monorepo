@@ -2,19 +2,29 @@
 
 ## Overview
 
-Flowstarter uses an AI credit system to manage and meter AI-powered editing features. Credits are an abstraction over token costs that simplifies billing and provides a predictable user experience.
+Flowstarter meters AI-powered editing as **AI edit sessions** (the
+user-facing unit on the site and in `discovery.logic.ts`). "Credits" in this
+doc are the internal token-accounting abstraction *underneath* a session; the
+customer only ever sees their monthly session allowance.
+
+> Canonical pricing/plan model: `docs/FLOWSTARTER_MASTER_DECISIONS.md`. The
+> monthly plan is decoupled from the one-time build.
 
 ---
 
 ## 1. Business Requirements
 
-### 1.1 Pricing Tiers
+### 1.1 Plans (shipped — session allowances, decoupled from setup)
 
-| Plan | Monthly Credits | Price | Credit Value |
-|------|-----------------|-------|--------------|
-| Starter | 1,000 | €39/mo | ~€0.039/credit |
-| Future Pro | 3,000 | TBD | TBD |
-| Future Enterprise | Unlimited | TBD | TBD |
+| Plan | AI edit sessions/mo | Price | Multiple |
+|------|---------------------|-------|----------|
+| Starter | 50 | €39/mo | base |
+| Pro | 150 | €99/mo | 3× |
+| Max | 450 | €249/mo | 9× |
+| Ecommerce (dedicated) | 450 | €149/mo | store ops + edits |
+
+Internal token budgeting still applies per session; the credit math below is
+the cost model that keeps each session profitable, not a customer-facing unit.
 
 ### 1.2 Profitability Target
 

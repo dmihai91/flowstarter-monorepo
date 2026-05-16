@@ -31,21 +31,43 @@ Sections of this doc that mention Cloudflare Pages, `pages.dev` URLs, or Daytona
 
 ---
 
-## Pricing (current as of 2026-05-06)
+## Pricing (current — superseded by FLOWSTARTER_MASTER_DECISIONS.md)
 
-Three main tiers. **All prices are "starting from" minimums** — final price is scoped on the discovery call based on complexity. Older sections of this doc that reference €499 / €39 / €699 / "launch price" / "lock in before it goes up" framing are superseded.
+The build (one-time setup) and the monthly plan are **decoupled**: a client
+picks a build package and, separately, a monthly plan sized by AI edit
+sessions. All setup prices are "from" minimums; final scope is agreed on the
+call. Storefront/Commerce is **open to everyone** (no longer coming-soon).
 
-| Tier | Setup (from) | Monthly (from) | Best for |
-|------|--------------|----------------|----------|
-| **Starter** | €799 | €49/mo | Coaches, consultants, therapists, freelancers, solo service businesses. No online store. |
-| **Pro** | €1,199 | €79/mo | Growing service businesses, agencies, multi-page sites with extended integrations. **No headless storefront** — uses Stripe Payment Links for simple paid offers if needed. |
-| **Commerce** | €2,199 | €129/mo | Businesses with a real catalog. Custom Astro storefront on the client's own domain, headless against **Shopify** (physical goods) or **Lemon Squeezy / Paddle** (digital goods). |
+**Build packages (one-time, from):**
 
-All tiers include: domain, professional email, hosting, smart editor, ongoing support, first month free, 50% setup refund if not happy in 30 days. Discovery call is **30 minutes**.
+| Package | From | Best for |
+|---------|------|----------|
+| **Starter** | €799 | Coaches, consultants, therapists, freelancers, solo service businesses. |
+| **Pro** | €1,199 | Growing service businesses, multi-page sites, extended integrations, Stripe for digital products. |
+| **Ecommerce** | €1,499 | A real catalog: custom Astro storefront headless against **Shopify** (physical) or **Lemon Squeezy / Paddle** (digital). Open to everyone. |
+| **Custom** | €2,499 | Bespoke web apps / integrations, quoted on the call. |
 
-**Why a separate Commerce tier?** Building a branded headless storefront is real work (8–15 extra hours: provider account setup, products configured, Astro shop pages, cart + checkout flow, webhook integration). Most service-business clients don't sell products — bundling commerce into Pro would charge them for something they don't use. Commerce clients have revenue from sales, justifying the higher fee + larger ongoing retainer.
+**Monthly plan (independent of the build):** Starter €39/mo (50 AI edit
+sessions), Pro €99/mo (150, 3×), Max €249/mo (450, 9×). The Ecommerce package
+uses a dedicated store plan: **€149/mo** (450 sessions + storefront ops).
+First month free; change or cancel anytime.
 
-**Relaunch** offering (from €999, audit + rebuild of an existing site) and **Custom** plan (from €2,499 for bespoke web apps) live alongside the three tiers and are quoted on the call.
+**Booking deposit:** 10% of the build setup to book the discovery call
+(Starter €79 / Pro €119 / Commerce €149) or **€199 flat for Custom**.
+Refundable after the call before any build work; credited to the setup fee
+on proceed. Stripe Checkout (`/api/discovery/deposit`).
+
+All builds include: domain, professional email, hosting, smart editor,
+ongoing support, first month free, 50% setup refund if not happy in 30 days.
+Discovery call is **30 minutes**.
+
+**Why a separate Ecommerce package?** A branded headless storefront is real
+extra work (provider setup, products, shop pages, cart/checkout, webhooks).
+Most service clients don't sell products, so it stays a separate package
+rather than bundled into Pro.
+
+**Relaunch** (from €999, audit + rebuild) and **Custom** (from €2,499) are
+quoted on the call.
 
 Heavy commerce ops (payment, tax, fulfillment, refunds, inventory) stay at the provider — Flowstarter renders product display + cart UI but **never reimplements checkout**. See `docs/CONCIERGE_COMMERCE_MODEL.md` for provider routing and `docs/PRO_PLAN_DELIVERY.md` for the Pro/Commerce delivery model.
 

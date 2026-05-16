@@ -169,40 +169,64 @@ Each workspace contains:
 - **Invoicing for Romanian clients** done in RON at BNR exchange rate on invoice date (Romanian legal requirement)
 - English website + EUR pricing signals European agency, not local freelancer
 
-### Setup Fees (one-time)
+> **Updated (this revision):** pricing was restructured. The build (one-time
+> setup) and the monthly plan are now **decoupled** — the client picks a build
+> package and, separately, a monthly plan sized by AI edit sessions. Prices
+> were tuned down for Romanian-market reach and the storefront tier was opened
+> to everyone (no longer "coming soon"). The tables below reflect what is
+> shipped in code (`landing-copy.ts`, `discovery.logic.ts`).
 
-| Product | Standard | Founding |
-|---------|----------|----------|
-| Service site (Starter) | €1,499 | €799 |
-| Shopify store (Standard) | €2,999 | €1,799 |
-| Custom (specific integrations) | from €4,999 | from €2,999 |
+### Setup Fees — one-time build package
 
-### Subscriptions — Monthly and Annual Options
+| Build package | From | Notes |
+|---------------|------|-------|
+| Starter (service site) | €799 | 5–7 page custom site |
+| Pro (service+) | €1,199 | More pages, integrations, Stripe for digital products |
+| Ecommerce / Commerce | €1,499 | Full Shopify-style storefront, open to everyone |
+| Custom | €2,499 | Bespoke build / integrations, scoped on the call |
 
-All tiers have both billing options. Annual = 10× monthly (equivalent to **2 months free**).
+### Monthly Plan — independent of the build
 
-#### Standard pricing
+The subscription is chosen separately from the build and sized by AI edit
+sessions. Change or cancel anytime; first month free.
 
-| Tier | Monthly | Annual | AI editor sessions/month | Max rollover | For |
-|------|---------|--------|--------------------------|--------------|-----|
-| Essential | €49/mo | **€490/year** | 15 | 22 | Simple presentation site |
-| Pro | €79/mo | **€790/year** | 50 | 75 | Advanced site (multi-page, blog) |
-| Commerce | €129/mo | **€1,290/year** | 75 | 110 | Online store |
+| Plan | Price | AI edit sessions/mo | Multiple |
+|------|-------|---------------------|----------|
+| Starter | €39/mo | 50 | base |
+| Pro | €99/mo | 150 | 3× |
+| Max | €249/mo | 450 | 9× |
 
-#### Founding pricing (first 10 clients per tier)
+The **Ecommerce** build package uses a **dedicated store plan** instead of the
+3-tier picker: **€149/mo** (450 sessions + storefront ops support — provider
+sync, order flows, inventory). The wizard auto-applies it for Commerce.
 
-| Tier | Monthly founding | Annual founding |
-|------|------------------|-----------------|
-| Essential | €39/mo | **€390/year** |
-| Pro | €59/mo | **€590/year** |
-| Commerce | €99/mo | **€990/year** |
+### Booking Deposit (pre-call)
+
+To book the discovery call the prospect pays a deposit via Stripe Checkout
+(`/api/discovery/deposit`):
+
+| Build tier | Deposit |
+|-----------|---------|
+| Starter | €79 (10% of €799) |
+| Pro | €119 (10% of €1,199) |
+| Commerce | €149 (10% of €1,499) |
+| Custom | €199 (flat — open-ended scope) |
+
+Refundable in full after the call, before any build work starts. Credited
+toward the setup fee if the client proceeds. The Stripe webhook
+(`checkout.session.completed`, `kind=booking_deposit`) emails the team;
+refunds are issued manually from the Stripe dashboard. Fails open: if Stripe
+is unconfigured the funnel proceeds straight to Calendly.
 
 ### Billing Rules
 
-- **Default on site = annual** with "Save 2 months" badge
-- **Visible toggle** for monthly/annual switch
-- **Dual display on cards:** "€490/year" large + "(equivalent to €40.83/month)" small
-- **Stripe Subscriptions** natively handles both intervals (price_monthly and price_yearly per product)
+- All prices in **EUR**, single set for all markets (RO invoiced in RON at
+  BNR rate, back-office only).
+- One-time build billed 50% upfront / 50% on sign-off (the existing
+  admin-side deposit/final invoice flow in `src/lib/billing/stripe.ts`).
+- Monthly plan is a separate Stripe subscription, first month free.
+- The pre-call booking deposit is a one-off Stripe Checkout payment,
+  separate from both of the above and credited into milestone 1 on proceed.
 
 ### Client Guarantees (Three Layers)
 

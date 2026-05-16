@@ -882,15 +882,23 @@ export default function ChatView(props: ChatViewProps) {
   const environmentConnectionEpoch = useEnvironmentConnectionEpoch();
   const filesPanelRpcEnvironmentId = useMemo(() => {
     void environmentConnectionEpoch;
+    // This hook runs before ChatView's no-thread early-return, so
+    // activeThread may be undefined on that (discarded) render pass.
+    // ChatHeader — the only consumer — is only mounted once activeThread
+    // is defined, so the fallback value here is never actually rendered.
+    const threadEnvironmentId = activeThread?.environmentId ?? primaryEnvironmentId;
+    if (threadEnvironmentId === null) {
+      return primaryEnvironmentId as EnvironmentId;
+    }
     return resolveRegisteredWorkspaceRpcEnvironmentId({
-      threadEnvironmentId: activeThread.environmentId,
+      threadEnvironmentId,
       primaryEnvironmentId,
       routeKind,
       activeProjectEnvironmentId: activeProject?.environmentId,
     });
   }, [
     environmentConnectionEpoch,
-    activeThread.environmentId,
+    activeThread?.environmentId,
     primaryEnvironmentId,
     routeKind,
     activeProject?.environmentId,

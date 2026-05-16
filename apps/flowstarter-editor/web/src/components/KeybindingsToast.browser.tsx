@@ -12,6 +12,7 @@ import {
   type ThreadId,
   WS_METHODS,
 } from "@flowstarter/editor-contracts";
+import { QueryClient } from "@tanstack/react-query";
 import { RouterProvider, createMemoryHistory } from "@tanstack/react-router";
 import { ws, http, HttpResponse } from "msw";
 import { setupWorker } from "msw/browser";
@@ -365,6 +366,7 @@ async function mountApp(): Promise<{ cleanup: () => Promise<void> }> {
 
   const router = getRouter(
     createMemoryHistory({ initialEntries: [`/${LOCAL_ENVIRONMENT_ID}/${THREAD_ID}`] }),
+    new QueryClient(),
   );
 
   const screen = await render(

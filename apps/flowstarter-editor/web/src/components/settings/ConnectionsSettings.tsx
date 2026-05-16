@@ -3,10 +3,20 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   type AuthClientSession,
   type AuthPairingLink,
-  type DesktopServerExposureState,
   type EnvironmentId,
 } from "@flowstarter/editor-contracts";
 import { DateTime } from "effect";
+
+/**
+ * The desktop bridge was removed in the concierge pivot, so the server
+ * never reports a real exposure state here (it stays `null`). This local
+ * shape covers only what the UI still reads — kept so the dead
+ * exposure-status row keeps rendering without the removed contract type.
+ */
+type DesktopServerExposureState = {
+  readonly mode: "local-only" | "network-accessible";
+  readonly endpointUrl: string | null;
+};
 
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { cn } from "../../lib/utils";

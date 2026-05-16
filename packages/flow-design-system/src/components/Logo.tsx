@@ -32,7 +32,13 @@ const markSizeBesideWordmark: Record<NonNullable<LogoProps['size']>, LogoProps['
   xl: 'lg',
 };
 
-export function LogoMark({ size = 'md', className }: { size?: LogoProps['size']; className?: string }) {
+export function LogoMark({
+  size = 'md',
+  className,
+}: {
+  size?: LogoProps['size'];
+  className?: string | undefined;
+}) {
   const id = useId();
 
   return (

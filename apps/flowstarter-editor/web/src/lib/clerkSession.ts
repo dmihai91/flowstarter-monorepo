@@ -81,13 +81,15 @@ export async function fetchClerkSession(
 ): Promise<ClerkSessionResolution> {
   let response: Response;
   try {
-    response = await fetch(CLERK_ME_PATH, {
+    const init: RequestInit = {
       method: "GET",
       credentials: "include",
       cache: "no-store",
-      headers: editorClerkReturnHeaders(),
-      ...(signal ? { signal } : {}),
-    });
+    };
+    const headers = editorClerkReturnHeaders();
+    if (headers) init.headers = headers;
+    if (signal) init.signal = signal;
+    response = await fetch(CLERK_ME_PATH, init);
   } catch (error) {
     return {
       status: "error",
@@ -172,13 +174,15 @@ export async function autoPairWithEditor(
 ): Promise<AutoPairResolution> {
   let response: Response;
   try {
-    response = await fetch(CLERK_AUTO_PAIR_PATH, {
+    const init: RequestInit = {
       method: "POST",
       credentials: "include",
       cache: "no-store",
-      headers: editorClerkReturnHeaders(),
-      ...(signal ? { signal } : {}),
-    });
+    };
+    const headers = editorClerkReturnHeaders();
+    if (headers) init.headers = headers;
+    if (signal) init.signal = signal;
+    response = await fetch(CLERK_AUTO_PAIR_PATH, init);
   } catch (error) {
     return {
       status: "error",

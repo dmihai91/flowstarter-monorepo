@@ -23,6 +23,7 @@ import {
   scopeProjectRef,
   scopeThreadRef,
 } from "@flowstarter/editor-client-runtime";
+import { QueryClient } from "@tanstack/react-query";
 import { RouterProvider, createMemoryHistory } from "@tanstack/react-router";
 import { HttpResponse, http, ws } from "msw";
 import { setupWorker } from "msw/browser";
@@ -1354,6 +1355,7 @@ async function mountChatView(options: {
     createMemoryHistory({
       initialEntries: [`/${LOCAL_ENVIRONMENT_ID}/${THREAD_ID}`],
     }),
+    new QueryClient(),
   );
 
   const screen = await render(

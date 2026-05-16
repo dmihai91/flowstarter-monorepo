@@ -78,6 +78,11 @@ export function GoalsStep({
       label: t('landing.discovery.options.pages.15+.label'),
       sub: t('landing.discovery.options.pages.15+.sub'),
     },
+    {
+      v: 'unsure',
+      label: t('landing.discovery.options.pages.unsure.label'),
+      sub: t('landing.discovery.options.pages.unsure.sub'),
+    },
   ];
 
   const timelineOptions: ReadonlyArray<{ v: TimelineId; label: string }> = [

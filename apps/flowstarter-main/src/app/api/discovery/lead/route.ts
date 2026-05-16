@@ -39,14 +39,18 @@ const DiscoveryLeadSchema = z.object({
   brandTone: z
     .enum(['professional', 'bold', 'friendly', 'minimal', ''])
     .optional(),
-  pageCount: z.enum(['lt-5', '5-7', '8-15', '15+', '']).optional(),
+  pageCount: z
+    .enum(['lt-5', '5-7', '8-15', '15+', 'unsure', ''])
+    .optional(),
   timeline: z
     .enum(['asap', '4-weeks', '1-3-months', 'flexible', ''])
     .optional(),
   commerceMode: z
     .enum(['none', 'few-services', 'digital', 'physical', 'mixed', ''])
     .optional(),
-  catalogSize: z.enum(['na', '1-5', '6-25', '26-100', '100+']).optional(),
+  catalogSize: z
+    .enum(['na', '1-5', '6-25', '26-100', '100+', 'unsure'])
+    .optional(),
   customIntegrations: z.string().max(2000).optional().default(''),
   selectedTier: TIER,
   subscription: z.enum(['starter', 'pro', 'max', '']).optional().default(''),

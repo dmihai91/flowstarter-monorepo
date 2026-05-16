@@ -2395,7 +2395,7 @@ const en = {
     "I'll explain my situation on the call",
 
   // Discovery wizard (multi-step pre-call form)
-  'landing.discovery.eyebrow': 'Free discovery — ~30s',
+  'landing.discovery.eyebrow': 'Free discovery — about a minute',
   'landing.discovery.nav.back': 'Back',
   'landing.discovery.nav.continue': 'Continue',
   'landing.discovery.nav.bookCall': 'book my call',
@@ -2410,7 +2410,7 @@ const en = {
     "We'll send the call link and follow-ups to this email",
   'landing.discovery.steps.business.title': 'What does your business do?',
   'landing.discovery.steps.business.subtitle':
-    'A few sentences are plenty — we just need the gist',
+    'A couple of sentences is enough. What you do, and who for.',
   'landing.discovery.steps.goals.title': "What's the goal of the site?",
   'landing.discovery.steps.goals.subtitle':
     'Helps us recommend the right tier and shape the call',
@@ -2516,6 +2516,8 @@ const en = {
   'landing.discovery.options.pages.8-15.sub': 'Multi-page or content-driven',
   'landing.discovery.options.pages.15+.label': '15+',
   'landing.discovery.options.pages.15+.sub': 'Large site, blog, locations',
+  'landing.discovery.options.pages.unsure.label': "Not sure",
+  'landing.discovery.options.pages.unsure.sub': "We'll work it out on the call",
 
   // Timeline options
   'landing.discovery.options.timeline.asap': 'ASAP',
@@ -2545,6 +2547,7 @@ const en = {
   'landing.discovery.options.catalog.6-25': '6 – 25',
   'landing.discovery.options.catalog.26-100': '26 – 100',
   'landing.discovery.options.catalog.100+': '100+',
+  'landing.discovery.options.catalog.unsure': 'Not sure',
 
   // Tier names + taglines (used in recommendation card and override picker)
   'landing.discovery.tiers.starter.name': 'Starter',

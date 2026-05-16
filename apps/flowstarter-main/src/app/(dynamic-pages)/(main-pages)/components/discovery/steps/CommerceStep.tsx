@@ -54,6 +54,7 @@ export function CommerceStep({
     { v: '6-25', label: t('landing.discovery.options.catalog.6-25') },
     { v: '26-100', label: t('landing.discovery.options.catalog.26-100') },
     { v: '100+', label: t('landing.discovery.options.catalog.100+') },
+    { v: 'unsure', label: t('landing.discovery.options.catalog.unsure') },
   ];
 
   const showsCatalog =

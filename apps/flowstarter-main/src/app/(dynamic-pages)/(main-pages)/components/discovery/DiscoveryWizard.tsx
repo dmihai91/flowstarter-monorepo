@@ -13,6 +13,13 @@ import {
   canProceed,
   recommendTier,
 } from './discovery.logic';
+import { AboutStep } from './steps/AboutStep';
+import { BusinessStep } from './steps/BusinessStep';
+import { GoalsStep } from './steps/GoalsStep';
+import { CommerceStep } from './steps/CommerceStep';
+import { RecommendationStep } from './steps/RecommendationStep';
+import { SubscriptionStep } from './steps/SubscriptionStep';
+import { PreviewStep } from './steps/PreviewStep';
 
 /**
  * Draft autosave. sessionStorage (not localStorage) on purpose: the draft
@@ -35,9 +42,7 @@ function loadDraft(): Draft | null {
     if (!parsed || typeof parsed !== 'object' || !parsed.data) return null;
     const stepNum = Number(parsed.step);
     const step = (
-      Number.isFinite(stepNum)
-        ? Math.min(LAST_STEP, Math.max(1, stepNum))
-        : 1
+      Number.isFinite(stepNum) ? Math.min(LAST_STEP, Math.max(1, stepNum)) : 1
     ) as Step;
     // Merge over EMPTY so a schema change can't yield missing keys.
     return { data: { ...EMPTY_DISCOVERY, ...parsed.data }, step };
@@ -54,13 +59,6 @@ function clearDraft(): void {
     // ignore
   }
 }
-import { AboutStep } from './steps/AboutStep';
-import { BusinessStep } from './steps/BusinessStep';
-import { GoalsStep } from './steps/GoalsStep';
-import { CommerceStep } from './steps/CommerceStep';
-import { RecommendationStep } from './steps/RecommendationStep';
-import { SubscriptionStep } from './steps/SubscriptionStep';
-import { PreviewStep } from './steps/PreviewStep';
 
 export interface DiscoveryCompletePayload {
   tier: Tier;
@@ -97,10 +95,7 @@ export function DiscoveryWizard({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
-      window.sessionStorage.setItem(
-        DRAFT_KEY,
-        JSON.stringify({ data, step })
-      );
+      window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ data, step }));
     } catch {
       // storage full / disabled — autosave is best-effort
     }

@@ -3,6 +3,7 @@ import {
   type SubscriptionTier,
   ECOMMERCE_SUBSCRIPTION,
   SUBSCRIPTIONS,
+  sessionMultiple,
   usesDedicatedSubscription,
 } from '../discovery.logic';
 
@@ -102,8 +103,7 @@ export function SubscriptionStep({
                 <div className="mt-1 text-[12px] text-[var(--fs-ink-faint)]">
                   {plan.sessions}{' '}
                   {t('landing.discovery.subscription.sessionsSuffix')}
-                  {tier === 'pro' && ' (3×)'}
-                  {tier === 'max' && ' (9×)'}
+                  {tier !== 'starter' && ` (${sessionMultiple(tier)}×)`}
                 </div>
               </button>
             );

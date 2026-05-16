@@ -21,13 +21,28 @@ export const SUBSCRIPTIONS: Record<
   SubscriptionTier,
   { priceEur: number; sessions: number }
 > = {
+  // Mirrors PLAN_ENTITLEMENTS in
+  // apps/flowstarter-editor/server/src/usage/planEntitlements.ts (the
+  // runtime source of truth). Change that table, then mirror here.
   starter: { priceEur: 39, sessions: 30 },
-  pro: { priceEur: 99, sessions: 90 },
-  max: { priceEur: 249, sessions: 270 },
+  pro: { priceEur: 99, sessions: 60 },
+  max: { priceEur: 249, sessions: 120 },
 };
 
-/** Commerce build package → dedicated storefront subscription (flat). */
-export const ECOMMERCE_SUBSCRIPTION = { priceEur: 149, sessions: 270 };
+/**
+ * Commerce build → dedicated "Pro+" store plan: Pro-level economics
+ * (same session allowance + €/session cap as Pro) plus store editing
+ * (products/collections from a separate ops pool). Mirrors
+ * PLAN_ENTITLEMENTS.ecommerce.
+ */
+export const ECOMMERCE_SUBSCRIPTION = { priceEur: 149, sessions: 60 };
+
+/** Session multiple vs Starter, for "2×"/"4×" style labels (no drift). */
+export function sessionMultiple(tier: SubscriptionTier): number {
+  return Math.round(
+    SUBSCRIPTIONS[tier].sessions / SUBSCRIPTIONS.starter.sessions
+  );
+}
 
 /** True when the build tier uses the dedicated store subscription. */
 export function usesDedicatedSubscription(tier: Tier | ''): boolean {

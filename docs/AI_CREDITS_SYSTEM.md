@@ -16,15 +16,23 @@ customer only ever sees their monthly session allowance.
 
 ### 1.1 Plans (shipped — session allowances, decoupled from setup)
 
-| Plan | AI edit sessions/mo | Price | Multiple |
-|------|---------------------|-------|----------|
-| Starter | 30 | €39/mo | base |
-| Pro | 90 | €99/mo | 3× |
-| Max | 270 | €249/mo | 9× |
-| Ecommerce (dedicated) | 270 | €149/mo | store ops + edits |
+> **Reconciled 2026-05-16** with
+> `apps/flowstarter-editor/server/src/usage/planEntitlements.ts`
+> (`PLAN_ENTITLEMENTS`) — the runtime source of truth. Numbers here
+> mirror that table; change the table, not this doc.
 
-Internal token budgeting still applies per session; the credit math below is
-the cost model that keeps each session profitable, not a customer-facing unit.
+| Plan | Sessions/mo | Price | €/session cap | Monthly soft → hard (€) |
+|------|-------------|-------|---------------|--------------------------|
+| Starter | 30 | €39/mo | €1 | 25 → 30 |
+| Pro | 60 | €99/mo | €2 | 50 → 75 |
+| Max | 120 | €249/mo | €3 | 75 → 190 |
+| Ecommerce (dedicated) | 60 | €149/mo | €2 | 50 → 110 |
+
+Per-session € caps and the monthly soft/hard thresholds are internal
+cost guards (token spend converted to €), not customer-facing units. The
+soft threshold fires an upgrade/buy-extra nudge; the hard ceiling is a
+margin circuit-breaker. Ecommerce store editing draws from a separate
+store-ops allowance, not the AI-edit-session pool.
 
 ### 1.2 Profitability Target
 

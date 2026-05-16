@@ -190,15 +190,30 @@ Each workspace contains:
 The subscription is chosen separately from the build and sized by AI edit
 sessions. Change or cancel anytime; first month free.
 
-| Plan | Price | AI edit sessions/mo | Multiple |
-|------|-------|---------------------|----------|
-| Starter | €39/mo | 30 | base |
-| Pro | €99/mo | 90 | 3× |
-| Max | €249/mo | 270 | 9× |
+> **AMENDMENT (pending Dorin sign-off — explicit instruction from Darius,
+> 2026-05-16):** restructured around the autorouter + per-session
+> AI-cost caps + a capability ladder. Runtime source of truth is
+> `apps/flowstarter-editor/server/src/usage/planEntitlements.ts`
+> (`PLAN_ENTITLEMENTS`); this table mirrors it. The €/session cap and
+> the monthly soft/hard thresholds are internal cost guards, not
+> customer-facing prices.
 
-The **Ecommerce** build package uses a **dedicated store plan** instead of the
-3-tier picker: **€149/mo** (270 sessions + storefront ops support — provider
-sync, order flows, inventory). The wizard auto-applies it for Commerce.
+| Plan | Price | AI edit sessions/mo | €/session cap | Model access | Edit scope | Store ops |
+|------|-------|---------------------|---------------|--------------|-----------|-----------|
+| Starter | €39/mo | 30 | €1 | Autorouter, locked to small models (sonnet-4.6 / gpt-5.4-mini) | Constrained | — |
+| Pro | €99/mo | 60 | €2 | Autorouter + manual model picker | Constrained | — |
+| Max | €249/mo | 120 | €3 | Pro + code experimentation (break-risk warning; paid help €20/h) | Code | — |
+| Ecommerce | €149/mo | 60 | €2 | Pro-equivalent | Constrained | Products + collections (separate allowance) |
+
+Internal cost guards (EUR, not shown to customers, tunable in
+`planEntitlements.ts`): a monthly **soft threshold** fires an
+upgrade/buy-extra nudge (Starter ≈ €25); a monthly **hard ceiling** is a
+margin circuit-breaker that soft-blocks and routes the user to a custom
+contract (Max = €190 on the €249 plan).
+
+The **Ecommerce** build package still auto-applies its dedicated store
+plan for Commerce builds; store editing (products + collections) draws
+from a separate store-ops allowance, not the AI-edit-session pool.
 
 ### Booking Deposit (pre-call)
 

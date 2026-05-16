@@ -152,7 +152,7 @@ export const LANDING_COPY = {
       'A one-time build, then a monthly plan you pick separately. Both start with a discovery call.',
     socialProof:
       'We only open a handful of new builds each month, so nothing turns into conveyor-belt work.',
-    note: 'The monthly plan is independent of the build: Starter €39, Pro €99 (3× edit sessions), Max €249 (9×). Stores run on a dedicated €149/mo plan. Relaunches and one-off custom work are quoted on the call.',
+    note: 'The monthly plan is independent of the build: Starter €39 (30 AI edit sessions), Pro €99 (60, 2×), Max €249 (120, 4× + code). Stores run on a dedicated €149/mo Pro-level plan with store editing. Relaunches and one-off custom work are quoted on the call.',
     plans: [
       {
         name: 'STARTER',
@@ -196,7 +196,7 @@ export const LANDING_COPY = {
           'Inventory, shipping and tax handled',
           'Order emails and customer notifications',
           'Stripe checkout, end to end',
-          'Dedicated store plan (270 edit sessions/mo)',
+          'Dedicated Pro-level plan (60 edit sessions/mo) + store editing',
         ],
         cta: 'Get my custom plan',
         status: 'available',

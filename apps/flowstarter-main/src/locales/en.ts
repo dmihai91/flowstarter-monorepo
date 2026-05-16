@@ -1443,7 +1443,7 @@ const en = {
     'We set a realistic timeline together on the discovery call based on scope, then keep you posted the whole way. Relaunches usually move faster since there is less to invent. We move quicker than a traditional agency, but we will not rush the parts that matter.',
   'help.faq2.question': "What's included in the monthly subscription?",
   'help.faq2.answer':
-    'Hosting on EU infrastructure, your domain renewal, SSL, automated backups, ongoing support, and your monthly allowance of AI edit sessions. The allowance scales with the plan: Starter 30, Pro 90 (3×), Max 270 (9×). See the breakdown on the pricing page.',
+    'Hosting on EU infrastructure, your domain renewal, SSL, automated backups, ongoing support, and your monthly allowance of AI edit sessions. The allowance scales with the plan: Starter 30, Pro 60 (2×), Max 120 (4× + code). See the breakdown on the pricing page.',
   'help.faq2.linkLabel': 'See pricing',
   'help.faq3.question': 'Can I edit the site myself after launch?',
   'help.faq3.answer':
@@ -2333,7 +2333,7 @@ const en = {
   'supportBot.replyEcommerce':
     'Full Shopify-style storefronts are open now on the Ecommerce tier: inventory, shipping, tax and Stripe checkout, end to end. The Pro tier still covers simpler digital products via Stripe. Book a call and we will scope what you sell',
   'supportBot.replyIncluded':
-    'The build is one-time (Starter from €799, Pro from €1,199); the monthly plan is separate and sets your AI edit sessions: Starter €39/mo (30 sessions), Pro €99/mo (90, 3×), Max €249/mo (270, 9×). Pro builds add more pages, integrations and Stripe for digital products',
+    'The build is one-time (Starter from €799, Pro from €1,199); the monthly plan is separate and sets your AI edit sessions: Starter €39/mo (30), Pro €99/mo (60, 2×), Max €249/mo (120, 4× + code). Pro builds add more pages, integrations and Stripe for digital products',
   'supportBot.replySupport':
     "We're with you after launch. The smart editor handles most updates. For bigger changes, your monthly subscription includes priority support",
   'supportBot.replyHandoff':
@@ -2437,7 +2437,7 @@ const en = {
   'landing.discovery.subscription.storeOps':
     'storefront support, order + catalog help',
   'landing.discovery.subscription.storeNote':
-    'A storefront needs more upkeep than a content site — provider sync, order flows, inventory. This plan covers that plus the top edit allowance.',
+    'A Pro-level plan (same editing allowance as Pro) plus store editing — products and collections, with provider sync and order flows handled. Built for running a storefront, not just a content site.',
   'landing.discovery.steps.preview.title': 'A rough taste of your site',
   'landing.discovery.steps.preview.subtitle':
     'Generated from your answers, in seconds. The real one is designed by hand on the call',

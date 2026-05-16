@@ -123,9 +123,7 @@ export function canProceed(step: Step, d: DiscoveryData): boolean {
       return d.selectedTier !== '';
     case 6:
       // Commerce uses the dedicated store subscription — nothing to pick.
-      return (
-        usesDedicatedSubscription(d.selectedTier) || d.subscription !== ''
-      );
+      return usesDedicatedSubscription(d.selectedTier) || d.subscription !== '';
     case 7:
       return true;
   }

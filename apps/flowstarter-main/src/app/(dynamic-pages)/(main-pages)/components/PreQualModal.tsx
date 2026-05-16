@@ -6,10 +6,7 @@ import { EXTERNAL_URLS } from '@/lib/constants';
 import { useI18n } from '@/lib/i18n';
 import { CalendlyEmbed } from './CalendlyEmbed';
 import { DiscoveryWizard } from './discovery/DiscoveryWizard';
-import type {
-  DiscoveryData,
-  Tier,
-} from './discovery/discovery.logic';
+import type { DiscoveryData, Tier } from './discovery/discovery.logic';
 
 type Step = 'discovery' | 'calendar' | 'confirmed';
 

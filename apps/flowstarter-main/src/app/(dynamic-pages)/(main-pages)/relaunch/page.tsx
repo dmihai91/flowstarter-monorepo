@@ -113,7 +113,9 @@ export default function RelaunchPage() {
                 className="ls-display ls-display--sm mt-6"
                 style={{ textWrap: 'balance' }}
               >
-                <span className="line">{t('relaunch.pain.headlinePrefix')}</span>
+                <span className="line">
+                  {t('relaunch.pain.headlinePrefix')}
+                </span>
                 <span className="line flourish mt-2">
                   {t('relaunch.pain.headlineFlourish')}
                 </span>
@@ -147,8 +149,12 @@ export default function RelaunchPage() {
                 className="ls-display ls-display--sm mt-6"
                 style={{ textWrap: 'balance' }}
               >
-                <span className="line">{t('relaunch.included.headlinePrefix')}</span>
-                <span className="line flourish mt-2">{t('relaunch.included.headlineFlourish')}</span>
+                <span className="line">
+                  {t('relaunch.included.headlinePrefix')}
+                </span>
+                <span className="line flourish mt-2">
+                  {t('relaunch.included.headlineFlourish')}
+                </span>
               </h2>
               <p className="ls-body ls-body--lead mx-auto mt-6">
                 {t('relaunch.included.sub')}

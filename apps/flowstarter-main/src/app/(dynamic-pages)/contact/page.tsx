@@ -122,7 +122,9 @@ export default function ContactPage() {
                 }}
               >
                 <div>
-                  <span style={cardKickerStyle}>{t('contact.form.kicker')}</span>
+                  <span style={cardKickerStyle}>
+                    {t('contact.form.kicker')}
+                  </span>
                   <h2 style={{ ...cardTitleStyle, marginTop: '0.45rem' }}>
                     {t('contact.form.title')}
                   </h2>
@@ -166,7 +168,9 @@ export default function ContactPage() {
                     >
                       <Check className="h-6 w-6" />
                     </span>
-                    <h3 style={cardTitleStyle}>{t('contact.form.successTitle')}</h3>
+                    <h3 style={cardTitleStyle}>
+                      {t('contact.form.successTitle')}
+                    </h3>
                     <p
                       className="ls-body"
                       style={{
@@ -250,13 +254,27 @@ export default function ContactPage() {
                         }
                         style={inputStyle}
                       >
-                        <option value="">{t('contact.form.subjectDefault')}</option>
-                        <option value="General">{t('contact.form.subjectGeneral')}</option>
-                        <option value="Project">{t('contact.form.subjectProject')}</option>
-                        <option value="Support">{t('contact.form.subjectSupport')}</option>
-                        <option value="Billing">{t('contact.form.subjectBilling')}</option>
-                        <option value="Press">{t('contact.form.subjectPress')}</option>
-                        <option value="Other">{t('contact.form.subjectOther')}</option>
+                        <option value="">
+                          {t('contact.form.subjectDefault')}
+                        </option>
+                        <option value="General">
+                          {t('contact.form.subjectGeneral')}
+                        </option>
+                        <option value="Project">
+                          {t('contact.form.subjectProject')}
+                        </option>
+                        <option value="Support">
+                          {t('contact.form.subjectSupport')}
+                        </option>
+                        <option value="Billing">
+                          {t('contact.form.subjectBilling')}
+                        </option>
+                        <option value="Press">
+                          {t('contact.form.subjectPress')}
+                        </option>
+                        <option value="Other">
+                          {t('contact.form.subjectOther')}
+                        </option>
                       </select>
                     </div>
 
@@ -342,7 +360,9 @@ export default function ContactPage() {
                     gap: '0.9rem',
                   }}
                 >
-                  <span style={cardKickerStyle}>{t('contact.call.kicker')}</span>
+                  <span style={cardKickerStyle}>
+                    {t('contact.call.kicker')}
+                  </span>
                   <h3 style={cardTitleStyle}>{t('contact.call.title')}</h3>
                   <p
                     className="ls-body"
@@ -371,7 +391,9 @@ export default function ContactPage() {
                     gap: '0.95rem',
                   }}
                 >
-                  <span style={cardKickerStyle}>{t('contact.direct.kicker')}</span>
+                  <span style={cardKickerStyle}>
+                    {t('contact.direct.kicker')}
+                  </span>
                   <h3 style={cardTitleStyle}>{t('contact.direct.title')}</h3>
 
                   <a

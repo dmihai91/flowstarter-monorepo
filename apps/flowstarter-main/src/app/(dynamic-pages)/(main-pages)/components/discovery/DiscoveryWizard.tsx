@@ -163,9 +163,7 @@ export function DiscoveryWizard({
         {step === 3 && <GoalsStep data={data} update={update} t={t} />}
         {step === 4 && <CommerceStep data={data} update={update} t={t} />}
         {step === 5 && <RecommendationStep data={data} update={update} t={t} />}
-        {step === 6 && (
-          <SubscriptionStep data={data} update={update} t={t} />
-        )}
+        {step === 6 && <SubscriptionStep data={data} update={update} t={t} />}
         {step === 7 && <PreviewStep data={data} t={t} />}
       </section>
 

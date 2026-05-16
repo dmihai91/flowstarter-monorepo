@@ -73,7 +73,9 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${roboto_mono.variable}${initialTheme !== 'auto' ? ` ${initialResolvedTheme}` : ''}`}
+      className={`${plusJakartaSans.variable} ${roboto_mono.variable}${
+        initialTheme !== 'auto' ? ` ${initialResolvedTheme}` : ''
+      }`}
       data-theme={initialTheme !== 'auto' ? initialResolvedTheme : undefined}
       suppressHydrationWarning
     >

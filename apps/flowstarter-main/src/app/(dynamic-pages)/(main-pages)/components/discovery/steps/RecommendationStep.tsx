@@ -171,7 +171,9 @@ export function RecommendationStep({
                   {bookingDepositFor(data.selectedTier as Tier)}
                   <span className="ml-1 text-[11px] font-medium text-[var(--fs-ink-faint)]">
                     ({BOOKING_DEPOSIT_PERCENT}
-                    {t('landing.discovery.recommendation.deposit.percentSuffix')}
+                    {t(
+                      'landing.discovery.recommendation.deposit.percentSuffix'
+                    )}
                     )
                   </span>
                 </p>

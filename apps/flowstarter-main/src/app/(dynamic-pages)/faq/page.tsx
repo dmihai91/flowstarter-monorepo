@@ -81,9 +81,7 @@ export default function FAQPage() {
               >
                 {t('faq.stillWondering')}
               </p>
-              <p>
-                {t('faq.stillWonderingBody')}
-              </p>
+              <p>{t('faq.stillWonderingBody')}</p>
               <div
                 style={{
                   marginTop: '1.1rem',
@@ -94,11 +92,7 @@ export default function FAQPage() {
                   gap: '0.8rem 1.2rem',
                 }}
               >
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={openBookingModal}
-                >
+                <Button variant="primary" size="sm" onClick={openBookingModal}>
                   {t('faq.bookCall')}
                 </Button>
                 <Link

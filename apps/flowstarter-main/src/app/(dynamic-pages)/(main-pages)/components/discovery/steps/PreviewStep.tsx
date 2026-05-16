@@ -76,9 +76,7 @@ export function PreviewStep({
             className="flex items-center justify-between px-5 py-3.5"
             style={{ borderBottom: `1px solid ${theme.accentSoft}` }}
           >
-            <span className="text-[13px] font-bold tracking-tight">
-              {name}
-            </span>
+            <span className="text-[13px] font-bold tracking-tight">{name}</span>
             <span className="flex items-center gap-3 text-[10px] opacity-70">
               <span>Home</span>
               {sells ? <span>Shop</span> : <span>Services</span>}

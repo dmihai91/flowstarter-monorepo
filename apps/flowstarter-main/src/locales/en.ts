@@ -1104,8 +1104,7 @@ const en = {
   'landing.faq.q10': 'What if I need more than 7 pages?',
   'landing.faq.a10':
     'The Starter plan includes up to 7 pages, which covers most service business websites. If you need more, we discuss options during the discovery call',
-  'landing.faq.q11':
-    'Why is there a deposit to book the discovery call?',
+  'landing.faq.q11': 'Why is there a deposit to book the discovery call?',
   'landing.faq.a11':
     "We ask for 10% of your tier's setup fee (e.g. €79 for Starter, €119 for Pro, €149 for Commerce) to hold your discovery call slot. It keeps the calendar honest and means we come prepared. After the call, before any build work starts, you can have it refunded in full if you decide not to move forward. If you do move forward, it's credited toward your setup fee — you don't pay twice.",
 
@@ -1341,7 +1340,7 @@ const en = {
   'contact.headlinePrefix': "Let's talk.",
   'contact.headlineFlourish': 'Properly. No sales script.',
   'contact.sub':
-    "Send a message, book a call, or write to us directly. You always reach one of the two founders, never a queue.",
+    'Send a message, book a call, or write to us directly. You always reach one of the two founders, never a queue.',
   'contact.form.kicker': 'Send a message',
   'contact.form.title': 'Write to the founders.',
   'contact.form.replyGuarantee':
@@ -1438,30 +1437,41 @@ const en = {
   'help.step3.title': 'You own it',
   'help.step3.description':
     'Your site goes live. Use the AI editor to update content, add pages, and tweak your design anytime',
-  'help.faq1.question': 'How long does it take to launch a website with Flowstarter?',
-  'help.faq1.answer': 'We set a realistic timeline together on the discovery call based on scope, then keep you posted the whole way. Relaunches usually move faster since there is less to invent. We move quicker than a traditional agency, but we will not rush the parts that matter.',
+  'help.faq1.question':
+    'How long does it take to launch a website with Flowstarter?',
+  'help.faq1.answer':
+    'We set a realistic timeline together on the discovery call based on scope, then keep you posted the whole way. Relaunches usually move faster since there is less to invent. We move quicker than a traditional agency, but we will not rush the parts that matter.',
   'help.faq2.question': "What's included in the monthly subscription?",
-  'help.faq2.answer': 'Hosting on EU infrastructure, your domain renewal, SSL, automated backups, ongoing support, and your monthly allowance of AI edit sessions. The allowance scales with the plan: Starter 50, Pro 150 (3×), Max 450 (9×). See the breakdown on the pricing page.',
+  'help.faq2.answer':
+    'Hosting on EU infrastructure, your domain renewal, SSL, automated backups, ongoing support, and your monthly allowance of AI edit sessions. The allowance scales with the plan: Starter 50, Pro 150 (3×), Max 450 (9×). See the breakdown on the pricing page.',
   'help.faq2.linkLabel': 'See pricing',
   'help.faq3.question': 'Can I edit the site myself after launch?',
-  'help.faq3.answer': 'Yes. That is the whole point of the smart editor. Type a plain English instruction like "change the hero headline to X" or "add a testimonial from Sarah" and it handles the rest. No CMS to learn, no developer to wait on.',
+  'help.faq3.answer':
+    'Yes. That is the whole point of the smart editor. Type a plain English instruction like "change the hero headline to X" or "add a testimonial from Sarah" and it handles the rest. No CMS to learn, no developer to wait on.',
   'help.faq4.question': 'Do I own my website? Can I take it elsewhere?',
-  'help.faq4.answer': 'Your domain stays in your name. Your content stays yours. If you ever want to leave, we hand over a static export of the site at no charge. No lock-in, no platform tax.',
+  'help.faq4.answer':
+    'Your domain stays in your name. Your content stays yours. If you ever want to leave, we hand over a static export of the site at no charge. No lock-in, no platform tax.',
   'help.faq4.linkLabel': 'Read the terms',
   'help.faq5.question': 'What happens during the discovery call?',
-  'help.faq5.answer': '30 minutes, no commitment. We talk about your business, your goals, and what is or is not working today. You ask questions. We tell you honestly if we are the right fit, and if so we agree on a concrete plan and timeline.',
+  'help.faq5.answer':
+    '30 minutes, no commitment. We talk about your business, your goals, and what is or is not working today. You ask questions. We tell you honestly if we are the right fit, and if so we agree on a concrete plan and timeline.',
   'help.faq6.question': 'How does pricing work? Are there hidden fees?',
-  'help.faq6.answer': 'A one-time setup fee (50% upfront, 50% on launch) plus a monthly subscription that covers hosting and the smart editor. Your first month is free. No hidden retainer fees, no per-change pricing, no surprise invoices. Founding rates are locked for 12 months.',
+  'help.faq6.answer':
+    'A one-time setup fee (50% upfront, 50% on launch) plus a monthly subscription that covers hosting and the smart editor. Your first month is free. No hidden retainer fees, no per-change pricing, no surprise invoices. Founding rates are locked for 12 months.',
   'help.faq6.linkLabel': 'See pricing',
   'help.faq7.question': 'Do you handle e-commerce or just brochure sites?',
-  'help.faq7.answer': 'Pro plans include Stripe for digital products, paid bookings, courses and memberships. For a full Shopify-style storefront with inventory, shipping and tax, the Ecommerce tier is open now. Bring it up on the discovery call and we will scope it with you.',
+  'help.faq7.answer':
+    'Pro plans include Stripe for digital products, paid bookings, courses and memberships. For a full Shopify-style storefront with inventory, shipping and tax, the Ecommerce tier is open now. Bring it up on the discovery call and we will scope it with you.',
   'help.faq8.question': 'What if I need a change after launch, small or large?',
-  'help.faq8.answer': 'Small changes are instant through the smart editor. Bigger work (new sections, new pages, integrations) gets quoted on a call, usually a small fixed fee rather than a long retainer. Normal upkeep covered by your plan is not charged extra.',
+  'help.faq8.answer':
+    'Small changes are instant through the smart editor. Bigger work (new sections, new pages, integrations) gets quoted on a call, usually a small fixed fee rather than a long retainer. Normal upkeep covered by your plan is not charged extra.',
   'help.faq9.question': 'How do I cancel? Is there a contract?',
-  'help.faq9.answer': 'Monthly subscriptions are month-to-month. Cancel any time with 30 days notice by emailing hello@flowstarter.net. Your site stays online through the end of the paid period. We can quote standalone hosting if you want to keep it up afterwards.',
+  'help.faq9.answer':
+    'Monthly subscriptions are month-to-month. Cancel any time with 30 days notice by emailing hello@flowstarter.net. Your site stays online through the end of the paid period. We can quote standalone hosting if you want to keep it up afterwards.',
   'help.faq9.linkLabel': 'Cancellation terms',
   'help.faq10.question': 'Where is my site hosted? Is my data safe?',
-  'help.faq10.answer': 'Hosted in the European Union on Hetzner, with daily encrypted backups and TLS everywhere. We use a small, vetted set of subprocessors (Clerk, Supabase, Stripe, Cloudflare) and never sell your data. Full details on our privacy and security pages.',
+  'help.faq10.answer':
+    'Hosted in the European Union on Hetzner, with daily encrypted backups and TLS everywhere. We use a small, vetted set of subprocessors (Clerk, Supabase, Stripe, Cloudflare) and never sell your data. Full details on our privacy and security pages.',
   'help.faq10.linkLabel': 'Privacy policy',
 
   // Pricing Page (editorial redesign)
@@ -2277,7 +2287,7 @@ const en = {
   'landing.audience.headlinePrefix': 'Service professionals',
   'landing.audience.headlineFlourish': 'and small product businesses',
   'landing.audience.sub':
-    "Whether you sell your time or you sell things, if the website does not do your work justice yet, we should talk",
+    'Whether you sell your time or you sell things, if the website does not do your work justice yet, we should talk',
 
   // Process — editorial redesign
   'landing.process.eyebrow': 'How it works',
@@ -2469,8 +2479,7 @@ const en = {
   'landing.discovery.placeholders.description':
     'e.g. Boutique dental clinic in Cluj offering cosmetic and pediatric services',
   'landing.discovery.placeholders.industry': 'dental, fitness, restaurant…',
-  'landing.discovery.placeholders.targetAudience':
-    'Who your ideal clients are',
+  'landing.discovery.placeholders.targetAudience': 'Who your ideal clients are',
   'landing.discovery.placeholders.customIntegrations':
     'e.g. Calendly for bookings, Mailchimp for newsletters, FANBox pickup points',
 
@@ -2560,8 +2569,7 @@ const en = {
   // Booking deposit policy (10% of setup fee, refundable after the call)
   'landing.discovery.recommendation.deposit.title':
     'Refundable deposit to book the call',
-  'landing.discovery.recommendation.deposit.percentSuffix':
-    '% of setup',
+  'landing.discovery.recommendation.deposit.percentSuffix': '% of setup',
   'landing.discovery.recommendation.deposit.body':
     "We ask for a small deposit to lock in your discovery call. After the call — before any build work starts — you can have it back in full if you decide not to move forward. If you do, it's credited toward your setup fee.",
 
@@ -2642,8 +2650,7 @@ const en = {
     'Too many good service professionals are invisible online. Not for lack of talent, but because the tools are built for developers, not for them. Templates come out generic. Agencies are slow and expensive. AI generators read hollow the moment a real customer lands on the page.',
   'about.manifesto.p2':
     'Flowstarter is the thing we wanted to exist. A real team builds you a real site, quickly, and a smart editor lets you keep changing it without ever opening code. We took the trade-off the other way: fewer projects, done by hand, made to last.',
-  'about.manifesto.closing':
-    'Your work is good. Your website should say so.',
+  'about.manifesto.closing': 'Your work is good. Your website should say so.',
   'about.principles.eyebrow': 'How we work',
   'about.principles.headlinePrefix': 'Three principles',
   'about.principles.headlineFlourish': "we don't bend on.",

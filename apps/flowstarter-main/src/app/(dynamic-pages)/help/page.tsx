@@ -223,7 +223,9 @@ export default function HelpPage() {
                 style={{ textWrap: 'balance' }}
               >
                 <span className="line">{t('help.faq.headlinePrefix')}</span>
-                <span className="line flourish mt-2">{t('help.faq.headlineFlourish')}</span>
+                <span className="line flourish mt-2">
+                  {t('help.faq.headlineFlourish')}
+                </span>
               </h2>
             </div>
 
@@ -312,9 +314,7 @@ export default function HelpPage() {
               >
                 {t('help.stillStuck')}
               </p>
-              <p>
-                {t('help.stillStuckBody')}
-              </p>
+              <p>{t('help.stillStuckBody')}</p>
               <div
                 style={{
                   marginTop: '1.1rem',
@@ -325,11 +325,7 @@ export default function HelpPage() {
                   gap: '0.8rem 1.2rem',
                 }}
               >
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={openBookingModal}
-                >
+                <Button variant="primary" size="sm" onClick={openBookingModal}>
                   {t('help.bookCall')}
                 </Button>
                 <Link

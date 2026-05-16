@@ -175,8 +175,12 @@ export default function AboutPage() {
                     style={{ borderRadius: '999px', objectFit: 'cover' }}
                   />
                   <div style={founderNameRowStyle}>
-                    <span style={founderNameStyle}>{t('about.darius.name')}</span>
-                    <span style={founderRoleStyle}>{t('about.darius.role')}</span>
+                    <span style={founderNameStyle}>
+                      {t('about.darius.name')}
+                    </span>
+                    <span style={founderRoleStyle}>
+                      {t('about.darius.role')}
+                    </span>
                   </div>
                 </div>
                 <p style={founderBioStyle}>{t('about.darius.bio1')}</p>
@@ -201,8 +205,12 @@ export default function AboutPage() {
                     style={{ borderRadius: '999px', objectFit: 'cover' }}
                   />
                   <div style={founderNameRowStyle}>
-                    <span style={founderNameStyle}>{t('about.dorin.name')}</span>
-                    <span style={founderRoleStyle}>{t('about.dorin.role')}</span>
+                    <span style={founderNameStyle}>
+                      {t('about.dorin.name')}
+                    </span>
+                    <span style={founderRoleStyle}>
+                      {t('about.dorin.role')}
+                    </span>
                   </div>
                 </div>
                 <p style={founderBioStyle}>{t('about.dorin.bio1')}</p>
@@ -248,7 +256,9 @@ export default function AboutPage() {
                 className="ls-display ls-display--sm mt-7"
                 style={{ textWrap: 'balance' }}
               >
-                <span className="line">{t('about.manifesto.headlinePrefix')}</span>
+                <span className="line">
+                  {t('about.manifesto.headlinePrefix')}
+                </span>
                 <span className="line flourish mt-2">
                   {t('about.manifesto.headlineFlourish')}
                 </span>
@@ -304,7 +314,9 @@ export default function AboutPage() {
                 className="ls-display ls-display--sm mt-6"
                 style={{ textWrap: 'balance' }}
               >
-                <span className="line">{t('about.principles.headlinePrefix')}</span>
+                <span className="line">
+                  {t('about.principles.headlinePrefix')}
+                </span>
                 <span className="line flourish mt-2">
                   {t('about.principles.headlineFlourish')}
                 </span>
@@ -343,7 +355,9 @@ export default function AboutPage() {
                 style={{ textWrap: 'balance' }}
               >
                 <span className="line">{t('about.steps.headlinePrefix')}</span>
-                <span className="line flourish mt-2">{t('about.steps.headlineFlourish')}</span>
+                <span className="line flourish mt-2">
+                  {t('about.steps.headlineFlourish')}
+                </span>
               </h2>
             </div>
 

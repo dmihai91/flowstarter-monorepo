@@ -21,13 +21,13 @@ export const SUBSCRIPTIONS: Record<
   SubscriptionTier,
   { priceEur: number; sessions: number }
 > = {
-  starter: { priceEur: 39, sessions: 50 },
-  pro: { priceEur: 99, sessions: 150 },
-  max: { priceEur: 249, sessions: 450 },
+  starter: { priceEur: 39, sessions: 30 },
+  pro: { priceEur: 99, sessions: 90 },
+  max: { priceEur: 249, sessions: 270 },
 };
 
 /** Commerce build package → dedicated storefront subscription (flat). */
-export const ECOMMERCE_SUBSCRIPTION = { priceEur: 149, sessions: 450 };
+export const ECOMMERCE_SUBSCRIPTION = { priceEur: 149, sessions: 270 };
 
 /** True when the build tier uses the dedicated store subscription. */
 export function usesDedicatedSubscription(tier: Tier | ''): boolean {
@@ -59,6 +59,8 @@ export interface DiscoveryData {
 
   // Step 3 — goals
   goal: GoalId | '';
+  /** Optional extra goals beyond the primary (informational, scoped on call) */
+  secondaryGoals: GoalId[];
   brandTone: ToneId | '';
   pageCount: PageCount | '';
   timeline: TimelineId | '';
@@ -85,6 +87,7 @@ export const EMPTY_DISCOVERY: DiscoveryData = {
   description: '',
   targetAudience: '',
   goal: '',
+  secondaryGoals: [],
   brandTone: '',
   pageCount: '',
   timeline: '',

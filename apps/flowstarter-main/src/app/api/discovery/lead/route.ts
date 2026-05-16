@@ -36,6 +36,10 @@ const DiscoveryLeadSchema = z.object({
   description: z.string().min(1).max(5000),
   targetAudience: z.string().max(500).optional().default(''),
   goal: z.enum(['leads', 'sales', 'bookings', 'portfolio', '']).optional(),
+  secondaryGoals: z
+    .array(z.enum(['leads', 'sales', 'bookings', 'portfolio']))
+    .optional()
+    .default([]),
   brandTone: z
     .enum(['professional', 'bold', 'friendly', 'minimal', ''])
     .optional(),
@@ -106,6 +110,7 @@ function buildEmailHtml(lead: DiscoveryLead): string {
     ${row('Description', lead.description)}
     ${row('Target audience', lead.targetAudience)}
     ${row('Primary goal', lead.goal)}
+    ${row('Secondary goals', lead.secondaryGoals?.join(', '))}
     ${row('Brand tone', lead.brandTone)}
     ${row('Page count', lead.pageCount)}
     ${row('Timeline', lead.timeline)}
@@ -165,6 +170,9 @@ export async function POST(request: NextRequest) {
           description: lead.description,
           target_audience: lead.targetAudience || null,
           goal: lead.goal || null,
+          secondary_goals: lead.secondaryGoals?.length
+            ? lead.secondaryGoals
+            : null,
           brand_tone: lead.brandTone || null,
           page_count: lead.pageCount || null,
           timeline: lead.timeline || null,

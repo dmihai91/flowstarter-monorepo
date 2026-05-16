@@ -1443,7 +1443,7 @@ const en = {
     'We set a realistic timeline together on the discovery call based on scope, then keep you posted the whole way. Relaunches usually move faster since there is less to invent. We move quicker than a traditional agency, but we will not rush the parts that matter.',
   'help.faq2.question': "What's included in the monthly subscription?",
   'help.faq2.answer':
-    'Hosting on EU infrastructure, your domain renewal, SSL, automated backups, ongoing support, and your monthly allowance of AI edit sessions. The allowance scales with the plan: Starter 50, Pro 150 (3×), Max 450 (9×). See the breakdown on the pricing page.',
+    'Hosting on EU infrastructure, your domain renewal, SSL, automated backups, ongoing support, and your monthly allowance of AI edit sessions. The allowance scales with the plan: Starter 30, Pro 90 (3×), Max 270 (9×). See the breakdown on the pricing page.',
   'help.faq2.linkLabel': 'See pricing',
   'help.faq3.question': 'Can I edit the site myself after launch?',
   'help.faq3.answer':
@@ -2333,7 +2333,7 @@ const en = {
   'supportBot.replyEcommerce':
     'Full Shopify-style storefronts are open now on the Ecommerce tier: inventory, shipping, tax and Stripe checkout, end to end. The Pro tier still covers simpler digital products via Stripe. Book a call and we will scope what you sell',
   'supportBot.replyIncluded':
-    'Starter (€799 + €49/mo) gets you a 5-7 page custom site, hosting, domain, 50 AI edit sessions/mo, and ongoing support. Pro (€1,199 + €79/mo) adds extended pages, integrations, Stripe for digital products, and 150 sessions/mo (3×). Max goes to 450/mo (9×)',
+    'The build is one-time (Starter from €799, Pro from €1,199); the monthly plan is separate and sets your AI edit sessions: Starter €39/mo (30 sessions), Pro €99/mo (90, 3×), Max €249/mo (270, 9×). Pro builds add more pages, integrations and Stripe for digital products',
   'supportBot.replySupport':
     "We're with you after launch. The smart editor handles most updates. For bigger changes, your monthly subscription includes priority support",
   'supportBot.replyHandoff':
@@ -2471,6 +2471,9 @@ const en = {
   'landing.discovery.fields.industry': 'Industry',
   'landing.discovery.fields.targetAudience': 'Target audience',
   'landing.discovery.fields.goal': 'Primary goal',
+  'landing.discovery.fields.secondaryGoals': 'Secondary goals (optional)',
+  'landing.discovery.hints.secondaryGoals':
+    'Anything else the site should do, beyond the main goal',
   'landing.discovery.fields.brandTone': 'Brand tone',
   'landing.discovery.fields.pageCount': 'Approximate page count',
   'landing.discovery.fields.timeline': 'Timeline',

@@ -18,10 +18,10 @@ customer only ever sees their monthly session allowance.
 
 | Plan | AI edit sessions/mo | Price | Multiple |
 |------|---------------------|-------|----------|
-| Starter | 50 | €39/mo | base |
-| Pro | 150 | €99/mo | 3× |
-| Max | 450 | €249/mo | 9× |
-| Ecommerce (dedicated) | 450 | €149/mo | store ops + edits |
+| Starter | 30 | €39/mo | base |
+| Pro | 90 | €99/mo | 3× |
+| Max | 270 | €249/mo | 9× |
+| Ecommerce (dedicated) | 270 | €149/mo | store ops + edits |
 
 Internal token budgeting still applies per session; the credit math below is
 the cost model that keeps each session profitable, not a customer-facing unit.

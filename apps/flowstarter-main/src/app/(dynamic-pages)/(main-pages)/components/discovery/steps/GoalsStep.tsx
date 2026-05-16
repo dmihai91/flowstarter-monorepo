@@ -109,11 +109,57 @@ export function GoalsStep({
       <Field label={t('landing.discovery.fields.goal')} required>
         <ChoiceGrid
           value={data.goal}
-          onChange={(v) => update('goal', v)}
+          onChange={(v) => {
+            update('goal', v);
+            // A goal can't be both primary and secondary.
+            if (data.secondaryGoals.includes(v)) {
+              update(
+                'secondaryGoals',
+                data.secondaryGoals.filter((g) => g !== v)
+              );
+            }
+          }}
           options={goalOptions}
           columns={2}
         />
       </Field>
+
+      {data.goal && (
+        <Field
+          label={t('landing.discovery.fields.secondaryGoals')}
+          hint={t('landing.discovery.hints.secondaryGoals')}
+        >
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {goalOptions
+              .filter((o) => o.v !== data.goal)
+              .map((o) => {
+                const active = data.secondaryGoals.includes(o.v);
+                return (
+                  <button
+                    key={o.v}
+                    type="button"
+                    onClick={() =>
+                      update(
+                        'secondaryGoals',
+                        active
+                          ? data.secondaryGoals.filter((g) => g !== o.v)
+                          : [...data.secondaryGoals, o.v]
+                      )
+                    }
+                    className={[
+                      'rounded-lg border px-3 py-2.5 text-left text-sm font-semibold transition-all',
+                      active
+                        ? 'border-[var(--purple-primary)] bg-[var(--purple-primary)]/8 text-[var(--fs-ink)] ring-1 ring-[var(--purple-primary)]'
+                        : 'border-[var(--fs-rule)] text-[var(--fs-ink-faint)] hover:border-[var(--purple-primary)]/40',
+                    ].join(' ')}
+                  >
+                    {o.label}
+                  </button>
+                );
+              })}
+          </div>
+        </Field>
+      )}
 
       <Field label={t('landing.discovery.fields.brandTone')}>
         <ChoiceGrid

@@ -196,7 +196,7 @@ export const LANDING_COPY = {
           'Inventory, shipping and tax handled',
           'Order emails and customer notifications',
           'Stripe checkout, end to end',
-          'Dedicated store plan (450 edit sessions/mo)',
+          'Dedicated store plan (270 edit sessions/mo)',
         ],
         cta: 'Get my custom plan',
         status: 'available',

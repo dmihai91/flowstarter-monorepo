@@ -192,12 +192,12 @@ sessions. Change or cancel anytime; first month free.
 
 | Plan | Price | AI edit sessions/mo | Multiple |
 |------|-------|---------------------|----------|
-| Starter | €39/mo | 50 | base |
-| Pro | €99/mo | 150 | 3× |
-| Max | €249/mo | 450 | 9× |
+| Starter | €39/mo | 30 | base |
+| Pro | €99/mo | 90 | 3× |
+| Max | €249/mo | 270 | 9× |
 
 The **Ecommerce** build package uses a **dedicated store plan** instead of the
-3-tier picker: **€149/mo** (450 sessions + storefront ops support — provider
+3-tier picker: **€149/mo** (270 sessions + storefront ops support — provider
 sync, order flows, inventory). The wizard auto-applies it for Commerce.
 
 ### Booking Deposit (pre-call)

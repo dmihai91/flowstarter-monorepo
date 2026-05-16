@@ -70,7 +70,7 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
             headerLoaded ? 'opacity-100' : 'opacity-0'
           } ${
             scrolled || mobileMenuOpen
-              ? 'border-b border-[var(--fs-rule)]/60 bg-white/90 dark:bg-[var(--fs-bg-base)]/85 backdrop-blur-2xl backdrop-saturate-180 shadow-[0_2px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_2px_16px_rgba(0,0,0,0.4),0_1px_0_rgba(255,255,255,0.06)_inset]'
+              ? 'border-b border-[var(--fs-glass-edge)] bg-white/65 dark:bg-[var(--fs-bg-base)]/55 backdrop-blur-2xl backdrop-saturate-[180%] shadow-[0_2px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_2px_16px_rgba(0,0,0,0.4),0_1px_0_rgba(255,255,255,0.06)_inset]'
               : 'border-b border-transparent bg-transparent backdrop-blur-0 shadow-none'
           }`}
         >
@@ -115,7 +115,10 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
               </nav>
 
               <div className="flex items-center gap-2 sm:gap-4">
-                <div className="hidden sm:block">
+                {/* Only show alongside the full desktop nav. Below lg the
+                    mobile drawer has its own ThemeToggle, so showing this one
+                    too would mean two switchers on tablets. */}
+                <div className="hidden lg:block">
                   <ThemeToggle />
                 </div>
                 <Button
@@ -220,12 +223,12 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="mt-3 flex h-12 w-full items-center justify-center rounded-lg border border-[var(--fs-rule-strong)] text-base font-medium text-[var(--fs-ink)] hover:bg-[var(--fs-glass-bg)] transition-colors"
+                  className="mt-6 flex h-11 w-full items-center justify-center rounded-lg border border-[var(--fs-rule-strong)] text-sm font-medium text-[var(--fs-ink)] hover:bg-[var(--fs-glass-bg)] transition-colors"
                 >
                   {tLanding('nav.signIn')}
                 </Link>
                 <Button
-                  className="ls-cta-hero mt-2 h-14 w-full px-8 text-[1.02rem]"
+                  className="mt-4 h-11 w-full rounded-lg px-6 text-sm"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     openBookingModal();

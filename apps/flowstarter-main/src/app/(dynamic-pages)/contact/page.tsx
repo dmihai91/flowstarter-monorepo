@@ -10,6 +10,7 @@ import {
   Twitter,
   Linkedin,
 } from 'lucide-react';
+import { Button } from '@flowstarter/flow-design-system';
 import { MarketingShell, PageHero } from '@/components/marketing';
 import { useI18n } from '@/lib/i18n';
 import { useBookingModal } from '@/app/(dynamic-pages)/(main-pages)/components/booking-modal-store';
@@ -302,24 +303,23 @@ export default function ContactPage() {
                       </div>
                     )}
 
-                    <button
+                    <Button
                       type="submit"
+                      variant="primary"
+                      loading={status === 'loading'}
                       disabled={status === 'loading'}
-                      className="ls-cta"
+                      iconPosition="right"
+                      icon={
+                        status === 'loading' ? undefined : (
+                          <Send className="h-4 w-4" />
+                        )
+                      }
                       style={{ alignSelf: 'flex-start' }}
                     >
-                      {status === 'loading' ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          {t('contact.form.sending')}
-                        </>
-                      ) : (
-                        <>
-                          {t('contact.form.send')}
-                          <Send className="ml-1 h-4 w-4" />
-                        </>
-                      )}
-                    </button>
+                      {status === 'loading'
+                        ? t('contact.form.sending')
+                        : t('contact.form.send')}
+                    </Button>
                   </form>
                 )}
               </div>
@@ -350,15 +350,15 @@ export default function ContactPage() {
                   >
                     {t('contact.call.body')}
                   </p>
-                  <button
-                    type="button"
+                  <Button
+                    variant="primary"
+                    size="sm"
                     onClick={openBookingModal}
-                    className="ls-cta ls-cta--sm"
+                    icon={<Calendar className="h-3.5 w-3.5" />}
                     style={{ alignSelf: 'flex-start' }}
                   >
-                    <Calendar className="h-3.5 w-3.5" />
                     {t('contact.call.cta')}
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Email + socials */}

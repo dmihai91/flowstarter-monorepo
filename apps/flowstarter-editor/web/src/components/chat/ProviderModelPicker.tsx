@@ -38,12 +38,15 @@ const PROVIDER_ICON_BY_PROVIDER: Record<ProviderPickerKind, Icon> = {
 
 export const AVAILABLE_PROVIDER_OPTIONS = PROVIDER_OPTIONS.filter(isAvailableProviderOption);
 /**
- * Flowstarter editor composer hides OpenAI/Codex in the model menu unless the
- * active thread is locked to Codex (existing Codex session).
+ * Historically the composer hid Codex from the picker unless the thread was
+ * locked to Codex. Codex is now a first-class option alongside Claude — the
+ * autorouter picks between them when the user opts into "Auto" mode, and
+ * the manual picker exposes both for explicit selection.
+ *
+ * This export name is preserved for now to avoid breaking imports; it points
+ * at the same option list as {@link AVAILABLE_PROVIDER_OPTIONS}.
  */
-export const EDITOR_ANTHROPIC_ONLY_PROVIDER_OPTIONS = AVAILABLE_PROVIDER_OPTIONS.filter(
-  (option) => option.value === "claudeAgent",
-);
+export const EDITOR_ANTHROPIC_ONLY_PROVIDER_OPTIONS = AVAILABLE_PROVIDER_OPTIONS;
 const UNAVAILABLE_PROVIDER_OPTIONS = PROVIDER_OPTIONS.filter((option) => !option.available);
 const COMING_SOON_PROVIDER_OPTIONS = [
   { id: "opencode", label: "OpenCode", icon: OpenCodeIcon },

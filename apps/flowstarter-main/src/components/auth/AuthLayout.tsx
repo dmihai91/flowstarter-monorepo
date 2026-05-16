@@ -45,63 +45,33 @@ export default function AuthLayout({
       <SiteHeader mode="auth" />
 
       {/* Content — fills remaining space, scrolls if needed */}
-      <main className="relative z-10 flex-1 flex flex-col items-center px-4 pt-8 pb-16 sm:pt-10 sm:pb-20">
-        <div className="w-full max-w-lg my-auto">
+      <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-8 sm:py-10">
+        <div className="w-full max-w-lg mt-4 sm:mt-6 mb-auto">
           {title && (
             <div className="text-center mb-6">
-              {teamLandingVisual ? (
-                <>
-                  <h1 className="ls-display ls-display--sm mb-3">
-                    {(() => {
-                      const parts = title.trim().split(/\s+/);
-                      const first = parts[0] ?? title;
-                      const rest = parts.slice(1).join(' ');
-                      return (
-                        <span className="line block">
-                          <span className="flourish">{first}</span>
-                          {rest ? (
-                            <span className="text-[var(--ls-ink)]">
-                              {' '}
-                              {rest}
-                            </span>
-                          ) : null}
-                        </span>
-                      );
-                    })()}
-                  </h1>
-                  {subtitle ? (
-                    <p className="ls-body text-[0.92rem] max-w-[40ch] mx-auto">
-                      {subtitle}
-                    </p>
-                  ) : null}
-                </>
-              ) : (
-                <>
-                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
-                    <span
-                      style={{
-                        backgroundImage:
-                          'linear-gradient(110deg, var(--fs-accent-hot), var(--fs-accent))',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}
-                    >
-                      {title.split(' ')[0]}
-                    </span>
-                    {title.split(' ').length > 1 && (
-                      <span className="text-[var(--fs-ink)]">
-                        {' '}
-                        {title.split(' ').slice(1).join(' ')}
-                      </span>
-                    )}
-                  </h1>
-                  {subtitle && (
-                    <p className="text-[var(--fs-ink-faint)] text-sm">
-                      {subtitle}
-                    </p>
-                  )}
-                </>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
+                <span
+                  style={{
+                    backgroundImage:
+                      'linear-gradient(110deg, var(--fs-accent-hot), var(--fs-accent))',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  {title.split(' ')[0]}
+                </span>
+                {title.split(' ').length > 1 && (
+                  <span className="text-[var(--fs-ink)]">
+                    {' '}
+                    {title.split(' ').slice(1).join(' ')}
+                  </span>
+                )}
+              </h1>
+              {subtitle && (
+                <p className="text-[var(--fs-ink-faint)] text-sm max-w-[40ch] mx-auto">
+                  {subtitle}
+                </p>
               )}
             </div>
           )}

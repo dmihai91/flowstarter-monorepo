@@ -73,22 +73,29 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${roboto_mono.variable} ${initialResolvedTheme}`}
-      data-theme={initialResolvedTheme}
+      className={`${plusJakartaSans.variable} ${roboto_mono.variable}${initialTheme !== 'auto' ? ` ${initialResolvedTheme}` : ''}`}
+      data-theme={initialTheme !== 'auto' ? initialResolvedTheme : undefined}
       suppressHydrationWarning
     >
       <head>
-        {/* Critical anti-flicker: cover both explicit class + system preference */}
+        {/* Critical anti-flicker styles */}
         <style
           dangerouslySetInnerHTML={{
             __html: [
-              // Explicit dark class (set by server or inline script)
+              // When no theme class is set (first visit, auto), hide body
+              // until the inline script below adds .dark or .light.
+              // The script runs synchronously before body parses, so
+              // the user never sees the hidden state.
+              'html:not(.dark):not(.light) body{visibility:hidden}',
+              // Dark backgrounds — both explicit class and media query fallback
               'html.dark,html.dark body{background-color:#0a0a0f!important}',
-              // System dark preference fallback (before JS runs on cached pages)
               '@media(prefers-color-scheme:dark){html:not(.light),html:not(.light) body{background-color:#0a0a0f!important}}',
             ].join(''),
           }}
         />
+        <noscript>
+          <style>{`html:not(.dark):not(.light) body{visibility:visible}`}</style>
+        </noscript>
         <script
           nonce={nonce}
           suppressHydrationWarning

@@ -10,6 +10,15 @@ interface CalendlyEmbedProps {
   utmContent?: string;
   utmCampaign?: string;
   utmTerm?: string;
+  /** Prefill the visitor's name on the Calendly form. */
+  prefillName?: string;
+  /** Prefill the visitor's email on the Calendly form. */
+  prefillEmail?: string;
+  /**
+   * Prefill custom Calendly question answers, in order (a1, a2, …).
+   * The Calendly event must have matching custom questions configured.
+   */
+  prefillAnswers?: ReadonlyArray<string | undefined>;
   onEventScheduled?: () => void;
   className?: string;
 }
@@ -53,6 +62,9 @@ export function CalendlyEmbed({
   utmContent,
   utmCampaign,
   utmTerm,
+  prefillName,
+  prefillEmail,
+  prefillAnswers,
   onEventScheduled,
   className,
 }: CalendlyEmbedProps) {
@@ -80,8 +92,29 @@ export function CalendlyEmbed({
     if (utmContent) u.searchParams.set('utm_content', utmContent);
     if (utmCampaign) u.searchParams.set('utm_campaign', utmCampaign);
     if (utmTerm) u.searchParams.set('utm_term', utmTerm);
+    // Prefill — saves the visitor from re-typing what they already gave us
+    if (prefillName) u.searchParams.set('name', prefillName);
+    if (prefillEmail) u.searchParams.set('email', prefillEmail);
+    if (prefillAnswers) {
+      prefillAnswers.forEach((answer, idx) => {
+        if (answer && answer.trim()) {
+          u.searchParams.set(`a${idx + 1}`, answer);
+        }
+      });
+    }
     return u.toString();
-  }, [url, colors, utmSource, utmMedium, utmContent, utmCampaign, utmTerm]);
+  }, [
+    url,
+    colors,
+    utmSource,
+    utmMedium,
+    utmContent,
+    utmCampaign,
+    utmTerm,
+    prefillName,
+    prefillEmail,
+    prefillAnswers,
+  ]);
 
   // Show spinner again when theme changes (new iframe src = reload)
   useEffect(() => {

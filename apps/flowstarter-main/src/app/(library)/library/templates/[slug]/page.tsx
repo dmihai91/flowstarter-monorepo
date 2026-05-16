@@ -198,7 +198,7 @@ export default async function TemplateDetailPage({ params }: PageProps) {
                 </span>
               )}
               <BookingTrigger className="action">
-                Want a site like this? Book a free discovery call
+                Want a site like this? Get my custom plan
               </BookingTrigger>
             </div>
           </div>

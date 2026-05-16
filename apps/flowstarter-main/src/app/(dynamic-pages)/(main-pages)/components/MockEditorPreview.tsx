@@ -207,6 +207,12 @@ export function MockEditorPreview({
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                    // Suppress browser-extension attribute injection (Grammarly etc.)
+                    // that causes a hydration warning on this client-only mock input.
+                    suppressHydrationWarning
+                    data-gramm="false"
+                    data-gramm_editor="false"
+                    data-enable-grammarly="false"
                   />
                   <button
                     onClick={() => handleSend()}

@@ -622,10 +622,10 @@ export const ChatComposer = memo(
     );
     const selectedModelForPicker = selectedModel;
 
-    const showCodexInPicker = lockedProvider === "codex";
-    const pickerVisibleProviderOptions = showCodexInPicker
-      ? AVAILABLE_PROVIDER_OPTIONS
-      : EDITOR_ANTHROPIC_ONLY_PROVIDER_OPTIONS;
+    // Codex is now a first-class provider in the picker; the autorouter
+    // picks between Codex and Claude in "Auto" mode, and the manual picker
+    // surfaces both for explicit selection.
+    const pickerVisibleProviderOptions = AVAILABLE_PROVIDER_OPTIONS;
 
     const modelOptionsByProvider = useMemo<
       Record<ProviderKind, ReadonlyArray<ServerProvider["models"][number]>>
@@ -635,10 +635,10 @@ export const ChatComposer = memo(
         providerStatuses.find((provider) => provider.provider === "claudeAgent")?.models ?? [];
       const claudeFiltered = filterClaudeEditorCatalogModels(claudeRaw);
       return {
-        codex: showCodexInPicker ? codexRaw : [],
+        codex: codexRaw,
         claudeAgent: [AUTO_CLAUDE_PICKER_MODEL, ...claudeFiltered],
       };
-    }, [providerStatuses, showCodexInPicker]);
+    }, [providerStatuses]);
 
     const selectedModelForPickerWithCustomFallback = useMemo(() => {
       const currentOptions = modelOptionsByProvider[selectedProvider];

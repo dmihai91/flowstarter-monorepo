@@ -47,187 +47,187 @@ export const LANDING_COPY = {
     headlineHighlight: "Let's aim them your way.",
     subheadlineBold: '',
     subheadline:
-      'New build or a tired site? One call—we shape the site around your business. You steer it with the smart editor: no code pile-up, no endless email chains.',
-    primaryCta: 'Book a free discovery call',
+      'New build or a tired site that needs rescuing? We get on one call, learn your business, and shape the site around it. After that you run it yourself with the smart editor. No code piling up, no email chains that go nowhere.',
+    primaryCta: 'Get my custom plan',
     secondaryCta: 'See plans and pricing',
     trustLine:
-      'Coaches, consultants, therapists, freelancers, founders—fresh launch or overdue relaunch.',
+      'For coaches, consultants, therapists, freelancers and founders, whether you are launching for the first time or finally fixing the site you have.',
     guarantee:
-      'First month free. Not happy in 30 days? We refund 50% of your setup fee. No questions asked.',
+      'First month is free. If you are not happy within 30 days, we refund half your setup fee and you keep the work.',
   },
   process: {
-    title: 'From conversation to launch, hand-crafted.',
+    title: 'How a project actually goes.',
     steps: [
       {
         number: '01',
-        title: 'Discovery call (30 minutes)',
+        title: 'Custom plan and discovery call',
         description:
-          'We unpack your offer, positioning, and must-haves. Ask anything—we will tell you plainly if someone else should do the job.',
+          'Answer a few quick questions and you get a tailored plan. Then we talk for 30 minutes about your offer, your positioning and the things you cannot live without. If we are not the right people for the job, we say so on that call.',
       },
       {
         number: '02',
         title: 'Design and build',
         description:
-          'We design and build with your assets and tone. Drafts arrive on a predictable rhythm—no blackout periods.',
+          'We design and build using your assets and your tone of voice. Drafts land on a schedule you can count on. No weeks of silence wondering what is happening.',
       },
       {
         number: '03',
         title: 'Review and launch',
         description:
-          'Polish passes from your feedback, then DNS, SSL, inbox—the boring bits handled before anyone visits.',
+          'You give feedback, we do the polish passes, then we handle the unglamorous parts: DNS, SSL, email. All of it sorted before anyone visits.',
       },
       {
         number: '04',
         title: 'Maintain and grow',
         description:
-          'Iterate in the editor between calls—we stay reachable for heavier lifts when you hit a ceiling.',
+          'Between calls you change things yourself in the editor. When you hit something bigger than the editor handles, we are still here.',
       },
     ],
   },
   problem: {
-    title: 'Forget about frustrating choices like these.',
+    title: 'You know how this usually goes.',
     pains: [
       {
         icon: 'puzzle',
         title: 'DIY builders',
-        body: 'Friendly to spin up—hard to make look like a serious practice once someone compares you to competitors.',
+        body: 'Quick to stand up, but it stops looking like a serious practice the moment a prospect compares you to a competitor.',
       },
       {
         icon: 'wallet',
         title: 'Traditional agencies',
-        body: 'They charge €5,000 or more and take months. Every small change after launch costs you days of waiting.',
+        body: 'They want €5,000 or more and take months. Then every small change after launch costs you days of waiting on someone else.',
       },
       {
         icon: 'sparkles',
         title: 'AI generators',
-        body: "Fast drafts, shallow structure—thin pages that read like everybody else's MVP.",
+        body: 'Drafts in seconds, but the structure is thin. The pages read like everyone else who used the same tool.',
       },
     ],
-    closing: 'Flowstarter skips that triangle.',
+    closing: 'Flowstarter is the option that is none of those.',
   },
   included: {
-    title: 'Everything wired up before you touch a thing.',
+    title: 'Set up before you touch a thing.',
     cards: [
       {
         icon: 'globe',
-        title: 'A premium site, designed and built for you',
+        title: 'A site designed and built for you',
         description:
-          'Design and build tailored to your offer—live on your domain before you wrestle DNS alone.',
+          'Designed around your offer and live on your domain before you would have finished fighting with DNS on your own.',
       },
       {
         icon: 'calendar',
-        title: 'Cal.com booking, integrated',
+        title: 'Cal.com booking, already connected',
         description:
-          'Clients book without the email tennis match—Cal.com already wired to your rules.',
+          'Clients pick a time without the back-and-forth email. Cal.com is wired to your availability rules from day one.',
       },
       {
         icon: 'briefcase',
-        title: 'Newsletter service ready to send',
+        title: 'Newsletter ready to send',
         description:
-          'List + first send ready on day one—no extra SaaS stack to babysit.',
+          'Your list and your first send are ready on launch day. No extra SaaS subscription for you to manage.',
       },
       {
         icon: 'sparkles',
-        title: 'Leads collector wired up from the start',
+        title: 'Lead capture from the start',
         description:
-          'Inbound hits a structured inbox so opportunities do not dissolve in Slack threads.',
+          'Enquiries land in a structured inbox instead of getting lost in a Slack thread you forgot to check.',
       },
       {
         icon: 'layout',
-        title: 'Your editor, included with the subscription',
+        title: 'Your editor, part of the subscription',
         description:
-          'Revise copy or sections when you need to—editor access, maintenance, and support stay bundled. Cancel anytime; the site keeps running on your infrastructure.',
+          'Change copy or sections whenever you want. Editor access, maintenance and support are all in the subscription. Cancel anytime and the site keeps running on your own infrastructure.',
       },
       {
         icon: 'layers',
         title: 'Domain and professional email',
         description:
-          'Domain, SSL, inbox at your hostname—routing handled before visitors arrive.',
+          'Domain, SSL and an inbox at your own hostname. The routing is handled before your first visitor shows up.',
       },
     ],
   },
   pricing: {
-    title: 'Simple, transparent pricing.',
-    subtitle: 'Two ways to work with us. Both start with a discovery call.',
+    title: 'Pricing, no surprises.',
+    subtitle:
+      'A one-time build, then a monthly plan you pick separately. Both start with a discovery call.',
     socialProof:
-      'Only a handful of new builds open each month so nothing turns into conveyor-belt shipping.',
-    note: 'Need something custom? We also handle site relaunches, e-commerce storefronts, and bespoke projects. Just mention your needs in the discovery call.',
+      'We only open a handful of new builds each month, so nothing turns into conveyor-belt work.',
+    note: 'The monthly plan is independent of the build: Starter €39, Pro €99 (3× edit sessions), Max €249 (9×). Stores run on a dedicated €149/mo plan. Relaunches and one-off custom work are quoted on the call.',
     plans: [
       {
         name: 'STARTER',
-        label: 'Launch your professional presence',
-        setupPrice: 'Starting from €799',
-        monthlyPrice: '+ €49 / month',
+        label: 'Get your professional presence online',
+        setupPrice: 'One-time build from €799',
+        monthlyPrice: '+ monthly plan from €39',
         features: [
           'Custom-built website (5 to 7 pages)',
           'Hosting and domain included',
-          'smart editor (50 edits per month)',
+          'Smart editor — sessions set by your monthly plan',
           'Discovery call and ongoing support',
         ],
-        cta: 'Book a free discovery call',
+        cta: 'Get my custom plan',
         status: 'available',
       },
       {
         name: 'PRO',
-        label: 'For growing premium businesses',
-        setupPrice: 'Starting from €1,499',
-        monthlyPrice: '+ €99 / month',
+        label: 'For service businesses that are growing',
+        setupPrice: 'One-time build from €1,199',
+        monthlyPrice: '+ monthly plan from €39',
         features: [
           'Everything in Starter',
-          'Extended pages and integrations',
+          'More pages and integrations',
           'Stripe integration for digital products',
-          'smart editor (150 edits per month)',
+          'Pair with the Pro or Max plan for more edit sessions',
           'Priority support',
         ],
-        cta: 'Book a free discovery call',
+        cta: 'Get my custom plan',
         badge: 'Most Popular',
         recommended: true,
         status: 'available',
       },
       {
         name: 'ECOMMERCE',
-        label: 'A full storefront, when you are ready to sell',
-        setupPrice: 'Coming soon',
-        monthlyPrice: '',
+        label: 'A full storefront, ready to sell',
+        setupPrice: 'One-time build from €1,499',
+        monthlyPrice: '+ €149 / month store plan',
         features: [
-          'Full Shopify-style storefront, hand-crafted',
+          'Full Shopify-style storefront, built for you',
           'Physical and digital products',
-          'Inventory, shipping, and tax sorted',
+          'Inventory, shipping and tax handled',
           'Order emails and customer notifications',
           'Stripe checkout, end to end',
-          'Everything in Pro included',
+          'Dedicated store plan (450 edit sessions/mo)',
         ],
-        cta: 'Notify me when ready',
-        badge: 'Coming Soon',
-        status: 'coming-soon',
+        cta: 'Get my custom plan',
+        status: 'available',
       },
     ],
     guarantee:
-      'We collect 50% upfront to begin the build. The remaining 50% is due only when you sign off on the result. After launch, your monthly subscription covers the smart editor, hosting, domain, and ongoing support.',
+      'You pay half the one-time build upfront so we can start; the rest only once you sign off. The monthly plan is separate, starts after your free first month, and covers the smart editor, hosting, domain and support. Change or cancel the plan anytime.',
   },
   differentiation: {
-    title: 'What makes Flowstarter different.',
+    title: 'Why people pick us.',
     cards: [
       {
-        label: 'Hand-crafted, not template-spammed',
+        label: 'Built for you, not pulled off a shelf',
         description:
-          'No marketplace theme swaps—layouts are authored for one business at a time.',
+          'No swapping marketplace themes. The layout is written for one business: yours.',
       },
       {
-        label: 'smart editor for life',
+        label: 'The editor stays yours',
         description:
-          'Describe tweaks in plain English—copy, imagery, testimonials—without opening a codebase or begging a freelancer.',
+          'Change copy, images or testimonials by describing what you want in plain English. No codebase to open, no freelancer to chase.',
       },
       {
-        label: 'Limited spots, by design',
+        label: 'A few clients at a time, on purpose',
         description:
-          'Small monthly intake keeps every roadmap human-sized—fewer spreadsheets, more listening.',
+          'Taking a small number of projects each month keeps the work human. We spend the time listening instead of managing a queue.',
         highlighted: true,
       },
     ],
   },
   audience: {
-    title: 'Built for service professionals who value craft.',
+    title: 'For service professionals and small product businesses.',
     items: [
       { icon: 'users', label: 'Coaches' },
       { icon: 'mic', label: 'Consultants' },
@@ -235,6 +235,7 @@ export const LANDING_COPY = {
       { icon: 'sparkles', label: 'Photographers' },
       { icon: 'layout', label: 'Creatives' },
       { icon: 'briefcase', label: 'Independent professionals' },
+      { icon: 'store', label: 'Small product sellers' },
     ],
   },
   proof: {
@@ -245,7 +246,7 @@ export const LANDING_COPY = {
         title: 'UX Journey',
         meta: 'Coaching · Live · 2026',
         kicker:
-          'Senior UX coaching practice—shipping copy, calendar, credibility on the same domain.',
+          'A senior UX coaching practice. Copy, calendar and credibility, all on one domain.',
         thumbnail: '/showcase/ux-journey.png',
         thumbnailDark: null,
         placeholder: 'ux-journey.com',
@@ -258,7 +259,7 @@ export const LANDING_COPY = {
         title: 'Lebădușul',
         meta: 'Retail · Live · 2026',
         kicker:
-          'Danube-side tackle shop—catalog, checkout, and logistics language tuned for serious anglers.',
+          'A Danube-side tackle shop. Catalog, checkout and logistics copy written for serious anglers.',
         thumbnail: '/showcase/lebadusul.png',
         thumbnailDark: null,
         placeholder: 'lebadusularticoledepescuit.ro',
@@ -271,7 +272,7 @@ export const LANDING_COPY = {
         title: 'Portfolio Template',
         meta: 'Portfolio · Starter · Live',
         kicker:
-          "Dorin's portfolio starter—grab it from the library when you need a credible launch fast.",
+          "Dorin's portfolio starter. Pull it from the library when you need to launch something credible fast.",
         thumbnail: '/showcase/dorin-portfolio.png',
         thumbnailDark: null,
         href: '/library/templates/dorin-portfolio',
@@ -280,48 +281,74 @@ export const LANDING_COPY = {
       },
     ],
   },
-  faq: {
-    title: 'Frequently asked questions.',
+  testimonials: {
+    title: 'In their words.',
     items: [
+      {
+        slug: 'lebadusul',
+        quote:
+          "I sell fishing tackle, not websites. They built me a proper online shop, catalog, checkout and all, and I can change a price or add a product myself without calling anyone. Orders come in while I'm on the water.",
+        name: 'Daniel Draga',
+        role: 'Owner, Lebădușul',
+        href: 'https://lebadusularticoledepescuit.ro/',
+      },
+      {
+        slug: 'ux-journey',
+        quote:
+          "My old site didn't say what I actually do. Now the copy, the booking calendar and the credibility all sit on one domain, and it looks like the senior practice it is. People book before the first call.",
+        name: 'Dorin',
+        role: 'UX Journey',
+        href: 'https://ux-journey.com/',
+      },
+    ],
+  },
+  faq: {
+    title: 'Questions we get asked a lot.',
+    items: [
+      {
+        question: 'Why is there a deposit to book the discovery call?',
+        answer:
+          "It is 10% of your tier's setup fee (around €79 for Starter, €119 for Pro, €149 for Commerce) and it holds your slot. It keeps the calendar honest and means we show up prepared. If you decide not to go ahead after the call, you get it back in full, before any build work starts. If you do go ahead, it counts toward your setup fee, so you are not paying twice.",
+      },
       {
         question: 'How long does it take to build my site?',
         answer:
-          'We agree on a realistic timeline together during the discovery call, then keep you in the loop the whole way. We aim to ship faster than traditional agencies, without rushing the craft.',
+          'We set a realistic timeline together on the discovery call and keep you posted the whole way. We move faster than a traditional agency, but we are not going to rush the parts that matter.',
       },
       {
         question: 'Do I own my website?',
         answer:
-          'Yes, completely. Your site is deployed on your own domain, and you can take the code with you anytime. No lock-in, no platform tax.',
+          'Completely. It runs on your own domain and you can take the code with you whenever you want. No lock-in, no platform cut.',
       },
       {
         question: 'What if I want to make changes after launch?',
         answer:
-          'Use the smart editor. Just describe what you want in plain English (“change the hero headline to X” or “add a testimonial from Sarah”) and the editor handles it. No system to learn.',
+          'You describe the change in plain English ("change the hero headline to X", "add a testimonial from Sarah") and the smart editor does it. There is no system to learn.',
       },
       {
         question: "What's included in the monthly fee?",
         answer:
-          'Hosting, domain renewal, ongoing support, and your monthly smart editor allowance. 50 edits for Starter, 150 for Pro. Most clients stay well within their plan, and add-on packs are available if you need more.',
+          'Hosting, domain renewal, support and your monthly editor allowance: 50 edits on Starter, 150 on Pro. Most people stay well inside that, and there are add-on packs if you need more.',
       },
       {
         question: 'What if I already have a website?',
         answer:
-          "We handle relaunches too. We'll analyze your current site, migrate the content that matters, and rebuild it the right way. Mention your existing site in the discovery call for a custom quote.",
+          'We do relaunches too. We look at what you have, keep the content that is worth keeping, and rebuild the rest properly. Mention your current site on the discovery call and we will quote it.',
       },
       {
         question: 'Can you handle e-commerce or selling courses?',
         answer:
-          "Yes. Pro includes Stripe integration for digital products, courses, bookings, and memberships. Full Shopify-style storefronts are coming soon. Let us know in the discovery call if that's what you need.",
+          'Pro includes Stripe for digital products, courses, bookings and memberships. Need a full Shopify-style storefront with inventory, shipping and tax? That is the Ecommerce tier, and it is open now. Tell us what you sell on the call and we will scope it.',
       },
       {
         question: 'Why limit how many clients you take on?',
         answer:
-          'Because every site is hand-crafted by us, Darius and Dorin, with AI as our assistant. We take a limited number of new clients each month so every project gets the attention it deserves. We choose craft over volume, every time.',
+          'Because it is the two of us, Darius and Dorin, building these by hand with AI helping. A small number of projects a month is the only way each one gets real attention. We would rather do fewer well.',
       },
       {
         question: 'What if I need more AI edits than my plan includes?',
         answer:
-          "We offer edit add-on packs starting at €15 a month for an extra 25 edits, up to €45 a month for 100 additional edits. We'll discuss the right setup with you in the discovery call or whenever your needs grow.",
+          'There are add-on packs: €15 a month for another 25 edits, up to €45 a month for 100 more. We will sort the right setup with you on the call, or later if your needs grow.',
       },
     ],
   },

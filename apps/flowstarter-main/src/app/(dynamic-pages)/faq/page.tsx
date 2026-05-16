@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
+import { Button } from '@flowstarter/flow-design-system';
 import { MarketingShell, PageHero } from '@/components/marketing';
 import { useFAQAccordion } from '@/app/(dynamic-pages)/(main-pages)/components/hooks/useFAQAccordion';
 import { useBookingModal } from '@/app/(dynamic-pages)/(main-pages)/components/booking-modal-store';
@@ -93,13 +94,13 @@ export default function FAQPage() {
                   gap: '0.8rem 1.2rem',
                 }}
               >
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={openBookingModal}
-                  className="ls-cta ls-cta--sm"
                 >
                   {t('faq.bookCall')}
-                </button>
+                </Button>
                 <Link
                   href="/contact"
                   className="ls-link"

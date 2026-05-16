@@ -6,10 +6,9 @@ import type {
   ServerProviderAuth,
   ServerProviderState,
 } from "@flowstarter/editor-contracts";
-import { Cache, Duration, Effect, Equal, Layer, Option, Result, Schema, Stream } from "effect";
+import { Duration, Effect, Equal, Layer, Option, Result, Schema, Stream } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
 import { decodeJsonResult } from "@flowstarter/editor-shared/schemaJson";
-import { query as claudeQuery } from "@anthropic-ai/claude-agent-sdk";
 
 import {
   buildServerProvider,
@@ -383,52 +382,20 @@ export function adjustModelsForSubscription(
   });
 }
 
-// ── SDK capability probe ────────────────────────────────────────────
+// ── SDK capability probe (removed) ──────────────────────────────────
+//
+// Previously this module spawned `claudeQuery({ prompt: ".", maxTurns: 0 })`
+// at boot and on a 5-minute cadence to read `initializationResult()` for the
+// user's subscription type. The `claude-agent-sdk` is an *agentic* SDK — the
+// CLI subprocess starts sampling the prompt the moment it spawns, and the
+// AbortController only signals JS-side cancellation, not a SIGTERM into the
+// child process. The net effect was a recurring API call (and sometimes an
+// orphan agentic subprocess that kept burning tokens) on every refresh.
+//
+// `subscriptionType` is now derived only from `claude auth status` output,
+// or left `undefined` — `adjustModelsForSubscription` already handles the
+// unknown case gracefully.
 
-const CAPABILITIES_PROBE_TIMEOUT_MS = 8_000;
-
-/**
- * Probe account information by spawning a lightweight Claude Agent SDK
- * session and reading the initialization result.
- *
- * The prompt is never sent to the Anthropic API — we abort immediately
- * after the local initialization phase completes. This gives us the
- * user's subscription type without incurring any token cost.
- *
- * This is used as a fallback when `claude auth status` does not include
- * subscription type information.
- */
-const probeClaudeCapabilities = (binaryPath: string) => {
-  const abort = new AbortController();
-  return Effect.tryPromise(async () => {
-    const q = claudeQuery({
-      prompt: ".",
-      options: {
-        persistSession: false,
-        pathToClaudeCodeExecutable: binaryPath,
-        abortController: abort,
-        maxTurns: 0,
-        settingSources: [],
-        allowedTools: [],
-        stderr: () => {},
-      },
-    });
-    const init = await q.initializationResult();
-    return { subscriptionType: init.account?.subscriptionType };
-  }).pipe(
-    Effect.ensuring(
-      Effect.sync(() => {
-        if (!abort.signal.aborted) abort.abort();
-      }),
-    ),
-    Effect.timeoutOption(CAPABILITIES_PROBE_TIMEOUT_MS),
-    Effect.result,
-    Effect.map((result) => {
-      if (Result.isFailure(result)) return undefined;
-      return Option.isSome(result.success) ? result.success.value : undefined;
-    }),
-  );
-};
 
 const runClaudeCommand = Effect.fn("runClaudeCommand")(function* (args: ReadonlyArray<string>) {
   const claudeSettings = yield* Effect.service(ServerSettingsService).pipe(
@@ -545,11 +512,11 @@ export const checkClaudeProviderStatus = Effect.fn("checkClaudeProviderStatus")(
     Effect.result,
   );
 
-  // Determine subscription type from multiple sources (cheapest first):
-  // 1. `claude auth status` JSON output (may or may not contain it)
-  // 2. Cached SDK probe (spawns a Claude process on miss, reads
-  //    `initializationResult()` for account metadata, then aborts
-  //    immediately — no API tokens are consumed)
+  // Subscription type is read from `claude auth status` JSON output when
+  // present. The previous SDK-probe fallback was removed (it ran the agentic
+  // SDK with `prompt: "."` and could not be reliably aborted without
+  // burning tokens). `resolveSubscriptionType` is retained as an injectable
+  // dependency for tests; production passes nothing.
 
   let subscriptionType: string | undefined;
   let authMethod: string | undefined;
@@ -629,16 +596,7 @@ export const ClaudeProviderLive = Layer.effect(
     const serverSettings = yield* ServerSettingsService;
     const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
 
-    const subscriptionProbeCache = yield* Cache.make({
-      capacity: 1,
-      timeToLive: Duration.minutes(5),
-      lookup: (binaryPath: string) =>
-        probeClaudeCapabilities(binaryPath).pipe(Effect.map((r) => r?.subscriptionType)),
-    });
-
-    const checkProvider = checkClaudeProviderStatus((binaryPath) =>
-      Cache.get(subscriptionProbeCache, binaryPath),
-    ).pipe(
+    const checkProvider = checkClaudeProviderStatus().pipe(
       Effect.provideService(ServerSettingsService, serverSettings),
       Effect.provideService(ChildProcessSpawner.ChildProcessSpawner, spawner),
     );
@@ -653,9 +611,9 @@ export const ClaudeProviderLive = Layer.effect(
       ),
       haveSettingsChanged: (previous, next) => !Equal.equals(previous, next),
       checkProvider,
-      // Align the background refresh with the subscription probe cache TTL
-      // (5 min) to avoid spawning `claude --version` + `claude auth status`
-      // every 60 s when nothing has changed.
+      // Refresh provider snapshot every 5 min. Each refresh runs only
+      // local CLI calls (`claude --version`, `claude auth status`) — no
+      // SDK / API invocation.
       refreshInterval: Duration.minutes(5),
     });
   }),

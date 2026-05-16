@@ -27,20 +27,24 @@ const publicRoutes = [
 const noNavbarRoutes = [
   '/',
   '/404',
+  // Auth screens render their own <SiteHeader mode="auth" /> via AuthLayout —
+  // without these the global ExternalNavigation stacks a second header on top.
+  '/login',
+  '/sign-up',
   '/admin',
   '/admin/login',
   '/admin/dashboard',
   '/admin/dashboard/new',
-  // Support pages with SupportHeader
+  // Marketing pages with their own MarketingShell header
   '/help',
   '/contact',
   '/about',
+  '/faq',
+  '/relaunch',
   '/privacy',
   '/terms',
   '/pricing',
   '/cookies',
-  '/privacy',
-  '/terms',
 ];
 
 export function NavigationWrapper() {

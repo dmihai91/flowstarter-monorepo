@@ -48,8 +48,9 @@ export function resolveSelectableProvider(
   providers: ReadonlyArray<ServerProvider>,
   provider: ProviderKind | null | undefined,
 ): ProviderKind {
-  // Flowstarter is Claude-only; the codex default in upstream T3 Code
-  // would surface OpenAI here, which the editor doesn't ship.
+  // Both providers ship in Flowstarter Editor. Default to Claude when the
+  // caller hasn't expressed a preference; fall back to whichever provider
+  // the server reports as currently enabled.
   const requested = provider ?? "claudeAgent";
   if (isProviderEnabled(providers, requested)) {
     return requested;

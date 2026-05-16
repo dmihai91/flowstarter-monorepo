@@ -87,7 +87,7 @@ export default async function GalleryPage() {
 
           <div className="gallery-cta-actions">
             <BookingTrigger className="cta-block">
-              Book a free discovery call
+              Get my custom plan
             </BookingTrigger>
             <Link href="/" className="action">
               Read the case for craft

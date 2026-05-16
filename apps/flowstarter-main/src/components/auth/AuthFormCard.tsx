@@ -20,8 +20,8 @@ export function AuthFormCard({
     <div
       className={
         landingSurface
-          ? 'auth-form-card--landing relative overflow-hidden w-full max-w-[540px] mx-auto rounded-[var(--fs-radius-2xl)] backdrop-blur-2xl py-8 px-6 md:px-8 border'
-          : 'w-full max-w-[540px] mx-auto rounded-[var(--fs-radius-2xl)] backdrop-blur-2xl py-8 px-6 md:px-8 border'
+          ? 'auth-form-card--landing relative overflow-hidden w-full max-w-[540px] mx-auto rounded-[var(--fs-radius-2xl)] backdrop-blur-2xl py-7 px-6 md:px-8 border'
+          : 'w-full max-w-[540px] mx-auto rounded-[var(--fs-radius-2xl)] backdrop-blur-2xl py-7 px-6 md:px-8 border'
       }
       style={{
         background: 'var(--fs-glass-bg)',
@@ -31,7 +31,7 @@ export function AuthFormCard({
     >
       {children}
       {footer && (
-        <div className="mt-6 pt-4 border-t border-[var(--fs-rule)] text-center">
+        <div className="mt-5 pt-4 border-t border-[var(--fs-rule)] text-center">
           {footer}
         </div>
       )}

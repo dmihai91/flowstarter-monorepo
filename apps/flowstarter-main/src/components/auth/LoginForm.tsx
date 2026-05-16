@@ -344,8 +344,8 @@ export function LoginForm({ variant }: LoginFormProps) {
       <div className="w-full">
         <div id="clerk-captcha" />
 
-        <div className="space-y-6">
-          <div className="space-y-3">
+        <div className="space-y-4">
+          <div className="space-y-2">
             <h2 className="text-2xl font-semibold">{t('auth.mfa.title')}</h2>
             <p className="text-sm text-muted-foreground">{hint}</p>
           </div>
@@ -502,7 +502,7 @@ export function LoginForm({ variant }: LoginFormProps) {
           />
         </div>
 
-        <div className="space-y-2 -mt-1">
+        <div className="space-y-2">
           <Label htmlFor="password" className="text-sm text-muted-foreground">
             {isTeam ? t('team.login.passwordLabel') : t('auth.password')}
           </Label>

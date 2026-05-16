@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Calendar, Mail, MessageCircle } from 'lucide-react';
+import { Button } from '@flowstarter/flow-design-system';
 import { MarketingShell, PageHero } from '@/components/marketing';
 import { useI18n } from '@/lib/i18n';
 import { useBookingModal } from '@/app/(dynamic-pages)/(main-pages)/components/booking-modal-store';
@@ -88,27 +89,30 @@ export default function HelpPage() {
                 >
                   {t('help.card1.body')}
                 </p>
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={openBookingModal}
-                  className="ls-cta ls-cta--sm mt-auto"
+                  className="mt-auto"
                   style={{ alignSelf: 'flex-start' }}
+                  iconPosition="right"
+                  icon={
+                    <svg
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 12h14m-5-6l6 6-6 6"
+                      />
+                    </svg>
+                  }
                 >
                   {t('help.card1.cta')}
-                  <svg
-                    className="arrow ml-1 h-3.5 w-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2.2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 12h14m-5-6l6 6-6 6"
-                    />
-                  </svg>
-                </button>
+                </Button>
               </div>
 
               {/* Card 2 — Email us */}
@@ -321,13 +325,13 @@ export default function HelpPage() {
                   gap: '0.8rem 1.2rem',
                 }}
               >
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={openBookingModal}
-                  className="ls-cta ls-cta--sm"
                 >
                   {t('help.bookCall')}
-                </button>
+                </Button>
                 <Link
                   href="/contact"
                   className="ls-link"

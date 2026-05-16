@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@flowstarter/flow-design-system';
 import { useI18n } from '@/lib/i18n';
 import { useBookingModal } from '@/app/(dynamic-pages)/(main-pages)/components/booking-modal-store';
 
@@ -60,26 +61,28 @@ export function AboutCtaBand() {
               {t('about.cta.sub')}
             </p>
             <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <button
-                type="button"
+              <Button
+                variant="primary"
+                size="lg"
                 onClick={openBookingModal}
-                className="ls-cta ls-cta-hero h-14 px-8 text-[1.02rem] sm:text-[1.08rem]"
+                iconPosition="right"
+                icon={
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.4}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 12h14m-5-6l6 6-6 6"
+                    />
+                  </svg>
+                }
               >
                 {t('about.cta.button')}
-                <svg
-                  className="arrow ml-2 h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.4}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 12h14m-5-6l6 6-6 6"
-                  />
-                </svg>
-              </button>
+              </Button>
             </div>
             <p
               className="mt-6"

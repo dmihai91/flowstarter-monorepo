@@ -16,9 +16,18 @@ export function EditorShowcase() {
     const section = sectionRef.current;
     if (!section) return;
 
+    // Latch-once: expand when the section first comes into view, then stop
+    // observing. The mobile-expanded class changes the section's height, which
+    // would change the intersection ratio and re-fire the observer — a
+    // feedback loop that flickers fast on mobile. Disconnecting after the
+    // first trigger breaks the loop while keeping the intended behavior
+    // (compact before you reach it, expanded once you're there).
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setMobileEditorExpanded(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setMobileEditorExpanded(true);
+          observer.disconnect();
+        }
       },
       {
         root: null,

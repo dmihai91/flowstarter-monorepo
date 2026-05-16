@@ -128,7 +128,8 @@ export function LandingHero() {
       className="ls-scope ls-section ls-section--pad-lg ls-fade-bottom"
       style={{
         minHeight: '100svh',
-        paddingTop: 'clamp(5.25rem, 10vh, 7.75rem)',
+        paddingTop: 'clamp(4.5rem, 9vh, 6.5rem)',
+        paddingBottom: 'clamp(3rem, 6vh, 5rem)',
       }}
     >
       <div className="ls-container">

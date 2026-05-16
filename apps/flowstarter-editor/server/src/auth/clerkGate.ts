@@ -15,11 +15,11 @@
  *
  * Authorization contract:
  *   - Admins (Clerk publicMetadata.role === 'team' | 'admin') get full
- *     access to every workspace. Their tier is hard-coded to 'custom'.
+ *     access to every workspace. Their plan is hard-coded to 'admin'.
  *   - Clients (any other Clerk user) must have a row in
  *     `workspace_memberships` for the workspace whose slug matches the
- *     request's `Host`. Their tier is that workspace's `tier_name`
- *     (defaults to 'essential' if unset).
+ *     request's `Host`. Their plan is that workspace's `tier_name`
+ *     normalised via `normalisePlanKey` (defaults to 'starter').
  *
  * We deliberately keep this module non-Effect so it can be unit-tested in
  * isolation and so the Clerk + Supabase SDKs stay outside T3's runtime
@@ -29,7 +29,13 @@
 import { createClerkClient, type ClerkClient } from "@clerk/backend";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-export type EditorTier = "essential" | "pro" | "commerce" | "custom";
+import {
+  type PlanKey,
+  normalisePlanKey,
+  pickHighestPlan,
+} from "../usage/planEntitlements.ts";
+
+export type { PlanKey } from "../usage/planEntitlements.ts";
 export type EditorRole = "admin" | "client";
 
 export interface ResolvedIdentity {
@@ -38,10 +44,10 @@ export interface ResolvedIdentity {
   /** Whether the user is a flowstarter team member or a paying client. */
   readonly role: EditorRole;
   /**
-   * UI gate level. Admins always get 'custom'. Clients get whatever
-   * `workspaces.tier_name` was set to during onboarding.
+   * UI gate level. Admins always get the 'admin' plan. Clients get the
+   * plan their `workspaces.tier_name` normalises to (see normalisePlanKey).
    */
-  readonly tier: EditorTier;
+  readonly tier: PlanKey;
   /** Workspace UUIDs this user can open. Admins get every workspace id. */
   readonly allowedWorkspaceIds: ReadonlyArray<string>;
   /**
@@ -57,7 +63,7 @@ export interface ResolvedWorkspace {
   readonly id: string;
   readonly slug: string;
   readonly name: string;
-  readonly tier: EditorTier;
+  readonly tier: PlanKey;
 }
 
 export class ClerkGateUnauthenticated extends Error {
@@ -319,10 +325,9 @@ function isAdminByEmailFallback(user: {
  *
  * Adminship comes from Clerk publicMetadata.role OR a verified email on
  * a Flowstarter-owned domain (or `EDITOR_ADMIN_EMAILS`). Membership
- * comes from Supabase. Tier defaults to 'custom' for admins. For
- * clients the tier is the `currentWorkspace.tier_name` if a slug was
- * supplied; otherwise the highest tier across their memberships
- * (back-compat).
+ * comes from Supabase. Plan is 'admin' for admins. For clients the plan
+ * is `currentWorkspace.tier_name` (normalised) if a slug was supplied;
+ * otherwise the highest-ranked plan across their memberships.
  *
  * If `currentSlug` is provided, this function ALSO verifies that the
  * user is allowed to open that specific workspace — admins always pass,
@@ -381,7 +386,7 @@ export async function resolveAuthorization(
       id: ws.id as string,
       slug: ws.slug as string,
       name: ws.name as string,
-      tier: normaliseTier(ws.tier_name as string | null),
+      tier: normalisePlanKey(ws.tier_name as string | null),
     };
   }
 
@@ -395,7 +400,7 @@ export async function resolveAuthorization(
     return {
       userId,
       role: "admin",
-      tier: "custom",
+      tier: "admin",
       allowedWorkspaceIds: (workspaces ?? []).map((row) => row.id as string),
       currentWorkspace,
     };
@@ -424,9 +429,9 @@ export async function resolveAuthorization(
     return {
       userId,
       role: "client",
-      // Default tier doesn't matter — they have no workspaces, so the editor
+      // Default plan doesn't matter — they have no workspaces, so the editor
       // will refuse to open anything anyway.
-      tier: "essential",
+      tier: "starter",
       allowedWorkspaceIds: [],
       currentWorkspace,
     };
@@ -446,7 +451,7 @@ export async function resolveAuthorization(
   // back to the highest available so generic queries still work.
   const tier = currentWorkspace
     ? currentWorkspace.tier
-    : pickHighestTier(
+    : pickHighestPlan(
         (workspaces ?? []).map((row) => row.tier_name as string | null),
       );
 
@@ -467,30 +472,3 @@ export async function resolveAuthorization(
   return resolvedClient;
 }
 
-const TIER_RANK: Record<EditorTier, number> = {
-  essential: 0,
-  pro: 1,
-  commerce: 2,
-  custom: 3,
-};
-
-function pickHighestTier(values: ReadonlyArray<string | null>): EditorTier {
-  let best: EditorTier = "essential";
-  for (const value of values) {
-    if (!value) continue;
-    if (!isEditorTier(value)) continue;
-    if (TIER_RANK[value] > TIER_RANK[best]) {
-      best = value;
-    }
-  }
-  return best;
-}
-
-function normaliseTier(value: string | null): EditorTier {
-  if (value && isEditorTier(value)) return value;
-  return "essential";
-}
-
-function isEditorTier(value: string): value is EditorTier {
-  return value === "essential" || value === "pro" || value === "commerce" || value === "custom";
-}

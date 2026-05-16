@@ -196,14 +196,16 @@ sessions. Change or cancel anytime; first month free.
 > `apps/flowstarter-editor/server/src/usage/planEntitlements.ts`
 > (`PLAN_ENTITLEMENTS`); this table mirrors it. The €/session cap and
 > the monthly soft/hard thresholds are internal cost guards, not
-> customer-facing prices.
+> customer-facing prices. Ecommerce repositioned to €129/mo with 90 AI
+> edit sessions ("Pro+", was €149/60); cost guards scaled down
+> proportionally (soft 43, hard 95).
 
 | Plan | Price | AI edit sessions/mo | €/session cap | Model access | Edit scope | Store ops |
 |------|-------|---------------------|---------------|--------------|-----------|-----------|
 | Starter | €39/mo | 30 | €1 | Autorouter, locked to small models (sonnet-4.6 / gpt-5.4-mini) | Constrained | — |
 | Pro | €99/mo | 60 | €2 | Autorouter + manual model picker | Constrained | — |
 | Max | €249/mo | 120 | €3 | Pro + code experimentation (break-risk warning; paid help €20/h) | Code | — |
-| Ecommerce | €149/mo | 60 | €2 | Pro-equivalent | Constrained | Products + collections (separate allowance) |
+| Ecommerce | €129/mo | 90 | €2 | Pro+ (more sessions than Pro) | Constrained | Products + collections (separate allowance) |
 
 Internal cost guards (EUR, not shown to customers, tunable in
 `planEntitlements.ts`): a monthly **soft threshold** fires an

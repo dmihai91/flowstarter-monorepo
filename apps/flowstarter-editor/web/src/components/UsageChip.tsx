@@ -38,7 +38,7 @@ export function UsageChip() {
     `Workspace: ${workspace.name}`,
     `Tier: ${labelForTier(usage.tier)}`,
     isCustom
-      ? "Unlimited sessions on Custom tier."
+      ? "Unlimited sessions on Admin plan."
       : `${formatNumber(usage.remaining ?? 0)} sessions remaining` +
         (usage.rollover > 0
           ? ` (incl. ${formatNumber(usage.rollover)} from rollover)`
@@ -83,16 +83,18 @@ function formatNumber(value: number): string {
 }
 
 function labelForTier(
-  tier: "essential" | "pro" | "commerce" | "custom",
+  tier: "starter" | "pro" | "max" | "ecommerce" | "admin",
 ): string {
   switch (tier) {
-    case "essential":
-      return "Essential";
+    case "starter":
+      return "Starter";
     case "pro":
       return "Pro";
-    case "commerce":
-      return "Commerce";
-    case "custom":
-      return "Custom";
+    case "max":
+      return "Max";
+    case "ecommerce":
+      return "Ecommerce";
+    case "admin":
+      return "Admin";
   }
 }

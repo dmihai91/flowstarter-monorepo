@@ -142,7 +142,7 @@ function ClerkSessionGateImpl({
     const devIdentity = {
       userId: "dev-bypass",
       role: "admin" as const,
-      tier: "custom" as const,
+      tier: "admin" as const,
       allowedWorkspaceIds: [],
       currentWorkspace: null,
     };

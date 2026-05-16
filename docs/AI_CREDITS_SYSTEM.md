@@ -26,7 +26,7 @@ customer only ever sees their monthly session allowance.
 | Starter | 30 | €39/mo | €1 | 25 → 30 |
 | Pro | 60 | €99/mo | €2 | 50 → 75 |
 | Max | 120 | €249/mo | €3 | 75 → 190 |
-| Ecommerce (dedicated) | 60 | €149/mo | €2 | 50 → 110 |
+| Ecommerce (dedicated) | 90 | €129/mo | €2 | 43 → 95 |
 
 Per-session € caps and the monthly soft/hard thresholds are internal
 cost guards (token spend converted to €), not customer-facing units. The

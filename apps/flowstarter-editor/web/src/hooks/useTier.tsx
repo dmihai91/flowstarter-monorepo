@@ -2,24 +2,24 @@
  * Tier-gating context for the multitenant editor.
  *
  * Source of truth comes from `GET /api/clerk/me` (see `lib/clerkSession.ts`),
- * which derives the tier per the master-decisions doc:
- *   - admins (Clerk role 'team' | 'admin') → 'custom' (full UI)
- *   - clients → tier of the workspace addressed by `{slug}.flowstarter.net`
+ * which derives the plan per the master-decisions doc:
+ *   - admins (Clerk role 'team' | 'admin') → 'admin' (full UI)
+ *   - clients → plan of the workspace addressed by `{slug}.flowstarter.net`
  *     (falls back to highest across memberships when no slug in Host).
  *
  * Components that render advanced features (file tree, terminal, raw code
- * editor) read `tier` via `useTier()` and hide themselves below 'custom'.
+ * editor) read `tier` via `useTier()` and hide themselves below 'admin'.
  */
 
 import { createContext, useContext, type ReactNode } from "react";
 import type {
   ClerkIdentity,
   ClerkWorkspaceContext,
-  EditorTier,
+  PlanKey,
 } from "../lib/clerkSession";
 
 export interface TierContextValue {
-  readonly tier: EditorTier;
+  readonly tier: PlanKey;
   readonly role: "admin" | "client";
   readonly userId: string;
   readonly allowedWorkspaceIds: ReadonlyArray<string>;
@@ -64,20 +64,24 @@ export function useTier(): TierContextValue {
 }
 
 /**
- * Tier-rank helper for components that want to render based on a minimum
- * tier (e.g. terminal needs >= 'pro'; raw code editor needs 'custom').
+ * Plan-rank helper for components that want to render based on a minimum
+ * plan (e.g. terminal needs >= 'pro'; raw code editor needs 'admin').
+ *
+ * Ranks mirror the server's `PLAN_RANK`
+ * (`server/src/usage/planEntitlements.ts`) — keep them in sync.
  */
-export function tierAtLeast(tier: EditorTier, minimum: EditorTier): boolean {
-  const rank: Record<EditorTier, number> = {
-    essential: 0,
+export function tierAtLeast(tier: PlanKey, minimum: PlanKey): boolean {
+  const rank: Record<PlanKey, number> = {
+    starter: 0,
     pro: 1,
-    commerce: 2,
-    custom: 3,
+    ecommerce: 2,
+    max: 3,
+    admin: 4,
   };
   return rank[tier] >= rank[minimum];
 }
 
 /** Convenience: admins always see everything. */
 export function tierGrantsFullAccess(value: TierContextValue): boolean {
-  return value.role === "admin" || value.tier === "custom";
+  return value.role === "admin" || value.tier === "admin";
 }

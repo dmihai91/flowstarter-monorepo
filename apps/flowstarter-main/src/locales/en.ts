@@ -2437,7 +2437,7 @@ const en = {
   'landing.discovery.subscription.storeOps':
     'storefront support, order + catalog help',
   'landing.discovery.subscription.storeNote':
-    'A Pro-level plan (same editing allowance as Pro) plus store editing — products and collections, with provider sync and order flows handled. Built for running a storefront, not just a content site.',
+    'A Pro+ plan — more AI edit sessions than Pro, plus store editing for products and collections, with provider sync and order flows handled. Built for running a storefront, not just a content site.',
   'landing.discovery.steps.preview.title': 'A rough taste of your site',
   'landing.discovery.steps.preview.subtitle':
     'Generated from your answers, in seconds. The real one is designed by hand on the call',

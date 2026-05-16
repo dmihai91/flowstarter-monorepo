@@ -13,20 +13,26 @@
  * session is automatically present on `editor.flowstarter.app`.
  */
 
-export type EditorTier = "essential" | "pro" | "commerce" | "custom";
+/**
+ * Mirrors the server's canonical `PlanKey`
+ * (`apps/flowstarter-editor/server/src/usage/planEntitlements.ts`). The
+ * server normalises legacy `tier_name` strings at its read boundary, so
+ * the wire only ever carries these five canonical values.
+ */
+export type PlanKey = "starter" | "pro" | "max" | "ecommerce" | "admin";
 export type EditorRole = "admin" | "client";
 
 export interface ClerkWorkspaceContext {
   readonly id: string;
   readonly slug: string;
   readonly name: string;
-  readonly tier: EditorTier;
+  readonly tier: PlanKey;
 }
 
 export interface ClerkIdentity {
   readonly userId: string;
   readonly role: EditorRole;
-  readonly tier: EditorTier;
+  readonly tier: PlanKey;
   readonly allowedWorkspaceIds: ReadonlyArray<string>;
   /**
    * Workspace this request was scoped to (derived server-side from the

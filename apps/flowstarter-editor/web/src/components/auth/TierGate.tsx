@@ -16,7 +16,7 @@
 import type { ReactNode } from "react";
 
 import { tierAtLeast, tierGrantsFullAccess, useTier } from "../../hooks/useTier";
-import type { EditorTier } from "../../lib/clerkSession";
+import type { PlanKey } from "../../lib/clerkSession";
 
 export interface TierGateProps {
   readonly children: ReactNode;
@@ -78,7 +78,7 @@ export function MinTier({
   fallback = null,
 }: {
   readonly children: ReactNode;
-  readonly minimum: EditorTier;
+  readonly minimum: PlanKey;
   readonly fallback?: ReactNode;
 }) {
   return (

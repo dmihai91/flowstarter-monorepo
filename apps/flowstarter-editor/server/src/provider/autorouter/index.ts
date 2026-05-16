@@ -10,6 +10,8 @@ export {
   resolveModelSelectionForTurn,
   resolveModelSelectionForTurnSync,
 } from "./resolveModelSelection.ts";
+export { LOCKED_SMALL_SLUGS, planRouterPolicy } from "./planRouting.ts";
+export type { PlanRouterPolicy } from "./planRouting.ts";
 export type {
   AutoRoutingDispatchInput,
   AutoRoutingDispatchResult,

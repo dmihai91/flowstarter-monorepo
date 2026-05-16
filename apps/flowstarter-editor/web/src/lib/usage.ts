@@ -4,15 +4,15 @@
  * via the `useUsage()` query hook.
  */
 
-import type { EditorTier, ClerkWorkspaceContext } from "./clerkSession";
+import type { PlanKey, ClerkWorkspaceContext } from "./clerkSession";
 
 export interface UsageSnapshot {
   readonly status: "ok";
   readonly workspace: ClerkWorkspaceContext;
   readonly usage: {
-    readonly tier: EditorTier;
+    readonly tier: PlanKey;
     readonly used: number;
-    /** Per-month cap for this tier (`null` for custom = unlimited). */
+    /** Per-month cap for this plan (`null` for admin = unlimited). */
     readonly limit: number | null;
     readonly rollover: number;
     /** `limit + rollover` (`null` for unlimited). */

@@ -1,7 +1,7 @@
 # Concierge Commerce Model
 
 > **Status:** the **Ecommerce build package is open to everyone** (one-time
-> build from €1,499 + a dedicated €149/mo store plan) — no longer
+> build from €1,499 + a dedicated €129/mo store plan) — no longer
 > "coming soon". The provider-routing model below is current and authoritative
 > for how a storefront is delivered. Canonical pricing:
 > `docs/FLOWSTARTER_MASTER_DECISIONS.md`.

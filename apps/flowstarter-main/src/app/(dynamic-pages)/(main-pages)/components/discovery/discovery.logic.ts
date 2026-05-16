@@ -30,12 +30,11 @@ export const SUBSCRIPTIONS: Record<
 };
 
 /**
- * Commerce build → dedicated "Pro+" store plan: Pro-level economics
- * (same session allowance + €/session cap as Pro) plus store editing
- * (products/collections from a separate ops pool). Mirrors
- * PLAN_ENTITLEMENTS.ecommerce.
+ * Commerce build → dedicated "Pro+" store plan: more AI sessions than Pro
+ * plus store editing (products/collections from a separate ops pool).
+ * Mirrors PLAN_ENTITLEMENTS.ecommerce.
  */
-export const ECOMMERCE_SUBSCRIPTION = { priceEur: 149, sessions: 60 };
+export const ECOMMERCE_SUBSCRIPTION = { priceEur: 129, sessions: 90 };
 
 /** Session multiple vs Starter, for "2×"/"4×" style labels (no drift). */
 export function sessionMultiple(tier: SubscriptionTier): number {

@@ -22,16 +22,16 @@ import {
   parseWorkspaceSlugFromHost,
   resolveAuthorization,
   verifyClerkRequest,
-  type EditorTier,
   type ResolvedWorkspace,
 } from "../auth/clerkGate.ts";
+import type { PlanKey } from "./planEntitlements.ts";
 import { computeUsage } from "./tierLimits.ts";
 
 interface UsageOk {
   readonly status: "ok";
   readonly workspace: ResolvedWorkspace;
   readonly usage: {
-    readonly tier: EditorTier;
+    readonly tier: PlanKey;
     readonly used: number;
     readonly limit: number | null;
     readonly rollover: number;

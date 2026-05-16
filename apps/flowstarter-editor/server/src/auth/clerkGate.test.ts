@@ -165,7 +165,7 @@ afterEach(() => {
 });
 
 describe("resolveAuthorization — admin path", () => {
-  it("returns role=admin, tier=custom, all workspace ids regardless of membership", async () => {
+  it("returns role=admin, plan=admin, all workspace ids regardless of membership", async () => {
     setClerkGateForTesting({
       clerk: buildClerkFake("team"),
       supabase: buildSupabaseFake({
@@ -178,7 +178,7 @@ describe("resolveAuthorization — admin path", () => {
     });
     const identity = await resolveAuthorization("user_admin");
     expect(identity.role).toBe("admin");
-    expect(identity.tier).toBe("custom");
+    expect(identity.tier).toBe("admin");
     expect(identity.allowedWorkspaceIds).toEqual(["ws-1", "ws-2"]);
   });
 
@@ -232,7 +232,7 @@ describe("resolveAuthorization — client path", () => {
     expect(identity.tier).toBe("pro");
   });
 
-  it("falls back to tier='essential' when no memberships exist", async () => {
+  it("falls back to plan='starter' when no memberships exist", async () => {
     setClerkGateForTesting({
       clerk: buildClerkFake(null),
       supabase: buildSupabaseFake({
@@ -242,12 +242,14 @@ describe("resolveAuthorization — client path", () => {
     });
     const identity = await resolveAuthorization("user_client");
     expect(identity.role).toBe("client");
-    expect(identity.tier).toBe("essential");
+    expect(identity.tier).toBe("starter");
     expect(identity.allowedWorkspaceIds).toEqual([]);
     expect(identity.currentWorkspace).toBeNull();
   });
 
-  it("scopes tier to the currentWorkspace, not 'highest across memberships'", async () => {
+  it("scopes plan to the currentWorkspace and normalises legacy tier_name", async () => {
+    // DB still holds legacy strings; the read boundary maps
+    // essential→starter and commerce→ecommerce.
     setClerkGateForTesting({
       clerk: buildClerkFake(null),
       supabase: buildSupabaseFake({
@@ -263,8 +265,8 @@ describe("resolveAuthorization — client path", () => {
     });
     const onAcme = await resolveAuthorization("user_client", { currentSlug: "acme" });
     const onBeta = await resolveAuthorization("user_client", { currentSlug: "beta" });
-    expect(onAcme.tier).toBe("essential");
-    expect(onBeta.tier).toBe("commerce");
+    expect(onAcme.tier).toBe("starter");
+    expect(onBeta.tier).toBe("ecommerce");
   });
 
   it("refuses when client tries to open a workspace they don't belong to", async () => {

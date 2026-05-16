@@ -11,8 +11,20 @@
  * - Returns 200 even on email failure so the client can move on to Calendly.
  */
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { sendEmail } from '@/lib/email';
+
+/**
+ * Untyped service-role client — `discovery_leads` isn't in the generated
+ * Database types yet (additive migration). Safe: server-only, service key.
+ */
+function leadStore() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { persistSession: false } });
+}
 
 const TIER = z.enum(['starter', 'pro', 'commerce', 'custom']);
 
@@ -136,6 +148,40 @@ export async function POST(request: NextRequest) {
   const notifyTo =
     process.env.DISCOVERY_LEAD_NOTIFY_EMAIL || 'hello@flowstarter.net';
 
+  // Persist (best-effort) — never block the prospect on a DB hiccup.
+  let leadId: string | null = null;
+  const store = leadStore();
+  if (store) {
+    try {
+      const { data, error } = await store
+        .from('discovery_leads')
+        .insert({
+          full_name: lead.fullName,
+          email: lead.email,
+          business_name: lead.businessName || null,
+          industry: lead.industry || null,
+          description: lead.description,
+          target_audience: lead.targetAudience || null,
+          goal: lead.goal || null,
+          brand_tone: lead.brandTone || null,
+          page_count: lead.pageCount || null,
+          timeline: lead.timeline || null,
+          commerce_mode: lead.commerceMode || null,
+          catalog_size: lead.catalogSize || null,
+          custom_integrations: lead.customIntegrations || null,
+          selected_tier: lead.selectedTier,
+          subscription: lead.subscription || null,
+          source: lead.source || null,
+        })
+        .select('id')
+        .single();
+      if (error) throw error;
+      leadId = (data as { id: string } | null)?.id ?? null;
+    } catch (err) {
+      console.error('[discovery/lead] persist failed', err);
+    }
+  }
+
   // Fire-and-log: never block the client on email failure
   try {
     await sendEmail({
@@ -148,5 +194,5 @@ export async function POST(request: NextRequest) {
     console.error('[discovery/lead] email failed', err);
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, leadId });
 }

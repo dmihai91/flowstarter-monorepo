@@ -69,13 +69,19 @@ export function DiscoveryWizard({
     setSubmitError(null);
     const tier = (data.selectedTier as Tier | '') || recommendTier(data).tier;
 
-    // Best-effort lead capture — never block the user from booking
+    // Best-effort lead capture — never block the user from booking.
+    // Capture the persisted lead id so the deposit webhook can mark it paid.
+    let leadId: string | null = null;
     try {
-      await fetch('/api/discovery/lead', {
+      const leadRes = await fetch('/api/discovery/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, selectedTier: tier, source }),
-      }).catch(() => undefined);
+      });
+      const leadJson = (await leadRes.json().catch(() => ({}))) as {
+        leadId?: string | null;
+      };
+      leadId = leadJson.leadId ?? null;
     } catch {
       // Swallow — capture is non-blocking
     }
@@ -96,6 +102,7 @@ export function DiscoveryWizard({
           businessName: data.businessName,
           subscription: data.subscription,
           source,
+          leadId,
         }),
       });
       const json = (await res.json().catch(() => ({}))) as {

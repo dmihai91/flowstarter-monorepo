@@ -136,6 +136,41 @@ async function handleBookingDepositPaid(
   const m = session.metadata ?? {};
   if (m['kind'] !== 'booking_deposit') return;
 
+  // Mark the persisted lead paid (best-effort; lead table is service-role).
+  const leadId = m['leadId'];
+  if (leadId) {
+    try {
+      const supabase = createSupabaseServiceRoleClient();
+      const amountEur =
+        typeof session.amount_total === 'number'
+          ? Math.round(session.amount_total / 100)
+          : m['amountEur']
+            ? Number(m['amountEur'])
+            : null;
+      // discovery_leads isn't in generated types yet — cast through unknown.
+      await (
+        supabase as unknown as {
+          from: (t: string) => {
+            update: (v: Record<string, unknown>) => {
+              eq: (c: string, v: string) => Promise<unknown>;
+            };
+          };
+        }
+      )
+        .from('discovery_leads')
+        .update({
+          deposit_status: 'paid',
+          deposit_amount_eur: amountEur,
+          stripe_session_id: session.id,
+          deposit_paid_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', leadId);
+    } catch (err) {
+      console.error('[Stripe] mark lead paid failed', err);
+    }
+  }
+
   const notifyTo =
     process.env.DISCOVERY_LEAD_NOTIFY_EMAIL || 'hello@flowstarter.net';
   const amount =

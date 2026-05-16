@@ -31,6 +31,7 @@ const DepositSchema = z.object({
   businessName: z.string().max(200).optional().default(''),
   subscription: z.enum(['starter', 'pro', 'max', '']).optional().default(''),
   source: z.string().max(100).optional().default('cta'),
+  leadId: z.string().uuid().nullish(),
 });
 
 const RATE_LIMIT = 5;
@@ -126,6 +127,7 @@ export async function POST(request: NextRequest) {
         businessName: lead.businessName || '',
         source: lead.source,
         amountEur: String(amountEur),
+        leadId: lead.leadId ?? '',
       },
       success_url: `${origin}/?deposit=paid&tier=${lead.tier}`,
       cancel_url: `${origin}/?deposit=cancelled`,

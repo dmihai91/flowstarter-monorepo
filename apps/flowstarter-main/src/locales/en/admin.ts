@@ -7,6 +7,7 @@ export const adminKeys = {
   'admin.nav.dashboard': 'Dashboard',
   'admin.nav.projects': 'Projects',
   'admin.nav.accounts': 'Accounts',
+  'admin.nav.leads': 'Leads',
   'admin.nav.hosting': 'Hosting',
   'admin.nav.analytics': 'Analytics',
   'admin.nav.aiUsage': 'AI usage',

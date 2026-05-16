@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Sparkles as SparklesIcon,
   FolderOpen,
+  Inbox,
   Server,
   Settings as SettingsIcon,
   type LucideIcon,
@@ -57,6 +58,11 @@ export function AdminDashboardSidebar() {
       labelKey: 'admin.nav.accounts',
       href: '/admin/dashboard/clients',
       icon: Users,
+    },
+    {
+      labelKey: 'admin.nav.leads',
+      href: '/admin/dashboard/leads',
+      icon: Inbox,
     },
   ];
 

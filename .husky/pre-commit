@@ -1,3 +1,29 @@
 #!/usr/bin/env sh
+#
+# Scoped pre-commit gate.
+#
+# The previous hook ran the full flowstarter-main quality gate
+# (lint + typecheck + the entire ~821-test vitest suite, ~30s, and
+# flake-prone) on EVERY commit — including commits that only touch
+# flowstarter-editor or docs. That blocked legitimate editor-only work
+# on an unrelated suite while never actually checking the editor.
+#
+# Fix: only run the flowstarter-main quality gate when the commit
+# actually changes flowstarter-main (or its shared design-system dep).
+# Editor-/docs-only commits skip it.
+#
+# NOTE: flowstarter-editor is not gated here yet — it carries
+# pre-existing TypeScript debt (editor-web ~14 errors; some server
+# *.test.ts Effect-context errors) that must be cleared before a strict
+# editor typecheck can be a commit gate. Tracked as a separate task.
 
-pnpm run ci:quality-gate
+STAGED="$(git diff --cached --name-only --diff-filter=ACMR)"
+[ -z "$STAGED" ] && exit 0
+
+if printf '%s\n' "$STAGED" | grep -qE '^(apps/flowstarter-main/|packages/flow-design-system/)'; then
+  echo "▶ pre-commit: flowstarter-main changed — running quality gate"
+  exec pnpm run ci:quality-gate
+fi
+
+echo "▶ pre-commit: no flowstarter-main changes — skipping main quality gate"
+exit 0

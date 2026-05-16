@@ -23,7 +23,7 @@ customer only ever sees their monthly session allowance.
 
 | Plan | Sessions/mo | Price | €/session cap | Monthly soft → hard (€) |
 |------|-------------|-------|---------------|--------------------------|
-| Starter | 30 | €39/mo | €1 | 25 → 30 |
+| Starter | 30 | €49/mo | €1 | 25 → 30 |
 | Pro | 60 | €99/mo | €2 | 50 → 75 |
 | Max | 120 | €249/mo | €3 | 75 → 190 |
 | Ecommerce (dedicated) | 90 | €129/mo | €2 | 43 → 95 |
@@ -37,7 +37,7 @@ store-ops allowance, not the AI-edit-session pool.
 ### 1.2 Profitability Target
 
 - **Target margin:** 50%+
-- **Max AI cost per €39 Starter plan:** ~€20/month
+- **Max AI cost per €49 Starter plan:** ~€20/month
 - **1,000 credits = max €20 in token costs**
 - **1 credit ≈ €0.02 max cost**
 

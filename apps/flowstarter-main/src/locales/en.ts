@@ -6,7 +6,7 @@ const en = {
   'app.name': 'Flowstarter',
   'app.title': 'Flowstarter | Done-for-you websites for coaches',
   'app.description':
-    'We design, build, and launch your professional website by hand. Update it yourself with AI. Starting at €499',
+    'We design, build, and launch your professional website by hand. Update it yourself with AI. Starting at €799',
   'app.back': 'Back',
   'app.saveContinue': 'Continue',
   'app.createProject': 'Create Project',
@@ -1043,8 +1043,8 @@ const en = {
   'landing.hero.cta': 'Launch my business',
   'landing.hero.ctaNote':
     'One call. We handle everything. We agree the timeline together',
-  'landing.hero.priceBuild': '€499',
-  'landing.hero.priceMonthly': '€39',
+  'landing.hero.priceBuild': '€799',
+  'landing.hero.priceMonthly': '€49',
 
   // What's Included section
   'landing.included.title': 'Everything you need to get found and get booked',
@@ -1089,9 +1089,9 @@ const en = {
   'landing.faq.q5': 'Do I need any technical skills?',
   'landing.faq.a5':
     'Zero. We handle the entire setup. You just review and approve',
-  'landing.faq.q6': 'What happens when the beta ends?',
+  'landing.faq.q6': 'Will the price change after I sign up?',
   'landing.faq.a6':
-    'Your €39/month rate is locked in for as long as you stay subscribed. After launch, new clients pay €699 setup + €49/month. You get 30 days notice before anything changes',
+    'Pricing is €799 setup plus €49/month. If we ever change it for new clients, existing subscribers get 30 days notice before anything changes for them',
   'landing.faq.q7': "What's included in the email?",
   'landing.faq.a7':
     'One professional email address with your domain (e.g. you@yourbusiness.com). Need more? We can add additional mailboxes',
@@ -1150,16 +1150,16 @@ const en = {
   'landing.pricing.title': 'No surprises',
   'landing.pricing.subtitle':
     'One fee to build. One fee to maintain. Cancel anytime',
-  'landing.pricing.limitedBadge': 'Launch pricing',
+  'landing.pricing.limitedBadge': 'Simple pricing',
   'landing.pricing.limitedNote':
-    'Prices go up after launch (€699 + €49/mo). Lock in current rates',
+    'One setup fee, one monthly fee. Cancel anytime',
   'landing.pricing.buildLabel': 'Setup:',
-  'landing.pricing.buildOriginalPrice': '€699',
-  'landing.pricing.buildPrice': '€499',
+  'landing.pricing.buildOriginalPrice': '',
+  'landing.pricing.buildPrice': '€799',
   'landing.pricing.buildPeriod': 'one-time',
   'landing.pricing.careLabel': 'Monthly:',
-  'landing.pricing.careOriginalPrice': '€49',
-  'landing.pricing.carePrice': '€39',
+  'landing.pricing.careOriginalPrice': '',
+  'landing.pricing.carePrice': '€49',
   'landing.pricing.carePeriod': '/month',
   'landing.pricing.firstMonthFree': 'First month free',
   'landing.pricing.note': 'First month free. Cancel anytime',
@@ -1167,7 +1167,7 @@ const en = {
   'landing.pricing.assets': 'All your site assets downloadable. You own them',
 
   // Landing Page - Pricing Features
-  'landing.pricing.websiteTitle': 'Setup (€499)',
+  'landing.pricing.websiteTitle': 'Setup (€799)',
   'landing.pricing.websiteDesc':
     'Your website, built around your business. Strategy call, custom design, domain, email, analytics. All included',
   'landing.pricing.websiteFeature1': 'Strategy call to clarify your offer',
@@ -1176,7 +1176,7 @@ const en = {
   'landing.pricing.websiteFeature4': 'Mobile-ready, fast, SEO basics handled',
   'landing.pricing.websiteFeature5': 'Live when you sign off',
 
-  'landing.pricing.careTitle': 'Monthly (€39)',
+  'landing.pricing.careTitle': 'Monthly (€49)',
   'landing.pricing.careDesc':
     'Hosting, security, updates, and small edits. Bigger changes are quoted separately',
   'landing.pricing.careFeature1': '1,000 AI credits for edits each month',
@@ -1202,8 +1202,8 @@ const en = {
   'landing.cta.button': 'Launch my business',
 
   // Landing Page - Footer CTA
-  'landing.cta.setupPrice': '€499 setup',
-  'landing.cta.monthlyPrice': '€39/month',
+  'landing.cta.setupPrice': '€799 setup',
+  'landing.cta.monthlyPrice': '€49/month',
   'landing.cta.firstMonthFree': 'First month free',
 
   // Three Pillars
@@ -1241,10 +1241,10 @@ const en = {
   'landing.team.linkedin': 'LinkedIn',
 
   // Landing Hero - Price Pill
-  'landing.hero.limitedBadge': '🔥 Limited launch price',
-  'landing.hero.buildOriginalPrice': '€699',
+  'landing.hero.limitedBadge': '',
+  'landing.hero.buildOriginalPrice': '',
   'landing.hero.buildSetupLabel': 'setup',
-  'landing.hero.careOriginalPrice': '€49',
+  'landing.hero.careOriginalPrice': '',
   'landing.hero.monthlyLabel': '/mo',
   'landing.hero.urgency': "This price won't last. Lock it in before it goes up",
 
@@ -2333,7 +2333,7 @@ const en = {
   'supportBot.replyEcommerce':
     'Full Shopify-style storefronts are open now on the Ecommerce tier: inventory, shipping, tax and Stripe checkout, end to end. The Pro tier still covers simpler digital products via Stripe. Book a call and we will scope what you sell',
   'supportBot.replyIncluded':
-    'The build is one-time (Starter from €799, Pro from €1,199); the monthly plan is separate and sets your AI edit sessions: Starter €39/mo (30), Pro €99/mo (60, 2×), Max €249/mo (120, 4× + code). Pro builds add more pages, integrations and Stripe for digital products',
+    'The build is one-time (Starter from €799, Pro from €1,199); the monthly plan is separate and sets your AI edit sessions: Starter €49/mo (30), Pro €99/mo (60, 2×), Max €249/mo (120, 4× + code). Pro builds add more pages, integrations and Stripe for digital products',
   'supportBot.replySupport':
     "We're with you after launch. The smart editor handles most updates. For bigger changes, your monthly subscription includes priority support",
   'supportBot.replyHandoff':

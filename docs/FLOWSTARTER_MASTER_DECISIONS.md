@@ -198,11 +198,13 @@ sessions. Change or cancel anytime; first month free.
 > the monthly soft/hard thresholds are internal cost guards, not
 > customer-facing prices. Ecommerce repositioned to €129/mo with 90 AI
 > edit sessions ("Pro+", was €149/60); cost guards scaled down
-> proportionally (soft 43, hard 95).
+> proportionally (soft 43, hard 95). Starter monthly raised €39→€49
+> (2026-05-16, explicit Darius instruction); launch-discount /
+> rate-lock scaffolding dropped — one price: €799 setup + €49/mo.
 
 | Plan | Price | AI edit sessions/mo | €/session cap | Model access | Edit scope | Store ops |
 |------|-------|---------------------|---------------|--------------|-----------|-----------|
-| Starter | €39/mo | 30 | €1 | Autorouter, locked to small models (sonnet-4.6 / gpt-5.4-mini) | Constrained | — |
+| Starter | €49/mo | 30 | €1 | Autorouter, locked to small models (sonnet-4.6 / gpt-5.4-mini) | Constrained | — |
 | Pro | €99/mo | 60 | €2 | Autorouter + manual model picker | Constrained | — |
 | Max | €249/mo | 120 | €3 | Pro + code experimentation (break-risk warning; paid help €20/h) | Code | — |
 | Ecommerce | €129/mo | 90 | €2 | Pro+ (more sessions than Pro) | Constrained | Products + collections (separate allowance) |

@@ -24,7 +24,7 @@ export const SUBSCRIPTIONS: Record<
   // Mirrors PLAN_ENTITLEMENTS in
   // apps/flowstarter-editor/server/src/usage/planEntitlements.ts (the
   // runtime source of truth). Change that table, then mirror here.
-  starter: { priceEur: 39, sessions: 30 },
+  starter: { priceEur: 49, sessions: 30 },
   pro: { priceEur: 99, sessions: 60 },
   max: { priceEur: 249, sessions: 120 },
 };

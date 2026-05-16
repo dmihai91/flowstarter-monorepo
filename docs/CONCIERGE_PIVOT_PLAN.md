@@ -47,7 +47,7 @@ call. Storefront/Commerce is **open to everyone** (no longer coming-soon).
 | **Ecommerce** | €1,499 | A real catalog: custom Astro storefront headless against **Shopify** (physical) or **Lemon Squeezy / Paddle** (digital). Open to everyone. |
 | **Custom** | €2,499 | Bespoke web apps / integrations, quoted on the call. |
 
-**Monthly plan (independent of the build):** Starter €39/mo (30 AI edit
+**Monthly plan (independent of the build):** Starter €49/mo (30 AI edit
 sessions), Pro €99/mo (60, 2×), Max €249/mo (120, 4×). The Ecommerce package
 uses a dedicated store plan: **€129/mo** (90 AI edit sessions + storefront
 ops). First month free; change or cancel anytime.

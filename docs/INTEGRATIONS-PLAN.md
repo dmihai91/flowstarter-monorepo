@@ -6,7 +6,7 @@
 > (extract artifact → write Caddy snippet → reload → preview-DNS upsert via
 > Cloudflare API). Read "Cloudflare Pages" below as "Hetzner + deploy-agent".
 > Domains are derived from `@flowstarter/platform-config`, never hardcoded.
-> The €39/mo reference is the current Starter monthly plan (still accurate).
+> The €49/mo reference is the current Starter monthly plan (still accurate).
 > See `docs/CONCIERGE_PIVOT_PLAN.md` (Architecture updates) for the final
 > hosting topology.
 
@@ -62,7 +62,7 @@ No AI needed — it's a deterministic code injection.
 - DNS: CNAME clientname.flowstarter.site → pages project
 - SSL: automatic via Cloudflare
 
-### Tier 2: Client's custom domain (included in €39/mo)
+### Tier 2: Client's custom domain (included in €49/mo)
 - Client provides their domain (e.g., elenabeauty.ro)
 - We add it to Cloudflare Pages custom domains
 - Client updates DNS: CNAME @ → our Pages project

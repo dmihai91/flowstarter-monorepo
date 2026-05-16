@@ -1,6 +1,6 @@
 # Pro plan delivery
 
-> **⚠️ Tier names and prices superseded.** `docs/FLOWSTARTER_MASTER_DECISIONS.md` is canonical. The "Pro" tier described here is now the **Ecommerce** build package: **one-time build from €1,499**, plus a **dedicated store subscription of €129/mo** (the monthly plan is decoupled from the build; the standard plans are Starter €39 / Pro €99 / Max €249). The Ecommerce package is open to everyone (no longer "coming soon"). The provider-routing logic and concierge delivery flow below remain accurate for the Ecommerce build; read "Ecommerce" for "Pro" throughout.
+> **⚠️ Tier names and prices superseded.** `docs/FLOWSTARTER_MASTER_DECISIONS.md` is canonical. The "Pro" tier described here is now the **Ecommerce** build package: **one-time build from €1,499**, plus a **dedicated store subscription of €129/mo** (the monthly plan is decoupled from the build; the standard plans are Starter €49 / Pro €99 / Max €249). The Ecommerce package is open to everyone (no longer "coming soon"). The provider-routing logic and concierge delivery flow below remain accurate for the Ecommerce build; read "Ecommerce" for "Pro" throughout.
 
 How Flowstarter delivers the **Pro tier** (€1,499 setup + €79/mo) when commerce is involved. Companion to `docs/CONCIERGE_COMMERCE_MODEL.md` (provider routing rationale).
 

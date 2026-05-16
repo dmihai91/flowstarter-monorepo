@@ -152,13 +152,13 @@ export const LANDING_COPY = {
       'A one-time build, then a monthly plan you pick separately. Both start with a discovery call.',
     socialProof:
       'We only open a handful of new builds each month, so nothing turns into conveyor-belt work.',
-    note: 'The monthly plan is independent of the build: Starter €39 (30 AI edit sessions), Pro €99 (60, 2×), Max €249 (120, 4× + code). Stores run on a dedicated €129/mo plan with 90 AI edit sessions plus store editing. Relaunches and one-off custom work are quoted on the call.',
+    note: 'The monthly plan is independent of the build: Starter €49 (30 AI edit sessions), Pro €99 (60, 2×), Max €249 (120, 4× + code). Stores run on a dedicated €129/mo plan with 90 AI edit sessions plus store editing. Relaunches and one-off custom work are quoted on the call.',
     plans: [
       {
         name: 'STARTER',
         label: 'Get your professional presence online',
         setupPrice: 'One-time build from €799',
-        monthlyPrice: '+ monthly plan from €39',
+        monthlyPrice: '+ monthly plan from €49',
         features: [
           'Custom-built website (5 to 7 pages)',
           'Hosting and domain included',
@@ -172,7 +172,7 @@ export const LANDING_COPY = {
         name: 'PRO',
         label: 'For service businesses that are growing',
         setupPrice: 'One-time build from €1,199',
-        monthlyPrice: '+ monthly plan from €39',
+        monthlyPrice: '+ monthly plan from €49',
         features: [
           'Everything in Starter',
           'More pages and integrations',

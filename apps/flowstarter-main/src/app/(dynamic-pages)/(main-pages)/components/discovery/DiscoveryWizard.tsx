@@ -6,6 +6,7 @@ import {
   type DiscoveryData,
   type Step,
   type Tier,
+  DEMO_STATE_KEY,
   EMPTY_DISCOVERY,
   LAST_STEP,
   STEPS,
@@ -55,6 +56,7 @@ function clearDraft(): void {
   if (typeof window === 'undefined') return;
   try {
     window.sessionStorage.removeItem(DRAFT_KEY);
+    window.sessionStorage.removeItem(DEMO_STATE_KEY);
   } catch {
     // ignore
   }
@@ -69,11 +71,14 @@ export function DiscoveryWizard({
   initialTier,
   source,
   onComplete,
+  onWideChange,
   t,
 }: {
   initialTier?: Tier | null;
   source: string;
   onComplete: (payload: DiscoveryCompletePayload) => void;
+  /** Signals the host modal to widen for the large preview step. */
+  onWideChange?: (wide: boolean) => void;
   t: (key: string) => string;
 }) {
   // Restore an in-progress draft so a refresh doesn't lose the input.
@@ -100,6 +105,11 @@ export function DiscoveryWizard({
       // storage full / disabled — autosave is best-effort
     }
   }, [data, step]);
+
+  // The preview/editor step needs more room — ask the modal to widen.
+  useEffect(() => {
+    onWideChange?.(step === LAST_STEP);
+  }, [step, onWideChange]);
 
   const update = useCallback(
     <K extends keyof DiscoveryData>(key: K, value: DiscoveryData[K]) => {

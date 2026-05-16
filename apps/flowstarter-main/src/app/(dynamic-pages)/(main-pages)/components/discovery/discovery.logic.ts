@@ -205,6 +205,141 @@ export function previewCtaLabel(goal: GoalId | ''): string {
   }
 }
 
+/* ───────────────────── Playable demo site model ─────────────────────── */
+
+/** Max prompts a prospect can run against the demo editor. */
+export const MAX_DEMO_EDITS = 20;
+
+/** sessionStorage key for the generated demo (site + id + edits used). */
+export const DEMO_STATE_KEY = 'fs-discovery-demo-v1';
+
+export type DemoSectionId =
+  | 'hero'
+  | 'valueProps'
+  | 'services'
+  | 'about'
+  | 'testimonial'
+  | 'cta';
+
+/**
+ * The whole editable site, as one JSON model. The renderer draws it; the
+ * edit endpoint sends this to the LLM and gets the same shape back with
+ * only allowed mutations (copy, accent hex, section order/visibility).
+ * Template-first: surfaces/typography come from the tone, never freeform.
+ */
+export interface DemoSite {
+  brandName: string;
+  tone: ToneId; // drives surfaces via previewTheme (always tasteful)
+  accent: string; // hex — editable
+  nav: string[];
+  hero: { eyebrow: string; headline: string; subhead: string; cta: string };
+  valueProps: Array<{ title: string; body: string }>;
+  services: {
+    sectionTitle: string;
+    items: Array<{ title: string; description: string }>;
+  };
+  about: { sectionTitle: string; paragraph: string };
+  testimonial: { quote: string; author: string };
+  cta: { headline: string; subhead: string; button: string };
+  order: DemoSectionId[];
+  hidden: DemoSectionId[];
+}
+
+/** Generated copy shape returned by the server (mirror of lib/ai SiteCopy). */
+export interface GeneratedSiteCopy {
+  hero: { headline: string; subhead: string; primaryCta: string };
+  services: {
+    sectionTitle: string;
+    items: Array<{ title: string; description: string }>;
+  };
+  about: { sectionTitle: string; paragraph: string };
+  finalCta: { headline: string; subhead: string; button: string };
+}
+
+const DEFAULT_ORDER: DemoSectionId[] = [
+  'hero',
+  'valueProps',
+  'services',
+  'about',
+  'testimonial',
+  'cta',
+];
+
+/**
+ * Compose the editable DemoSite from the generated copy + wizard answers.
+ * Value props are distilled from the first services; the testimonial is a
+ * neutral placeholder (clearly a demo, not a fabricated real review).
+ */
+export function buildDemoSite(
+  d: Pick<
+    DiscoveryData,
+    'businessName' | 'fullName' | 'industry' | 'targetAudience' | 'brandTone'
+  >,
+  copy: GeneratedSiteCopy
+): DemoSite {
+  const tone: ToneId = d.brandTone || 'professional';
+  const theme = previewTheme(tone);
+  const brandName =
+    d.businessName.trim() || d.fullName.trim() || 'Your business';
+  const items = copy.services.items.slice(0, 6);
+  const valueProps = items.slice(0, 3).map((s) => ({
+    title: s.title,
+    body: s.description,
+  }));
+  return {
+    brandName,
+    tone,
+    accent: theme.accent,
+    nav: ['Home', copy.services.sectionTitle || 'Services', 'About'],
+    hero: {
+      eyebrow: d.industry.trim(),
+      headline: copy.hero.headline,
+      subhead: copy.hero.subhead,
+      cta: copy.hero.primaryCta,
+    },
+    valueProps:
+      valueProps.length > 0
+        ? valueProps
+        : [
+            { title: 'Built for you', body: 'Designed around your offer.' },
+            { title: 'Yours to edit', body: 'Change anything in plain words.' },
+            { title: 'Live fast', body: 'Online in weeks, not months.' },
+          ],
+    services: {
+      sectionTitle: copy.services.sectionTitle || 'What we do',
+      items,
+    },
+    about: copy.about,
+    testimonial: {
+      quote: d.targetAudience.trim()
+        ? `Exactly what ${d.targetAudience.trim()} were looking for.`
+        : 'Exactly what our clients were looking for.',
+      author: 'Sample testimonial — replace with a real one',
+    },
+    cta: {
+      headline: copy.finalCta.headline,
+      subhead: copy.finalCta.subhead,
+      button: copy.finalCta.button,
+    },
+    order: [...DEFAULT_ORDER],
+    hidden: [],
+  };
+}
+
+/** Defensive: ensure an LLM-returned object is a usable DemoSite. */
+export function isDemoSite(v: unknown): v is DemoSite {
+  if (!v || typeof v !== 'object') return false;
+  const s = v as Record<string, unknown>;
+  return (
+    typeof s.brandName === 'string' &&
+    typeof s.accent === 'string' &&
+    !!s.hero &&
+    !!s.services &&
+    !!s.cta &&
+    Array.isArray(s.order)
+  );
+}
+
 export interface Recommendation {
   tier: Tier;
   /** i18n key suffixes under `landing.discovery.recommendation.reasons.*` */

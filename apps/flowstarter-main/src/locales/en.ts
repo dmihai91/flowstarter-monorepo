@@ -2446,9 +2446,22 @@ const en = {
     'Work worth showing off, online at last',
   'landing.discovery.preview.audiencePrefix': 'For',
   'landing.discovery.preview.generating':
-    'Drafting copy for your business from your answers…',
+    'Building a first draft of your site from your answers…',
+  'landing.discovery.preview.editorTitle':
+    'Try the editor — ask for changes in plain English',
+  'landing.discovery.preview.editsLeft': 'edits left',
+  'landing.discovery.preview.editorPlaceholder':
+    'e.g. "make the headline punchier" or "use a teal accent"',
+  'landing.discovery.preview.apply': 'Apply',
+  'landing.discovery.preview.applying': 'Applying…',
+  'landing.discovery.preview.editFailed':
+    "Couldn't apply that one — try rewording it.",
+  'landing.discovery.preview.limitReached':
+    "You've used all your demo edits. The real editor has no limit.",
+  'landing.discovery.preview.editorUnavailable':
+    'Live editing is off in this environment — this is a static preview.',
   'landing.discovery.preview.disclaimer':
-    'This is an instant impression, not the finished site. Yours is hand-built around your brand, content and goals after the discovery call.',
+    'A working draft built from your answers. The real site is hand-finished with your brand and content after the discovery call — and the editor that ships with it has no edit limit.',
 
   // Field labels
   'landing.discovery.fields.fullName': 'Your name',

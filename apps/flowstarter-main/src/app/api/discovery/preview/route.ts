@@ -12,9 +12,22 @@
  * so the wizard shows the static mock instead of dead-ending.
  */
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { isOpenRouterConfigured } from '@/lib/ai/client';
 import { generateSiteCopy, type SiteCopyInput } from '@/lib/ai/site-copy';
+import {
+  type ToneId,
+  buildDemoSite,
+} from '@/app/(dynamic-pages)/(main-pages)/components/discovery/discovery.logic';
+
+/** Service client — demo_edit_counters/discovery_leads aren't in gen types. */
+function store() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { persistSession: false } });
+}
 
 const PreviewSchema = z.object({
   businessName: z.string().max(200).optional().default(''),
@@ -103,7 +116,36 @@ export async function POST(request: NextRequest) {
       goal: mapGoal(d.goal),
       brandTone: mapTone(d.brandTone),
     });
-    return NextResponse.json({ copy });
+
+    const site = buildDemoSite(
+      {
+        businessName: d.businessName,
+        fullName: d.fullName,
+        industry: d.industry,
+        targetAudience: d.targetAudience,
+        brandTone: (d.brandTone || '') as ToneId | '',
+      },
+      copy
+    );
+
+    // Create the server-side edit counter (caps the playable editor).
+    let demoId: string | null = null;
+    const sb = store();
+    if (sb) {
+      try {
+        const { data, error } = await sb
+          .from('demo_edit_counters')
+          .insert({ edits_used: 0 })
+          .select('demo_id')
+          .single();
+        if (error) throw error;
+        demoId = (data as { demo_id: string } | null)?.demo_id ?? null;
+      } catch (e) {
+        console.error('[discovery/preview] counter create failed', e);
+      }
+    }
+
+    return NextResponse.json({ site, demoId });
   } catch (err) {
     console.error('[discovery/preview] generation failed', err);
     return NextResponse.json({ skip: true });

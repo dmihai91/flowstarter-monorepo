@@ -54,6 +54,7 @@ export function PreQualModal({
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
   const [step, setStep] = useState<Step>('discovery');
+  const [wizardWide, setWizardWide] = useState(false);
   const [selectedTier, setSelectedTier] = useState<Tier | null>(null);
   const [discoveryData, setDiscoveryData] = useState<DiscoveryData | null>(
     null
@@ -64,6 +65,7 @@ export function PreQualModal({
     if (open) {
       setSelectedTier(coerceInitialTier(initialPlan));
       setDiscoveryData(null);
+      setWizardWide(false);
       // After a paid deposit we resume at the calendar; otherwise start fresh.
       setStep(resumeStep === 'calendar' ? 'calendar' : 'discovery');
       document.body.style.overflow = 'hidden';
@@ -144,7 +146,11 @@ export function PreQualModal({
         <div
           className={[
             'relative w-full my-auto rounded-2xl border border-white/10 bg-white dark:bg-[#0f1117] shadow-2xl shadow-black/30 p-6 sm:p-8 transition-all duration-300',
-            step === 'calendar' ? 'max-w-3xl' : 'max-w-2xl',
+            step === 'calendar'
+              ? 'max-w-3xl'
+              : step === 'discovery' && wizardWide
+                ? 'max-w-5xl'
+                : 'max-w-2xl',
           ].join(' ')}
         >
           {/* Drag handle — mobile only */}
@@ -179,6 +185,7 @@ export function PreQualModal({
               initialTier={selectedTier}
               source={source}
               onComplete={handleDiscoveryComplete}
+              onWideChange={setWizardWide}
               t={t}
             />
           )}

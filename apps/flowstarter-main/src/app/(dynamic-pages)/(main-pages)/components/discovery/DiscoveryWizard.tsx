@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@flowstarter/flow-design-system';
 import {
   type DiscoveryData,
@@ -13,6 +13,47 @@ import {
   canProceed,
   recommendTier,
 } from './discovery.logic';
+
+/**
+ * Draft autosave. sessionStorage (not localStorage) on purpose: the draft
+ * holds PII (name/email), so it should survive a refresh but not linger
+ * across browser sessions. Cleared on submit.
+ */
+const DRAFT_KEY = 'fs-discovery-draft-v1';
+
+interface Draft {
+  data: DiscoveryData;
+  step: Step;
+}
+
+function loadDraft(): Draft | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.sessionStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<Draft>;
+    if (!parsed || typeof parsed !== 'object' || !parsed.data) return null;
+    const stepNum = Number(parsed.step);
+    const step = (
+      Number.isFinite(stepNum)
+        ? Math.min(LAST_STEP, Math.max(1, stepNum))
+        : 1
+    ) as Step;
+    // Merge over EMPTY so a schema change can't yield missing keys.
+    return { data: { ...EMPTY_DISCOVERY, ...parsed.data }, step };
+  } catch {
+    return null;
+  }
+}
+
+function clearDraft(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // ignore
+  }
+}
 import { AboutStep } from './steps/AboutStep';
 import { BusinessStep } from './steps/BusinessStep';
 import { GoalsStep } from './steps/GoalsStep';
@@ -37,13 +78,33 @@ export function DiscoveryWizard({
   onComplete: (payload: DiscoveryCompletePayload) => void;
   t: (key: string) => string;
 }) {
-  const [step, setStep] = useState<Step>(1);
-  const [data, setData] = useState<DiscoveryData>(() => ({
-    ...EMPTY_DISCOVERY,
-    selectedTier: initialTier ?? '',
-  }));
+  // Restore an in-progress draft so a refresh doesn't lose the input.
+  const [step, setStep] = useState<Step>(() => loadDraft()?.step ?? 1);
+  const [data, setData] = useState<DiscoveryData>(() => {
+    const draft = loadDraft();
+    if (draft) {
+      // Keep a pricing-card pre-selection only if the draft didn't set one.
+      return draft.data.selectedTier
+        ? draft.data
+        : { ...draft.data, selectedTier: initialTier ?? '' };
+    }
+    return { ...EMPTY_DISCOVERY, selectedTier: initialTier ?? '' };
+  });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Persist the draft on every change (cheap; object is small).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ data, step })
+      );
+    } catch {
+      // storage full / disabled — autosave is best-effort
+    }
+  }, [data, step]);
 
   const update = useCallback(
     <K extends keyof DiscoveryData>(key: K, value: DiscoveryData[K]) => {
@@ -85,6 +146,10 @@ export function DiscoveryWizard({
     } catch {
       // Swallow — capture is non-blocking
     }
+
+    // Submitted — drop the autosaved draft (covers both the Stripe
+    // redirect-away path and the straight-to-Calendly fallback below).
+    clearDraft();
 
     // Booking deposit: send the prospect to Stripe Checkout. On success
     // Stripe redirects back with ?deposit=paid and the modal reopens on the

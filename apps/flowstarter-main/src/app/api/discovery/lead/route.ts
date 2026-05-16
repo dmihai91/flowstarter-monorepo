@@ -39,9 +39,7 @@ const DiscoveryLeadSchema = z.object({
   brandTone: z
     .enum(['professional', 'bold', 'friendly', 'minimal', ''])
     .optional(),
-  pageCount: z
-    .enum(['lt-5', '5-7', '8-15', '15+', 'unsure', ''])
-    .optional(),
+  pageCount: z.enum(['lt-5', '5-7', '8-15', '15+', 'unsure', '']).optional(),
   timeline: z
     .enum(['asap', '4-weeks', '1-3-months', 'flexible', ''])
     .optional(),

@@ -42,13 +42,7 @@ export type CommerceMode =
   | 'digital'
   | 'physical'
   | 'mixed';
-export type CatalogSize =
-  | 'na'
-  | '1-5'
-  | '6-25'
-  | '26-100'
-  | '100+'
-  | 'unsure';
+export type CatalogSize = 'na' | '1-5' | '6-25' | '26-100' | '100+' | 'unsure';
 export type PageCount = 'lt-5' | '5-7' | '8-15' | '15+' | 'unsure';
 export type TimelineId = 'asap' | '4-weeks' | '1-3-months' | 'flexible';
 

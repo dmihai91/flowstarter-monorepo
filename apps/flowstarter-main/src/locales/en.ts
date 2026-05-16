@@ -2516,7 +2516,7 @@ const en = {
   'landing.discovery.options.pages.8-15.sub': 'Multi-page or content-driven',
   'landing.discovery.options.pages.15+.label': '15+',
   'landing.discovery.options.pages.15+.sub': 'Large site, blog, locations',
-  'landing.discovery.options.pages.unsure.label': "Not sure",
+  'landing.discovery.options.pages.unsure.label': 'Not sure',
   'landing.discovery.options.pages.unsure.sub': "We'll work it out on the call",
 
   // Timeline options

@@ -1,6 +1,7 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   type DiscoveryData,
+  type Recommendation,
   type Tier,
   BOOKING_DEPOSIT_PERCENT,
   TIER_MONTHLY_FROM,
@@ -28,9 +29,65 @@ export function RecommendationStep({
   ) => void;
   t: (key: string) => string;
 }) {
-  const recommendation = useMemo(() => recommendTier(data), [data]);
+  // Deterministic result is computed instantly so the card never flashes
+  // empty. The LLM route refines it in the background; on any failure the
+  // deterministic answer stays (the route itself also fails open).
+  const fallback = useMemo(() => recommendTier(data), [data]);
+  const [recommendation, setRecommendation] =
+    useState<Recommendation>(fallback);
 
-  // Auto-select the recommended tier the first time the user lands here
+  useEffect(() => {
+    const controller = new AbortController();
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/discovery/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            businessName: data.businessName,
+            description: data.description,
+            industry: data.industry,
+            targetAudience: data.targetAudience,
+            goal: data.goal,
+            secondaryGoals: data.secondaryGoals,
+            brandTone: data.brandTone,
+            pageCount: data.pageCount,
+            timeline: data.timeline,
+            commerceMode: data.commerceMode,
+            catalogSize: data.catalogSize,
+            customIntegrations: data.customIntegrations,
+          }),
+          signal: controller.signal,
+        });
+        if (!res.ok) return;
+        const json = (await res.json()) as Partial<Recommendation>;
+        if (
+          !cancelled &&
+          json &&
+          typeof json.tier === 'string' &&
+          Array.isArray(json.reasonKeys)
+        ) {
+          setRecommendation({
+            tier: json.tier as Tier,
+            reasonKeys: json.reasonKeys as string[],
+          });
+        }
+      } catch {
+        // keep deterministic fallback
+      }
+    })();
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+    // Run once on mount — by step 5 the answers are filled, and the step
+    // remounts if the user navigates back and returns.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-select the recommended tier whenever the recommendation resolves,
+  // unless the user has already picked one.
   useEffect(() => {
     if (!data.selectedTier) {
       update('selectedTier', recommendation.tier);

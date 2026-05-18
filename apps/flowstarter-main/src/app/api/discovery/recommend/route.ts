@@ -13,7 +13,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { recommendTierLLM } from '@/lib/ai/recommend-tier';
+import { recommendTierLLM, RECOMMEND_MODEL } from '@/lib/ai/recommend-tier';
+import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
 import {
   type DiscoveryData,
   EMPTY_DISCOVERY,
@@ -101,13 +102,23 @@ export async function POST(request: NextRequest) {
   // the floor we never go below.
   const deterministic = recommendTier(data);
 
-  try {
-    const llm = await recommendTierLLM(data);
-    if (llm) {
-      return NextResponse.json({ ...llm, source: 'llm' });
+  // Funnel budget kill-switch: over the monthly cap → skip the LLM entirely.
+  const budget = await funnelBudgetState();
+  if (budget.state !== 'blocked') {
+    try {
+      const llm = await recommendTierLLM(data);
+      if (llm) {
+        await recordGenerationCost({
+          kind: 'recommend',
+          model: RECOMMEND_MODEL,
+          usage: llm.usage,
+          ip: ip === 'unknown' ? null : ip,
+        });
+        return NextResponse.json({ ...llm.rec, source: 'llm' });
+      }
+    } catch {
+      // fall through to deterministic
     }
-  } catch {
-    // fall through to deterministic
   }
 
   return NextResponse.json({ ...deterministic, source: 'fallback' });

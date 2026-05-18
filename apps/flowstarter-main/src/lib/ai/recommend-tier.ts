@@ -84,6 +84,19 @@ function coerce(raw: unknown): Recommendation | null {
   };
 }
 
+/** OpenRouter model id used for the recommendation (for cost attribution). */
+export const RECOMMEND_MODEL = 'meta-llama/llama-3.1-70b-instruct';
+
+export interface RecommendLLMResult {
+  rec: Recommendation;
+  usage?: {
+    inputTokens?: number;
+    outputTokens?: number;
+    promptTokens?: number;
+    completionTokens?: number;
+  };
+}
+
 /**
  * LLM-driven tier recommendation. Returns `null` on any failure (no key,
  * model error, unparseable / invalid output) so the caller can fall back to
@@ -91,11 +104,11 @@ function coerce(raw: unknown): Recommendation | null {
  */
 export async function recommendTierLLM(
   d: DiscoveryData
-): Promise<Recommendation | null> {
+): Promise<RecommendLLMResult | null> {
   if (!isOpenRouterConfigured()) return null;
 
   try {
-    const { text } = await generateText({
+    const { text, usage } = await generateText({
       model: models.llama,
       messages: [
         {
@@ -115,7 +128,9 @@ export async function recommendTierLLM(
       .replace(/^```\n?/i, '')
       .replace(/\n?```$/i, '')
       .trim();
-    return coerce(JSON.parse(clean));
+    const rec = coerce(JSON.parse(clean));
+    if (!rec) return null;
+    return { rec, usage: usage as RecommendLLMResult['usage'] };
   } catch {
     return null;
   }

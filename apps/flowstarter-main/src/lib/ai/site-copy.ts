@@ -83,8 +83,20 @@ OUTPUT — pure JSON, no markdown fences, no commentary, exactly this shape:
 }`;
 }
 
+/** Model id behind `models.projectDetails`, for cost attribution. */
+export const SITE_COPY_MODEL = 'anthropic/claude-sonnet-4';
+
+export interface SiteCopyUsage {
+  inputTokens?: number;
+  outputTokens?: number;
+  promptTokens?: number;
+  completionTokens?: number;
+}
+
 export async function generateSiteCopy(
-  input: SiteCopyInput
+  input: SiteCopyInput,
+  /** Optional, backward-compatible: receives token usage for cost tracking. */
+  onUsage?: (usage: SiteCopyUsage | undefined) => void
 ): Promise<SiteCopy> {
   if (!input.businessName?.trim() || !input.description?.trim()) {
     throw new Error(
@@ -92,11 +104,12 @@ export async function generateSiteCopy(
     );
   }
 
-  const { text } = await generateText({
+  const { text, usage } = await generateText({
     model: models.projectDetails,
     prompt: buildPrompt(input),
     temperature: 0.4,
   });
+  onUsage?.(usage as SiteCopyUsage | undefined);
 
   const trimmed = text.trim();
   const jsonText = trimmed

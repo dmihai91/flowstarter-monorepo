@@ -15,7 +15,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { isOpenRouterConfigured } from '@/lib/ai/client';
-import { generateSiteCopy, type SiteCopyInput } from '@/lib/ai/site-copy';
+import {
+  generateSiteCopy,
+  SITE_COPY_MODEL,
+  type SiteCopyInput,
+  type SiteCopyUsage,
+} from '@/lib/ai/site-copy';
+import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
 import {
   type ToneId,
   buildDemoSite,
@@ -107,15 +113,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ skip: true });
   }
 
+  // Funnel budget kill-switch: over the monthly cap → fail open to the
+  // deterministic template demo (the wizard handles {skip:true}).
+  const budget = await funnelBudgetState();
+  if (budget.state === 'blocked') {
+    return NextResponse.json({ skip: true });
+  }
+
   try {
-    const copy = await generateSiteCopy({
-      businessName,
-      description: d.description,
-      industry: d.industry || undefined,
-      targetAudience: d.targetAudience || undefined,
-      goal: mapGoal(d.goal),
-      brandTone: mapTone(d.brandTone),
-    });
+    let usage: SiteCopyUsage | undefined;
+    const copy = await generateSiteCopy(
+      {
+        businessName,
+        description: d.description,
+        industry: d.industry || undefined,
+        targetAudience: d.targetAudience || undefined,
+        goal: mapGoal(d.goal),
+        brandTone: mapTone(d.brandTone),
+      },
+      (u) => {
+        usage = u;
+      }
+    );
 
     const site = buildDemoSite(
       {
@@ -144,6 +163,14 @@ export async function POST(request: NextRequest) {
         console.error('[discovery/preview] counter create failed', e);
       }
     }
+
+    await recordGenerationCost({
+      kind: 'preview',
+      model: SITE_COPY_MODEL,
+      usage,
+      demoId,
+      ip: ip === 'unknown' ? null : ip,
+    });
 
     return NextResponse.json({ site, demoId });
   } catch (err) {

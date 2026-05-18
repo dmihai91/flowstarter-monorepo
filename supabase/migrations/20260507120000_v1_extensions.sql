@@ -180,9 +180,20 @@ CREATE INDEX IF NOT EXISTS idx_deployments_status
 
 ALTER TABLE deployments ENABLE ROW LEVEL SECURITY;
 
-ALTER TABLE workspaces
-  ADD CONSTRAINT workspaces_last_deploy_fk
-  FOREIGN KEY (last_deploy_id) REFERENCES deployments(id) ON DELETE SET NULL;
+-- Idempotent: Postgres has no ADD CONSTRAINT IF NOT EXISTS, so guard on
+-- pg_constraint. Without this, any replay over an existing schema (branch
+-- reset/rebase, re-run) fails with "constraint already exists" and flips
+-- the branch to MIGRATIONS_FAILED.
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_last_deploy_fk'
+  ) THEN
+    ALTER TABLE workspaces
+      ADD CONSTRAINT workspaces_last_deploy_fk
+      FOREIGN KEY (last_deploy_id) REFERENCES deployments(id) ON DELETE SET NULL;
+  END IF;
+END $$;
 
 -- ─── 4. Commerce catalog ────────────────────────────────────────────────────
 

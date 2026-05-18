@@ -26,6 +26,14 @@ interface DemoState {
   editsUsed: number;
 }
 
+/** Honest phases of the generate pipeline, shown while it runs. */
+const BUILD_STEPS = [
+  'landing.discovery.preview.build.s1',
+  'landing.discovery.preview.build.s2',
+  'landing.discovery.preview.build.s3',
+  'landing.discovery.preview.build.s4',
+] as const;
+
 /** Deterministic fallback when the AI editor is unavailable — still rich. */
 function fallbackSite(data: DiscoveryData): DemoSite {
   const firstSentence =
@@ -86,7 +94,18 @@ export function PreviewStep({
   const [prompt, setPrompt] = useState('');
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [buildStep, setBuildStep] = useState(0);
   const requested = useRef(false);
+
+  // Advance the visible pipeline phase while the draft is generating. Stops
+  // at the last phase until the request actually resolves.
+  useEffect(() => {
+    if (!loading) return;
+    const id = setInterval(() => {
+      setBuildStep((s) => Math.min(s + 1, BUILD_STEPS.length - 1));
+    }, 2600);
+    return () => clearInterval(id);
+  }, [loading]);
 
   // Restore an edited demo from sessionStorage; otherwise generate one.
   useEffect(() => {
@@ -235,8 +254,48 @@ export function PreviewStep({
       </header>
 
       {loading || !demo ? (
-        <div className="flex h-64 items-center justify-center rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
-          <div className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
+        <div className="flex h-64 flex-col justify-center gap-3 rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-6">
+          {BUILD_STEPS.map((key, i) => {
+            const done = i < buildStep;
+            const active = i === buildStep;
+            return (
+              <div
+                key={key}
+                className={[
+                  'flex items-center gap-3 text-sm transition-opacity',
+                  done || active
+                    ? 'text-[var(--fs-ink)]'
+                    : 'text-[var(--fs-ink-faint)] opacity-50',
+                ].join(' ')}
+              >
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center">
+                  {done ? (
+                    <svg
+                      className="h-4 w-4 text-[var(--purple-primary)]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : active ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
+                  ) : (
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--fs-ink-faint)]" />
+                  )}
+                </span>
+                <span>
+                  {t(key)}
+                  {active && '…'}
+                </span>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <DemoSiteFrame site={demo.site} />

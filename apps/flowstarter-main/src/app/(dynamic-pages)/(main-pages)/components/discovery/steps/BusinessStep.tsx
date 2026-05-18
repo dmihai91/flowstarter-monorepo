@@ -1,5 +1,24 @@
+import { useState } from 'react';
+
 import type { DiscoveryData } from '../discovery.logic';
 import { Field, fieldInputClass } from '../Field';
+
+const INDUSTRIES = [
+  'Coaching',
+  'Consulting',
+  'Therapy & wellness',
+  'Photography',
+  'Creative & design',
+  'Fashion & style',
+  'Fitness & training',
+  'Beauty & salon',
+  'Hospitality & food',
+  'Retail & products',
+  'Online store / ecommerce',
+  'Professional services',
+] as const;
+
+const OTHER = '__other__';
 
 export function BusinessStep({
   data,
@@ -13,6 +32,10 @@ export function BusinessStep({
   ) => void;
   t: (key: string) => string;
 }) {
+  const isPreset = (INDUSTRIES as readonly string[]).includes(data.industry);
+  const [otherMode, setOtherMode] = useState(data.industry !== '' && !isPreset);
+  const selectValue = otherMode ? OTHER : isPreset ? data.industry : '';
+
   return (
     <div className="space-y-4">
       <header className="space-y-1">
@@ -38,26 +61,52 @@ export function BusinessStep({
         />
       </Field>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label={t('landing.discovery.fields.industry')}>
+      <Field label={t('landing.discovery.fields.industry')}>
+        <select
+          value={selectValue}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (v === OTHER) {
+              setOtherMode(true);
+              update('industry', '');
+            } else {
+              setOtherMode(false);
+              update('industry', v);
+            }
+          }}
+          className={fieldInputClass}
+        >
+          <option value="">
+            {t('landing.discovery.placeholders.industry')}
+          </option>
+          {INDUSTRIES.map((i) => (
+            <option key={i} value={i}>
+              {i}
+            </option>
+          ))}
+          <option value={OTHER}>{t('landing.discovery.industryOther')}</option>
+        </select>
+        {otherMode && (
           <input
             type="text"
             value={data.industry}
             onChange={(e) => update('industry', e.target.value)}
-            placeholder={t('landing.discovery.placeholders.industry')}
-            className={fieldInputClass}
+            placeholder={t('landing.discovery.placeholders.industryOther')}
+            className={`${fieldInputClass} mt-2`}
+            autoFocus
           />
-        </Field>
-        <Field label={t('landing.discovery.fields.targetAudience')}>
-          <input
-            type="text"
-            value={data.targetAudience}
-            onChange={(e) => update('targetAudience', e.target.value)}
-            placeholder={t('landing.discovery.placeholders.targetAudience')}
-            className={fieldInputClass}
-          />
-        </Field>
-      </div>
+        )}
+      </Field>
+
+      <Field label={t('landing.discovery.fields.targetAudience')}>
+        <textarea
+          rows={3}
+          value={data.targetAudience}
+          onChange={(e) => update('targetAudience', e.target.value)}
+          placeholder={t('landing.discovery.placeholders.targetAudience')}
+          className={fieldInputClass}
+        />
+      </Field>
     </div>
   );
 }

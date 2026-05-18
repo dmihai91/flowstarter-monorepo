@@ -47,8 +47,8 @@ export default function TermsPage() {
               monitoring.
             </li>
             <li>
-              Access to the smart editor — your monthly plan covers a fixed
-              allowance of AI edits. Add-on packs are available.
+              Access to the smart conversational editor — your monthly plan
+              covers a fixed allowance of AI edits. Add-on packs are available.
             </li>
             <li>
               Ongoing support via email and your discovery-call number, with

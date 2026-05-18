@@ -140,10 +140,18 @@ export function LandingHero() {
               className="ls-eyebrow flex flex-wrap items-center gap-1"
             >
               <span>{t('landing.hero.eyebrowSerial')}</span>
-              <span className="dot">·</span>
-              <span>{t('landing.hero.eyebrowLabel')}</span>
-              <span className="dot">·</span>
-              <span>{t('landing.hero.eyebrowTagline')}</span>
+              {t('landing.hero.eyebrowLabel') && (
+                <>
+                  <span className="dot">·</span>
+                  <span>{t('landing.hero.eyebrowLabel')}</span>
+                </>
+              )}
+              {t('landing.hero.eyebrowTagline') && (
+                <>
+                  <span className="dot">·</span>
+                  <span>{t('landing.hero.eyebrowTagline')}</span>
+                </>
+              )}
             </div>
 
             <h1 className="ls-display ls-display--hero mt-9">

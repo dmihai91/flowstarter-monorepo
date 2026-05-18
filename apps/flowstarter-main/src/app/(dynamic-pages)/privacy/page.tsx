@@ -82,8 +82,8 @@ export default function PrivacyPage() {
           <ul>
             <li>
               <strong>Service delivery</strong> — scheduling calls, building
-              your site, hosting it, providing the smart editor, and responding
-              to support.
+              your site, hosting it, providing the smart conversational editor,
+              and responding to support.
             </li>
             <li>
               <strong>Billing</strong> — generating invoices, processing

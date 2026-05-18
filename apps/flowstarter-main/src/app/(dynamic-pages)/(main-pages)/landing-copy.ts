@@ -29,7 +29,7 @@ export interface PricingPlan {
   features: readonly string[];
   cta: string;
   ctaVariant?: 'primary' | 'secondary' | 'outline';
-  status: 'available' | 'coming-soon';
+  status: 'available';
   badge?: string;
   recommended?: boolean;
 }
@@ -47,7 +47,7 @@ export const LANDING_COPY = {
     headlineHighlight: "Let's aim them your way.",
     subheadlineBold: '',
     subheadline:
-      'New build or a tired site that needs rescuing? We get on one call, learn your business, and shape the site around it. After that you run it yourself with the smart editor. No code piling up, no email chains that go nowhere.',
+      'New build or a tired site that needs rescuing? We get on one call, learn your business, and shape the site around it. After that you run it yourself with the smart conversational editor. No code piling up, no email chains that go nowhere.',
     primaryCta: 'Get my custom plan',
     secondaryCta: 'See plans and pricing',
     trustLine:
@@ -62,25 +62,25 @@ export const LANDING_COPY = {
         number: '01',
         title: 'Custom plan and discovery call',
         description:
-          'Answer a few quick questions and you get a tailored plan. Then we talk for 30 minutes about your offer, your positioning and the things you cannot live without. If we are not the right people for the job, we say so on that call.',
+          'Answer a few quick questions and you get a plan made for you. Then we talk for 30 minutes about what you do and what you need. If we are not the right fit, we tell you on that call.',
       },
       {
         number: '02',
         title: 'Design and build',
         description:
-          'We design and build using your assets and your tone of voice. Drafts land on a schedule you can count on. No weeks of silence wondering what is happening.',
+          'We design and build it using your photos, your words and your style. You see progress on a set schedule, so you are never left wondering what is going on.',
       },
       {
         number: '03',
         title: 'Review and launch',
         description:
-          'You give feedback, we do the polish passes, then we handle the unglamorous parts: DNS, SSL, email. All of it sorted before anyone visits.',
+          'You tell us what to change, we polish it, then we handle the technical setup, domain, security and email, so it all just works before anyone sees it.',
       },
       {
         number: '04',
         title: 'Maintain and grow',
         description:
-          'Between calls you change things yourself in the editor. When you hit something bigger than the editor handles, we are still here.',
+          'Between calls you change things yourself, just by asking. When something is bigger than that, we are still here.',
       },
     ],
   },
@@ -162,7 +162,7 @@ export const LANDING_COPY = {
         features: [
           'Custom-built website (5 to 7 pages)',
           'Hosting and domain included',
-          'Smart editor — sessions set by your monthly plan',
+          'Smart conversational editor, sessions set by your monthly plan',
           'Discovery call and ongoing support',
         ],
         cta: 'Get my custom plan',
@@ -203,7 +203,7 @@ export const LANDING_COPY = {
       },
     ],
     guarantee:
-      'You pay half the one-time build upfront so we can start; the rest only once you sign off. The monthly plan is separate, starts after your free first month, and covers the smart editor, hosting, domain and support. Change or cancel the plan anytime.',
+      'You pay half the one-time build upfront so we can start; the rest only once you sign off. The monthly plan is separate, starts after your free first month, and covers the smart conversational editor, hosting, domain and support. Change or cancel the plan anytime.',
   },
   differentiation: {
     title: 'Why people pick us.',
@@ -211,12 +211,12 @@ export const LANDING_COPY = {
       {
         label: 'Built for you, not pulled off a shelf',
         description:
-          'No swapping marketplace themes. The layout is written for one business: yours.',
+          'No off-the-shelf templates. The layout is built for one business: yours.',
       },
       {
         label: 'The editor stays yours',
         description:
-          'Change copy, images or testimonials by describing what you want in plain English. No codebase to open, no freelancer to chase.',
+          'Change wording, photos or testimonials just by asking. No software to open, no freelancer to chase.',
       },
       {
         label: 'A few clients at a time, on purpose',
@@ -227,14 +227,15 @@ export const LANDING_COPY = {
     ],
   },
   audience: {
-    title: 'For service professionals and small product businesses.',
+    title: 'For small businesses across Europe, service or store.',
     items: [
       { icon: 'users', label: 'Coaches' },
       { icon: 'mic', label: 'Consultants' },
       { icon: 'check', label: 'Therapists' },
       { icon: 'sparkles', label: 'Photographers' },
-      { icon: 'layout', label: 'Creatives' },
       { icon: 'briefcase', label: 'Independent professionals' },
+      { icon: 'store', label: 'Online stores' },
+      { icon: 'store', label: 'Makers and retailers' },
       { icon: 'store', label: 'Small product sellers' },
     ],
   },
@@ -323,7 +324,7 @@ export const LANDING_COPY = {
       {
         question: 'What if I want to make changes after launch?',
         answer:
-          'You describe the change in plain English ("change the hero headline to X", "add a testimonial from Sarah") and the smart editor does it. There is no system to learn.',
+          'You describe the change in plain English ("change the hero headline to X", "add a testimonial from Sarah") and the smart conversational editor does it. There is no system to learn.',
       },
       {
         question: "What's included in the monthly fee?",
@@ -343,7 +344,7 @@ export const LANDING_COPY = {
       {
         question: 'Why limit how many clients you take on?',
         answer:
-          'Because it is the two of us, Darius and Dorin, building these by hand with AI helping. A small number of projects a month is the only way each one gets real attention. We would rather do fewer well.',
+          'Because it is the two of us, Darius and Dorin, with AI doing the heavy lifting and us responsible for the result. A small number of projects a month is the only way each one gets real attention. We would rather do fewer well.',
       },
       {
         question: 'What if I need more AI edits than my plan includes?',

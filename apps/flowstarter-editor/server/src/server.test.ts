@@ -27,6 +27,7 @@ import {
 import { assert, it } from "@effect/vitest";
 import { assertFailure, assertInclude, assertTrue } from "@effect/vitest/utils";
 import {
+  Context,
   Deferred,
   Duration,
   Effect,
@@ -50,7 +51,7 @@ import { vi } from "vitest";
 
 import type { ServerConfigShape } from "./config.ts";
 import { deriveServerPaths, ServerConfig } from "./config.ts";
-import { ServerAuth } from "./auth/Services/ServerAuth.ts";
+import { ServerAuth, type ServerAuthShape } from "./auth/Services/ServerAuth.ts";
 import { makeRoutesLayer } from "./server.ts";
 import { resolveAttachmentRelativePath } from "./attachmentPaths.ts";
 import {
@@ -107,8 +108,28 @@ import { ServerAuthLive } from "./auth/Layers/ServerAuth.ts";
 const defaultProjectId = ProjectId.make("project-default");
 const defaultThreadId = ThreadId.make("thread-default");
 
+/**
+ * `buildAppUnderTest` builds the server's layer (including its ServerAuth,
+ * bound to the per-test ServerConfig + in-memory stores) and discards the
+ * Context. Credential helpers must use that exact same ServerAuth instance
+ * — a second instance would have a separate session store, so credentials
+ * it issues would be rejected by the running server. We capture the built
+ * ServerAuth here so helpers can read it without re-requiring `ServerAuth`
+ * in every test Effect's context.
+ */
+let builtServerAuth: ServerAuthShape | undefined;
+
+function requireBuiltServerAuth(): ServerAuthShape {
+  if (!builtServerAuth) {
+    throw new Error(
+      "ServerAuth not available — call buildAppUnderTest() before issuing credentials.",
+    );
+  }
+  return builtServerAuth;
+}
+
 const issueOwnerBootstrapCredential = Effect.gen(function* () {
-  const serverAuth = yield* ServerAuth;
+  const serverAuth = requireBuiltServerAuth();
   const issued = yield* serverAuth.issuePairingCredential({ role: "owner" });
   return issued.credential;
 });
@@ -482,7 +503,8 @@ const buildAppUnderTest = (options?: {
       Layer.provide(layerConfig),
     );
 
-    yield* Layer.build(appLayer);
+    const builtContext = yield* Layer.build(appLayer);
+    builtServerAuth = Context.get(builtContext, ServerAuth);
     return config;
   });
 
@@ -2008,7 +2030,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
       yield* buildAppUnderTest();
 
       const clientCredential = yield* Effect.gen(function* () {
-        const serverAuth = yield* ServerAuth;
+        const serverAuth = requireBuiltServerAuth();
         const issued = yield* serverAuth.issuePairingCredential({ role: "client" });
         return issued.credential;
       });
@@ -2141,7 +2163,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
       yield* buildAppUnderTest();
 
       const clientCredential = yield* Effect.gen(function* () {
-        const serverAuth = yield* ServerAuth;
+        const serverAuth = requireBuiltServerAuth();
         const issued = yield* serverAuth.issuePairingCredential({ role: "client" });
         return issued.credential;
       });

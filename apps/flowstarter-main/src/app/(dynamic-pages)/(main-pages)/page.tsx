@@ -34,11 +34,6 @@ const FinalCTASection = nextDynamic(() =>
 const SupportBot = nextDynamic(() =>
   import('./components/SupportBot').then((m) => ({ default: m.SupportBot }))
 );
-const EcommerceWaitlistModal = nextDynamic(() =>
-  import('./components/EcommerceWaitlistModal').then((m) => ({
-    default: m.EcommerceWaitlistModal,
-  }))
-);
 
 export default function LandingPage() {
   return (
@@ -76,7 +71,6 @@ export default function LandingPage() {
       <CookieConsent />
       <ScrollFab />
       <SupportBot />
-      <EcommerceWaitlistModal />
     </div>
   );
 }

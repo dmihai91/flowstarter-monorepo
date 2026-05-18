@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/unified-button';
 import { useI18n } from '@/lib/i18n';
 import { LANDING_COPY } from '../landing-copy';
 import { PreQualModal } from './PreQualModal';
-import { useEcommerceWaitlist } from './ecommerce-waitlist-store';
 
 // Storage tiers are not advertised on the concierge offer.
 const STORAGE_BY_PLAN: Record<string, string> = {};
@@ -14,7 +13,6 @@ export function LandingPricing() {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
   const pricing = LANDING_COPY.pricing;
-  const openWaitlist = useEcommerceWaitlist((s) => s.open);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -72,14 +70,13 @@ export function LandingPricing() {
         <div className="ls-pricing-grid mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
           {pricing.plans.map((plan, i) => {
             const isHighlighted = plan.recommended === true;
-            const isComingSoon = plan.status === 'coming-soon';
             const storage = STORAGE_BY_PLAN[plan.name];
             return (
               <div
                 key={plan.name}
                 className={`ls-card ls-price-card ${
                   isHighlighted ? 'ls-price-card--hi' : ''
-                } ${isComingSoon ? 'ls-price-card--soon' : ''}`}
+                }`}
                 style={{
                   animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
                     i * 110
@@ -135,28 +132,12 @@ export function LandingPricing() {
                   ))}
                 </ul>
 
-                {isComingSoon ? (
-                  <Button
-                    onClick={openWaitlist}
-                    className="mt-auto h-[46px] w-full text-[0.9rem]"
-                  >
-                    {plan.cta}
-                  </Button>
-                ) : isHighlighted ? (
-                  <Button
-                    onClick={() => handlePlanClick(plan.name.toLowerCase())}
-                    className="mt-auto h-[46px] w-full text-[0.9rem]"
-                  >
-                    {plan.cta}
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => handlePlanClick(plan.name.toLowerCase())}
-                    className="mt-auto h-[46px] w-full text-[0.9rem]"
-                  >
-                    {plan.cta}
-                  </Button>
-                )}
+                <Button
+                  onClick={() => handlePlanClick(plan.name.toLowerCase())}
+                  className="mt-auto h-[46px] w-full text-[0.9rem]"
+                >
+                  {plan.cta}
+                </Button>
               </div>
             );
           })}

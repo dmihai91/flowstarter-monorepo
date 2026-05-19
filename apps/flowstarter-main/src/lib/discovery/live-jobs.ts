@@ -1,0 +1,67 @@
+import 'server-only';
+
+/**
+ * In-memory live-demo job store. A demo = one generated, sandbox-hosted site
+ * the visitor can see and edit up to 15 times. Keyed by demoId.
+ *
+ * NOTE: process-local and ephemeral by design — fine for a single Node
+ * worker / local dev. Production (multi-instance) must back this with a
+ * durable store (Supabase) + the existing demo_edit_counters cap; the route
+ * shapes here are written so that swap is mechanical.
+ */
+export const LIVE_EDIT_CAP = 15;
+
+export interface LiveJob {
+  demoId: string;
+  status: 'building' | 'ready' | 'failed';
+  previewUrl?: string;
+  sandboxId?: string;
+  /** Absolute path to the site's single content file (for edits). */
+  contentFile?: string;
+  /** Relative path of that file inside the sandbox workspace. */
+  contentRel: string;
+  editsUsed: number;
+  error?: string;
+  /** Latest streamed progress phase from the in-sandbox agent (for the wizard). */
+  phase?: string;
+  createdAt: number;
+  teardown?: () => Promise<void>;
+}
+
+const jobs = new Map<string, LiveJob>();
+
+export function createJob(demoId: string): LiveJob {
+  const job: LiveJob = {
+    demoId,
+    status: 'building',
+    contentRel: 'src/content/site-labels.md',
+    editsUsed: 0,
+    createdAt: Date.now(),
+  };
+  jobs.set(demoId, job);
+  return job;
+}
+
+export function getJob(demoId: string): LiveJob | undefined {
+  return jobs.get(demoId);
+}
+
+export function updateJob(demoId: string, patch: Partial<LiveJob>): void {
+  const j = jobs.get(demoId);
+  if (j) jobs.set(demoId, { ...j, ...patch });
+}
+
+/** Best-effort GC: tear down + drop demos older than the TTL. */
+export async function reapStaleJobs(ttlMs = 45 * 60_000): Promise<void> {
+  const now = Date.now();
+  for (const [id, j] of Array.from(jobs.entries())) {
+    if (now - j.createdAt > ttlMs) {
+      try {
+        await j.teardown?.();
+      } catch {
+        /* autoStopInterval is the backstop */
+      }
+      jobs.delete(id);
+    }
+  }
+}

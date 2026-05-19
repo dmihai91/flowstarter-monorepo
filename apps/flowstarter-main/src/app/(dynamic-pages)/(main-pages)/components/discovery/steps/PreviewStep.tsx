@@ -12,12 +12,12 @@ import {
 import { DemoSiteFrame } from './DemoSiteFrame';
 
 /**
- * Playable demo. We generate a real multi-section site from the wizard
- * answers (server LLM via /api/discovery/preview) and let the prospect edit
- * it in plain English — capped at MAX_DEMO_EDITS, enforced server-side. The
- * generated site + edit count are mirrored to sessionStorage so a refresh
- * keeps the work (and doesn't burn an LLM call or an edit). Cleared on
- * submit by the wizard.
+ * Step 7. Primary path: the in-sandbox autonomous Agent-SDK pipeline
+ * (/api/discovery/preview/live) builds a real, personalized site in a
+ * Daytona sandbox and we embed its live URL. Real streamed progress phases
+ * are shown while it builds. Fail-open: if the live pipeline is
+ * unavailable / budget-blocked / errors, we fall back to the deterministic
+ * JSON demo so the funnel never dead-ends.
  */
 
 interface DemoState {
@@ -26,7 +26,6 @@ interface DemoState {
   editsUsed: number;
 }
 
-/** Honest phases of the generate pipeline, shown while it runs. */
 const BUILD_STEPS = [
   'landing.discovery.preview.build.s1',
   'landing.discovery.preview.build.s2',
@@ -34,7 +33,6 @@ const BUILD_STEPS = [
   'landing.discovery.preview.build.s4',
 ] as const;
 
-/** Deterministic fallback when the AI editor is unavailable — still rich. */
 function fallbackSite(data: DiscoveryData): DemoSite {
   const firstSentence =
     data.description.trim().split(/[.!?]/)[0]?.trim() ||
@@ -82,6 +80,8 @@ function fallbackSite(data: DiscoveryData): DemoSite {
   );
 }
 
+type Mode = 'loading' | 'live' | 'json';
+
 export function PreviewStep({
   data,
   t,
@@ -89,60 +89,64 @@ export function PreviewStep({
   data: DiscoveryData;
   t: (key: string) => string;
 }) {
+  const [mode, setMode] = useState<Mode>('loading');
+  const [liveUrl, setLiveUrl] = useState<string | null>(null);
+  const [livePhase, setLivePhase] = useState<string | null>(null);
   const [demo, setDemo] = useState<DemoState | null>(null);
-  const [loading, setLoading] = useState(true);
   const [prompt, setPrompt] = useState('');
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [buildStep, setBuildStep] = useState(0);
   const requested = useRef(false);
 
-  // Advance the visible pipeline phase while the draft is generating. Stops
-  // at the last phase until the request actually resolves.
+  // Fallback checklist animation (only while no real phase is streaming).
   useEffect(() => {
-    if (!loading) return;
-    const id = setInterval(() => {
-      setBuildStep((s) => Math.min(s + 1, BUILD_STEPS.length - 1));
-    }, 2600);
+    if (mode !== 'loading' || livePhase) return;
+    const id = setInterval(
+      () => setBuildStep((s) => Math.min(s + 1, BUILD_STEPS.length - 1)),
+      2600
+    );
     return () => clearInterval(id);
-  }, [loading]);
+  }, [mode, livePhase]);
 
-  // Restore an edited demo from sessionStorage; otherwise generate one.
   useEffect(() => {
     if (requested.current) return;
     requested.current = true;
     let cancelled = false;
 
-    if (typeof window !== 'undefined') {
-      try {
-        const raw = window.sessionStorage.getItem(DEMO_STATE_KEY);
-        if (raw) {
-          const saved = JSON.parse(raw) as DemoState;
-          if (saved?.site) {
-            setDemo(saved);
-            setLoading(false);
-            return;
-          }
-        }
-      } catch {
-        /* ignore */
-      }
-    }
+    const payload = {
+      businessName: data.businessName,
+      fullName: data.fullName,
+      description: data.description,
+      industry: data.industry,
+      targetAudience: data.targetAudience,
+      goal: data.goal,
+      brandTone: data.brandTone,
+    };
 
-    (async () => {
+    async function loadJsonFallback() {
+      // Restore an edited JSON demo if present.
+      if (typeof window !== 'undefined') {
+        try {
+          const raw = window.sessionStorage.getItem(DEMO_STATE_KEY);
+          if (raw) {
+            const saved = JSON.parse(raw) as DemoState;
+            if (saved?.site) {
+              if (cancelled) return;
+              setDemo(saved);
+              setMode('json');
+              return;
+            }
+          }
+        } catch {
+          /* ignore */
+        }
+      }
       try {
         const res = await fetch('/api/discovery/preview', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            businessName: data.businessName,
-            fullName: data.fullName,
-            description: data.description,
-            industry: data.industry,
-            targetAudience: data.targetAudience,
-            goal: data.goal,
-            brandTone: data.brandTone,
-          }),
+          body: JSON.stringify(payload),
         });
         const json = (await res.json().catch(() => ({}))) as {
           site?: DemoSite;
@@ -166,16 +170,68 @@ export function PreviewStep({
           setNotice(t('landing.discovery.preview.editorUnavailable'));
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setMode('json');
       }
-    })();
+    }
+
+    async function runLive() {
+      let demoId: string | null = null;
+      try {
+        const res = await fetch('/api/discovery/preview/live', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const json = (await res.json().catch(() => ({}))) as {
+          demoId?: string;
+          skip?: boolean;
+        };
+        if (cancelled) return;
+        if (json.skip || !json.demoId) return loadJsonFallback();
+        demoId = json.demoId;
+      } catch {
+        return loadJsonFallback();
+      }
+
+      // Poll for streamed progress + the live URL.
+      const started = Date.now();
+      while (!cancelled && Date.now() - started < 18 * 60_000) {
+        await new Promise((r) => setTimeout(r, 3500));
+        if (cancelled) return;
+        let s: {
+          status?: string;
+          phase?: string;
+          previewUrl?: string;
+          error?: string;
+        } = {};
+        try {
+          const r = await fetch(
+            `/api/discovery/preview/live?demoId=${encodeURIComponent(demoId)}`
+          );
+          s = (await r.json().catch(() => ({}))) as typeof s;
+        } catch {
+          continue;
+        }
+        if (s.phase) setLivePhase(s.phase);
+        if (s.status === 'ready' && s.previewUrl) {
+          if (cancelled) return;
+          setLiveUrl(s.previewUrl);
+          setMode('live');
+          return;
+        }
+        if (s.status === 'failed') return loadJsonFallback();
+      }
+      if (!cancelled) return loadJsonFallback();
+    }
+
+    runLive();
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist demo state so a refresh keeps edits + count.
+  // Persist JSON demo state (fallback path only).
   useEffect(() => {
     if (!demo || typeof window === 'undefined') return;
     try {
@@ -225,11 +281,8 @@ export function PreviewStep({
               }
             : d
         );
-        if (json.error) {
-          setNotice(t('landing.discovery.preview.editFailed'));
-        } else {
-          setPrompt('');
-        }
+        if (json.error) setNotice(t('landing.discovery.preview.editFailed'));
+        else setPrompt('');
       } else {
         setNotice(t('landing.discovery.preview.editFailed'));
       }
@@ -247,62 +300,89 @@ export function PreviewStep({
           {t('landing.discovery.steps.preview.title')}
         </h3>
         <p className="text-sm text-[var(--fs-ink-faint)]">
-          {loading
+          {mode === 'loading'
             ? t('landing.discovery.preview.generating')
             : t('landing.discovery.steps.preview.subtitle')}
         </p>
       </header>
 
-      {loading || !demo ? (
+      {mode === 'loading' && (
         <div className="flex h-64 flex-col justify-center gap-3 rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-6">
-          {BUILD_STEPS.map((key, i) => {
-            const done = i < buildStep;
-            const active = i === buildStep;
-            return (
-              <div
-                key={key}
-                className={[
-                  'flex items-center gap-3 text-sm transition-opacity',
-                  done || active
-                    ? 'text-[var(--fs-ink)]'
-                    : 'text-[var(--fs-ink-faint)] opacity-50',
-                ].join(' ')}
-              >
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center">
-                  {done ? (
-                    <svg
-                      className="h-4 w-4 text-[var(--purple-primary)]"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2.5}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  ) : active ? (
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
-                  ) : (
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--fs-ink-faint)]" />
-                  )}
-                </span>
-                <span>
-                  {t(key)}
-                  {active && '…'}
-                </span>
-              </div>
-            );
-          })}
+          {livePhase ? (
+            <div className="flex items-center gap-3 text-sm text-[var(--fs-ink)]">
+              <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
+              <span>{livePhase}</span>
+            </div>
+          ) : (
+            BUILD_STEPS.map((key, i) => {
+              const done = i < buildStep;
+              const active = i === buildStep;
+              return (
+                <div
+                  key={key}
+                  className={[
+                    'flex items-center gap-3 text-sm transition-opacity',
+                    done || active
+                      ? 'text-[var(--fs-ink)]'
+                      : 'text-[var(--fs-ink-faint)] opacity-50',
+                  ].join(' ')}
+                >
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center">
+                    {done ? (
+                      <svg
+                        className="h-4 w-4 text-[var(--purple-primary)]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    ) : active ? (
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
+                    ) : (
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--fs-ink-faint)]" />
+                    )}
+                  </span>
+                  <span>
+                    {t(key)}
+                    {active && '…'}
+                  </span>
+                </div>
+              );
+            })
+          )}
         </div>
-      ) : (
-        <DemoSiteFrame site={demo.site} />
       )}
 
-      {/* Playable editor */}
-      {demo?.demoId && (
+      {mode === 'live' && liveUrl && (
+        <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
+          <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] px-3 py-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+            <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
+            <span className="ml-3 truncate text-[11px] text-[var(--fs-ink-faint)]">
+              {data.businessName || 'your site'} — live preview
+            </span>
+          </div>
+          <iframe
+            src={liveUrl}
+            title="Live site preview"
+            className="h-[58vh] w-full bg-white"
+            sandbox="allow-scripts allow-same-origin"
+            loading="lazy"
+          />
+        </div>
+      )}
+
+      {mode === 'json' && demo && <DemoSiteFrame site={demo.site} />}
+
+      {/* Plain-English editor — JSON-demo path (live edit loop is staged next). */}
+      {mode === 'json' && demo?.demoId && (
         <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 p-3">
           <div className="mb-2 flex items-center justify-between">
             <p className="text-[12px] font-semibold text-[var(--fs-ink)]">
@@ -345,11 +425,6 @@ export function PreviewStep({
           {notice && (
             <p className="mt-2 text-[12px] text-[var(--fs-ink-faint)]">
               {notice}
-            </p>
-          )}
-          {editsLeft <= 0 && !notice && (
-            <p className="mt-2 text-[12px] text-[var(--fs-ink-faint)]">
-              {t('landing.discovery.preview.limitReached')}
             </p>
           )}
         </div>

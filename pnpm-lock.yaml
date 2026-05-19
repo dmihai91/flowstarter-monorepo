@@ -479,6 +479,12 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@19.1.0)
+      '@flowstarter/agentic-codegen':
+        specifier: workspace:*
+        version: link:../../packages/agentic-codegen
+      '@flowstarter/daytona-utils':
+        specifier: workspace:*
+        version: link:../../packages/daytona-utils
       '@flowstarter/flow-design-system':
         specifier: workspace:*
         version: link:../../packages/flow-design-system
@@ -25075,7 +25081,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.1.0
-      vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@20.19.9)(@vitest/ui@4.0.18)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@20.19.9)(typescript@5.7.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3)
+      vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(@vitest/browser-playwright@4.1.4)(@vitest/ui@4.0.18)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@25.2.3)(typescript@5.9.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3)
     optional: true
 
   '@vitest/utils@4.0.18':

@@ -82,7 +82,15 @@ export default {
       },
     ];
   },
-  transpilePackages: ['uploadthing', '@uploadthing/react', '@uploadthing/shared'],
+  transpilePackages: [
+    'uploadthing',
+    '@uploadthing/react',
+    '@uploadthing/shared',
+    // TS-source workspace pkgs consumed by the live-demo route — Next must
+    // transpile them (their heavy/native bits stay external below).
+    '@flowstarter/agentic-codegen',
+    '@flowstarter/daytona-utils',
+  ],
   images: {
     remotePatterns: [
       {
@@ -181,5 +189,5 @@ export default {
   },
   // Keep heavy native deps as external `require()` calls so they aren't
   // re-bundled per route — keeps Lambda cold starts smaller.
-  serverExternalPackages: [],
+  serverExternalPackages: ['@daytonaio/sdk'],
 };

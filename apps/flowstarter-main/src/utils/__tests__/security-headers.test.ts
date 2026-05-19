@@ -51,6 +51,17 @@ describe('security-headers', () => {
       expect(buildCSPHeader()).toContain("frame-ancestors 'none'");
     });
 
+    it('allows Daytona sandbox previews in frame-src (concierge funnel)', () => {
+      // The discovery wizard step-7 live preview frames the generated
+      // site running in its Daytona sandbox; without this the browser
+      // blocks it under our own CSP and the preview stays blank.
+      const frameSrc = buildCSPHeader()
+        .split(';')
+        .map((d) => d.trim())
+        .find((d) => d.startsWith('frame-src'));
+      expect(frameSrc).toContain('https://*.daytonaproxy01.net');
+    });
+
     it('includes object-src none', () => {
       expect(buildCSPHeader()).toContain("object-src 'none'");
     });

@@ -99,6 +99,12 @@ const ALLOWED_FRAME_DOMAINS = [
   // own X-Frame-Options / frame-ancestors — that we can't override).
   'https://ux-journey.com',
   'https://lebadusularticoledepescuit.ro',
+  // Concierge discovery funnel (step 7): the live preview embeds the
+  // generated site while it runs in its Daytona sandbox. PreviewStep.tsx
+  // frames https://<port>-<sandboxId>.daytonaproxy01.net — without this
+  // the browser blocks the frame under our own CSP and the wizard
+  // preview stays permanently blank.
+  'https://*.daytonaproxy01.net',
 ];
 
 // Create headers without CSP (we'll add it dynamically with nonce)

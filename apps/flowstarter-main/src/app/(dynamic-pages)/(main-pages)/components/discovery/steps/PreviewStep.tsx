@@ -115,7 +115,6 @@ export function PreviewStep({
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [buildStep, setBuildStep] = useState(0);
-  const requested = useRef(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -132,8 +131,6 @@ export function PreviewStep({
   }, [mode, livePhase]);
 
   useEffect(() => {
-    if (requested.current) return;
-    requested.current = true;
     let cancelled = false;
 
     const payload = {
@@ -280,9 +277,16 @@ export function PreviewStep({
       if (!cancelled && !shownBase) return loadJsonFallback();
     }
 
-    runLive();
+    // Defer the kickoff one macrotask so React Strict Mode's
+    // mount → unmount → remount cancels the throwaway first run *before*
+    // it POSTs. Exactly one live job is ever created (dev and prod alike);
+    // the surviving mount is the one that polls to completion.
+    const startTimer = setTimeout(() => {
+      if (!cancelled) runLive();
+    }, 30);
     return () => {
       cancelled = true;
+      clearTimeout(startTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

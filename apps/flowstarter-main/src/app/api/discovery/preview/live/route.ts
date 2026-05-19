@@ -14,7 +14,6 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
-import { join } from 'node:path';
 import { z } from 'zod';
 import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
 import { createJob, getJob, updateJob } from '@/lib/discovery/live-jobs';
@@ -69,79 +68,83 @@ export async function POST(req: NextRequest) {
   const spec = parsed.data;
 
   // Detached: do NOT await — the wizard polls GET while progress streams.
-  // Runs the autonomous Agent-SDK build INSIDE a Daytona sandbox, then
-  // serves it live. The route only orchestrates Daytona (no host claude
-  // binary), so this is Netlify-safe aside from duration (must run on a
-  // Node host; the wizard polls, it doesn't hold the request).
+  // FAST path: single-shot personalization (~60-95s) of the industry-routed
+  // template, then push the built site into a Daytona sandbox for the live
+  // preview (~14s). Autonomous in-sandbox agent is reserved for structural
+  // edits (the 15-prompt loop), not the initial build.
   void (async () => {
     try {
-      const { selectBaseTemplate, AGENT_BUILD_SYSTEM, buildAgentTask } =
-        await import('@flowstarter/agentic-codegen');
-      const { buildSiteInSandbox } = await import('@flowstarter/daytona-utils');
+      const { runCodegen } = await import('@flowstarter/agentic-codegen');
+      const { previewInSandbox } = await import('@flowstarter/daytona-utils');
 
-      const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
-      if (!anthropicApiKey) {
-        updateJob(demoId, {
-          status: 'failed',
-          error: 'ANTHROPIC_API_KEY missing',
-        });
+      if (!process.env.ANTHROPIC_API_KEY) {
+        updateJob(demoId, { status: 'failed', error: 'ANTHROPIC_API_KEY missing' });
         return;
       }
 
-      const codegenSpec = {
-        businessName: spec.businessName,
-        industry: spec.industry,
-        description: spec.description,
-        targetAudience: spec.targetAudience,
-        goal: spec.goal,
-        brandTone: spec.brandTone,
-      };
-      // Next runtime cwd = apps/flowstarter-main → repo root is two up.
-      const repoRoot = join(process.cwd(), '..', '..');
-      const base = selectBaseTemplate(codegenSpec);
-      const templateDir = join(repoRoot, base.rootRel);
-      const runnerPath = join(
-        repoRoot,
-        'packages/agentic-codegen/sandbox/agent-runner.mjs'
+      const gen = await runCodegen(
+        {
+          businessName: spec.businessName,
+          industry: spec.industry,
+          description: spec.description,
+          targetAudience: spec.targetAudience,
+          goal: spec.goal,
+          brandTone: spec.brandTone,
+        },
+        {
+          verifyBuild: false,
+          keepWorkspace: true,
+          onEvent: (e) =>
+            updateJob(demoId, {
+              phase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
+            }),
+        }
       );
-
-      const build = await buildSiteInSandbox(templateDir, {
-        projectId: demoId,
-        systemPrompt: AGENT_BUILD_SYSTEM,
-        taskPrompt: buildAgentTask(codegenSpec),
-        runnerPath,
-        model: 'claude-sonnet-4-6',
-        env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
-        anthropicApiKey,
-        agentTimeoutMs: 14 * 60_000,
-        onProgress: (e) =>
-          updateJob(demoId, {
-            phase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
-          }),
-      });
 
       await recordGenerationCost({
         kind: 'codegen',
-        model: 'claude-sonnet-4-6',
+        model: 'claude-haiku-4-5',
         usage: {},
         demoId,
         ip,
       }).catch(() => {});
 
-      if (!build.success || !build.previewUrl) {
+      if (!gen.contentChanged) {
         updateJob(demoId, {
           status: 'failed',
-          error: build.error ?? 'live build failed',
+          error: gen.failure?.log ?? 'generation produced no changes',
         });
-        await build.teardown().catch(() => {});
+        await gen.cleanup().catch(() => {});
+        return;
+      }
+
+      updateJob(demoId, { phase: 'Publishing your live preview' });
+      const preview = await previewInSandbox(gen.buildDir, {
+        projectId: demoId,
+        env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+        onProgress: (_step, message) =>
+          updateJob(demoId, { phase: message ?? 'Publishing your live preview' }),
+      });
+
+      if (!preview.success || !preview.previewUrl) {
+        updateJob(demoId, {
+          status: 'failed',
+          error: preview.error ?? 'preview unavailable',
+        });
+        await preview.teardown().catch(() => {});
+        await gen.cleanup().catch(() => {});
         return;
       }
 
       updateJob(demoId, {
         status: 'ready',
-        previewUrl: build.previewUrl,
-        sandboxId: build.sandboxId,
-        teardown: build.teardown,
+        previewUrl: preview.previewUrl,
+        sandboxId: preview.sandboxId,
+        contentFile: gen.contentFile,
+        teardown: async () => {
+          await preview.teardown().catch(() => {});
+          await gen.cleanup().catch(() => {});
+        },
       });
     } catch (e) {
       updateJob(demoId, {

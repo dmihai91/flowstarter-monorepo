@@ -2044,7 +2044,7 @@ const en = {
   'landing.prequal.close': 'Close',
 
   // Discovery wizard (multi-step pre-call form)
-  'landing.discovery.eyebrow': 'Free discovery — about a minute',
+  'landing.discovery.eyebrow': 'Free discovery — a few minutes',
   'landing.discovery.nav.back': 'Back',
   'landing.discovery.nav.continue': 'Continue',
   'landing.discovery.nav.bookCall': 'book my call',

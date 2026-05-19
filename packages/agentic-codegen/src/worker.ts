@@ -1,10 +1,15 @@
 import { spawn } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import type { DiscoverySpec } from './spec.js';
-import { buildSystemPrompt, buildTaskPrompt } from './prompt.js';
-import { createWorkspace, selectBaseTemplate } from './workspace.js';
-import { runBuild } from './build.js';
+import type { DiscoverySpec } from './spec';
+import { buildSystemPrompt, buildTaskPrompt } from './prompt';
+import {
+  createWorkspace,
+  selectBaseTemplate,
+  BASE_TEMPLATES,
+  TEMPLATE_CATALOG,
+} from './workspace';
+import { runBuild } from './build';
 
 export interface CodegenEvent {
   phase: string;
@@ -155,9 +160,44 @@ function assembleAndValidate(
 }
 
 /**
- * Discovery spec in → personalized dorin-portfolio site out, fast: warm
- * workspace (no install), one tool-less LLM call rewriting the single content
- * file, envelope-safe write, optional build proof.
+ * LLM template router: pick the best-fit template from the catalog for this
+ * spec (a fast Haiku call). Far better than keyword regex for fuzzy cases
+ * (e.g. a fashion-guide creator → creative-portfolio, not the regex's
+ * professional-services default). Fail-safe: returns null on any
+ * error/timeout so the caller falls back to the regex selector.
+ */
+async function classifyTemplate(spec: DiscoverySpec): Promise<string | null> {
+  try {
+    const system =
+      'You choose the single best website template for a business. Reply with ONLY the template id — no other text.';
+    const task = [
+      'Templates:',
+      ...TEMPLATE_CATALOG.map((t) => `- ${t.id}: ${t.bestFor}`),
+      '',
+      'Business:',
+      `- Name: ${spec.businessName}`,
+      `- Industry: ${spec.industry ?? ''}`,
+      `- What they do: ${spec.description}`,
+      `- Audience: ${spec.targetAudience ?? ''}`,
+      `- Goal: ${spec.goal ?? ''}`,
+      `- Tone: ${spec.brandTone ?? ''}`,
+      '',
+      'Reply with exactly one id from the list above.',
+    ].join('\n');
+    const g = await runGeneration(system, task, 'claude-haiku-4-5', 0.2, 20_000);
+    if (!g.ok || !g.resultText) return null;
+    const out = g.resultText.toLowerCase();
+    for (const { id } of TEMPLATE_CATALOG) if (out.includes(id)) return id;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Discovery spec in → personalized industry-matched site out, fast: LLM
+ * template routing, warm workspace (no install), one tool-less LLM call
+ * rewriting the single content file, envelope-safe write, optional build.
  */
 export async function runCodegen(
   spec: DiscoverySpec,
@@ -169,7 +209,17 @@ export async function runCodegen(
   const wallClockMs = options.wallClockMs ?? 150_000;
   const verifyBuild = options.verifyBuild ?? true;
 
-  const base = selectBaseTemplate(spec, options.baseOverride);
+  let base;
+  if (options.baseOverride && BASE_TEMPLATES[options.baseOverride]) {
+    base = BASE_TEMPLATES[options.baseOverride]!;
+  } else {
+    options.onEvent?.({ phase: 'Choosing the best template for you' });
+    const chosen = await classifyTemplate(spec);
+    base =
+      chosen && BASE_TEMPLATES[chosen]
+        ? BASE_TEMPLATES[chosen]!
+        : selectBaseTemplate(spec);
+  }
   options.onEvent?.({ phase: 'Preparing', detail: `${base.name} (warm)` });
   const ws = await createWorkspace(base);
 

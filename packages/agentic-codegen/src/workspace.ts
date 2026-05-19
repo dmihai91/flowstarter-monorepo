@@ -1,8 +1,9 @@
 import { cp, mkdtemp, rm, readFile, access, mkdir, symlink } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import type { DiscoverySpec } from './spec.js';
+import { join, dirname } from 'node:path';
+import type { DiscoverySpec } from './spec';
 
 /**
  * Base templates the agent personalizes. dorin-portfolio is the chosen base:
@@ -18,7 +19,24 @@ interface BaseTemplate {
   contentFileRel: string;
 }
 
-const REPO_ROOT = new URL('../../../', import.meta.url).pathname;
+/**
+ * Repo root, found by walking up from cwd to the pnpm workspace marker.
+ * Bundler-safe (no `new URL(rel, import.meta.url)` — Next tries to resolve
+ * that as an asset) and context-independent (works whether cwd is the Next
+ * app, the repo root, or a package dir).
+ */
+function findRepoRoot(): string {
+  let d = process.cwd();
+  for (let i = 0; i < 10; i++) {
+    if (existsSync(join(d, 'pnpm-workspace.yaml'))) return d;
+    const up = dirname(d);
+    if (up === d) break;
+    d = up;
+  }
+  return process.cwd();
+}
+
+const REPO_ROOT = findRepoRoot();
 const CACHE_ROOT = join(tmpdir(), 'fs-codegen-cache');
 
 const tpl = (name: string): BaseTemplate => ({
@@ -35,6 +53,35 @@ export const BASE_TEMPLATES: Record<string, BaseTemplate> = {
   'dorin-portfolio': tpl('dorin-portfolio'),
 };
 
+/**
+ * What each template is best for — fed to the LLM selector so it picks the
+ * right structural/aesthetic fit (the regex below is only the fail-safe
+ * fallback). dorin-portfolio is intentionally excluded (legacy; superseded
+ * by creative-portfolio).
+ */
+export const TEMPLATE_CATALOG: Array<{ id: string; bestFor: string }> = [
+  {
+    id: 'wellness-therapy',
+    bestFor:
+      'therapists, counsellors, psychologists, coaches, nutritionists, wellbeing/holistic practitioners — calm, warm, human practices selling sessions or programmes',
+  },
+  {
+    id: 'professional-services',
+    bestFor:
+      'consultancies, agencies, accountants, lawyers, advisors, B2B/SaaS or other expertise firms — confident, premium, outcome/credibility-led',
+  },
+  {
+    id: 'local-trade',
+    bestFor:
+      'local trades & hands-on services: joinery, builders, electricians, salons, cleaners, instructors — warm, trustworthy, call/quote-driven',
+  },
+  {
+    id: 'creative-portfolio',
+    bestFor:
+      'creators & personal brands: designers, photographers, makers, artists, and people selling their own products/digital goods (guides, courses, ebooks, fashion/style, shops) — bold, editorial, expressive',
+  },
+];
+
 /** Most generic service-business shape — safe fallback for unknown industries. */
 const DEFAULT_TEMPLATE = 'professional-services';
 
@@ -50,7 +97,7 @@ const INDUSTRY_RULES: Array<[base: string, patterns: RegExp]> = [
   ],
   [
     'creative-portfolio',
-    /portfolio|photograph|designer|illustrat|artist|maker|creative|filmmaker|videograph|architec(t|ture)|studio|freelance/i,
+    /portfolio|photograph|designer|illustrat|artist|maker|creative|filmmaker|videograph|architec(t|ture)|studio|freelance|fashion|style|stylist|wardrobe|outfit|boutique|shop|store|e-?commerce|guide|e-?book|course|digital product|creator|personal brand|blogger|influencer|sell(s|er|ing)?/i,
   ],
   [
     'professional-services',

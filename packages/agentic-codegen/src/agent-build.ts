@@ -1,4 +1,4 @@
-import type { DiscoverySpec } from './spec.js';
+import type { DiscoverySpec } from './spec';
 
 /**
  * System prompt + task for the AUTONOMOUS in-sandbox build agent (Agent SDK

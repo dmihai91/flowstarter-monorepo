@@ -1,5 +1,5 @@
-import type { DiscoverySpec } from './spec.js';
-import { RESPECT_DESIGN, WRITING_HUMANIZE } from './skills.js';
+import type { DiscoverySpec } from './spec';
+import { RESPECT_DESIGN, WRITING_HUMANIZE } from './skills';
 
 /**
  * Single-shot, tool-less personalization. The model's entire reply must BE the

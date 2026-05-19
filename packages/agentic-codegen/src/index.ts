@@ -1,6 +1,6 @@
-export type { DiscoverySpec } from './spec.js';
-export { sampleSpec } from './spec.js';
-export { runCodegen, editContent } from './worker.js';
-export type { CodegenOptions, CodegenResult, CodegenEvent, EditResult } from './worker.js';
-export { BASE_TEMPLATES, selectBaseTemplate } from './workspace.js';
-export { AGENT_BUILD_SYSTEM, buildAgentTask } from './agent-build.js';
+export type { DiscoverySpec } from './spec';
+export { sampleSpec } from './spec';
+export { runCodegen, editContent } from './worker';
+export type { CodegenOptions, CodegenResult, CodegenEvent, EditResult } from './worker';
+export { BASE_TEMPLATES, selectBaseTemplate } from './workspace';
+export { AGENT_BUILD_SYSTEM, buildAgentTask } from './agent-build';

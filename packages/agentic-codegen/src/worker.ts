@@ -236,3 +236,60 @@ export async function runCodegen(
   });
   return result;
 }
+
+export interface EditResult {
+  ok: boolean;
+  costUsd: number;
+  changed: boolean;
+  /** The new file content (also written to disk) — caller pushes it to the sandbox. */
+  content?: string;
+  failure?: string;
+}
+
+/**
+ * Apply ONE plain-English instruction to the site's single content file
+ * (the 15-prompt edit loop). Same fast single-shot path as generation:
+ * tool-less, structure-preserving, envelope-safe. The caller pushes the new
+ * content into the running sandbox for HMR.
+ */
+export async function editContent(
+  contentFile: string,
+  instruction: string,
+  opts: { model?: string; maxBudgetUsd?: number; wallClockMs?: number } = {}
+): Promise<EditResult> {
+  const model = opts.model ?? 'claude-haiku-4-5';
+  const maxBudgetUsd = opts.maxBudgetUsd ?? 0.5;
+  const wallClockMs = opts.wallClockMs ?? 120_000;
+
+  let current: string;
+  try {
+    current = await readFile(contentFile, 'utf8');
+  } catch {
+    return { ok: false, costUsd: 0, changed: false, failure: 'content file missing' };
+  }
+
+  const system = [
+    `You apply ONE change to a website's YAML content file (markdown frontmatter). Every component reads from it through typed accessors.`,
+    `# Output contract
+- Your ENTIRE response is the complete updated file content: no code fences, no \`---\` lines, no commentary.
+- Apply only the requested change. Preserve every other value, all keys, nesting, array item shapes/counts, \`href\` routes and image \`src\` paths.
+- Keep YAML valid (indentation; quote strings with colons; preserve block scalars \`|\`). Human, specific copy; never fabricate real contact details, prices, or quotes.`,
+  ].join('\n\n');
+  const task = `Change requested by the site owner:\n"${instruction}"\n\nCurrent file:\n${current}\n\nOutput the complete updated file now — only the file.`;
+
+  const gen = await runGeneration(system, task, model, maxBudgetUsd, wallClockMs);
+  if (!gen.ok || !gen.resultText) {
+    return { ok: false, costUsd: gen.costUsd, changed: false, failure: gen.err ?? 'no result' };
+  }
+  const asm = assembleAndValidate(current, gen.resultText);
+  if (!asm.ok || !asm.content) {
+    return { ok: false, costUsd: gen.costUsd, changed: false, failure: asm.reason };
+  }
+  await writeFile(contentFile, asm.content, 'utf8');
+  return {
+    ok: true,
+    costUsd: gen.costUsd,
+    changed: asm.content.trim() !== current.trim(),
+    content: asm.content,
+  };
+}

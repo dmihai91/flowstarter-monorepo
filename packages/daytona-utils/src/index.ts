@@ -41,7 +41,7 @@ export {
 export { bootstrapWorkspace } from './bootstrap';
 
 // Live preview (push a site dir → sandbox dev server → public URL + teardown)
-export { previewInSandbox } from './preview';
+export { previewInSandbox, pushFileToSandbox } from './preview';
 export type { SandboxPreview } from './preview';
 
 // Snapshot service

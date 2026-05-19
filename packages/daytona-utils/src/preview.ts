@@ -38,6 +38,35 @@ async function readSiteFiles(dir: string): Promise<Record<string, string>> {
   return files;
 }
 
+/**
+ * Push a single updated file into a running sandbox (the 15-prompt edit
+ * loop): the dev server's HMR re-renders the live preview, no rebuild.
+ */
+export async function pushFileToSandbox(
+  sandboxId: string,
+  relPath: string,
+  content: string,
+  env?: DaytonaEnv
+): Promise<boolean> {
+  try {
+    const client = getClient(env);
+    const sandbox = await client.get(sandboxId);
+    let workDir: string;
+    try {
+      workDir = (await sandbox.getWorkDir()) || '/home/daytona';
+    } catch {
+      workDir = '/home/daytona';
+    }
+    await sandbox.fs.uploadFile(
+      Buffer.from(content, 'utf-8'),
+      `${workDir}/${relPath}`
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export interface SandboxPreview {
   success: boolean;
   previewUrl?: string;

@@ -60,6 +60,41 @@ export type CatalogSize = 'na' | '1-5' | '6-25' | '26-100' | '100+' | 'unsure';
 export type PageCount = 'lt-5' | '5-7' | '8-15' | '15+' | 'unsure';
 export type TimelineId = 'asap' | '4-weeks' | '1-3-months' | 'flexible';
 
+/** Suggested goal chips (multi-select). Users can also add freetext. */
+export const GOAL_PRESETS: readonly string[] = [
+  'Get enquiries / leads',
+  'Sell products or services',
+  'Take bookings or appointments',
+  'Grow an email list',
+  'Show a portfolio of work',
+  'Build trust and credibility',
+  'Promote an event or launch',
+  'Drive calls or visits',
+];
+
+/**
+ * Brand-tone chips across several dimensions (warmth, energy, formality,
+ * character) — multi-select, plus freetext.
+ */
+export const TONE_PRESETS: readonly string[] = [
+  'Warm',
+  'Calm',
+  'Friendly',
+  'Professional',
+  'Bold',
+  'Playful',
+  'Minimal',
+  'Premium / elegant',
+  'Energetic',
+  'Trustworthy',
+  'Modern',
+  'Editorial',
+  'Earthy / natural',
+  'Vibrant',
+  'Confident',
+  'Approachable',
+];
+
 export interface DiscoveryData {
   // Step 1 — about you
   fullName: string;
@@ -71,11 +106,12 @@ export interface DiscoveryData {
   description: string;
   targetAudience: string;
 
-  // Step 3 — goals
-  goal: GoalId | '';
-  /** Optional extra goals beyond the primary (informational, scoped on call) */
-  secondaryGoals: GoalId[];
-  brandTone: ToneId | '';
+  // Step 3 — goals. Free-form: chip presets + freetext, comma-joined.
+  goal: string;
+  /** Reserved (kept for back-compat; the goal chips capture everything). */
+  secondaryGoals: string[];
+  /** Multi-dimensional brand tone: chip presets + freetext, comma-joined. */
+  brandTone: string;
   pageCount: PageCount | '';
   timeline: TimelineId | '';
 
@@ -133,7 +169,7 @@ export function canProceed(step: Step, d: DiscoveryData): boolean {
     case 2:
       return d.description.trim().length >= 10;
     case 3:
-      return d.goal !== '';
+      return d.goal.trim() !== '';
     case 4:
       return d.commerceMode !== '';
     case 5:
@@ -161,8 +197,19 @@ export interface PreviewTheme {
   radius: string;
 }
 
-export function previewTheme(tone: ToneId | ''): PreviewTheme {
-  switch (tone) {
+/** Map free-form tone text to the closest preset visual theme. */
+function resolveToneId(tone: string): ToneId {
+  const t = tone.toLowerCase();
+  if (/bold|vibrant|energetic|playful|colou?rful/.test(t)) return 'bold';
+  if (/warm|friendly|approachable|earthy|natural|calm|gentle/.test(t))
+    return 'friendly';
+  if (/minimal|clean|elegant|premium|refined|editorial/.test(t))
+    return 'minimal';
+  return 'professional';
+}
+
+export function previewTheme(tone: ToneId | '' | string): PreviewTheme {
+  switch (tone ? resolveToneId(tone) : 'professional') {
     case 'bold':
       return {
         accent: '#e8551f',
@@ -208,18 +255,12 @@ export function previewTheme(tone: ToneId | ''): PreviewTheme {
 }
 
 /** Primary action label for the mock site, shaped by the prospect's goal. */
-export function previewCtaLabel(goal: GoalId | ''): string {
-  switch (goal) {
-    case 'sales':
-      return 'Shop now';
-    case 'bookings':
-      return 'Book a session';
-    case 'portfolio':
-      return 'View work';
-    case 'leads':
-    default:
-      return 'Get in touch';
-  }
+export function previewCtaLabel(goal: GoalId | '' | string): string {
+  const g = String(goal).toLowerCase();
+  if (/sell|shop|sales|product|store|buy/.test(g)) return 'Shop now';
+  if (/book|appointment|session|reserv/.test(g)) return 'Book a session';
+  if (/portfolio|showcase|view work|gallery/.test(g)) return 'View work';
+  return 'Get in touch';
 }
 
 /* ───────────────────── Playable demo site model ─────────────────────── */
@@ -294,8 +335,8 @@ export function buildDemoSite(
   >,
   copy: GeneratedSiteCopy
 ): DemoSite {
-  const tone: ToneId = d.brandTone || 'professional';
-  const theme = previewTheme(tone);
+  const tone: ToneId = resolveToneId(d.brandTone);
+  const theme = previewTheme(d.brandTone);
   const brandName =
     d.businessName.trim() || d.fullName.trim() || 'Your business';
   const items = copy.services.items.slice(0, 6);
@@ -402,7 +443,7 @@ export function recommendTier(d: DiscoveryData): Recommendation {
   } else if (manyPages) {
     tier = 'pro';
     reasons.push('multiPage');
-  } else if (mediumPages && d.goal === 'leads') {
+  } else if (mediumPages && /lead|enquir|inquir/i.test(d.goal)) {
     tier = 'pro';
     reasons.push('contentDriven');
   } else if (noCommerce) {
@@ -410,10 +451,10 @@ export function recommendTier(d: DiscoveryData): Recommendation {
     reasons.push('servicePresentation');
   }
 
-  if (d.goal === 'bookings' && tier === 'starter') {
+  if (/book|appointment/i.test(d.goal) && tier === 'starter') {
     reasons.push('bookingFriendly');
   }
-  if (d.goal === 'portfolio' && tier === 'starter') {
+  if (/portfolio|showcase/i.test(d.goal) && tier === 'starter') {
     reasons.push('portfolioFriendly');
   }
   if (d.timeline === 'asap') {

@@ -28,8 +28,8 @@ const SpecSchema = z.object({
   description: z.string().min(1).max(5000),
   industry: z.string().max(200).optional().default(''),
   targetAudience: z.string().max(500).optional().default(''),
-  goal: z.string().max(50).optional().default(''),
-  brandTone: z.string().max(50).optional().default(''),
+  goal: z.string().max(400).optional().default(''),
+  brandTone: z.string().max(400).optional().default(''),
 });
 
 function clientIp(req: NextRequest): string {
@@ -78,7 +78,10 @@ export async function POST(req: NextRequest) {
       const { previewInSandbox } = await import('@flowstarter/daytona-utils');
 
       if (!process.env.ANTHROPIC_API_KEY) {
-        updateJob(demoId, { status: 'failed', error: 'ANTHROPIC_API_KEY missing' });
+        updateJob(demoId, {
+          status: 'failed',
+          error: 'ANTHROPIC_API_KEY missing',
+        });
         return;
       }
 
@@ -123,7 +126,9 @@ export async function POST(req: NextRequest) {
         projectId: demoId,
         env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
         onProgress: (_step, message) =>
-          updateJob(demoId, { phase: message ?? 'Publishing your live preview' }),
+          updateJob(demoId, {
+            phase: message ?? 'Publishing your live preview',
+          }),
       });
 
       if (!preview.success || !preview.previewUrl) {

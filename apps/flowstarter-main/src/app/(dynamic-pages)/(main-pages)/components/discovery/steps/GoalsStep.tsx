@@ -1,11 +1,12 @@
-import type {
-  DiscoveryData,
-  GoalId,
-  PageCount,
-  TimelineId,
-  ToneId,
+import {
+  type DiscoveryData,
+  type PageCount,
+  type TimelineId,
+  GOAL_PRESETS,
+  TONE_PRESETS,
 } from '../discovery.logic';
 import { ChoiceGrid, Field } from '../Field';
+import { ChipsInput } from '../ChipsInput';
 
 export function GoalsStep({
   data,
@@ -19,40 +20,6 @@ export function GoalsStep({
   ) => void;
   t: (key: string) => string;
 }) {
-  const goalOptions: ReadonlyArray<{ v: GoalId; label: string; sub: string }> =
-    [
-      {
-        v: 'leads',
-        label: t('landing.discovery.options.goal.leads.label'),
-        sub: t('landing.discovery.options.goal.leads.sub'),
-      },
-      {
-        v: 'sales',
-        label: t('landing.discovery.options.goal.sales.label'),
-        sub: t('landing.discovery.options.goal.sales.sub'),
-      },
-      {
-        v: 'bookings',
-        label: t('landing.discovery.options.goal.bookings.label'),
-        sub: t('landing.discovery.options.goal.bookings.sub'),
-      },
-      {
-        v: 'portfolio',
-        label: t('landing.discovery.options.goal.portfolio.label'),
-        sub: t('landing.discovery.options.goal.portfolio.sub'),
-      },
-    ];
-
-  const toneOptions: ReadonlyArray<{ v: ToneId; label: string }> = [
-    {
-      v: 'professional',
-      label: t('landing.discovery.options.tone.professional'),
-    },
-    { v: 'bold', label: t('landing.discovery.options.tone.bold') },
-    { v: 'friendly', label: t('landing.discovery.options.tone.friendly') },
-    { v: 'minimal', label: t('landing.discovery.options.tone.minimal') },
-  ];
-
   const pageOptions: ReadonlyArray<{
     v: PageCount;
     label: string;
@@ -106,67 +73,28 @@ export function GoalsStep({
         </p>
       </header>
 
-      <Field label={t('landing.discovery.fields.goal')} required>
-        <ChoiceGrid
+      <Field
+        label={t('landing.discovery.fields.goal')}
+        hint="Pick any that apply — or add your own."
+        required
+      >
+        <ChipsInput
           value={data.goal}
-          onChange={(v) => {
-            update('goal', v);
-            // A goal can't be both primary and secondary.
-            if (data.secondaryGoals.includes(v)) {
-              update(
-                'secondaryGoals',
-                data.secondaryGoals.filter((g) => g !== v)
-              );
-            }
-          }}
-          options={goalOptions}
-          columns={2}
+          presets={GOAL_PRESETS}
+          onChange={(v) => update('goal', v)}
+          placeholder="Add another goal…"
         />
       </Field>
 
-      {data.goal && (
-        <Field
-          label={t('landing.discovery.fields.secondaryGoals')}
-          hint={t('landing.discovery.hints.secondaryGoals')}
-        >
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-            {goalOptions
-              .filter((o) => o.v !== data.goal)
-              .map((o) => {
-                const active = data.secondaryGoals.includes(o.v);
-                return (
-                  <button
-                    key={o.v}
-                    type="button"
-                    onClick={() =>
-                      update(
-                        'secondaryGoals',
-                        active
-                          ? data.secondaryGoals.filter((g) => g !== o.v)
-                          : [...data.secondaryGoals, o.v]
-                      )
-                    }
-                    className={[
-                      'rounded-lg border px-3 py-2.5 text-left text-sm font-semibold transition-all',
-                      active
-                        ? 'border-[var(--purple-primary)] bg-[var(--purple-primary)]/8 text-[var(--fs-ink)] ring-1 ring-[var(--purple-primary)]'
-                        : 'border-[var(--fs-rule)] text-[var(--fs-ink-faint)] hover:border-[var(--purple-primary)]/40',
-                    ].join(' ')}
-                  >
-                    {o.label}
-                  </button>
-                );
-              })}
-          </div>
-        </Field>
-      )}
-
-      <Field label={t('landing.discovery.fields.brandTone')}>
-        <ChoiceGrid
+      <Field
+        label={t('landing.discovery.fields.brandTone')}
+        hint="Choose a few words — combine dimensions, or add your own."
+      >
+        <ChipsInput
           value={data.brandTone}
+          presets={TONE_PRESETS}
           onChange={(v) => update('brandTone', v)}
-          options={toneOptions}
-          columns={4}
+          placeholder="Add a tone word…"
         />
       </Field>
 

@@ -22,10 +22,7 @@ import {
   type SiteCopyUsage,
 } from '@/lib/ai/site-copy';
 import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
-import {
-  type ToneId,
-  buildDemoSite,
-} from '@/app/(dynamic-pages)/(main-pages)/components/discovery/discovery.logic';
+import { buildDemoSite } from '@/app/(dynamic-pages)/(main-pages)/components/discovery/discovery.logic';
 
 /** Service client — demo_edit_counters/discovery_leads aren't in gen types. */
 function store() {
@@ -41,14 +38,9 @@ const PreviewSchema = z.object({
   description: z.string().min(1).max(5000),
   industry: z.string().max(200).optional().default(''),
   targetAudience: z.string().max(500).optional().default(''),
-  goal: z
-    .enum(['leads', 'sales', 'bookings', 'portfolio', ''])
-    .optional()
-    .default(''),
-  brandTone: z
-    .enum(['professional', 'bold', 'friendly', 'minimal', ''])
-    .optional()
-    .default(''),
+  // Free-form now (chips + freetext, comma-joined) — see discovery.logic.
+  goal: z.string().max(400).optional().default(''),
+  brandTone: z.string().max(400).optional().default(''),
 });
 
 const RATE_LIMIT = 4;
@@ -66,15 +58,20 @@ function isRateLimited(ip: string): boolean {
   return entry.count > RATE_LIMIT;
 }
 
-/** Wizard goal → site-copy goal (portfolio has no direct copy goal). */
+/** Free-form wizard goal → site-copy goal bucket. */
 function mapGoal(g: string): SiteCopyInput['goal'] {
-  if (g === 'sales' || g === 'bookings' || g === 'leads') return g;
+  const s = g.toLowerCase();
+  if (/sell|shop|sales|product|store|buy/.test(s)) return 'sales';
+  if (/book|appointment|reserv|session/.test(s)) return 'bookings';
   return 'leads';
 }
 
-/** Wizard tone → site-copy tone (minimal collapses to professional). */
+/** Free-form wizard tone → site-copy tone bucket. */
 function mapTone(t: string): SiteCopyInput['brandTone'] {
-  if (t === 'bold' || t === 'friendly' || t === 'professional') return t;
+  const s = t.toLowerCase();
+  if (/bold|vibrant|energetic|playful|colou?rful/.test(s)) return 'bold';
+  if (/warm|friendly|approachable|calm|natural|earthy/.test(s))
+    return 'friendly';
   return 'professional';
 }
 
@@ -142,7 +139,7 @@ export async function POST(request: NextRequest) {
         fullName: d.fullName,
         industry: d.industry,
         targetAudience: d.targetAudience,
-        brandTone: (d.brandTone || '') as ToneId | '',
+        brandTone: d.brandTone || '',
       },
       copy
     );

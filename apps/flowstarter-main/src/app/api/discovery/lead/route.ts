@@ -35,14 +35,10 @@ const DiscoveryLeadSchema = z.object({
   industry: z.string().max(200).optional().default(''),
   description: z.string().min(1).max(5000),
   targetAudience: z.string().max(500).optional().default(''),
-  goal: z.enum(['leads', 'sales', 'bookings', 'portfolio', '']).optional(),
-  secondaryGoals: z
-    .array(z.enum(['leads', 'sales', 'bookings', 'portfolio']))
-    .optional()
-    .default([]),
-  brandTone: z
-    .enum(['professional', 'bold', 'friendly', 'minimal', ''])
-    .optional(),
+  // Free-form (chips + freetext, comma-joined) — see discovery.logic.
+  goal: z.string().max(400).optional().default(''),
+  secondaryGoals: z.array(z.string().max(120)).optional().default([]),
+  brandTone: z.string().max(400).optional().default(''),
   pageCount: z.enum(['lt-5', '5-7', '8-15', '15+', 'unsure', '']).optional(),
   timeline: z
     .enum(['asap', '4-weeks', '1-3-months', 'flexible', ''])

@@ -144,7 +144,7 @@ function assembleAndValidate(
     new Set((s.match(/^[a-zA-Z_][\w]*:/gm) ?? []).map((k) => k.trim()));
   const want = topKeys(orig.yaml);
   const got = topKeys(yaml);
-  const missing = [...want].filter((k) => !got.has(k));
+  const missing = Array.from(want).filter((k) => !got.has(k));
   // site-data.ts accessors are fallback-safe, but a wholesale key loss means
   // the model reformatted instead of personalizing — reject it.
   if (want.size > 0 && missing.length > want.size * 0.25) {

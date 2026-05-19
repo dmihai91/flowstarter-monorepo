@@ -53,7 +53,7 @@ async function uploadFiles(
 
   // Create directories first
   if (dirs.size > 0) {
-    const mkdirCmd = `mkdir -p ${[...dirs].map((d) => `"${workDir}/${d}"`).join(' ')}`;
+    const mkdirCmd = `mkdir -p ${Array.from(dirs).map((d) => `"${workDir}/${d}"`).join(' ')}`;
     await sandbox.process.executeCommand(mkdirCmd, workDir);
   }
 

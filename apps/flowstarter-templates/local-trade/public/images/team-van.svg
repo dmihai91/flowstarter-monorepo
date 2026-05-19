@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Hearthstone Joinery work van outside a workshop">
+  <defs>
+    <linearGradient id="tv-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#efe7d4"/>
+      <stop offset="1" stop-color="#e0d3b3"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#tv-sky)"/>
+  <!-- workshop building -->
+  <rect x="80" y="160" width="640" height="380" fill="#e7dcc1"/>
+  <path d="M60 160 L400 60 L740 160 Z" fill="#2c241d"/>
+  <!-- big workshop door -->
+  <rect x="430" y="300" width="240" height="240" fill="#3a2f24"/>
+  <g stroke="#5c6b4f" stroke-width="6">
+    <line x1="430" y1="360" x2="670" y2="360"/>
+    <line x1="430" y1="420" x2="670" y2="420"/>
+    <line x1="430" y1="480" x2="670" y2="480"/>
+  </g>
+  <!-- window + sign -->
+  <rect x="140" y="250" width="200" height="140" fill="#fbf3df" stroke="#43362a" stroke-width="6"/>
+  <rect x="140" y="210" width="240" height="34" rx="4" fill="#d98a3d"/>
+  <rect x="170" y="218" width="180" height="18" rx="3" fill="#211b16"/>
+  <!-- ground -->
+  <rect x="0" y="540" width="800" height="260" fill="#cdbb95"/>
+  <!-- van body -->
+  <g transform="translate(150 470)">
+    <rect x="0" y="40" width="320" height="170" rx="14" fill="#5c6b4f"/>
+    <rect x="320" y="90" width="120" height="120" rx="12" fill="#5c6b4f"/>
+    <path d="M320 90 L420 90 L440 150 L320 150 Z" fill="#bfe0e6"/>
+    <rect x="40" y="80" width="240" height="70" rx="6" fill="#d98a3d"/>
+    <rect x="70" y="98" width="180" height="34" rx="4" fill="#211b16"/>
+    <!-- wheels -->
+    <circle cx="90" cy="210" r="44" fill="#211b16"/>
+    <circle cx="90" cy="210" r="18" fill="#7c6f5d"/>
+    <circle cx="370" cy="210" r="44" fill="#211b16"/>
+    <circle cx="370" cy="210" r="18" fill="#7c6f5d"/>
+  </g>
+  <!-- two figures -->
+  <g>
+    <circle cx="600" cy="560" r="26" fill="#3a2f24"/>
+    <rect x="576" y="586" width="48" height="110" rx="14" fill="#d98a3d"/>
+    <circle cx="675" cy="566" r="24" fill="#3a2f24"/>
+    <rect x="653" y="590" width="44" height="106" rx="14" fill="#5c6b4f"/>
+  </g>
+</svg>

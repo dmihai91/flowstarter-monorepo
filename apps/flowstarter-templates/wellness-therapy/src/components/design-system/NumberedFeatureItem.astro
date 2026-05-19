@@ -1,0 +1,67 @@
+---
+interface Props {
+  number: string;
+  title: string;
+  description: string;
+  className?: string;
+}
+
+const { number, title, description, className = '' } = Astro.props;
+---
+
+<div class={`ds-numbered-feature ${className}`.trim()}>
+  <span class="ds-numbered-feature__number">{number}</span>
+  <div class="ds-numbered-feature__content">
+    <h3 class="ds-numbered-feature__title">{title}</h3>
+    <p class="ds-numbered-feature__desc">{description}</p>
+  </div>
+</div>
+
+<style>
+  .ds-numbered-feature {
+    display: flex;
+    gap: 28px;
+    padding: 30px 0;
+    border-bottom: 1px solid var(--surface-panel-border);
+    align-items: flex-start;
+    transition: padding-left var(--transition);
+  }
+
+  .ds-numbered-feature:hover {
+    padding-left: 8px;
+  }
+
+  .ds-numbered-feature__number {
+    font-family: var(--font-title);
+    font-size: 1rem;
+    color: var(--accent);
+    font-weight: var(--fw-semibold);
+    min-width: 32px;
+    padding-top: 6px;
+  }
+
+  .ds-numbered-feature__content {
+    flex: 1;
+  }
+
+  .ds-numbered-feature__title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--bg-dark);
+    transition: color var(--transition);
+  }
+
+  .ds-numbered-feature:hover .ds-numbered-feature__title {
+    color: var(--brand-primary);
+  }
+
+  .ds-numbered-feature__desc {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--text-body);
+    max-width: 46ch;
+  }
+</style>

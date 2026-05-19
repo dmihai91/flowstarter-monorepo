@@ -1,0 +1,113 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import ActionButton from './design-system/ActionButton.astro';
+
+const cta = (siteLabels as any).cta ?? {};
+const heading: string =
+  typeof cta.heading === 'string' && cta.heading.trim()
+    ? cta.heading
+    : "Have a project worth making well?";
+const buttonLabel: string =
+  typeof cta.buttonLabel === 'string' && cta.buttonLabel.trim()
+    ? cta.buttonLabel
+    : 'Start a conversation';
+const buttonHref: string =
+  typeof cta.buttonHref === 'string' && cta.buttonHref.trim() ? cta.buttonHref : '/contact';
+const eyebrow: string =
+  typeof cta.eyebrow === 'string' && cta.eyebrow.trim() ? cta.eyebrow : 'Next';
+---
+
+<SectionBlock className="cta-section" tone="dark" padding="none">
+  <div class="cta-section__inner container">
+    <span class="cta-section__eyebrow">{eyebrow}</span>
+    <h2 class="cta-section__heading">{heading}</h2>
+    <ActionButton
+      href={buttonHref}
+      label={buttonLabel}
+      variant="outline"
+      className="cta-section__btn ds-action-button--outline-light ds-action-button--outline-thick"
+    />
+    <span class="cta-section__mark" aria-hidden="true">V</span>
+  </div>
+</SectionBlock>
+
+<style>
+  .cta-section {
+    position: relative;
+    overflow: clip;
+  }
+
+  .cta-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 120%, rgba(255, 59, 31, 0.22), transparent 58%);
+    pointer-events: none;
+  }
+
+  .cta-section__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 36px;
+    padding-top: 130px;
+    padding-bottom: 140px;
+  }
+
+  .cta-section__eyebrow {
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.34em;
+    color: var(--signal);
+  }
+
+  .cta-section__heading {
+    max-width: 16ch;
+    font-family: var(--font-title);
+    font-size: clamp(2.6rem, 6vw, 5.4rem);
+    font-weight: 320;
+    font-optical-sizing: auto;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--text-on-dark);
+  }
+
+  .cta-section__mark {
+    position: absolute;
+    right: -2%;
+    bottom: -34%;
+    font-family: var(--font-title);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(16rem, 34vw, 34rem);
+    line-height: 1;
+    color: rgba(244, 241, 234, 0.05);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .cta-section__inner :global(.cta-section__btn) {
+    padding: 20px 44px;
+    font-size: 0.95rem;
+    letter-spacing: 0.14em;
+  }
+
+  @media (max-width: 768px) {
+    .cta-section__inner {
+      padding-top: 80px;
+      padding-bottom: 90px;
+      gap: 28px;
+    }
+
+    .cta-section__mark {
+      font-size: clamp(11rem, 60vw, 18rem);
+      bottom: -22%;
+    }
+  }
+</style>

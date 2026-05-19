@@ -1,0 +1,16 @@
+{
+  "name": "@flowstarter/template-wellness-therapy",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Dorin's hand-crafted portfolio template — used as the canonical demo client site for the Flowstarter editor.",
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build",
+    "build:preview": "astro build --base /preview/dorin-portfolio --outDir ../../flowstarter-main/public/preview/dorin-portfolio",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.4.1"
+  }
+}

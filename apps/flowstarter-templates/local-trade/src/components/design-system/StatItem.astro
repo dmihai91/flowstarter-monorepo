@@ -1,0 +1,58 @@
+---
+interface Props {
+  number: string;
+  label: string;
+  className?: string;
+}
+
+const { number, label, className = '' } = Astro.props;
+---
+
+<div class={`ds-stat-item ${className}`.trim()}>
+  <span class="ds-stat-item__number" data-stat-number data-target={number}>{number}</span>
+  <span class="ds-stat-item__label">{label}</span>
+</div>
+
+<style>
+  .ds-stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ds-stat-item__number {
+    display: inline-block;
+    font-family: var(--font-title);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--bg-dark);
+    transform: translateY(0);
+    opacity: 1;
+    transition:
+      transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 500ms ease;
+  }
+
+  .ds-stat-item__number.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .ds-stat-item__label {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--bg-dark);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-stat-item__number {
+      transform: none;
+      opacity: 1;
+      transition: none;
+    }
+  }
+</style>

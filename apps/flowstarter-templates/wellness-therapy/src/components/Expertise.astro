@@ -1,0 +1,59 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import SectionHeading from './design-system/SectionHeading.astro';
+import NumberedFeatureItem from './design-system/NumberedFeatureItem.astro';
+
+const { expertise } = siteLabels;
+---
+
+<SectionBlock id="expertise" className="expertise" tone="none">
+  <div class="expertise__inner container">
+    <div class="expertise__left">
+      <SectionHeading
+        label={expertise.sectionLabel}
+        title={expertise.sectionTitle}
+        maxWidth="400px"
+      />
+    </div>
+    <div class="expertise__right" data-expertise-list>
+      {expertise.items.map((item, index) => (
+        <NumberedFeatureItem
+          number={item.number}
+          title={item.title}
+          description={item.description}
+          className={index === 0 ? 'expertise__item--first' : ''}
+        />
+      ))}
+    </div>
+  </div>
+</SectionBlock>
+
+<style>
+  :global(.expertise) {
+    background: var(--surface-base);
+    color: var(--bg-dark);
+  }
+
+  .expertise__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+
+  .expertise__right :global(.expertise__item--first) {
+    padding-top: 0;
+  }
+
+  .expertise__right :global(.ds-numbered-feature:last-child) {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    .expertise__inner {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+</style>

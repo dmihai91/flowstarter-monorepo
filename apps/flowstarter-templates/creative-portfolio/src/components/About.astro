@@ -1,0 +1,117 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import SectionHeading from './design-system/SectionHeading.astro';
+import VennStatement from './design-system/VennStatement.astro';
+
+const { about } = siteLabels;
+---
+
+<SectionBlock id="about" className="about" tone="dark">
+  <div class="about__stage" data-about-stage>
+    <div class="about__inner container" data-about-sticky>
+      <SectionHeading
+        className="about__header"
+        label={about.sectionLabel}
+        title={about.title}
+        align="center"
+        maxWidth="700px"
+        labelColor="var(--text-on-dark)"
+      />
+      <VennStatement circles={about.circles} />
+      <p class="about__text">{about.text}</p>
+    </div>
+  </div>
+</SectionBlock>
+
+<style>
+  .about {
+    overflow: clip;
+  }
+
+  :global(.about.ds-section--default) {
+    padding: 130px 0;
+  }
+
+  .about__stage {
+    position: relative;
+  }
+
+  .about__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  :global(.about .about__header .section-title) {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    max-width: 18ch;
+  }
+
+  :global(.about .about__header) {
+    margin-bottom: 8px;
+  }
+
+  :global(.about .ds-venn-statement) {
+    margin: 40px auto 44px;
+  }
+
+  .about__text {
+    font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+    font-family: var(--font-title);
+    font-weight: 360;
+    max-width: 30ch;
+    margin: 0 auto;
+    line-height: 1.4;
+    color: var(--text-on-dark);
+  }
+
+  /* Show the venn circles on load (scroll choreography removed).
+     Fully :global() because the .about section element is rendered by
+     SectionBlock, so it never carries this component's scope hash. */
+  :global(.about .ds-venn-statement__circle) {
+    --circle-opacity: 1 !important;
+    --circle-y: 0px !important;
+    --circle-scale-x: 1 !important;
+    --circle-scale-y: 1 !important;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  :global(.about .ds-venn-statement) {
+    animation: about-venn-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    animation-delay: 120ms;
+  }
+
+  @keyframes about-venn-rise {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.about .ds-venn-statement) {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about__inner {
+      display: block;
+      padding: 16px 0;
+    }
+
+    :global(.about .about__header) {
+      margin-bottom: 40px;
+    }
+  }
+</style>
+
+<script>
+  /* Venn statement now reveals via CSS on load — no scroll choreography. */
+  document
+    .querySelectorAll('[data-venn-circle]')
+    .forEach((circle) => circle.removeAttribute('style'));
+</script>

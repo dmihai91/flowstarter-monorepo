@@ -1,0 +1,396 @@
+/* Reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--surface-base);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+  line-height: 1.3;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+p {
+  font-size: var(--fs-body);
+  color: var(--text-primary);
+}
+
+.ds-section--dark :is(h1, h2, h3, h4, h5, h6, p),
+.footer :is(h1, h2, h3, h4, h5, h6, p) {
+  color: var(--text-on-dark);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-radius: 0;
+  font-family: var(--font-button);
+}
+
+/* ============================================================
+   ATELIER VERSO — high-craft editorial gallery identity
+   Ink black + warm gallery paper + one electric vermilion accent.
+   Display face: Fraunces (high-contrast serif). Text face: Space Grotesk.
+   ============================================================ */
+:root {
+  /* Colors — light "gallery paper" mode */
+  --ink: #111014;
+  --paper: #F4F1EA;
+  --paper-deep: #ECE7DC;
+  --signal: #FF3B1F;
+  --signal-deep: #E22E13;
+
+  --bg-dark: var(--ink);
+  --bg-card: #18171B;
+  --bg-card-hover: #201F24;
+  --brand-primary: var(--signal);
+  --accent: #E9E3D5;
+  --accent-light: #F4F1EA;
+  --text-on-dark: #F4F1EA;
+  --text-primary: var(--ink);
+  --text-body: var(--ink);
+  --text-secondary: #6E6A60;
+  --text-muted: #837E72;
+  --text-nav: #B6B1A4;
+  --color-ink-strong: #000000;
+  --border-color: rgba(244, 241, 234, 0.16);
+  --border-strong: var(--ink);
+  --text-dim-38: rgba(17, 16, 20, 0.38);
+  --text-dim-72: rgba(17, 16, 20, 0.72);
+  --about-circle-think-more: var(--ink);
+  --about-circle-ask-a-lot: #E9E3D5;
+  --about-circle-design-less: var(--signal);
+  --surface-base: #F4F1EA;
+  --surface-panel: rgba(255, 255, 255, 0.66);
+  --surface-panel-border: rgba(17, 16, 20, 0.16);
+  --surface-field: #FBFAF6;
+  --surface-field-border: rgba(17, 16, 20, 0.24);
+  --surface-field-border-active: var(--signal);
+  --surface-field-border-active-width: 1.5px;
+  --surface-field-focus-ring: 0 0 0 var(--surface-field-border-active-width) var(--surface-field-border-active);
+  --surface-placeholder: rgba(17, 16, 20, 0.5);
+  --surface-selected: rgba(255, 59, 31, 0.12);
+  --surface-brand-glow: rgba(255, 59, 31, 0.14);
+  --surface-accent-glow: rgba(17, 16, 20, 0.06);
+  --surface-subtle: #EAE4D6;
+  --surface-subtle-hover: #E3DCCB;
+  --surface-subtle-border: rgba(17, 16, 20, 0.1);
+  --focus-ring-color: rgba(255, 59, 31, 0.3);
+  --shadow-float: 0 22px 50px rgba(17, 16, 20, 0.16);
+
+  /* Spacing */
+  --section-padding: 110px 0;
+  --container-width: 1240px;
+  --container-padding: 0 28px;
+
+  /* Typography */
+  --fs-display: 3.4rem;
+  --fs-h1: 3.4rem;
+  --fs-h2: 2.9rem;
+  --fs-h3: 1.95rem;
+  --fs-h4: 1.7rem;
+  --fs-h5: 1.3rem;
+  --fs-body: 1.08rem;
+  --fs-small: 0.84rem;
+  --fs-xs: 0.74rem;
+  --font-body: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-title: 'Fraunces', 'Space Grotesk', Georgia, 'Times New Roman', serif;
+  --font-button: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-black: 900;
+  --fw-headline: 600;
+
+  /* Borders — sharp, gallery-frame aesthetic */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+
+  /* Transitions */
+  --transition: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Dark "after-hours gallery" mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #0B0A0C;
+    --paper: #131217;
+    --paper-deep: #0F0E12;
+    --bg-dark: #0B0A0C;
+    --bg-card: #1A181F;
+    --bg-card-hover: #221F28;
+    --accent: #1B1A20;
+    --accent-light: #131217;
+    --text-on-dark: #F1EDE3;
+    --text-primary: #F1EDE3;
+    --text-body: #F1EDE3;
+    --text-secondary: #9A9488;
+    --text-muted: #877F70;
+    --text-nav: #B6B1A4;
+    --color-ink-strong: #F1EDE3;
+    --border-color: rgba(241, 237, 227, 0.14);
+    --border-strong: rgba(241, 237, 227, 0.22);
+    --text-dim-38: rgba(241, 237, 227, 0.4);
+    --text-dim-72: rgba(241, 237, 227, 0.74);
+    --about-circle-think-more: #F1EDE3;
+    --about-circle-ask-a-lot: #2A2832;
+    --surface-base: #131217;
+    --surface-panel: rgba(26, 24, 31, 0.7);
+    --surface-panel-border: rgba(241, 237, 227, 0.14);
+    --surface-field: #1A181F;
+    --surface-field-border: rgba(241, 237, 227, 0.22);
+    --surface-placeholder: rgba(241, 237, 227, 0.46);
+    --surface-selected: rgba(255, 59, 31, 0.2);
+    --surface-brand-glow: rgba(255, 59, 31, 0.22);
+    --surface-accent-glow: rgba(241, 237, 227, 0.05);
+    --surface-subtle: #1C1A22;
+    --surface-subtle-hover: #232029;
+    --surface-subtle-border: rgba(241, 237, 227, 0.1);
+    --shadow-float: 0 22px 50px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Light-tone sections become deep gallery panels in dark mode */
+  .ds-section--light,
+  :global(.ds-section--light) {
+    color: var(--text-primary);
+  }
+}
+
+/* Dark-mode safety net: many components hardcode text/border in
+   var(--bg-dark) on transparent "light" sections. In dark mode that token
+   is near-black, so force legible ink on everything that is NOT explicitly
+   placed on a dark/accent panel. */
+@media (prefers-color-scheme: dark) {
+  body :is(h1, h2, h3, h4, h5, h6, p, li, a, span, figcaption, blockquote, label, summary) {
+    color: var(--text-primary);
+  }
+
+  /* Keep intentionally-dark surfaces light-on-dark (already correct via tokens) */
+  .ds-section--dark :is(h1, h2, h3, h4, h5, h6, p, li, a, span),
+  .footer :is(h1, h2, h3, h4, h5, h6, p, li, a, span),
+  .header :is(a, span),
+  .hero :is(h1, h2, h3, h4, h5, h6, p, li, a, span),
+  .cta-section :is(h1, h2, h3, h4, h5, h6, p, li, a, span) {
+    color: inherit;
+  }
+
+  /* Muted text stays muted but legible */
+  .hero__text,
+  .blog-card__excerpt,
+  .work-hero__sub,
+  .blog-hero__sub {
+    color: var(--text-nav) !important;
+  }
+
+  /* In dark mode the accent panel + testimonial cards are dark surfaces,
+     so their text must be light (the component CSS hardcodes --bg-dark). */
+  .ds-section--accent :is(h1, h2, h3, h4, h5, h6, p, li, a, span),
+  .testimonial__card :is(h1, h2, h3, h4, h5, h6, p, li, a, span) {
+    color: var(--text-primary) !important;
+  }
+
+  .testimonial__card {
+    background: var(--surface-field);
+    border-color: var(--border-strong);
+  }
+
+  .ds-testimonial-author__avatar {
+    background: var(--signal);
+  }
+
+  .ds-testimonial-author__avatar span {
+    color: #fff;
+  }
+
+  /* Service card hover swaps to the signal fill — keep that text dark */
+  .ds-service-card:hover :is(h4, p),
+  .ds-service-card:hover .ds-service-card__icon {
+    color: #fff !important;
+  }
+
+  /* Signal-coloured eyebrows/labels keep their accent */
+  .section-label,
+  .hero__eyebrow,
+  .cta-section__eyebrow,
+  .blog-card__category,
+  .case-studies__list-category {
+    color: var(--signal) !important;
+  }
+
+  /* SVG line-icons that were authored near-black */
+  .contact-details-panel__block svg,
+  .blog-card__read-more svg {
+    color: var(--text-primary);
+  }
+}
+
+/* Subtle gallery-paper grain on the base surface */
+body {
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(255, 59, 31, 0.04), transparent 38%),
+    radial-gradient(circle at 88% 86%, rgba(17, 16, 20, 0.045), transparent 42%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--signal);
+  color: #fff;
+}
+
+/* Utilities */
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+.section-label {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  margin-bottom: 18px;
+  position: relative;
+  padding-left: 30px;
+  color: var(--signal);
+}
+
+.section-label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.52em;
+  width: 20px;
+  height: 1.5px;
+  background: var(--signal);
+}
+
+.ds-section-heading--center .section-label {
+  display: inline-block;
+}
+
+.section-title {
+  font-family: var(--font-title);
+  font-size: var(--fs-h1);
+  font-weight: 380;
+  font-optical-sizing: auto;
+  text-transform: none;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.section-title {
+  font-family: var(--font-title);
+  font-optical-sizing: auto;
+  text-transform: none !important;
+  letter-spacing: -0.018em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 380;
+  line-height: 1.04;
+}
+
+h1 {
+  font-size: var(--fs-display);
+  font-weight: 340;
+}
+
+h2 {
+  font-size: var(--fs-h2);
+}
+
+/* Editorial emphasis: italic display serif for accented words */
+.multi-line-title__accent,
+.animated-word-title__word--accent,
+.hero__text-highlight {
+  font-family: var(--font-title);
+  font-style: italic;
+  font-weight: 420;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: var(--fs-h3);
+}
+
+h4 {
+  font-size: var(--fs-h4);
+}
+
+h5 {
+  font-size: var(--fs-h5);
+}
+
+.ds-action-button {
+  font-family: var(--font-button);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  :root {
+    --fs-display: 2.9rem;
+    --fs-h1: 2.6rem;
+    --fs-h2: 2.4rem;
+    --fs-h3: 1.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 68px 0;
+    --container-padding: 0 18px;
+    --fs-display: 2.35rem;
+    --fs-h1: 2.2rem;
+    --fs-h2: 2rem;
+    --fs-h3: 1.4rem;
+    --fs-body: 1rem;
+  }
+
+  .section-label {
+    letter-spacing: 0.2em;
+    margin-bottom: 14px;
+  }
+}

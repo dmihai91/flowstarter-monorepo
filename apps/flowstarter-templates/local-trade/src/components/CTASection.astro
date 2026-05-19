@@ -1,0 +1,68 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import ActionButton from './design-system/ActionButton.astro';
+
+const cta = (siteLabels as any).cta ?? {};
+const heading =
+  typeof cta.heading === 'string' && cta.heading.trim()
+    ? cta.heading
+    : 'Need a quote? Tell us about the job.';
+const buttonLabel =
+  typeof cta.buttonLabel === 'string' && cta.buttonLabel.trim()
+    ? cta.buttonLabel
+    : 'Get a free quote';
+const buttonHref =
+  typeof cta.buttonHref === 'string' && cta.buttonHref.trim() ? cta.buttonHref : '/book';
+const subtext = typeof cta.subtext === 'string' ? cta.subtext.trim() : '';
+---
+
+<SectionBlock className="cta-section" tone="accent" padding="none">
+  <div class="cta-section__inner container">
+    <h2 class="cta-section__heading">{heading}</h2>
+    {subtext && <p class="cta-section__subtext">{subtext}</p>}
+    <ActionButton
+      href={buttonHref}
+      label={buttonLabel}
+      variant="outline"
+      className="cta-section__btn ds-action-button--outline-dark"
+    />
+  </div>
+</SectionBlock>
+
+<style>
+  .cta-section__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .cta-section__heading {
+    max-width: 820px;
+    line-height: 1.08;
+    font-size: clamp(2rem, 4.4vw, 3.4rem);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .cta-section__subtext {
+    max-width: 600px;
+    margin-top: -16px;
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+    line-height: 1.55;
+    color: var(--bg-dark);
+    opacity: 0.86;
+  }
+
+  @media (max-width: 768px) {
+    .cta-section__inner {
+      padding-top: 60px;
+      padding-bottom: 60px;
+      gap: 32px;
+    }
+  }
+</style>

@@ -1,0 +1,91 @@
+---
+/**
+ * OrganicVisual — the single, on-brand CSS visual used everywhere a photo
+ * would have gone. Calm layered field + hand-drawn fern motif + quiet
+ * concentric rings. Keeps the whole site visually coherent with zero
+ * stock photography and zero empty bands.
+ */
+interface Props {
+  tone?: 'light' | 'deep';
+  bare?: boolean;
+  breathe?: boolean;
+  caption?: string;
+  className?: string;
+  ariaLabel?: string;
+}
+
+const {
+  tone = 'light',
+  bare = false,
+  breathe = true,
+  caption = '',
+  className = '',
+  ariaLabel = 'Decorative calm botanical illustration',
+} = Astro.props;
+
+const classes = [
+  'ds-organic',
+  tone === 'deep' ? 'ds-organic--deep' : '',
+  bare ? 'ds-organic--bare' : '',
+  breathe ? 'ds-organic--breathe' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<div class={classes} role="img" aria-label={ariaLabel}>
+  <div class="ds-organic__motif" aria-hidden="true">
+    <svg viewBox="0 0 120 320" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+      <path
+        d="M60 320 C60 250 58 180 60 120 C61 78 66 36 76 6"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+      />
+      <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none">
+        <path d="M60 300 C40 296 24 282 16 262 C30 268 48 276 60 286" />
+        <path d="M60 300 C80 296 96 282 104 262 C90 268 72 276 60 286" />
+        <path d="M60 264 C42 260 28 248 21 230 C34 235 50 242 60 250" />
+        <path d="M60 264 C78 260 92 248 99 230 C86 235 70 242 60 250" />
+        <path d="M60 228 C44 224 32 213 26 197 C38 202 51 208 60 215" />
+        <path d="M60 228 C76 224 88 213 94 197 C82 202 69 208 60 215" />
+        <path d="M61 190 C47 187 36 177 31 163 C42 167 53 172 61 178" />
+        <path d="M61 190 C74 187 84 177 89 163 C78 167 68 172 61 178" />
+        <path d="M62 152 C50 149 41 141 36 129 C46 132 55 137 62 142" />
+        <path d="M62 152 C73 149 82 141 87 129 C77 132 69 137 62 142" />
+        <path d="M64 116 C54 114 46 107 42 97 C51 100 58 104 64 108" />
+        <path d="M64 116 C73 114 80 107 84 97 C76 100 70 104 64 108" />
+        <path d="M68 82 C60 80 53 74 50 66 C57 68 63 71 68 75" />
+        <path d="M68 82 C75 80 81 74 84 66 C78 68 73 71 68 75" />
+      </g>
+    </svg>
+    <svg
+      class="ds-organic__motif--alt"
+      viewBox="0 0 120 320"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMidYMax meet"
+    >
+      <path
+        d="M60 320 C60 252 59 184 61 126 C62 86 67 44 78 12"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none">
+        <path d="M60 292 C42 288 28 276 21 258 C34 263 50 270 60 278" />
+        <path d="M60 292 C78 288 92 276 99 258 C86 263 70 270 60 278" />
+        <path d="M61 252 C45 248 33 237 27 221 C39 226 52 232 61 239" />
+        <path d="M61 252 C77 248 89 237 95 221 C83 226 70 232 61 239" />
+        <path d="M62 210 C48 207 37 197 32 183 C43 187 54 192 62 198" />
+        <path d="M62 210 C76 207 87 197 92 183 C81 187 70 192 62 198" />
+        <path d="M64 168 C52 165 43 157 38 145 C48 148 57 153 64 158" />
+        <path d="M64 168 C76 165 85 157 90 145 C80 148 71 153 64 158" />
+        <path d="M67 124 C57 122 49 115 45 105 C54 108 61 112 67 116" />
+        <path d="M67 124 C77 122 85 115 89 105 C80 108 73 112 67 116" />
+      </g>
+    </svg>
+  </div>
+  {caption && <p class="ds-organic__caption">{caption}</p>}
+</div>

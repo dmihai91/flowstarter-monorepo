@@ -1,0 +1,138 @@
+---
+import type { CountryCodeOption } from '../../lib/contact-country-codes';
+import TextAreaField from '../form/TextAreaField.astro';
+import TextField from '../form/TextField.astro';
+import PhoneField from '../form/PhoneField.astro';
+
+interface Props {
+  form: {
+    title: string;
+    note: string;
+    fullNameLabel: string;
+    fullNamePlaceholder: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    phoneLabel: string;
+    phonePlaceholder: string;
+    messageLabel: string;
+    messagePlaceholder: string;
+    submitLabel: string;
+    successMessage: string;
+  };
+  countryCodes: CountryCodeOption[];
+  defaultCountry: CountryCodeOption;
+}
+
+const { form, countryCodes, defaultCountry } = Astro.props;
+---
+
+<div class="contact-form-panel">
+  <form class="contact-form-panel__form" data-contact-form novalidate>
+    <TextField label={form.fullNameLabel} name="fullName" placeholder={form.fullNamePlaceholder} required={true} />
+    <TextField label={form.emailLabel} name="email" type="email" placeholder={form.emailPlaceholder} required={true} />
+
+    <PhoneField
+      label={form.phoneLabel}
+      codeName="countryCode"
+      phoneName="phone"
+      phonePlaceholder={form.phonePlaceholder}
+      required={true}
+      options={countryCodes}
+      defaultOption={defaultCountry}
+    />
+
+    <TextAreaField label={form.messageLabel} name="message" placeholder={form.messagePlaceholder} required={true} rows={7} />
+
+    <div class="contact-form-panel__footer">
+      <button type="submit" class="contact-form-panel__submit">{form.submitLabel}</button>
+      <p class="contact-form-panel__note">{form.note}</p>
+      <p class="contact-form-panel__success" data-contact-success hidden>{form.successMessage}</p>
+    </div>
+  </form>
+</div>
+
+<style>
+  .contact-form-panel {
+    --panel-gap: 32px;
+    --form-gap: 22px;
+    --phone-gap: 18px;
+    --field-height: 58px;
+    --form-field-gap: 10px;
+    display: grid;
+    gap: var(--panel-gap);
+  }
+
+  .contact-form-panel__header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .contact-form-panel__title {
+    text-transform: uppercase;
+    color: var(--bg-dark);
+  }
+
+  .contact-form-panel__note {
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .contact-form-panel__form {
+    display: grid;
+    gap: var(--form-gap);
+  }
+
+.contact-form-panel__footer {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .contact-form-panel__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--field-height);
+    padding: 0 30px;
+    border: 2px solid var(--bg-dark);
+    background: var(--bg-dark);
+    color: var(--text-on-dark);
+    font-family: var(--font-button);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: transform var(--transition), opacity var(--transition);
+  }
+
+  .contact-form-panel__submit:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+  }
+
+  .contact-form-panel__success {
+    color: var(--bg-dark);
+    line-height: 1.5;
+    max-width: 520px;
+  }
+
+  @media (max-width: 768px) {
+    .contact-form-panel__header {
+      align-items: start;
+      flex-direction: column;
+    }
+
+    .contact-form-panel__note {
+      text-align: left;
+    }
+
+    .contact-form-panel__phone-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

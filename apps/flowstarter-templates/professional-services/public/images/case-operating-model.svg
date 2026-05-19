@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 644 560" role="img" aria-label="Operating model redesign">
+  <rect width="644" height="560" fill="#0d1c2d"/>
+  <rect x="262" y="60" width="120" height="80" fill="#c8a25a"/>
+  <rect x="100" y="240" width="120" height="80" fill="none" stroke="#9fb0c2" stroke-width="2" opacity="0.6"/>
+  <rect x="262" y="240" width="120" height="80" fill="none" stroke="#c8a25a" stroke-width="2"/>
+  <rect x="424" y="240" width="120" height="80" fill="none" stroke="#9fb0c2" stroke-width="2" opacity="0.6"/>
+  <rect x="180" y="420" width="120" height="80" fill="#c8a25a" opacity="0.18"/>
+  <rect x="344" y="420" width="120" height="80" fill="#c8a25a" opacity="0.18"/>
+  <g stroke="#c8a25a" stroke-width="2" fill="none">
+    <path d="M322 140 V200 M322 200 H160 V240 M322 200 H322 V240 M322 200 H484 V240"/>
+    <path d="M322 320 V360 M322 360 H240 V420 M322 360 H404 V420"/>
+  </g>
+  <circle cx="322" cy="100" r="6" fill="#0b1623"/>
+</svg>

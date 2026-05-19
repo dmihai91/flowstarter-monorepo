@@ -1,0 +1,208 @@
+---
+import type { JourneyItem } from '../../lib/site-data';
+
+interface Props {
+  journey: {
+    title: string;
+    intro: string;
+    items: JourneyItem[];
+  };
+}
+
+const { journey } = Astro.props;
+---
+
+<section class="about-journey-section container">
+  <div class="about-journey-section__intro" data-about-reveal>
+    <h2 class="about-journey-section__title">{journey.title}</h2>
+    <p class="about-journey-section__intro-text">{journey.intro}</p>
+  </div>
+
+  <ol class="about-journey-section__list">
+    {journey.items.map((item, index) => (
+      <li
+        class="about-journey-section__step"
+        data-about-reveal
+        style={`--about-reveal-delay: ${index * 90}ms;`}
+      >
+        <div class="about-journey-section__marker" aria-hidden="true">
+          <span class="about-journey-section__dot"></span>
+          {index < journey.items.length - 1 && (
+            <span class="about-journey-section__line"></span>
+          )}
+        </div>
+        <div class="about-journey-section__body">
+          <span class="about-journey-section__step-year">{item.year}</span>
+          <h3 class="about-journey-section__step-title">{item.title}</h3>
+          <p class="about-journey-section__step-desc">{item.description}</p>
+          <div class="about-journey-section__meta">
+            {item.keyMoment && (
+              <p class="about-journey-section__meta-item">
+                <span class="about-journey-section__meta-label">What shifts</span>
+                {item.keyMoment}
+              </p>
+            )}
+            {item.achievement && (
+              <p class="about-journey-section__meta-item">
+                <span class="about-journey-section__meta-label">What you leave with</span>
+                {item.achievement}
+              </p>
+            )}
+          </div>
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .about-journey-section {
+    display: grid;
+    gap: 56px;
+    width: 100%;
+  }
+
+  .about-journey-section__intro {
+    display: grid;
+    gap: 18px;
+    max-width: 640px;
+  }
+
+  .about-journey-section__title {
+    text-transform: uppercase;
+    color: var(--bg-dark);
+    line-height: 1.04;
+  }
+
+  .about-journey-section__intro-text {
+    color: var(--text-body);
+    line-height: 1.55;
+    font-size: clamp(1.1rem, 1.3vw, 1.28rem);
+  }
+
+  .about-journey-section__list {
+    display: grid;
+    gap: 0;
+  }
+
+  .about-journey-section__step {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 32px;
+    padding-bottom: 48px;
+  }
+
+  .about-journey-section__step:last-child {
+    padding-bottom: 0;
+  }
+
+  .about-journey-section__marker {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 6px;
+  }
+
+  .about-journey-section__dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--surface-base);
+    border: 2px solid var(--brand-primary);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .about-journey-section__dot::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+  }
+
+  .about-journey-section__line {
+    flex: 1;
+    width: 1.5px;
+    margin-top: 8px;
+    background: linear-gradient(
+      var(--brand-primary) 0%,
+      var(--surface-panel-border) 100%
+    );
+  }
+
+  .about-journey-section__body {
+    padding-bottom: 8px;
+  }
+
+  .about-journey-section__step-year {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .about-journey-section__step-title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    color: var(--bg-dark);
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .about-journey-section__step-desc {
+    color: var(--text-body);
+    line-height: 1.6;
+    max-width: 52ch;
+    margin-bottom: 20px;
+  }
+
+  .about-journey-section__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 40px;
+    max-width: 760px;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--surface-panel-border);
+  }
+
+  .about-journey-section__meta-item {
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--text-body);
+  }
+
+  .about-journey-section__meta-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 768px) {
+    .about-journey-section {
+      gap: 40px;
+    }
+
+    .about-journey-section__step {
+      gap: 22px;
+      padding-bottom: 40px;
+    }
+
+    .about-journey-section__meta {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+</style>

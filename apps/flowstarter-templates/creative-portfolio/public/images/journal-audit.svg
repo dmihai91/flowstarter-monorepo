@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Journal cover: reading the room">
+  <rect width="800" height="500" fill="#F4F1EA"/>
+  <rect x="0" y="0" width="800" height="500" fill="none" stroke="#111014" stroke-opacity="0.14" stroke-width="1"/>
+  <g fill="none" stroke="#111014" stroke-width="2">
+    <circle cx="400" cy="250" r="180"/>
+    <circle cx="400" cy="250" r="120"/>
+  </g>
+  <circle cx="400" cy="250" r="56" fill="#FF3B1F"/>
+  <line x1="400" y1="70" x2="400" y2="430" stroke="#111014" stroke-opacity="0.2"/>
+  <line x1="220" y1="250" x2="580" y2="250" stroke="#111014" stroke-opacity="0.2"/>
+  <text x="56" y="120" font-family="'Space Grotesk',sans-serif" font-size="18" letter-spacing="6" fill="#FF3B1F">PROCESS</text>
+  <text x="56" y="450" font-family="Georgia,serif" font-style="italic" font-size="44" fill="#111014">Find what is actually wrong.</text>
+</svg>

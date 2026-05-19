@@ -1,0 +1,113 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import ActionButton from './design-system/ActionButton.astro';
+
+const cta = (siteLabels as any).cta ?? {};
+const heading =
+  typeof cta.heading === 'string' && cta.heading.trim()
+    ? cta.heading
+    : 'When you are ready, a quiet first conversation is the next step.';
+const buttonLabel =
+  typeof cta.buttonLabel === 'string' && cta.buttonLabel.trim()
+    ? cta.buttonLabel
+    : 'Get in touch';
+const buttonHref =
+  typeof cta.buttonHref === 'string' && cta.buttonHref.trim() ? cta.buttonHref : '/contact';
+---
+
+<SectionBlock className="cta-section" tone="accent" padding="none">
+  <div class="cta-section__inner container">
+    <span class="cta-section__mark" aria-hidden="true"></span>
+    <h2 class="cta-section__heading">{heading}</h2>
+    <ActionButton
+      href={buttonHref}
+      label={buttonLabel}
+      variant="outline"
+      className="cta-section__btn ds-action-button--outline-dark"
+    />
+  </div>
+</SectionBlock>
+
+<style>
+  :global(.cta-section.ds-section--accent) {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 140% at 50% -20%, rgba(255, 255, 255, 0.22), transparent 60%),
+      linear-gradient(165deg, #c0926d 0%, #b08a68 52%, #9c785a 100%);
+  }
+
+  :global(.cta-section.ds-section--accent)::before,
+  :global(.cta-section.ds-section--accent)::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    pointer-events: none;
+  }
+
+  :global(.cta-section.ds-section--accent)::before {
+    width: 460px;
+    height: 460px;
+    left: -160px;
+    bottom: -220px;
+    box-shadow: 0 0 0 60px rgba(255, 255, 255, 0.06);
+  }
+
+  :global(.cta-section.ds-section--accent)::after {
+    width: 320px;
+    height: 320px;
+    right: -120px;
+    top: -150px;
+    box-shadow: 0 0 0 44px rgba(255, 255, 255, 0.05);
+  }
+
+  .cta-section__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 36px;
+    padding-top: 104px;
+    padding-bottom: 104px;
+  }
+
+  .cta-section__mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(27, 33, 28, 0.55);
+    position: relative;
+  }
+
+  .cta-section__mark::after {
+    content: '';
+    position: absolute;
+    inset: 9px;
+    border-radius: 50%;
+    background: rgba(27, 33, 28, 0.55);
+  }
+
+  .cta-section__heading {
+    max-width: 18ch;
+    line-height: 1.12;
+    font-size: clamp(2rem, 3.6vw, 3.1rem);
+    color: var(--color-ink-strong);
+    text-wrap: balance;
+  }
+
+  @media (max-width: 768px) {
+    .cta-section__inner {
+      padding-top: 72px;
+      padding-bottom: 72px;
+      gap: 28px;
+    }
+
+    .cta-section__heading {
+      max-width: 24ch;
+    }
+  }
+</style>

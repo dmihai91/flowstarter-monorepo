@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Grid rules with a single accent mark">
+  <rect width="800" height="1120" fill="#111014"/>
+  <g stroke="#F4F1EA" stroke-opacity="0.12" stroke-width="1">
+    <line x1="0" y1="186" x2="800" y2="186"/>
+    <line x1="0" y1="373" x2="800" y2="373"/>
+    <line x1="0" y1="560" x2="800" y2="560"/>
+    <line x1="0" y1="746" x2="800" y2="746"/>
+    <line x1="0" y1="933" x2="800" y2="933"/>
+    <line x1="266" y1="0" x2="266" y2="1120"/>
+    <line x1="533" y1="0" x2="533" y2="1120"/>
+  </g>
+  <circle cx="400" cy="560" r="210" fill="#FF3B1F"/>
+  <text x="400" y="650" font-family="Georgia,serif" font-style="italic" font-size="240" fill="#F4F1EA" text-anchor="middle">V</text>
+  <text x="60" y="120" font-family="'Space Grotesk',sans-serif" font-size="20" letter-spacing="6" fill="#FF3B1F">DETAIL · 04</text>
+  <text x="740" y="1040" font-family="Georgia,serif" font-style="italic" font-size="40" fill="#F4F1EA" fill-opacity="0.85" text-anchor="end">Exact, by habit.</text>
+</svg>

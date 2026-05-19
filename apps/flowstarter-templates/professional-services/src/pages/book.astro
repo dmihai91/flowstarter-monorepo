@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Book a Working Session | Halden & Roe">
+  <Header ctaDisabled={true} />
+  <main class="book-page">
+    <div class="book-page__inner container">
+      <div class="book-page__copy">
+        <h1 class="book-page__title">Book a working session</h1>
+        <p class="book-page__description">
+          Thirty minutes with a partner to frame the decision in front of you and how we would approach it.
+          No pitch. A direct conversation about the situation and whether we are the right firm to help.
+        </p>
+      </div>
+      <div class="book-page__calendar">
+        <!-- Replace the src below with your Calendly or Cal.com embed URL -->
+        <iframe
+          src="https://calendly.com/your-username/discovery-call"
+          width="100%"
+          height="700"
+          frameborder="0"
+          title="Book a working session"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .book-page {
+    padding-top: 64px;
+  }
+
+  .book-page__inner {
+    padding-top: 80px;
+    padding-bottom: 100px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 56px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .book-page__copy {
+    display: grid;
+    gap: 20px;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .book-page__title {
+    color: var(--bg-dark);
+    line-height: 1.05;
+  }
+
+  .book-page__description {
+    line-height: 1.45;
+    color: var(--bg-dark);
+    padding: 0 40px;
+  }
+
+  .book-page__calendar {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface-base);
+  }
+
+  .book-page__calendar iframe {
+    display: block;
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .book-page__inner {
+      padding-top: 48px;
+      padding-bottom: 64px;
+      gap: 40px;
+    }
+  }
+</style>

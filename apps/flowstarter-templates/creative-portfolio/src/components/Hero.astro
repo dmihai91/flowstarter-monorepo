@@ -1,0 +1,468 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import ActionButton from './design-system/ActionButton.astro';
+
+const { hero } = siteLabels;
+const heroImage: string = typeof hero.image === 'string' ? hero.image.trim() : '';
+const heroHighlights: string[] = Array.isArray(hero.highlights)
+  ? hero.highlights.filter((item: unknown): item is string => typeof item === 'string' && item.trim() !== '')
+  : [];
+
+const escapeRegex = (value = '') => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const heroParagraphs = String(hero.text ?? '')
+  .split(/\n\s*\n/)
+  .map((paragraph) => paragraph.replace(/\s*\n\s*/g, ' ').trim())
+  .filter(Boolean);
+
+const highlightPattern = heroHighlights.length
+  ? new RegExp(`(${heroHighlights.map(escapeRegex).join('|')})`, 'gi')
+  : null;
+
+const heroParagraphSegments = heroParagraphs.map((paragraph) =>
+  (highlightPattern ? paragraph.split(highlightPattern) : [paragraph])
+    .filter(Boolean)
+    .map((segment) => ({
+      text: segment,
+      highlighted: heroHighlights.some((phrase) => phrase.toLowerCase() === segment.toLowerCase()),
+    }))
+);
+---
+
+<div class="hero__intro-overlay" aria-hidden="true">
+  <span class="hero__intro-text">{hero.title}</span>
+</div>
+
+<SectionBlock id="home" className="hero" tone="dark" padding="none">
+  <div class="hero__inner container">
+    <div class="hero__content-wrap">
+      <div class="hero__content">
+        {hero.label && <span class="hero__eyebrow">{hero.label}</span>}
+        <h1 class="hero__title">{hero.title}</h1>
+        <p class="hero__text">
+          {heroParagraphSegments.map((paragraph, index) => (
+            <>
+              {index > 0 && (
+                <>
+                  <br />
+                  <br />
+                </>
+              )}
+              {paragraph.map((segment) =>
+                segment.highlighted ? (
+                  <span class="hero__text-highlight">{segment.text}</span>
+                ) : (
+                  segment.text
+                )
+              )}
+            </>
+          ))}
+        </p>
+        <div class="hero__actions">
+          {hero.actions.map((action) => (
+            <ActionButton
+              href={action.href}
+              label={action.label}
+              variant={action.outline ? 'outline' : 'primary'}
+              className={action.outline ? 'ds-action-button--outline-light' : 'ds-action-button--primary-light'}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+    <div class="hero__image">
+      {heroImage ? (
+        <div
+          class="hero__photo"
+          role="img"
+          aria-label={hero.title}
+          style={`background-image:url('${heroImage}');`}
+        ></div>
+      ) : (
+        <div class="hero__art" aria-hidden="true">
+          <span class="hero__art-index">№ 01 — 06</span>
+          <span class="hero__art-mark">V</span>
+          <div class="hero__art-rules">
+            {hero.tags && hero.tags.slice(0, 4).map((tag: string) => (
+              <span class="hero__art-rule">{tag}</span>
+            ))}
+          </div>
+          <span class="hero__art-foot">Selected works · the studio index</span>
+        </div>
+      )}
+    </div>
+  </div>
+</SectionBlock>
+
+<style>
+  .hero {
+    overflow: clip;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 78% 8%, rgba(255, 59, 31, 0.18), transparent 46%),
+      radial-gradient(circle at 6% 96%, rgba(255, 59, 31, 0.07), transparent 40%);
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    --hero-image-top-offset: 56px;
+    --hero-image-bleed: max(calc((100vw - var(--container-width)) / 2), 0px);
+    display: grid;
+    grid-template-columns: minmax(0, 1.06fr) minmax(400px, 44%);
+    gap: 64px;
+    align-items: stretch;
+    justify-content: space-between;
+    min-height: max(760px, calc(100vh - 64px));
+    padding: 100px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero__content-wrap {
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero__content {
+    max-width: 720px;
+  }
+
+  .hero__eyebrow {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--signal);
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+    opacity: 0;
+    animation: hero-enter 750ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1200ms;
+  }
+
+  .hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(3.4rem, 6.8vw, 6.4rem);
+    font-weight: 320;
+    font-optical-sizing: auto;
+    line-height: 0.98;
+    letter-spacing: -0.032em;
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: hero-enter 750ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1300ms;
+  }
+
+  .hero__text {
+    font-family: var(--font-body);
+    font-size: clamp(1.05rem, 1.35vw, 1.28rem);
+    line-height: 1.62;
+    max-width: 520px;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: hero-enter 750ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1500ms;
+  }
+
+  .hero__text-highlight {
+    color: var(--text-on-dark);
+    font-style: italic;
+  }
+
+  /* ── Editorial art panel (image-free state) ── */
+  .hero__art {
+    position: absolute;
+    top: var(--hero-image-top-offset);
+    right: calc((var(--hero-image-bleed) + 28px) * -1);
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(28px, 3.4vw, 52px);
+    background:
+      linear-gradient(155deg, #FF3B1F 0%, #E22E13 38%, #1A0A07 100%);
+    color: #F4F1EA;
+    overflow: hidden;
+    isolation: isolate;
+    opacity: 0;
+    animation: hero-art-enter 1000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1150ms;
+  }
+
+  .hero__art::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(244, 241, 234, 0.14) 0 1px, transparent 1px 84px),
+      repeating-linear-gradient(0deg, rgba(244, 241, 234, 0.1) 0 1px, transparent 1px 84px);
+    mix-blend-mode: overlay;
+    z-index: -1;
+  }
+
+  .hero__art::after {
+    content: "";
+    position: absolute;
+    right: -28%;
+    bottom: -34%;
+    width: 86%;
+    height: 86%;
+    border: 1.5px solid rgba(244, 241, 234, 0.32);
+    border-radius: 50%;
+    z-index: -1;
+  }
+
+  .hero__art-index {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .hero__art-mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -54%);
+    z-index: 0;
+    font-family: var(--font-title);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(13rem, 26vw, 24rem);
+    line-height: 1;
+    color: rgba(244, 241, 234, 0.92);
+    pointer-events: none;
+  }
+
+  .hero__art-index,
+  .hero__art-foot {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero__art-rules {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    max-width: 82%;
+  }
+
+  .hero__art-rule {
+    font-family: var(--font-body);
+    font-size: 0.74rem;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    color: #F4F1EA;
+    background: rgba(26, 10, 7, 0.46);
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(244, 241, 234, 0.5);
+  }
+
+  .hero__art-foot {
+    font-family: var(--font-title);
+    font-style: italic;
+    font-size: clamp(1rem, 1.5vw, 1.35rem);
+    color: rgba(244, 241, 234, 0.92);
+  }
+
+  @keyframes hero-art-enter {
+    from {
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* ── Intro overlay ── */
+  .hero__intro-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 clamp(20px, 5vw, 80px);
+    pointer-events: none;
+    animation: intro-overlay-exit 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 1000ms;
+  }
+
+  .hero__intro-text {
+    font-family: var(--font-title);
+    font-weight: 300;
+    font-style: italic;
+    font-optical-sizing: auto;
+    letter-spacing: -0.03em;
+    color: var(--text-on-dark);
+    text-align: center;
+    line-height: 1;
+    font-size: clamp(3rem, 11vw, 10rem);
+    opacity: 0;
+    animation: intro-text-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 80ms;
+  }
+
+  @keyframes intro-text-enter {
+    from {
+      opacity: 0;
+      filter: blur(24px);
+      transform: scale(0.88);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+    }
+  }
+
+  @keyframes intro-overlay-exit {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @keyframes hero-enter {
+    from {
+      opacity: 0;
+      transform: translateX(-28px);
+      filter: blur(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+      filter: blur(0px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__intro-overlay {
+      display: none;
+    }
+
+    .hero__intro-text,
+    .hero__eyebrow,
+    .hero__title,
+    .hero__text,
+    .hero__actions,
+    .hero__art {
+      opacity: 1;
+      animation: none;
+      clip-path: none;
+    }
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: hero-enter 750ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 1700ms;
+  }
+
+  .hero__actions :global(.ds-action-button) {
+    font-weight: var(--fw-semibold);
+    min-width: 210px;
+    text-align: center;
+  }
+
+  .hero__image {
+    position: relative;
+    min-height: inherit;
+    height: 100%;
+    align-self: stretch;
+    justify-self: stretch;
+    overflow: visible;
+  }
+
+  .hero__photo {
+    position: absolute;
+    top: var(--hero-image-top-offset);
+    right: calc((var(--hero-image-bleed) + 28px) * -1);
+    bottom: 0;
+    left: 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center top;
+    filter: grayscale(0.15) contrast(1.04);
+  }
+
+  @media (max-width: 768px) {
+    .hero__inner {
+      --hero-image-top-offset: 0px;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      min-height: auto;
+      padding: 32px 0 48px;
+    }
+
+    .hero__content-wrap {
+      padding: 0;
+    }
+
+    .hero__image {
+      order: -1;
+      margin-top: 64px;
+      min-height: 520px;
+      height: auto;
+      overflow: hidden;
+    }
+
+    .hero__photo,
+    .hero__art {
+      position: relative;
+      top: auto;
+      right: auto;
+      bottom: auto;
+      left: auto;
+      min-height: 520px;
+      background-position: center top;
+    }
+
+    .hero__art-mark {
+      font-size: 15rem;
+      transform: translate(-50%, -50%);
+      color: rgba(244, 241, 234, 0.82);
+    }
+
+    .hero__art-rules {
+      max-width: 100%;
+    }
+
+    .hero__actions {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero__actions :global(.ds-action-button) {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+</style>

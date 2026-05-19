@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 644 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Sable Coffee Roasters identity">
+  <rect width="644" height="560" fill="#231A14"/>
+  <rect x="0" y="0" width="644" height="560" fill="none" stroke="#F4F1EA" stroke-opacity="0.14" stroke-width="1"/>
+  <circle cx="322" cy="280" r="170" fill="none" stroke="#F4F1EA" stroke-opacity="0.5" stroke-width="2"/>
+  <circle cx="322" cy="280" r="92" fill="#FF3B1F"/>
+  <text x="322" y="300" font-family="Georgia,serif" font-style="italic" font-size="84" fill="#231A14" text-anchor="middle">S</text>
+  <text x="322" y="120" font-family="'Space Grotesk',sans-serif" font-size="16" letter-spacing="6" fill="#FF3B1F" text-anchor="middle">SABLE ROASTERS</text>
+  <text x="322" y="500" font-family="Georgia,serif" font-style="italic" font-size="40" fill="#F4F1EA" text-anchor="middle">Single origin.</text>
+</svg>

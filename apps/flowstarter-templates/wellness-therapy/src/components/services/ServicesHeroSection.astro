@@ -1,0 +1,196 @@
+---
+import type { ImageItem, TitleLine } from '../../lib/site-data';
+import AnimatedWordTitle from '../shared/AnimatedWordTitle.astro';
+import OrganicVisual from '../design-system/OrganicVisual.astro';
+
+interface Props {
+  heroLines: TitleLine[];
+  heroImages: ImageItem[];
+  heroSubtitle?: string;
+}
+
+const { heroLines, heroImages, heroSubtitle = '' } = Astro.props;
+const validImages = (heroImages ?? []).filter(
+  (image) => typeof image?.imageSrc === 'string' && image.imageSrc.trim() !== ''
+);
+---
+
+<section class="services-hero-section container">
+  <div class="services-hero-section__copy">
+    <AnimatedWordTitle
+      as="h1"
+      lines={heroLines}
+      autoplay={true}
+      centered={true}
+      className="services-hero-section__title"
+    />
+    {heroSubtitle && <p class="services-hero-section__sub">{heroSubtitle}</p>}
+    {validImages.length > 0 ? (
+      <div class="services-hero-section__media">
+        {validImages.map((image, index) => (
+          <figure class={`services-hero-section__media-item services-hero-section__media-item--${index === 0 ? 'left' : 'right'}`}>
+            <img src={image.imageSrc} alt={image.imageAlt} loading={index === 0 ? 'eager' : 'lazy'} />
+          </figure>
+        ))}
+      </div>
+    ) : (
+      <OrganicVisual className="services-hero-section__visual" ariaLabel="Calm botanical illustration" />
+    )}
+  </div>
+</section>
+
+<style>
+  .services-hero-section {
+    --hero-top-space: 72px;
+    --hero-max-width: 1440px;
+    max-width: var(--hero-max-width);
+    padding-top: var(--hero-top-space);
+  }
+
+  .services-hero-section__copy {
+    margin: 0 auto;
+    text-align: center;
+    display: grid;
+    gap: 56px;
+    justify-items: center;
+  }
+
+  .services-hero-section__sub {
+    max-width: 56ch;
+    font-size: clamp(1.1rem, 1.4vw, 1.32rem);
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-top: -24px;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: services-sub-enter 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 700ms;
+  }
+
+  @keyframes services-sub-enter {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .services-hero-section__copy :global(.services-hero-section__visual) {
+    width: 100%;
+    max-width: 1080px;
+    aspect-ratio: 16 / 7;
+    margin-top: 8px;
+    opacity: 0;
+    animation: services-image-enter 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 600ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .services-hero-section__sub,
+    .services-hero-section__copy :global(.services-hero-section__visual) {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+  }
+
+  .services-hero-section__title {
+    font-family: var(--font-title);
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .services-hero-section__title :global(.animated-word-title__line) {
+    white-space: nowrap;
+  }
+
+  .services-hero-section__media {
+    width: min(100%, 920px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    align-items: start;
+  }
+
+  .services-hero-section__media-item {
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    opacity: 0;
+    animation: services-image-enter 820ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    will-change: transform, opacity, filter;
+  }
+
+  .services-hero-section__media-item--left {
+    animation-delay: 500ms;
+  }
+
+  .services-hero-section__media-item--right {
+    animation-delay: 700ms;
+  }
+
+  @keyframes services-image-enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 56px, 0) scale(0.97);
+      filter: blur(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+      filter: blur(0px);
+    }
+  }
+
+  .services-hero-section__media-item--left img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .services-hero-section__media-item--right {
+    margin-top: 96px;
+  }
+
+  .services-hero-section__media-item--right img {
+    aspect-ratio: 5 / 7;
+  }
+
+  .services-hero-section__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .services-hero-section__media-item {
+      opacity: 1;
+      animation: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .services-hero-section {
+      max-width: var(--container-width);
+      padding-top: 48px;
+    }
+
+    .services-hero-section__title {
+      font-size: 2.5rem;
+    }
+
+    .services-hero-section__title :global(.animated-word-title__line) {
+      white-space: normal;
+    }
+
+    .services-hero-section__copy {
+      gap: 56px;
+    }
+
+    .services-hero-section__media {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .services-hero-section__media-item--right {
+      margin-top: 0;
+    }
+  }
+</style>

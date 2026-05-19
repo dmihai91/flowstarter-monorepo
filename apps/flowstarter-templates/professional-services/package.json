@@ -1,0 +1,16 @@
+{
+  "name": "@flowstarter/template-professional-services",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Halden & Roe — a professional-services (operations & strategy consultancy) website template for Flowstarter.",
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build",
+    "build:preview": "astro build --base /preview/dorin-portfolio --outDir ../../flowstarter-main/public/preview/dorin-portfolio",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.4.1"
+  }
+}

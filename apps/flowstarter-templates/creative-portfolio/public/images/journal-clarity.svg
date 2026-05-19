@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Journal cover: naming the idea">
+  <rect width="800" height="500" fill="#F4F1EA"/>
+  <rect x="0" y="0" width="800" height="500" fill="none" stroke="#111014" stroke-opacity="0.14" stroke-width="1"/>
+  <line x1="0" y1="250" x2="800" y2="250" stroke="#111014" stroke-opacity="0.18"/>
+  <circle cx="640" cy="250" r="120" fill="#FF3B1F"/>
+  <text x="56" y="160" font-family="'Space Grotesk',sans-serif" font-size="18" letter-spacing="6" fill="#FF3B1F">PROCESS</text>
+  <text x="50" y="300" font-family="Georgia,serif" font-style="italic" font-size="140" fill="#111014">Idea</text>
+  <text x="50" y="400" font-family="'Space Grotesk',sans-serif" font-size="22" letter-spacing="3" fill="#111014" fill-opacity="0.62">first, tool second</text>
+</svg>

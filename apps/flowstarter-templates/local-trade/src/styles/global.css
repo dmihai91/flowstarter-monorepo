@@ -1,0 +1,229 @@
+/* Reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--surface-base);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+  line-height: 1.3;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+p {
+  font-size: var(--fs-body);
+  color: var(--text-primary);
+}
+
+.ds-section--dark :is(h1, h2, h3, h4, h5, h6, p),
+.footer :is(h1, h2, h3, h4, h5, h6, p) {
+  color: var(--text-on-dark);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-radius: 0;
+  font-family: var(--font-button);
+}
+
+/* Design Tokens */
+/* ───────────────────────────────────────────────────────────
+   HEARTHSTONE JOINERY — warm, hands-on workshop identity.
+   Espresso charcoal + honey amber + sage pine on warm paper.
+   ─────────────────────────────────────────────────────────── */
+:root {
+  /* Colors */
+  --bg-dark: #211b16;
+  --bg-card: #2c241d;
+  --bg-card-hover: #372c23;
+  --brand-primary: #d98a3d;
+  --brand-primary-dark: #b96d28;
+  --accent: #dfe0cf;
+  --accent-light: #efe7d4;
+  --accent-pine: #5c6b4f;
+  --text-on-dark: #f6efe3;
+  --text-primary: #211b16;
+  --text-body: #211b16;
+  --text-secondary: #8a7e6d;
+  --text-muted: #7c6f5d;
+  --text-nav: #c8bca6;
+  --color-ink-strong: #2c241d;
+  --border-color: #43362a;
+  --border-strong: var(--bg-dark);
+  --text-dim-38: rgba(33, 27, 22, 0.38);
+  --text-dim-72: rgba(33, 27, 22, 0.72);
+  --about-circle-think-more: #5c6b4f;
+  --about-circle-ask-a-lot: #e6dcc6;
+  --about-circle-design-less: var(--brand-primary);
+  --surface-base: #f4ede1;
+  --surface-panel: rgba(252, 248, 240, 0.78);
+  --surface-panel-border: rgba(33, 27, 22, 0.16);
+  --surface-field: #fdfaf3;
+  --surface-field-border: rgba(33, 27, 22, 0.26);
+  --surface-field-border-active: var(--brand-primary);
+  --surface-field-border-active-width: 1.5px;
+  --surface-field-focus-ring: 0 0 0 var(--surface-field-border-active-width) var(--surface-field-border-active);
+  --surface-placeholder: rgba(33, 27, 22, 0.54);
+  --surface-selected: rgba(217, 138, 61, 0.18);
+  --surface-brand-glow: rgba(217, 138, 61, 0.2);
+  --surface-accent-glow: rgba(92, 107, 79, 0.18);
+  --surface-subtle: #e9dfca;
+  --surface-subtle-hover: #e2d6bd;
+  --surface-subtle-border: rgba(33, 27, 22, 0.1);
+  --focus-ring-color: rgba(217, 138, 61, 0.32);
+  --shadow-float: 0 18px 40px rgba(33, 27, 22, 0.16);
+
+  /* Spacing */
+  --section-padding: 100px 0;
+  --container-width: 1200px;
+  --container-padding: 0 24px;
+
+  /* Typography */
+  --fs-display: 3rem;
+  --fs-h1: 3rem;
+  --fs-h2: 2.75rem;
+  --fs-h3: 1.9rem;
+  --fs-h4: 1.8rem;
+  --fs-h5: 1.3rem;
+  --fs-body: 1.1rem;
+  --fs-small: 0.875rem;
+  --fs-xs: 0.75rem;
+  --font-body: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-title: 'Bricolage Grotesque', 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-button: 'Bricolage Grotesque', 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-black: 800;
+  --fw-headline: 700;
+
+  /* Borders */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* Transitions */
+  --transition: 0.3s ease;
+}
+
+/* Utilities */
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+.section-label {
+  font-size: var(--fs-body);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-headline);
+  text-transform: uppercase;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.section-title {
+  font-family: var(--font-title);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: var(--fw-headline);
+}
+
+h1 {
+  font-size: var(--fs-display);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+}
+
+h4 {
+  font-size: var(--fs-h4);
+}
+
+h5 {
+  font-size: var(--fs-h5);
+}
+
+.ds-action-button {
+  font-family: var(--font-button);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  :root {
+    --fs-display: 3.2rem;
+    --fs-h1: 2.5rem;
+    --fs-h2: 2.5rem;
+    --fs-h3: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 64px 0;
+    --container-padding: 0 16px;
+    --fs-display: 2.4rem;
+    --fs-h1: 2rem;
+    --fs-h2: 2rem;
+    --fs-h3: 1.15rem;
+    --fs-body: 1rem;
+  }
+
+  .section-label {
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+  }
+}

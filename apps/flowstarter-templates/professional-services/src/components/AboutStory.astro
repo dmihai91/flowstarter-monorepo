@@ -1,0 +1,92 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import ActionButton from './design-system/ActionButton.astro';
+
+const { aboutStory } = siteLabels;
+---
+
+<SectionBlock id="about-story" className="about-story">
+  <div class="about-story__inner container">
+    <div class="about-story__media">
+      <img src={aboutStory.imageSrc} alt={aboutStory.imageAlt} loading="lazy" />
+    </div>
+    <div class="about-story__content">
+      <h2 class="about-story__title">{aboutStory.title}</h2>
+      <div class="about-story__text-group">
+        {aboutStory.paragraphs.map((paragraph) => (
+          <p class="about-story__text">{paragraph}</p>
+        ))}
+      </div>
+      <div class="about-story__actions">
+        <ActionButton
+          href={aboutStory.buttonHref}
+          label={aboutStory.buttonLabel}
+          variant="outline"
+          className="about-story__button ds-action-button--outline-dark"
+        />
+      </div>
+    </div>
+  </div>
+</SectionBlock>
+
+<style>
+  .about-story__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .about-story__media img {
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    display: block;
+  }
+
+  .about-story__content {
+    max-width: 560px;
+  }
+
+  .about-story__title {
+    margin-bottom: 20px;
+    color: var(--bg-dark);
+    text-transform: uppercase;
+  }
+
+  .about-story__text {
+    line-height: 1.5;
+  }
+
+  .about-story__text + .about-story__text {
+    margin-top: 14px;
+  }
+
+  .about-story__text-group {
+    margin-bottom: 2rem;
+  }
+
+  .about-story__actions {
+    display: block;
+  }
+
+  @media (max-width: 1024px) {
+    .about-story__inner {
+      gap: 40px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about-story__inner {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .about-story__media img,
+    .about-story__content {
+      max-width: 100%;
+    }
+  }
+</style>

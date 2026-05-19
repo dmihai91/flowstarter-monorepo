@@ -1,0 +1,109 @@
+---
+import ActionButton from '../design-system/ActionButton.astro';
+import OrganicVisual from '../design-system/OrganicVisual.astro';
+
+interface Props {
+  intro: {
+    eyebrow: string;
+    paragraphs: string[];
+    buttonLabel: string;
+    buttonHref: string;
+    imageSrc: string;
+    imageAlt: string;
+    imageCaption?: string;
+  };
+}
+
+const { intro } = Astro.props;
+const introImage = typeof intro.imageSrc === 'string' ? intro.imageSrc.trim() : '';
+---
+
+<section class="about-intro-section container" data-zigzag-section>
+  <div class="about-intro-section__media" data-zigzag-part="left">
+    {introImage ? (
+      <img src={introImage} alt={intro.imageAlt} loading="eager" />
+    ) : (
+      <OrganicVisual
+        className="about-intro-section__visual"
+        caption={intro.imageCaption || intro.imageAlt}
+        ariaLabel={intro.imageAlt}
+      />
+    )}
+  </div>
+  <div class="about-intro-section__content" data-zigzag-part="right">
+    <h2 class="about-intro-section__heading">{intro.eyebrow}</h2>
+    <div class="about-intro-section__text">
+      {intro.paragraphs.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </div>
+    <ActionButton
+      href={intro.buttonHref}
+      label={intro.buttonLabel}
+      variant="outline"
+      className="about-intro-section__button ds-action-button--outline-dark"
+    />
+  </div>
+</section>
+
+<style>
+  .about-intro-section {
+    --split-gap: 72px;
+    display: grid;
+    grid-template-columns: minmax(320px, 1fr) minmax(320px, 0.95fr);
+    gap: var(--split-gap);
+    align-items: center;
+  }
+
+  .about-intro-section__media img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .about-intro-section__media :global(.about-intro-section__visual) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+  }
+
+  .about-intro-section__heading {
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    color: var(--bg-dark);
+  }
+
+  .about-intro-section__text {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 540px;
+    margin-bottom: 2rem;
+  }
+
+  .about-intro-section__text p {
+    font-size: clamp(1.1rem, 1.3vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--bg-dark);
+  }
+
+  :global(.about-intro-section__button) {
+    padding: 18px 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .about-intro-section {
+      --split-gap: 48px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about-intro-section {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    :global(.about-intro-section__button) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

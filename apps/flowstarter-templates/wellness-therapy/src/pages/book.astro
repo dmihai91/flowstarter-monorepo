@@ -1,0 +1,225 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ActionButton from '../components/design-system/ActionButton.astro';
+import OrganicVisual from '../components/design-system/OrganicVisual.astro';
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+
+const bookPage = (siteLabels as any).bookPage ?? {};
+const title =
+  typeof bookPage.title === 'string' && bookPage.title.trim()
+    ? bookPage.title
+    : 'Book a free intro call';
+const description = typeof bookPage.description === 'string' ? bookPage.description : '';
+const steps = Array.isArray(bookPage.steps) ? bookPage.steps : [];
+const note = typeof bookPage.note === 'string' ? bookPage.note : '';
+const noteHref =
+  typeof bookPage.noteHref === 'string' && bookPage.noteHref.trim()
+    ? bookPage.noteHref
+    : '/contact';
+const noteLinkLabel =
+  typeof bookPage.noteLinkLabel === 'string' && bookPage.noteLinkLabel.trim()
+    ? bookPage.noteLinkLabel
+    : 'Use the contact form';
+const embedNote = typeof bookPage.embedNote === 'string' ? bookPage.embedNote : '';
+const buttonLabel =
+  typeof bookPage.buttonLabel === 'string' && bookPage.buttonLabel.trim()
+    ? bookPage.buttonLabel
+    : 'Get in touch';
+const buttonHref =
+  typeof bookPage.buttonHref === 'string' && bookPage.buttonHref.trim()
+    ? bookPage.buttonHref
+    : '/contact';
+const pageTitle = `${title} — ${(siteLabels as any).siteMeta?.title ?? ''}`;
+---
+
+<Layout title={pageTitle}>
+  <Header ctaDisabled={true} />
+  <main class="book-page">
+    <div class="book-page__inner container">
+      <div class="book-page__copy">
+        <span class="book-page__eyebrow">A calm first step</span>
+        <h1 class="book-page__title">{title}</h1>
+        {description && <p class="book-page__description">{description}</p>}
+
+        {steps.length > 0 && (
+          <ol class="book-page__steps">
+            {steps.map((step: string, index: number) => (
+              <li class="book-page__step">
+                <span class="book-page__step-num">{String(index + 1).padStart(2, '0')}</span>
+                <span class="book-page__step-text">{step}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+
+        {note && (
+          <p class="book-page__note">
+            {note}{' '}
+            <a class="book-page__note-link" href={noteHref}>{noteLinkLabel}</a>.
+          </p>
+        )}
+      </div>
+
+      <aside class="book-page__panel">
+        <OrganicVisual tone="deep" bare={true} className="book-page__visual" ariaLabel="Calm botanical illustration" />
+        <div class="book-page__panel-body">
+          <h2 class="book-page__panel-title">No forms, no pressure</h2>
+          {embedNote && <p class="book-page__panel-note">{embedNote}</p>}
+          <ActionButton
+            href={buttonHref}
+            label={buttonLabel}
+            variant="outline"
+            className="book-page__panel-btn ds-action-button--outline-dark ds-action-button--outline-thick"
+          />
+        </div>
+      </aside>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .book-page {
+    padding-top: 64px;
+  }
+
+  .book-page__inner {
+    padding-top: 96px;
+    padding-bottom: 120px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.85fr);
+    gap: 64px;
+    align-items: start;
+  }
+
+  .book-page__eyebrow {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brand-primary);
+    margin-bottom: 20px;
+  }
+
+  .book-page__eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 26px;
+    height: 1px;
+    margin-right: 14px;
+    vertical-align: middle;
+    background: var(--accent);
+  }
+
+  .book-page__title {
+    color: var(--bg-dark);
+    line-height: 1.04;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .book-page__description {
+    line-height: 1.6;
+    color: var(--text-body);
+    font-size: clamp(1.1rem, 1.3vw, 1.28rem);
+    max-width: 46ch;
+    margin-bottom: 40px;
+  }
+
+  .book-page__steps {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--surface-panel-border);
+    margin-bottom: 36px;
+  }
+
+  .book-page__step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 22px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--surface-panel-border);
+  }
+
+  .book-page__step-num {
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    font-weight: var(--fw-semibold);
+    color: var(--accent);
+  }
+
+  .book-page__step-text {
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--text-body);
+  }
+
+  .book-page__note {
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  .book-page__note-link {
+    color: var(--bg-dark);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+  }
+
+  .book-page__panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--surface-panel);
+    border: 1px solid var(--surface-panel-border);
+    backdrop-filter: blur(8px);
+  }
+
+  .book-page__panel :global(.book-page__visual) {
+    height: 220px;
+    border-radius: 0;
+  }
+
+  .book-page__panel-body {
+    padding: 32px;
+    display: grid;
+    gap: 18px;
+  }
+
+  .book-page__panel-title {
+    color: var(--bg-dark);
+    text-transform: uppercase;
+    font-size: var(--fs-h4);
+  }
+
+  .book-page__panel-note {
+    font-size: var(--fs-small);
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+
+  :global(.book-page__panel-btn) {
+    justify-self: stretch;
+    justify-content: center;
+  }
+
+  @media (max-width: 1024px) {
+    .book-page__inner {
+      grid-template-columns: 1fr;
+      gap: 44px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .book-page__inner {
+      padding-top: 56px;
+      padding-bottom: 72px;
+    }
+  }
+</style>

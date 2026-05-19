@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Journal cover: type does the work">
+  <rect width="800" height="500" fill="#FF3B1F"/>
+  <rect x="0" y="0" width="800" height="500" fill="none" stroke="#111014" stroke-opacity="0.2" stroke-width="1"/>
+  <text x="40" y="430" font-family="Georgia,serif" font-style="italic" font-size="420" fill="#111014">Aa</text>
+  <text x="56" y="120" font-family="'Space Grotesk',sans-serif" font-size="18" letter-spacing="6" fill="#111014">EDITORIAL</text>
+  <text x="744" y="120" font-family="'Space Grotesk',sans-serif" font-size="18" letter-spacing="4" text-anchor="end" fill="#111014" fill-opacity="0.7">TYPE</text>
+</svg>

@@ -1,0 +1,133 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import CTASection from '../../components/CTASection.astro';
+import OrganicVisual from '../../components/design-system/OrganicVisual.astro';
+import { getCaseStudyProjects } from '../../lib/site-data';
+
+interface Project {
+  title: string;
+  category: string;
+  color: string;
+  description?: string;
+  href?: string;
+}
+
+export function getStaticPaths() {
+  const slugify = (value: string) =>
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  const slugFromHref = (href?: string) => {
+    if (!href) return '';
+    const segments = href.split('/').filter(Boolean);
+    return segments[segments.length - 1] ?? '';
+  };
+
+  return getCaseStudyProjects().map((project: Project) => {
+    const slug = slugFromHref(project.href) || slugify(project.title);
+    return {
+      params: { slug },
+      props: { project },
+    };
+  });
+}
+
+const { project } = Astro.props as { project: Project };
+---
+
+<Layout title={`${project.title} — How I help`}>
+  <Header activeIndex={1} ctaLabel="Book a free intro call" ctaHref="/contact" />
+  <main class="case-study-page">
+    <section class="case-study-page__hero">
+      <div class="container">
+        <a class="case-study-page__back" href="/work">&#8598; Back to how I help</a>
+        <p class="case-study-page__category">{project.category}</p>
+        <h1 class="case-study-page__title">{project.title}</h1>
+        <div class="case-study-page__cover" style={`--card-tint: ${project.color};`}>
+          <OrganicVisual tone="deep" bare={true} className="case-study-page__visual" ariaLabel={project.category} />
+        </div>
+        <p class="case-study-page__summary">
+          {project.description
+            ? project.description
+            : 'This is one of the things people most often bring to the room. The work is steady, paced and led by what is actually going on for you.'}
+        </p>
+        <p class="case-study-page__summary case-study-page__summary--muted">
+          Every piece of work starts the same way: a free, low-key intro call to see if we are a good fit. No pressure, nothing to prepare.
+        </p>
+      </div>
+    </section>
+  </main>
+  <CTASection />
+  <Footer />
+</Layout>
+
+<style>
+  .case-study-page__hero {
+    padding: 140px 0 96px;
+  }
+
+  .case-study-page__back {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-size: var(--fs-small);
+    color: var(--bg-dark);
+  }
+
+  .case-study-page__category {
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .case-study-page__title {
+    margin-bottom: 28px;
+    color: var(--bg-dark);
+  }
+
+  .case-study-page__cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .case-study-page__cover :global(.case-study-page__visual) {
+    position: absolute;
+    inset: 0;
+    border-radius: 0;
+    background:
+      radial-gradient(120% 90% at 80% 14%, color-mix(in srgb, var(--card-tint, #3f5147) 52%, transparent), transparent 60%),
+      linear-gradient(160deg,
+        color-mix(in srgb, var(--card-tint, #3f5147) 86%, #1b211c) 0%,
+        color-mix(in srgb, var(--card-tint, #3f5147) 64%, #1b211c) 100%);
+  }
+
+  .case-study-page__summary {
+    max-width: 70ch;
+    line-height: 1.6;
+    color: var(--text-body);
+    font-size: clamp(1.1rem, 1.3vw, 1.28rem);
+  }
+
+  .case-study-page__summary--muted {
+    margin-top: 18px;
+    color: var(--text-muted);
+    font-size: var(--fs-body);
+  }
+
+  @media (max-width: 768px) {
+    .case-study-page__hero {
+      padding: 110px 0 72px;
+    }
+  }
+</style>

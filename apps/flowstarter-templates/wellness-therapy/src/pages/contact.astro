@@ -1,0 +1,85 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ContactDetailsPanel from '../components/contact/ContactDetailsPanel.astro';
+import ContactFormPanel from '../components/contact/ContactFormPanel.astro';
+import ContactHeroSection from '../components/contact/ContactHeroSection.astro';
+import { contactCountryCodes } from '../lib/contact-country-codes';
+import CTASection from '../components/CTASection.astro';
+import { getContactPageData } from '../lib/site-data';
+
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+
+const contactPage = getContactPageData();
+const defaultCountry = contactCountryCodes[0];
+const pageTitle = `Contact — ${(siteLabels as any).siteMeta?.title ?? ''}`;
+---
+
+<Layout title={pageTitle}>
+  <Header activeIndex={5} />
+  <main class="contact-page">
+    <ContactHeroSection titleLines={contactPage.titleLines} introText={contactPage.introText} />
+
+    <section class="contact-page__content container">
+      <ContactFormPanel form={contactPage.form} countryCodes={contactCountryCodes} defaultCountry={defaultCountry} />
+      <ContactDetailsPanel details={contactPage.details} />
+    </section>
+  </main>
+  <CTASection />
+  <Footer />
+</Layout>
+
+<style>
+  .contact-page {
+    --contact-page-bottom-space: 120px;
+    position: relative;
+    padding-top: 64px;
+    padding-bottom: var(--contact-page-bottom-space);
+    overflow: clip;
+  }
+
+  .contact-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at top left, var(--surface-brand-glow), transparent 28%),
+      radial-gradient(circle at 88% 22%, var(--surface-accent-glow), transparent 24%);
+    pointer-events: none;
+  }
+
+  .contact-page__content {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.82fr);
+    gap: 40px;
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .contact-page__content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .contact-page {
+      --contact-page-bottom-space: 72px;
+    }
+  }
+</style>
+
+<script>
+  import { useCountryPicker } from '../scripts/hooks/useCountryPicker.js';
+  import { useFormSuccess } from '../scripts/hooks/useFormSuccess.js';
+
+  const picker = useCountryPicker('[data-country-picker]');
+
+  useFormSuccess({
+    formSelector: '[data-contact-form]',
+    successSelector: '[data-contact-success]',
+    onSuccess: () => picker?.reset(),
+  });
+</script>

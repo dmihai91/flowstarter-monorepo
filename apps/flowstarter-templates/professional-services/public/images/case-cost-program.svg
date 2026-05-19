@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 644 560" role="img" aria-label="Cost program">
+  <rect width="644" height="560" fill="#11243a"/>
+  <g fill="url(#cp)" >
+    <defs><linearGradient id="cp" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#c8a25a" stop-opacity="0.2"/><stop offset="1" stop-color="#c8a25a" stop-opacity="0.85"/></linearGradient></defs>
+    <rect x="80" y="120" width="60" height="360"/>
+    <rect x="170" y="180" width="60" height="300"/>
+    <rect x="260" y="240" width="60" height="240"/>
+    <rect x="350" y="300" width="60" height="180"/>
+    <rect x="440" y="360" width="60" height="120"/>
+    <rect x="530" y="410" width="60" height="70"/>
+  </g>
+  <polyline points="110,140 200,200 290,260 380,320 470,380 560,430" fill="none" stroke="#f4f1ea" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
+  <line x1="60" y1="480" x2="600" y2="480" stroke="#21385250" stroke-width="2"/>
+</svg>

@@ -1,0 +1,168 @@
+---
+import OrganicVisual from '../design-system/OrganicVisual.astro';
+
+interface Props {
+  background: {
+    eyebrow: string;
+    title: string;
+    imageSrc: string;
+    imageAlt: string;
+    imageCaption?: string;
+    paragraphs: string[];
+    whyWorkWithMeTitle: string;
+    whyWorkWithMeText: string;
+    items: string[];
+  };
+}
+
+const { background } = Astro.props;
+const backgroundImage =
+  typeof background.imageSrc === 'string' ? background.imageSrc.trim() : '';
+---
+
+<>
+  <section class="about-background-section container">
+    <div class="about-background-section__content" data-zigzag-section>
+      <div class="about-background-section__media" data-zigzag-part="left">
+        {backgroundImage ? (
+          <img src={backgroundImage} alt={background.imageAlt} loading="lazy" />
+        ) : (
+          <OrganicVisual
+            className="about-background-section__visual"
+            caption={background.imageCaption || background.imageAlt}
+            ariaLabel={background.imageAlt}
+          />
+        )}
+      </div>
+      <div class="about-background-section__why-work" data-zigzag-part="right">
+        <h2 class="about-background-section__meta-title">{background.whyWorkWithMeTitle}</h2>
+        <p class="about-background-section__meta-text">{background.whyWorkWithMeText}</p>
+        <ul class="about-background-section__reason-list">
+          {background.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="about-background-story-section container"
+    data-about-reveal
+    style="--about-reveal-delay: 60ms;"
+  >
+    <h2 class="about-background-story-section__title">{background.title}</h2>
+    <div class="about-background-story-section__text-grid">
+      {background.paragraphs.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </div>
+  </section>
+</>
+
+<style>
+  .about-background-section {
+    width: 100%;
+  }
+
+  .about-background-section__content {
+    display: grid;
+    grid-template-columns: minmax(320px, 0.9fr) minmax(320px, 1fr);
+    gap: 48px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .about-background-section__media img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .about-background-section__media :global(.about-background-section__visual) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+
+  .about-background-section__meta-title {
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    line-height: 1.05;
+    color: var(--bg-dark);
+  }
+
+  .about-background-section__meta-text {
+    margin-bottom: 1.5rem;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--bg-dark);
+  }
+
+  .about-background-section__reason-list {
+    display: grid;
+    gap: 1rem 1.5rem;
+  }
+
+  .about-background-section__reason-list li {
+    position: relative;
+    padding-left: 1.25rem;
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    color: var(--bg-dark);
+  }
+
+  .about-background-section__reason-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 8px;
+    height: 8px;
+    background: var(--brand-primary);
+  }
+
+  .about-background-story-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    width: 100%;
+  }
+
+  .about-background-story-section__title {
+    margin: 0;
+    text-transform: uppercase;
+    line-height: 1.05;
+    color: var(--bg-dark);
+  }
+
+  .about-background-story-section__text-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 48px;
+    width: 100%;
+  }
+
+  .about-background-story-section__text-grid p {
+    font-size: clamp(1.15rem, 1.35vw, 1.35rem);
+    line-height: 1.5;
+    color: var(--bg-dark);
+    margin: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .about-background-section__content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about-background-story-section {
+      gap: 32px;
+    }
+
+    .about-background-story-section__text-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+</style>

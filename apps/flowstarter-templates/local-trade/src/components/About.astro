@@ -1,0 +1,98 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import SectionHeading from './design-system/SectionHeading.astro';
+import VennStatement from './design-system/VennStatement.astro';
+
+const { about } = siteLabels;
+---
+
+<SectionBlock id="about" className="about" tone="dark">
+  <div class="about__inner container" data-about-reveal>
+    <SectionHeading
+      className="about__header"
+      label={about.sectionLabel}
+      title={about.title}
+      align="center"
+      maxWidth="760px"
+      labelColor="var(--brand-primary)"
+    />
+    <VennStatement circles={about.circles} />
+    <p class="about__text">{about.text}</p>
+  </div>
+</SectionBlock>
+
+<style>
+  .about {
+    overflow: clip;
+  }
+
+  .about__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .about__header {
+    margin-bottom: 8px;
+  }
+
+  .about__text {
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.7;
+    color: var(--text-on-dark);
+  }
+
+  /* Gentle entrance — visible by default, animates once when scrolled in */
+  :global([data-about-reveal].is-observing:not(.is-visible)) {
+    opacity: 0;
+    transform: translateY(40px);
+    filter: blur(8px);
+  }
+
+  :global([data-about-reveal].is-observing) {
+    transition:
+      opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 760ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 760ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity, filter;
+  }
+
+  :global([data-about-reveal].is-visible) {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global([data-about-reveal].is-observing) {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about__header {
+      margin-bottom: 4px;
+    }
+  }
+</style>
+
+<script>
+  import { useVisibilityClass } from '../scripts/hooks/useVisibilityClass.js';
+
+  useVisibilityClass({
+    selector: '[data-about-reveal]',
+    threshold: 0.2,
+    rootMargin: '0px 0px -10% 0px',
+    once: true,
+  });
+</script>

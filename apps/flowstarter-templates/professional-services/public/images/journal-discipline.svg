@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Article cover">
+  <rect width="600" height="400" fill="#11243a"/>
+  <g fill="#c8a25a">
+    <rect x="80" y="240" width="50" height="100" opacity="0.85"/>
+    <rect x="160" y="190" width="50" height="150" opacity="0.6"/>
+    <rect x="240" y="140" width="50" height="200" opacity="0.85"/>
+    <rect x="320" y="200" width="50" height="140" opacity="0.4"/>
+    <rect x="400" y="110" width="50" height="230" opacity="0.85"/>
+    <rect x="480" y="170" width="50" height="170" opacity="0.55"/>
+  </g>
+  <line x1="60" y1="340" x2="540" y2="340" stroke="#21385250" stroke-width="2"/>
+</svg>

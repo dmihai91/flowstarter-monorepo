@@ -1,0 +1,54 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import ActionButton from './design-system/ActionButton.astro';
+
+const cta = (siteLabels as any).cta ?? {};
+const heading =
+  typeof cta.heading === 'string' && cta.heading.trim()
+    ? cta.heading
+    : 'Bring us the decision you keep deferring.';
+const buttonLabel =
+  typeof cta.buttonLabel === 'string' && cta.buttonLabel.trim()
+    ? cta.buttonLabel
+    : 'Book a working session';
+const buttonHref =
+  typeof cta.buttonHref === 'string' && cta.buttonHref.trim() ? cta.buttonHref : '/book';
+---
+
+<SectionBlock className="cta-section" tone="accent" padding="none">
+  <div class="cta-section__inner container">
+    <h2 class="cta-section__heading">{heading}</h2>
+    <ActionButton
+      href={buttonHref}
+      label={buttonLabel}
+      variant="outline"
+      className="cta-section__btn ds-action-button--outline-dark"
+    />
+  </div>
+</SectionBlock>
+
+<style>
+  .cta-section__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .cta-section__heading {
+    max-width: 780px;
+    line-height: 1.1;
+  }
+
+  @media (max-width: 768px) {
+    .cta-section__inner {
+      padding-top: 60px;
+      padding-bottom: 60px;
+      gap: 32px;
+    }
+  }
+</style>

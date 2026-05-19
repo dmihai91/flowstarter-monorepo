@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 1000" role="img" aria-label="Findings report cover">
+  <rect width="720" height="1000" fill="#0c1a2b"/>
+  <rect x="70" y="90" width="580" height="820" fill="#f4f1ea"/>
+  <rect x="70" y="90" width="580" height="14" fill="#c8a25a"/>
+  <g fill="#0b1623">
+    <rect x="120" y="180" width="120" height="10" rx="5"/>
+    <rect x="120" y="240" width="420" height="22" rx="4"/>
+    <rect x="120" y="282" width="360" height="22" rx="4"/>
+  </g>
+  <g stroke="#0b162320" stroke-width="1">
+    <line x1="120" y1="360" x2="600" y2="360"/>
+  </g>
+  <g transform="translate(120 410)">
+    <circle cx="90" cy="90" r="86" fill="none" stroke="#0b162318" stroke-width="22"/>
+    <circle cx="90" cy="90" r="86" fill="none" stroke="#c8a25a" stroke-width="22" stroke-dasharray="380 540" stroke-linecap="butt" transform="rotate(-90 90 90)"/>
+  </g>
+  <g transform="translate(360 420)" fill="#0b1623">
+    <rect x="0" y="0" width="220" height="10" rx="5" opacity="0.8"/>
+    <rect x="0" y="34" width="180" height="10" rx="5" opacity="0.5"/>
+    <rect x="0" y="78" width="220" height="10" rx="5" opacity="0.8"/>
+    <rect x="0" y="112" width="150" height="10" rx="5" opacity="0.5"/>
+    <rect x="0" y="156" width="200" height="10" rx="5" opacity="0.8"/>
+  </g>
+  <g fill="#c8a25a">
+    <rect x="120" y="680" width="120" height="120"/>
+  </g>
+  <g fill="#0b1623" opacity="0.12">
+    <rect x="280" y="680" width="120" height="120"/>
+    <rect x="440" y="680" width="120" height="120"/>
+  </g>
+</svg>

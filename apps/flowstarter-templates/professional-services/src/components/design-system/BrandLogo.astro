@@ -1,0 +1,21 @@
+---
+interface Props {
+  label: string;
+  href?: string;
+  className?: string;
+}
+
+const { label, href = '/', className = '' } = Astro.props;
+---
+
+<a href={href} class={`ds-brand-logo ${className}`.trim()}>{label}</a>
+
+<style>
+  .ds-brand-logo {
+    font-size: 1rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: 1px;
+    color: var(--text-on-dark);
+    display: block;
+  }
+</style>

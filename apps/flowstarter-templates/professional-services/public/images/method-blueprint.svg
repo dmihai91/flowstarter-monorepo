@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Operating model blueprint">
+  <rect width="800" height="600" fill="#0d1c2d"/>
+  <g stroke="#21385240" stroke-width="1">
+    <path d="M0 50 H800 M0 150 H800 M0 250 H800 M0 350 H800 M0 450 H800 M0 550 H800"/>
+    <path d="M50 0 V600 M150 0 V600 M250 0 V600 M350 0 V600 M450 0 V600 M550 0 V600 M650 0 V600 M750 0 V600"/>
+  </g>
+  <rect x="120" y="120" width="220" height="140" fill="none" stroke="#c8a25a" stroke-width="2"/>
+  <rect x="440" y="120" width="240" height="100" fill="none" stroke="#9fb0c2" stroke-width="2" opacity="0.6"/>
+  <rect x="120" y="340" width="160" height="140" fill="#c8a25a" opacity="0.18"/>
+  <rect x="120" y="340" width="160" height="140" fill="none" stroke="#c8a25a" stroke-width="2"/>
+  <rect x="380" y="300" width="300" height="180" fill="none" stroke="#9fb0c2" stroke-width="2" opacity="0.6"/>
+  <line x1="340" y1="190" x2="440" y2="170" stroke="#c8a25a" stroke-width="2"/>
+  <line x1="200" y1="260" x2="200" y2="340" stroke="#c8a25a" stroke-width="2"/>
+  <line x1="280" y1="410" x2="380" y2="390" stroke="#9fb0c2" stroke-width="2" opacity="0.6"/>
+  <circle cx="120" cy="120" r="5" fill="#c8a25a"/>
+  <circle cx="680" cy="480" r="5" fill="#c8a25a"/>
+</svg>

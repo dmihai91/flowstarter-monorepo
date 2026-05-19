@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 644 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Marrow and Vine packaging">
+  <rect width="644" height="560" fill="#4A1F17"/>
+  <rect x="0" y="0" width="644" height="560" fill="none" stroke="#F4F1EA" stroke-opacity="0.14" stroke-width="1"/>
+  <rect x="252" y="70" width="140" height="420" fill="#F4F1EA"/>
+  <rect x="252" y="70" width="140" height="120" fill="#FF3B1F"/>
+  <text x="322" y="150" font-family="Georgia,serif" font-style="italic" font-size="64" fill="#F4F1EA" text-anchor="middle">M&amp;V</text>
+  <text x="322" y="330" font-family="Georgia,serif" font-style="italic" font-size="40" fill="#4A1F17" text-anchor="middle" transform="rotate(-90 322 330)">MARROW &amp; VINE</text>
+  <text x="40" y="110" font-family="'Space Grotesk',sans-serif" font-size="16" letter-spacing="5" fill="#F4F1EA" fill-opacity="0.85">NATURAL WINE</text>
+  <text x="604" y="520" font-family="'Space Grotesk',sans-serif" font-size="15" letter-spacing="4" text-anchor="end" fill="#F4F1EA" fill-opacity="0.6">PACKAGING · 2023</text>
+</svg>

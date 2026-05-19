@@ -1,0 +1,123 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import { getCaseStudyProjects } from '../../lib/site-data';
+
+interface Project {
+  title: string;
+  category: string;
+  color: string;
+  description?: string;
+  imageSrc?: string;
+  href?: string;
+}
+
+export function getStaticPaths() {
+  const slugify = (value: string) =>
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  const slugFromHref = (href?: string) => {
+    if (!href) return '';
+    const segments = href.split('/').filter(Boolean);
+    return segments[segments.length - 1] ?? '';
+  };
+
+  return getCaseStudyProjects().map((project: Project) => {
+    const slug = slugFromHref(project.href) || slugify(project.title);
+    return {
+      params: { slug },
+      props: { project },
+    };
+  });
+}
+
+const { project } = Astro.props as { project: Project };
+---
+
+<Layout title={`${project.title} — Atelier Verso`}>
+  <Header activeIndex={1} ctaLabel="Start a project" ctaHref="/contact" />
+  <main class="case-study-page">
+    <section class="case-study-page__hero">
+      <div class="container">
+        <a class="case-study-page__back" href="/work">&#8598; Back to work</a>
+        <p class="case-study-page__category">{project.category}</p>
+        <h1 class="case-study-page__title">{project.title}</h1>
+        <div
+          class="case-study-page__cover"
+          style={project.imageSrc
+            ? `background-image:url('${project.imageSrc}');`
+            : `background-color:${project.color};`}
+          aria-hidden="true"
+        ></div>
+        {project.description && (
+          <p class="case-study-page__summary">{project.description}</p>
+        )}
+        <p class="case-study-page__note">
+          A full write-up of process, decisions, and outcomes can live here. This template
+          gives every project its own page, ready for the detail.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .case-study-page__hero {
+    padding: 140px 0 96px;
+  }
+
+  .case-study-page__back {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-size: var(--fs-small);
+    color: var(--bg-dark);
+  }
+
+  .case-study-page__category {
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .case-study-page__title {
+    margin-bottom: 28px;
+    color: var(--bg-dark);
+  }
+
+  .case-study-page__cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 40px;
+  }
+
+  .case-study-page__summary {
+    max-width: 780px;
+    font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+    font-family: var(--font-title);
+    font-weight: 360;
+    line-height: 1.3;
+    color: var(--bg-dark);
+    margin-bottom: 24px;
+  }
+
+  .case-study-page__note {
+    max-width: 620px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .case-study-page__hero {
+      padding: 110px 0 72px;
+    }
+  }
+</style>

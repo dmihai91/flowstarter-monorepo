@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Journal cover: what a brand keeps">
+  <rect width="800" height="500" fill="#1C1B20"/>
+  <g stroke="#F4F1EA" stroke-opacity="0.14" stroke-width="1">
+    <line x1="200" y1="0" x2="200" y2="500"/>
+    <line x1="400" y1="0" x2="400" y2="500"/>
+    <line x1="600" y1="0" x2="600" y2="500"/>
+    <line x1="0" y1="166" x2="800" y2="166"/>
+    <line x1="0" y1="333" x2="800" y2="333"/>
+  </g>
+  <rect x="600" y="0" width="200" height="166" fill="#FF3B1F"/>
+  <text x="56" y="150" font-family="'Space Grotesk',sans-serif" font-size="18" letter-spacing="6" fill="#FF3B1F">BRAND</text>
+  <text x="50" y="300" font-family="Georgia,serif" font-style="italic" font-size="120" fill="#F4F1EA">Lasting</text>
+  <text x="50" y="390" font-family="'Space Grotesk',sans-serif" font-size="22" letter-spacing="3" fill="#F4F1EA" fill-opacity="0.62">after the novelty</text>
+</svg>

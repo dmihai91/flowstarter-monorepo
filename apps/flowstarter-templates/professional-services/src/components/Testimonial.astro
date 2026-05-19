@@ -1,0 +1,123 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import QuoteBlock from './design-system/QuoteBlock.astro';
+import TestimonialAuthor from './design-system/TestimonialAuthor.astro';
+
+const { testimonials } = siteLabels;
+
+// Split into 3 columns for masonry
+const col0: any[] = [];
+const col1: any[] = [];
+const col2: any[] = [];
+testimonials.forEach((t: any, i: number) => {
+  if (i % 3 === 0) col0.push(t);
+  else if (i % 3 === 1) col1.push(t);
+  else col2.push(t);
+});
+const columns = [col0, col1, col2];
+---
+
+<SectionBlock className="testimonial" tone="accent" topBorder>
+  <div class="testimonial__inner container">
+    <h2 class="testimonial__heading">What clients say</h2>
+    {/* heading intentionally concise; testimonials data drives the section */}
+    <div class="testimonial__masonry">
+      {columns.map((col, colIndex) => (
+        <div class="testimonial__column">
+          {col.map((t: any, cardIndex: number) => (
+            <div
+              class="testimonial__card"
+              data-testimonial-reveal
+              style={`--reveal-delay: ${(colIndex * 100) + (cardIndex * 60)}ms`}
+            >
+              <QuoteBlock quote={t.quote} />
+              <TestimonialAuthor name={t.authorName} role={t.authorRole} image={t.authorImage} />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</SectionBlock>
+
+<script>
+  import { useVisibilityClass } from '../scripts/hooks/useVisibilityClass.js';
+
+  useVisibilityClass({
+    selector: '[data-testimonial-reveal]',
+    threshold: 0.05,
+    rootMargin: '0px',
+    once: true,
+    revealIfAlreadyVisible: false,
+  });
+</script>
+
+<style>
+  .testimonial__heading {
+    margin-bottom: 48px;
+  }
+
+  .testimonial__masonry {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .testimonial__column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .testimonial__card {
+    background: var(--surface-field);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+  }
+
+  /* Reveal animation — bottom to top */
+  :global(.testimonial__card.is-observing:not(.is-visible)) {
+    opacity: 0;
+    transform: translateY(48px) scale(0.985);
+    filter: blur(8px);
+  }
+
+  :global(.testimonial__card.is-observing) {
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: transform, opacity, filter;
+  }
+
+  :global(.testimonial__card.is-visible) {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+
+  @media (max-width: 1024px) {
+    .testimonial__masonry {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .testimonial__masonry {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.testimonial__card.is-observing) {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+  }
+</style>

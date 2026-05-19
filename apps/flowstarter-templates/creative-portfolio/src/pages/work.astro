@@ -1,0 +1,96 @@
+---
+import CaseStudies from '../components/CaseStudies.astro';
+import CTASection from '../components/CTASection.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Layout from '../layouts/Layout.astro';
+import AnimatedWordTitle from '../components/shared/AnimatedWordTitle.astro';
+---
+
+<Layout title="Work — Atelier Verso">
+  <Header activeIndex={1} />
+  <main class="work-page">
+
+    <section class="work-hero container">
+      <AnimatedWordTitle
+        as="h1"
+        autoplay={true}
+        centered={true}
+        className="work-hero__title"
+        lines={[
+          { text: 'WORK WE WERE', accent: 'GLAD' },
+          { text: 'TO PUT OUR', accent: 'NAME ON' },
+        ]}
+      />
+      <p class="work-hero__sub">A selection of identity, editorial, and digital projects — made with founders and small teams who cared how it turned out.</p>
+    </section>
+
+    <CaseStudies showCta={false} layout="list" />
+  </main>
+  <CTASection />
+  <Footer />
+</Layout>
+
+<style>
+  .work-page {
+    padding-top: 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .work-hero {
+    padding-top: 80px;
+    padding-bottom: 40px;
+    display: grid;
+    gap: 24px;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .work-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+
+.work-hero__sub {
+    max-width: 44rem;
+    font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--text-muted);
+    opacity: 0;
+    transform: translateY(16px);
+    animation: work-sub-enter 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 700ms;
+  }
+
+  @keyframes work-sub-enter {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Remove top padding from the case-studies section on this page */
+  .work-page :global(#case-studies) {
+    padding-top: 0;
+  }
+
+  @media (max-width: 768px) {
+    .work-hero {
+      padding-top: 56px;
+      padding-bottom: 24px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-hero__sub {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+  }
+</style>

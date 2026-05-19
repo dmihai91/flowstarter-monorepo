@@ -1,0 +1,162 @@
+---
+import type { ArticleItem } from '../../lib/site-data';
+import ActionButton from '../design-system/ActionButton.astro';
+import OrganicVisual from '../design-system/OrganicVisual.astro';
+
+interface Props {
+  title: string;
+  buttonLabel: string;
+  buttonHref: string;
+  articles: ArticleItem[];
+}
+
+const { title, buttonLabel, buttonHref, articles } = Astro.props;
+const articleTints = ['#4F6457', '#6B5D4F', '#3F5147', '#5A4A3F'];
+---
+
+<section class="about-articles-section container">
+  <div class="about-articles-section__header" data-about-reveal>
+    <div class="about-articles-section__heading">
+      <h3 class="about-articles-section__title">{title}</h3>
+    </div>
+    <ActionButton
+      href={buttonHref}
+      label={buttonLabel}
+      variant="outline"
+      className="about-articles-section__button ds-action-button--outline-dark"
+    />
+  </div>
+  <div class="about-articles-section__grid">
+    {articles.map((article, index) => (
+      <a
+        href={article.href}
+        class="about-articles-section__card"
+        data-about-reveal
+        style={`--about-reveal-delay: ${140 + index * 120}ms;`}
+      >
+        {article.imageSrc?.trim() ? (
+          <img class="about-articles-section__image" src={article.imageSrc} alt={article.imageAlt} loading="lazy" />
+        ) : (
+          <div
+            class="about-articles-section__visual"
+            style={`--card-tint: ${articleTints[index % articleTints.length]};`}
+          >
+            <OrganicVisual tone="deep" bare={true} breathe={false} ariaLabel={article.title} className="about-articles-section__organic" />
+          </div>
+        )}
+        <div class="about-articles-section__body">
+          <h4 class="about-articles-section__card-title">{article.title}</h4>
+          <p class="about-articles-section__excerpt">{article.excerpt}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .about-articles-section {
+    display: grid;
+    gap: 40px;
+    padding-bottom: 120px;
+  }
+
+  .about-articles-section__header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  .about-articles-section__heading {
+    display: grid;
+    gap: 0;
+  }
+
+  .about-articles-section__title {
+    text-transform: uppercase;
+    color: var(--bg-dark);
+  }
+
+  .about-articles-section__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+
+  .about-articles-section__card {
+    display: grid;
+    gap: 24px;
+    color: var(--bg-dark);
+    align-content: start;
+  }
+
+  .about-articles-section__image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .about-articles-section__visual {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    position: relative;
+  }
+
+  .about-articles-section__visual :global(.about-articles-section__organic) {
+    position: absolute;
+    inset: 0;
+    border-radius: 0;
+    background:
+      radial-gradient(120% 90% at 80% 14%, color-mix(in srgb, var(--card-tint, #3f5147) 50%, transparent), transparent 60%),
+      linear-gradient(160deg,
+        color-mix(in srgb, var(--card-tint, #3f5147) 86%, #1b211c) 0%,
+        color-mix(in srgb, var(--card-tint, #3f5147) 64%, #1b211c) 100%);
+    transition: transform 600ms ease;
+  }
+
+  .about-articles-section__card:hover .about-articles-section__visual :global(.about-articles-section__organic),
+  .about-articles-section__card:focus-visible .about-articles-section__visual :global(.about-articles-section__organic) {
+    transform: scale(1.035);
+  }
+
+  .about-articles-section__body {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+  }
+
+  .about-articles-section__card-title {
+    justify-self: start;
+    text-transform: uppercase;
+    color: var(--bg-dark);
+    text-decoration: none;
+  }
+
+  .about-articles-section__card:hover .about-articles-section__card-title,
+  .about-articles-section__card:focus-visible .about-articles-section__card-title {
+    text-decoration: underline;
+  }
+
+  .about-articles-section__excerpt {
+    color: var(--bg-dark);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1024px) {
+    .about-articles-section__header {
+      align-items: start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about-articles-section {
+      gap: 32px;
+      padding-bottom: 72px;
+    }
+
+    .about-articles-section__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

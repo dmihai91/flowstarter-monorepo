@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 644 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Kestrel Studio site">
+  <rect width="644" height="560" fill="#1A2622"/>
+  <g stroke="#F4F1EA" stroke-opacity="0.12" stroke-width="1">
+    <line x1="0" y1="186" x2="644" y2="186"/>
+    <line x1="0" y1="373" x2="644" y2="373"/>
+    <line x1="322" y1="0" x2="322" y2="560"/>
+  </g>
+  <g fill="none" stroke="#F4F1EA" stroke-opacity="0.55" stroke-width="2">
+    <rect x="90" y="120" width="180" height="320"/>
+    <rect x="374" y="120" width="180" height="150"/>
+  </g>
+  <rect x="374" y="290" width="180" height="150" fill="#FF3B1F"/>
+  <text x="40" y="100" font-family="'Space Grotesk',sans-serif" font-size="16" letter-spacing="5" fill="#FF3B1F">KESTREL STUDIO</text>
+  <text x="40" y="520" font-family="Georgia,serif" font-style="italic" font-size="48" fill="#F4F1EA">Architecture, framed.</text>
+</svg>

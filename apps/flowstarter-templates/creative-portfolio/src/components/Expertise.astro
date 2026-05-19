@@ -1,0 +1,139 @@
+---
+import { frontmatter as siteLabels } from '../content/site-labels.md';
+import SectionBlock from './design-system/SectionBlock.astro';
+import SectionHeading from './design-system/SectionHeading.astro';
+import NumberedFeatureItem from './design-system/NumberedFeatureItem.astro';
+
+const { expertise } = siteLabels;
+---
+
+<SectionBlock id="expertise" className="expertise" tone="none">
+  <div class="expertise__inner container">
+    <div class="expertise__left">
+      <div class="expertise__left-inner">
+        <SectionHeading
+          label={expertise.sectionLabel}
+          title={expertise.sectionTitle}
+          maxWidth="420px"
+        />
+        <p class="expertise__lead">
+          Five stages, no surprises. The same considered process behind every project we take on.
+        </p>
+        <span class="expertise__mark" aria-hidden="true">✻</span>
+      </div>
+    </div>
+    <div class="expertise__right is-intro-state" data-expertise-list>
+      {expertise.items.map((item, index) => (
+        <NumberedFeatureItem
+          number={item.number}
+          title={item.title}
+          description={item.description}
+          className={index === 0 ? 'expertise__item--first' : ''}
+        />
+      ))}
+    </div>
+  </div>
+</SectionBlock>
+
+<style>
+  :global(.expertise) {
+    background: var(--surface-base);
+    color: var(--bg-dark);
+  }
+
+  .expertise__inner {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .expertise__left-inner {
+    position: sticky;
+    top: 128px;
+    display: grid;
+    gap: 28px;
+  }
+
+  .expertise__lead {
+    font-size: clamp(1.05rem, 1.3vw, 1.22rem);
+    line-height: 1.55;
+    color: var(--text-muted);
+    max-width: 32ch;
+  }
+
+  .expertise__mark {
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--signal);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 1024px) {
+    .expertise__left-inner {
+      position: static;
+    }
+
+    .expertise__mark {
+      display: none;
+    }
+  }
+
+  .expertise__right :global(.expertise__item--first) {
+    padding-top: 0;
+  }
+
+  .expertise__right.is-intro-state :global(.expertise__item--first .ds-numbered-feature__content) {
+    filter: blur(0);
+    opacity: 1;
+  }
+
+  .expertise__right :global(.ds-numbered-feature:last-child) {
+    border-bottom: none;
+    padding-bottom: 4rem;
+  }
+
+  @media (max-width: 768px) {
+    .expertise__inner {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+</style>
+
+<script>
+  const expertiseList = document.querySelector('[data-expertise-list]');
+
+  if (expertiseList) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let introPlayed = false;
+
+    const clearIntroState = () => {
+      expertiseList.classList.remove('is-intro-state');
+    };
+
+    if (reduceMotion.matches) {
+      clearIntroState();
+    } else {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting || introPlayed) return;
+
+          introPlayed = true;
+          expertiseList.classList.add('is-intro-state');
+
+          window.setTimeout(() => {
+            clearIntroState();
+          }, 1400);
+
+          observer.disconnect();
+        },
+        {
+          threshold: 0.35,
+        }
+      );
+
+      observer.observe(expertiseList);
+    }
+  }
+</script>

@@ -1,0 +1,48 @@
+---
+import type { TitleLine } from '../../lib/site-data';
+import AnimatedWordTitle from '../shared/AnimatedWordTitle.astro';
+
+interface Props {
+  titleLines: TitleLine[];
+  introText: string;
+}
+
+const { titleLines, introText } = Astro.props;
+---
+
+<section class="contact-hero-section container">
+  <div class="contact-hero-section__copy">
+    <AnimatedWordTitle as="h1" lines={titleLines} autoplay={true} className="contact-hero-section__title" />
+  </div>
+</section>
+
+<style>
+  .contact-hero-section {
+    padding-top: 80px;
+    padding-bottom: 56px;
+  }
+
+  .contact-hero-section__copy {
+    max-width: 980px;
+    display: grid;
+    gap: 24px;
+  }
+
+  .contact-hero-section__title {
+    line-height: 1.02;
+  }
+
+  .contact-hero-section__intro {
+    max-width: 760px;
+    font-size: clamp(1.18rem, 1.55vw, 1.42rem);
+    line-height: 1.5;
+    color: var(--bg-dark);
+  }
+
+  @media (max-width: 768px) {
+    .contact-hero-section {
+      padding-top: 56px;
+      padding-bottom: 40px;
+    }
+  }
+</style>

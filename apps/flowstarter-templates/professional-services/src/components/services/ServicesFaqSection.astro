@@ -1,0 +1,98 @@
+---
+import FaqAccordionItem from '../design-system/FaqAccordionItem.astro';
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  title: string;
+  items: FaqItem[];
+}
+
+const { title, items } = Astro.props;
+---
+
+<section class="services-faq-section container" id="faq">
+  <div class="services-faq-section__intro">
+    <h2 class="services-faq-section__title">{title}</h2>
+  </div>
+
+  <div class="services-faq-section__list">
+    {items.map((item) => (
+      <FaqAccordionItem question={item.question} answer={item.answer} />
+    ))}
+  </div>
+</section>
+
+<style>
+  .services-faq-section {
+    --services-faq-title-width: 380px;
+    --services-faq-list-width: 700px;
+    display: grid;
+    grid-template-columns: var(--services-faq-title-width) minmax(0, var(--services-faq-list-width));
+    gap: 72px;
+    align-items: start;
+    justify-content: space-between;
+    padding-bottom: 100px;
+  }
+
+  .services-faq-section__intro {
+    width: 100%;
+    align-self: start;
+  }
+
+  .services-faq-section__title {
+    max-width: 15ch;
+    text-transform: uppercase;
+    line-height: 1;
+    text-align: left;
+    color: var(--bg-dark);
+  }
+
+  .services-faq-section__list {
+    display: grid;
+    gap: 20px;
+    width: var(--services-faq-list-width);
+    max-width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+  }
+
+  .services-faq-section__list :global(.faq-accordion-item) {
+    width: 90%;
+    justify-self: end;
+  }
+
+  @media (max-width: 1024px) {
+    .services-faq-section {
+      grid-template-columns: 1fr;
+      gap: 36px;
+      padding-bottom: 80px;
+    }
+
+    .services-faq-section__intro {
+      position: static;
+    }
+
+    .services-faq-section__title {
+      max-width: 14ch;
+    }
+
+    .services-faq-section__list :global(.faq-accordion-item) {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .services-faq-section {
+      gap: 28px;
+      padding-bottom: 64px;
+    }
+
+    .services-faq-section__title {
+      max-width: none;
+    }
+  }
+</style>

@@ -323,3 +323,70 @@ export async function editSiteInSandbox(
     return { ok: false, error: e instanceof Error ? e.message : 'edit error' };
   }
 }
+
+/**
+ * FAST single-shot content edit in the live sandbox (content/copy/palette
+ * prompts): one tool-less claude completion rewrites site-labels.md in place,
+ * `astro dev` HMR reflects it in ~seconds. ~10-40x faster than the
+ * autonomous agent; falls to editSiteInSandbox only for structural prompts.
+ */
+export async function fastEditInSandbox(
+  sandboxId: string,
+  instruction: string,
+  opts: {
+    anthropicApiKey: string;
+    /** Host path to sandbox/fast-edit-runner.mjs. */
+    runnerPath: string;
+    model?: string;
+    env?: DaytonaEnv;
+    timeoutMs?: number;
+  }
+): Promise<InSandboxEdit> {
+  try {
+    const client = getClient(opts.env);
+    const sandbox = await client.get(sandboxId);
+    const workDir = (await sandbox.getWorkDir().catch(() => '')) || '/home/daytona';
+    const agentDir = `${workDir}/.agent`;
+    const siteRoot = `${workDir}/site`;
+    const claudeBin = `${agentDir}/node_modules/.bin/claude`;
+    const model = opts.model ?? 'claude-haiku-4-5';
+    const id = Date.now();
+    const instrFile = `${agentDir}/fastedit-${id}.txt`;
+
+    await sandbox.fs.uploadFile(
+      Buffer.from(await readFile(opts.runnerPath, 'utf-8'), 'utf-8'),
+      `${agentDir}/fast-edit-runner.mjs`
+    );
+    await sandbox.fs.uploadFile(Buffer.from(instruction, 'utf-8'), instrFile);
+
+    const r = await sandbox.process.executeCommand(
+      `cd "${agentDir}" && FS_SITE_LABELS="${siteRoot}/src/content/site-labels.md" ` +
+        `FS_INSTRUCTION_FILE="${instrFile}" FS_CLAUDE_BIN="${claudeBin}" ` +
+        `FS_MODEL="${model}" ANTHROPIC_API_KEY="${opts.anthropicApiKey}" ` +
+        `node fast-edit-runner.mjs`,
+      workDir,
+      undefined,
+      Math.ceil((opts.timeoutMs ?? 180_000) / 1000)
+    );
+    const line = (r.result || '')
+      .split('\n')
+      .reverse()
+      .find((l) => l.trim().startsWith('{'));
+    if (line) {
+      try {
+        const o = JSON.parse(line) as Record<string, unknown>;
+        if (o.type === 'done')
+          return { ok: true, costUsd: typeof o.costUsd === 'number' ? o.costUsd : 0 };
+        return { ok: false, error: String(o.message ?? 'fast edit failed') };
+      } catch {
+        /* fall through */
+      }
+    }
+    return {
+      ok: false,
+      error: r.exitCode === 0 ? 'fast edit: no result' : `fast edit exit ${r.exitCode}`,
+    };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'fast edit error' };
+  }
+}

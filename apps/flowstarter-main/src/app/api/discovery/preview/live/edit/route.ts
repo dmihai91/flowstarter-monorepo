@@ -8,6 +8,7 @@
  * live); HMR reflects the change in the embedded preview. Node host only.
  */
 import { NextRequest, NextResponse } from 'next/server';
+import { join } from 'node:path';
 import { z } from 'zod';
 import { recordGenerationCost } from '@/lib/ai/funnel-cost';
 import { getJob, updateJob, LIVE_EDIT_CAP } from '@/lib/discovery/live-jobs';
@@ -71,20 +72,50 @@ export async function POST(req: NextRequest) {
   // Detached — wizard polls GET while the agent edits in the sandbox.
   void (async () => {
     try {
-      const { editSiteInSandbox } = await import('@flowstarter/daytona-utils');
-      const r = await editSiteInSandbox(job.sandboxId!, instruction, {
-        anthropicApiKey,
-        model: 'claude-sonnet-4-6',
-        env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
-        onProgress: (e) =>
-          updateJob(demoId, {
-            editPhase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
-          }),
+      // Classify: structural prompts (new pages/components/layout/interactive
+      // code) need the autonomous agent; everything else (copy/palette/section
+      // text — the common case) takes the fast single-shot path (~seconds).
+      const structural =
+        /\b(add|new|create|build|insert)\b[\s\S]*\b(page|route|component|form that|integration|api|backend|animation|carousel|slider|interactive|javascript|script|booking|calendar|map|gallery|video)\b/i.test(
+          instruction
+        ) ||
+        /\b(re-?structure|re-?layout|re-?build|rework the (layout|structure)|new layout|change the layout|add a page|new page)\b/i.test(
+          instruction
+        );
+      const editModel = structural ? 'claude-sonnet-4-6' : 'claude-haiku-4-5';
+      const repoRoot = join(process.cwd(), '..', '..');
+      const { fastEditInSandbox, editSiteInSandbox } = await import(
+        '@flowstarter/daytona-utils'
+      );
+      updateJob(demoId, {
+        editPhase: structural
+          ? 'Planning a structural change'
+          : 'Applying your change',
       });
+
+      const r = structural
+        ? await editSiteInSandbox(job.sandboxId!, instruction, {
+            anthropicApiKey,
+            model: editModel,
+            env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+            onProgress: (e) =>
+              updateJob(demoId, {
+                editPhase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
+              }),
+          })
+        : await fastEditInSandbox(job.sandboxId!, instruction, {
+            anthropicApiKey,
+            runnerPath: join(
+              repoRoot,
+              'packages/agentic-codegen/sandbox/fast-edit-runner.mjs'
+            ),
+            model: editModel,
+            env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+          });
 
       await recordGenerationCost({
         kind: 'edit',
-        model: 'claude-sonnet-4-6',
+        model: editModel,
         usage: {},
         demoId,
         ip,

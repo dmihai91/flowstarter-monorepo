@@ -25,16 +25,18 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { EditorLoginForm } from "./EditorLoginForm";
 
 import {
   autoPairWithEditor,
   fetchClerkSession,
-  redirectToLogin,
   type AutoPairResolution,
 } from "../../lib/clerkSession";
 import { TierProvider } from "../../hooks/useTier";
 
 import { EditorBootstrapLoader } from "./EditorBootstrapLoader";
+import { FlowstarterFMark } from "./FlowstarterFMark";
+import { FlowstarterWordmark } from "../brand/FlowstarterWordmark";
 
 /**
  * When the user lands here after a cross-domain sign-in on the marketing
@@ -263,62 +265,9 @@ interface EditorAuthShellProps {
   readonly body: ReactNode;
   readonly footnote?: ReactNode;
   readonly actions?: ReadonlyArray<AuthAction>;
-}
-
-function FlowstarterFMark({ size = 56 }: { readonly size?: number }) {
-  return (
-    <span
-      aria-hidden
-      style={{
-        width: size,
-        height: size,
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 16,
-        background:
-          "linear-gradient(135deg, hsl(233, 65%, 50%) 0%, hsl(233, 75%, 60%) 50%, hsl(180, 65%, 55%) 100%)",
-        boxShadow:
-          "0 1px 0 rgba(255,255,255,0.32) inset, 0 8px 22px rgba(78,94,218,0.32)",
-      }}
-    >
-      <svg
-        viewBox="0 0 40 40"
-        width={size * 0.62}
-        height={size * 0.62}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M13 10 L13 30"
-          stroke="white"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M13 11 C17 10, 22 10, 27 11"
-          stroke="white"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M13 20 C16 19, 20 19, 24 20"
-          stroke="white"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M13 30 C16 30, 20 29, 25 28"
-          stroke="rgba(255,255,255,0.5)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </svg>
-    </span>
-  );
+  /** Slot rendered between body and footnote — used to embed the
+      inline Clerk <SignIn/> form so sign-in stays in the editor. */
+  readonly children?: ReactNode;
 }
 
 function EditorAuthShell({
@@ -328,6 +277,7 @@ function EditorAuthShell({
   body,
   footnote,
   actions,
+  children,
 }: EditorAuthShellProps) {
   return (
     <div
@@ -423,6 +373,10 @@ function EditorAuthShell({
             {body}
           </p>
         </div>
+
+        {children ? (
+          <div className="flex w-full justify-center">{children}</div>
+        ) : null}
 
         {state === "loading" ? (
           <div
@@ -533,48 +487,123 @@ function EditorAuthShell({
 
 function ClerkLoadingScreen() {
   return (
-    <EditorBootstrapLoader statusLabel="Loading Flowstarter Editor. Verifying your session before opening the workspace." />
+    <EditorBootstrapLoader statusLabel="Loading Flowstarter Assistant. Verifying your session before opening the workspace." />
   );
 }
 
-function ClerkRedirectScreen({
-  loginUrl,
-  reason,
-}: {
+/**
+ * Inline sign-in. Renders Clerk's <SignIn/> *inside* the editor's
+ * auth shell instead of redirecting to flowstarter-main's /login.
+ *
+ * Why: a hard redirect to localhost:3000/login boots the entire
+ * flowstarter-main app, which shows its own NavigationWrapper
+ * loading screen — so the user saw two unrelated loaders back to
+ * back. Keeping sign-in in the editor (ClerkProvider is mounted in
+ * main.tsx) means one surface, one loader, no bounce.
+ *
+ * On success Clerk sets the session cookie; `fallbackRedirectUrl`
+ * reloads the editor at the same URL so ClerkSessionGate re-runs
+ * /api/clerk/me and resolves `paired`.
+ *
+ * Falls back to the old redirect only if the Clerk SDK isn't
+ * available (no publishable key — `loginUrl` carries the server's
+ * configured URL in that case).
+ */
+/**
+ * Unauthenticated → render the shared <LoginForm/> (via the editor
+ * adapter) inside the platform's AuthFormCard treatment. Same
+ * component flowstarter-main uses, so the editor sign-in is
+ * pixel-identical. No bounce to localhost:3000, no second app boot.
+ *
+ * `loginUrl` / `reason` are kept in the signature for the gate's
+ * call-site contract but are no longer needed for a redirect — the
+ * form drives the whole sign-in in-place via Clerk.
+ */
+function ClerkRedirectScreen(_props: {
   readonly loginUrl: string | null;
   readonly reason: string;
 }) {
-  useEffect(() => {
-    if (loginUrl) {
-      redirectToLogin(loginUrl);
-    }
-  }, [loginUrl]);
-
-  if (!loginUrl) {
-    return (
-      <EditorAuthShell
-        state="error"
-        overline="Flowstarter Editor"
-        title={
-          <>
-            Sign-in link <em className="fs-flourish">unavailable</em>
-          </>
-        }
-        body={reason}
-        footnote="The editor server did not return a login URL. Check server configuration and try again."
-        actions={[
-          {
-            label: "Reload",
-            onClick: () => window.location.reload(),
-            tone: "primary",
-          },
-        ]}
-      />
-    );
-  }
+  // Client ↔ team toggled in place — same shared LoginForm, no
+  // cross-app bounce. Mirrors the platform's "Admin? Sign in here →"
+  // affordance (which on flowstarter-main navigates to /admin/login;
+  // the editor has no separate route, so we flip the variant).
+  const [variant, setVariant] = useState<"client" | "team">("client");
 
   return (
-    <EditorBootstrapLoader statusLabel="Redirecting to Flowstarter sign-in. You will return to the editor after signing in." />
+    <div
+      className="relative flex min-h-screen w-full items-center justify-center px-6 py-10"
+      style={{
+        fontFamily:
+          '"Onest Variable", "Onest", "Plus Jakarta Sans", system-ui, sans-serif',
+      }}
+    >
+      {/* 540px — matches the platform's AuthFormCard max width. */}
+      <div className="flex w-full max-w-[540px] flex-col items-center gap-7">
+        {/* Brand lockup: mark + "Flowstarter Assistant" inline (same
+            wordmark as the editor header), not a stacked overline. */}
+        <FlowstarterWordmark size="lg" />
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1
+            style={{
+              fontFamily:
+                '"Onest Variable", "Onest", "Plus Jakarta Sans", system-ui, sans-serif',
+              fontWeight: 600,
+              fontSize: "clamp(1.05rem, 1.9vw, 1.3rem)",
+              lineHeight: 1.15,
+              letterSpacing: "-0.02em",
+              color: "var(--fs-ink)",
+              margin: 0,
+            }}
+          >
+            {variant === "team" ? (
+              <>
+                Admin <em className="fs-flourish">sign-in</em>
+              </>
+            ) : (
+              <>
+                Sign in to your{" "}
+                <em className="fs-flourish">workspace</em>
+              </>
+            )}
+          </h1>
+        </div>
+        {/* Platform AuthFormCard treatment: glass card, hairline edge,
+            landing 4-stop shadow, with the footer admin/client toggle
+            link exactly like flowstarter-main's LoginClient. */}
+        <div
+          className="w-full rounded-2xl px-7 py-8 md:px-8"
+          style={{
+            background: "var(--fs-glass-bg)",
+            border: "1px solid var(--fs-glass-edge)",
+            boxShadow: "var(--fs-glass-shadow)",
+            backdropFilter: "blur(24px) saturate(150%)",
+            WebkitBackdropFilter: "blur(24px) saturate(150%)",
+          }}
+        >
+          <EditorLoginForm variant={variant} />
+          <div className="mt-5 border-t border-[var(--fs-rule)] pt-4 text-center">
+            <button
+              type="button"
+              onClick={() =>
+                setVariant((v) => (v === "client" ? "team" : "client"))
+              }
+              className="text-sm transition-colors"
+              style={{ color: "var(--fs-ink-faint)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--purple)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "var(--fs-ink-faint)";
+              }}
+            >
+              {variant === "client"
+                ? "Admin? Sign in here →"
+                : "← Back to client sign-in"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

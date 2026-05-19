@@ -1,0 +1,880 @@
+/**
+ * Shared LoginForm — the canonical Flowstarter sign-in surface.
+ *
+ * Ported verbatim (markup + flow) from the marketing app's
+ * `components/auth/LoginForm.tsx` so the editor and flowstarter-main
+ * render the exact same component. All app-specific concerns are
+ * dependency-injected via props so this file imports neither a Clerk
+ * SDK nor an i18n system:
+ *
+ *   - `signIn` + `setActive`  → each app passes its own Clerk
+ *     `useSignIn()` result (`@clerk/nextjs/legacy` in main,
+ *     `@clerk/clerk-react` in the editor — the resource API is
+ *     identical, typed structurally below).
+ *   - `t`                     → translator (main: useTranslations;
+ *     editor: a static English map).
+ *   - `getSearchParam`        → router-agnostic query reader.
+ *   - `onTransferToken`       → optional cross-domain session hand-off
+ *     (main wires /api/auth/transfer-token; editor omits it).
+ *
+ * `isTrustedHost` / `isTeamEmail` come straight from
+ * `@flowstarter/platform-config` (already a design-system dep).
+ *
+ * Field chrome uses the brand tokens (--purple / --fs-* / --surface-2)
+ * defined in brand.css, so it's pixel-identical across both apps.
+ */
+
+import { useEffect, useState, type ReactNode } from 'react';
+import { isTrustedHost, isTeamEmail } from '@flowstarter/platform-config';
+
+/* ── Structural Clerk types ───────────────────────────────────────────
+   Only the surface we touch. Keeps this package SDK-free. */
+export interface SharedSignInResource {
+  readonly supportedSecondFactors?: ReadonlyArray<{ strategy: string }> | null;
+  create(params: Record<string, unknown>): Promise<SharedSignInResult>;
+  attemptFirstFactor(
+    params: Record<string, unknown>,
+  ): Promise<SharedSignInResult>;
+  attemptSecondFactor(
+    params: Record<string, unknown>,
+  ): Promise<SharedSignInResult>;
+}
+export interface SharedSignInResult {
+  readonly status: string | null;
+  readonly createdSessionId: string | null;
+}
+export type SharedSetActive = (params: {
+  session: string | null;
+}) => Promise<void>;
+
+export type SharedTranslate = (key: string) => string;
+
+export interface LoginFormProps {
+  /** `team` routes to /admin/dashboard, `client` to /dashboard. */
+  readonly variant: 'client' | 'team';
+  readonly signIn: SharedSignInResource | undefined;
+  readonly setActive: SharedSetActive | undefined;
+  readonly t: SharedTranslate;
+  /** Router-agnostic query reader (URLSearchParams.get shape). */
+  readonly getSearchParam: (key: string) => string | null;
+  /**
+   * Optional cross-domain hand-off. Given a trusted redirect URL,
+   * returns a token-bearing URL to navigate to, or null to fall back
+   * to a plain redirect. The editor omits this (no such endpoint).
+   */
+  readonly onTransferToken?: (redirectUrl: string) => Promise<string | null>;
+}
+
+/* ── Inlined icons (no lucide dep in this package) ────────────────── */
+const IconArrowLeft = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M19 12H5M12 19l-7-7 7-7" />
+  </svg>
+);
+const IconEye = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+const IconEyeOff = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+    <line x1="2" x2="22" y1="2" y2="22" />
+  </svg>
+);
+
+/* ── Inlined form primitives (exact platform classes) ─────────────── */
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export function isValidEmail(value: string): boolean {
+  return EMAIL_REGEX.test(value.trim());
+}
+
+function Label({
+  htmlFor,
+  children,
+}: {
+  htmlFor: string;
+  children: ReactNode;
+}) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="flex items-center gap-2 text-sm leading-none font-medium select-none text-muted-foreground"
+    >
+      {children}
+    </label>
+  );
+}
+
+function FieldInput(
+  props: React.InputHTMLAttributes<HTMLInputElement> & { className?: string },
+) {
+  const { className = '', ...rest } = props;
+  return (
+    <input
+      data-slot="input"
+      className={`flex h-12 w-full min-w-0 rounded-lg border px-4 py-2 text-sm shadow-sm transition-[color,box-shadow,border-color,background-color] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      {...rest}
+    />
+  );
+}
+
+/* ── Error handler (pure; was useClerkErrorHandler) ───────────────── */
+interface ClerkErrorLike {
+  status?: number;
+  code?: number | string;
+  message?: string;
+  errors?: Array<{
+    code?: string;
+    message?: string;
+    meta?: { param_name?: string };
+  }>;
+}
+type ErrCtx = 'signIn' | 'signUp' | 'reset';
+
+function resolveClerkError(
+  err: unknown,
+  context: ErrCtx,
+  t: SharedTranslate,
+): string {
+  let message = t('auth.errors.somethingWentWrong');
+  if (typeof err === 'string') {
+    return context === 'signIn' ? t('auth.errors.signInInvalid') : err;
+  }
+  if (!err || typeof err !== 'object') return message;
+  const e = err as ClerkErrorLike;
+
+  if (
+    e.code === 'session_exists' ||
+    e.message === 'Session already exists' ||
+    (Array.isArray(e.errors) &&
+      e.errors.some((x) => x?.code === 'session_exists'))
+  ) {
+    return '__SESSION_EXISTS__';
+  }
+
+  if (e.status === 422 || e.code === 422) {
+    if (Array.isArray(e.errors) && e.errors.length > 0) {
+      const first = e.errors[0];
+      if (first?.code) {
+        message = errorForCode(first.code, context, first.message, t);
+      } else if (context === 'signIn') {
+        message = t('auth.errors.signInInvalid');
+      } else {
+        message = first?.message || t('auth.errors.somethingWentWrong');
+      }
+    } else {
+      message =
+        context === 'signIn'
+          ? t('auth.errors.signInInvalid')
+          : t('auth.errors.somethingWentWrong');
+    }
+  } else if (Array.isArray(e.errors)) {
+    message =
+      context === 'signIn'
+        ? t('auth.errors.signInInvalid')
+        : e.errors[0]?.message || t('auth.errors.somethingWentWrong');
+  } else if (e.message) {
+    message =
+      context === 'signIn' ? t('auth.errors.signInInvalid') : e.message;
+  }
+  return message;
+}
+
+function errorForCode(
+  code: string,
+  context: ErrCtx,
+  fallback: string | undefined,
+  t: SharedTranslate,
+): string {
+  if (context === 'signIn') {
+    if (code === 'form_identifier_not_found' || code === 'form_password_incorrect') {
+      return t('auth.errors.signInInvalid');
+    }
+  }
+  if (context === 'signIn') return t('auth.errors.signInInvalid');
+  return fallback || t('auth.errors.somethingWentWrong');
+}
+
+function clerkErrorMessage(error: unknown, fallback: string): string {
+  if (error && typeof error === 'object' && 'errors' in error) {
+    const msg = (error as { errors?: Array<{ message?: string }> }).errors?.[0]
+      ?.message;
+    if (msg) return msg;
+  }
+  if (error instanceof Error) return error.message;
+  return fallback;
+}
+
+function useEdgeBrowserDetection(): boolean {
+  const [isEdge, setIsEdge] = useState(false);
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    setIsEdge(ua.includes('Edg/') || ua.includes('Edge/'));
+  }, []);
+  return isEdge;
+}
+
+const FIELD_CLS = [
+  'h-12 rounded-lg bg-white/80 border border-white/40 text-foreground backdrop-blur-sm',
+  'placeholder:text-muted-foreground/50',
+  'dark:border-white/10 dark:bg-[var(--surface-2)]/80 dark:text-white',
+  'focus:ring-2 focus:ring-[var(--purple)]/30 focus:border-[var(--purple)]/50 transition-all',
+].join(' ');
+
+function SubmitButton({
+  children,
+  disabled,
+  type = 'submit',
+  onClick,
+  className = '',
+}: {
+  children: ReactNode;
+  disabled?: boolean;
+  type?: 'submit' | 'button';
+  onClick?: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type={type}
+      disabled={disabled}
+      onClick={onClick}
+      className={`w-full rounded-lg font-semibold inline-flex items-center justify-center h-12 px-5 text-sm transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none bg-[var(--purple)] text-white shadow-sm hover:brightness-110 active:brightness-95 ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+type FlowStep = 'credentials' | 'forgot' | 'forgot-code' | 'mfa';
+type MfaReturnStep = 'credentials' | 'forgot-code';
+
+function supportedMfaStrategies(
+  factors: ReadonlyArray<{ strategy: string }> | null | undefined,
+): { totp: boolean; backup: boolean } {
+  const list = factors ?? [];
+  return {
+    totp: list.some((f) => f.strategy === 'totp'),
+    backup: list.some((f) => f.strategy === 'backup_code'),
+  };
+}
+
+export function LoginForm({
+  variant,
+  signIn,
+  setActive,
+  t,
+  getSearchParam,
+  onTransferToken,
+}: LoginFormProps) {
+  const isEdgeBrowser = useEdgeBrowserDetection();
+  const isTeam = variant === 'team';
+
+  const getRedirectTarget = (
+    userEmail?: string,
+  ): { url: string; external: boolean } => {
+    const redirectUrl = getSearchParam('redirect_url');
+    if (redirectUrl) {
+      try {
+        const url = new URL(redirectUrl);
+        if (isTrustedHost(url.hostname)) {
+          const isCrossDomain =
+            typeof window !== 'undefined' &&
+            url.hostname !== window.location.hostname;
+          return { url: redirectUrl, external: isCrossDomain };
+        }
+      } catch {
+        /* invalid URL */
+      }
+    }
+    if (isTeam) {
+      const nextUrl = getSearchParam('next');
+      if (nextUrl && nextUrl.startsWith('/'))
+        return { url: nextUrl, external: false };
+      return { url: '/admin/dashboard', external: false };
+    }
+    if (userEmail && isTeamEmail(userEmail)) {
+      return { url: '/admin/dashboard', external: false };
+    }
+    return { url: '/dashboard', external: false };
+  };
+
+  const navigate = async (sessionId: string | null, userEmail?: string) => {
+    if (!setActive) return;
+    const target = getRedirectTarget(userEmail);
+    if (target.external && onTransferToken) {
+      await setActive({ session: sessionId });
+      try {
+        const url = await onTransferToken(target.url);
+        if (url) {
+          window.location.href = url;
+          return;
+        }
+      } catch {
+        /* fall through */
+      }
+      window.location.href = target.url;
+    } else {
+      await setActive({ session: sessionId });
+      window.location.href = target.url;
+    }
+  };
+
+  const [step, setStep] = useState<FlowStep>('credentials');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetCode, setResetCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isResetLoading, setIsResetLoading] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [mfaReturnStep, setMfaReturnStep] =
+    useState<MfaReturnStep>('credentials');
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaStrategy, setMfaStrategy] = useState<'totp' | 'backup_code'>(
+    'totp',
+  );
+  const [mfaChoices, setMfaChoices] = useState({ totp: false, backup: false });
+  const [isMfaLoading, setIsMfaLoading] = useState(false);
+
+  const goBackFromMfa = () => {
+    setError('');
+    setMfaCode('');
+    setStep(mfaReturnStep);
+  };
+  const enterMfaStep = (returnStep: MfaReturnStep) => {
+    if (!signIn) return;
+    const { totp, backup } = supportedMfaStrategies(
+      signIn.supportedSecondFactors,
+    );
+    if (!totp && !backup) {
+      setError(t('auth.mfa.unsupportedFactor'));
+      return;
+    }
+    setError('');
+    setMfaChoices({ totp, backup });
+    setMfaStrategy(totp ? 'totp' : 'backup_code');
+    setMfaCode('');
+    setMfaReturnStep(returnStep);
+    setStep('mfa');
+  };
+  const goBack = () => {
+    setError('');
+    setResetCode('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setStep('credentials');
+  };
+
+  const handleMfaSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signIn || !mfaCode.trim()) return;
+    setIsMfaLoading(true);
+    setError('');
+    try {
+      const result = await signIn.attemptSecondFactor({
+        strategy: mfaStrategy,
+        code: mfaCode.trim(),
+      });
+      if (result.status === 'complete') {
+        await navigate(
+          result.createdSessionId,
+          mfaReturnStep === 'credentials' ? email : resetEmail,
+        );
+      } else if (result.status === 'needs_second_factor') {
+        setError(t('auth.mfa.invalidCode'));
+      } else {
+        setError(t('auth.errors.signInInvalid'));
+      }
+    } catch (err: unknown) {
+      const message = resolveClerkError(err, 'signIn', t);
+      if (message === '__SESSION_EXISTS__') {
+        window.location.href = getRedirectTarget(
+          mfaReturnStep === 'credentials' ? email : resetEmail,
+        ).url;
+        return;
+      }
+      setError(clerkErrorMessage(err, t('auth.mfa.invalidCode')));
+    } finally {
+      setIsMfaLoading(false);
+    }
+  };
+
+  const handleCredentialsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signIn || !email || !password) return;
+    setIsLoading(true);
+    setError('');
+    try {
+      const result = await signIn.create({ identifier: email, password });
+      if (result.status === 'complete') {
+        await navigate(result.createdSessionId, email);
+      } else if (result.status === 'needs_second_factor') {
+        enterMfaStep('credentials');
+      } else {
+        setError(t('auth.errors.signInInvalid'));
+      }
+    } catch (err: unknown) {
+      const message = resolveClerkError(err, 'signIn', t);
+      if (message === '__SESSION_EXISTS__') {
+        window.location.href = getRedirectTarget(email).url;
+        return;
+      }
+      setError(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleForgotSend = async () => {
+    if (!signIn || !resetEmail) return;
+    setIsResetLoading(true);
+    setError('');
+    try {
+      await signIn.create({
+        strategy: 'reset_password_email_code',
+        identifier: resetEmail,
+      });
+      setStep('forgot-code');
+    } catch (err: unknown) {
+      setError(clerkErrorMessage(err, t('auth.errors.somethingWentWrong')));
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+  const handleForgotReset = async () => {
+    if (!signIn || !resetCode || !newPassword) return;
+    if (newPassword !== confirmPassword) {
+      setError(t('auth.forgotPassword.passwordsDoNotMatch'));
+      return;
+    }
+    setIsResetLoading(true);
+    setError('');
+    try {
+      const result = await signIn.attemptFirstFactor({
+        strategy: 'reset_password_email_code',
+        code: resetCode,
+        password: newPassword,
+      });
+      if (result.status === 'complete') {
+        await navigate(result.createdSessionId, resetEmail);
+      } else if (result.status === 'needs_second_factor') {
+        enterMfaStep('forgot-code');
+      }
+    } catch (err: unknown) {
+      setError(clerkErrorMessage(err, t('auth.forgotPassword.invalidCode')));
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+  const handleForgotResend = async () => {
+    if (!signIn || !resetEmail) return;
+    setIsResetLoading(true);
+    setError('');
+    try {
+      await signIn.create({
+        strategy: 'reset_password_email_code',
+        identifier: resetEmail,
+      });
+    } catch (err: unknown) {
+      setError(clerkErrorMessage(err, t('auth.errors.somethingWentWrong')));
+    } finally {
+      setIsResetLoading(false);
+    }
+  };
+
+  /* ── MFA step ── */
+  if (step === 'mfa') {
+    const hint =
+      mfaStrategy === 'totp'
+        ? t('auth.mfa.totpHint')
+        : t('auth.mfa.backupHint');
+    const showToggle = mfaChoices.totp && mfaChoices.backup;
+    return (
+      <div className="w-full">
+        <div id="clerk-captcha" />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold">{t('auth.mfa.title')}</h2>
+            <p className="text-sm text-muted-foreground">{hint}</p>
+          </div>
+          {showToggle ? (
+            <div className="flex rounded-lg border border-white/40 p-1 bg-white/50 dark:border-white/15 dark:bg-[var(--surface-2)]/60">
+              <button
+                type="button"
+                onClick={() => {
+                  setMfaStrategy('totp');
+                  setMfaCode('');
+                  setError('');
+                }}
+                className={
+                  mfaStrategy === 'totp'
+                    ? 'flex-1 rounded-md bg-[var(--purple)]/15 py-2 text-sm font-medium text-foreground'
+                    : 'flex-1 rounded-md py-2 text-sm font-medium text-muted-foreground hover:text-foreground'
+                }
+              >
+                {t('auth.mfa.useAuthenticatorApp')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMfaStrategy('backup_code');
+                  setMfaCode('');
+                  setError('');
+                }}
+                className={
+                  mfaStrategy === 'backup_code'
+                    ? 'flex-1 rounded-md bg-[var(--purple)]/15 py-2 text-sm font-medium text-foreground'
+                    : 'flex-1 rounded-md py-2 text-sm font-medium text-muted-foreground hover:text-foreground'
+                }
+              >
+                {t('auth.mfa.useBackupCode')}
+              </button>
+            </div>
+          ) : null}
+          <form onSubmit={handleMfaSubmit} className="flex flex-col gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="mfa-code">{t('auth.mfa.codeLabel')}</Label>
+              <FieldInput
+                id="mfa-code"
+                type="text"
+                inputMode={mfaStrategy === 'totp' ? 'numeric' : 'text'}
+                autoComplete={mfaStrategy === 'totp' ? 'one-time-code' : 'off'}
+                placeholder={
+                  mfaStrategy === 'totp'
+                    ? t('auth.mfa.codePlaceholder.totp')
+                    : t('auth.mfa.codePlaceholder.backup')
+                }
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+                className={FIELD_CLS}
+                autoFocus
+              />
+            </div>
+            {error ? (
+              <p role="alert" className="text-xs leading-snug text-red-600 dark:text-red-400">
+                {error}
+              </p>
+            ) : null}
+            <SubmitButton type="submit" disabled={isMfaLoading || !mfaCode.trim()}>
+              {isMfaLoading ? t('auth.mfa.verifying') : t('auth.mfa.verify')}
+            </SubmitButton>
+            <button
+              type="button"
+              onClick={goBackFromMfa}
+              className="inline-flex items-center justify-center gap-1.5 text-sm text-muted-foreground hover:text-foreground hover:underline"
+            >
+              <IconArrowLeft />
+              {t('auth.mfa.back')}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Forgot: send code ── */
+  if (step === 'forgot') {
+    const emailIsValid = isValidEmail(resetEmail);
+    return (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <h2 className="text-2xl font-semibold">
+            {t('auth.forgotPassword.title')}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t('auth.forgotPassword.description')}
+          </p>
+        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!emailIsValid || isResetLoading) return;
+            handleForgotSend();
+          }}
+          noValidate
+          className="flex flex-col space-y-5"
+        >
+          <div className="space-y-2">
+            <Label htmlFor="resetEmail">{t('auth.email')}</Label>
+            <FieldInput
+              id="resetEmail"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder={t('auth.email.placeholder')}
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
+              className={FIELD_CLS}
+              required
+            />
+          </div>
+          {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
+          <SubmitButton
+            type="submit"
+            disabled={isResetLoading || !emailIsValid}
+            className="mt-4"
+          >
+            {isResetLoading
+              ? t('auth.forgotPassword.sendingCode')
+              : t('auth.forgotPassword.sendCode')}
+          </SubmitButton>
+          <button
+            type="button"
+            onClick={goBack}
+            className="inline-flex items-center justify-center gap-1.5 text-sm text-muted-foreground hover:text-foreground hover:underline"
+          >
+            <IconArrowLeft />
+            {t('auth.forgotPassword.backToSignIn')}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  /* ── Forgot: reset ── */
+  if (step === 'forgot-code') {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <h2 className="text-2xl font-semibold">
+            {t('auth.forgotPassword.title')}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t('auth.forgotPassword.description')}
+          </p>
+        </div>
+        <div className="flex flex-col space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="resetCode">
+              {t('auth.forgotPassword.enterCode')}
+            </Label>
+            <FieldInput
+              id="resetCode"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="123456"
+              value={resetCode}
+              onChange={(e) => setResetCode(e.target.value)}
+              className={FIELD_CLS}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="newPassword">
+              {t('auth.forgotPassword.newPassword')}
+            </Label>
+            <div className="relative">
+              <FieldInput
+                id="newPassword"
+                type={showNewPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className={`${FIELD_CLS} pr-12`}
+              />
+              {newPassword && (
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showNewPassword ? <IconEyeOff /> : <IconEye />}
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">
+              {t('auth.forgotPassword.confirmPassword')}
+            </Label>
+            <div className="relative">
+              <FieldInput
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={`${FIELD_CLS} pr-12`}
+              />
+              {confirmPassword && (
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={
+                    showConfirmPassword ? 'Hide password' : 'Show password'
+                  }
+                >
+                  {showConfirmPassword ? <IconEyeOff /> : <IconEye />}
+                </button>
+              )}
+            </div>
+          </div>
+          {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
+          <SubmitButton
+            type="button"
+            onClick={handleForgotReset}
+            disabled={
+              isResetLoading || !resetCode || !newPassword || !confirmPassword
+            }
+            className="mt-4"
+          >
+            {isResetLoading
+              ? t('auth.forgotPassword.resettingPassword')
+              : t('auth.forgotPassword.resetPassword')}
+          </SubmitButton>
+          <div className="flex items-center justify-between pt-1">
+            <button
+              type="button"
+              onClick={handleForgotResend}
+              disabled={isResetLoading}
+              className="text-sm text-[var(--fs-ink-dim)] hover:text-gray-900 dark:hover:text-gray-200 hover:underline"
+            >
+              {t('auth.forgotPassword.resendCode')}
+            </button>
+            <button
+              type="button"
+              onClick={goBack}
+              className="inline-flex items-center gap-1.5 text-sm text-[var(--fs-ink-dim)] hover:text-gray-900 dark:hover:text-gray-200 hover:underline"
+            >
+              <IconArrowLeft />
+              {t('auth.forgotPassword.backToSignIn')}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Credentials step ── */
+  const emailIsValid = isValidEmail(email);
+  return (
+    <div className="w-full">
+      <div id="clerk-captcha" />
+      <form onSubmit={handleCredentialsSubmit} className="flex flex-col gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">
+            {isTeam ? t('team.login.emailLabel') : t('auth.email')}
+          </Label>
+          <FieldInput
+            id="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            spellCheck={false}
+            placeholder={
+              isTeam
+                ? t('team.login.emailPlaceholder')
+                : t('auth.email.placeholder')
+            }
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={FIELD_CLS}
+            required
+            autoFocus={isTeam}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">
+            {isTeam ? t('team.login.passwordLabel') : t('auth.password')}
+          </Label>
+          <div className="relative">
+            <FieldInput
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder={
+                isTeam
+                  ? t('team.login.passwordPlaceholder')
+                  : t('auth.password.placeholder')
+              }
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${FIELD_CLS} pr-12`}
+              required
+            />
+            {(isTeam || !isEdgeBrowser) && password && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <IconEyeOff /> : <IconEye />}
+              </button>
+            )}
+          </div>
+          <div className="flex justify-end mt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setStep('forgot');
+                setResetEmail(email);
+              }}
+              className="text-sm text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)] hover:underline"
+            >
+              {t('auth.forgotPassword')}
+            </button>
+          </div>
+          {error ? (
+            <p role="alert" className="text-xs leading-snug text-red-600 dark:text-red-400">
+              {error}
+            </p>
+          ) : null}
+        </div>
+        <SubmitButton
+          type="submit"
+          disabled={isLoading || !emailIsValid || !password}
+        >
+          {isLoading
+            ? isTeam
+              ? t('team.login.signingIn')
+              : t('auth.signIn.signingIn')
+            : isTeam
+              ? t('team.login.signIn')
+              : t('auth.signIn')}
+        </SubmitButton>
+      </form>
+    </div>
+  );
+}

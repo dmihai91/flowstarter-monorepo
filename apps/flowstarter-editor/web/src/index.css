@@ -2,6 +2,16 @@
 @import "@flowstarter/flow-design-system/styles";
 @import "@flowstarter/flow-design-system/clerk-account.css";
 
+/* Tailwind v4 only auto-scans this app's own source. The shared
+   LoginForm (and any other consumed design-system component) lives in
+   the workspace package and uses Tailwind utilities — without this
+   @source, those classes (bg-[var(--purple)], h-12, rounded-lg,
+   text-muted-foreground, …) are never compiled, so the component
+   renders unstyled (invisible Sign-in button, plain inputs). Path is
+   relative to this file: src → web → flowstarter-editor → apps →
+   repo root → packages/flow-design-system/src. */
+@source "../../../../packages/flow-design-system/src";
+
 /* Marketing-site design system, ported wholesale. Defines every
    --ls-* token, the .ls-scope wrapper, atmospheric layers
    (.ls-mesh / .ls-grain / .ls-orb / .ls-streak), typography
@@ -122,6 +132,13 @@
   --fs-ink-mono: rgba(18, 10, 34, 0.5);
   --fs-ink-faint: rgba(18, 10, 34, 0.36);
   --fs-ink-disabled: rgba(18, 10, 34, 0.2);
+
+  /* Compat aliases for the shared design-system LoginForm, which
+     references the marketing app's token names (`--purple` for the
+     primary CTA, `--surface-2` for dark input fills). Map them onto
+     the editor's brand scale so the form renders identically. */
+  --purple: var(--fs-accent);
+  --surface-2: #ffffff;
 
   /* Glass surfaces — mirrored exactly off the landing's
      `--ls-glass-bg` / `--ls-glass-edge` / `--ls-card-shadow`. The
@@ -288,6 +305,10 @@
     --fs-ink-mono: rgba(244, 238, 228, 0.48);
     --fs-ink-faint: rgba(244, 238, 228, 0.32);
     --fs-ink-disabled: rgba(244, 238, 228, 0.28);
+
+    /* Dark compat aliases for the shared LoginForm. */
+    --purple: var(--fs-accent);
+    --surface-2: #100e1c;
 
     /* Flow mesh — landing dark uses `screen` + full orb stack; slightly
        softer cores keep violet readable without neon overload on `#040308`. */

@@ -9,6 +9,17 @@ export { Logo, LogoIcon, LogoMark, type LogoProps } from './components/Logo';
 export { LoadingScreen } from './components/LoadingScreen';
 export { ThemeToggle, type ThemeToggleProps } from './components/ThemeToggle';
 
+// Components - Auth (SDK-agnostic; deps injected via props)
+export {
+  LoginForm,
+  isValidEmail,
+  type LoginFormProps,
+  type SharedSignInResource,
+  type SharedSignInResult,
+  type SharedSetActive,
+  type SharedTranslate,
+} from './components/auth/LoginForm';
+
 // Components - Buttons
 export {
   Button,

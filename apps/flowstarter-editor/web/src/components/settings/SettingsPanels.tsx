@@ -139,7 +139,7 @@ function getProviderSummary(provider: ServerProvider | undefined) {
     return {
       headline: "Disabled",
       detail:
-        provider.message ?? "This provider is installed but disabled for new sessions in Flowstarter Editor.",
+        provider.message ?? "This provider is installed but disabled for new sessions in Flowstarter Assistant.",
     };
   }
   if (!provider.installed) {
@@ -556,7 +556,7 @@ export function GeneralSettingsPanel() {
       <SettingsSection title="General">
         <SettingsRow
           title="Theme"
-          description="Choose how Flowstarter Editor looks across the app."
+          description="Choose how Flowstarter Assistant looks across the app."
           resetAction={
             theme !== "system" ? (
               <SettingResetButton label="theme" onClick={() => setTheme("system")} />

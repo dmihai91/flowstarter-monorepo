@@ -25,7 +25,12 @@ function getSystemDark(): boolean {
 function getStored(): Theme {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw === "light" || raw === "dark" || raw === "system") return raw;
-  return "system";
+  // Default to light, not "system". Flowstarter is a cream/light-first
+  // brand and the boot shell now only goes dark on an explicit stored
+  // "dark" — defaulting the app to "system" here would re-introduce the
+  // dark→light entry flash for users on a dark-OS who never picked a
+  // theme. They can still opt into system/dark via the switcher.
+  return "light";
 }
 
 function ensureThemeColorMetaTag(): HTMLMetaElement {

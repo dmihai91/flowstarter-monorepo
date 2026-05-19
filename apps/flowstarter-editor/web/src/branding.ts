@@ -1,7 +1,7 @@
-export const APP_BASE_NAME = "Flowstarter Editor";
+export const APP_BASE_NAME = "Flowstarter Assistant";
 
 /** Browser tab, static HTML, router head, and social metadata (no stage suffix). */
-export const APP_SITE_TITLE = "Flowstarter | Smart AI Editor";
+export const APP_SITE_TITLE = "Flowstarter Assistant";
 
 export const APP_STAGE_LABEL = import.meta.env.DEV ? "Dev" : "";
 export const APP_DISPLAY_NAME = APP_STAGE_LABEL

@@ -11,6 +11,7 @@ import {
   TerminalIcon,
 } from "lucide-react";
 import { ProjectFavicon } from "./ProjectFavicon";
+import { FlowstarterWordmark } from "./brand/FlowstarterWordmark";
 import { autoAnimate } from "@formkit/auto-animate";
 import React, { useCallback, useEffect, memo, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -2008,48 +2009,6 @@ const SidebarProjectListRow = memo(function SidebarProjectListRow(props: Sidebar
     </SidebarMenuItem>
   );
 });
-
-function FlowstarterWordmark() {
-  return (
-    <span
-      aria-label="Flowstarter"
-      className="flex shrink-0 items-center gap-2.5"
-      style={{ color: "var(--fs-ink)" }}
-    >
-      <span
-        aria-hidden
-        className="flex size-7 items-center justify-center"
-        style={{
-          borderRadius: 8,
-          background:
-            "linear-gradient(135deg, hsl(233, 65%, 50%) 0%, hsl(233, 75%, 60%) 50%, hsl(180, 65%, 55%) 100%)",
-          boxShadow:
-            "0 1px 0 rgba(255,255,255,0.32) inset, 0 3px 8px rgba(78,94,218,0.24)",
-        }}
-      >
-        <svg
-          aria-hidden="true"
-          width="17"
-          height="17"
-          viewBox="0 0 40 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M13 10 L13 30" stroke="white" strokeWidth="3" strokeLinecap="round" />
-          <path d="M13 11 C17 10, 22 10, 27 11" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          <path d="M13 20 C16 19, 20 19, 24 20" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-          <path d="M13 30 C16 30, 20 29, 25 28" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-        </svg>
-      </span>
-      <span
-        className="flex items-baseline leading-none"
-        style={{ letterSpacing: "-0.02em" }}
-      >
-        <span className="text-[15px] font-semibold">Flowstarter</span>
-      </span>
-    </span>
-  );
-}
 
 type SortableProjectHandleProps = Pick<
   ReturnType<typeof useSortable>,

@@ -48,7 +48,7 @@ export function resolveSelectableProvider(
   providers: ReadonlyArray<ServerProvider>,
   provider: ProviderKind | null | undefined,
 ): ProviderKind {
-  // Both providers ship in Flowstarter Editor. Default to Claude when the
+  // Both providers ship in Flowstarter Assistant. Default to Claude when the
   // caller hasn't expressed a preference; fall back to whichever provider
   // the server reports as currently enabled.
   const requested = provider ?? "claudeAgent";

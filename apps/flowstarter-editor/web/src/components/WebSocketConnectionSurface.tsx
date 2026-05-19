@@ -55,7 +55,7 @@ function describeExhaustedToast(): string {
 }
 
 function buildReconnectTitle(_status: WsConnectionStatus): string {
-  return "Disconnected from Flowstarter Editor";
+  return "Disconnected from Flowstarter Assistant";
 }
 
 function describeRecoveredToast(
@@ -271,7 +271,7 @@ export function WebSocketConnectionCoordinator() {
               },
               description: describeExhaustedToast(),
               timeout: 0,
-              title: "Disconnected from Flowstarter Editor",
+              title: "Disconnected from Flowstarter Assistant",
               type: "error" as const,
               data: {
                 hideCopyButton: true,
@@ -311,7 +311,7 @@ export function WebSocketConnectionCoordinator() {
     ) {
       const successToast = {
         description: describeRecoveredToast(previousDisconnectedAt, status.connectedAt),
-        title: "Reconnected to Flowstarter Editor",
+        title: "Reconnected to Flowstarter Assistant",
         type: "success" as const,
         timeout: 0,
         data: {

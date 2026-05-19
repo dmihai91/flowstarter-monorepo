@@ -8,6 +8,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 import { PowerUserOnly } from "../auth/TierGate";
 import { useTier } from "~/hooks/useTier";
 import { EditorAccountChip, EditorThemeSwitcher } from "../HeaderChromeControls";
+import { FlowstarterWordmark } from "../brand/FlowstarterWordmark";
 import { toastManager } from "../ui/toast";
 import { runPublish } from "~/lib/publishSite";
 
@@ -269,8 +270,16 @@ export const ChatHeader = memo(function ChatHeader({
 
   return (
     <div className="fs-chat-header-root @container/chrome-tools flex w-full min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4">
-      {/* ── Left: project name (grows; keeps title readable) ───── */}
+      {/* ── Left: brand mark + project name (grows; keeps title readable) ─ */}
       <div className="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
+        {/* Logo on the far left — mirrors flowstarter-main's NavbarLogo so
+            the editor top bar reads like the marketing app's header. */}
+        <FlowstarterWordmark />
+        <span
+          aria-hidden
+          className="hidden h-4 w-px shrink-0 sm:block"
+          style={{ background: "var(--fs-rule-strong)" }}
+        />
         <Tooltip>
           <TooltipTrigger
             render={<SidebarTrigger className="size-7 shrink-0" aria-label="Toggle thread sidebar" />}

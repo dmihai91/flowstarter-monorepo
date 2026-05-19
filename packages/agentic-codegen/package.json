@@ -1,0 +1,16 @@
+{
+  "name": "@flowstarter/agentic-codegen",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Headless agentic codegen worker: a discovery spec in, a built static Astro site out. Drives the installed `claude` CLI in a bounded, sandboxed ephemeral workspace. Reused by the discovery funnel and (later) the Daytona-isolated concierge build.",
+  "main": "src/index.ts",
+  "scripts": {
+    "test:codegen": "tsx test/run.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.0"
+  }
+}

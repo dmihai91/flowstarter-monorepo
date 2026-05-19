@@ -287,6 +287,57 @@ export async function runCodegen(
   return result;
 }
 
+/**
+ * Pick the best-fit template (LLM router, regex fallback). Exposed so the
+ * funnel can choose + show the base template live BEFORE personalizing
+ * (progressive "base first, hot-swap personalized" flow).
+ */
+export async function selectBaseTemplateSmart(
+  spec: DiscoverySpec,
+  baseOverride?: string
+): Promise<ReturnType<typeof selectBaseTemplate>> {
+  if (baseOverride && BASE_TEMPLATES[baseOverride]) {
+    return BASE_TEMPLATES[baseOverride]!;
+  }
+  const chosen = await classifyTemplate(spec);
+  return chosen && BASE_TEMPLATES[chosen]
+    ? BASE_TEMPLATES[chosen]!
+    : selectBaseTemplate(spec);
+}
+
+/**
+ * Just the single-shot content generation: spec + the template's current
+ * site-labels.md → the personalized, envelope-safe file content. No
+ * workspace/build — the funnel pushes the result into the already-live
+ * sandbox via HMR.
+ */
+export async function generateSiteContent(
+  spec: DiscoverySpec,
+  contentBefore: string,
+  opts: { model?: string; maxBudgetUsd?: number; wallClockMs?: number } = {}
+): Promise<{ ok: boolean; content?: string; costUsd: number; reason?: string }> {
+  const gen = await runGeneration(
+    buildSystemPrompt(),
+    buildTaskPrompt(spec, '', contentBefore),
+    opts.model ?? 'claude-haiku-4-5',
+    opts.maxBudgetUsd ?? 1,
+    opts.wallClockMs ?? 150_000
+  );
+  if (!gen.ok || !gen.resultText) {
+    return { ok: false, costUsd: gen.costUsd, reason: gen.err ?? 'no result' };
+  }
+  const asm = assembleAndValidate(contentBefore, gen.resultText);
+  if (!asm.ok || !asm.content) {
+    return { ok: false, costUsd: gen.costUsd, reason: asm.reason };
+  }
+  return {
+    ok: asm.content.trim() !== contentBefore.trim(),
+    content: asm.content,
+    costUsd: gen.costUsd,
+    reason: asm.content.trim() === contentBefore.trim() ? 'no changes' : undefined,
+  };
+}
+
 export interface EditResult {
   ok: boolean;
   costUsd: number;

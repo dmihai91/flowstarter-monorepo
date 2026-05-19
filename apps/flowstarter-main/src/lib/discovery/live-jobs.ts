@@ -22,8 +22,10 @@ export interface LiveJob {
   contentRel: string;
   editsUsed: number;
   error?: string;
-  /** Latest streamed progress phase from the in-sandbox build agent. */
+  /** Latest streamed progress phase. */
   phase?: string;
+  /** Base template live? then personalization hot-swapped in (progressive). */
+  personalized?: boolean;
   /** 15-prompt edit loop state. */
   editStatus?: 'idle' | 'editing' | 'done' | 'failed';
   editPhase?: string;

@@ -68,42 +68,70 @@ export async function POST(req: NextRequest) {
   const spec = parsed.data;
 
   // Detached: do NOT await — the wizard polls GET while progress streams.
-  // FAST path: single-shot personalization (~60-95s) of the industry-routed
-  // template, then push the built site into a Daytona sandbox for the live
-  // preview (~14s). Autonomous in-sandbox agent is reserved for structural
-  // edits (the 15-prompt loop), not the initial build.
+  // PROGRESSIVE path: show the matched industry template LIVE first (~15-40s),
+  // then single-shot personalize and hot-swap the content into the running
+  // sandbox via HMR — the visitor watches a real site become theirs instead
+  // of waiting on a blank screen.
   void (async () => {
     try {
-      const { runCodegen } = await import('@flowstarter/agentic-codegen');
-      const { previewInSandbox } = await import('@flowstarter/daytona-utils');
+      const { selectBaseTemplateSmart, createWorkspace, generateSiteContent } =
+        await import('@flowstarter/agentic-codegen');
+      const { previewInSandbox, pushFileToSandbox } = await import(
+        '@flowstarter/daytona-utils'
+      );
 
       if (!process.env.ANTHROPIC_API_KEY) {
-        updateJob(demoId, {
-          status: 'failed',
-          error: 'ANTHROPIC_API_KEY missing',
-        });
+        updateJob(demoId, { status: 'failed', error: 'ANTHROPIC_API_KEY missing' });
         return;
       }
 
-      const gen = await runCodegen(
-        {
-          businessName: spec.businessName,
-          industry: spec.industry,
-          description: spec.description,
-          targetAudience: spec.targetAudience,
-          goal: spec.goal,
-          brandTone: spec.brandTone,
-        },
-        {
-          verifyBuild: false,
-          keepWorkspace: true,
-          onEvent: (e) =>
-            updateJob(demoId, {
-              phase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
-            }),
-        }
-      );
+      const codegenSpec = {
+        businessName: spec.businessName,
+        industry: spec.industry,
+        description: spec.description,
+        targetAudience: spec.targetAudience,
+        goal: spec.goal,
+        brandTone: spec.brandTone,
+      };
 
+      updateJob(demoId, { phase: 'Choosing the best template for you' });
+      const base = await selectBaseTemplateSmart(codegenSpec);
+      const ws = await createWorkspace(base);
+      const cleanupAll = (extra?: () => Promise<void>) => async () => {
+        if (extra) await extra().catch(() => {});
+        await ws.cleanup().catch(() => {});
+      };
+
+      // 1) Bring the BASE template up live, fast.
+      updateJob(demoId, { phase: 'Building your live preview' });
+      const preview = await previewInSandbox(ws.buildDir, {
+        projectId: demoId,
+        env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+        onProgress: (_s, message) =>
+          updateJob(demoId, { phase: message ?? 'Building your live preview' }),
+      });
+      if (!preview.success || !preview.previewUrl) {
+        updateJob(demoId, {
+          status: 'failed',
+          error: preview.error ?? 'preview unavailable',
+        });
+        await cleanupAll(preview.teardown)();
+        return;
+      }
+
+      // Visitor now sees a real, on-vertical site immediately.
+      updateJob(demoId, {
+        status: 'ready',
+        previewUrl: preview.previewUrl,
+        sandboxId: preview.sandboxId,
+        contentFile: ws.contentFile,
+        personalized: false,
+        phase: 'Personalizing it for your business…',
+        teardown: cleanupAll(preview.teardown),
+      });
+
+      // 2) Personalize, then hot-swap into the running sandbox (HMR).
+      const gen = await generateSiteContent(codegenSpec, ws.contentBefore);
       await recordGenerationCost({
         kind: 'codegen',
         model: 'claude-haiku-4-5',
@@ -112,45 +140,26 @@ export async function POST(req: NextRequest) {
         ip,
       }).catch(() => {});
 
-      if (!gen.contentChanged) {
+      if (gen.ok && gen.content && preview.sandboxId) {
+        const pushed = await pushFileToSandbox(
+          preview.sandboxId,
+          base.contentFileRel,
+          gen.content,
+          { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY }
+        );
         updateJob(demoId, {
-          status: 'failed',
-          error: gen.failure?.log ?? 'generation produced no changes',
+          personalized: pushed,
+          phase: pushed
+            ? 'Done — your site is ready'
+            : 'Showing the starting template (personalization unavailable)',
         });
-        await gen.cleanup().catch(() => {});
-        return;
-      }
-
-      updateJob(demoId, { phase: 'Publishing your live preview' });
-      const preview = await previewInSandbox(gen.buildDir, {
-        projectId: demoId,
-        env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
-        onProgress: (_step, message) =>
-          updateJob(demoId, {
-            phase: message ?? 'Publishing your live preview',
-          }),
-      });
-
-      if (!preview.success || !preview.previewUrl) {
+      } else {
+        // Fail-soft: the base template is still a real, relevant site.
         updateJob(demoId, {
-          status: 'failed',
-          error: preview.error ?? 'preview unavailable',
+          personalized: false,
+          phase: 'Showing the starting template (personalization unavailable)',
         });
-        await preview.teardown().catch(() => {});
-        await gen.cleanup().catch(() => {});
-        return;
       }
-
-      updateJob(demoId, {
-        status: 'ready',
-        previewUrl: preview.previewUrl,
-        sandboxId: preview.sandboxId,
-        contentFile: gen.contentFile,
-        teardown: async () => {
-          await preview.teardown().catch(() => {});
-          await gen.cleanup().catch(() => {});
-        },
-      });
     } catch (e) {
       updateJob(demoId, {
         status: 'failed',
@@ -176,6 +185,7 @@ export async function GET(req: NextRequest) {
     {
       status: job.status,
       phase: job.phase,
+      personalized: job.personalized ?? false,
       previewUrl: job.status === 'ready' ? job.previewUrl : undefined,
       editsUsed: job.editsUsed,
       error: job.status === 'failed' ? job.error : undefined,

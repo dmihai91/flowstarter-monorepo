@@ -52,7 +52,10 @@ function fallbackSite(data: DiscoveryData): DemoSite {
       sectionTitle: 'What we do',
       items: [
         { title: 'Tailored to you', description: 'Built around your offer.' },
-        { title: 'Yours to edit', description: 'Change anything in plain words.' },
+        {
+          title: 'Yours to edit',
+          description: 'Change anything in plain words.',
+        },
         { title: 'Live fast', description: 'Online in weeks, not months.' },
       ],
     },
@@ -98,6 +101,7 @@ export function PreviewStep({
   const [liveDemoId, setLiveDemoId] = useState<string | null>(null);
   const [livePhase, setLivePhase] = useState<string | null>(null);
   const [iframeNonce, setIframeNonce] = useState(0);
+  const [personalizing, setPersonalizing] = useState(false);
 
   // Conversational editor (live mode).
   const [chat, setChat] = useState<ChatTurn[]>([]);
@@ -172,7 +176,11 @@ export function PreviewStep({
         };
         if (cancelled) return;
         if (res.ok && json.site) {
-          setDemo({ demoId: json.demoId ?? null, site: json.site, editsUsed: 0 });
+          setDemo({
+            demoId: json.demoId ?? null,
+            site: json.site,
+            editsUsed: 0,
+          });
         } else {
           setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
           setNotice(t('landing.discovery.preview.editorUnavailable'));
@@ -208,6 +216,7 @@ export function PreviewStep({
       }
 
       const started = Date.now();
+      let shownBase = false;
       while (!cancelled && Date.now() - started < 18 * 60_000) {
         await new Promise((r) => setTimeout(r, 3500));
         if (cancelled) return;
@@ -215,6 +224,7 @@ export function PreviewStep({
           status?: string;
           phase?: string;
           previewUrl?: string;
+          personalized?: boolean;
           error?: string;
         } = {};
         try {
@@ -226,21 +236,48 @@ export function PreviewStep({
           continue;
         }
         if (s.phase) setLivePhase(s.phase);
-        if (s.status === 'ready' && s.previewUrl) {
+
+        // First time it's ready: show the base template live immediately.
+        if (s.status === 'ready' && s.previewUrl && !shownBase) {
           if (cancelled) return;
+          shownBase = true;
           setLiveUrl(s.previewUrl);
           setMode('live');
+          setPersonalizing(!s.personalized);
           setChat([
             {
               role: 'agent',
-              text: `Your site is live. Tell me what to change — you have ${LIVE_EDIT_CAP} prompts to make it yours.`,
+              text: s.personalized
+                ? `Your site is live. Tell me what to change — ${LIVE_EDIT_CAP} prompts to make it yours.`
+                : 'Here’s your starting point — personalizing it for your business now…',
+            },
+          ]);
+        }
+        // Personalization hot-swapped in: refresh the iframe, hand over.
+        if (shownBase && s.personalized) {
+          if (cancelled) return;
+          setPersonalizing(false);
+          setIframeNonce((n) => n + 1);
+          setChat([
+            {
+              role: 'agent',
+              text: `Your personalized site is live. Tell me what to change — you have ${LIVE_EDIT_CAP} prompts to make it yours.`,
             },
           ]);
           return;
         }
         if (s.status === 'failed') return loadJsonFallback();
+        if (
+          shownBase &&
+          s.phase &&
+          /personalization unavailable/i.test(s.phase)
+        ) {
+          // Fail-soft: base template stays as a real, relevant demo.
+          setPersonalizing(false);
+          return;
+        }
       }
-      if (!cancelled) return loadJsonFallback();
+      if (!cancelled && !shownBase) return loadJsonFallback();
     }
 
     runLive();
@@ -302,7 +339,9 @@ export function PreviewStep({
         return;
       }
       if (!json.accepted) {
-        setLastAgent(json.error ?? "I couldn't start that edit. Try rephrasing.");
+        setLastAgent(
+          json.error ?? "I couldn't start that edit. Try rephrasing."
+        );
         setEditBusy(false);
         return;
       }
@@ -319,7 +358,9 @@ export function PreviewStep({
         } = {};
         try {
           const r = await fetch(
-            `/api/discovery/preview/live/edit?demoId=${encodeURIComponent(liveDemoId)}`
+            `/api/discovery/preview/live/edit?demoId=${encodeURIComponent(
+              liveDemoId
+            )}`
           );
           s = (await r.json().catch(() => ({}))) as typeof s;
         } catch {
@@ -334,7 +375,9 @@ export function PreviewStep({
         }
         if (s.editStatus === 'failed') {
           setLastAgent(
-            s.editError ? `That didn't work: ${s.editError}` : "That didn't work."
+            s.editError
+              ? `That didn't work: ${s.editError}`
+              : "That didn't work."
           );
           break;
         }
@@ -359,7 +402,11 @@ export function PreviewStep({
       const res = await fetch('/api/discovery/preview/edit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ demoId: demo.demoId, instruction, site: demo.site }),
+        body: JSON.stringify({
+          demoId: demo.demoId,
+          instruction,
+          site: demo.site,
+        }),
       });
       const json = (await res.json().catch(() => ({}))) as {
         site?: DemoSite;
@@ -471,12 +518,20 @@ export function PreviewStep({
               <span className="ml-3 truncate text-[11px] text-[var(--fs-ink-faint)]">
                 {data.businessName || 'your site'} — live preview
               </span>
+              {personalizing && (
+                <span className="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-[var(--purple-primary)]">
+                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
+                  Personalizing for {data.businessName || 'your business'}…
+                </span>
+              )}
             </div>
             <iframe
               key={iframeNonce}
               src={
                 iframeNonce > 0
-                  ? `${liveUrl}${liveUrl.includes('?') ? '&' : '?'}r=${iframeNonce}`
+                  ? `${liveUrl}${
+                      liveUrl.includes('?') ? '&' : '?'
+                    }r=${iframeNonce}`
                   : liveUrl
               }
               title="Live site preview"
@@ -507,7 +562,9 @@ export function PreviewStep({
               {chat.map((m, i) => (
                 <div
                   key={i}
-                  className={m.role === 'you' ? 'flex justify-end' : 'flex justify-start'}
+                  className={
+                    m.role === 'you' ? 'flex justify-end' : 'flex justify-start'
+                  }
                 >
                   <span
                     className={[
@@ -555,7 +612,8 @@ export function PreviewStep({
               Love it? Let’s make it real — yours, on your domain.
             </p>
             <p className="text-[12px] text-[var(--fs-ink-faint)]">
-              Continue to reserve your build. {editsLeft < LIVE_EDIT_CAP
+              Continue to reserve your build.{' '}
+              {editsLeft < LIVE_EDIT_CAP
                 ? 'Your changes are saved to this preview.'
                 : ''}
             </p>
@@ -606,7 +664,9 @@ export function PreviewStep({
             </button>
           </div>
           {notice && (
-            <p className="mt-2 text-[12px] text-[var(--fs-ink-faint)]">{notice}</p>
+            <p className="mt-2 text-[12px] text-[var(--fs-ink-faint)]">
+              {notice}
+            </p>
           )}
         </div>
       )}

@@ -1,0 +1,69 @@
+# Flowstarter Assistant — per-workspace editor instance (systemd template).
+#
+# One instance per client workspace. The instance name (%i) IS the
+# workspace slug, e.g.:
+#
+#   systemctl enable --now flowstarter-editor@acme.service
+#
+# That instance:
+#   - opens ONLY /srv/clients/<slug>/site as its project (cwd arg)
+#   - keeps its own editor state in /srv/clients/<slug>/.state
+#   - listens on the port from /etc/flowstarter/clients/<slug>.env
+#
+# nginx maps <slug>.app.<domain> -> that port. The Clerk gate
+# (clerkGate.ts:420-426) already refuses any user who is not a member
+# of the workspace addressed by the subdomain, so the OS process + the
+# directory are the isolation boundary — nothing multi-tenant runs
+# in-process.
+#
+# Install: copy to /etc/systemd/system/flowstarter-editor@.service
+# then `systemctl daemon-reload`. Provisioned by onboard-client.sh.
+
+[Unit]
+Description=Flowstarter Assistant editor — workspace %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=flowstarter
+Group=flowstarter
+
+# Shared secrets (Clerk / Supabase / Anthropic / FLOWSTARTER_APP_ROOT).
+# Provisioned out of band — NEVER committed. 0600, root:flowstarter.
+EnvironmentFile=/etc/flowstarter/editor.env
+# Per-workspace: T3CODE_PORT, T3CODE_HOME, T3CODE_PROJECT_DIR,
+# T3CODE_AUTO_BOOTSTRAP_PROJECT_FROM_CWD, FLOWSTARTER_WORKSPACE_SLUG.
+EnvironmentFile=/etc/flowstarter/clients/%i.env
+
+WorkingDirectory=/srv/clients/%i/site
+
+# Thin launcher so the unit never hardcodes the monorepo path or the
+# server entrypoint. It must `exec node "$FLOWSTARTER_APP_ROOT"/apps/
+# flowstarter-editor/server/dist/bin.mjs "$T3CODE_PROJECT_DIR"`.
+# (Prod build: `pnpm --filter @flowstarter/editor-server build` ->
+# server/dist/bin.mjs; start = `node dist/bin.mjs <cwd>`.) See
+# docs/EDITOR_DEPLOYMENT.md for the exact launcher contents.
+ExecStart=/opt/flowstarter/bin/run-editor.sh
+
+Restart=always
+RestartSec=3
+# Don't thrash on a crash-loop (e.g. bad client repo).
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+# --- Hardening (conservative: the editor spawns `claude`, git and
+# node-pty terminals, so we sandbox the filesystem but keep exec). If a
+# legitimate tool breaks, relax ReadWritePaths rather than disabling. ---
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/srv/clients/%i
+# Bound per-client blast radius. Tune to box size / plan tier.
+MemoryAccounting=true
+MemoryMax=2G
+TasksMax=512
+
+[Install]
+WantedBy=multi-user.target

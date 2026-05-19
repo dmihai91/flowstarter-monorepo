@@ -22,8 +22,12 @@ export interface LiveJob {
   contentRel: string;
   editsUsed: number;
   error?: string;
-  /** Latest streamed progress phase from the in-sandbox agent (for the wizard). */
+  /** Latest streamed progress phase from the in-sandbox build agent. */
   phase?: string;
+  /** 15-prompt edit loop state. */
+  editStatus?: 'idle' | 'editing' | 'done' | 'failed';
+  editPhase?: string;
+  editError?: string;
   createdAt: number;
   teardown?: () => Promise<void>;
 }

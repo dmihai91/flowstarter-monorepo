@@ -240,3 +240,86 @@ export async function buildSiteInSandbox(
     };
   }
 }
+
+export interface InSandboxEdit {
+  ok: boolean;
+  costUsd?: number;
+  error?: string;
+}
+
+/**
+ * Apply one plain-English edit to an already-live sandbox site (the 15-prompt
+ * loop). Reuses the running sandbox: the agent runner, system prompt, claude
+ * binary and `astro dev` are already in place — we just drop a new task file
+ * and re-run the autonomous agent. HMR reflects the change in the live
+ * preview; no rebuild, no teardown (the sandbox stays for the next prompt).
+ */
+export async function editSiteInSandbox(
+  sandboxId: string,
+  instruction: string,
+  opts: {
+    anthropicApiKey: string;
+    model?: string;
+    env?: DaytonaEnv;
+    onProgress?: (e: { phase: string; detail?: string }) => void;
+    timeoutMs?: number;
+  }
+): Promise<InSandboxEdit> {
+  try {
+    const client = getClient(opts.env);
+    const sandbox = await client.get(sandboxId);
+    const workDir = (await sandbox.getWorkDir().catch(() => '')) || '/home/daytona';
+    const agentDir = `${workDir}/.agent`;
+    const siteRoot = `${workDir}/site`;
+    const claudeBin = `${agentDir}/node_modules/.bin/claude`;
+    const model = opts.model ?? 'claude-sonnet-4-6';
+    const timeoutMs = opts.timeoutMs ?? 10 * 60_000;
+    const id = Date.now();
+    const taskFile = `${agentDir}/edit-${id}.txt`;
+    const logFile = `/tmp/agent-edit-${id}.log`;
+
+    const task = `Apply this change to the EXISTING site in your working directory, then stop. Keep everything else intact and keep the project building under \`astro build\`.\n\nRequested change:\n${instruction}`;
+    await sandbox.fs.uploadFile(Buffer.from(task, 'utf-8'), taskFile);
+
+    await sandbox.process.executeCommand(
+      `cd "${agentDir}" && FS_SITE_DIR="${siteRoot}" FS_SYSTEM_FILE="${agentDir}/system.txt" ` +
+        `FS_TASK_FILE="${taskFile}" FS_MODEL="${model}" FS_CLAUDE_BIN="${claudeBin}" ` +
+        `ANTHROPIC_API_KEY="${opts.anthropicApiKey}" nohup node agent-runner.mjs > ${logFile} 2>&1 &`,
+      workDir,
+      undefined,
+      15
+    );
+
+    const start = Date.now();
+    let seen = 0;
+    let costUsd = 0;
+    while (Date.now() - start < timeoutMs) {
+      await sleep(5000);
+      const tail = await sandbox.process
+        .executeCommand(`cat ${logFile} 2>/dev/null || true`, workDir, undefined, 15)
+        .catch(() => ({ result: '' }) as { result?: string });
+      const lines = (tail.result || '').split('\n').filter(Boolean);
+      for (const line of lines.slice(seen)) {
+        try {
+          const o = JSON.parse(line) as Record<string, unknown>;
+          if (o.type === 'done') {
+            if (typeof o.costUsd === 'number') costUsd = o.costUsd;
+            return { ok: true, costUsd };
+          }
+          if (o.type === 'error') return { ok: false, error: String(o.message ?? 'edit error') };
+          if (o.phase)
+            opts.onProgress?.({
+              phase: String(o.phase),
+              detail: o.detail ? String(o.detail) : undefined,
+            });
+        } catch {
+          /* non-JSON noise */
+        }
+      }
+      seen = lines.length;
+    }
+    return { ok: false, error: 'edit timed out' };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'edit error' };
+  }
+}

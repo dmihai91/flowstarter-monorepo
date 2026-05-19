@@ -13,12 +13,15 @@ import { DemoSiteFrame } from './DemoSiteFrame';
 
 /**
  * Step 7. Primary path: the in-sandbox autonomous Agent-SDK pipeline
- * (/api/discovery/preview/live) builds a real, personalized site in a
- * Daytona sandbox and we embed its live URL. Real streamed progress phases
- * are shown while it builds. Fail-open: if the live pipeline is
- * unavailable / budget-blocked / errors, we fall back to the deterministic
- * JSON demo so the funnel never dead-ends.
+ * (/api/discovery/preview/live) builds a real personalized site in a Daytona
+ * sandbox; we embed its live URL and give the visitor a T3-Code-style
+ * conversational editor — up to 15 plain-English prompts, applied by the
+ * agent in the same sandbox (HMR updates the preview). Fail-open: if the
+ * live pipeline is unavailable / budget-blocked / errors, fall back to the
+ * deterministic JSON demo so the funnel never dead-ends.
  */
+
+const LIVE_EDIT_CAP = 15;
 
 interface DemoState {
   demoId: string | null;
@@ -49,10 +52,7 @@ function fallbackSite(data: DiscoveryData): DemoSite {
       sectionTitle: 'What we do',
       items: [
         { title: 'Tailored to you', description: 'Built around your offer.' },
-        {
-          title: 'Yours to edit',
-          description: 'Change anything in plain words.',
-        },
+        { title: 'Yours to edit', description: 'Change anything in plain words.' },
         { title: 'Live fast', description: 'Online in weeks, not months.' },
       ],
     },
@@ -81,6 +81,10 @@ function fallbackSite(data: DiscoveryData): DemoSite {
 }
 
 type Mode = 'loading' | 'live' | 'json';
+interface ChatTurn {
+  role: 'you' | 'agent';
+  text: string;
+}
 
 export function PreviewStep({
   data,
@@ -91,15 +95,29 @@ export function PreviewStep({
 }) {
   const [mode, setMode] = useState<Mode>('loading');
   const [liveUrl, setLiveUrl] = useState<string | null>(null);
+  const [liveDemoId, setLiveDemoId] = useState<string | null>(null);
   const [livePhase, setLivePhase] = useState<string | null>(null);
+  const [iframeNonce, setIframeNonce] = useState(0);
+
+  // Conversational editor (live mode).
+  const [chat, setChat] = useState<ChatTurn[]>([]);
+  const [editPrompt, setEditPrompt] = useState('');
+  const [editBusy, setEditBusy] = useState(false);
+  const [editsLeft, setEditsLeft] = useState(LIVE_EDIT_CAP);
+
+  // JSON-fallback demo + its inline editor.
   const [demo, setDemo] = useState<DemoState | null>(null);
   const [prompt, setPrompt] = useState('');
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [buildStep, setBuildStep] = useState(0);
   const requested = useRef(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Fallback checklist animation (only while no real phase is streaming).
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chat]);
+
   useEffect(() => {
     if (mode !== 'loading' || livePhase) return;
     const id = setInterval(
@@ -125,7 +143,6 @@ export function PreviewStep({
     };
 
     async function loadJsonFallback() {
-      // Restore an edited JSON demo if present.
       if (typeof window !== 'undefined') {
         try {
           const raw = window.sessionStorage.getItem(DEMO_STATE_KEY);
@@ -155,11 +172,7 @@ export function PreviewStep({
         };
         if (cancelled) return;
         if (res.ok && json.site) {
-          setDemo({
-            demoId: json.demoId ?? null,
-            site: json.site,
-            editsUsed: 0,
-          });
+          setDemo({ demoId: json.demoId ?? null, site: json.site, editsUsed: 0 });
         } else {
           setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
           setNotice(t('landing.discovery.preview.editorUnavailable'));
@@ -189,11 +202,11 @@ export function PreviewStep({
         if (cancelled) return;
         if (json.skip || !json.demoId) return loadJsonFallback();
         demoId = json.demoId;
+        setLiveDemoId(demoId);
       } catch {
         return loadJsonFallback();
       }
 
-      // Poll for streamed progress + the live URL.
       const started = Date.now();
       while (!cancelled && Date.now() - started < 18 * 60_000) {
         await new Promise((r) => setTimeout(r, 3500));
@@ -217,6 +230,12 @@ export function PreviewStep({
           if (cancelled) return;
           setLiveUrl(s.previewUrl);
           setMode('live');
+          setChat([
+            {
+              role: 'agent',
+              text: `Your site is live. Tell me what to change — you have ${LIVE_EDIT_CAP} prompts to make it yours.`,
+            },
+          ]);
           return;
         }
         if (s.status === 'failed') return loadJsonFallback();
@@ -231,7 +250,6 @@ export function PreviewStep({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist JSON demo state (fallback path only).
   useEffect(() => {
     if (!demo || typeof window === 'undefined') return;
     try {
@@ -241,8 +259,96 @@ export function PreviewStep({
     }
   }, [demo]);
 
-  const editsLeft = demo ? MAX_DEMO_EDITS - demo.editsUsed : MAX_DEMO_EDITS;
-  const canEdit = !!demo?.demoId && editsLeft > 0 && !editing;
+  // ---- Live conversational editor ----
+  async function sendEdit() {
+    const instruction = editPrompt.trim();
+    if (!instruction || !liveDemoId || editBusy || editsLeft <= 0) return;
+    setEditPrompt('');
+    setEditBusy(true);
+    setChat((c) => [
+      ...c,
+      { role: 'you', text: instruction },
+      { role: 'agent', text: 'Working on it…' },
+    ]);
+    const setLastAgent = (text: string) =>
+      setChat((c) => {
+        const next = [...c];
+        for (let i = next.length - 1; i >= 0; i--) {
+          const turn = next[i];
+          if (turn && turn.role === 'agent') {
+            next[i] = { role: 'agent', text };
+            break;
+          }
+        }
+        return next;
+      });
+
+    try {
+      const res = await fetch('/api/discovery/preview/live/edit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ demoId: liveDemoId, instruction }),
+      });
+      const json = (await res.json().catch(() => ({}))) as {
+        accepted?: boolean;
+        limitReached?: boolean;
+        editsLeft?: number;
+        error?: string;
+      };
+      if (json.limitReached) {
+        setEditsLeft(0);
+        setLastAgent("That was your last prompt — let's make this real.");
+        setEditBusy(false);
+        return;
+      }
+      if (!json.accepted) {
+        setLastAgent(json.error ?? "I couldn't start that edit. Try rephrasing.");
+        setEditBusy(false);
+        return;
+      }
+
+      // Poll edit status.
+      const started = Date.now();
+      while (Date.now() - started < 12 * 60_000) {
+        await new Promise((r) => setTimeout(r, 3500));
+        let s: {
+          editStatus?: string;
+          editPhase?: string;
+          editError?: string;
+          editsLeft?: number;
+        } = {};
+        try {
+          const r = await fetch(
+            `/api/discovery/preview/live/edit?demoId=${encodeURIComponent(liveDemoId)}`
+          );
+          s = (await r.json().catch(() => ({}))) as typeof s;
+        } catch {
+          continue;
+        }
+        if (s.editPhase) setLastAgent(s.editPhase);
+        if (s.editStatus === 'done') {
+          if (typeof s.editsLeft === 'number') setEditsLeft(s.editsLeft);
+          setLastAgent('Done — updating your live preview.');
+          setIframeNonce((n) => n + 1);
+          break;
+        }
+        if (s.editStatus === 'failed') {
+          setLastAgent(
+            s.editError ? `That didn't work: ${s.editError}` : "That didn't work."
+          );
+          break;
+        }
+      }
+    } catch {
+      setLastAgent('Something went wrong applying that. Try again.');
+    } finally {
+      setEditBusy(false);
+    }
+  }
+
+  // ---- JSON-fallback inline editor ----
+  const jsonEditsLeft = demo ? MAX_DEMO_EDITS - demo.editsUsed : MAX_DEMO_EDITS;
+  const canEdit = !!demo?.demoId && jsonEditsLeft > 0 && !editing;
 
   async function runEdit() {
     if (!demo || !prompt.trim() || !canEdit) return;
@@ -253,11 +359,7 @@ export function PreviewStep({
       const res = await fetch('/api/discovery/preview/edit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          demoId: demo.demoId,
-          instruction,
-          site: demo.site,
-        }),
+        body: JSON.stringify({ demoId: demo.demoId, instruction, site: demo.site }),
       });
       const json = (await res.json().catch(() => ({}))) as {
         site?: DemoSite;
@@ -360,28 +462,109 @@ export function PreviewStep({
       )}
 
       {mode === 'live' && liveUrl && (
-        <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
-          <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] px-3 py-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
-            <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
-            <span className="ml-3 truncate text-[11px] text-[var(--fs-ink-faint)]">
-              {data.businessName || 'your site'} — live preview
-            </span>
+        <div className="space-y-3">
+          <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
+            <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] px-3 py-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+              <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
+              <span className="ml-3 truncate text-[11px] text-[var(--fs-ink-faint)]">
+                {data.businessName || 'your site'} — live preview
+              </span>
+            </div>
+            <iframe
+              key={iframeNonce}
+              src={
+                iframeNonce > 0
+                  ? `${liveUrl}${liveUrl.includes('?') ? '&' : '?'}r=${iframeNonce}`
+                  : liveUrl
+              }
+              title="Live site preview"
+              className="h-[52vh] w-full bg-white"
+              sandbox="allow-scripts allow-same-origin"
+              loading="lazy"
+            />
           </div>
-          <iframe
-            src={liveUrl}
-            title="Live site preview"
-            className="h-[58vh] w-full bg-white"
-            sandbox="allow-scripts allow-same-origin"
-            loading="lazy"
-          />
+
+          {/* T3-Code-style conversational editor */}
+          <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
+            <div className="flex items-center justify-between border-b border-[var(--fs-rule)] px-3 py-2">
+              <p className="text-[12px] font-semibold text-[var(--fs-ink)]">
+                Smart editor — ask for any change
+              </p>
+              <span
+                className={[
+                  'rounded-full px-2 py-0.5 text-[11px] font-semibold',
+                  editsLeft <= 3
+                    ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                    : 'bg-[var(--purple-primary)]/12 text-[var(--purple-primary)]',
+                ].join(' ')}
+              >
+                {editsLeft}/{LIVE_EDIT_CAP} prompts left
+              </span>
+            </div>
+            <div className="max-h-56 space-y-2 overflow-y-auto px-3 py-3">
+              {chat.map((m, i) => (
+                <div
+                  key={i}
+                  className={m.role === 'you' ? 'flex justify-end' : 'flex justify-start'}
+                >
+                  <span
+                    className={[
+                      'max-w-[85%] rounded-2xl px-3 py-1.5 text-[13px] leading-snug',
+                      m.role === 'you'
+                        ? 'bg-[var(--purple-primary)] text-white'
+                        : 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink)] border border-[var(--fs-rule)]',
+                    ].join(' ')}
+                  >
+                    {m.text}
+                  </span>
+                </div>
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+            <div className="flex gap-2 border-t border-[var(--fs-rule)] p-3">
+              <input
+                value={editPrompt}
+                onChange={(e) => setEditPrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') sendEdit();
+                }}
+                disabled={editBusy || editsLeft <= 0}
+                placeholder={
+                  editsLeft <= 0
+                    ? 'No prompts left — ready to make it real?'
+                    : 'e.g. make the hero warmer and add a pricing section'
+                }
+                className="w-full rounded-lg border border-[var(--fs-rule)] bg-white px-3 py-2 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/30 disabled:opacity-50 dark:bg-white/[0.03]"
+              />
+              <button
+                type="button"
+                onClick={sendEdit}
+                disabled={editBusy || editsLeft <= 0 || !editPrompt.trim()}
+                className="shrink-0 rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              >
+                {editBusy ? 'Editing…' : 'Send'}
+              </button>
+            </div>
+          </div>
+
+          {/* Pay CTA */}
+          <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--purple-primary)]/30 bg-[var(--purple-primary)]/[0.06] p-4 text-center">
+            <p className="text-sm font-semibold text-[var(--fs-ink)]">
+              Love it? Let’s make it real — yours, on your domain.
+            </p>
+            <p className="text-[12px] text-[var(--fs-ink-faint)]">
+              Continue to reserve your build. {editsLeft < LIVE_EDIT_CAP
+                ? 'Your changes are saved to this preview.'
+                : ''}
+            </p>
+          </div>
         </div>
       )}
 
       {mode === 'json' && demo && <DemoSiteFrame site={demo.site} />}
 
-      {/* Plain-English editor — JSON-demo path (live edit loop is staged next). */}
       {mode === 'json' && demo?.demoId && (
         <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 p-3">
           <div className="mb-2 flex items-center justify-between">
@@ -391,12 +574,12 @@ export function PreviewStep({
             <span
               className={[
                 'rounded-full px-2 py-0.5 text-[11px] font-semibold',
-                editsLeft <= 3
+                jsonEditsLeft <= 3
                   ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
                   : 'bg-[var(--purple-primary)]/12 text-[var(--purple-primary)]',
               ].join(' ')}
             >
-              {editsLeft}/{MAX_DEMO_EDITS}{' '}
+              {jsonEditsLeft}/{MAX_DEMO_EDITS}{' '}
               {t('landing.discovery.preview.editsLeft')}
             </span>
           </div>
@@ -423,9 +606,7 @@ export function PreviewStep({
             </button>
           </div>
           {notice && (
-            <p className="mt-2 text-[12px] text-[var(--fs-ink-faint)]">
-              {notice}
-            </p>
+            <p className="mt-2 text-[12px] text-[var(--fs-ink-faint)]">{notice}</p>
           )}
         </div>
       )}

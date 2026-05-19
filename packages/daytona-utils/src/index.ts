@@ -45,8 +45,12 @@ export { previewInSandbox, pushFileToSandbox } from './preview';
 export type { SandboxPreview } from './preview';
 
 // Autonomous in-sandbox build (Agent SDK runs inside the sandbox)
-export { buildSiteInSandbox } from './build-in-sandbox';
-export type { InSandboxBuild, InSandboxBuildOpts } from './build-in-sandbox';
+export { buildSiteInSandbox, editSiteInSandbox } from './build-in-sandbox';
+export type {
+  InSandboxBuild,
+  InSandboxBuildOpts,
+  InSandboxEdit,
+} from './build-in-sandbox';
 
 // Snapshot service
 export {

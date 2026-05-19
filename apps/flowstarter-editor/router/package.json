@@ -1,0 +1,16 @@
+{
+  "name": "@flowstarter/editor-router",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "In-container per-workspace router/supervisor. One editor process per client workspace; routes by Host subdomain; spawns on demand, idle-stops. Entrypoint of the single editor Docker image.",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.14",
+    "typescript": "^5.9.2"
+  }
+}

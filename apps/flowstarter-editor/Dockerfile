@@ -38,6 +38,12 @@ COPY . .
 # canonical pattern — supply with `--build-arg VITE_CLERK_PUBLISHABLE_KEY=…`.
 ARG VITE_CLERK_PUBLISHABLE_KEY=""
 ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+# When the editor is mounted under a sub-path (e.g. /editor on a shared
+# workspace host), pass `--build-arg VITE_BASE_PATH=/editor/`. Vite emits
+# asset URLs with that prefix and TanStack Router uses it as basepath
+# (router.ts). Leave empty for root-mounted deploys.
+ARG VITE_BASE_PATH=""
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
 
 RUN pnpm install --frozen-lockfile \
   # pnpm 10 skips install scripts by default; force node-pty's so its

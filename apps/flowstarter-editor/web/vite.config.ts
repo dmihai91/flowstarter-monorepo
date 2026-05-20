@@ -132,7 +132,14 @@ export default defineConfig(({ mode }) => {
   const mainAppLoginUrl =
     mainAppBase.length > 0 ? `${mainAppBase.replace(/\/+$/, "")}/login` : "";
 
+  // Build with `VITE_BASE_PATH=/editor/` (or any prefix) when mounting
+  // the editor under a sub-path on a shared workspace host. Local dev
+  // / standalone deploys keep base='/' (the default). Trailing slash
+  // is required by Vite's docs.
+  const basePath = (process.env.VITE_BASE_PATH ?? fileEnv.VITE_BASE_PATH ?? "/").trim() || "/";
+
   return {
+    base: basePath,
     plugins: [
       tanstackRouter(),
       react(),

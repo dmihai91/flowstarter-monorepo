@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lebădușul — Articole de Pescuit</title>
+  <meta name="description" content="Manage the lebadusularticoledepescuit.ro Shopify storefront — visit the live store, open the Flowstarter editor, or preview pending changes." />
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      min-height: 100dvh;
+      font-family: 'Onest', system-ui, sans-serif;
+      color: #120a22;
+      background: #fbf7ef;
+      background-image:
+        radial-gradient(900px 600px at 12% -10%, rgba(78, 94, 218, 0.18), transparent 60%),
+        radial-gradient(720px 520px at 100% 8%, rgba(180, 83, 9, 0.10), transparent 65%),
+        radial-gradient(800px 600px at 50% 110%, rgba(78, 94, 218, 0.12), transparent 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+    main {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+    .mark {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: linear-gradient(135deg, hsl(233, 65%, 50%) 0%, hsl(233, 75%, 60%) 50%, hsl(180, 65%, 55%) 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 24px;
+      box-shadow: 0 1px 0 rgba(255,255,255,.32) inset, 0 8px 22px rgba(78,94,218,.32);
+    }
+    header { text-align: center; }
+    .eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: .22em;
+      text-transform: uppercase; color: rgba(18, 10, 34, .42);
+    }
+    h1 {
+      margin: 8px 0 0;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      font-weight: 600; letter-spacing: -0.025em; line-height: 1.15;
+    }
+    h1 em { font-style: normal; font-weight: 600; color: hsl(233, 68%, 46%); }
+    p.lead {
+      max-width: 44ch;
+      margin: 12px auto 0;
+      color: rgba(18, 10, 34, .62);
+      line-height: 1.55;
+    }
+    .links {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    a.card {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 18px;
+      padding: 18px 22px;
+      background: rgba(255, 255, 255, .55);
+      border: 1px solid rgba(18, 10, 34, .10);
+      border-radius: 16px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.85),
+        inset 0 -1px 0 rgba(18,10,34,.04),
+        0 14px 32px rgba(78, 94, 218, .06),
+        0 4px 12px rgba(18, 10, 34, .04);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      color: inherit; text-decoration: none;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    a.card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(78, 94, 218, .30);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.92),
+        0 20px 44px rgba(78, 94, 218, .10),
+        0 6px 16px rgba(18, 10, 34, .06);
+    }
+    a.card .body { flex: 1; min-width: 0; }
+    a.card .row {
+      display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    }
+    a.card .title { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.015em; }
+    a.card .pill {
+      display: inline-flex; align-items: center;
+      font-family: ui-monospace, 'JetBrains Mono', monospace;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: rgba(18,10,34,.42);
+      background: rgba(18,10,34,.04);
+      border: 1px solid rgba(18,10,34,.08);
+      border-radius: 999px;
+      padding: 3px 9px;
+    }
+    a.card .pill.ok { color: hsl(151, 72%, 28%); background: hsla(151, 72%, 40%, .08); border-color: hsla(151, 72%, 40%, .22); }
+    a.card .pill.soon { color: rgba(18,10,34,.46); }
+    a.card .desc { margin-top: 5px; color: rgba(18, 10, 34, .60); font-size: .92rem; line-height: 1.4; }
+    a.card .arrow {
+      width: 32px; height: 32px; border-radius: 999px;
+      background: rgba(78, 94, 218, .08);
+      color: hsl(233, 68%, 46%);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    a.card[aria-disabled="true"] { cursor: not-allowed; opacity: .72; }
+    a.card[aria-disabled="true"]:hover { transform: none; border-color: rgba(18, 10, 34, .10); }
+    footer {
+      font-size: 12px; color: rgba(18,10,34,.40); text-align: center;
+    }
+    footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:18px">
+        <span class="mark" aria-hidden="true">L</span>
+      </div>
+      <div class="eyebrow">Flowstarter workspace</div>
+      <h1>Lebădușul — <em>articole de pescuit</em></h1>
+      <p class="lead">Manage the lebadusularticoledepescuit.ro storefront — visit the live site, open the editor, or preview pending changes.</p>
+    </header>
+
+    <nav class="links" aria-label="Workspace actions">
+      <a class="card" href="https://lebadusularticoledepescuit.ro" rel="noopener external">
+        <div class="body">
+          <div class="row">
+            <span class="title">Visit the live store</span>
+            <span class="pill ok">Live</span>
+          </div>
+          <div class="desc">lebadusularticoledepescuit.ro — public storefront, currently published theme.</div>
+        </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="card" href="https://lebadusul.editor.flowstarter.net/">
+        <div class="body">
+          <div class="row">
+            <span class="title">Open the editor</span>
+            <span class="pill">Flowstarter Assistant</span>
+          </div>
+          <div class="desc">Edit the Shopify Liquid theme with an AI pair. Changes stay in the draft until you publish.</div>
+        </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="card" href="https://lebadusul.preview.flowstarter.net/" aria-disabled="false">
+        <div class="body">
+          <div class="row">
+            <span class="title">Preview pending changes</span>
+            <span class="pill soon">Setup pending</span>
+          </div>
+          <div class="desc">See the theme rendered with your draft changes before publishing. Connects once the Shopify Theme Access token is wired.</div>
+        </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </nav>
+
+    <footer>Internal workspace · <a href="https://flowstarter.net">flowstarter.net</a></footer>
+  </main>
+</body>
+</html>

@@ -16,9 +16,12 @@
 # ---------- build ----------------------------------------------------
 FROM node:22-bookworm AS build
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
-# corepack → pnpm 10 (matches repo); bun for the router; build tools for
-# node-pty's native addon.
-RUN corepack enable && corepack prepare pnpm@10.29.2 --activate \
+# corepack → pnpm 10 (matches repo); bun for the router (bun's installer
+# needs `unzip`); build tools for node-pty's native addon.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends unzip \
+  && rm -rf /var/lib/apt/lists/* \
+  && corepack enable && corepack prepare pnpm@10.29.2 --activate \
   && npm i -g @anthropic-ai/claude-code \
   && curl -fsSL https://bun.sh/install | bash \
   && ln -s /root/.bun/bin/bun /usr/local/bin/bun
@@ -53,7 +56,7 @@ ENV NODE_ENV=production \
     EDITOR_WORKSPACES_ROOT=/workspaces \
     EDITOR_STATE_ROOT=/state
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends git ca-certificates curl \
+  && apt-get install -y --no-install-recommends git ca-certificates curl unzip \
   && rm -rf /var/lib/apt/lists/* \
   && npm i -g @anthropic-ai/claude-code \
   && curl -fsSL https://bun.sh/install | bash \

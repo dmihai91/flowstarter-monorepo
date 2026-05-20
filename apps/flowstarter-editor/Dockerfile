@@ -31,6 +31,13 @@ WORKDIR /app
 # need the full set of package.json + lockfile to install correctly.
 COPY . .
 
+# Vite bakes import.meta.env.VITE_* at build time. Clerk publishable
+# keys are public by design (the secret half is the server-side
+# CLERK_SECRET_KEY), so receiving the publishable via a build-arg is the
+# canonical pattern — supply with `--build-arg VITE_CLERK_PUBLISHABLE_KEY=…`.
+ARG VITE_CLERK_PUBLISHABLE_KEY=""
+ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+
 RUN pnpm install --frozen-lockfile \
   && pnpm --filter @flowstarter/editor-web build \
   && pnpm --filter @flowstarter/editor-server build \

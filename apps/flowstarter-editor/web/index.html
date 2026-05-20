@@ -17,19 +17,19 @@
         const LIGHT_BACKGROUND = "#fbf7ef";
         const DARK_BACKGROUND = "#040308";
         const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-        /* Flowstarter is a cream/light-first brand. The boot shell goes
-           dark ONLY when the user has explicitly chosen dark
-           (localStorage === "dark"). "system", unset, incognito, or any
-           storage error → light. This matches what the app actually
-           renders by default and kills the dark→light entry flash the
-           old "system + prefers-dark" + dark-catch logic caused. */
-        let isDark = false;
-        try {
-          isDark =
-            window.localStorage.getItem("flowstarter-editor:theme") === "dark";
-        } catch {
-          isDark = false;
-        }
+        /* Theme resolution for first paint (before useTheme.ts loads):
+             - explicit "dark"   → dark
+             - explicit "light"  → light
+             - "system" / unset  → match OS prefers-color-scheme
+           Mirrors getStored() in useTheme.ts so the boot shell and the
+           hydrated React app agree on the very first paint. */
+        let stored = null;
+        try { stored = window.localStorage.getItem("flowstarter-editor:theme"); } catch {}
+        const systemDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isDark =
+          stored === "dark" || (stored !== "light" && systemDark);
         document.documentElement.classList.toggle("dark", isDark);
         const chromeColor = isDark ? DARK_BACKGROUND : LIGHT_BACKGROUND;
         document.documentElement.style.backgroundColor = chromeColor;

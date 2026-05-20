@@ -604,9 +604,21 @@ html.dark {
   height: 100%;
 }
 
-/* Opacities now come from `brand.css` via `.fs-bg--dashboard` (see
-   `<FlowBackground variant="dashboard" />` in main.tsx) so the editor
-   uses the exact same orb intensities as the admin dashboard. */
+/* The editor uses `<FlowBackground variant="landing" />` in main.tsx
+   (see comment there). brand.css's landing-variant opacities are tuned
+   for marketing — for the editor's larger glass surface we bump them a
+   touch so the flow background reads through more atmospherically.
+   Light: ~+50% over brand.css; dark: ~+40% (already higher there). */
+.fs-bg--landing .fs-bg__bloom     { opacity: 0.28; }
+.fs-bg--landing .fs-bg__secondary { opacity: 0.13; }
+.fs-bg--landing .fs-bg__warm      { opacity: 0.14; }
+.fs-bg--landing .fs-bg__tertiary  { opacity: 0.08; }
+.fs-bg--landing .fs-bg__lines     { opacity: 0.10; }
+html.dark .fs-bg--landing .fs-bg__bloom     { opacity: 0.34; }
+html.dark .fs-bg--landing .fs-bg__secondary { opacity: 0.16; }
+html.dark .fs-bg--landing .fs-bg__warm      { opacity: 0.18; }
+html.dark .fs-bg--landing .fs-bg__tertiary  { opacity: 0.10; }
+html.dark .fs-bg--landing .fs-bg__lines     { opacity: 0.12; }
 
 /* Bloom drift animations — direct port. */
 @keyframes fs-bloom-drift {

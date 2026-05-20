@@ -531,14 +531,18 @@ function ClerkRedirectScreen(_props: {
 
   return (
     <div
-      className="relative flex min-h-screen w-full items-center justify-center px-6 py-10"
+      // `h-dvh` (dynamic viewport) instead of `min-h-screen` so the
+      // flex centering actually puts the card at the visual midline on
+      // every device — `min-h-screen` only floors the height, allowing
+      // a tall content stack to push the card down off-center.
+      className="relative flex h-dvh w-full items-center justify-center overflow-y-auto px-6 py-10"
       style={{
         fontFamily:
           '"Onest Variable", "Onest", "Plus Jakarta Sans", system-ui, sans-serif',
       }}
     >
       {/* 540px — matches the platform's AuthFormCard max width. */}
-      <div className="flex w-full max-w-[540px] flex-col items-center gap-7">
+      <div className="my-auto flex w-full max-w-[540px] flex-col items-center gap-7">
         {/* Brand lockup: mark + "Flowstarter Assistant" inline (same
             wordmark as the editor header), not a stacked overline. */}
         <FlowstarterWordmark size="lg" />

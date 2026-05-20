@@ -47,8 +47,11 @@ const TEMPLATE_ENTRIES: ReadonlyArray<TemplateAuditEntry> = [
 ] as const;
 
 // Sub-routes that exist inside each Astro template build. Only iterated
-// for templates with `hasPreview: true`.
-const PREVIEW_SUBROUTES = ['', 'about', 'contact', 'services', 'pricing'] as const;
+// for templates with `hasPreview: true`. Must be the intersection of
+// pages every previewable template ships — dorin-portfolio is the only
+// previewable today and doesn't include a pricing page, so don't audit
+// that subroute (add it back if a future preview ships one).
+const PREVIEW_SUBROUTES = ['', 'about', 'contact', 'services'] as const;
 
 const SCREENSHOT_DIR = path.join(__dirname, 'screenshots', 'templates');
 fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });

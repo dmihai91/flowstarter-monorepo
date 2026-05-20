@@ -3,24 +3,91 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lebădușul — Articole de Pescuit</title>
+  <title>Lebădușul — Articole de Pescuit · Flowstarter workspace</title>
   <meta name="description" content="Manage the lebadusularticoledepescuit.ro Shopify storefront — visit the live store, open the Flowstarter editor, or preview pending changes." />
   <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#fbf7ef" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0a0716" media="(prefers-color-scheme: dark)" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
+    /* Brand tokens — auto-flips on OS prefers-color-scheme. Mirrors the
+       editor's flow-design-system palette (brand.css). */
+    :root {
+      color-scheme: light dark;
+
+      --bg:           #fbf7ef;
+      --ink:          #120a22;
+      --ink-dim:      rgba(18, 10, 34, .62);
+      --ink-faint:    rgba(18, 10, 34, .42);
+      --ink-mono:     rgba(18, 10, 34, .50);
+      --surface:      rgba(255, 255, 255, .55);
+      --surface-edge: rgba(18, 10, 34, .10);
+      --surface-hover-edge: rgba(78, 94, 218, .30);
+      --rule:         rgba(18, 10, 34, .08);
+      --accent:       hsl(233, 68%, 46%);
+      --pill-bg:      rgba(18, 10, 34, .04);
+      --pill-edge:    rgba(18, 10, 34, .08);
+      --ok-fg:        hsl(151, 72%, 28%);
+      --ok-bg:        hsla(151, 72%, 40%, .08);
+      --ok-edge:      hsla(151, 72%, 40%, .22);
+      --bloom-1:      rgba(78, 94, 218, .18);
+      --bloom-2:      rgba(180, 83, 9, .10);
+      --bloom-3:      rgba(78, 94, 218, .12);
+      --card-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .85),
+        inset 0 -1px 0 rgba(18, 10, 34, .04),
+        0 14px 32px rgba(78, 94, 218, .06),
+        0 4px 12px rgba(18, 10, 34, .04);
+      --card-shadow-hover:
+        inset 0 1px 0 rgba(255, 255, 255, .92),
+        0 20px 44px rgba(78, 94, 218, .10),
+        0 6px 16px rgba(18, 10, 34, .06);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:           #0a0716;
+        --ink:          #f4eee4;
+        --ink-dim:      rgba(244, 238, 228, .72);
+        --ink-faint:    rgba(244, 238, 228, .50);
+        --ink-mono:     rgba(244, 238, 228, .55);
+        --surface:      rgba(22, 28, 45, .64);
+        --surface-edge: rgba(148, 163, 184, .22);
+        --surface-hover-edge: rgba(130, 148, 255, .42);
+        --rule:         rgba(244, 238, 228, .10);
+        --accent:       hsl(233, 76%, 72%);
+        --pill-bg:      rgba(148, 163, 184, .12);
+        --pill-edge:    rgba(148, 163, 184, .22);
+        --ok-fg:        hsl(151, 60%, 70%);
+        --ok-bg:        hsla(151, 60%, 50%, .14);
+        --ok-edge:      hsla(151, 60%, 50%, .28);
+        --bloom-1:      rgba(88, 106, 240, .26);
+        --bloom-2:      rgba(255, 160, 80, .14);
+        --bloom-3:      rgba(88, 106, 240, .20);
+        --card-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, .06),
+          inset 0 -1px 0 rgba(0, 0, 0, .34),
+          0 18px 44px rgba(2, 6, 23, .35),
+          0 6px 18px rgba(56, 97, 182, .12);
+        --card-shadow-hover:
+          inset 0 1px 0 rgba(255, 255, 255, .10),
+          0 24px 56px rgba(2, 6, 23, .42),
+          0 8px 22px rgba(56, 97, 182, .18);
+      }
+    }
+
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body {
       min-height: 100dvh;
       font-family: 'Onest', system-ui, sans-serif;
-      color: #120a22;
-      background: #fbf7ef;
+      color: var(--ink);
+      background: var(--bg);
       background-image:
-        radial-gradient(900px 600px at 12% -10%, rgba(78, 94, 218, 0.18), transparent 60%),
-        radial-gradient(720px 520px at 100% 8%, rgba(180, 83, 9, 0.10), transparent 65%),
-        radial-gradient(800px 600px at 50% 110%, rgba(78, 94, 218, 0.12), transparent 70%);
+        radial-gradient(900px 600px at 12% -10%, var(--bloom-1), transparent 60%),
+        radial-gradient(720px 520px at 100% 8%,  var(--bloom-2), transparent 65%),
+        radial-gradient(800px 600px at 50% 110%, var(--bloom-3), transparent 70%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -28,54 +95,76 @@
     }
     main {
       width: 100%;
-      max-width: 600px;
+      max-width: 640px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 32px;
+      align-items: stretch;
+      gap: 28px;
     }
+
+    /* Mark + header */
+    header { text-align: center; }
     .mark {
       width: 56px; height: 56px; border-radius: 16px;
+      margin: 0 auto 18px;
       background: linear-gradient(135deg, hsl(233, 65%, 50%) 0%, hsl(233, 75%, 60%) 50%, hsl(180, 65%, 55%) 100%);
       display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 700; font-size: 24px;
+      color: #fff; font-weight: 700; font-size: 22px; letter-spacing: -.02em;
       box-shadow: 0 1px 0 rgba(255,255,255,.32) inset, 0 8px 22px rgba(78,94,218,.32);
     }
-    header { text-align: center; }
     .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
       font-size: 11px; font-weight: 500; letter-spacing: .22em;
-      text-transform: uppercase; color: rgba(18, 10, 34, .42);
+      text-transform: uppercase; color: var(--ink-faint);
     }
     h1 {
-      margin: 8px 0 0;
-      font-size: clamp(1.6rem, 3vw, 2.1rem);
-      font-weight: 600; letter-spacing: -0.025em; line-height: 1.15;
+      margin: 10px 0 0;
+      font-size: clamp(1.55rem, 3vw, 2.05rem);
+      font-weight: 600; letter-spacing: -.025em; line-height: 1.15;
     }
-    h1 em { font-style: normal; font-weight: 600; color: hsl(233, 68%, 46%); }
+    h1 em { font-style: normal; font-weight: 600; color: var(--accent); }
     p.lead {
-      max-width: 44ch;
-      margin: 12px auto 0;
-      color: rgba(18, 10, 34, .62);
+      max-width: 46ch;
+      margin: 14px auto 0;
+      color: var(--ink-dim);
       line-height: 1.55;
     }
-    .links {
-      width: 100%;
+
+    /* Stats strip — quick workspace facts */
+    .stats {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 12px;
+      padding: 18px 20px;
+      border: 1px solid var(--surface-edge);
+      border-radius: 16px;
+      background: var(--surface);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      box-shadow: var(--card-shadow);
     }
+    .stat .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px; font-weight: 500; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--ink-mono);
+      margin-bottom: 4px;
+    }
+    .stat .value {
+      font-size: 14px; font-weight: 500; color: var(--ink);
+      letter-spacing: -.005em;
+    }
+    .stat .value a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--surface-edge); }
+    .stat .value a:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* Action cards */
+    .links { display: grid; grid-template-columns: 1fr; gap: 12px; }
     a.card {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 18px;
-      padding: 18px 22px;
-      background: rgba(255, 255, 255, .55);
-      border: 1px solid rgba(18, 10, 34, .10);
+      gap: 18px; padding: 18px 22px;
+      background: var(--surface);
+      border: 1px solid var(--surface-edge);
       border-radius: 16px;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.85),
-        inset 0 -1px 0 rgba(18,10,34,.04),
-        0 14px 32px rgba(78, 94, 218, .06),
-        0 4px 12px rgba(18, 10, 34, .04);
+      box-shadow: var(--card-shadow);
       backdrop-filter: blur(24px) saturate(150%);
       -webkit-backdrop-filter: blur(24px) saturate(150%);
       color: inherit; text-decoration: none;
@@ -83,57 +172,99 @@
     }
     a.card:hover {
       transform: translateY(-1px);
-      border-color: rgba(78, 94, 218, .30);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.92),
-        0 20px 44px rgba(78, 94, 218, .10),
-        0 6px 16px rgba(18, 10, 34, .06);
+      border-color: var(--surface-hover-edge);
+      box-shadow: var(--card-shadow-hover);
     }
     a.card .body { flex: 1; min-width: 0; }
-    a.card .row {
-      display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
-    }
-    a.card .title { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.015em; }
+    a.card .row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    a.card .title { font-size: 1.05rem; font-weight: 600; letter-spacing: -.015em; }
     a.card .pill {
       display: inline-flex; align-items: center;
-      font-family: ui-monospace, 'JetBrains Mono', monospace;
-      font-size: 10px; font-weight: 500;
-      letter-spacing: .16em; text-transform: uppercase;
-      color: rgba(18,10,34,.42);
-      background: rgba(18,10,34,.04);
-      border: 1px solid rgba(18,10,34,.08);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--ink-faint);
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-edge);
       border-radius: 999px;
       padding: 3px 9px;
     }
-    a.card .pill.ok { color: hsl(151, 72%, 28%); background: hsla(151, 72%, 40%, .08); border-color: hsla(151, 72%, 40%, .22); }
-    a.card .pill.soon { color: rgba(18,10,34,.46); }
-    a.card .desc { margin-top: 5px; color: rgba(18, 10, 34, .60); font-size: .92rem; line-height: 1.4; }
+    a.card .pill.ok { color: var(--ok-fg); background: var(--ok-bg); border-color: var(--ok-edge); }
+    a.card .pill.soon { color: var(--ink-faint); }
+    a.card .desc { margin-top: 5px; color: var(--ink-dim); font-size: .92rem; line-height: 1.4; }
     a.card .arrow {
       width: 32px; height: 32px; border-radius: 999px;
       background: rgba(78, 94, 218, .08);
-      color: hsl(233, 68%, 46%);
+      color: var(--accent);
       display: inline-flex; align-items: center; justify-content: center;
       font-size: 14px;
       flex-shrink: 0;
     }
-    a.card[aria-disabled="true"] { cursor: not-allowed; opacity: .72; }
-    a.card[aria-disabled="true"]:hover { transform: none; border-color: rgba(18, 10, 34, .10); }
-    footer {
-      font-size: 12px; color: rgba(18,10,34,.40); text-align: center;
+    @media (prefers-color-scheme: dark) {
+      a.card .arrow { background: rgba(130, 148, 255, .16); }
     }
-    footer a { color: inherit; }
+
+    /* About block */
+    .about {
+      padding: 22px 24px;
+      border: 1px solid var(--surface-edge);
+      border-radius: 16px;
+      background: var(--surface);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      box-shadow: var(--card-shadow);
+      font-size: .94rem; line-height: 1.55; color: var(--ink-dim);
+    }
+    .about h2 {
+      font-size: 11px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--ink-faint);
+      margin: 0 0 10px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+    .about p { margin: 0 0 10px; }
+    .about p:last-child { margin: 0; }
+    .about strong { color: var(--ink); font-weight: 600; }
+
+    /* Footer */
+    footer {
+      font-size: 12px; color: var(--ink-faint); text-align: center;
+      padding-top: 4px;
+    }
+    footer .meta {
+      display: inline-flex; align-items: center; gap: 14px;
+      flex-wrap: wrap; justify-content: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+    }
+    footer a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
   </style>
 </head>
 <body>
   <main>
     <header>
-      <div style="display:inline-flex;align-items:center;gap:12px;margin-bottom:18px">
-        <span class="mark" aria-hidden="true">L</span>
-      </div>
+      <div class="mark" aria-hidden="true">L</div>
       <div class="eyebrow">Flowstarter workspace</div>
       <h1>Lebădușul — <em>articole de pescuit</em></h1>
       <p class="lead">Manage the lebadusularticoledepescuit.ro storefront — visit the live site, open the editor, or preview pending changes.</p>
     </header>
+
+    <section class="stats" aria-label="Workspace summary">
+      <div class="stat">
+        <div class="label">Storefront</div>
+        <div class="value"><a href="https://lebadusularticoledepescuit.ro" rel="noopener external">lebadusularticoledepescuit.ro</a></div>
+      </div>
+      <div class="stat">
+        <div class="label">Theme</div>
+        <div class="value">Shopify Liquid</div>
+      </div>
+      <div class="stat">
+        <div class="label">Tier</div>
+        <div class="value">Pro</div>
+      </div>
+      <div class="stat">
+        <div class="label">Deploy</div>
+        <div class="value">Live</div>
+      </div>
+    </section>
 
     <nav class="links" aria-label="Workspace actions">
       <a class="card" href="https://lebadusularticoledepescuit.ro" rel="noopener external">
@@ -147,7 +278,7 @@
         <span class="arrow" aria-hidden="true">→</span>
       </a>
 
-      <a class="card" href="https://lebadusul.editor.flowstarter.net/">
+      <a class="card" href="/editor/">
         <div class="body">
           <div class="row">
             <span class="title">Open the editor</span>
@@ -158,7 +289,7 @@
         <span class="arrow" aria-hidden="true">→</span>
       </a>
 
-      <a class="card" href="https://lebadusul.preview.flowstarter.net/" aria-disabled="false">
+      <a class="card" href="/preview">
         <div class="body">
           <div class="row">
             <span class="title">Preview pending changes</span>
@@ -170,7 +301,21 @@
       </a>
     </nav>
 
-    <footer>Internal workspace · <a href="https://flowstarter.net">flowstarter.net</a></footer>
+    <section class="about" aria-label="About this workspace">
+      <h2>About this workspace</h2>
+      <p><strong>Lebădușul</strong> is a Romanian fishing-tackle storefront on Shopify. This Flowstarter workspace is the operator surface for the team — visit the live store, open the AI-paired editor on the draft theme, or preview pending changes before publishing.</p>
+      <p>Changes made in the editor never auto-publish: they sit on the draft theme until <em>Publish</em> is explicitly clicked, then go live via <code>shopify theme push</code>. The live store stays exactly as it was until then.</p>
+    </section>
+
+    <footer>
+      <div class="meta">
+        <span>workspace · lebadusul</span>
+        <span>·</span>
+        <span>fsn1 · cpx32</span>
+        <span>·</span>
+        <a href="https://flowstarter.net">flowstarter.net</a>
+      </div>
+    </footer>
   </main>
 </body>
 </html>

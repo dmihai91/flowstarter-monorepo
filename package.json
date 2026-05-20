@@ -92,6 +92,16 @@
         "react": "19",
         "react-dom": "19"
       }
-    }
+    },
+    "onlyBuiltDependencies": [
+      "node-pty",
+      "bufferutil",
+      "utf-8-validate",
+      "@parcel/watcher",
+      "esbuild",
+      "sharp",
+      "@swc/core",
+      "msgpackr-extract"
+    ]
   }
 }

@@ -17,9 +17,10 @@
 FROM node:22-bookworm AS build
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 # corepack → pnpm 10 (matches repo); bun for the router (bun's installer
-# needs `unzip`); build tools for node-pty's native addon.
+# needs `unzip`); python3 + build-essential for node-pty's native addon
+# (no linux-x64 prebuild ships in node-pty 1.1.0 → must compile).
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends unzip \
+  && apt-get install -y --no-install-recommends unzip python3 build-essential \
   && rm -rf /var/lib/apt/lists/* \
   && corepack enable && corepack prepare pnpm@10.29.2 --activate \
   && npm i -g @anthropic-ai/claude-code \
@@ -39,6 +40,10 @@ ARG VITE_CLERK_PUBLISHABLE_KEY=""
 ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
 
 RUN pnpm install --frozen-lockfile \
+  # pnpm 10 skips install scripts by default; force node-pty's so its
+  # native addon (`build/Release/pty.node`) actually gets compiled —
+  # the server's terminal subsystem hangs the boot without it.
+  && pnpm rebuild node-pty \
   && pnpm --filter @flowstarter/editor-web build \
   && pnpm --filter @flowstarter/editor-server build \
   # Bundle the web output where the server looks first

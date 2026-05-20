@@ -374,8 +374,25 @@ export default clerkMiddleware(async (auth, req) => {
         ...getAllowedRedirectOrigins(req.headers.get('host') ?? undefined),
       ].filter(Boolean) as string[];
       const isAllowedOrigin = !!origin && allowedOrigins.includes(origin);
+      // Standard browser-attested same-origin check: the Origin header must
+      // match the request's Host. Origin is browser-set and unspoofable
+      // from page JS, so `Origin === <proto>://<Host>` IS same-origin by
+      // definition. Works uniformly for localhost dev, LAN/tunnel dev
+      // (e.g. http://192.168.x.y, ngrok), and prod — independent of
+      // `req.nextUrl.origin`, which in Next dev uses the bind host instead
+      // of the request Host and therefore 403s legitimate LAN browsers.
+      const host = req.headers.get('host') || '';
+      const proto =
+        req.headers.get('x-forwarded-proto') ||
+        req.nextUrl.protocol.replace(':', '') ||
+        'http';
+      const hostOrigin = host ? `${proto}://${host}` : '';
       const isSameOrigin =
-        (!!origin && origin === siteOrigin) || referer.startsWith(siteOrigin);
+        (!!origin &&
+          (origin === siteOrigin ||
+            (!!hostOrigin && origin === hostOrigin))) ||
+        referer.startsWith(siteOrigin) ||
+        (!!hostOrigin && referer.startsWith(hostOrigin));
 
       const applyCorsHeaders = (response: NextResponse) => {
         if (isAllowedOrigin) {

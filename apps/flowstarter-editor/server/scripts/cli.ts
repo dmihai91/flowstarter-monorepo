@@ -9,9 +9,9 @@ import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process";
 import {
   DEVELOPMENT_ICON_OVERRIDES,
   PUBLISH_ICON_OVERRIDES,
-} from "../../../scripts/lib/brand-assets.ts";
-import { resolveCatalogDependencies } from "../../../scripts/lib/resolve-catalog.ts";
-import rootPackageJson from "../../../package.json" with { type: "json" };
+} from "./lib/brand-assets.ts";
+import { resolveCatalogDependencies } from "./lib/resolve-catalog.ts";
+import rootPackageJson from "../../../../package.json" with { type: "json" };
 import serverPackageJson from "../package.json" with { type: "json" };
 
 class CliError extends Data.TaggedError("CliError")<{
@@ -19,8 +19,12 @@ class CliError extends Data.TaggedError("CliError")<{
   readonly cause?: unknown;
 }> {}
 
+// `../../../..` from apps/flowstarter-editor/server/scripts/cli.ts → repo root.
+// (Upstream T3's layout is `apps/server/scripts/cli.ts`, hence the upstream
+// used `../../..` — our editor lives one level deeper under
+// `apps/flowstarter-editor/`.)
 const RepoRoot = Effect.service(Path.Path).pipe(
-  Effect.flatMap((path) => path.fromFileUrl(new URL("../../..", import.meta.url))),
+  Effect.flatMap((path) => path.fromFileUrl(new URL("../../../..", import.meta.url))),
 );
 
 const runCommand = Effect.fn("runCommand")(function* (command: ChildProcess.Command) {
@@ -127,7 +131,7 @@ const buildCmd = Command.make(
       const path = yield* Path.Path;
       const fs = yield* FileSystem.FileSystem;
       const repoRoot = yield* RepoRoot;
-      const serverDir = path.join(repoRoot, "apps/server");
+      const serverDir = path.join(repoRoot, "apps/flowstarter-editor/server");
 
       yield* Effect.log("[cli] Running tsdown...");
       yield* runCommand(
@@ -140,7 +144,7 @@ const buildCmd = Command.make(
         })`bun tsdown`,
       );
 
-      const webDist = path.join(repoRoot, "apps/web/dist");
+      const webDist = path.join(repoRoot, "apps/flowstarter-editor/web/dist");
       const clientTarget = path.join(serverDir, "dist/client");
 
       if (yield* fs.exists(webDist)) {
@@ -172,7 +176,7 @@ const publishCmd = Command.make(
       const path = yield* Path.Path;
       const fs = yield* FileSystem.FileSystem;
       const repoRoot = yield* RepoRoot;
-      const serverDir = path.join(repoRoot, "apps/server");
+      const serverDir = path.join(repoRoot, "apps/flowstarter-editor/server");
       const packageJsonPath = path.join(serverDir, "package.json");
       const backupPath = `${packageJsonPath}.bak`;
 

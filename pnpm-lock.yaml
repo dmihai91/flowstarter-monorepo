@@ -967,6 +967,34 @@ importers:
         specifier: ^5.4.1
         version: 5.18.1(@types/node@25.2.3)(ioredis@5.10.1)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.32.0)(rollup@4.57.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(uploadthing@7.7.4(express@5.2.1)(h3@1.15.11)(next@16.2.0(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(babel-plugin-macros@3.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.97.3))(tailwindcss@4.1.18))(yaml@2.8.3)
 
+  apps/lebadusul-landing:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.90.0
+        version: 5.90.21(react@19.2.4)
+      react:
+        specifier: 19.2.4
+        version: 19.2.4
+      react-dom:
+        specifier: 19.2.4
+        version: 19.2.4(react@19.2.4)
+    devDependencies:
+      '@types/react':
+        specifier: 19.1.0
+        version: 19.1.0
+      '@types/react-dom':
+        specifier: 19.1.2
+        version: 19.1.2(@types/react@19.1.0)
+      '@vitejs/plugin-react':
+        specifier: ^6.0.0
+        version: 6.0.1(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.0)(@babel/plugin-transform-runtime@7.29.0(@babel/core@7.29.0))(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.16)(vite@8.0.8(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3)))(babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411)(vite@8.0.8(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3))
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vite:
+        specifier: ^8.0.0
+        version: 8.0.8(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3)
+
   packages/agentic-codegen:
     devDependencies:
       tsx:
@@ -25081,7 +25109,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.1.0
-      vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.2.3)(@vitest/browser-playwright@4.1.4)(@vitest/ui@4.0.18)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@25.2.3)(typescript@5.9.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3)
+      vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@20.19.9)(@vitest/ui@4.0.18)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(less@4.5.1)(lightningcss@1.32.0)(msw@2.12.11(@types/node@20.19.9)(typescript@5.7.3))(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.3)
     optional: true
 
   '@vitest/utils@4.0.18':

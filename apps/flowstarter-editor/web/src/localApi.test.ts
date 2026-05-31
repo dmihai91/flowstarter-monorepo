@@ -222,6 +222,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe("wsApi", () => {
@@ -428,6 +429,11 @@ describe("wsApi", () => {
   });
 
   it("reads and writes persistence through browser storage", async () => {
+    // Browser persistence routes through window.localStorage (gated on
+    // `typeof window`); the env is node, so stub a window carrying the
+    // storage. Stubbing only the global `localStorage` (as the shared
+    // beforeEach does) is never read by this path.
+    vi.stubGlobal("window", { localStorage: createLocalStorageStub() });
     const { createLocalApi } = await import("./localApi");
     const api = createLocalApi(rpcClientMock as never);
 

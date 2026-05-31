@@ -99,25 +99,26 @@ describe("environment runtime catalog stores", () => {
       throw new Error("Registry read resolver was not initialized.");
     };
 
-    vi.stubGlobal("window", {
-      nativeApi: {
-        persistence: {
-          getClientSettings: async () => null,
-          setClientSettings: async () => undefined,
-          getSavedEnvironmentRegistry: () =>
-            new Promise<readonly PersistedSavedEnvironmentRecord[]>((resolve) => {
-              resolveRegistryRead = () => resolve([]);
-            }),
-          setSavedEnvironmentRegistry: async () => undefined,
-          getSavedEnvironmentSecret: async () => null,
-          setSavedEnvironmentSecret: async () => true,
-          removeSavedEnvironmentSecret: async () => undefined,
-        },
-      } satisfies Pick<LocalApi, "persistence">,
-    });
-
-    const { __resetLocalApiForTests } = await import("../../localApi");
+    // ensureLocalApi() resolves the injected test API — the refactored
+    // localApi no longer reads window.nativeApi — so inject a persistence
+    // surface whose registry read we resolve on demand. window stays stubbed
+    // by beforeEach, so readLocalApi() returns this override.
+    const { __resetLocalApiForTests, __setLocalApiForTests } = await import("../../localApi");
     await __resetLocalApiForTests();
+    __setLocalApiForTests({
+      persistence: {
+        getClientSettings: async () => null,
+        setClientSettings: async () => undefined,
+        getSavedEnvironmentRegistry: () =>
+          new Promise<readonly PersistedSavedEnvironmentRecord[]>((resolve) => {
+            resolveRegistryRead = () => resolve([]);
+          }),
+        setSavedEnvironmentRegistry: async () => undefined,
+        getSavedEnvironmentSecret: async () => null,
+        setSavedEnvironmentSecret: async () => true,
+        removeSavedEnvironmentSecret: async () => undefined,
+      },
+    } as unknown as LocalApi);
 
     const hydrationPromise = waitForSavedEnvironmentRegistryHydration();
 

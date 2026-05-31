@@ -129,6 +129,7 @@ import {
 } from "../lib/terminalContext";
 import { selectThreadTerminalState, useTerminalStateStore } from "../terminalStateStore";
 import { ChatComposer, type ChatComposerHandle } from "./chat/ChatComposer";
+import { ComposerLimitReachedPanel } from "./chat/ComposerLimitReachedPanel";
 import { ExpandedImageDialog } from "./chat/ExpandedImageDialog";
 import { PullRequestThreadDialog } from "./PullRequestThreadDialog";
 import { MessagesTimeline } from "./chat/MessagesTimeline";
@@ -3378,6 +3379,7 @@ export default function ChatView(props: ChatViewProps) {
 
           {/* Input bar */}
           <div className={cn("px-3 pt-1.5 sm:px-5 sm:pt-2", isGitRepo ? "pb-1" : "pb-3 sm:pb-4")}>
+            <ComposerLimitReachedPanel />
             <ChatComposer
               ref={composerRef}
               composerDraftTarget={composerDraftTarget}

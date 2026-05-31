@@ -6,6 +6,25 @@
 
 import type { PlanKey, ClerkWorkspaceContext } from "./clerkSession";
 
+/**
+ * Monthly €-budget gate decision, mirrored from the server
+ * (`apps/flowstarter-editor/server/src/usage/usageAccounting.ts`). `null`
+ * when it couldn't be evaluated — the UI treats that as "not blocked"
+ * (fail-open), matching the server which admits turns in that case.
+ */
+export interface UsageGateDecision {
+  readonly tier: PlanKey;
+  readonly blocked: boolean;
+  readonly reason: "sessions" | "budget" | null;
+  readonly softReached: boolean;
+  readonly isMax: boolean;
+  readonly sessionsUsed: number;
+  readonly sessionLimit: number | null;
+  readonly aiCostEur: number;
+  readonly monthlyBudgetEur: number | null;
+  readonly perEditCapEur: number | null;
+}
+
 export interface UsageSnapshot {
   readonly status: "ok";
   readonly workspace: ClerkWorkspaceContext;
@@ -25,6 +44,7 @@ export interface UsageSnapshot {
     readonly inThisMonth: number;
     readonly outThisMonth: number;
   };
+  readonly gate: UsageGateDecision | null;
 }
 
 export type UsageResolution =

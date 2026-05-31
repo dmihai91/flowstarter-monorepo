@@ -30,7 +30,138 @@ type ClerkWebhookEventType =
   | 'session.removed'
   | 'organization.created'
   | 'organization.updated'
-  | 'organization.deleted';
+  | 'organization.deleted'
+  // Clerk Billing (B2C). Note: Clerk event names (dot/camelCase), not Stripe's.
+  | 'subscription.created'
+  | 'subscription.updated'
+  | 'subscription.active'
+  | 'subscription.pastDue'
+  | 'subscriptionItem.canceled'
+  | 'subscriptionItem.ended';
+
+// Canonical PlanKey values the editor enforces (planEntitlements.ts) and that
+// the Clerk Billing plan slugs are configured to match (clerk-billing.json).
+const CANONICAL_TIER_SLUGS = new Set(['starter', 'pro', 'max', 'ecommerce']);
+
+interface ClerkBillingEventData {
+  id: string;
+  status?: string;
+  payer?: { user_id?: string | null; organization_id?: string | null };
+  items?: Array<{ plan?: { slug?: string | null } | null } | null>;
+}
+
+/**
+ * Map a Clerk Billing subscription event to the workspace tier update we
+ * mirror into Supabase. Pure + exported for tests.
+ *
+ * - active/created/updated → set tier_name from the plan slug, status active.
+ * - pastDue → keep the tier (grace), mark status past_due.
+ * - canceled/ended → downgrade tier_name to null (→ Starter floor via
+ *   normalisePlanKey in the editor), status canceled.
+ * Returns null when there's no B2C user payer (we mirror user subscriptions
+ * only) or no usable plan slug.
+ */
+export function billingEventToTierUpdate(
+  eventType: ClerkWebhookEventType,
+  data: ClerkBillingEventData
+): {
+  clerkUserId: string;
+  // omitted = leave tier_name unchanged; null = downgrade to floor;
+  // string = set to this canonical slug.
+  tierName?: string | null;
+  subscriptionStatus: string;
+} | null {
+  const clerkUserId = data.payer?.user_id ?? null;
+  if (!clerkUserId) return null; // org payers are out of scope (B2C only)
+
+  const planSlug = data.items?.[0]?.plan?.slug ?? null;
+
+  switch (eventType) {
+    case 'subscriptionItem.canceled':
+    case 'subscriptionItem.ended':
+      return { clerkUserId, tierName: null, subscriptionStatus: 'canceled' };
+    case 'subscription.pastDue':
+      // Grace period: keep the current tier, only flag status (tierName omitted).
+      return { clerkUserId, subscriptionStatus: 'past_due' };
+    case 'subscription.created':
+    case 'subscription.updated':
+    case 'subscription.active':
+      if (!planSlug || !CANONICAL_TIER_SLUGS.has(planSlug)) return null;
+      return {
+        clerkUserId,
+        tierName: planSlug,
+        subscriptionStatus: data.status ?? 'active',
+      };
+    default:
+      return null;
+  }
+}
+
+/**
+ * Mirror a Clerk Billing subscription event into Supabase: resolve the payer's
+ * workspace(s) via workspace_memberships and update tier_name (when the event
+ * dictates) + subscription_status. The editor reads tier_name → PLAN_ENTITLEMENTS,
+ * so this is the only wiring needed for enforcement to follow the subscription.
+ */
+async function handleBillingSubscription(
+  eventType: ClerkWebhookEventType,
+  data: ClerkBillingEventData
+): Promise<void> {
+  const update = billingEventToTierUpdate(eventType, data);
+  if (!update) {
+    console.info(
+      `[Clerk Webhook] Billing event ${eventType} ignored (no user payer / unknown plan).`
+    );
+    return;
+  }
+
+  const supabase = createSupabaseServiceRoleClient();
+
+  const { data: memberships, error: membershipError } = await supabase
+    .from('workspace_memberships')
+    .select('workspace_id')
+    .eq('clerk_user_id', update.clerkUserId);
+  if (membershipError) {
+    console.error(
+      '[Clerk Webhook] membership lookup failed:',
+      membershipError.message
+    );
+    return;
+  }
+  const workspaceIds = (memberships ?? [])
+    .map((m) => m.workspace_id)
+    .filter((id): id is string => typeof id === 'string');
+  if (workspaceIds.length === 0) {
+    console.warn(
+      `[Clerk Webhook] No workspace for clerk user ${update.clerkUserId}; tier not mirrored.`
+    );
+    return;
+  }
+
+  const patch: { subscription_status: string; tier_name?: string | null } = {
+    subscription_status: update.subscriptionStatus,
+  };
+  if ('tierName' in update) {
+    patch.tier_name = update.tierName ?? null;
+  }
+
+  const { error: updateError } = await supabase
+    .from('workspaces')
+    .update(patch)
+    .in('id', workspaceIds);
+  if (updateError) {
+    console.error(
+      '[Clerk Webhook] workspace tier mirror failed:',
+      updateError.message
+    );
+    return;
+  }
+  console.info(
+    `[Clerk Webhook] ${eventType}: mirrored ${update.subscriptionStatus}` +
+      (patch.tier_name !== undefined ? ` / tier=${patch.tier_name}` : '') +
+      ` to ${workspaceIds.length} workspace(s).`
+  );
+}
 
 interface ClerkUserData {
   id: string;
@@ -168,6 +299,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       case 'session.ended':
       case 'session.removed':
         console.info(`[Clerk Webhook] Session event: ${event.type}`);
+        break;
+      case 'subscription.created':
+      case 'subscription.updated':
+      case 'subscription.active':
+      case 'subscription.pastDue':
+      case 'subscriptionItem.canceled':
+      case 'subscriptionItem.ended':
+        await handleBillingSubscription(
+          event.type,
+          event.data as unknown as ClerkBillingEventData
+        );
         break;
       default:
         console.info(`[Clerk Webhook] Unhandled event type: ${event.type}`);

@@ -13,6 +13,13 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'on',
     video: 'on-first-retry',
+    // The library pages reveal content via scroll animations gated behind
+    // `@media (prefers-reduced-motion: no-preference)` (see library.css). Under
+    // reduced-motion those `.reveal` elements render immediately (no opacity:0
+    // start state), so headings are visible without waiting on an animation /
+    // IntersectionObserver that fires unreliably in headless. Emulating reduced
+    // motion makes the templates-audit deterministic instead of flaky.
+    reducedMotion: 'reduce',
   },
 
   projects: [

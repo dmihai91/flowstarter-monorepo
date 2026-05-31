@@ -70,19 +70,32 @@ export type PlanEntitlement = {
 /**
  * The canonical table.
  *
- * NOTE — TUNABLE NUMBERS: only Starter's monthly soft threshold (~€25)
- * was given explicitly. Pro/Max/Ecommerce soft + all hard ceilings are
- * derived proportionally and flagged here; change in ONE place. The
- * Max hard ceiling (€190 on a €249 plan) is the margin circuit-breaker
- * agreed in planning.
+ * COST MODEL (decided 2026-05-31, calibrated against live token usage):
+ * "many edits, each bounded in depth." Two AI-cost guards:
+ *   - `eurCostCapPerSession` = how deep a single back-and-forth edit may
+ *     go before its active turn is interrupted. Flat €0.50 across paid
+ *     tiers (measured: shallow edit ≈ €0.11, deep whole-page analysis +
+ *     plan ≈ €0.28, so €0.50 clears normal deep work and bounds only
+ *     runaways).
+ *   - `monthlyHardCeilingEur` = the overall monthly AI budget / margin
+ *     circuit-breaker. Founding-phase generous set (decided 2026-05-31):
+ *     €20 Starter, €50 Pro, €75 Ecommerce, €150 Max. Worst-case margin
+ *     ~37–51% at 10 clients/host, but typical realized margin stays
+ *     ~90%+ (real edits run €0.12–€0.28 and monthly usage is light, so
+ *     the ceiling is headroom, not the expected spend). Tighten before
+ *     scaling past founding clients. Soft thresholds sit ~75% of hard.
+ * `sessionsPerMonth` is unchanged here and still the enforced limit; the
+ * € budget is intended to become the binding "edits included" lever once
+ * cost accumulation is wired (today only session COUNT is enforced in
+ * tierLimits.ts — the € caps are declared, not yet enforced).
  */
 export const PLAN_ENTITLEMENTS: Readonly<Record<PlanKey, PlanEntitlement>> = {
   starter: {
     plan: "starter",
     sessionsPerMonth: 30,
-    eurCostCapPerSession: 1,
-    monthlySoftThresholdEur: 25, // explicit (user)
-    monthlyHardCeilingEur: 30, // TUNABLE
+    eurCostCapPerSession: 0.5, // per-edit depth cap (flat across paid tiers)
+    monthlySoftThresholdEur: 15, // ≈ 75% of hard
+    monthlyHardCeilingEur: 20, // monthly AI budget (founding-phase generous)
     modelAccess: "autorouter-locked",
     editScope: "constrained",
     storeOps: false,
@@ -91,9 +104,9 @@ export const PLAN_ENTITLEMENTS: Readonly<Record<PlanKey, PlanEntitlement>> = {
   pro: {
     plan: "pro",
     sessionsPerMonth: 60,
-    eurCostCapPerSession: 2,
-    monthlySoftThresholdEur: 50, // TUNABLE (≈ Starter × cap ratio)
-    monthlyHardCeilingEur: 75, // TUNABLE
+    eurCostCapPerSession: 0.5, // per-edit depth cap (flat across paid tiers)
+    monthlySoftThresholdEur: 38, // ≈ 75% of hard
+    monthlyHardCeilingEur: 50, // monthly AI budget (founding-phase generous)
     modelAccess: "autorouter+picker",
     editScope: "constrained",
     storeOps: false,
@@ -102,9 +115,9 @@ export const PLAN_ENTITLEMENTS: Readonly<Record<PlanKey, PlanEntitlement>> = {
   max: {
     plan: "max",
     sessionsPerMonth: 120,
-    eurCostCapPerSession: 3,
-    monthlySoftThresholdEur: 75, // TUNABLE
-    monthlyHardCeilingEur: 190, // agreed margin circuit-breaker (€249 plan)
+    eurCostCapPerSession: 0.5, // per-edit depth cap (flat; revisit for code scope — see report)
+    monthlySoftThresholdEur: 112, // ≈ 75% of hard
+    monthlyHardCeilingEur: 150, // monthly AI budget (founding-phase generous; was €190)
     modelAccess: "autorouter+picker+code",
     editScope: "code",
     storeOps: false,
@@ -113,9 +126,9 @@ export const PLAN_ENTITLEMENTS: Readonly<Record<PlanKey, PlanEntitlement>> = {
   ecommerce: {
     plan: "ecommerce",
     sessionsPerMonth: 90, // Pro+ (more sessions than Pro, store-ops on top)
-    eurCostCapPerSession: 2,
-    monthlySoftThresholdEur: 43, // TUNABLE (€149→€129 scaled ≈ ×0.866)
-    monthlyHardCeilingEur: 95, // TUNABLE (€129 plan)
+    eurCostCapPerSession: 0.5, // per-edit depth cap (flat across paid tiers)
+    monthlySoftThresholdEur: 56, // ≈ 75% of hard
+    monthlyHardCeilingEur: 75, // monthly AI budget (founding-phase generous)
     modelAccess: "autorouter+picker",
     editScope: "constrained",
     storeOps: true,

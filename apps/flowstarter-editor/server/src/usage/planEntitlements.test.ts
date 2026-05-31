@@ -14,42 +14,48 @@ import {
 const ALL_PLANS: PlanKey[] = ["starter", "pro", "max", "ecommerce", "admin"];
 
 describe("PLAN_ENTITLEMENTS — agreed matrix", () => {
-  it("starter: 30 sessions, €1 cap, locked autorouter, constrained, no store ops", () => {
+  it("starter: 30 sessions, €0.50 per-edit cap, €20 monthly budget, locked autorouter, constrained, no store ops", () => {
     expect(PLAN_ENTITLEMENTS.starter).toMatchObject({
       sessionsPerMonth: 30,
-      eurCostCapPerSession: 1,
-      monthlySoftThresholdEur: 25,
+      eurCostCapPerSession: 0.5,
+      monthlySoftThresholdEur: 15,
+      monthlyHardCeilingEur: 20,
       modelAccess: "autorouter-locked",
       editScope: "constrained",
       storeOps: false,
     });
   });
 
-  it("pro: 60 sessions, €2 cap, picker unlocked, constrained", () => {
+  it("pro: 60 sessions, €0.50 per-edit cap, €50 monthly budget, picker unlocked, constrained", () => {
     expect(PLAN_ENTITLEMENTS.pro).toMatchObject({
       sessionsPerMonth: 60,
-      eurCostCapPerSession: 2,
+      eurCostCapPerSession: 0.5,
+      monthlySoftThresholdEur: 38,
+      monthlyHardCeilingEur: 50,
       modelAccess: "autorouter+picker",
       editScope: "constrained",
       storeOps: false,
     });
   });
 
-  it("max: 120 sessions, €3 cap, code unlocked, €190 margin ceiling", () => {
+  it("max: 120 sessions, €0.50 per-edit cap, €150 monthly budget, code unlocked", () => {
     expect(PLAN_ENTITLEMENTS.max).toMatchObject({
       sessionsPerMonth: 120,
-      eurCostCapPerSession: 3,
-      monthlyHardCeilingEur: 190,
+      eurCostCapPerSession: 0.5,
+      monthlySoftThresholdEur: 112,
+      monthlyHardCeilingEur: 150,
       modelAccess: "autorouter+picker+code",
       editScope: "code",
       storeOps: false,
     });
   });
 
-  it("ecommerce: Pro+ sessions + store ops with a separate allowance", () => {
+  it("ecommerce: Pro+ sessions, €0.50 per-edit cap, €75 monthly budget, store ops with a separate allowance", () => {
     expect(PLAN_ENTITLEMENTS.ecommerce).toMatchObject({
       sessionsPerMonth: 90,
-      eurCostCapPerSession: 2,
+      eurCostCapPerSession: 0.5,
+      monthlySoftThresholdEur: 56,
+      monthlyHardCeilingEur: 75,
       modelAccess: "autorouter+picker",
       editScope: "constrained",
       storeOps: true,

@@ -204,16 +204,28 @@ sessions. Change or cancel anytime; first month free.
 
 | Plan | Price | AI edit sessions/mo | €/session cap | Model access | Edit scope | Store ops |
 |------|-------|---------------------|---------------|--------------|-----------|-----------|
-| Starter | €49/mo | 30 | €1 | Autorouter, locked to small models (sonnet-4.6 / gpt-5.4-mini) | Constrained | — |
-| Pro | €99/mo | 60 | €2 | Autorouter + manual model picker | Constrained | — |
-| Max | €249/mo | 120 | €3 | Pro + code experimentation (break-risk warning; paid help €20/h) | Code | — |
-| Ecommerce | €129/mo | 90 | €2 | Pro+ (more sessions than Pro) | Constrained | Products + collections (separate allowance) |
+| Starter | €49/mo | 30 | €0.50 | Autorouter, locked to small models (sonnet-4.6 / gpt-5.4-mini) | Constrained | — |
+| Pro | €99/mo | 60 | €0.50 | Autorouter + manual model picker | Constrained | — |
+| Max | €249/mo | 120 | €0.50 | Pro + code experimentation (break-risk warning; paid help €20/h) | Code | — |
+| Ecommerce | €129/mo | 90 | €0.50 | Pro+ (more sessions than Pro) | Constrained | Products + collections (separate allowance) |
 
 Internal cost guards (EUR, not shown to customers, tunable in
-`planEntitlements.ts`): a monthly **soft threshold** fires an
-upgrade/buy-extra nudge (Starter ≈ €25); a monthly **hard ceiling** is a
-margin circuit-breaker that soft-blocks and routes the user to a custom
-contract (Max = €190 on the €249 plan).
+`planEntitlements.ts`). Model: **many edits, each bounded in depth.**
+- **Per-edit depth cap** (the €/session column, €0.50 flat): interrupts a
+  single back-and-forth edit when its provider cost exceeds the cap.
+  Calibrated against live usage (shallow edit ≈ €0.11, deep whole-page
+  analysis + plan ≈ €0.28), so €0.50 clears normal deep work and bounds
+  only runaways.
+- **Monthly soft threshold**: upgrade/buy-extra nudge (~75% of hard).
+- **Monthly hard ceiling**: overall AI budget / margin circuit-breaker.
+  Founding-phase generous set (2026-05-31, explicit Darius instruction):
+  **€20 Starter / €50 Pro / €75 Ecommerce / €150 Max** (soft €15 / €38 /
+  €56 / €112). At 10 clients/host (€3.25 infra ea), worst-case margin
+  (budget fully spent) ≈ 37–51%; at 70–80% utilization ≈ 49–63%; typical
+  observed usage is far lighter so realized margin is much higher.
+  Deliberately generous early; tighten before scaling past founding
+  clients. NOTE: only session *count* is enforced today (`tierLimits.ts`)
+  — the € caps are declared, not yet wired to interrupt/block.
 
 The **Ecommerce** build package still auto-applies its dedicated store
 plan for Commerce builds; store editing (products + collections) draws

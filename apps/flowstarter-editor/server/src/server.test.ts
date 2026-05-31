@@ -1264,8 +1264,14 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
     Effect.gen(function* () {
       yield* buildAppUnderTest();
 
-      const first = yield* bootstrapBrowserSession();
-      const second = yield* bootstrapBrowserSession();
+      // Reuse ONE credential across both exchanges — bootstrap credentials are
+      // one-time-use (consumeAvailable marks consumedAt), so the second
+      // exchange of the same credential must be rejected. Calling
+      // bootstrapBrowserSession() with no argument would mint a fresh
+      // credential each time and exercise nothing.
+      const credential = yield* issueOwnerBootstrapCredential;
+      const first = yield* bootstrapBrowserSession(credential);
+      const second = yield* bootstrapBrowserSession(credential);
 
       assert.equal(first.response.status, 200);
       assert.equal(second.response.status, 401);

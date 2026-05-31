@@ -1,8 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import {
+  configureWorkspaceSlug,
   evaluateGate,
+  gateForConfiguredWorkspace,
+  getConfiguredWorkspaceSlug,
   isNewUtcMonth,
+  recordTurnCostForConfiguredWorkspace,
   usdToEur,
   utcMonthStart,
 } from "./usageAccounting";
@@ -36,6 +40,60 @@ describe("usdToEur", () => {
   it("applies the rate", () => {
     expect(usdToEur(10, 0.9)).toBeCloseTo(9);
     expect(usdToEur(0, 0.92)).toBe(0);
+  });
+});
+
+describe("configureWorkspaceSlug / getConfiguredWorkspaceSlug", () => {
+  afterEach(() => configureWorkspaceSlug(null));
+
+  it("stores and returns a slug", () => {
+    configureWorkspaceSlug("lebadusul");
+    expect(getConfiguredWorkspaceSlug()).toBe("lebadusul");
+  });
+  it("trims surrounding whitespace", () => {
+    configureWorkspaceSlug("  lebadusul  ");
+    expect(getConfiguredWorkspaceSlug()).toBe("lebadusul");
+  });
+  it("treats empty / whitespace / null / undefined as unset", () => {
+    configureWorkspaceSlug("x");
+    configureWorkspaceSlug("   ");
+    expect(getConfiguredWorkspaceSlug()).toBe(null);
+    configureWorkspaceSlug("y");
+    configureWorkspaceSlug(null);
+    expect(getConfiguredWorkspaceSlug()).toBe(null);
+    configureWorkspaceSlug(undefined);
+    expect(getConfiguredWorkspaceSlug()).toBe(null);
+  });
+});
+
+describe("configured-workspace hot-path hooks (fail-open)", () => {
+  afterEach(() => configureWorkspaceSlug(null));
+
+  it("gateForConfiguredWorkspace → null when no slug configured (no DB touch)", async () => {
+    configureWorkspaceSlug(null);
+    expect(await gateForConfiguredWorkspace()).toBe(null);
+  });
+
+  it("gateForConfiguredWorkspace → null (fail-open) when configured but Supabase unavailable", async () => {
+    // Test env has no SUPABASE_* — getUsageSupabase throws, gateForSlug swallows → null.
+    configureWorkspaceSlug("lebadusul");
+    expect(await gateForConfiguredWorkspace()).toBe(null);
+  });
+
+  it("recordTurnCostForConfiguredWorkspace → false when no slug configured", async () => {
+    configureWorkspaceSlug(null);
+    expect(await recordTurnCostForConfiguredWorkspace(0.42)).toBe(false);
+  });
+
+  it("recordTurnCostForConfiguredWorkspace → false for non-positive cost (no DB touch)", async () => {
+    configureWorkspaceSlug("lebadusul");
+    expect(await recordTurnCostForConfiguredWorkspace(0)).toBe(false);
+    expect(await recordTurnCostForConfiguredWorkspace(-1)).toBe(false);
+  });
+
+  it("recordTurnCostForConfiguredWorkspace → false (fail-open) when Supabase unavailable", async () => {
+    configureWorkspaceSlug("lebadusul");
+    expect(await recordTurnCostForConfiguredWorkspace(0.42)).toBe(false);
   });
 });
 

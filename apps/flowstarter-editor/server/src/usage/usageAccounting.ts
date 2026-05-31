@@ -35,6 +35,24 @@ import {
   normalisePlanKey,
 } from "./planEntitlements.ts";
 
+/**
+ * The editor server is single-workspace-per-process (cwd = /workspaces/<slug>).
+ * Rather than thread `ServerConfig` through the Effect orchestration layers,
+ * the slug is configured once at startup and read by the turn-path hooks.
+ * Unset → the hooks no-op / fail-open (enforcement never breaks editing).
+ */
+let configuredWorkspaceSlug: string | null = null;
+
+/** Set once at server startup from `basename(ServerConfig.cwd)`. */
+export function configureWorkspaceSlug(slug: string | null | undefined): void {
+  const trimmed = slug?.trim();
+  configuredWorkspaceSlug = trimmed && trimmed.length > 0 ? trimmed : null;
+}
+
+export function getConfiguredWorkspaceSlug(): string | null {
+  return configuredWorkspaceSlug;
+}
+
 /** USD→EUR conversion for comparing stored USD cost against € ceilings. */
 export const USD_EUR_RATE = (() => {
   const raw = Number.parseFloat(process.env.FLOWSTARTER_USD_EUR ?? "");
@@ -331,4 +349,30 @@ export async function gateForSlug(
   } catch {
     return null;
   }
+}
+
+// ─── Configured-workspace hot-path hooks (turn lifecycle) ────────────────────
+
+/**
+ * Pre-turn gate for the process's configured workspace. Fail-open: returns
+ * `null` (admit the turn) when no slug is configured or Supabase is
+ * unreachable. The reactor refuses the turn only on an explicit `blocked`.
+ */
+export async function gateForConfiguredWorkspace(
+  now: Date = new Date(),
+): Promise<GateDecision | null> {
+  if (!configuredWorkspaceSlug) return null;
+  return gateForSlug(configuredWorkspaceSlug, now);
+}
+
+/**
+ * Accumulate a completed turn's provider USD cost onto the configured
+ * workspace's monthly total. Best-effort: never throws, returns whether it
+ * recorded. No-ops when no slug is configured or cost is non-positive.
+ */
+export async function recordTurnCostForConfiguredWorkspace(
+  usd: number,
+): Promise<boolean> {
+  if (!configuredWorkspaceSlug) return false;
+  return addAiCostUsdBySlug(configuredWorkspaceSlug, usd);
 }

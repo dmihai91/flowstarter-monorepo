@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { PricingTable } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
+import { BillingDetailsForm } from './BillingDetailsForm';
 
 export const metadata = {
   title: 'Billing & plan',
@@ -69,23 +69,7 @@ export default async function BillingPage() {
 
       <PricingTable />
 
-      <div className="mt-10 rounded-2xl border border-slate-200 bg-white/60 px-5 py-4 text-[0.9rem] leading-relaxed text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/30 dark:text-slate-300">
-        <p>
-          <span className="font-medium text-slate-900 dark:text-slate-100">
-            Invoice in your company&rsquo;s name?
-          </span>{' '}
-          Billing details — company name, address, and VAT / tax id — are
-          collected securely at checkout. For custom invoicing or annual
-          billing,{' '}
-          <Link
-            href="/contact"
-            className="font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
-          >
-            contact us
-          </Link>
-          .
-        </p>
-      </div>
+      <BillingDetailsForm />
     </main>
   );
 }

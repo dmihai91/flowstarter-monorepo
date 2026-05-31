@@ -213,6 +213,7 @@ const isPublicRoute = createRouteMatcher([
   '/',
   '/about(.*)',
   '/login(.*)',
+  '/assistant(.*)', // Client-facing "Flowstarter Assistant" sign-in (reached from workspace landings)
   '/sign-up(.*)',
   '/forgot-password(.*)',
   '/reset-password(.*)',
@@ -254,6 +255,7 @@ const isKnownAppRoute = createRouteMatcher([
   '/',
   '/about(.*)',
   '/login(.*)',
+  '/assistant(.*)', // Client-facing "Flowstarter Assistant" sign-in (reached from workspace landings)
   '/sign-up(.*)',
   '/forgot-password(.*)',
   '/reset-password(.*)',
@@ -389,8 +391,7 @@ export default clerkMiddleware(async (auth, req) => {
       const hostOrigin = host ? `${proto}://${host}` : '';
       const isSameOrigin =
         (!!origin &&
-          (origin === siteOrigin ||
-            (!!hostOrigin && origin === hostOrigin))) ||
+          (origin === siteOrigin || (!!hostOrigin && origin === hostOrigin))) ||
         referer.startsWith(siteOrigin) ||
         (!!hostOrigin && referer.startsWith(hostOrigin));
 

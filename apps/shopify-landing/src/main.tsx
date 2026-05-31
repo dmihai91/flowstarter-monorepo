@@ -12,10 +12,24 @@ import "./styles.css";
 // usage tile then shows its neutral "—" placeholder.
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY as string | undefined;
 
+// Branded Flowstarter sign-in page (the main app's /login). When set, "Sign in"
+// redirects there — same as the editor — instead of Clerk's stock modal. Clerk
+// carries the dev-browser token across the redirect for us.
+const signInUrl = (import.meta.env.VITE_MAIN_APP_LOGIN_URL as string | undefined)?.trim() || undefined;
+
 const queryClient = new QueryClient();
 
-// useAuth() must live inside ClerkProvider — keep it in its own component so
-// App stays usable in the no-Clerk build (no conditional hooks).
+// Sign-in/up live on the main app (cross-origin), so Clerk navigation must be a
+// whole-page redirect, not SPA pushState.
+const navigate = (to: string) => {
+  if (typeof window !== "undefined") window.location.href = to;
+};
+const navigateReplace = (to: string) => {
+  if (typeof window !== "undefined") window.location.replace(to);
+};
+
+// useAuth()/useClerk() must live inside ClerkProvider — keep them in their own
+// component so App stays usable in the no-Clerk build (no conditional hooks).
 function ClerkBridge() {
   const { getToken, isLoaded, isSignedIn } = useAuth();
   const clerk = useClerk();
@@ -24,7 +38,8 @@ function ClerkBridge() {
       getToken={getToken}
       authReady={isLoaded}
       signedIn={!!isSignedIn}
-      onSignIn={() => clerk.openSignIn({})}
+      // Redirect to the branded /login (signInUrl) and come back here after.
+      onSignIn={() => clerk.redirectToSignIn({ redirectUrl: window.location.href })}
     />
   );
 }
@@ -36,7 +51,13 @@ createRoot(container).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       {publishableKey ? (
-        <ClerkProvider publishableKey={publishableKey} afterSignOutUrl="/">
+        <ClerkProvider
+          publishableKey={publishableKey}
+          afterSignOutUrl="/"
+          routerPush={navigate}
+          routerReplace={navigateReplace}
+          {...(signInUrl ? { signInUrl } : {})}
+        >
           <ClerkBridge />
         </ClerkProvider>
       ) : (

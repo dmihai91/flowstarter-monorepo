@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   configureWorkspaceSlug,
   evaluateGate,
+  formatLimitReachedMessage,
   gateForConfiguredWorkspace,
   getConfiguredWorkspaceSlug,
   isNewUtcMonth,
@@ -94,6 +95,54 @@ describe("configured-workspace hot-path hooks (fail-open)", () => {
   it("recordTurnCostForConfiguredWorkspace → false (fail-open) when Supabase unavailable", async () => {
     configureWorkspaceSlug("lebadusul");
     expect(await recordTurnCostForConfiguredWorkspace(0.42)).toBe(false);
+  });
+});
+
+describe("formatLimitReachedMessage", () => {
+  const base = {
+    blocked: true as const,
+    softReached: true,
+    sessionsUsed: 0,
+    sessionLimit: null,
+    aiCostEur: 0,
+    monthlyBudgetEur: null,
+    perEditCapEur: null,
+  };
+
+  it("budget reason on a non-max tier → upgrade wording", () => {
+    const msg = formatLimitReachedMessage({
+      ...base,
+      tier: "pro",
+      isMax: false,
+      reason: "budget",
+    });
+    expect(msg).toContain("Pro");
+    expect(msg).toMatch(/budget/i);
+    expect(msg).toMatch(/upgrade/i);
+    expect(msg).not.toMatch(/contact us/i);
+  });
+
+  it("max tier → contact-us wording (no upgrade)", () => {
+    const msg = formatLimitReachedMessage({
+      ...base,
+      tier: "max",
+      isMax: true,
+      reason: "budget",
+    });
+    expect(msg).toContain("Max");
+    expect(msg).toMatch(/contact us/i);
+    expect(msg).not.toMatch(/upgrade/i);
+  });
+
+  it("sessions reason → sessions wording", () => {
+    const msg = formatLimitReachedMessage({
+      ...base,
+      tier: "starter",
+      isMax: false,
+      reason: "sessions",
+    });
+    expect(msg).toMatch(/sessions/i);
+    expect(msg).toContain("Starter");
   });
 });
 

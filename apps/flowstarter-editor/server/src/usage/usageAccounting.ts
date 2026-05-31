@@ -167,6 +167,29 @@ export function evaluateGate(
   };
 }
 
+const TIER_LABEL: Readonly<Record<PlanKey, string>> = {
+  starter: "Starter",
+  pro: "Pro",
+  max: "Max",
+  ecommerce: "Ecommerce",
+  admin: "Admin",
+};
+
+/**
+ * User-facing message for a blocked turn (server backstop — the web shows the
+ * richer CTA panel from the gate API). Pure + exported for tests.
+ */
+export function formatLimitReachedMessage(gate: GateDecision): string {
+  const tier = TIER_LABEL[gate.tier] ?? gate.tier;
+  const next = gate.isMax
+    ? "Contact us to extend your limit and keep editing this month."
+    : "Upgrade your plan to keep editing this month.";
+  if (gate.reason === "sessions") {
+    return `You've used all your editing sessions this month on the ${tier} plan. ${next}`;
+  }
+  return `You've reached this month's AI editing budget on the ${tier} plan. ${next}`;
+}
+
 // ─── Persistence (thin supabase-js I/O) ──────────────────────────────────────
 
 let cachedSupabase: SupabaseClient | null = null;

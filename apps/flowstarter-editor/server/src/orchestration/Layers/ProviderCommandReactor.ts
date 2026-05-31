@@ -26,6 +26,10 @@ import {
   type ProviderCommandReactorShape,
 } from "../Services/ProviderCommandReactor.ts";
 import { ServerSettingsService } from "../../serverSettings.ts";
+import {
+  formatLimitReachedMessage,
+  gateForConfiguredWorkspace,
+} from "../../usage/usageAccounting.ts";
 
 type ProviderIntentEvent = Extract<
   OrchestrationEvent,
@@ -369,6 +373,16 @@ const make = Effect.gen(function* () {
     const thread = yield* resolveThread(input.threadId);
     if (!thread) {
       return;
+    }
+    // Pre-turn enforcement backstop: refuse the turn when the workspace's
+    // monthly €-budget (or session allowance) is spent. Fail-open — a null
+    // gate (Supabase unreachable / unconfigured) admits the turn. The caller
+    // (processTurnStartRequested) catches this via appendProviderFailureActivity,
+    // surfacing the message; the web also pre-locks the composer from the
+    // gate API so users normally see the CTA, not this error.
+    const usageGate = yield* Effect.promise(() => gateForConfiguredWorkspace());
+    if (usageGate?.blocked) {
+      return yield* Effect.fail(new Error(formatLimitReachedMessage(usageGate)));
     }
     yield* ensureSessionForThread(
       input.threadId,

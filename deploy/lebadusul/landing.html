@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lebădușul · Flowstarter workspace</title>
-  <meta name="description" content="Operator console for the lebadusularticoledepescuit.ro Shopify storefront — visit the live store, open the Flowstarter AI editor, or preview pending changes." />
+  <meta name="description" content="A real Romanian fishing-tackle Shopify storefront, run end to end through Flowstarter. Visit the live store, edit the theme with an AI pair, or preview pending changes." />
   <meta name="robots" content="noindex" />
   <meta name="theme-color" content="#fbf7ef" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#0a0716" media="(prefers-color-scheme: dark)" />
@@ -15,19 +15,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     /*
-     * Lebadusul · Flowstarter workspace console
+     * Lebadusul · Flowstarter workspace
      * ---------------------------------------------------------------
-     * A workspace operator dashboard for one client (lebadusul).
-     * Matches the editor's type stack (Onest + JetBrains Mono) so the
-     * full Flowstarter surface feels of-a-piece across landing→editor.
-     * One primary action (open editor), two secondary, an at-a-glance
-     * metric strip, a short about, and a technical footer.
+     * The first public demo of the Flowstarter system: one real client
+     * storefront, run end to end. A composed first fold puts the
+     * workspace identity next to a live screenshot of the actual store,
+     * so "this is a real shop we operate" lands before any scroll. A
+     * short how-it-works strip narrates the system (visit, edit with an
+     * AI pair, publish safely). Product surface, not a brochure.
+     * Type: Bricolage Grotesque display, Onest body, JetBrains Mono
+     * labels — the same stack as the editor, so landing -> editor is
+     * of-a-piece. Auto light/dark via prefers-color-scheme.
      */
 
     :root {
       color-scheme: light dark;
 
-      /* Brand-aligned palette — same tokens as the editor. */
       --bg:           #fbf7ef;
       --surface:      rgba(255, 255, 255, 0.62);
       --surface-2:    rgba(255, 255, 255, 0.85);
@@ -41,6 +44,7 @@
       --rule:         rgba(18, 10, 34, 0.08);
       --rule-strong:  rgba(18, 10, 34, 0.14);
       --accent:       hsl(233, 65%, 50%);
+      --accent-strong:hsl(233, 70%, 44%);
       --accent-soft:  rgba(78, 94, 218, 0.10);
       --accent-edge:  rgba(78, 94, 218, 0.28);
       --warm:         #b65a23;
@@ -49,7 +53,7 @@
       --ok:           hsl(151, 72%, 30%);
       --ok-soft:      hsla(151, 72%, 40%, 0.10);
       --ok-edge:      hsla(151, 72%, 40%, 0.28);
-      --bloom-1:      rgba(78, 94, 218, 0.14);
+      --bloom-1:      rgba(78, 94, 218, 0.15);
       --bloom-2:      rgba(180, 83, 9, 0.08);
       --card-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.92),
@@ -60,6 +64,10 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.95),
         0 18px 44px rgba(78, 94, 218, 0.10),
         0 6px 14px rgba(18, 10, 34, 0.05);
+      --preview-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.7) inset,
+        0 30px 60px -22px rgba(18, 10, 34, 0.34),
+        0 12px 28px -16px rgba(78, 94, 218, 0.30);
 
       --font-sans: 'Onest', system-ui, sans-serif;
       --font-display: 'Bricolage Grotesque', 'Onest', system-ui, sans-serif;
@@ -80,6 +88,7 @@
         --rule:         rgba(244, 238, 228, 0.10);
         --rule-strong:  rgba(244, 238, 228, 0.20);
         --accent:       hsl(233, 72%, 68%);
+        --accent-strong:hsl(233, 80%, 76%);
         --accent-soft:  rgba(130, 148, 255, 0.15);
         --accent-edge:  rgba(130, 148, 255, 0.36);
         --warm:         #d99a4a;
@@ -88,7 +97,7 @@
         --ok:           hsl(151, 62%, 68%);
         --ok-soft:      hsla(151, 60%, 50%, 0.14);
         --ok-edge:      hsla(151, 60%, 50%, 0.32);
-        --bloom-1:      rgba(88, 106, 240, 0.22);
+        --bloom-1:      rgba(88, 106, 240, 0.24);
         --bloom-2:      rgba(255, 160, 80, 0.12);
         --card-shadow:
           inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -99,6 +108,10 @@
           inset 0 1px 0 rgba(255, 255, 255, 0.10),
           0 24px 56px rgba(2, 6, 23, 0.40),
           0 8px 20px rgba(56, 97, 182, 0.16);
+        --preview-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.06) inset,
+          0 36px 70px -24px rgba(2, 6, 23, 0.66),
+          0 14px 30px -18px rgba(56, 97, 182, 0.30);
       }
     }
 
@@ -110,20 +123,20 @@
       color: var(--ink);
       background: var(--bg);
       background-image:
-        radial-gradient(900px 600px at 8% -10%, var(--bloom-1), transparent 60%),
-        radial-gradient(720px 520px at 100% 8%, var(--bloom-2), transparent 65%),
-        radial-gradient(700px 520px at 50% 110%, var(--bloom-1), transparent 70%);
+        radial-gradient(1100px 700px at 6% -12%, var(--bloom-1), transparent 58%),
+        radial-gradient(820px 560px at 102% 4%, var(--bloom-2), transparent 62%),
+        radial-gradient(760px 560px at 50% 116%, var(--bloom-1), transparent 68%);
       -webkit-font-smoothing: antialiased;
       letter-spacing: -0.005em;
     }
 
     .shell {
-      max-width: 920px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 24px clamp(20px, 4vw, 48px) 36px;
+      padding: 22px clamp(20px, 4vw, 52px) 40px;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 30px;
       min-height: 100dvh;
     }
 
@@ -141,10 +154,7 @@
       -webkit-backdrop-filter: blur(20px) saturate(150%);
       box-shadow: var(--card-shadow);
     }
-    .brand {
-      display: inline-flex; align-items: center; gap: 12px;
-      min-width: 0;
-    }
+    .brand { display: inline-flex; align-items: center; gap: 12px; min-width: 0; }
     .fmark {
       width: 30px; height: 30px; border-radius: 9px;
       background: linear-gradient(135deg, hsl(233, 65%, 50%) 0%, hsl(233, 75%, 60%) 50%, hsl(180, 65%, 55%) 100%);
@@ -153,12 +163,7 @@
       box-shadow: 0 1px 0 rgba(255, 255, 255, 0.32) inset, 0 4px 12px rgba(78, 94, 218, 0.30);
       flex-shrink: 0;
     }
-    .brand .crumbs {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 13px; font-weight: 500;
-      color: var(--ink-dim);
-      min-width: 0;
-    }
+    .brand .crumbs { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--ink-dim); min-width: 0; }
     .brand .crumbs strong { color: var(--ink); font-weight: 600; }
     .brand .crumbs .sep { color: var(--rule-strong); }
     .brand .crumbs .ws { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.02em; }
@@ -175,114 +180,94 @@
       background: var(--ok-soft);
       white-space: nowrap;
     }
-    .status .dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--ok);
-      box-shadow: 0 0 0 0 var(--ok);
-      animation: pulse 2400ms ease-in-out infinite;
-    }
+    .status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 var(--ok); animation: pulse 2400ms ease-in-out infinite; }
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(47, 107, 60, 0); }
-      50%      { box-shadow: 0 0 0 5px rgba(47, 107, 60, 0); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(47, 107, 60, 0.45); }
+      50%      { box-shadow: 0 0 0 6px rgba(47, 107, 60, 0); }
     }
 
-    /* ─── Hero ─────────────────────────────────────────────────── */
-    .hero { padding: 28px 4px 8px; }
-    @media (min-width: 760px) { .hero { padding-top: 44px; } }
+    /* ─── Hero (two-column first fold) ────────────────────────── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(26px, 4vw, 46px);
+      align-items: center;
+      padding: 18px 4px 4px;
+    }
+    @media (min-width: 880px) {
+      .hero { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); padding-top: 30px; }
+    }
 
-    /* Grounding kicker — Romanian descriptor + platform, mono, with a
-       short accent rule. Frames the big name beneath it. */
     .hero .kicker {
       display: inline-flex; align-items: center; gap: 11px;
       font-family: var(--font-mono);
       font-size: 11px; font-weight: 500;
       letter-spacing: 0.24em; text-transform: uppercase;
       color: var(--ink-mono);
-      margin: 0 0 22px;
+      margin: 0 0 20px;
     }
-    .hero .kicker::before {
-      content: ""; width: 26px; height: 1px;
-      background: var(--accent); opacity: 0.85;
-    }
+    .hero .kicker::before { content: ""; width: 26px; height: 1px; background: var(--accent); opacity: 0.85; }
     .hero .kicker .em { color: var(--accent); }
 
     h1.name {
       margin: 0;
       font-family: var(--font-display);
       font-optical-sizing: auto;
-      font-size: clamp(2.6rem, 9vw, 5.4rem);
+      font-size: clamp(3rem, 6.6vw, 5rem);
       font-weight: 700;
-      line-height: 0.94;
+      line-height: 0.92;
       letter-spacing: -0.04em;
       color: var(--ink);
     }
     h1.name .dot { color: var(--accent); }
-    p.tagline {
-      margin: 14px 0 0;
-      font-size: 1.075rem;
-      line-height: 1.55;
-      color: var(--ink-dim);
-      max-width: 60ch;
-    }
-    p.tagline a {
-      color: var(--ink);
-      text-decoration: none;
-      border-bottom: 1px solid var(--rule-strong);
-      padding-bottom: 1px;
-      transition: color 180ms ease, border-color 180ms ease;
-    }
-    p.tagline a:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* Hero lede — the actual dynamic highlight of the hero. Sits
-       directly under the workspace name, accent-colored, cross-fades
-       every ~4s through four Flowstarter offer lines so the visual
-       anchor under the title is what we deliver, not a static label.
-       inline-grid stacks all phrases in one grid cell so the line
-       height reserves space for the longest phrase and the tagline
-       below never jumps as the rotation advances. */
-    .hero .lede {
-      margin: 12px 0 0;
-      font-size: clamp(1.2rem, 2.7vw, 1.55rem);
+    p.lede {
+      margin: 20px 0 0;
+      font-size: clamp(1.12rem, 1.7vw, 1.32rem);
       font-weight: 500;
-      line-height: 1.35;
+      line-height: 1.4;
       letter-spacing: -0.014em;
-      color: var(--accent);
-      max-width: 38ch;
+      color: var(--ink);
+      max-width: 30ch;
     }
-    .hero .lede .rotator {
-      display: inline-grid;
-      width: 100%;
+    p.sub {
+      margin: 12px 0 0;
+      font-size: 1.0rem;
+      line-height: 1.58;
+      color: var(--ink-dim);
+      max-width: 42ch;
     }
-    .hero .lede .rotator .phrase {
-      grid-area: 1 / 1;
-      opacity: 0;
-    }
-    .hero .lede .rotator .phrase:first-child {
-      /* keep the first phrase painted before the animation kicks in
-         so the page doesn't open with a blank highlight slot */
-      opacity: 1;
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .hero .lede .rotator .phrase {
-        animation: phraseRotate 16s cubic-bezier(0.16, 1, 0.3, 1) infinite both;
-      }
-      .hero .lede .rotator .phrase:nth-child(1) { animation-delay: -0.5s; }
-      .hero .lede .rotator .phrase:nth-child(2) { animation-delay: 3.5s; }
-      .hero .lede .rotator .phrase:nth-child(3) { animation-delay: 7.5s; }
-      .hero .lede .rotator .phrase:nth-child(4) { animation-delay: 11.5s; }
-    }
-    @keyframes phraseRotate {
-      0%      { opacity: 0; transform: translateY(4px); }
-      3.125%  { opacity: 1; transform: none; }
-      25%     { opacity: 1; transform: none; }
-      28.125% { opacity: 0; transform: translateY(-4px); }
-      100%    { opacity: 0; transform: translateY(-4px); }
-    }
+    p.sub a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule-strong); padding-bottom: 1px; transition: color 180ms ease, border-color 180ms ease; }
+    p.sub a:hover { color: var(--accent); border-color: var(--accent); }
 
-    .badges {
-      display: inline-flex; flex-wrap: wrap; gap: 8px;
-      margin-top: 18px;
+    .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 26px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-sans);
+      font-size: 0.98rem; font-weight: 600; letter-spacing: -0.01em;
+      color: #fff; text-decoration: none;
+      padding: 13px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.28) inset, 0 10px 26px -8px rgba(78, 94, 218, 0.55), 0 3px 8px rgba(18, 10, 34, 0.08);
+      transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease;
     }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.32) inset, 0 16px 36px -10px rgba(78, 94, 218, 0.6), 0 5px 12px rgba(18, 10, 34, 0.1); }
+    .btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .btn-primary .arrow { transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1); }
+    .btn-primary:hover .arrow { transform: translateX(4px); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.95rem; font-weight: 500; color: var(--ink-dim); text-decoration: none;
+      padding: 12px 8px;
+      border-bottom: 1px solid transparent;
+      transition: color 180ms ease;
+    }
+    .btn-ghost:hover { color: var(--accent); }
+    .btn-ghost svg { width: 15px; height: 15px; }
+
+    .badges { display: inline-flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
     .badge {
       display: inline-flex; align-items: center; gap: 6px;
       font-family: var(--font-mono);
@@ -294,54 +279,35 @@
       border-radius: 999px;
       background: var(--surface-2);
     }
-    .badge.accent {
-      color: var(--accent);
-      border-color: var(--accent-edge);
-      background: var(--accent-soft);
-    }
-    .badge.warm {
-      color: var(--warm);
-      border-color: var(--warm-edge);
-      background: var(--warm-soft);
-    }
+    .badge.accent { color: var(--accent); border-color: var(--accent-edge); background: var(--accent-soft); }
 
-    /* ─── Storefront preview ──────────────────────────────────────
-       A browser-chrome mockup framing a real screenshot of the live
-       store — the "this is the thing you manage" centerpiece. Whole
-       frame links out to the storefront. The shot is cropped 16:9
-       (object-position top) to hide the cookie banner at its foot. */
+    /* ─── Storefront preview (hero right) ─────────────────────── */
     .preview {
       display: block;
-      border: 1px solid var(--surface-edge);
-      border-radius: 18px;
+      border: 1px solid var(--surface-edge-strong);
+      border-radius: 16px;
       overflow: hidden;
       background: var(--surface-2);
-      box-shadow: var(--card-shadow);
+      box-shadow: var(--preview-shadow);
       text-decoration: none; color: inherit;
-      transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
-                  box-shadow 240ms ease, border-color 240ms ease;
+      transform: perspective(1600px) rotateY(-1.4deg);
+      transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 320ms ease, border-color 320ms ease;
     }
-    .preview:hover { transform: translateY(-2px); border-color: var(--hover-edge); box-shadow: var(--card-shadow-hover); }
-    .preview:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-    .preview .chrome {
-      display: flex; align-items: center; gap: 12px;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--surface-edge);
-    }
+    .preview:hover { transform: perspective(1600px) rotateY(0deg) translateY(-3px); border-color: var(--hover-edge); }
+    .preview:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .preview .chrome { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--surface-edge); background: var(--surface); }
     .preview .lights { display: inline-flex; gap: 7px; flex-shrink: 0; }
-    .preview .lights i { width: 11px; height: 11px; border-radius: 50%; display: block; opacity: 0.85; }
+    .preview .lights i { width: 11px; height: 11px; border-radius: 50%; display: block; opacity: 0.9; }
     .preview .lights i:nth-child(1) { background: #ec6a5e; }
     .preview .lights i:nth-child(2) { background: #f4bf4f; }
     .preview .lights i:nth-child(3) { background: #61c554; }
     .preview .urlbar {
       flex: 1; min-width: 0;
       display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--font-mono); font-size: 12px;
-      color: var(--ink-dim);
+      font-family: var(--font-mono); font-size: 12px; color: var(--ink-dim);
       background: var(--bg);
       border: 1px solid var(--surface-edge);
-      border-radius: 999px;
-      padding: 5px 12px;
+      border-radius: 999px; padding: 5px 12px;
       overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
     }
     .preview .urlbar svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--ok); }
@@ -349,282 +315,120 @@
       font-family: var(--font-mono); font-size: 9.5px; font-weight: 500;
       letter-spacing: 0.18em; text-transform: uppercase; color: var(--ok);
       border: 1px solid var(--ok-edge); background: var(--ok-soft);
-      border-radius: 999px; padding: 3px 9px; flex-shrink: 0;
-      white-space: nowrap;
+      border-radius: 999px; padding: 3px 9px; flex-shrink: 0; white-space: nowrap;
     }
-    .preview .shot {
-      position: relative;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      background: var(--surface);
-    }
-    .preview .shot img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: top center;
-      display: block;
-    }
+    .preview .shot { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--surface); }
+    .preview .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
     .preview .shot .overlay {
       position: absolute; inset: 0;
-      display: flex; align-items: flex-end;
-      padding: 18px 20px;
-      background: linear-gradient(to top, rgba(8, 6, 20, 0.34), transparent 46%);
+      display: flex; align-items: flex-end; padding: 18px 20px;
+      background: linear-gradient(to top, rgba(8, 6, 20, 0.40), transparent 46%);
       opacity: 0; transition: opacity 240ms ease;
     }
     .preview:hover .shot .overlay { opacity: 1; }
-    .preview .shot .overlay .cue {
-      font-family: var(--font-sans);
-      font-size: 13px; font-weight: 500; color: #fff;
-      display: inline-flex; align-items: center; gap: 8px;
-      text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
-    }
+    .preview .shot .overlay .cue { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: #fff; display: inline-flex; align-items: center; gap: 8px; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45); }
 
-    /* ─── Actions grid ─────────────────────────────────────────── */
-    .actions {
-      display: grid;
-      gap: 14px;
-      grid-template-columns: 1fr;
-    }
-    @media (min-width: 760px) {
-      .actions { grid-template-columns: 1.55fr 1fr; }
-      .actions .primary { grid-row: span 2; }
-    }
-
-    .card {
-      display: flex;
-      gap: 18px;
-      padding: 22px 24px;
+    /* ─── How it works ────────────────────────────────────────── */
+    .how { display: flex; flex-direction: column; gap: 16px; }
+    .how .eyebrow { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-mono); padding-left: 2px; }
+    .how-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 720px) { .how-grid { grid-template-columns: repeat(3, 1fr); } }
+    .step {
+      position: relative;
+      padding: 22px 22px 24px;
       border: 1px solid var(--surface-edge);
-      border-radius: 18px;
+      border-radius: 16px;
       background: var(--surface);
       backdrop-filter: blur(20px) saturate(150%);
       -webkit-backdrop-filter: blur(20px) saturate(150%);
       box-shadow: var(--card-shadow);
-      color: inherit;
-      text-decoration: none;
-      transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
-                  border-color 220ms ease,
-                  box-shadow 220ms ease;
-      position: relative;
       overflow: hidden;
     }
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: var(--hover-edge);
-      box-shadow: var(--card-shadow-hover);
+    .step .n {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.16em; color: var(--accent);
+      display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px;
     }
-    .card:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
+    .step .n::after { content: ""; flex: 1; height: 1px; background: var(--rule); min-width: 28px; }
+    .step .icon { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .step .icon svg { width: 18px; height: 18px; }
+    .step h3 { font-size: 1.06rem; font-weight: 600; letter-spacing: -0.014em; margin: 0 0 6px; }
+    .step p { font-size: 0.92rem; line-height: 1.5; color: var(--ink-dim); margin: 0; }
+
+    /* ─── Secondary actions ───────────────────────────────────── */
+    .actions { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 720px) { .actions { grid-template-columns: 1fr 1fr; } }
+    .card {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 18px 20px;
+      border: 1px solid var(--surface-edge);
+      border-radius: 16px;
+      background: var(--surface);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      box-shadow: var(--card-shadow);
+      color: inherit; text-decoration: none;
+      transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease, box-shadow 220ms ease;
     }
-    .card .icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      display: inline-flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: background 220ms ease, color 220ms ease;
-    }
+    .card:hover { transform: translateY(-2px); border-color: var(--hover-edge); box-shadow: var(--card-shadow-hover); }
+    .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .card .icon { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 220ms ease, color 220ms ease; }
     .card .icon svg { width: 18px; height: 18px; }
     .card:hover .icon { background: var(--accent); color: #fff; }
-
-    .card.primary {
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 26px 28px;
-      gap: 20px;
-      min-height: 220px;
-    }
-    .card.primary::before {
-      content: "";
-      position: absolute; inset: 0;
-      background: radial-gradient(420px 220px at 100% 100%, var(--accent-soft), transparent 65%);
-      opacity: 0.85;
-      pointer-events: none;
-    }
-    .card.primary > * { position: relative; }
-    .card.primary .icon { width: 44px; height: 44px; border-radius: 12px; }
-    .card.primary .icon svg { width: 22px; height: 22px; }
-    .card.primary h3 {
-      font-size: 1.55rem;
-      font-weight: 600;
-      letter-spacing: -0.022em;
-      line-height: 1.15;
-      margin: 0;
-    }
-    .card.primary .desc {
-      font-size: 0.98rem;
-      line-height: 1.55;
-      color: var(--ink-dim);
-      margin: 8px 0 0;
-      max-width: 38ch;
-    }
-    .card.primary .cta {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.92rem; font-weight: 500;
-      color: var(--accent);
-      margin-top: auto;
-    }
-    .card.primary .cta .arrow {
-      transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .card.primary:hover .cta .arrow { transform: translateX(4px); }
-
-    .card.secondary {
-      flex-direction: row;
-      align-items: flex-start;
-      padding: 18px 20px;
-    }
-    .card.secondary .body { flex: 1; min-width: 0; }
-    .card.secondary h3 {
-      font-size: 1.02rem;
-      font-weight: 600;
-      letter-spacing: -0.012em;
-      margin: 0;
-      display: inline-flex; align-items: center; gap: 8px;
-      flex-wrap: wrap;
-    }
-    .card.secondary .pill {
-      font-family: var(--font-mono);
-      font-size: 9.5px; font-weight: 500;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--ink-mono);
-      padding: 2px 7px;
-      border: 1px solid var(--rule-strong);
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-    .card.secondary .pill.ok    { color: var(--ok);    border-color: var(--ok-edge);    background: var(--ok-soft); }
-    .card.secondary .pill.soon  { color: var(--warm);  border-color: var(--warm-edge);  background: var(--warm-soft); }
-    .card.secondary .desc {
-      font-size: 0.92rem;
-      line-height: 1.45;
-      color: var(--ink-dim);
-      margin: 5px 0 0;
-    }
-    .card.secondary .arrow {
-      align-self: center;
-      color: var(--ink-faint);
-      font-size: 1.05rem;
-      transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), color 220ms ease;
-    }
-    .card.secondary:hover .arrow { transform: translateX(4px); color: var(--accent); }
-    .card.secondary[aria-disabled="true"] { opacity: 0.80; }
-    .card.secondary[aria-disabled="true"]:hover { transform: none; }
-    .card.secondary[aria-disabled="true"]:hover .arrow { transform: none; color: var(--ink-faint); }
+    .card .body { flex: 1; min-width: 0; }
+    .card h3 { font-size: 1.02rem; font-weight: 600; letter-spacing: -0.012em; margin: 0; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .card .pill { font-family: var(--font-mono); font-size: 9.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mono); padding: 2px 7px; border: 1px solid var(--rule-strong); border-radius: 999px; white-space: nowrap; }
+    .card .pill.ok { color: var(--ok); border-color: var(--ok-edge); background: var(--ok-soft); }
+    .card .pill.soon { color: var(--warm); border-color: var(--warm-edge); background: var(--warm-soft); }
+    .card .desc { font-size: 0.92rem; line-height: 1.45; color: var(--ink-dim); margin: 5px 0 0; }
+    .card .arrow { align-self: center; color: var(--ink-faint); font-size: 1.05rem; transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1), color 220ms ease; }
+    .card:hover .arrow { transform: translateX(4px); color: var(--accent); }
 
     /* ─── At-a-glance metrics ─────────────────────────────────── */
     .metrics {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1px;
-      padding: 1px;
+      gap: 1px; padding: 1px;
       background: var(--surface-edge);
       border: 1px solid var(--surface-edge);
-      border-radius: 16px;
-      overflow: hidden;
+      border-radius: 16px; overflow: hidden;
       box-shadow: var(--card-shadow);
     }
-    .metric {
-      padding: 18px 20px;
-      background: var(--surface);
-      backdrop-filter: blur(20px) saturate(150%);
-      -webkit-backdrop-filter: blur(20px) saturate(150%);
-      min-width: 0;
-    }
-    .metric .label {
-      font-family: var(--font-mono);
-      font-size: 10.5px; font-weight: 500;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--ink-mono);
-      margin-bottom: 6px;
-    }
-    .metric .value {
-      font-size: 1.35rem;
-      font-weight: 600;
-      letter-spacing: -0.018em;
-      color: var(--ink);
-      line-height: 1.1;
-    }
-    .metric .sub {
-      font-size: 0.78rem;
-      font-weight: 400;
-      color: var(--ink-faint);
-      margin-top: 4px;
-    }
+    .metric { padding: 18px 20px; background: var(--surface); backdrop-filter: blur(20px) saturate(150%); -webkit-backdrop-filter: blur(20px) saturate(150%); min-width: 0; }
+    .metric .label { font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-mono); margin-bottom: 6px; }
+    .metric .value { font-size: 1.35rem; font-weight: 600; letter-spacing: -0.018em; color: var(--ink); line-height: 1.1; }
+    .metric .sub { font-size: 0.78rem; font-weight: 400; color: var(--ink-faint); margin-top: 4px; }
     .metric .value .accent { color: var(--accent); }
-    .metric .value .warm   { color: var(--warm); }
 
-    /* ─── About block ─────────────────────────────────────────── */
-    .about {
-      padding: 22px 24px;
-      border: 1px solid var(--surface-edge);
-      border-radius: 16px;
-      background: var(--surface);
-      backdrop-filter: blur(20px) saturate(150%);
-      -webkit-backdrop-filter: blur(20px) saturate(150%);
-      box-shadow: var(--card-shadow);
-    }
-    .about h2 {
-      font-family: var(--font-mono);
-      font-size: 11px; font-weight: 500;
-      letter-spacing: 0.20em; text-transform: uppercase;
-      color: var(--ink-mono);
-      margin: 0 0 12px;
-    }
-    .about p {
-      font-size: 0.98rem;
-      line-height: 1.6;
-      color: var(--ink-dim);
-      margin: 0 0 10px;
-    }
+    /* ─── About ───────────────────────────────────────────────── */
+    .about { padding: 22px 24px; border: 1px solid var(--surface-edge); border-radius: 16px; background: var(--surface); backdrop-filter: blur(20px) saturate(150%); -webkit-backdrop-filter: blur(20px) saturate(150%); box-shadow: var(--card-shadow); }
+    .about h2 { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.20em; text-transform: uppercase; color: var(--ink-mono); margin: 0 0 12px; }
+    .about p { font-size: 0.98rem; line-height: 1.6; color: var(--ink-dim); margin: 0 0 10px; }
     .about p:last-of-type { margin-bottom: 0; }
     .about strong { color: var(--ink); font-weight: 600; }
-    .about code {
-      font-family: var(--font-mono);
-      font-size: 0.85em;
-      padding: 1.5px 6px;
-      border-radius: 4px;
-      background: var(--accent-soft);
-      color: var(--accent);
-    }
+    .about code { font-family: var(--font-mono); font-size: 0.85em; padding: 1.5px 6px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); }
 
-    /* ─── Footer ───────────────────────────────────────────────── */
-    footer {
-      margin-top: auto;
-      padding: 14px 4px 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 14px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.10em; text-transform: uppercase;
-      color: var(--ink-faint);
-    }
+    /* ─── Footer ──────────────────────────────────────────────── */
+    footer { margin-top: auto; padding: 14px 4px 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--ink-faint); }
     footer .stack { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     footer .sep { color: var(--rule-strong); }
     footer a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); transition: color 200ms ease, border 200ms ease; }
     footer a:hover { color: var(--accent); border-color: var(--accent); }
 
     /* ─── Load reveal ─────────────────────────────────────────── */
-    @keyframes lift {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: none; }
-    }
+    @keyframes lift { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes liftPreview { from { opacity: 0; transform: perspective(1600px) rotateY(-1.4deg) translateY(10px); } to { opacity: 1; transform: perspective(1600px) rotateY(-1.4deg); } }
     @media (prefers-reduced-motion: no-preference) {
-      .topbar, .hero, .preview, .actions > *, .metrics, .about, footer {
-        animation: lift 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
-      }
-      .topbar         { animation-delay: 60ms; }
-      .hero           { animation-delay: 140ms; }
-      .preview        { animation-delay: 240ms; }
-      .actions > *:nth-child(1) { animation-delay: 340ms; }
-      .actions > *:nth-child(2) { animation-delay: 400ms; }
-      .actions > *:nth-child(3) { animation-delay: 460ms; }
-      .metrics        { animation-delay: 560ms; }
-      .about          { animation-delay: 640ms; }
-      footer          { animation-delay: 720ms; }
+      .topbar, .hero-copy, .preview, .how, .actions > *, .metrics, .about, footer { animation: lift 640ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+      .topbar      { animation-delay: 40ms; }
+      .hero-copy   { animation-delay: 130ms; }
+      .preview     { animation: liftPreview 720ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: 240ms; }
+      .how         { animation-delay: 360ms; }
+      .actions > *:nth-child(1) { animation-delay: 460ms; }
+      .actions > *:nth-child(2) { animation-delay: 520ms; }
+      .metrics     { animation-delay: 600ms; }
+      .about       { animation-delay: 680ms; }
+      footer       { animation-delay: 760ms; }
     }
   </style>
 </head>
@@ -647,80 +451,90 @@
     </header>
 
     <section class="hero" aria-labelledby="workspace-name">
-      <div class="kicker"><span class="em">Articole de pescuit</span> · Shopify storefront</div>
-      <h1 id="workspace-name" class="name">Lebădușul<span class="dot">.</span></h1>
-      <p class="lede">
-        <span class="rotator"><span class="phrase">An AI pair-editor for your Shopify theme.</span><span class="phrase">Drafts are safe by default.</span><span class="phrase">A concierge on call, every workspace.</span><span class="phrase">One click from drafts to live.</span></span>
-      </p>
-      <p class="tagline">
-        Romanian fishing-tackle storefront at
-        <a href="https://lebadusularticoledepescuit.ro" rel="noopener external">lebadusularticoledepescuit.ro</a>,
-        managed end-to-end with the Flowstarter Assistant — visit the live store, edit the
-        Liquid theme with an AI pair, or preview pending changes.
-      </p>
-      <div class="badges" aria-label="Workspace facts">
-        <span class="badge accent">Shopify Liquid</span>
-        <span class="badge">Pro tier</span>
-        <span class="badge">Concierge</span>
-        <span class="badge">Since Apr 2026</span>
+      <div class="hero-copy">
+        <div class="kicker"><span class="em">Articole de pescuit</span> · Shopify storefront</div>
+        <h1 id="workspace-name" class="name">Lebădușul<span class="dot">.</span></h1>
+        <p class="lede">A real Shopify store, run end to end through Flowstarter.</p>
+        <p class="sub">
+          Romanian fishing-tackle storefront at
+          <a href="https://lebadusularticoledepescuit.ro" rel="noopener external">lebadusularticoledepescuit.ro</a>.
+          Edit the Liquid theme with an AI pair, then publish when it's ready.
+        </p>
+        <div class="hero-cta">
+          <a class="btn-primary" href="/editor/">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17.4 3.6a2.1 2.1 0 0 1 3 3L8 19l-4 1 1-4Z"/><path d="m14.5 6.5 3 3"/>
+            </svg>
+            Open the editor
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="btn-ghost" href="https://lebadusularticoledepescuit.ro" rel="noopener external">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><path d="M14 4h6v6"/><path d="M20 4 10 14"/></svg>
+            Visit the live store
+          </a>
+        </div>
+        <div class="badges" aria-label="Workspace facts">
+          <span class="badge accent">Shopify Liquid</span>
+          <span class="badge">Pro tier</span>
+          <span class="badge">Concierge</span>
+          <span class="badge">Since Apr 2026</span>
+        </div>
+      </div>
+
+      <a class="preview" href="https://lebadusularticoledepescuit.ro" rel="noopener external" aria-label="Open the live storefront in a new tab">
+        <div class="chrome">
+          <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="urlbar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            lebadusularticoledepescuit.ro
+          </span>
+          <span class="livetag">Live</span>
+        </div>
+        <div class="shot">
+          <img src="/assets/storefront.jpg" alt="Lebădușul storefront — the live fishing-tackle homepage" width="1600" height="1000" loading="eager" decoding="async" />
+          <div class="overlay"><span class="cue">Visit the live store →</span></div>
+        </div>
+      </a>
+    </section>
+
+    <section class="how" aria-labelledby="how-heading">
+      <div class="eyebrow" id="how-heading">How this workspace runs</div>
+      <div class="how-grid">
+        <div class="step">
+          <span class="n">01</span>
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <h3>See the live store</h3>
+          <p>The public storefront, exactly as customers see it right now.</p>
+        </div>
+        <div class="step">
+          <span class="n">02</span>
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg></span>
+          <h3>Edit with an AI pair</h3>
+          <p>Change the Liquid theme in plain language with the Flowstarter assistant.</p>
+        </div>
+        <div class="step">
+          <span class="n">03</span>
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <h3>Publish safely</h3>
+          <p>Work stays on a draft theme until you publish. The live store never changes by surprise.</p>
+        </div>
       </div>
     </section>
 
-    <a class="preview" href="https://lebadusularticoledepescuit.ro" rel="noopener external" aria-label="Open the live storefront in a new tab">
-      <div class="chrome">
-        <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="urlbar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          lebadusularticoledepescuit.ro
-        </span>
-        <span class="livetag">Live</span>
-      </div>
-      <div class="shot">
-        <img src="/assets/storefront.jpg" alt="Lebădușul storefront — the live fishing-tackle homepage" width="1600" height="1000" loading="eager" decoding="async" />
-        <div class="overlay"><span class="cue">Visit the live store →</span></div>
-      </div>
-    </a>
-
-    <section class="actions" aria-label="Primary actions">
-      <a class="card primary" href="/editor/">
-        <span class="icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17.4 3.6a2.1 2.1 0 0 1 3 3L8 19l-4 1 1-4Z"/>
-            <path d="m14.5 6.5 3 3"/>
-          </svg>
-        </span>
-        <div>
-          <h3>Open the editor</h3>
-          <p class="desc">Edit the Liquid theme with the Flowstarter Assistant — your AI pair-editor. Changes stay on the draft theme until you publish.</p>
-        </div>
-        <span class="cta">Launch workspace <span class="arrow" aria-hidden="true">→</span></span>
-      </a>
-
-      <a class="card secondary" href="https://lebadusularticoledepescuit.ro" rel="noopener external">
-        <span class="icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/>
-            <path d="M14 4h6v6"/>
-            <path d="M20 4 10 14"/>
-          </svg>
-        </span>
+    <section class="actions" aria-label="More actions">
+      <a class="card" href="https://lebadusularticoledepescuit.ro" rel="noopener external">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/><path d="M14 4h6v6"/><path d="M20 4 10 14"/></svg></span>
         <div class="body">
           <h3>Visit the live store <span class="pill ok">Live</span></h3>
           <p class="desc">The public storefront customers see right now.</p>
         </div>
         <span class="arrow" aria-hidden="true">→</span>
       </a>
-
-      <a class="card secondary" href="/preview" aria-disabled="false">
-        <span class="icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
-        </span>
+      <a class="card" href="/preview">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span>
         <div class="body">
           <h3>Preview pending changes <span class="pill soon">Setup pending</span></h3>
-          <p class="desc">Render the draft theme. Connects when the Shopify Theme Access token is wired.</p>
+          <p class="desc">Render the draft theme. Connects once the Shopify Theme Access token is wired.</p>
         </div>
         <span class="arrow" aria-hidden="true">→</span>
       </a>
@@ -751,7 +565,7 @@
 
     <section class="about" aria-labelledby="about-heading">
       <h2 id="about-heading">About this workspace</h2>
-      <p><strong>Lebădușul</strong> is a Romanian fishing-tackle storefront on Shopify. This page is the operator surface for the workspace — a single place to <strong>visit</strong>, <strong>edit</strong> with the AI pair-editor, or <strong>preview</strong> pending changes.</p>
+      <p><strong>Lebădușul</strong> is a Romanian fishing-tackle storefront on Shopify. This page is the operator surface for the workspace, one place to <strong>visit</strong>, <strong>edit</strong> with the AI pair-editor, or <strong>preview</strong> pending changes.</p>
       <p>Changes made through the editor never auto-publish. They sit on the draft theme until you click <strong>publish</strong>, then ship via <code>shopify theme push</code>. Until that moment, the live store stays exactly as it is.</p>
     </section>
 

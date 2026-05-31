@@ -146,7 +146,9 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     liveUrl: null,
     thumbnail: 'dorin-portfolio',
     hasDarkThumbnail: false,
-    previewPath: '/preview/dorin-portfolio/',
+    // dorin-portfolio is the freelancer-portfolio Astro template; there is no
+    // separate /preview/dorin-portfolio build, so point at the real one.
+    previewPath: '/preview/freelancer-portfolio/',
   },
 
   // ── Flowstarter Library starter templates ───────────────────────────
@@ -179,6 +181,7 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     liveUrl: null,
     thumbnail: 'coach-pro',
     hasDarkThumbnail: true,
+    previewPath: '/preview/coach-pro/',
   },
   {
     slug: 'creative-portfolio',
@@ -225,6 +228,7 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     liveUrl: null,
     thumbnail: 'fitness-coach',
     hasDarkThumbnail: true,
+    previewPath: '/preview/fitness-coach/',
   },
   {
     slug: 'freelancer-portfolio',
@@ -266,6 +270,7 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     liveUrl: null,
     thumbnail: 'therapist-care',
     hasDarkThumbnail: true,
+    previewPath: '/preview/therapist-care/',
   },
 ];
 

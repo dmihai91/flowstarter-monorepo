@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useUsage, isUsageOk, type PlanKey, type GetToken } from "./useUsage";
 import { siteConfig } from "./siteConfig";
 
@@ -38,10 +39,12 @@ export function App({
   getToken,
   authReady,
   signedIn,
+  onSignIn,
 }: {
   getToken?: GetToken;
   authReady?: boolean;
   signedIn?: boolean;
+  onSignIn?: () => void;
 } = {}) {
   const s = siteConfig;
   // Wait for Clerk to load before fetching (so the token is available); the
@@ -55,6 +58,17 @@ export function App({
   const tierLabel = ok ? (TIER_LABEL[ok.usage.tier] ?? ok.usage.tier) : null;
   const month = utcMonthShort();
 
+  // The usage tiles are gated on a Clerk session. When Clerk is loaded and the
+  // visitor is signed out, prompt sign-in instead of a bare "—"; the no-Clerk
+  // build (no onSignIn) just shows the value/placeholder.
+  const needsSignIn = !!onSignIn && authReady === true && signedIn === false;
+  const signInLink = (
+    <button type="button" onClick={onSignIn} className="metric-signin">
+      Sign in
+    </button>
+  );
+  const gated = (content: ReactNode) => (needsSignIn ? signInLink : content);
+
   return (
     <div className="shell">
       <header className="topbar">
@@ -66,9 +80,16 @@ export function App({
             <span className="ws">{s.workspaceSlug}</span>
           </div>
         </div>
-        <div className="status" title="Your store is live and published">
-          <span className="dot" aria-hidden="true" />
-          <span>Live</span>
+        <div className="topbar-right">
+          {needsSignIn && (
+            <button type="button" onClick={onSignIn} className="signin-btn">
+              Sign in
+            </button>
+          )}
+          <div className="status" title="Your store is live and published">
+            <span className="dot" aria-hidden="true" />
+            <span>Live</span>
+          </div>
         </div>
       </header>
 
@@ -165,13 +186,13 @@ export function App({
         <div className="metric">
           <div className="label">Edits · {month}</div>
           <div className="value">
-            {ok ? <EditsValue used={ok.usage.used} total={ok.usage.total} /> : "—"}
+            {gated(ok ? <EditsValue used={ok.usage.used} total={ok.usage.total} /> : "—")}
           </div>
           <div className="sub">{tierLabel ? `${tierLabel} plan · ` : ""}resets monthly</div>
         </div>
         <div className="metric">
           <div className="label">Your plan</div>
-          <div className="value">{tierLabel ?? "—"}</div>
+          <div className="value">{gated(tierLabel ?? "—")}</div>
           <div className="sub">concierge included</div>
         </div>
         <div className="metric">

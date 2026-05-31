@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { ClerkProvider, useAuth } from "@clerk/clerk-react";
+import { ClerkProvider, useAuth, useClerk } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { App } from "./App";
 import "./styles.css";
@@ -18,7 +18,15 @@ const queryClient = new QueryClient();
 // App stays usable in the no-Clerk build (no conditional hooks).
 function ClerkBridge() {
   const { getToken, isLoaded, isSignedIn } = useAuth();
-  return <App getToken={getToken} authReady={isLoaded} signedIn={!!isSignedIn} />;
+  const clerk = useClerk();
+  return (
+    <App
+      getToken={getToken}
+      authReady={isLoaded}
+      signedIn={!!isSignedIn}
+      onSignIn={() => clerk.openSignIn({})}
+    />
+  );
 }
 
 const container = document.getElementById("root");

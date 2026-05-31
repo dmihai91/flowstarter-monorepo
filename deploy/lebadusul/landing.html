@@ -552,9 +552,9 @@
         <div class="sub">main · auto-synced</div>
       </div>
       <div class="metric">
-        <div class="label">Sessions · May</div>
-        <div class="value"><span class="accent">2</span> / 90</div>
-        <div class="sub">Pro tier · resets monthly</div>
+        <div class="label" id="m-sessions-label">Sessions</div>
+        <div class="value" id="m-sessions-value">Live-metered</div>
+        <div class="sub" id="m-sessions-sub">resets monthly</div>
       </div>
       <div class="metric">
         <div class="label">Publish</div>
@@ -583,5 +583,38 @@
     </footer>
 
   </div>
+  <script>
+    // Sessions tile: live from the editor's usage API (same origin, Clerk-cookie
+    // gated). Anonymous visitors / errors keep the neutral "Live-metered" default
+    // — we never show a fabricated count. Month label tracks the server's UTC
+    // reset boundary.
+    (function () {
+      var labelEl = document.getElementById("m-sessions-label");
+      var valueEl = document.getElementById("m-sessions-value");
+      var subEl = document.getElementById("m-sessions-sub");
+      var TIER = { starter: "Starter", pro: "Pro", max: "Max", ecommerce: "Ecommerce", admin: "Admin" };
+      try {
+        var month = new Date().toLocaleString("en-US", { month: "short", timeZone: "UTC" });
+        if (labelEl) labelEl.textContent = "Sessions · " + month;
+      } catch (e) {}
+      fetch("/api/clerk/usage", { credentials: "include", cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data || data.status !== "ok" || !data.usage) return; // anon → keep default
+          var u = data.usage;
+          var used = typeof u.used === "number" ? u.used : 0;
+          if (valueEl) {
+            valueEl.innerHTML = u.total == null
+              ? '<span class="accent">' + used + "</span> used"
+              : '<span class="accent">' + used + "</span> / " + u.total;
+          }
+          if (subEl) {
+            var tier = TIER[u.tier] || u.tier;
+            subEl.textContent = (tier ? tier + " tier · " : "") + "resets monthly";
+          }
+        })
+        .catch(function () { /* keep neutral default */ });
+    })();
+  </script>
 </body>
 </html>

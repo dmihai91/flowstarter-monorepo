@@ -288,3 +288,47 @@ export async function addAiCostUsd(
     );
   }
 }
+
+/**
+ * Best-effort cost accumulation by workspace slug, for the turn-completion
+ * hot path. NEVER throws — accounting must not break editing. Returns true
+ * if the cost was recorded, false if it was skipped/failed (logged by caller).
+ */
+export async function addAiCostUsdBySlug(
+  slug: string,
+  usd: number,
+): Promise<boolean> {
+  if (!(usd > 0)) return false;
+  try {
+    const supabase = getUsageSupabase();
+    const { data, error } = await supabase
+      .from("workspaces")
+      .select("id")
+      .eq("slug", slug)
+      .maybeSingle();
+    if (error || !data?.id) return false;
+    await addAiCostUsd(data.id, usd);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The pre-turn gate decision for a workspace slug, with the monthly counters
+ * lazily reset on period rollover. NEVER throws — on any failure it returns a
+ * fail-open `null` so the caller admits the turn (enforcement must not break
+ * editing when Supabase is unreachable).
+ */
+export async function gateForSlug(
+  slug: string,
+  now: Date = new Date(),
+): Promise<GateDecision | null> {
+  try {
+    const row = await loadUsageRowBySlug(slug, now);
+    if (!row) return null;
+    return evaluateGate(row);
+  } catch {
+    return null;
+  }
+}

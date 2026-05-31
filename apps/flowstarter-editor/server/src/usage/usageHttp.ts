@@ -26,6 +26,7 @@ import {
 } from "../auth/clerkGate.ts";
 import type { PlanKey } from "./planEntitlements.ts";
 import { computeUsage } from "./tierLimits.ts";
+import { gateForSlug, type GateDecision } from "./usageAccounting.ts";
 
 interface UsageOk {
   readonly status: "ok";
@@ -44,6 +45,13 @@ interface UsageOk {
     readonly inThisMonth: number;
     readonly outThisMonth: number;
   };
+  /**
+   * Monthly €-budget gate decision (the active enforcement guard). `null`
+   * when it can't be evaluated (Supabase unreachable / workspace missing) —
+   * the web treats a null gate as "not blocked" (fail-open), matching the
+   * server which admits turns in that case.
+   */
+  readonly gate: GateDecision | null;
 }
 
 type UsageOutcome =
@@ -183,6 +191,9 @@ async function runUsage(
       used: counters.used,
       rollover: counters.rollover,
     });
+    // Monthly €-budget gate (fail-open: null on any error → web treats as
+    // not-blocked). Also lazily resets the usage period on month rollover.
+    const gate = await gateForSlug(currentSlug);
     return {
       status: "ok",
       workspace: identity.currentWorkspace,
@@ -191,6 +202,7 @@ async function runUsage(
         inThisMonth: counters.tokensIn,
         outThisMonth: counters.tokensOut,
       },
+      gate,
     };
   } catch (error) {
     if (error instanceof ClerkGateUnauthenticated) {

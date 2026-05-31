@@ -1,5 +1,5 @@
 {
-  "name": "@flowstarter/lebadusul-landing",
+  "name": "@flowstarter/shopify-landing",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.61.3",
     "@tanstack/react-query": "^5.90.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"

@@ -1,7 +1,5 @@
-import { useUsage, isUsageOk, type PlanKey } from "./useUsage";
-
-const STORE_URL = "https://lebadusularticoledepescuit.ro";
-const STORE_HOST = "lebadusularticoledepescuit.ro";
+import { useUsage, isUsageOk, type PlanKey, type GetToken } from "./useUsage";
+import { siteConfig } from "./siteConfig";
 
 const TIER_LABEL: Record<PlanKey, string> = {
   starter: "Starter",
@@ -36,8 +34,23 @@ function EditsValue({ used, total }: { used: number; total: number | null }) {
   );
 }
 
-export function App() {
-  const { data } = useUsage();
+export function App({
+  getToken,
+  authReady,
+  signedIn,
+}: {
+  getToken?: GetToken;
+  authReady?: boolean;
+  signedIn?: boolean;
+} = {}) {
+  const s = siteConfig;
+  // Wait for Clerk to load before fetching (so the token is available); the
+  // no-Clerk build passes nothing and fetches immediately.
+  const { data } = useUsage({
+    getToken,
+    enabled: getToken ? authReady !== false : true,
+    signedIn,
+  });
   const ok = isUsageOk(data) ? data : null;
   const tierLabel = ok ? (TIER_LABEL[ok.usage.tier] ?? ok.usage.tier) : null;
   const month = utcMonthShort();
@@ -46,11 +59,11 @@ export function App() {
     <div className="shell">
       <header className="topbar">
         <div className="brand">
-          <span className="fmark" aria-hidden="true">F</span>
+          <span className="fmark" aria-hidden="true">{s.brandName.charAt(0)}</span>
           <div className="crumbs">
-            <strong>Flowstarter</strong>
+            <strong>{s.brandName}</strong>
             <span className="sep">/</span>
-            <span className="ws">lebadusul</span>
+            <span className="ws">{s.workspaceSlug}</span>
           </div>
         </div>
         <div className="status" title="Your store is live and published">
@@ -61,13 +74,13 @@ export function App() {
 
       <section className="hero" aria-labelledby="workspace-name">
         <div className="hero-copy">
-          <div className="kicker"><span className="em">Articole de pescuit</span> · Online store</div>
-          <h1 id="workspace-name" className="name">Lebădușul<span className="dot">.</span></h1>
-          <p className="lede">Your online store, run with Flowstarter.</p>
+          <div className="kicker"><span className="em">{s.kicker.lead}</span> · {s.kicker.tail}</div>
+          <h1 id="workspace-name" className="name">{s.storeName}<span className="dot">.</span></h1>
+          <p className="lede">{s.lede}</p>
           <p className="sub">
-            Your fishing-tackle shop at{" "}
-            <a href={STORE_URL} rel="noopener external">{STORE_HOST}</a>.
-            Make changes by chatting with your assistant, then publish when you're happy.
+            {s.sub.before}{" "}
+            <a href={s.storeUrl} rel="noopener external">{s.storeHost}</a>.{" "}
+            {s.sub.after}
           </p>
           <div className="hero-cta">
             <a className="btn-primary" href="/editor/">
@@ -77,28 +90,29 @@ export function App() {
               Edit my site
               <span className="arrow" aria-hidden="true">→</span>
             </a>
-            <a className="btn-ghost" href={STORE_URL} rel="noopener external">
+            <a className="btn-ghost" href={s.storeUrl} rel="noopener external">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" /><path d="M14 4h6v6" /><path d="M20 4 10 14" /></svg>
               Visit my store
             </a>
           </div>
           <div className="badges" aria-label="Workspace facts">
-            <span className="badge accent">Concierge included</span>
-            <span className="badge">Since Apr 2026</span>
+            {s.badges.map((b) => (
+              <span key={b.label} className={b.accent ? "badge accent" : "badge"}>{b.label}</span>
+            ))}
           </div>
         </div>
 
-        <a className="preview" href={STORE_URL} rel="noopener external" aria-label="Open your live store in a new tab">
+        <a className="preview" href={s.storeUrl} rel="noopener external" aria-label="Open your live store in a new tab">
           <div className="chrome">
             <span className="lights" aria-hidden="true"><i /><i /><i /></span>
             <span className="urlbar">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
-              {STORE_HOST}
+              {s.storeHost}
             </span>
             <span className="livetag">Live</span>
           </div>
           <div className="shot">
-            <img src="/assets/storefront.jpg" alt="Lebădușul storefront — your live fishing-tackle homepage" width="1600" height="1000" loading="eager" decoding="async" />
+            <img src={s.storefrontImage} alt={s.storefrontAlt} width="1600" height="1000" loading="eager" decoding="async" />
             <div className="overlay"><span className="cue">Visit my store →</span></div>
           </div>
         </a>
@@ -117,7 +131,7 @@ export function App() {
             <span className="n">02</span>
             <span className="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8" /><rect x="4" y="8" width="16" height="12" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg></span>
             <h3>Make changes by chatting</h3>
-            <p>Tell your Flowstarter assistant what to change, in plain language.</p>
+            <p>Tell your {s.brandName} assistant what to change, in plain language.</p>
           </div>
           <div className="step">
             <span className="n">03</span>
@@ -129,7 +143,7 @@ export function App() {
       </section>
 
       <section className="actions" aria-label="More actions">
-        <a className="card" href={STORE_URL} rel="noopener external">
+        <a className="card" href={s.storeUrl} rel="noopener external">
           <span className="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5" /><path d="M14 4h6v6" /><path d="M20 4 10 14" /></svg></span>
           <div className="body">
             <h3>Visit your store <span className="pill ok">Live</span></h3>
@@ -169,20 +183,20 @@ export function App() {
 
       <section className="about" aria-labelledby="about-heading">
         <h2 id="about-heading">About your workspace</h2>
-        <p>This is your Flowstarter home for <strong>Lebădușul</strong> — one place to visit your store, make changes with your assistant, or preview what's coming.</p>
+        <p>This is your {s.brandName} home for <strong>{s.storeName}</strong> — one place to visit your store, make changes with your assistant, or preview what's coming.</p>
         <p>Nothing you change goes live automatically. Your edits wait until you click <strong>publish</strong> — until then, your store stays exactly as it is.</p>
       </section>
 
       <footer>
         <div className="stack">
-          <span>Lebădușul</span>
+          <span>{s.storeName}</span>
           <span className="sep">·</span>
-          <span>powered by Flowstarter</span>
+          <span>powered by {s.brandName}</span>
         </div>
         <div className="stack">
-          <a href="https://flowstarter.net/contact" rel="noopener">Need help?</a>
+          <a href={s.helpUrl} rel="noopener">Need help?</a>
           <span className="sep">·</span>
-          <a href="https://flowstarter.net" rel="noopener">flowstarter.net</a>
+          <a href={s.brandUrl} rel="noopener">{s.brandHost}</a>
         </div>
       </footer>
     </div>

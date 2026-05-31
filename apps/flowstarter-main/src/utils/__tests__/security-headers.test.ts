@@ -74,12 +74,17 @@ describe('security-headers', () => {
       expect(buildCSPHeader()).toContain('upgrade-insecure-requests');
     });
 
-    it('includes nonce when provided', () => {
+    it('does NOT emit a per-request nonce in script-src (caching mismatch)', () => {
+      // The site is statically rendered + CDN-cached, so a per-request CSP
+      // nonce never matches the cached HTML's build-time <script> nonce and
+      // blocks every inline script (blank page). buildCSPHeader therefore
+      // ignores the nonce for script-src and relies on 'unsafe-inline' + the
+      // host allowlist. See the comment in `security-headers.ts`.
       const csp = buildCSPHeader('test-nonce-123');
-      expect(csp).toContain("'nonce-test-nonce-123'");
-      // `'strict-dynamic'` is intentionally NOT emitted — it would
-      // override the host allowlist and break Clerk's external script
-      // load. See the comment in `buildCSPHeader` in `security-headers.ts`.
+      expect(csp).not.toContain("'nonce-test-nonce-123'");
+      expect(csp).toContain("'unsafe-inline'");
+      // `'strict-dynamic'` is intentionally NOT emitted — it would override
+      // the host allowlist and break Clerk's external script load.
       expect(csp).not.toContain("'strict-dynamic'");
     });
 

@@ -124,19 +124,24 @@ const baseHeaders = createSecureHeaders({
  */
 export function buildCSPHeader(nonce?: string): string {
   const isDev = process.env.NODE_ENV === 'development';
-  const nonceToken = nonce ? `'nonce-${nonce}'` : undefined;
+  // `nonce` is intentionally unused for script-src — see below.
+  void nonce;
 
   // In development, use relaxed CSP to allow Next.js hot reload and dev scripts.
-  // In production, use nonce + host allowlist. We deliberately do NOT emit
-  // `'strict-dynamic'` here — it would override the host allowlist and block
-  // external `<script src="https://...clerk.accounts.dev/...">` tags that
-  // Clerk's SDK injects without a nonce, breaking auth on every page that
-  // loads Clerk. The nonce still locks down all inline scripts, and the
-  // allowlist still constrains which third-party hosts can serve scripts.
+  //
+  // In production we use `'unsafe-inline'` + a host allowlist for scripts —
+  // NOT a per-request nonce. The middleware regenerates a fresh nonce on every
+  // request and writes it into the CSP header, but flowstarter.net's pages are
+  // statically rendered + CDN-cached (cache HIT, max-age=300), so the cached
+  // HTML carries a *build-time* nonce on its <script> tags. The per-request
+  // header nonce therefore never matches the cached script nonce → every
+  // inline script is blocked → blank page. Dropping the nonce (browsers ignore
+  // 'unsafe-inline' whenever a nonce is also present) lets the cached inline
+  // bootstrap scripts run. The host allowlist still constrains third-party
+  // script sources; we also do NOT emit 'strict-dynamic' (it would block
+  // Clerk's nonce-less external SDK <script src> and break auth).
   const scriptSrc = isDev
     ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", ...ALLOWED_SCRIPT_DOMAINS]
-    : nonceToken
-    ? ["'self'", nonceToken, ...ALLOWED_SCRIPT_DOMAINS]
     : ["'self'", "'unsafe-inline'", ...ALLOWED_SCRIPT_DOMAINS];
 
   const directives = [

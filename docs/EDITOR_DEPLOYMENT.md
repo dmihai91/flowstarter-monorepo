@@ -1,203 +1,159 @@
 # Flowstarter Assistant — Editor Deployment & Per-Client Loading
 
-Runbook for hosting the editor (forked T3 Code, branded **Flowstarter
-Assistant**) and the client sites on Hetzner, fronted by Cloudflare.
+How the editor (forked T3 Code, branded **Flowstarter Assistant**) is
+hosted and bound to a client workspace, **on the hosting stack that
+already exists in this repo**.
 
-This is the **implementation runbook**. The firm architectural
-decisions live in
-[`FLOWSTARTER_MASTER_DECISIONS.md` → Editor Architecture](./FLOWSTARTER_MASTER_DECISIONS.md).
-Where this document is more specific, it is *implementing* that
-section, not overriding it.
+> Supersedes an earlier draft of this file that proposed a parallel
+> nginx + systemd-per-process approach. That was drafted blind to
+> `lib/hosting` / `apps/deploy-agent` and has been removed
+> (`deploy/editor/*` deleted). This version extends the existing stack.
 
-## Alignment with the Master Decisions doc
+Canonical architecture: [`CONCIERGE_PIVOT_PLAN.md`](./CONCIERGE_PIVOT_PLAN.md)
+lines 16–30. This is the implementation runbook for it.
 
-The canonical doc specifies: a single deployment, **subdomain routing**
-(`client1.flowstarter.app → workspace → project`), each client sees
-only their workspace, **theme = a local folder on the VPS synced via
-git (Astro) or Shopify CLI (Liquid)**, publish + one-click rollback,
-per-client rate limiting.
+## The load-bearing fact
 
-This runbook satisfies all of that. **One implementation nuance worth
-stating explicitly:** the canonical text reads as a *single editor
-process* that route-switches on `req.headers.host`. The editor as built
-today is single-project-per-process (one `cwd` per server instance —
-`serverRuntimeStartup.ts`). So the simplest faithful implementation is
-**one editor process per workspace behind nginx subdomain routing** —
-identical external behaviour (subdomain → workspace, total isolation,
-local folder + git) with **zero editor code changes**, just N processes
-instead of one multi-tenant process. This is an implementation detail
-under the same decision, and it upgrades cleanly (see *Upgrade path*).
+The editor server is **single-project-per-process**:
+`serverRuntimeStartup.ts:169-195` bootstraps exactly one project from
+`serverConfig.cwd` (`getActiveProjectByWorkspaceRoot(serverConfig.cwd)`).
+`clerkGate.ts` is multitenant for **auth** (Host → slug → membership,
+`parseWorkspaceSlugFromHost` 256-270, `resolveAuthorization` 336-473)
+but the **files/threads a process serves are pinned to one cwd**.
 
-## Why this is safe (the load-bearing fact)
+⇒ One shared process cannot serve multiple clients' code. **Each client
+needs its own editor process** (its own `cwd` + state). That is the
+isolation boundary; the clerkGate membership check is the auth
+boundary. No editor rewrite — we run it exactly as built.
 
-`apps/flowstarter-editor/server/src/auth/clerkGate.ts:420-426` already
-refuses any client who is not a member of the workspace addressed by
-the subdomain:
-
-```ts
-// If the request scoped to a specific workspace, the client MUST be a
-// member of it. Refuse otherwise — even if they have other workspaces.
-if (currentWorkspace && !allowedIds.includes(currentWorkspace.id)) {
-  throw new ClerkGateForbidden(`User is not a member of workspace ${currentWorkspace.slug}`);
-}
-```
-
-`currentWorkspace` is derived from the Host header subdomain. So the
-auth boundary already exists. The per-client OS process + its directory
-are the isolation boundary; nothing multi-tenant runs in-process.
-
-## Architecture
+## Architecture (all but the router/Dockerfile already built)
 
 ```
-                Cloudflare  (DNS · proxy · edge TLS · WAF · cache)
-                │
-  <slug>.app.<domain>            → cache BYPASS  (the editor: app/api/ws)
-  <slug>.<domain> / custom domain → cache EVERYTHING + purge-on-publish
-                │  (Origin cert, SSL = Full (strict))
-        ┌───────▼──────────  Hetzner Cloud VPS (Ubuntu 24.04) ─────────┐
-        │  nginx                                                       │
-        │   ├─ <slug>.app.<domain> → 127.0.0.1:<port>  (per workspace) │
-        │   │      systemd: flowstarter-editor@<slug>                  │
-        │   │        cwd  = /srv/clients/<slug>/site   (git checkout)  │
-        │   │        state= /srv/clients/<slug>/.state                 │
-        │   │        spawns: claude CLI, git, node-pty terminals       │
-        │   └─ client live site → git push / shopify theme push        │
-        └───────────────────────────────────────────────────────────────┘
+flowstarter-main (Netlify)
+  │  HetznerClient (lib/hosting/hetzner.ts) + buildCloudInit (cloud-init.ts)
+  ▼
+Hetzner VPS  (Ubuntu 24.04, cpx22 default; cloud-init installs
+              Caddy + Docker + Node22 + @anthropic-ai/claude-code,
+              ufw 22/80/443, deploy-agent systemd unit)
+  ├─ Caddy   (deploy-agent writes /etc/caddy/sites/<slug>.caddy:
+  │            <slug>.../editor/*  → reverse_proxy editor:3773
+  │            <slug>.../*         → /var/www/sites/<slug>)
+  ├─ deploy-agent  (Bun; POST /sites/:slug/deploy, Bearer
+  │                 DEPLOY_AGENT_SHARED_SECRET)
+  └─ editor container  ("editor", :3773)  ← DEPLOY_AGENT_EDITOR_UPSTREAM
+       ├─ router/supervisor (Bun, :3773)         ◄── NEW, the only
+       │    Host → slug (reuse parseWorkspaceSlugFromHost logic)        │
+       │    ensure per-slug process up; proxy HTTP+WS; idle-stop        │
+       ├─ node dist/bin.mjs /workspaces/<slugA>                         │
+       │    T3CODE_PORT=4001 T3CODE_HOME=/state/<slugA>                 │
+       ├─ node dist/bin.mjs /workspaces/<slugB>  (T3CODE_PORT=4002 …)   │
+       └─ … spawned on first request, killed after idle TTL ───────────┘
 ```
 
-**Box:** start on Hetzner CPX31 (4 vCPU / 8 GB); move to CPX41 when
-agent jobs run hot. **Daytona is NOT used for v1** — the project is a
-plain git checkout on the box (matches "local folder on VPS"). Daytona
-sandboxing is the documented *upgrade path*, not v1.
+Caddy forwards the original `Host`, so each per-slug editor process
+still runs its own `clerkGate` check and refuses non-members
+(`clerkGate.ts:420-426`).
 
-## Repository layout of the deploy artifacts
+## What already exists and is reused verbatim
 
-| File | Role |
-|---|---|
-| `deploy/editor/flowstarter-editor@.service` | systemd template, one instance per workspace slug |
-| `deploy/editor/nginx-shared.conf` | HTTP-context: WS upgrade map + Cloudflare real-IP (install once) |
-| `deploy/editor/nginx-site.conf.tmpl` | per-slug vhost template (rendered by the onboarding script) |
-| `deploy/editor/onboard-client.sh` | idempotent: clone → env → nginx → systemd → print DNS |
+| Piece | File | Used for |
+|---|---|---|
+| Hetzner API client | `lib/hosting/hetzner.ts` (`HetznerClient`, `clientFromEnv` reads `HETZNER_API_TOKEN`) | provision the VPS |
+| Cloud-init generator | `lib/hosting/cloud-init.ts` (`CLOUD_INIT_VERSION=2`) | first-boot: Caddy+Docker+Node22+claude+deploy-agent |
+| Deploy agent | `apps/deploy-agent` (`POST /sites/:slug/deploy`, `DEPLOY_AGENT_EDITOR_UPSTREAM=http://editor:3773`) | site artifacts + Caddy snippet incl. `/editor/*` route |
+| Deploy flow | `lib/hosting/deploy.ts` (`deploySite()`) | publish client site builds |
+| Cloudflare DNS | `lib/hosting/cloudflare.ts` (`CloudflareClient.upsertRecord`, `CLOUDFLARE_API_TOKEN`) | `<slug>` DNS record |
+| Schema | `hosting_servers`, `workspaces` (`hosting_server_id`, `site_directory`, `cloudflare_*`), `workspace_hosts`, `deployments` (`20260507120000_v1_extensions.sql`, `20260430000001_workspaces.sql`) | server/workspace/domain state |
+| Editor auth/routing | `clerkGate.ts` (`parseWorkspaceSlugFromHost`, `resolveAuthorization`, `EDITOR_PUBLIC_DOMAIN`) | Host→workspace, membership enforcement |
 
-## Phase 0 — Base provisioning (one-time, per VPS)
+Provisioning a host is already a solved path: `HetznerClient.createServer({ image:'ubuntu-24.04', server_type:'cpx22', ssh_keys, user_data: buildCloudInit({...}) })` → row in `hosting_servers` → cloud-init brings up Caddy + deploy-agent.
 
-1. Ubuntu 24.04. `ufw` allow 22/80/443; `fail2ban`; unattended-upgrades.
-2. System user: `useradd --system --create-home --shell /usr/sbin/nologin flowstarter`.
-3. Toolchain: Node 22, **Bun**, pnpm, git, nginx, the `claude` CLI.
-4. App code: deploy the monorepo to `FLOWSTARTER_APP_ROOT` (e.g.
-   `/opt/flowstarter/app`), `pnpm install --frozen-lockfile`, then
-   build the editor:
-   - web: `pnpm --filter @flowstarter/editor-web build`
-   - server: `pnpm --filter @flowstarter/editor-server build` →
-     produces `apps/flowstarter-editor/server/dist/bin.mjs`
-5. Launcher `/opt/flowstarter/bin/run-editor.sh` (chmod 0755):
+## What must be built (the actual work)
 
-   ```bash
-   #!/usr/bin/env bash
-   set -euo pipefail
-   # FLOWSTARTER_APP_ROOT + T3CODE_PROJECT_DIR come from the
-   # EnvironmentFiles in flowstarter-editor@.service.
-   exec node "${FLOWSTARTER_APP_ROOT}/apps/flowstarter-editor/server/dist/bin.mjs" \
-     "${T3CODE_PROJECT_DIR}"
-   ```
+1. **Editor Dockerfile** (`apps/flowstarter-editor`). Multi-stage:
+   build `@flowstarter/editor-web` + `@flowstarter/editor-server`
+   (`node dist/bin.mjs`), include the `claude` CLI, expose `:3773`,
+   entrypoint = the router/supervisor (below). Image referenced by the
+   Caddy snippet as `editor:3773`.
+2. **In-container router/supervisor** (small Bun service, the core new
+   component). Responsibilities:
+   - parse workspace slug from `Host` (same rule as
+     `parseWorkspaceSlugFromHost`);
+   - ensure a per-slug child: `node dist/bin.mjs /workspaces/<slug>`
+     with `T3CODE_PORT=<assigned>`, `T3CODE_HOME=/state/<slug>`,
+     `T3CODE_AUTO_BOOTSTRAP_PROJECT_FROM_CWD=true`;
+   - reverse-proxy HTTP **and websockets** to that child;
+   - idle-stop a child after an inactivity TTL; respawn on next hit
+     (state in `/state/<slug>` persists across restarts);
+   - concurrency cap + memory ceiling per child (bound blast radius).
+3. **Per-workspace code on the box.** `/workspaces/<slug>` is a git
+   checkout of the client's repo, on a Docker volume. Needs a canonical
+   repo location — **no Supabase column for it today**
+   (`workspaces.site_directory` is the *deployed* path, not the editable
+   source). Add `workspaces.editor_repo_url` / `editor_repo_ref`
+   (migration, idempotent, per the Supabase rule), and a checkout step
+   at onboarding (clone) the router can `git pull` on spawn.
+4. **Admin acceptance → provision → operator redirect** (Task 8): in
+   flowstarter-main admin, when a client project is accepted —
+   - create/confirm Supabase `workspaces` row + `slug` + membership;
+   - pick an `active` `hosting_servers` row with capacity (or provision
+     one via `HetznerClient`);
+   - ensure the repo is checked out into that host's editor volume;
+   - `CloudflareClient.upsertRecord` for `<slug>.<EDITOR_PUBLIC_DOMAIN>`
+     (A → server ipv4, proxied);
+   - redirect the operator to `https://<slug>.<domain>/editor/`.
+5. **Operator service** — *architected, not built* (CONCIERGE_PIVOT_PLAN).
+   Today DNS/provisioning would run inline in a Netlify function
+   (10–26 s limit) while real provisioning is 60–120 s. v1 mitigation:
+   do only the **fast** steps inline (DNS upsert, redirect — the host
+   is pre-provisioned and warm); defer host creation to a pre-warmed
+   pool. A proper Bun operator service on Hetzner (job queue, Hetzner
+   API, Docker lifecycle, DNS) is the durable fix and the next infra
+   milestone.
 
-   > The editor server takes `cwd` as a positional arg (defaults to
-   > `process.cwd()` — `cli.ts:258,725`); passing `$T3CODE_PROJECT_DIR`
-   > explicitly is unambiguous. Confirm `dist/bin.mjs` is the built
-   > entrypoint for your build (server `package.json` `start` =
-   > `node dist/bin.mjs`).
-6. Shared secrets `/etc/flowstarter/editor.env` (root:flowstarter,
-   chmod 0600) — **never committed**:
+## v1 scope vs deferred (stated honestly)
 
-   ```
-   FLOWSTARTER_APP_ROOT=/opt/flowstarter/app
-   CLERK_SECRET_KEY=...
-   VITE_CLERK_PUBLISHABLE_KEY=...
-   NEXT_PUBLIC_SUPABASE_URL=...
-   SUPABASE_SERVICE_ROLE_KEY=...
-   ANTHROPIC_API_KEY=...
-   ```
-7. Install the systemd template + shared nginx:
-   ```bash
-   cp deploy/editor/flowstarter-editor@.service /etc/systemd/system/
-   systemctl daemon-reload
-   cp deploy/editor/nginx-shared.conf /etc/nginx/conf.d/flowstarter-shared.conf
-   ```
-8. TLS: install the Cloudflare **Origin Certificate** (wildcard
-   `*.app.<domain>`) at `/etc/ssl/flowstarter/origin.{pem,key}`;
-   Cloudflare SSL mode = **Full (strict)**.
+**v1 delivers:** single editor container + router (per-slug process,
+on-demand, idle-stop) on a pre-provisioned Hetzner host via the
+existing cloud-init/Caddy/deploy-agent; admin-accept → DNS upsert →
+operator redirect; per-process+per-cwd isolation; clerkGate auth.
 
-## Phase 1 — Onboard a client (per workspace, repeatable)
+**Deferred (do before paying clients at volume):** the operator
+service (so provisioning isn't on a Netlify function); pre-publish
+snapshots + one-click rollback for the editor path; per-client
+sessions/month quota enforcement; multi-host capacity autoscaling.
 
-The workspace must already exist in Supabase with its `slug` and the
-client added to `workspace_memberships` (done by the main app /
-admin flow — the editor only reads it).
+## Operations gotchas (learned in prod)
 
-```bash
-sudo deploy/editor/onboard-client.sh <slug> <git-repo-url> <base-domain>
-# e.g.
-sudo deploy/editor/onboard-client.sh acme git@github.com:flowstarter/acme-site.git flowstarter.app
-```
+- **`IS_SANDBOX=1` is required on every per-client editor container.**
+  The container runs as root, and "Full access" runtime mode makes the
+  Claude Agent SDK pass `--dangerously-skip-permissions`, which Claude
+  Code refuses under root ("cannot be used with root/sudo privileges")
+  → the agent turn dies with *"Claude Code process exited with code 1 /
+  Runtime error"*. Each tenant is already isolated in its own
+  container, so it genuinely is a sandbox: set `IS_SANDBOX=1` (it lives
+  in the deploy-composed `/etc/flowstarter/editor.env`). Without it,
+  default-permission threads work but full-access ones fail. Note
+  `docker restart` does not re-read `--env-file`; recreate the
+  container (`docker rm -f` + `docker run`) to apply env changes.
+- **The editor SPA fetches root-absolute paths** that must be routed to
+  the editor container, not the static landing fallback:
+  `/.well-known/t3/*`, `/api/*`, `/attachments/*`, and the `/ws`
+  websocket. Missing any of these returns the landing `index.html` and
+  the SPA throws *"Unexpected token '<' … is not valid JSON"*.
+- A thread whose first turn failed records a Claude session id that was
+  never persisted; reopening it resumes a dead id (*"No conversation
+  found with session ID …"*). Start a new thread rather than retrying a
+  poisoned one.
 
-The script (idempotent, non-destructive):
-1. `/srv/clients/<slug>/{site,.state}` — `git clone` **first run only**
-   (re-runs never discard a checkout that may hold unpushed edits).
-2. `/etc/flowstarter/clients/<slug>.env` — reuses an already-assigned
-   port; otherwise allocates the next free one in 5800–5999.
-3. Renders the nginx vhost, `nginx -t`, reload.
-4. `systemctl enable --now flowstarter-editor@<slug>`.
-5. Prints the exact Cloudflare DNS record + cache rule to add. **It
-   does not mutate DNS** — that's an external account; do it in the
-   Cloudflare UI/API deliberately.
+## Open items to confirm
 
-## Phase 2 — Publish & rollback (per site kind)
-
-Per the master doc. v1 keeps it minimal; wire fully as the publish
-route lands (`/api/site/publish` does not exist yet — tracked
-separately).
-
-- **Astro:** edit in the checkout → preview via the workspace's dev
-  server (separate subdomain) → Publish = `git push` → deploy to the
-  client live target (Cloudflare Pages or a `/srv/sites/<slug>` static
-  vhost on this box) → Cloudflare cache purge for that hostname.
-- **Shopify Liquid:** edit the theme checkout → preview via Shopify dev
-  store (Shopify CLI) → Publish = `shopify theme push` to the live
-  store.
-- **Rollback:** snapshot (git tag / release dir) immediately before
-  every publish; one-click revert restores it.
-
-## Phase 3 — Operations (canonical requirements; staged)
-
-The master doc requires per-request logging, pre-publish snapshots,
-one-click rollback, **per-client rate limiting (sessions/month)**, soft
-blocks at limit. v1 ships process isolation + journald logs + the
-upgrade-prompt path that already exists in the editor (`useTier` /
-constraints). Snapshots, automated rollback and quota enforcement are a
-follow-up hardening pass — **not claimed as done by v1**; track them
-before onboarding paying clients at volume.
-
-Cost lever (not needed for correctness): when N idle processes get
-heavy, add on-demand start / idle-stop (systemd socket activation or a
-start-on-first-request proxy). **No editor changes required.**
-
-## Upgrade path (when scale or security demands it)
-
-Everything above stays; only the project source swaps:
-
-- **cwd = local git checkout → cwd = a per-workspace Daytona sandbox
-  FS.** `daytona-utils` already does get-or-create-by-label
-  (`labels.project`). Add `workspaces.repo_url`/`repo_branch` in
-  Supabase as the canonical code-location, resolve workspace → sandbox
-  on gate resolution. Routing, auth and nginx are unchanged.
-- Optionally add OS-container-per-workspace on top of the sandbox for
-  defense-in-depth if a security review requires it.
-
-## Open items to confirm before first run
-
-- **`base-domain`** for the editor (`<slug>.app.<domain>`) and the
-  client-site domain pattern — read from env / `@flowstarter/platform-config`,
-  never hardcoded.
-- **Prod server entrypoint**: confirm `apps/flowstarter-editor/server/
-  dist/bin.mjs` after `pnpm --filter @flowstarter/editor-server build`.
-- **Client-site live target**: Cloudflare Pages vs a static
-  `/srv/sites/<slug>` vhost on this box (the master doc allows either).
+- `EDITOR_PUBLIC_DOMAIN` and the exact editor hostname pattern
+  (`<slug>.flowstarter.app` vs `<slug>.editor.flowstarter.app`) — read
+  from env / `@flowstarter/platform-config`, never hardcoded.
+- Canonical client **source repo** location (GitHub org? bare repo on
+  the host?) → drives the new `workspaces.editor_repo_url` column.
+- Prod env on Netlify: confirm `HETZNER_SSH_KEY_ID`,
+  `DEPLOY_AGENT_SHARED_SECRET`, `CLOUDFLARE_API_TOKEN`,
+  `caddyAcmeEmail` are set there (only `HETZNER_API_TOKEN` is in local
+  `.env.local`).

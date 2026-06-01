@@ -26,4 +26,4 @@ export default async () => {
   return new Response('warmed');
 };
 
-export const config = { schedule: '*/5 * * * *' };
+export const config = { schedule: '*/3 * * * *' };

@@ -1,114 +1,302 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import '../../../shared/editorial.css';
 
 const nav = [
-  { label: 'Programs', href: '#fees' },
-  { label: 'Coaching', href: '#work' },
-  { label: 'Approach', href: '#studio' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Programs', href: '#programs' },
+  { label: 'Method', href: '#method' },
+  { label: 'Results', href: '#results' },
+  { label: 'Start', href: '#start' },
 ];
 const stats = [
   { n: '180+', l: 'Clients coached' },
-  { n: 'NSCA-CPT', l: 'Certified' },
-  { n: 'Hybrid', l: 'In-person + online' },
+  { n: '12', l: 'Years lifting' },
+  { n: '4.9', l: 'Avg rating' },
+  { n: '0', l: 'Crash diets' },
 ];
-const work = [
-  { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&h=1750&fit=crop', alt: 'Strength training session', tag: 'Strength', place: 'Build the base', span: 'tall' },
-  { src: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1400&h=1050&fit=crop', alt: 'Coaching a lift', tag: 'Technique', place: 'Move well first', span: 'wide' },
-  { src: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1200&h=1500&fit=crop', alt: 'Conditioning work', tag: 'Conditioning', place: 'Built to last', span: 'reg' },
-  { src: 'https://images.unsplash.com/photo-1517438476312-10d79c077509?w=1400&h=1050&fit=crop', alt: 'Training the whole room', tag: 'Small group', place: 'Train together', span: 'wide' },
-  { src: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&h=1500&fit=crop', alt: 'A client mid-session', tag: 'Results', place: 'Honest progress', span: 'tall' },
+const programs = [
+  { k: '01', name: 'Barbell foundations', who: 'New to lifting', body: 'Learn the big lifts properly. Squat, hinge, press, pull — coached rep by rep until they’re yours.', price: '€45', per: '/ session' },
+  { k: '02', name: 'Strength online', who: 'Self-driven', body: 'A custom plan in your pocket, updated weekly, with video feedback on every working set.', price: '€120', per: '/ month' },
+  { k: '03', name: 'Hybrid', who: 'Best of both', body: 'In-person where technique matters, online for the volume. Fastest progress, most support.', price: '€240', per: '/ month' },
+  { k: '04', name: 'Small group', who: '2–3 people', body: 'Train with others chasing the same goal. Cheaper, competitive, and a lot more fun.', price: '€25', per: '/ session' },
 ];
-const offerings = [
-  { k: '01', name: '1:1 in person', body: 'Private sessions in Cluj-Napoca, programmed and coached rep by rep.', price: 'from €45 / session' },
-  { k: '02', name: 'Online programming', body: 'A custom plan in your pocket, updated weekly, with video feedback on your lifts.', price: 'from €120 / mo' },
-  { k: '03', name: 'Hybrid coaching', body: 'In-person where it matters, online for the rest. The best of both.', price: 'from €240 / mo' },
-  { k: '04', name: 'Small group', body: 'Train with two or three others on the same goal. Cheaper, and more fun.', price: 'from €25 / session' },
+const method = [
+  { n: '01', t: 'Move well first', b: 'A movement screen before any load. We fix what’s limiting you, then build on a base that won’t break down.' },
+  { n: '02', t: 'Progress on purpose', b: 'Every session is programmed. Load goes up only when you’ve earned it — no random workouts, no guesswork.' },
+  { n: '03', t: 'Built to last', b: 'The goal isn’t a peak you can’t hold. It’s being stronger at forty than thirty, and staying that way.' },
+];
+const results = [
+  { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1100&h=1400&fit=crop', tag: 'Strength' },
+  { src: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1100&h=1400&fit=crop', tag: 'Technique' },
+  { src: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1100&h=1400&fit=crop', tag: 'Conditioning' },
+  { src: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1100&h=1400&fit=crop', tag: 'Consistency' },
 ];
 ---
 <Layout>
-  <div class="grain" aria-hidden="true"></div>
   <header class="nav">
-    <a href="#top" class="brand"><span class="brand__mark" aria-hidden="true"></span>Radu&nbsp;Stoica</a>
-    <nav class="nav__links" aria-label="Primary">{nav.map((i) => <a href={i.href}>{i.label}</a>)}</nav>
+    <a href="#top" class="brand">RADU<span>/</span>STOICA</a>
+    <nav class="nav__links">{nav.map((i) => <a href={i.href}>{i.label}</a>)}</nav>
     <div class="nav__right">
-      <button type="button" class="themer" data-themer aria-label="Toggle dark mode"><span class="themer__dot"></span></button>
-      <a href="#contact" class="btn btn--sm">Book a free trial</a>
+      <button type="button" class="themer" data-themer aria-label="Toggle theme"><span></span></button>
+      <a href="#start" class="cta">Free trial</a>
     </div>
   </header>
+
   <main id="top">
+    <!-- HERO -->
     <section class="hero">
-      <div class="hero__copy reveal">
-        <p class="eyebrow">Strength coaching — Cluj-Napoca &amp; online</p>
-        <h1 class="display">Train<br />with<br /><em>intent.</em></h1>
-        <p class="lede">I'm Radu Stoica, a strength coach for busy adults. We build something you can actually use — more structure, better movement, and progress you can sustain past January.</p>
-        <div class="hero__cta">
-          <a href="#contact" class="btn">Book a free trial</a>
-          <a href="#fees" class="link-arrow">See programs →</a>
+      <div class="hero__bgword" aria-hidden="true">STRENGTH</div>
+      <div class="hero__copy">
+        <p class="kick reveal">Strength coaching — Cluj-Napoca &amp; online</p>
+        <h1 class="hero__title">
+          <span class="reveal" style="--d:.05s">TRAIN</span>
+          <span class="reveal" style="--d:.12s">WITH</span>
+          <span class="reveal accent" style="--d:.19s">INTENT.</span>
+        </h1>
+        <p class="hero__lede reveal" style="--d:.28s">
+          Strength &amp; conditioning for busy adults. We build something you can
+          actually use — more structure, better movement, progress you can keep
+          past January.
+        </p>
+        <div class="hero__cta reveal" style="--d:.34s">
+          <a href="#start" class="cta cta--lg">Book a free trial</a>
+          <a href="#programs" class="ghost">See programs →</a>
         </div>
-        <dl class="stats">{stats.map((s) => (<div><dt>{s.n}</dt><dd>{s.l}</dd></div>))}</dl>
       </div>
-      <figure class="hero__plate reveal" style="--d:.15s">
-        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1100&h=1450&fit=crop" alt="Strength training in the gym" loading="eager" />
-        <figcaption><span>№ 01</span> Build the base, then build on it</figcaption>
+      <figure class="hero__shot reveal" style="--d:.18s">
+        <span class="hero__num">01</span>
+        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1100&h=1500&fit=crop" alt="Strength training" loading="eager" />
       </figure>
     </section>
-    <div class="strip" aria-hidden="true"><div class="strip__row">
-      <span>Strength</span><span class="dot">✦</span><span>Conditioning</span><span class="dot">✦</span><span>Technique</span><span class="dot">✦</span><span>Mobility</span><span class="dot">✦</span><span>Sustainable</span><span class="dot">✦</span>
-      <span>Strength</span><span class="dot">✦</span><span>Conditioning</span><span class="dot">✦</span><span>Technique</span><span class="dot">✦</span><span>Mobility</span><span class="dot">✦</span><span>Sustainable</span><span class="dot">✦</span>
+
+    <!-- MARQUEE -->
+    <div class="marq" aria-hidden="true"><div class="marq__row">
+      {Array(2).fill(0).map(() => (<>
+        <span>Strength</span><i>/</i><span>Conditioning</span><i>/</i><span>Technique</span><i>/</i><span>Mobility</span><i>/</i><span>Sustainable</span><i>/</i>
+      </>))}
     </div></div>
-    <section class="section" id="work">
-      <div class="section__head"><p class="eyebrow">The work</p><h2 class="h2">Build something you can use.</h2></div>
-      <div class="gallery">{work.map((w, i) => (
-        <figure class={`gal gal--${w.span} reveal`} style={`--d:${i * 0.06}s`}><img src={w.src} alt={w.alt} loading="lazy" /><figcaption><span class="gal__tag">{w.tag}</span><span class="gal__place">{w.place}</span></figcaption></figure>
-      ))}</div>
+
+    <!-- STATS -->
+    <section class="stats">
+      {stats.map((s, i) => (
+        <div class="stats__item reveal" style={`--d:${i * 0.06}s`}>
+          <span class="stats__n">{s.n}</span>
+          <span class="stats__l">{s.l}</span>
+        </div>
+      ))}
     </section>
-    <section class="section studio" id="studio">
-      <figure class="studio__img reveal"><img src="https://images.unsplash.com/photo-1499914485622-a88fac536970?w=1000&h=1250&fit=crop" alt="Radu Stoica, strength coach" loading="lazy" /></figure>
-      <div class="studio__copy reveal" style="--d:.1s">
-        <p class="eyebrow">How I coach</p>
-        <h2 class="h2">Less hype.<br />More progress.</h2>
-        <p>Most people don't need a harder workout — they need a plan that fits their week and a coach who'll keep them honest. We start with how you move, build a base of real strength, and add load only when you've earned it.</p>
-        <p>No crash plans, no fads. Just consistent, well-programmed training that compounds — so you're stronger at forty than you were at thirty, and you stay that way.</p>
-        <p class="sig">— Radu</p>
+
+    <!-- PROGRAMS -->
+    <section class="section" id="programs">
+      <div class="head">
+        <span class="head__idx">[ 01 ]</span>
+        <h2 class="h2">Pick how<br />you train.</h2>
+      </div>
+      <ul class="prog">
+        {programs.map((p) => (
+          <li class="prog__row reveal">
+            <span class="prog__k">{p.k}</span>
+            <div class="prog__name">{p.name}<em>{p.who}</em></div>
+            <p class="prog__body">{p.body}</p>
+            <span class="prog__price">{p.price}<small>{p.per}</small></span>
+            <span class="prog__arrow" aria-hidden="true">→</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="section results" id="results">
+      <div class="head">
+        <span class="head__idx">[ 02 ]</span>
+        <h2 class="h2">The work,<br />on the floor.</h2>
+      </div>
+      <div class="rgrid">
+        {results.map((r, i) => (
+          <figure class="rcard reveal" style={`--d:${i * 0.06}s`}>
+            <img src={r.src} alt={r.tag} loading="lazy" />
+            <figcaption>{r.tag}</figcaption>
+          </figure>
+        ))}
       </div>
     </section>
-    <section class="section" id="fees">
-      <div class="section__head"><p class="eyebrow">Programs</p><h2 class="h2">Pick how you want to train.</h2></div>
-      <ul class="offer">{offerings.map((o) => (
-        <li class="offer__row reveal"><span class="offer__k">{o.k}</span><span class="offer__name">{o.name}</span><span class="offer__body">{o.body}</span><span class="offer__price">{o.price}</span></li>
-      ))}</ul>
-      <p class="offer__note">Every program starts with a free assessment session — movement screen, goals, and an honest plan. No lock-in.</p>
+
+    <!-- METHOD -->
+    <section class="section method" id="method">
+      <div class="method__lead reveal">
+        <span class="head__idx">[ 03 ]</span>
+        <h2 class="big">LESS HYPE.<br /><span class="accent">MORE PROGRESS.</span></h2>
+      </div>
+      <div class="method__grid">
+        {method.map((m, i) => (
+          <div class="mcol reveal" style={`--d:${i * 0.08}s`}>
+            <span class="mcol__n">{m.n}</span>
+            <h3>{m.t}</h3>
+            <p>{m.b}</p>
+          </div>
+        ))}
+      </div>
     </section>
-    <section class="quote reveal">
-      <blockquote>“I'd started and quit a dozen times. Radu built something that fit my actual life — eighteen months in, I'm still going, and I'm stronger than I've ever been.”</blockquote>
+
+    <!-- TESTIMONIAL -->
+    <section class="testi reveal">
+      <span class="testi__stat">+18<small>months</small></span>
+      <blockquote>“I'd started and quit a dozen times. Radu built something that fit my actual life — eighteen months in, I'm still going, and I'm the strongest I've ever been.”</blockquote>
       <cite>Andrei T. — training since 2024</cite>
     </section>
-    <section class="cta" id="contact">
-      <p class="eyebrow eyebrow--accent">A free assessment session</p>
-      <h2 class="display cta__title">Start<br />training.</h2>
-      <p class="cta__lede">Come in for a free assessment — we'll screen your movement, talk through your goals, and map an honest plan. No pressure, no lock-in.</p>
-      <div class="cta__actions"><a href="mailto:hello@radustoica.com" class="btn btn--lg">Book a free trial</a><a href="tel:+40740000000" class="link-arrow">+40 740 000 000</a></div>
+
+    <!-- CTA -->
+    <section class="start" id="start">
+      <p class="kick kick--on">A free assessment session</p>
+      <h2 class="start__title">START<br />TRAINING.</h2>
+      <p class="start__lede">Come in for a free assessment — movement screen, goals, and an honest plan. No pressure, no lock-in.</p>
+      <div class="start__cta">
+        <a href="mailto:hello@radustoica.com" class="cta cta--lg cta--inv">Book a free trial</a>
+        <a href="tel:+40740000000" class="ghost ghost--on">+40 740 000 000</a>
+      </div>
     </section>
   </main>
+
   <footer class="foot">
-    <div class="foot__top">
-      <div class="foot__brand">Radu Stoica</div>
-      <div class="foot__cols">
-        <div><h4>Programs</h4><a href="#fees">1:1 in person</a><a href="#fees">Online</a><a href="#fees">Small group</a></div>
-        <div><h4>About</h4><a href="#studio">Approach</a><a href="#work">The work</a><a href="#contact">Contact</a></div>
-        <div><h4>Elsewhere</h4><a href="#">Instagram</a><a href="#">YouTube</a><a href="mailto:hello@radustoica.com">Email</a></div>
-      </div>
+    <div class="foot__word">RADU STOICA</div>
+    <div class="foot__cols">
+      <div><h4>Programs</h4><a href="#programs">Barbell</a><a href="#programs">Online</a><a href="#programs">Small group</a></div>
+      <div><h4>Gym</h4><a href="#method">Method</a><a href="#results">Results</a><a href="#start">Start</a></div>
+      <div><h4>Find me</h4><a href="#">Instagram</a><a href="#">YouTube</a><a href="mailto:hello@radustoica.com">Email</a></div>
     </div>
     <div class="foot__base"><span>© 2026 Radu Stoica</span><span>Cluj-Napoca · Online worldwide</span></div>
   </footer>
+
   <script is:inline>
-    (function () { var btn = document.querySelector('[data-themer]'); if (btn) btn.addEventListener('click', function () { var dark = !document.documentElement.classList.contains('theme-dark'); document.documentElement.classList.toggle('theme-dark', dark); document.documentElement.classList.toggle('dark', dark); try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (_) {} }); })();
-    (function () { var els = document.querySelectorAll('.reveal'); if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; } var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }); }, { threshold: 0.12 }); els.forEach(function (e) { io.observe(e); }); })();
+    (function () { var b = document.querySelector('[data-themer]'); if (b) b.addEventListener('click', function () { var d = !document.documentElement.classList.contains('theme-dark'); document.documentElement.classList.toggle('theme-dark', d); document.documentElement.classList.toggle('dark', d); try { localStorage.setItem('theme', d ? 'dark' : 'light'); } catch (_) {} }); })();
+    (function () { var els = document.querySelectorAll('.reveal'); if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; } var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }); }, { threshold: 0.1 }); els.forEach(function (e) { io.observe(e); }); })();
   </script>
+
   <style is:global>
-    :root { --bg:#f6f1ea; --bg-2:#efe5d8; --surface:#fcf8f2; --ink:#1d1814; --ink-soft:#473c33; --muted:#867565; --accent:#d6562a; --accent-2:#e8763f; --line:rgba(29,24,20,.14); --line-soft:rgba(29,24,20,.08); --shadow:0 30px 70px -30px rgba(29,24,20,.42); --grain:.04; }
-    html.theme-dark, html.dark { --bg:#120f0c; --bg-2:#1a140f; --surface:#1c1611; --ink:#f4ece2; --ink-soft:#dccfc0; --muted:#9c8c7a; --accent:#f0824f; --accent-2:#f59a6e; --line:rgba(244,236,226,.15); --line-soft:rgba(244,236,226,.08); --shadow:0 30px 80px -30px rgba(0,0,0,.7); --grain:.065; }
+    :root {
+      --bg: #0c0c0e; --raise: #16161b; --ink: #f6f6f3; --dim: #8a8a93;
+      --accent: #ff5a1f; --accent-2: #ff8049; --line: rgba(246,246,243,.13);
+      --disp: 'Oswald', 'Arial Narrow', sans-serif;
+      --body: 'Manrope', -apple-system, system-ui, sans-serif;
+    }
+    /* Dark is the default (:root above). Light is the override when the
+       platform/user is in light mode (no theme-dark/dark class on html). */
+    html:not(.theme-dark):not(.dark) {
+      --bg: #f2f1ec; --raise: #ffffff; --ink: #121214; --dim: #6c6c74; --line: rgba(18,18,20,.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background .4s, color .4s; }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ::selection { background: var(--accent); color: #fff; }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s cubic-bezier(.2,.8,.2,1) var(--d,0s), transform .8s cubic-bezier(.2,.8,.2,1) var(--d,0s); }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce){ .reveal{opacity:1;transform:none;transition:none} }
+
+    .kick { font-family: var(--disp); text-transform: uppercase; letter-spacing: .28em; font-size: .72rem; font-weight: 500; color: var(--accent); margin: 0 0 1.5rem; }
+    .h2 { font-family: var(--disp); text-transform: uppercase; font-weight: 600; font-size: clamp(2.2rem,5vw,4rem); line-height: .92; letter-spacing: .01em; margin: 0; }
+    .big { font-family: var(--disp); text-transform: uppercase; font-weight: 700; font-size: clamp(2.6rem,7vw,6rem); line-height: .9; margin: .6rem 0 0; }
+    .accent { color: var(--accent); }
+
+    .cta { display: inline-flex; align-items: center; font-family: var(--disp); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; font-size: .82rem; background: var(--accent); color: #fff; padding: .7rem 1.3rem; border: 0; cursor: pointer; transition: transform .2s, background .2s; }
+    .cta:hover { transform: translateY(-2px); background: var(--accent-2); }
+    .cta--lg { padding: 1.05rem 2rem; font-size: .95rem; }
+    .cta--inv { background: var(--ink); color: var(--bg); }
+    .cta--inv:hover { background: var(--accent); color: #fff; }
+    .ghost { font-family: var(--disp); text-transform: uppercase; letter-spacing: .08em; font-weight: 500; font-size: .82rem; color: var(--ink); border-bottom: 2px solid var(--accent); padding-bottom: 3px; }
+    .ghost--on { color: var(--ink); }
+
+    .nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 1rem clamp(1.2rem,5vw,3.5rem); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 2px solid var(--ink); }
+    .brand { font-family: var(--disp); font-weight: 700; font-size: 1.3rem; letter-spacing: .04em; text-transform: uppercase; }
+    .brand span { color: var(--accent); margin: 0 .15em; }
+    .nav__links { display: flex; gap: 1.8rem; }
+    .nav__links a { font-family: var(--disp); text-transform: uppercase; letter-spacing: .1em; font-size: .8rem; font-weight: 500; color: var(--dim); transition: color .2s; }
+    .nav__links a:hover { color: var(--accent); }
+    .nav__right { display: flex; align-items: center; gap: 1rem; }
+    .themer { width: 36px; height: 36px; border: 2px solid var(--line); background: transparent; cursor: pointer; display: grid; place-items: center; }
+    .themer span { width: 14px; height: 14px; background: var(--ink); box-shadow: inset -4px -4px 0 0 var(--bg); }
+    html.theme-light .themer span { box-shadow: inset 4px 4px 0 0 var(--bg); }
+
+    .hero { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(2rem,5vw,5rem); align-items: center; padding: clamp(3rem,7vw,6rem) clamp(1.2rem,5vw,3.5rem); max-width: 1500px; margin: 0 auto; overflow: clip; }
+    .hero__bgword { position: absolute; top: 50%; left: -3vw; transform: translateY(-50%); font-family: var(--disp); font-weight: 700; font-size: 32vw; line-height: 1; color: var(--ink); opacity: .035; pointer-events: none; z-index: 0; letter-spacing: -.02em; }
+    .hero__copy, .hero__shot { position: relative; z-index: 1; }
+    .hero__title { font-family: var(--disp); font-weight: 700; text-transform: uppercase; font-size: clamp(3.4rem,11vw,9rem); line-height: .85; letter-spacing: -.01em; margin: 0 0 1.8rem; }
+    .hero__title span { display: block; }
+    .hero__lede { font-size: 1.1rem; color: var(--dim); max-width: 44ch; margin: 0 0 2.2rem; }
+    .hero__cta { display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; }
+    .hero__shot { position: relative; }
+    .hero__shot img { width: 100%; aspect-ratio: 3/4; object-fit: cover; filter: grayscale(.15) contrast(1.08); border-bottom: 6px solid var(--accent); }
+    .hero__num { position: absolute; top: -.3em; left: -.2em; font-family: var(--disp); font-weight: 700; font-size: clamp(4rem,8vw,7rem); color: var(--accent); line-height: 1; z-index: 2; -webkit-text-stroke: 0; }
+
+    .marq { border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); background: var(--accent); color: #fff; overflow: hidden; padding: .55rem 0; }
+    .marq__row { display: flex; gap: 1.4rem; width: max-content; animation: scroll 26s linear infinite; font-family: var(--disp); text-transform: uppercase; font-weight: 600; font-size: 1.1rem; letter-spacing: .05em; align-items: center; }
+    .marq__row i { font-style: normal; opacity: .55; }
+    @keyframes scroll { to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce){ .marq__row{animation:none} }
+
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); max-width: 1500px; margin: 0 auto; }
+    .stats__item { padding: clamp(2rem,4vw,3.5rem) clamp(1.2rem,3vw,2rem); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .stats__item:nth-child(4n) { border-right: 0; }
+    .stats__n { display: block; font-family: var(--disp); font-weight: 700; font-size: clamp(2.6rem,6vw,4.5rem); line-height: 1; }
+    .stats__l { font-family: var(--disp); text-transform: uppercase; letter-spacing: .14em; font-size: .72rem; color: var(--dim); margin-top: .6rem; display: block; }
+
+    .section { max-width: 1500px; margin: 0 auto; padding: clamp(4rem,8vw,8rem) clamp(1.2rem,5vw,3.5rem); }
+    .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; flex-wrap: wrap; margin-bottom: clamp(2rem,4vw,3.5rem); }
+    .head__idx { font-family: var(--disp); color: var(--accent); letter-spacing: .2em; font-size: .8rem; font-weight: 600; }
+
+    .prog { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+    .prog__row { display: grid; grid-template-columns: 4.5rem 1.3fr 2fr auto 2rem; gap: 1.6rem; align-items: center; padding: 1.8rem .5rem; border-bottom: 1px solid var(--line); transition: background .25s, color .25s, padding .25s; }
+    .prog__row:hover { background: var(--accent); color: #fff; padding-left: 1.3rem; }
+    .prog__row:hover .prog__k, .prog__row:hover .prog__name em, .prog__row:hover .prog__body, .prog__row:hover small { color: rgba(255,255,255,.85); }
+    .prog__row:hover .prog__arrow { transform: translateX(6px); opacity: 1; }
+    .prog__k { font-family: var(--disp); font-weight: 700; font-size: 1.6rem; color: var(--accent); }
+    .prog__name { font-family: var(--disp); text-transform: uppercase; font-weight: 600; font-size: 1.45rem; line-height: 1.05; }
+    .prog__name em { display: block; font-family: var(--body); text-transform: none; font-style: normal; font-size: .78rem; letter-spacing: .04em; color: var(--dim); margin-top: .3rem; font-weight: 600; }
+    .prog__body { color: var(--dim); font-size: .96rem; }
+    .prog__price { font-family: var(--disp); font-weight: 700; font-size: 1.6rem; white-space: nowrap; }
+    .prog__price small { font-family: var(--body); font-weight: 600; font-size: .72rem; color: var(--dim); margin-left: .25rem; }
+    .prog__arrow { font-size: 1.3rem; opacity: .4; transition: transform .25s, opacity .25s; text-align: right; }
+    @media (max-width:760px){ .prog__row{grid-template-columns:3rem 1fr; row-gap:.5rem} .prog__body,.prog__price{grid-column:2} .prog__arrow{display:none} }
+
+    .rgrid { display: grid; grid-template-columns: repeat(4,1fr); gap: clamp(.6rem,1.4vw,1.1rem); }
+    .rcard { position: relative; margin: 0; overflow: hidden; }
+    .rcard img { width: 100%; aspect-ratio: 3/4; object-fit: cover; filter: grayscale(.2) contrast(1.06); transition: transform 1s cubic-bezier(.2,.8,.2,1), filter .5s; }
+    .rcard:hover img { transform: scale(1.05); filter: grayscale(0) contrast(1.06); }
+    .rcard figcaption { position: absolute; left: 0; bottom: 0; background: var(--accent); color: #fff; font-family: var(--disp); text-transform: uppercase; letter-spacing: .12em; font-size: .72rem; font-weight: 600; padding: .4rem .75rem; }
+    @media (max-width:760px){ .rgrid{grid-template-columns:repeat(2,1fr)} }
+
+    .method { background: var(--raise); }
+    .method__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: clamp(1.5rem,3vw,3rem); margin-top: clamp(2rem,4vw,3.5rem); }
+    .mcol { border-top: 3px solid var(--accent); padding-top: 1.4rem; }
+    .mcol__n { font-family: var(--disp); font-weight: 700; font-size: 2rem; color: var(--accent); }
+    .mcol h3 { font-family: var(--disp); text-transform: uppercase; font-size: 1.3rem; font-weight: 600; margin: .6rem 0 .8rem; }
+    .mcol p { color: var(--dim); margin: 0; }
+    @media (max-width:760px){ .method__grid{grid-template-columns:1fr} }
+
+    .testi { max-width: 1100px; margin: 0 auto; padding: clamp(3rem,7vw,7rem) clamp(1.2rem,5vw,3.5rem); text-align: center; }
+    .testi__stat { font-family: var(--disp); font-weight: 700; font-size: clamp(4rem,12vw,9rem); line-height: 1; color: var(--accent); display: block; }
+    .testi__stat small { font-family: var(--body); font-weight: 600; font-size: 1rem; color: var(--dim); display: block; margin-top: -.4rem; text-transform: uppercase; letter-spacing: .2em; }
+    .testi blockquote { font-family: var(--disp); font-weight: 500; text-transform: uppercase; font-size: clamp(1.4rem,3vw,2.4rem); line-height: 1.2; letter-spacing: .005em; margin: 1.8rem auto; max-width: 22ch; }
+    .testi cite { font-style: normal; font-family: var(--body); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+
+    .start { background: var(--ink); color: var(--bg); text-align: center; padding: clamp(4rem,9vw,9rem) clamp(1.2rem,5vw,3.5rem); }
+    .kick--on { color: var(--accent); }
+    .start__title { font-family: var(--disp); font-weight: 700; text-transform: uppercase; font-size: clamp(3.5rem,13vw,11rem); line-height: .85; margin: .4rem 0 1.4rem; }
+    .start__lede { color: color-mix(in srgb, var(--bg) 70%, var(--ink)); max-width: 44ch; margin: 0 auto 2.4rem; font-size: 1.05rem; }
+    .start__cta { display: flex; gap: 1.6rem; justify-content: center; align-items: center; flex-wrap: wrap; }
+    .start .ghost { color: var(--bg); }
+
+    .foot { border-top: 2px solid var(--ink); max-width: 1500px; margin: 0 auto; padding: clamp(3rem,6vw,5rem) clamp(1.2rem,5vw,3.5rem) 2rem; }
+    .foot__word { font-family: var(--disp); font-weight: 700; text-transform: uppercase; font-size: clamp(3rem,12vw,9rem); line-height: .85; letter-spacing: -.01em; margin-bottom: 2.5rem; }
+    .foot__cols { display: flex; gap: clamp(2rem,5vw,5rem); flex-wrap: wrap; }
+    .foot__cols h4 { font-family: var(--disp); text-transform: uppercase; letter-spacing: .12em; font-size: .72rem; color: var(--accent); margin: 0 0 .9rem; }
+    .foot__cols a { display: block; color: var(--dim); font-size: .92rem; margin-bottom: .5rem; transition: color .2s; }
+    .foot__cols a:hover { color: var(--ink); }
+    .foot__base { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); font-size: .78rem; color: var(--dim); font-family: var(--disp); text-transform: uppercase; letter-spacing: .08em; }
+
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr; gap:2.5rem} .hero__shot{max-width:440px} .nav__links{display:none}
+      .stats{grid-template-columns:repeat(2,1fr)} .stats__item:nth-child(2n){border-right:0}
+    }
   </style>
 </Layout>

@@ -2,14 +2,14 @@
 import DSHead from '../../../shared/dorin-ds/components/DSHead.astro';
 interface Props { title?: string; description?: string; }
 const {
-  title = 'Dorin Andrei — Product Designer & Developer',
-  description = 'Independent product designer and developer. Case-study-led portfolios, web builds, and design systems for founders and independent professionals. Remote, worldwide.',
+  title = 'Dorin Andrei — Product designer & front-end developer',
+  description = 'I design and build products and marketing sites from scratch. Remote, working with founders and small teams. Product design, web builds, and design systems.',
 } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
   <head>
-    <DSHead title={title} description={description} fontPair="fraunces-source" />
+    <DSHead title={title} description={description} fontPair="space-grotesk-jet" />
     <script is:inline>
       (function () { try { var t = localStorage.getItem('theme'); if (!t || t === 'system') { t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } document.documentElement.classList.toggle('theme-dark', t === 'dark'); document.documentElement.classList.toggle('dark', t === 'dark'); } catch (_) {} })();
     </script>

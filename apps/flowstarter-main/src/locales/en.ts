@@ -4,7 +4,7 @@ import { adminKeys } from './en/admin';
 const en = {
   // General
   'app.name': 'Flowstarter',
-  'app.title': 'Flowstarter | Done-for-you websites for coaches',
+  'app.title': 'Flowstarter - Premium websites for service professionals',
   'app.description':
     'We design and build your website or online store, then you change it yourself just by asking. For small businesses across Europe. From €799',
   'app.back': 'Back',
@@ -440,8 +440,7 @@ const en = {
   'dashboard.stepper.developmentDescription':
     'Pages built, content placed, SEO configured',
   'dashboard.stepper.launch': 'Launch',
-  'dashboard.stepper.launchDescription':
-    'Live site + smart conversational editor access',
+  'dashboard.stepper.launchDescription': 'Live site + smart editor access',
   'dashboard.stepper.milestone': 'Phase {number}',
   'dashboard.stepper.done': 'Complete',
 
@@ -1243,18 +1242,18 @@ const en = {
   'help.step3.number': '03',
   'help.step3.title': 'You own it',
   'help.step3.description':
-    'Your site is live. Change text, add a page or tweak the design yourself anytime with the smart conversational editor',
+    'Your site is live. Change text, add a page or tweak the design yourself anytime with the smart editor',
   'help.faq1.question':
     'How long does it take to launch a website with Flowstarter?',
   'help.faq1.answer':
-    'We set a realistic timeline together on the discovery call based on scope, then keep you posted the whole way. Relaunches usually move faster since there is less to invent. We move quicker than a traditional agency, but we will not rush the parts that matter.',
+    'We set a realistic timeline together on the discovery call based on scope, then keep you posted the whole way. Relaunches usually move faster since there is less to invent. Most builds ship in weeks, not months, but we will not rush the parts that matter.',
   'help.faq2.question': "What's included in the monthly subscription?",
   'help.faq2.answer':
     'Hosting on EU infrastructure, your domain renewal, SSL, automated backups, ongoing support, and your monthly allowance of AI edit sessions. The allowance scales with the plan: Starter 30, Pro 60 (2×), Max 120 (4× + code). See the breakdown on the pricing page.',
   'help.faq2.linkLabel': 'See pricing',
   'help.faq3.question': 'Can I edit the site myself after launch?',
   'help.faq3.answer':
-    'Yes, that is the whole point. Tell the smart conversational editor something like "change the headline to X" or "add a testimonial from Sarah", and it does it. No software to learn, nobody to wait on.',
+    'Yes, that is the whole point. Tell the smart editor something like "change the headline to X" or "add a testimonial from Sarah", and it does it. No software to learn, nobody to wait on.',
   'help.faq4.question': 'Do I own my website? Can I take it elsewhere?',
   'help.faq4.answer':
     'Your domain stays in your name. Your content stays yours. If you ever want to leave, we hand over a static export of the site at no charge. No lock-in, no platform tax.',
@@ -1264,14 +1263,14 @@ const en = {
     '30 minutes, no commitment. We talk about your business, your goals, and what is or is not working today. You ask questions. We tell you honestly if we are the right fit, and if so we agree on a concrete plan and timeline.',
   'help.faq6.question': 'How does pricing work? Are there hidden fees?',
   'help.faq6.answer':
-    'A one-time setup fee (50% upfront, 50% on launch) plus a monthly subscription that covers hosting and the smart conversational editor. Your first month is free. No hidden retainer fees, no per-change pricing, no surprise invoices.',
+    'A one-time setup fee (50% upfront, 50% on launch) plus a monthly subscription that covers hosting and the smart editor. Your first month is free. No hidden retainer fees, no per-change pricing, no surprise invoices.',
   'help.faq6.linkLabel': 'See pricing',
   'help.faq7.question': 'Do you handle e-commerce or just brochure sites?',
   'help.faq7.answer':
     'Pro plans include Stripe for digital products, paid bookings, courses and memberships. For a full Shopify-style storefront with inventory, shipping and tax, the Ecommerce tier is open now. Bring it up on the discovery call and we will scope it with you.',
   'help.faq8.question': 'What if I need a change after launch, small or large?',
   'help.faq8.answer':
-    'Small changes are instant through the smart conversational editor. Bigger work (new sections, new pages, integrations) gets quoted on a call, usually a small fixed fee rather than a long retainer. Normal upkeep covered by your plan is not charged extra.',
+    'Small changes are instant through the smart editor. Bigger work (new sections, new pages, integrations) gets quoted on a call, usually a small fixed fee rather than a long retainer. Normal upkeep covered by your plan is not charged extra.',
   'help.faq9.question': 'How do I cancel? Is there a contract?',
   'help.faq9.answer':
     'Monthly subscriptions are month-to-month. Cancel any time with 30 days notice by emailing hello@flowstarter.net. Your site stays online through the end of the paid period. We can quote standalone hosting if you want to keep it up afterwards.',
@@ -1286,7 +1285,7 @@ const en = {
   'pricing.headlinePrefix': 'One setup fee.',
   'pricing.headlineFlourish': 'A monthly that earns its keep.',
   'pricing.sub':
-    'No retainer games, no charging per change, no invoices you did not see coming. The setup gets you launched. The subscription keeps it running and the editor unlocked.',
+    'No retainer games, no charging per change, no invoices you did not see coming. The setup gets you launched and the subscription keeps it running. Custom software builds are quoted on the call, fixed fee.',
 
   // Cookies Page
   'cookies.badge': 'Transparency First',
@@ -1840,42 +1839,52 @@ const en = {
   // Landing Hero — editorial redesign
   'landing.hero.displayPrefix': 'The website your business deserves.',
   'landing.hero.displayFlourish': 'Built for you, edited by you.',
+  'landing.hero.proofLine':
+    'Real Astro or Shopify Liquid code you own, not a React-in-iframe wrapper. Lighthouse 95+. Plain-language edits with the smart editor.',
   'landing.hero.subhead':
-    'We build your website or online store for you. Then a smart conversational editor lets you change it yourself, just by asking in plain words. No software to learn, no developer to chase. For small businesses across Europe. €799 to start, €49/month after.',
-  'landing.hero.primaryCta': 'Build my site',
+    'We build your website or online store for you. Then the smart editor lets you change it yourself, just by asking in plain words. No software to learn, no developer to chase. For small businesses across Europe. €799 to start, €49/month after.',
+  'landing.hero.primaryCta': 'Get my site built',
   'landing.hero.secondaryCta': 'See how it works',
   'landing.hero.eyebrowSerial': 'Your digital presence, built properly',
   'landing.hero.eyebrowLabel': '',
   'landing.hero.eyebrowTagline': '',
   'landing.hero.guaranteeShort':
     'Limited capacity. We take a small number of new clients each month',
-  'landing.hero.stat1Value': 'Limited',
-  'landing.hero.stat1Label': 'Spots each month',
-  'landing.hero.stat2Value': 'Starting from €799',
-  'landing.hero.stat2Label': 'Starter, one-time setup',
-  'landing.hero.stat3Value': 'Custom-built',
-  'landing.hero.stat3Label': 'Every site, made for you',
-  'landing.hero.stat4Value': '100%',
-  'landing.hero.stat4Label': 'Yours forever',
+  'landing.hero.stat1Value': '95+',
+  'landing.hero.stat1Label': 'Lighthouse target',
+  'landing.hero.stat2Value': 'Astro/Liquid',
+  'landing.hero.stat2Label': 'Code you own',
+  'landing.hero.stat3Value': 'SEO',
+  'landing.hero.stat3Label': 'Metadata and sitemap',
+  'landing.hero.stat4Value': 'Chat edits',
+  'landing.hero.stat4Label': 'Smart editor',
   'landing.hero.brief.live': 'Live',
-  'landing.hero.brief.serial': 'Starter build',
-  'landing.hero.brief.title': 'Your digital presence',
-  'landing.hero.brief.subtitle': 'Built properly, and made for you',
+  'landing.hero.brief.serial': 'Shipped project',
+  'landing.hero.brief.title': 'Lebădușul',
+  'landing.hero.brief.subtitle': 'Shopify store launch',
   'landing.hero.brief.field1Label': 'For',
-  'landing.hero.brief.field1Value':
-    'Small businesses across Europe, service or store',
-  'landing.hero.brief.field2Label': 'Site or store',
-  'landing.hero.brief.field2Value': 'Custom-built, made for you',
+  'landing.hero.brief.field1Value': 'Romanian fishing tackle store',
+  'landing.hero.brief.field2Label': 'Build',
+  'landing.hero.brief.field2Value': 'Custom Shopify Liquid theme',
   'landing.hero.brief.field3Label': 'Includes',
-  'landing.hero.brief.field3Value':
-    'Hosting, domain, smart conversational editor, ongoing care',
+  'landing.hero.brief.field3Value': 'Catalog, product pages, smart editor',
   'landing.hero.brief.field4Label': 'Launch',
-  'landing.hero.brief.field4Value': 'When you sign off',
-  'landing.hero.brief.progressLabel': 'Progress',
-  'landing.hero.brief.progressBuilding': 'Drafting',
-  'landing.hero.brief.progressReady': 'Built properly',
-  'landing.hero.brief.ctaPending': 'Build my site',
-  'landing.hero.brief.ctaReady': 'Built properly. Build my site',
+  'landing.hero.brief.field4Value': 'Signed off and live',
+  'landing.hero.brief.scenario2.field1Value': 'A neighborhood bistro in Lisbon',
+  'landing.hero.brief.scenario2.field2Value':
+    'Custom site with menu and bookings',
+  'landing.hero.brief.scenario3.field1Value':
+    'A salon and barber duo in Cluj-Napoca',
+  'landing.hero.brief.scenario3.field2Value':
+    'Booking site with stylist profiles',
+  'landing.hero.brief.scenario4.field1Value':
+    'An independent boutique selling local crafts',
+  'landing.hero.brief.scenario4.field2Value': 'Online store with checkout',
+  'landing.hero.brief.progressLabel': 'Status',
+  'landing.hero.brief.progressBuilding': 'Building',
+  'landing.hero.brief.progressReady': 'Live',
+  'landing.hero.brief.ctaPending': 'Get my site built',
+  'landing.hero.brief.ctaReady': 'Get my site built',
   'landing.hero.pills.label': 'Included from day one',
   'landing.hero.pills.booking': 'Cal.com booking',
   'landing.hero.pills.newsletter': 'Newsletter',
@@ -1896,7 +1905,7 @@ const en = {
   'landing.problem.headlinePrefix': 'You know how',
   'landing.problem.headlineFlourish': 'this usually goes',
   'landing.problem.sub':
-    'Most small businesses end up with one of these three. None of them hold up when a customer is comparing you to someone else.',
+    'Traditional methods all run into the same problems. None of them hold up when a customer is comparing you to someone else.',
 
   // Pillars — editorial redesign
 
@@ -1925,13 +1934,14 @@ const en = {
 
   // Pricing — editorial redesign
   'landing.pricing.eyebrow': 'Pricing',
-  'landing.pricing.headlinePrefix': 'One price.',
+  'landing.pricing.headlinePrefix': 'Simple pricing.',
   'landing.pricing.headlineFlourish': 'No surprises.',
 
   // Testimonials — editorial redesign
   'landing.testimonials.eyebrow': 'In their words',
-  'landing.testimonials.headlinePrefix': 'The people',
-  'landing.testimonials.headlineFlourish': 'we built these for',
+  'landing.testimonials.headlinePrefix': 'A real business',
+  'landing.testimonials.headlineFlourish': 'we built this for',
+  'landing.testimonials.cta': 'view site',
 
   // Manifesto — editorial redesign
 
@@ -1957,7 +1967,7 @@ const en = {
   'landing.audience.headlinePrefix': 'Built for small businesses',
   'landing.audience.headlineFlourish': 'across Europe',
   'landing.audience.sub':
-    'Whether you sell your time or sell products, if the site does not match how good you are, we should talk.',
+    "Whether you sell your time, sell products, or need software a template can't handle, we should talk.",
 
   // Process — editorial redesign
   'landing.process.eyebrow': 'How it works',
@@ -1972,7 +1982,7 @@ const en = {
   'landing.solution.paragraph1':
     'We build your site or store from scratch, around your business and nobody else. Not a template. Not a generic builder.',
   'landing.solution.paragraph2':
-    'Then you get the smart conversational editor. Change a line, swap a photo, add a section, just by saying what you want. Nothing to learn.',
+    'Then you get the smart editor. Change a line, swap a photo, add a section, just by saying what you want. Nothing to learn.',
 
   // Support bot (floating widget on landing)
   'supportBot.openLabel': 'Open support chat',
@@ -1984,11 +1994,11 @@ const en = {
   'supportBot.send': 'Send',
   'supportBot.contactOperator': 'Contact an operator',
   'supportBot.replyPrice':
-    'Starter is €799 setup + €49/month. Pro starts at €1,199 + €79/month. Both include hosting, domain, and the smart conversational editor. Want a personal walkthrough?',
+    'Starter is €799 setup + €49/month. Pro starts at €1,199 + €79/month. Both include hosting, domain, and the smart editor. Want a personal walkthrough?',
   'supportBot.replyTimeline':
     'We agree on the timeline together during the discovery call. You see drafts before launch, and we keep you in the loop the whole way',
   'supportBot.replyEditor':
-    'You get a smart conversational editor with your site. Change wording, swap photos, add sections, just by asking in plain words. Nothing to learn, no code',
+    'You get a smart editor with your site. Change wording, swap photos, add sections, just by asking in plain words. Nothing to learn, no code',
   'supportBot.replyOwnership':
     'Yes, you own everything. Site, content, hosting are all in your name from day one. No platform lock-in',
   'supportBot.replyCapacity':
@@ -2004,7 +2014,7 @@ const en = {
   'supportBot.replyIncluded':
     'The build is one-time (Starter from €799, Pro from €1,199); the monthly plan is separate and sets your AI edit sessions: Starter €49/mo (30), Pro €99/mo (60, 2×), Max €249/mo (120, 4× + code). Pro builds add more pages, integrations and Stripe for digital products',
   'supportBot.replySupport':
-    "We're with you after launch. The smart conversational editor handles most updates. For bigger changes, your monthly subscription includes priority support",
+    "We're with you after launch. The smart editor handles most updates. For bigger changes, your monthly subscription includes priority support",
   'supportBot.replyHandoff':
     "This one needs a human. Reach out to an operator and they'll handle it directly",
   'supportBot.replyError':
@@ -2124,7 +2134,7 @@ const en = {
   'landing.discovery.fields.industry': 'Industry',
   'landing.discovery.industryOther': 'Other',
   'landing.discovery.fields.targetAudience': 'Target audience',
-  'landing.discovery.fields.goal': 'Primary goal',
+  'landing.discovery.fields.goal': 'Goals',
   'landing.discovery.fields.secondaryGoals': 'Secondary goals (optional)',
   'landing.discovery.hints.secondaryGoals':
     'Anything else the site should do, beyond the main goal',
@@ -2293,7 +2303,7 @@ const en = {
   'about.headlinePrefix': 'Two founders.',
   'about.headlineFlourish': 'One job: get you online.',
   'about.sub':
-    "We're a small studio that builds websites for service professionals. Dorin designs them, Darius engineers them, and both of us support them. No agency, no sales funnel, no hand-off to a junior you never met.",
+    "We're a small studio that builds websites, online stores, and custom software for service professionals across Europe. Dorin designs them, Darius engineers them, and both of us support them. Two founders, direct, no hand-off to a junior you never met.",
   'about.darius.name': 'Darius',
   'about.darius.role': 'Engineering & ops',
   'about.darius.bio1':
@@ -2312,22 +2322,22 @@ const en = {
   'about.manifesto.headlinePrefix': 'Real expertise',
   'about.manifesto.headlineFlourish': 'should be easier to find.',
   'about.manifesto.p1':
-    'Too many good service professionals are invisible online. Not for lack of talent, but because the tools are built for developers, not for them. Templates come out generic. Agencies are slow and expensive. AI generators read hollow the moment a real customer lands on the page.',
+    'Too many good service professionals are invisible online. Not for lack of talent, but because the tools are built for developers, not for them. The traditional ways come with the same problems: generic output, long timelines, and a system you never own.',
   'about.manifesto.p2':
-    'Flowstarter is the thing we wanted to exist. A real team builds you a real site, quickly, and a smart conversational editor lets you keep changing it without ever opening code. We took the trade-off the other way: fewer projects, built properly, made to last.',
+    'Flowstarter is the thing we wanted to exist. A real team builds you a real site, quickly, and a smart editor lets you keep changing it without ever opening code. We took the trade-off the other way: fewer projects, real code you own, and a site you can keep changing.',
   'about.manifesto.closing': 'Your work is good. Your website should say so.',
   'about.principles.eyebrow': 'How we work',
   'about.principles.headlinePrefix': 'Three principles',
   'about.principles.headlineFlourish': "we don't bend on.",
   'about.principle1.title': 'Speed.',
   'about.principle1.body':
-    'We move quickly. The brief turns into a live site faster than most agencies answer your first email, and we do not cut the craft to get there.',
+    'We move quickly. Most briefs turn into a live site in weeks, not months, and we do not cut the craft to get there.',
   'about.principle2.title': 'Craft.',
   'about.principle2.body':
     'Built properly every time. No recycled templates, no AI slop, no "we will fix it later." It goes out the way it should have in the first place.',
   'about.principle3.title': 'Honesty.',
   'about.principle3.body':
-    'Transparent pricing, direct conversation, no agency theatre. You always know what you are getting and what it costs.',
+    'Transparent pricing, direct conversation, no surprise invoices. You always know what you are getting and what it costs.',
   'about.steps.eyebrow': 'What to expect',
   'about.steps.headlinePrefix': 'From the first email',
   'about.steps.headlineFlourish': 'to your launch day.',
@@ -2339,7 +2349,7 @@ const en = {
     'Together. Dorin runs design, brand and copy direction. Darius runs engineering, integrations and deploy. You see progress instead of silence.',
   'about.step3.title': 'You run it.',
   'about.step3.body':
-    'With the smart conversational editor and our support behind it. We are a message away when you need us, whether that is a change, some advice, or whatever comes next.',
+    'With the smart editor and our support behind it. We are a message away when you need us, whether that is a change, some advice, or whatever comes next.',
   'about.cta.eyebrow': 'Want to talk?',
   'about.cta.headlinePrefix': 'No slides. No sales team.',
   'about.cta.headlineFlourish': 'Just us, and your plan.',
@@ -2398,7 +2408,7 @@ const en = {
   'relaunch.included.item5':
     'Booking, contact form and analytics, all connected.',
   'relaunch.included.item6':
-    'The smart conversational editor, so you can change anything yourself after launch without code.',
+    'The smart editor, so you can change anything yourself after launch without code.',
   'relaunch.included.item7': 'Your own business dashboard.',
   'relaunch.included.item8':
     'First month free. 50% setup refund if not happy in 30 days.',

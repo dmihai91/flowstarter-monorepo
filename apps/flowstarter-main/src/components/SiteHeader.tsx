@@ -60,7 +60,7 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
       <>
         {mobileMenuOpen && (
           <div
-            className="fixed inset-0 z-40 bg-black/20 dark:bg-black/50 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-40 bg-black/55 dark:bg-black/75 backdrop-blur-lg md:hidden"
             onClick={() => setMobileMenuOpen(false)}
           />
         )}
@@ -115,21 +115,18 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
               </nav>
 
               <div className="flex items-center gap-2 sm:gap-4">
-                {/* Only show alongside the full desktop nav. Below lg the
-                    mobile drawer has its own ThemeToggle, so showing this one
-                    too would mean two switchers on tablets. */}
-                <div className="hidden lg:block">
+                <div className="hidden md:block">
                   <ThemeToggle />
                 </div>
                 <Button
                   asChild
                   tone="secondary"
-                  className="!hidden h-10 px-4 py-2 text-sm lg:!inline-flex"
+                  className="!hidden h-10 px-4 py-2 text-sm font-semibold border border-[var(--fs-accent)] text-[var(--fs-accent)] hover:bg-[var(--fs-accent)]/10 md:!inline-flex"
                 >
                   <Link href="/login">{tLanding('nav.signIn')}</Link>
                 </Button>
                 <Button
-                  className="!hidden h-10 px-4 py-2 text-sm lg:!inline-flex"
+                  className="!hidden h-10 px-4 py-2 text-sm md:!inline-flex"
                   onClick={openBookingModal}
                 >
                   {tLanding('landing.header.cta')}
@@ -184,7 +181,7 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
                 aria-label="Mobile navigation"
                 className="ls-mobile-nav flex flex-col gap-0.5 pt-4 mt-3 border-t border-[var(--fs-rule)]/50"
               >
-                <div className="flex items-center justify-between px-3 py-2">
+                <div className="md:hidden flex items-center justify-between px-3 py-2">
                   <span className="text-base font-medium text-gray-700 dark:text-white/80">
                     {tLanding('nav.theme')}
                   </span>
@@ -223,12 +220,12 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="mt-6 flex h-11 w-full items-center justify-center rounded-lg border border-[var(--fs-rule-strong)] text-sm font-medium text-[var(--fs-ink)] hover:bg-[var(--fs-glass-bg)] transition-colors"
+                  className="md:hidden mt-6 flex h-11 w-full items-center justify-center rounded-lg border border-[var(--fs-rule-strong)] text-sm font-medium text-[var(--fs-ink)] hover:bg-[var(--fs-glass-bg)] transition-colors"
                 >
                   {tLanding('nav.signIn')}
                 </Link>
                 <Button
-                  className="mt-4 h-11 w-full rounded-lg px-6 text-sm"
+                  className="mt-4 h-11 w-full rounded-lg px-6 text-sm md:!hidden"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     openBookingModal();
@@ -336,12 +333,8 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-opacity duration-500 border-b border-[var(--fs-glass-edge)] bg-white/65 dark:bg-[var(--fs-bg-base)]/55 backdrop-blur-2xl backdrop-saturate-[180%] shadow-[0_2px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_2px_16px_rgba(0,0,0,0.4),0_1px_0_rgba(255,255,255,0.06)_inset] ${
         headerLoaded ? 'opacity-100' : 'opacity-0'
-      } ${
-        scrolled
-          ? 'border-b border-[var(--fs-rule)]/60 bg-white/90 dark:bg-[var(--fs-bg-base)]/85 backdrop-blur-2xl backdrop-saturate-180 shadow-[0_2px_16px_rgba(0,0,0,0.08),0_1px_0_rgba(255,255,255,0.6)_inset] dark:shadow-[0_2px_16px_rgba(0,0,0,0.4),0_1px_0_rgba(255,255,255,0.06)_inset]'
-          : 'border-b border-transparent bg-transparent backdrop-blur-0 shadow-none'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-14 sm:h-16 flex items-center justify-between gap-3">

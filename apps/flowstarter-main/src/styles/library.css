@@ -17,7 +17,9 @@
 
   --font-display: var(--fs-font-sans);
   --font-body: var(--fs-font-sans);
-  --font-mono: var(--fs-font-mono);
+  /* Accent labels (.meta/.status — e.g. "limited spots each month") use the
+     clean body sans, not the monospace face. */
+  --font-mono: var(--fs-font-sans);
 
   --card-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.84),

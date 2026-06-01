@@ -42,7 +42,10 @@
 # Uncomment + set `region` once you've confirmed the Supabase region.
 [functions]
   node_bundler = "esbuild"
-  # region = "eu-central-1"
+  # Colocate functions with Supabase (Flowstarter project = eu-central-1,
+  # Frankfurt) + EU users, so requests don't pay a trans-Atlantic round trip
+  # to the default us-east-1 on every DB/auth call (worst on cold start).
+  region = "eu-central-1"
 
 # Official Next.js Runtime — required for SSR routes, middleware, and ISR.
 # It also handles build caching automatically.

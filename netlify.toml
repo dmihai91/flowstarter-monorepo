@@ -26,6 +26,13 @@
   TURBO_TELEMETRY_DISABLED = "1"
   NODE_VERSION = "22"
 
+# Disable Netlify "Pretty URLs" — it 301-redirects /preview/<slug>/index.html
+# → /preview/<slug>/, which loops against the Next.js preview rewrite
+# (/preview/:slug → /preview/:slug/index.html), causing ERR_TOO_MANY_REDIRECTS
+# on the static Astro template previews. The directory index is served directly.
+[build.processing.html]
+  pretty_urls = false
+
 # --- Runtime / cold-start tuning ---------------------------------------------
 # `node_bundler = "esbuild"` produces smaller, faster-cold-starting Lambdas
 # than the default zisi bundler (~20–30% smaller bundle in practice).

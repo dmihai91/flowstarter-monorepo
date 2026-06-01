@@ -35,7 +35,7 @@ export default {
       {
         source: '/preview/:path*',
         headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=600, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=300, stale-while-revalidate=60' },
         ],
       },
       // Library showcase imagery is rebuilt only when we recapture thumbs.
@@ -53,7 +53,7 @@ export default {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, s-maxage=600, stale-while-revalidate=86400',
+            value: 'public, s-maxage=300, stale-while-revalidate=60',
           },
           {
             key: 'Accept-CH',

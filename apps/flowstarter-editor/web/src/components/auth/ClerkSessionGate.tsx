@@ -570,6 +570,21 @@ function ClerkRedirectScreen(_props: {
               </>
             )}
           </h1>
+          {/* Subtitle mirrors flowstarter-main's AuthLayout (title + muted
+              subtitle), so the editor sign-in reads as the same screen. */}
+          <p
+            style={{
+              fontSize: 14,
+              lineHeight: 1.5,
+              color: "var(--fs-ink-faint)",
+              margin: 0,
+              maxWidth: "40ch",
+            }}
+          >
+            {variant === "team"
+              ? "Team access to manage client workspaces and publish their sites."
+              : "Sign in to edit and publish your website with your Flowstarter assistant."}
+          </p>
         </div>
         {/* Platform AuthFormCard treatment: glass card, hairline edge,
             landing 4-stop shadow, with the footer admin/client toggle

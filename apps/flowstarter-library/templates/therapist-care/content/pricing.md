@@ -1,41 +1,41 @@
 ---
 title: "Investment in Your Wellbeing"
-subtitle: "Flexible options to support your healing journey. Insurance accepted."
+subtitle: "Simple, transparent fees for ongoing therapy. A small number of reduced-fee places are reserved each season."
 plans:
   - name: "Single Session"
-    price: 150
+    price: 260
     period: "/session"
-    description: "Start with one session to see if we're a good fit for your needs."
+    description: "A standard 50-minute therapy session for adults."
     features:
-      - "50-minute therapy session"
-      - "Personalized treatment approach"
-      - "Secure video or in-person"
-      - "Session notes & resources"
-    cta: "Book a Session"
+      - "50-minute session"
+      - "Online or in person in Bucharest"
+      - "Approach adjusted to your needs"
+      - "Suitable for weekly or bi-weekly work"
+    cta: "Book a session"
     popular: false
   - name: "Monthly Support"
-    price: 520
+    price: 960
     period: "/month"
-    description: "Consistent weekly sessions for deeper, lasting transformation."
+    description: "A consistent weekly rhythm for clients who want ongoing support and steadier progress."
     features:
-      - "4 sessions per month (save $80)"
+      - "4 sessions per month"
       - "Priority scheduling"
-      - "Between-session email support"
-      - "Personalized exercises & resources"
-      - "Progress tracking"
-    cta: "Begin Monthly Care"
+      - "Short between-session check-ins when useful"
+      - "Recommended for active therapeutic work"
+      - "Review point every 8 to 10 weeks"
+    cta: "Begin monthly care"
     popular: true
-  - name: "Intensive Program"
-    price: 950
-    period: "/month"
-    description: "For those ready to dive deep. Twice-weekly sessions plus extended support."
+  - name: "Couples Session"
+    price: 360
+    period: "/session"
+    description: "Longer sessions for couples who need a clear, well-held space to work through recurring patterns."
     features:
-      - "8 sessions per month"
-      - "60-minute extended sessions"
-      - "Crisis support availability"
-      - "Comprehensive treatment plan"
-      - "Family consultation included"
-    cta: "Apply for Intensive"
+      - "75-minute session"
+      - "Structured but not rigid"
+      - "Works online or in person"
+      - "Suitable for short-term or ongoing work"
+      - "Follow-up recommendations when helpful"
+    cta: "Request a couples session"
     popular: false
-guarantee: "Your first session is risk-free. If it's not the right fit, no charge."
+guarantee: "If it becomes clear in the first consultation that I am not the right therapist for you, I will suggest a more suitable direction."
 ---

@@ -27,6 +27,7 @@ interface PricingContent {
   guarantee?: string;
 }
 interface BookingContent {
+  enabled?: boolean;
   cal_link?: string;
   cal_event_label?: string;
   cal_duration_label?: string;
@@ -38,6 +39,7 @@ interface BookingContent {
 const site = siteData as SiteContent;
 const pricing = pricingData as PricingContent;
 const booking = bookingData as BookingContent;
+const showBooking = booking.enabled === true && Boolean(booking.cal_link);
 
 const plans = (pricing.plans ?? []).map((p) => ({
   name: p.name,
@@ -50,7 +52,7 @@ const plans = (pricing.plans ?? []).map((p) => ({
   featured: !!p.popular,
 }));
 
-const siteName = site.name ?? 'James Parker Coaching';
+const siteName = site.name ?? 'Mara Petrescu Advisory';
 const siteDescription =
   site.description ??
   'Executive, business, and life coaching for ambitious professionals.';
@@ -92,19 +94,23 @@ const siteDescription =
   }
 
   <!-- ─── Booking CTA ───────────────────────────────────── -->
-  <SectionBlock tone="dark" padding="default">
-    <Container className="cp-pricing-cta">
-      <CalBookingBlock
-        variant="cta"
-        calLink={booking.cal_link}
-        eventLabel={booking.cal_event_label}
-        title={booking.title}
-        subtitle={booking.description}
-        durationLabel={booking.cal_duration_label}
-        layout={booking.cal_layout}
-      />
-    </Container>
-  </SectionBlock>
+  {
+    showBooking && (
+      <SectionBlock tone="dark" padding="default">
+        <Container className="cp-pricing-cta">
+          <CalBookingBlock
+            variant="cta"
+            calLink={booking.cal_link}
+            eventLabel={booking.cal_event_label}
+            title={booking.title}
+            subtitle={booking.description}
+            durationLabel={booking.cal_duration_label}
+            layout={booking.cal_layout}
+          />
+        </Container>
+      </SectionBlock>
+    )
+  }
 </Layout>
 
 <style>

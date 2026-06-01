@@ -20,8 +20,8 @@ interface ContactFormContent {
 }
 
 const {
-  title = 'James Parker — Executive & Life Coach',
-  description = 'Executive, business, and life coaching for ambitious professionals ready to break through limitations and achieve extraordinary results.',
+  title = 'Mara Petrescu Advisory — Leadership Coach for Founders and Team Leads',
+  description = 'Executive coaching for founders, operators, and emerging leaders navigating growth, difficult conversations, and high-responsibility roles across Europe, from a base in Lisbon.',
   activeIndex = -1,
 } = Astro.props;
 
@@ -63,8 +63,8 @@ const footerColumns = [
     heading: 'Get in touch',
     links: [
       { label: 'Discovery call', href: '/contact' },
-      { label: 'coach@jamesparker.com', href: 'mailto:coach@jamesparker.com' },
-      { label: '(555) 234-5678', href: 'tel:+15552345678' },
+      { label: 'hello@marapetrescu.com', href: 'mailto:hello@marapetrescu.com' },
+      { label: '+351 913 442 118', href: 'tel:+351913442118' },
     ],
   },
 ];
@@ -139,7 +139,7 @@ const socials = [
   </head>
   <body>
     <Header
-      brandLabel="James Parker"
+      brandLabel="Mara Petrescu"
       links={navLinks}
       ctaLabel="Book discovery call"
       ctaHref="/contact"
@@ -149,11 +149,11 @@ const socials = [
       <slot />
     </main>
     <Footer
-      brandLabel="James Parker"
-      tagline="Executive, business, and life coaching for professionals ready to break through limitations and lead from a place of clarity."
+      brandLabel="Mara Petrescu"
+      tagline="Leadership coaching for founders, operators, and team leads who need clearer thinking and steadier execution."
       columns={footerColumns}
       socials={socials}
-      copyrightSuffix="James Parker Coaching. All rights reserved."
+      copyrightSuffix="Mara Petrescu Advisory. All rights reserved."
     />
     <ContactScript
       actionUrl={contactFormActionUrl}

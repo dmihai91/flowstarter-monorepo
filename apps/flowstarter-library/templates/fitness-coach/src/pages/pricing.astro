@@ -45,6 +45,7 @@ interface BookingContent {
 const site = siteData as SiteContent;
 const pricing = pricingData as PricingContent;
 const booking = bookingData as BookingContent;
+const showBooking = booking.enabled === true && Boolean(booking.cal_link);
 
 function formatPrice(p: number | string): string {
   if (typeof p === 'number') return `$${p.toLocaleString('en-US')}`;
@@ -110,21 +111,25 @@ function formatPrice(p: number | string): string {
   }
 
   <!-- ─── CTA — Cal.com booking ────────────────────────── -->
-  <SectionBlock tone="dark" padding="default">
-    <Container className="fc-pricing-cta">
-      <CalBookingBlock
-        variant="cta"
-        calLink={booking.cal_link}
-        eventLabel={booking.cal_event_label ?? 'Book a free trial'}
-        title={booking.title ?? 'Try a session before you commit.'}
-        subtitle={booking.description ??
-          'The first assessment is on me. Pick a time and we will figure out which program fits.'}
-        durationLabel={booking.cal_duration_label ?? '45 minutes · in-person or video · free'}
-        layout={booking.cal_layout ?? 'month_view'}
-        className="fc-pricing-cta__cal"
-      />
-    </Container>
-  </SectionBlock>
+  {
+    showBooking && (
+      <SectionBlock tone="dark" padding="default">
+        <Container className="fc-pricing-cta">
+          <CalBookingBlock
+            variant="cta"
+            calLink={booking.cal_link}
+            eventLabel={booking.cal_event_label ?? 'Book a free trial'}
+            title={booking.title ?? 'Try a session before you commit.'}
+            subtitle={booking.description ??
+              'The first assessment is on me. Pick a time and we will figure out which program fits.'}
+            durationLabel={booking.cal_duration_label ?? '45 minutes · in-person or video · free'}
+            layout={booking.cal_layout ?? 'month_view'}
+            className="fc-pricing-cta__cal"
+          />
+        </Container>
+      </SectionBlock>
+    )
+  }
 </Layout>
 
 <style>

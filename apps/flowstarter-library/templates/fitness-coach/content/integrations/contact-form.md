@@ -4,8 +4,8 @@ provider: null
 action_url: ""
 success_message: "Thank you for reaching out! We'll be in touch within 24 hours."
 
-title: "Reach Out"
-description: "Questions about therapy or ready to take the first step? Send a message—all inquiries are confidential."
+title: "Apply for coaching"
+description: "Tell me what you are training for, what is not clicking yet, and whether you want in-person or online coaching."
 
 fields:
   - name: "name"
@@ -22,31 +22,31 @@ fields:
     width: "half"
   - name: "phone"
     label: "Phone"
-    placeholder: "+1 (555) 000-0000"
+    placeholder: "+40 721 234 567"
     type: "tel"
     required: false
     width: "half"
   - name: "inquiry_type"
-    label: "I'm Interested In"
+    label: "I'm interested in"
     placeholder: "Select an option"
     type: "select"
     required: true
     width: "half"
     options:
-      - "Individual Therapy"
-      - "Couples Counseling"
-      - "Anxiety or Depression Support"
-      - "Grief Counseling"
-      - "General Question"
+      - "1:1 coaching"
+      - "Hybrid coaching"
+      - "Powerlifting prep"
+      - "Return from injury"
+      - "General question"
   - name: "message"
     label: "Your Message"
-    placeholder: "Share what's on your mind..."
+    placeholder: "Share your training goal, current level, and the biggest thing holding progress back."
     type: "textarea"
     required: true
     width: "full"
     rows: 5
 
-submit_text: "Send Message"
+submit_text: "Send application"
 submitting_text: "Sending..."
 
 validation:
@@ -55,10 +55,10 @@ validation:
   phone: "Please enter a valid phone number"
 
 success:
-  title: "Message Received"
-  message: "Thank you for reaching out. I'll respond within 24 hours. All communications are confidential."
+  title: "Application received"
+  message: "Thanks. I will review it and reply with the next step within 24 hours."
 
 error:
-  title: "Something Went Wrong"
-  message: "Please try again or call the office directly."
+  title: "Something went wrong"
+  message: "Please try again or reach out directly by email."
 ---

@@ -9,6 +9,7 @@ import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock
 import { frontmatter as bookingData } from '../../content/integrations/booking.md';
 
 interface BookingContent {
+  enabled?: boolean;
   cal_link?: string;
   cal_event_label?: string;
   cal_duration_label?: string;
@@ -18,11 +19,12 @@ interface BookingContent {
 }
 
 const booking = bookingData as BookingContent;
+const showBooking = booking.enabled === true && Boolean(booking.cal_link);
 ---
 
 <Layout
-  title="Contact — James Parker Coaching"
-  description="Book a 30-minute discovery call. Tell me about your goals and we'll figure out if coaching is the right fit."
+  title="Contact — Mara Petrescu Advisory"
+  description="Book a 30-minute discovery call and talk through what you need without pressure or theatre."
   activeIndex={3}
 >
   <!-- ─── Hero ──────────────────────────────────────────── -->
@@ -42,19 +44,23 @@ const booking = bookingData as BookingContent;
   </SectionBlock>
 
   <!-- ─── Cal.com booking ─────────────────────────────────── -->
-  <SectionBlock tone="subtle" padding="default">
-    <Container className="cp-contact-cal">
-      <CalBookingBlock
-        variant="inline"
-        calLink={booking.cal_link}
-        eventLabel={booking.cal_event_label}
-        title={booking.title}
-        subtitle={booking.description}
-        durationLabel={booking.cal_duration_label}
-        layout={booking.cal_layout}
-      />
-    </Container>
-  </SectionBlock>
+  {
+    showBooking && (
+      <SectionBlock tone="subtle" padding="default">
+        <Container className="cp-contact-cal">
+          <CalBookingBlock
+            variant="inline"
+            calLink={booking.cal_link}
+            eventLabel={booking.cal_event_label}
+            title={booking.title}
+            subtitle={booking.description}
+            durationLabel={booking.cal_duration_label}
+            layout={booking.cal_layout}
+          />
+        </Container>
+      </SectionBlock>
+    )
+  }
 
   <!-- ─── Contact (form + info) ───────────────────────────── -->
   <SectionBlock tone="light" padding="default" topBorder>
@@ -120,7 +126,7 @@ const booking = bookingData as BookingContent;
             type="tel"
             name="phone"
             label="Phone (optional)"
-            placeholder="(555) 234-5678"
+            placeholder="+351 913 442 118"
           />
 
           <FormField
@@ -147,27 +153,27 @@ const booking = bookingData as BookingContent;
         <div class="cp-contact-grid__info-cards">
           <ContactCard
             label="Email"
-            value="coach@jamesparker.com"
-            href="mailto:coach@jamesparker.com"
+            value="hello@marapetrescu.com"
+            href="mailto:hello@marapetrescu.com"
             hint="Replies within 24 hours, weekdays"
           />
           <ContactCard
             label="Phone"
-            value="(555) 234-5678"
-            href="tel:+15552345678"
-            hint="Mon–Fri, 8am–6pm CT"
+            value="+351 913 442 118"
+            href="tel:+351913442118"
+            hint="Mon–Fri, 9:00–18:00 WET"
           />
           <ContactCard
             label="Office"
-            value="Austin, TX"
-            hint="456 Executive Blvd, Suite 300 — in-person sessions by appointment"
+            value="Lisbon, Portugal"
+            hint="In-person sessions by appointment in central Lisbon, plus online across Europe"
           />
         </div>
 
         <div class="cp-contact-grid__hours">
           <span class="cp-contact-grid__hours-label">Coaching hours</span>
           <ul class="cp-contact-grid__hours-list">
-            <li><span>Mon — Fri</span><span>8:00 — 18:00 CT</span></li>
+            <li><span>Mon — Fri</span><span>9:00 — 18:00 WET</span></li>
             <li><span>Saturday</span><span>By appointment</span></li>
             <li><span>Sunday</span><span>Closed</span></li>
           </ul>

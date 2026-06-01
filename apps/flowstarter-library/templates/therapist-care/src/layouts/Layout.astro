@@ -20,8 +20,8 @@ interface ContactFormContent {
 }
 
 const {
-  title = 'Sarah Mitchell, LMFT — Licensed Marriage & Family Therapist',
-  description = 'Compassionate, evidence-based therapy for individuals, couples, and families in the San Francisco Bay Area. Licensed Marriage & Family Therapist.',
+  title = 'Elena Marin Therapy — Psychotherapy in Barcelona',
+  description = 'Individual therapy for adults and couples in Barcelona and online across Spain. Warm, evidence-based support without jargon.',
   activeIndex = -1,
 } = Astro.props;
 
@@ -64,10 +64,10 @@ const footerColumns = [
     links: [
       { label: 'Schedule a consultation', href: '/contact' },
       {
-        label: 'hello@sarahmitchell-lmft.com',
-        href: 'mailto:hello@sarahmitchell-lmft.com',
+        label: 'hello@elenamarintherapy.com',
+        href: 'mailto:hello@elenamarintherapy.com',
       },
-      { label: '(415) 555-0184', href: 'tel:+14155550184' },
+      { label: '+34 611 482 903', href: 'tel:+34611482903' },
     ],
   },
 ];
@@ -142,7 +142,7 @@ const socials = [
   </head>
   <body>
     <Header
-      brandLabel="Sarah Mitchell, LMFT"
+      brandLabel="Elena Marin Therapy"
       links={navLinks}
       ctaLabel="Schedule a consultation"
       ctaHref="/contact"
@@ -152,11 +152,11 @@ const socials = [
       <slot />
     </main>
     <Footer
-      brandLabel="Sarah Mitchell, LMFT"
-      tagline="Compassionate, evidence-based psychotherapy for individuals, couples, and families navigating life's most difficult chapters."
+      brandLabel="Elena Marin Therapy"
+      tagline="Psychotherapy for anxiety, burnout, grief, and life transitions. In person in Barcelona and online across Spain."
       columns={footerColumns}
       socials={socials}
-      copyrightSuffix="Sarah Mitchell, LMFT. All rights reserved. License #87654."
+      copyrightSuffix="Elena Marin Therapy. All rights reserved."
     />
     <ContactScript
       actionUrl={contactFormActionUrl}

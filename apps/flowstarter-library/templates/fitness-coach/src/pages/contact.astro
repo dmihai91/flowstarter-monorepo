@@ -53,6 +53,7 @@ interface ContactFormContent {
 const site = siteData as SiteContent;
 const booking = bookingData as BookingContent;
 const contactForm = contactFormData as ContactFormContent;
+const showBooking = booking.enabled === true && Boolean(booking.cal_link);
 
 const contactInfo = site.contact ?? {};
 
@@ -116,22 +117,26 @@ const emailHref = contactInfo.email ? `mailto:${contactInfo.email}` : undefined;
           Lock in your<br /><em>free assessment</em>.
         </h1>
         <p class="fc-contact-hero__lede">
-          Pick a time below and we'll run a 45-minute movement-and-goals
-          screen — in-person at Iron Forge or over video. You leave with a
+          Send over your details and we'll set up a 45-minute movement-and-goals
+          screen — in person in Cluj-Napoca or over video. You leave with a
           written next-step plan whether we keep training together or not.
         </p>
       </header>
-      <CalBookingBlock
-        variant="inline"
-        calLink={booking.cal_link}
-        eventLabel={booking.cal_event_label ?? 'Free assessment session'}
-        title={booking.title ?? 'Lock in your free assessment.'}
-        subtitle={booking.description ??
-          'Pick a time and we will run a 45-minute movement and goals assessment.'}
-        durationLabel={booking.cal_duration_label ?? '45 minutes · in-person or video · free'}
-        layout={booking.cal_layout ?? 'month_view'}
-        className="fc-contact-hero__cal"
-      />
+      {
+        showBooking && (
+          <CalBookingBlock
+            variant="inline"
+            calLink={booking.cal_link}
+            eventLabel={booking.cal_event_label ?? 'Free assessment session'}
+            title={booking.title ?? 'Lock in your free assessment.'}
+            subtitle={booking.description ??
+              'Pick a time and we will run a 45-minute movement and goals assessment.'}
+            durationLabel={booking.cal_duration_label ?? '45 minutes · in-person or video · free'}
+            layout={booking.cal_layout ?? 'month_view'}
+            className="fc-contact-hero__cal"
+          />
+        )
+      }
     </Container>
   </SectionBlock>
 
@@ -217,7 +222,7 @@ const emailHref = contactInfo.email ? `mailto:${contactInfo.email}` : undefined;
                 label="Phone"
                 value={contactInfo.phone}
                 href={phoneHref}
-                hint="Mon–Fri, 8am–6pm CT"
+                hint="Mon–Fri, 8:00–18:00 EET"
               />
             )
           }
@@ -225,7 +230,7 @@ const emailHref = contactInfo.email ? `mailto:${contactInfo.email}` : undefined;
             contactInfo.address && (
               <ContactCard
                 label="Studio"
-                value="Iron Forge — East Austin"
+                value="Cluj-Napoca"
                 hint={contactInfo.address}
               />
             )
@@ -235,7 +240,7 @@ const emailHref = contactInfo.email ? `mailto:${contactInfo.email}` : undefined;
         <div class="fc-contact-grid__hours">
           <span class="fc-contact-grid__hours-label">Coaching hours</span>
           <ul class="fc-contact-grid__hours-list">
-            <li><span>Mon — Fri</span><span>6:00 — 19:00 CT</span></li>
+            <li><span>Mon — Fri</span><span>7:00 — 19:00 EET</span></li>
             <li><span>Saturday</span><span>By appointment</span></li>
             <li><span>Sunday</span><span>Closed</span></li>
           </ul>

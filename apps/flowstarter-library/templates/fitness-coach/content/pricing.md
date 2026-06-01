@@ -1,41 +1,41 @@
 ---
-title: "Investment in Your Wellbeing"
-subtitle: "Flexible options to support your healing journey. Insurance accepted."
+title: "Straightforward pricing"
+subtitle: "Choose a structure that matches how much support you want. No long-term contract unless we agree one."
 plans:
   - name: "Single Session"
-    price: 150
+    price: 45
     period: "/session"
-    description: "Start with one session to see if we're a good fit for your needs."
+    description: "A one-off coached session for technique, a restart, or a training check-in."
     features:
-      - "50-minute therapy session"
-      - "Personalized treatment approach"
-      - "Secure video or in-person"
-      - "Session notes & resources"
-    cta: "Book a Session"
+      - "60-minute coached session"
+      - "In-person in Cluj-Napoca"
+      - "Technique feedback and short follow-up notes"
+      - "Good for occasional top-ups"
+    cta: "Book a session"
     popular: false
-  - name: "Monthly Support"
-    price: 520
+  - name: "Monthly Coaching"
+    price: 180
     period: "/month"
-    description: "Consistent weekly sessions for deeper, lasting transformation."
+    description: "For people who want a steady weekly rhythm and someone watching their progress properly."
     features:
-      - "4 sessions per month (save $80)"
-      - "Priority scheduling"
-      - "Between-session email support"
-      - "Personalized exercises & resources"
+      - "4 coached sessions per month"
+      - "Priority booking"
       - "Progress tracking"
-    cta: "Begin Monthly Care"
+      - "Basic nutrition guidance"
+      - "WhatsApp support on training days"
+    cta: "Start monthly coaching"
     popular: true
-  - name: "Intensive Program"
-    price: 950
+  - name: "Online Coaching"
+    price: 140
     period: "/month"
-    description: "For those ready to dive deep. Twice-weekly sessions plus extended support."
+    description: "Remote coaching for clients who can train on their own but want better programming and accountability."
     features:
-      - "8 sessions per month"
-      - "60-minute extended sessions"
-      - "Crisis support availability"
-      - "Comprehensive treatment plan"
-      - "Family consultation included"
-    cta: "Apply for Intensive"
+      - "Custom program updated every 2 weeks"
+      - "Form review by video"
+      - "Weekly check-ins"
+      - "Habit and recovery tracking"
+      - "Best value if you travel or train flexibly"
+    cta: "Apply for online coaching"
     popular: false
-guarantee: "Your first session is risk-free. If it's not the right fit, no charge."
+guarantee: "If the first session makes it obvious we are not the right fit, I will not push you into a package."
 ---

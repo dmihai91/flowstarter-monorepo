@@ -65,11 +65,12 @@ const servicesFm = servicesData as ServicesContent;
 const testimonialsFm = testimonialsData as TestimonialsContent;
 const videoFm = videoData as VideoContent;
 const bookingFm = bookingData as BookingContent;
+const showBooking = bookingFm.enabled === true && Boolean(bookingFm.cal_link);
 
 const heroStats = [
-  { number: '15+', label: 'Years in practice' },
-  { number: '1,200+', label: 'Clients supported' },
-  { number: '92%', label: 'Client retention' },
+  { number: '9+', label: 'Years in practice' },
+  { number: '300+', label: 'Clients supported' },
+  { number: '90%', label: 'Clients who continue after intake' },
   { number: '4.9', label: 'Average rating' },
 ];
 
@@ -149,34 +150,33 @@ const faqs = [
 ];
 
 const credentials = [
-  'Licensed Marriage & Family Therapist (LMFT #87654)',
-  'EMDR Certified Therapist',
-  'Masters in Clinical Psychology, Stanford University',
-  'Member, California Association of Marriage and Family Therapists',
+  'Licensed psychotherapist',
+  'EMDR-informed trauma training',
+  'MA in Clinical Psychology',
+  '9+ years in private practice',
 ];
 ---
 
 <Layout
-  title="Sarah Mitchell, LMFT — Compassionate Therapy in the Bay Area"
-  description="Compassionate, evidence-based therapy for individuals, couples, and families across the San Francisco Bay Area. Licensed Marriage & Family Therapist offering in-person and telehealth sessions."
+  title="Elena Marin Therapy — Psychotherapy in Barcelona"
+  description="Individual therapy for adults and couples in Barcelona and online across Spain. Warm, evidence-based support without jargon."
   activeIndex={-1}
 >
-  <HeroIntro text="Sarah Mitchell, LMFT" />
+  <HeroIntro text="Elena Marin Therapy" />
 
   <!-- ─── Hero ──────────────────────────────────────────────── -->
   <SectionBlock id="home" tone="light" padding="hero" className="tc-hero">
     <Container className="tc-hero__inner">
       <div class="tc-hero__copy">
-        <OverlineText text="LMFT · San Francisco Bay Area" tone="accent" />
+        <OverlineText text="Psychotherapy · Barcelona + online" tone="accent" />
         <h1 class="tc-hero__title">
           A considered space<br />
           to <span class="tc-hero__title-accent">begin again</span>.
         </h1>
         <p class="tc-hero__lede">
-          I'm <strong>Sarah Mitchell</strong> — a licensed marriage and family
-          therapist offering quietly held, evidence-based therapy for
-          individuals, couples, and families across the Bay Area and
-          throughout California by telehealth.
+          I'm <strong>Elena Marin</strong> — a psychotherapist offering
+          calm, evidence-based support for anxiety, burnout, grief, and
+          life transitions in Barcelona and online across Spain.
         </p>
         <div class="tc-hero__actions">
           <ActionButton
@@ -193,9 +193,9 @@ const credentials = [
           />
         </div>
         <div class="tc-hero__pills">
-          <TagPill label="In-person & telehealth" />
+          <TagPill label="In-person & online" />
           <TagPill label="Sliding scale available" />
-          <TagPill label="EMDR certified" />
+          <TagPill label="Trauma-informed care" />
         </div>
       </div>
 
@@ -372,7 +372,7 @@ const credentials = [
           className="fs-book-btn"
         />
         <ActionButton
-          href="mailto:hello@sarahmitchell-lmft.com"
+          href="mailto:hello@elenamarintherapy.com"
           label="Send a private email"
           variant="outline-light"
           size="large"
@@ -382,19 +382,23 @@ const credentials = [
   </SectionBlock>
 
   <!-- ─── Direct booking ───────────────────────────────────── -->
-  <SectionBlock tone="light" padding="default" topBorder>
-    <Container>
-      <CalBookingBlock
-        variant="cta"
-        calLink={bookingFm.cal_link}
-        eventLabel={bookingFm.cal_event_label}
-        title={bookingFm.title}
-        subtitle={bookingFm.description}
-        durationLabel={bookingFm.cal_duration_label}
-        layout={bookingFm.cal_layout}
-      />
-    </Container>
-  </SectionBlock>
+  {
+    showBooking && (
+      <SectionBlock tone="light" padding="default" topBorder>
+        <Container>
+          <CalBookingBlock
+            variant="cta"
+            calLink={bookingFm.cal_link}
+            eventLabel={bookingFm.cal_event_label}
+            title={bookingFm.title}
+            subtitle={bookingFm.description}
+            durationLabel={bookingFm.cal_duration_label}
+            layout={bookingFm.cal_layout}
+          />
+        </Container>
+      </SectionBlock>
+    )
+  }
 </Layout>
 
 <style>
@@ -463,18 +467,35 @@ const credentials = [
   .tc-hero__plate {
     position: relative;
     aspect-ratio: 4 / 5;
-    background: var(--surface-subtle);
-    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(circle at 22% 20%, rgba(255, 255, 255, 0.42), transparent 24%),
+      linear-gradient(180deg, rgba(63, 127, 104, 0.14), rgba(201, 167, 122, 0.08)),
+      var(--surface-subtle);
+    border-radius: 240px 240px 28px 28px / 180px 180px 28px 28px;
     overflow: hidden;
+    box-shadow: 0 28px 80px rgba(63, 127, 104, 0.12);
+  }
+
+  .tc-hero__plate::before {
+    content: '';
+    position: absolute;
+    inset: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 220px 220px 22px 22px / 164px 164px 22px 22px;
+    z-index: 1;
+    pointer-events: none;
   }
 
   .tc-hero__plate-image {
     position: absolute;
     inset: 0;
-    background-image: url('https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&h=1100&fit=crop');
+    background-image:
+      linear-gradient(180deg, rgba(249, 247, 241, 0.02), rgba(10, 10, 10, 0.24)),
+      radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.34), transparent 16%),
+      url('https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&h=1100&fit=crop');
     background-size: cover;
     background-position: center 30%;
-    filter: contrast(1.02) saturate(0.9);
+    filter: contrast(1.02) saturate(0.78) sepia(0.08);
     transition: transform 1.4s var(--ease-emphasized);
   }
 
@@ -596,6 +617,13 @@ const credentials = [
     gap: 20px;
   }
 
+  .tc-testimonials :global(figure) {
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.42));
+    border: 1px solid rgba(63, 127, 104, 0.12);
+    box-shadow: 0 12px 30px rgba(63, 127, 104, 0.08);
+  }
+
   .tc-faq {
     max-width: 920px;
   }
@@ -649,6 +677,7 @@ const credentials = [
     .tc-hero__plate {
       aspect-ratio: 16 / 11;
       max-width: 720px;
+      border-radius: 48px 48px 20px 20px / 38px 38px 20px 20px;
     }
 
     .tc-about,

@@ -4,8 +4,8 @@ provider: null
 action_url: ""
 success_message: "Thank you for reaching out! We'll be in touch within 24 hours."
 
-title: "Reach Out"
-description: "Questions about therapy or ready to take the first step? Send a message—all inquiries are confidential."
+title: "Reach out"
+description: "Questions about therapy, availability, or fit are welcome. All inquiries are handled privately and with care."
 
 fields:
   - name: "name"
@@ -22,7 +22,7 @@ fields:
     width: "half"
   - name: "phone"
     label: "Phone"
-    placeholder: "+1 (555) 000-0000"
+    placeholder: "+34 612 345 678"
     type: "tel"
     required: false
     width: "half"
@@ -46,7 +46,7 @@ fields:
     width: "full"
     rows: 5
 
-submit_text: "Send Message"
+submit_text: "Send a private email"
 submitting_text: "Sending..."
 
 validation:

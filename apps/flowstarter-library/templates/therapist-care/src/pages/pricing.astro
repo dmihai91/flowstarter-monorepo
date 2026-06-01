@@ -44,8 +44,9 @@ interface BookingContent {
 const site = siteData as SiteContent;
 const pricingFm = pricingData as PricingContent;
 const bookingFm = bookingData as BookingContent;
+const showBooking = bookingFm.enabled === true && Boolean(bookingFm.cal_link);
 
-const siteName = site.name ?? 'Sarah Mitchell, LMFT';
+const siteName = site.name ?? 'Elena Marin Therapy';
 const siteDescription =
   site.description ??
   'Compassionate, evidence-based therapy for individuals, couples, and families.';
@@ -109,19 +110,23 @@ const plans = pricingFm.plans ?? [];
   }
 
   <!-- ─── Final CTA ─────────────────────────────────────── -->
-  <SectionBlock tone="dark" padding="default">
-    <Container>
-      <CalBookingBlock
-        variant="cta"
-        calLink={bookingFm.cal_link}
-        eventLabel={bookingFm.cal_event_label}
-        title={bookingFm.title}
-        subtitle={bookingFm.description}
-        durationLabel={bookingFm.cal_duration_label}
-        layout={bookingFm.cal_layout}
-      />
-    </Container>
-  </SectionBlock>
+  {
+    showBooking && (
+      <SectionBlock tone="dark" padding="default">
+        <Container>
+          <CalBookingBlock
+            variant="cta"
+            calLink={bookingFm.cal_link}
+            eventLabel={bookingFm.cal_event_label}
+            title={bookingFm.title}
+            subtitle={bookingFm.description}
+            durationLabel={bookingFm.cal_duration_label}
+            layout={bookingFm.cal_layout}
+          />
+        </Container>
+      </SectionBlock>
+    )
+  }
 </Layout>
 
 <style>

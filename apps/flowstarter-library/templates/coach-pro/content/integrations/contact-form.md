@@ -4,8 +4,8 @@ provider: null
 action_url: ""
 success_message: "Thank you for reaching out! We'll be in touch within 24 hours."
 
-title: "Reach Out"
-description: "Questions about therapy or ready to take the first step? Send a message—all inquiries are confidential."
+title: "Start the conversation"
+description: "If you are exploring leadership support for yourself or your team, send a note with context and I will reply with next steps."
 
 fields:
   - name: "name"
@@ -22,31 +22,31 @@ fields:
     width: "half"
   - name: "phone"
     label: "Phone"
-    placeholder: "+1 (555) 000-0000"
+    placeholder: "+351 912 345 678"
     type: "tel"
     required: false
     width: "half"
   - name: "inquiry_type"
-    label: "I'm Interested In"
+    label: "I need help with"
     placeholder: "Select an option"
     type: "select"
     required: true
     width: "half"
     options:
-      - "Individual Therapy"
-      - "Couples Counseling"
-      - "Anxiety or Depression Support"
-      - "Grief Counseling"
-      - "General Question"
+      - "Founder coaching"
+      - "Leadership communication"
+      - "Executive team offsite"
+      - "Advisory retainer"
+      - "General inquiry"
   - name: "message"
     label: "Your Message"
-    placeholder: "Share what's on your mind..."
+    placeholder: "Tell me what is changing, where the friction is, and what kind of support would be useful."
     type: "textarea"
     required: true
     width: "full"
     rows: 5
 
-submit_text: "Send Message"
+submit_text: "Send inquiry"
 submitting_text: "Sending..."
 
 validation:
@@ -55,10 +55,10 @@ validation:
   phone: "Please enter a valid phone number"
 
 success:
-  title: "Message Received"
-  message: "Thank you for reaching out. I'll respond within 24 hours. All communications are confidential."
+  title: "Inquiry received"
+  message: "Thanks for reaching out. You will hear back within one business day."
 
 error:
-  title: "Something Went Wrong"
-  message: "Please try again or call the office directly."
+  title: "Something went wrong"
+  message: "Please try again or email directly."
 ---

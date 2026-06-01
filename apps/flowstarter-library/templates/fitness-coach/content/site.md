@@ -1,14 +1,14 @@
 ---
-name: "Mike Torres Fitness"
-tagline: "Push Beyond Your Limits"
-description: "Transform your body and mind with personalized training programs. Certified personal trainer specializing in strength training, weight loss, and athletic performance."
+name: "Radu Stoica Performance"
+tagline: "Strength coaching for busy adults"
+description: "Strength and conditioning coaching for busy adults who want to get stronger, move better, and stay consistent. In-person in Cluj-Napoca and online."
 contact:
-  email: "mike@torresfit.com"
-  phone: "(555) 345-6789"
-  address: "456 Iron Street, Fitness District, Austin, TX 78701"
+  email: "radu@stoicaperformance.ro"
+  phone: "+40 744 381 220"
+  address: "Strada Fabricii 121, Cluj-Napoca"
 social:
-  instagram: "https://instagram.com/miketorresfit"
-  youtube: "https://youtube.com/@miketorresfit"
-  tiktok: "https://tiktok.com/@miketorresfit"
-year: 2025
+  instagram: "https://instagram.com/radustoicaperformance"
+  youtube: "https://youtube.com/@radustoicaperformance"
+  tiktok: "https://tiktok.com/@radustoicaperformance"
+year: 2026
 ---

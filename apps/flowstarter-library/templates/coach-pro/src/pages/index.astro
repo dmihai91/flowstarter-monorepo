@@ -36,6 +36,7 @@ interface VideoContent {
   aspect?: '21/9' | '16/9' | '4/3' | '1/1';
 }
 interface BookingContent {
+  enabled?: boolean;
   cal_link?: string;
   cal_event_label?: string;
   cal_duration_label?: string;
@@ -49,6 +50,7 @@ const servicesContent = servicesData as ServicesContent;
 const testimonialsContent = testimonialsData as TestimonialsContent;
 const video = videoData as VideoContent;
 const booking = bookingData as BookingContent;
+const showBooking = booking.enabled === true && Boolean(booking.cal_link);
 
 // Map .md hero stats (value/label) to StatsRow's expected (number/label) shape.
 const heroStats = (hero.stats ?? []).map((s) => ({
@@ -128,7 +130,7 @@ const faqs = [
   {
     question: 'Do you offer virtual coaching sessions?',
     answer:
-      'Yes. The majority of my clients work with me virtually via secure video calls. Virtual coaching is just as effective as in-person and offers the flexibility to work together regardless of location. I also offer in-person sessions in Austin, TX for local clients.',
+      'Yes. Most clients work with me online. It keeps the process easier to sustain and gives us enough continuity to work properly. In-person sessions are available in Bucharest when a client prefers that format.',
   },
   {
     question: 'How is coaching different from therapy?',
@@ -138,33 +140,33 @@ const faqs = [
 ];
 
 const credentials = [
-  'ICF Professional Certified Coach (PCC)',
-  'Certified Executive Coach — Columbia University',
-  'MBA, Harvard Business School',
-  '12+ years coaching experience',
+  'ICF Associate Certified Coach (ACC)',
+  'Systemic coaching & facilitation training',
+  'Former operations advisor for service and SaaS teams',
+  '9+ years coaching founders and team leads',
 ];
 ---
 
 <Layout
-  title="James Parker — Executive & Life Coach"
-  description="Executive, business, and life coaching for ambitious professionals ready to break through limitations and achieve extraordinary results."
+  title="Mara Petrescu Advisory — Leadership Coach for Founders and Team Leads"
+  description="Executive coaching for founders, operators, and emerging leaders navigating growth, difficult conversations, and high-responsibility roles across Europe, from a base in Lisbon."
   activeIndex={-1}
 >
-  <HeroIntro text="James Parker" />
+  <HeroIntro text="Mara Petrescu" />
 
   <!-- ─── Hero ──────────────────────────────────────────────── -->
   <SectionBlock id="home" tone="light" padding="hero" className="cp-hero">
     <Container className="cp-hero__inner">
       <div class="cp-hero__copy">
-        <OverlineText text="ICF Certified · Austin, TX" tone="accent" />
+        <OverlineText text="ICF ACC · Lisbon + online" tone="accent" />
         <h1 class="cp-hero__title">
           Unlock your true<br />
           <span class="cp-hero__title-accent">potential.</span>
         </h1>
         <p class="cp-hero__lede">
-          I'm <strong>James Parker</strong> — I help ambitious professionals
-          and entrepreneurs break through limitations, gain clarity, and
-          achieve extraordinary results in life, career, and business.
+          I'm <strong>Mara Petrescu</strong> — I help founders, operators,
+          and newly stretched leaders think more clearly, make cleaner
+          decisions, and lead without living in a permanent state of tension.
         </p>
         <div class="cp-hero__actions">
           <ActionButton
@@ -181,9 +183,9 @@ const credentials = [
           />
         </div>
         <div class="cp-hero__pills">
-          <TagPill label="Virtual sessions worldwide" />
-          <TagPill label="500+ clients coached" />
-          <TagPill label="ICF accredited" />
+          <TagPill label="Online across Europe" />
+          <TagPill label="120+ leaders coached" />
+          <TagPill label="Small retained roster" />
         </div>
       </div>
 
@@ -213,16 +215,14 @@ const credentials = [
       </div>
       <div class="cp-about__body">
         <p class="cp-about__intro">
-          For over twelve years, I've coached leaders, entrepreneurs, and
-          professionals through pivotal moments in their careers and lives.
-          My approach blends strategic thinking with deep personal insight —
-          rigorous, practical, and unsentimental.
+          For nearly a decade, I've worked with founders, operators, and
+          team leads through promotions, difficult hiring decisions, burnout
+          edges, and the strain that comes with carrying too much alone.
         </p>
         <p class="cp-about__copy">
-          I specialize in life transitions, leadership development, business
-          growth, and career acceleration. Whether you're scaling a company,
-          navigating a pivot, or seeking greater fulfillment, I'm here to help
-          you achieve breakthrough results.
+          The work is practical and direct. We slow things down enough to
+          think properly, then turn that thinking into decisions, boundaries,
+          conversations, and follow-through.
         </p>
         <ul class="cp-about__credentials" id="credentials">
           {
@@ -341,12 +341,12 @@ const credentials = [
   <SectionBlock id="contact" tone="dark" padding="default">
     <Container className="cp-cta">
       <h2 class="cp-cta__title">
-        Ready to transform<br />your life and work?
+        Ready to lead with<br />more clarity?
       </h2>
       <p class="cp-cta__lede">
-        The first step is a complimentary 30-minute discovery call. We'll
-        discuss your goals, explore how coaching can help, and determine if
-        we're the right fit to work together.
+        The first step is a 30-minute discovery call. We talk through what
+        you are carrying, where you feel stuck, and whether this looks like
+        the right kind of support.
       </p>
       <div class="cp-cta__actions">
         <ActionButton
@@ -357,7 +357,7 @@ const credentials = [
           className="fs-book-btn"
         />
         <ActionButton
-          href="mailto:coach@jamesparker.com"
+          href="mailto:hello@marapetrescu.com"
           label="Send an email instead"
           variant="outline-light"
           size="large"
@@ -367,19 +367,23 @@ const credentials = [
   </SectionBlock>
 
   <!-- ─── Cal.com booking CTA ──────────────────────────────── -->
-  <SectionBlock tone="subtle" padding="default" topBorder>
-    <Container className="cp-cal-cta">
-      <CalBookingBlock
-        variant="cta"
-        calLink={booking.cal_link}
-        eventLabel={booking.cal_event_label}
-        title={booking.title}
-        subtitle={booking.description}
-        durationLabel={booking.cal_duration_label}
-        layout={booking.cal_layout}
-      />
-    </Container>
-  </SectionBlock>
+  {
+    showBooking && (
+      <SectionBlock tone="subtle" padding="default" topBorder>
+        <Container className="cp-cal-cta">
+          <CalBookingBlock
+            variant="cta"
+            calLink={booking.cal_link}
+            eventLabel={booking.cal_event_label}
+            title={booking.title}
+            subtitle={booking.description}
+            durationLabel={booking.cal_duration_label}
+            layout={booking.cal_layout}
+          />
+        </Container>
+      </SectionBlock>
+    )
+  }
 </Layout>
 
 <style>
@@ -446,18 +450,36 @@ const credentials = [
   .cp-hero__plate {
     position: relative;
     aspect-ratio: 4 / 5;
-    background: var(--surface-subtle);
-    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 38%),
+      linear-gradient(180deg, rgba(32, 83, 246, 0.16), rgba(10, 10, 10, 0.08)),
+      var(--surface-subtle);
+    border: 1px solid rgba(32, 83, 246, 0.16);
+    border-radius: 28px 8px 28px 8px;
     overflow: hidden;
+    box-shadow: 0 24px 60px rgba(32, 83, 246, 0.12);
+  }
+
+  .cp-hero__plate::before {
+    content: '';
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 18px 6px 18px 6px;
+    z-index: 1;
+    pointer-events: none;
   }
 
   .cp-hero__plate-image {
     position: absolute;
     inset: 0;
-    background-image: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=900&h=1100&fit=crop&crop=faces');
+    background-image:
+      linear-gradient(180deg, rgba(13, 23, 60, 0.1), rgba(13, 23, 60, 0.68)),
+      linear-gradient(130deg, rgba(255, 138, 91, 0.18), transparent 30%),
+      url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=900&h=1100&fit=crop&crop=faces');
     background-size: cover;
     background-position: center 30%;
-    filter: contrast(1.04) saturate(0.92);
+    filter: contrast(1.06) saturate(0.9);
     transition: transform 1.2s var(--ease-emphasized);
   }
 

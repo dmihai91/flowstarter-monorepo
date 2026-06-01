@@ -1,8 +1,8 @@
 ---
-enabled: true
+enabled: false
 provider: cal
 embed_url: null
-cal_link: "therapist-care/intro-consult"
+cal_link: ""
 cal_event_label: "20-minute intro call"
 cal_duration_label: "20 minutes · video or phone · confidential"
 cal_layout: "month_view"
@@ -32,7 +32,7 @@ fields:
     required: true
   - name: "phone"
     label: "Phone"
-    placeholder: "+1 (555) 000-0000"
+    placeholder: "+34 611 482 903"
     required: true
   - name: "concern"
     label: "What brings you to therapy?"

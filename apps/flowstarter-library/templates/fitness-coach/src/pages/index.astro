@@ -91,6 +91,7 @@ const services = servicesData as ServicesContent;
 const testimonials = testimonialsData as TestimonialsContent;
 const video = videoData as VideoContent;
 const booking = bookingData as BookingContent;
+const showBooking = booking.enabled === true && Boolean(booking.cal_link);
 
 // Hero stat row — content is in hero.md, but StatsRow uses { number, label }.
 const heroStats = (hero.stats ?? []).map((s) => ({
@@ -167,24 +168,24 @@ const faqs = [
 ];
 
 const credentials = [
-  'NASM Certified Personal Trainer',
-  'CSCS — Strength & Conditioning Specialist',
-  'ACE Fitness Nutrition Specialist',
-  '8+ years coaching strength & performance',
+  'NSCA Certified Personal Trainer',
+  'Precision Nutrition Level 1',
+  'Strength & conditioning focus for busy adults',
+  '7+ years coaching consistency and performance',
 ];
 ---
 
 <Layout
-  title={`${site.name} — Strength & Performance Coach, Austin`}
+  title={`${site.name} — Strength Coach in Cluj-Napoca`}
   description={site.description ??
-    'Train with intent. Strength, conditioning, and 12-week transformations out of Iron Forge in East Austin. NASM + CSCS certified.'}
+    'Strength and conditioning coaching for busy adults who want to get stronger, move better, and stay consistent. In-person in Cluj-Napoca and online.'}
   activeIndex={-1}
 >
   <!-- ─── Hero ──────────────────────────────────────────────── -->
   <SectionBlock id="home" tone="light" padding="hero" className="fc-hero">
     <Container className="fc-hero__inner">
       <div class="fc-hero__copy">
-        <OverlineText text="NASM-CPT · CSCS · Austin, TX" tone="accent" />
+        <OverlineText text="NSCA-CPT · Cluj-Napoca + online" tone="accent" />
         <h1 class="fc-hero__title">
           Train with<br />
           <span class="fc-hero__title-accent">intent</span>.<br />
@@ -192,10 +193,9 @@ const credentials = [
           you can use.
         </h1>
         <p class="fc-hero__lede">
-          I'm <strong>Mike Torres</strong> — strength and performance coach
-          out of Iron Forge in East Austin. Eight years building stronger,
-          more capable athletes through programmed work, tracked numbers,
-          and zero guesswork.
+          I'm <strong>Radu Stoica</strong> — a strength coach in
+          Cluj-Napoca helping busy adults train with more structure,
+          move better, and make progress they can actually sustain.
         </p>
         <div class="fc-hero__actions">
           <ActionButton
@@ -212,8 +212,8 @@ const credentials = [
           />
         </div>
         <div class="fc-hero__pills">
-          <TagPill label="Free trial session" />
-          <TagPill label="800+ athletes coached" />
+          <TagPill label="Intro assessment available" />
+          <TagPill label="180+ clients coached" />
           <TagPill label="In-person & online" />
         </div>
       </div>
@@ -391,29 +391,33 @@ const credentials = [
   </SectionBlock>
 
   <!-- ─── CTA — Cal.com booking ─────────────────────────────── -->
-  <SectionBlock id="contact" tone="dark" padding="default">
-    <Container className="fc-cta">
-      <CalBookingBlock
-        variant="cta"
-        calLink={booking.cal_link}
-        eventLabel={booking.cal_event_label ?? 'Book a free trial'}
-        title={booking.title ?? 'Stop hoping. Start training.'}
-        subtitle={booking.description ??
-          'First session is on me — a full assessment, a sample workout, and a plain-language conversation about what we would build together.'}
-        durationLabel={booking.cal_duration_label ?? '45 minutes · in-person or video · free'}
-        layout={booking.cal_layout ?? 'month_view'}
-        className="fc-cta__cal"
-      />
-      <div class="fc-cta__actions">
-        <ActionButton
-          href="/services"
-          label="See programs"
-          variant="outline-light"
-          size="large"
-        />
-      </div>
-    </Container>
-  </SectionBlock>
+  {
+    showBooking && (
+      <SectionBlock id="contact" tone="dark" padding="default">
+        <Container className="fc-cta">
+          <CalBookingBlock
+            variant="cta"
+            calLink={booking.cal_link}
+            eventLabel={booking.cal_event_label ?? 'Book a free trial'}
+            title={booking.title ?? 'Stop hoping. Start training.'}
+            subtitle={booking.description ??
+              'First session is on me — a full assessment, a sample workout, and a plain-language conversation about what we would build together.'}
+            durationLabel={booking.cal_duration_label ?? '45 minutes · in-person or video · free'}
+            layout={booking.cal_layout ?? 'month_view'}
+            className="fc-cta__cal"
+          />
+          <div class="fc-cta__actions">
+            <ActionButton
+              href="/services"
+              label="See programs"
+              variant="outline-light"
+              size="large"
+            />
+          </div>
+        </Container>
+      </SectionBlock>
+    )
+  }
 </Layout>
 
 <style>
@@ -484,18 +488,41 @@ const credentials = [
   .fc-hero__plate {
     position: relative;
     aspect-ratio: 4 / 5;
-    background: var(--bg-dark);
-    border-radius: var(--radius-sm);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.18)),
+      var(--bg-dark);
+    border: 1px solid rgba(216, 77, 37, 0.28);
+    border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 24px 50px rgba(10, 10, 10, 0.2);
+  }
+
+  .fc-hero__plate::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.06) 0 2px,
+        transparent 2px 18px
+      );
+    mix-blend-mode: screen;
+    opacity: 0.28;
+    z-index: 1;
+    pointer-events: none;
   }
 
   .fc-hero__plate-image {
     position: absolute;
     inset: 0;
-    background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&h=1100&fit=crop');
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.48)),
+      linear-gradient(135deg, rgba(216, 77, 37, 0.18), transparent 24%),
+      url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&h=1100&fit=crop');
     background-size: cover;
     background-position: center 40%;
-    filter: contrast(1.08) saturate(0.95);
+    filter: contrast(1.12) saturate(0.88);
     transition: transform 1s var(--ease-emphasized);
   }
 
@@ -654,6 +681,12 @@ const credentials = [
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+  }
+
+  .fc-testimonials :global(figure) {
+    border-radius: 10px;
+    border: 1px solid rgba(216, 77, 37, 0.18);
+    box-shadow: inset 0 0 0 1px rgba(10, 10, 10, 0.04);
   }
 
   /* FAQ */

@@ -1,41 +1,41 @@
 ---
-title: "Investment in Your Wellbeing"
-subtitle: "Flexible options to support your healing journey. Insurance accepted."
+title: "Ways to work together"
+subtitle: "Simple pricing for individual coaching. Team workshops and facilitation are scoped separately."
 plans:
   - name: "Single Session"
-    price: 150
+    price: 180
     period: "/session"
-    description: "Start with one session to see if we're a good fit for your needs."
+    description: "A standalone session for a specific decision, transition, or leadership knot you want to think through properly."
     features:
-      - "50-minute therapy session"
-      - "Personalized treatment approach"
-      - "Secure video or in-person"
-      - "Session notes & resources"
-    cta: "Book a Session"
+      - "60-minute coaching session"
+      - "Video or in-person in Bucharest"
+      - "Short written recap after the call"
+      - "Useful when you do not need an ongoing engagement"
+    cta: "Book a session"
     popular: false
-  - name: "Monthly Support"
-    price: 520
+  - name: "Monthly Coaching"
+    price: 640
     period: "/month"
-    description: "Consistent weekly sessions for deeper, lasting transformation."
+    description: "A steady coaching rhythm for people in demanding roles who need regular space to think, decide, and follow through."
     features:
-      - "4 sessions per month (save $80)"
+      - "4 sessions per month"
       - "Priority scheduling"
-      - "Between-session email support"
-      - "Personalized exercises & resources"
-      - "Progress tracking"
-    cta: "Begin Monthly Care"
+      - "Between-session voice or email support"
+      - "Shared action tracking"
+      - "Monthly review of patterns and progress"
+    cta: "Start monthly coaching"
     popular: true
-  - name: "Intensive Program"
-    price: 950
-    period: "/month"
-    description: "For those ready to dive deep. Twice-weekly sessions plus extended support."
+  - name: "Leadership Intensive"
+    price: 1450
+    period: "/6 weeks"
+    description: "A focused short engagement for a role transition, a founder bottleneck, or a difficult quarter you need to move through cleanly."
     features:
-      - "8 sessions per month"
-      - "60-minute extended sessions"
-      - "Crisis support availability"
-      - "Comprehensive treatment plan"
-      - "Family consultation included"
-    cta: "Apply for Intensive"
+      - "6 sessions across 6 weeks"
+      - "One strategy document tailored to your situation"
+      - "Priority async support"
+      - "Can include one stakeholder session if useful"
+      - "Best for time-bound transitions"
+    cta: "Apply for the intensive"
     popular: false
-guarantee: "Your first session is risk-free. If it's not the right fit, no charge."
+guarantee: "If the fit is clearly wrong after the first session, we stop there. No awkward lock-in."
 ---

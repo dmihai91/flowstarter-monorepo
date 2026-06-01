@@ -1,8 +1,8 @@
 ---
-enabled: true
+enabled: false
 provider: cal
 embed_url: null
-cal_link: "fitness-coach/free-session"
+cal_link: ""
 cal_event_label: "Free assessment session"
 cal_duration_label: "45 minutes · in-person or video · free"
 cal_layout: "month_view"
@@ -32,11 +32,11 @@ fields:
     required: true
   - name: "phone"
     label: "Phone"
-    placeholder: "+1 (555) 000-0000"
+    placeholder: "+40 744 381 220"
     required: true
   - name: "concern"
-    label: "What brings you to therapy?"
-    placeholder: "Share as much or as little as you're comfortable with..."
+    label: "What are you training for?"
+    placeholder: "Tell me your main goal, current level, and any injuries or constraints..."
     required: false
     type: "textarea"
 

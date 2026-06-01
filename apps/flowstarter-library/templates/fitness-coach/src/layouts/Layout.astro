@@ -20,8 +20,8 @@ interface ContactFormContent {
 }
 
 const {
-  title = 'Mike Torres — Strength & Performance Coach, Austin TX',
-  description = 'NASM-certified strength and performance coaching in Austin, TX. 1-on-1, group, and online programming for adults who want to get measurably stronger.',
+  title = 'Radu Stoica Performance — Strength Coach in Cluj-Napoca',
+  description = 'Strength and conditioning coaching for busy adults who want to get stronger, move better, and stay consistent. In-person in Cluj-Napoca and online.',
   activeIndex = -1,
 } = Astro.props;
 
@@ -63,8 +63,8 @@ const footerColumns = [
     heading: 'Train',
     links: [
       { label: 'Book a free trial', href: '/contact' },
-      { label: 'mike@torrescoaching.com', href: 'mailto:mike@torrescoaching.com' },
-      { label: '(512) 555-0419', href: 'tel:+15125550419' },
+      { label: 'radu@stoicaperformance.ro', href: 'mailto:radu@stoicaperformance.ro' },
+      { label: '+40 744 381 220', href: 'tel:+40744381220' },
     ],
   },
 ];
@@ -139,7 +139,7 @@ const socials = [
   </head>
   <body>
     <Header
-      brandLabel="Mike Torres"
+      brandLabel="Radu Stoica"
       links={navLinks}
       ctaLabel="Book a free trial"
       ctaHref="/contact"
@@ -149,11 +149,11 @@ const socials = [
       <slot />
     </main>
     <Footer
-      brandLabel="Mike Torres"
-      tagline="Strength and performance coaching out of Iron Forge in East Austin. Built for adults who want measurable results without the fluff."
+      brandLabel="Radu Stoica"
+      tagline="Strength coaching in Cluj-Napoca for busy adults who want measurable progress without living in the gym."
       columns={footerColumns}
       socials={socials}
-      copyrightSuffix="Torres Coaching. All rights reserved."
+      copyrightSuffix="Radu Stoica Performance. All rights reserved."
     />
     <ContactScript
       actionUrl={contactFormActionUrl}

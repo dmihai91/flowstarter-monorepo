@@ -1,6 +1,6 @@
 ---
-name: "Sarah Mitchell Therapy"
-tagline: "Begin Your Journey to Healing"
-description: "Compassionate therapy services helping individuals, couples, and families navigate life's challenges. Begin your journey to healing today."
-year: 2025
+name: "Elena Marin Therapy"
+tagline: "Psychotherapy for anxiety, burnout, and life transitions"
+description: "Individual therapy for adults and couples in Barcelona and online across Spain. Warm, evidence-based support without jargon."
+year: 2026
 ---

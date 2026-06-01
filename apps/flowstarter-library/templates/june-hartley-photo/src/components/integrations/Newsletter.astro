@@ -1,0 +1,142 @@
+---
+/**
+ * Newsletter Integration Component
+ * Reads content from content/integrations/newsletter.md
+ * Shows real newsletter form when enabled, beautiful placeholder when not
+ */
+import { getEntry } from 'astro:content';
+
+const newsletter = await getEntry('integrations', 'newsletter');
+const { 
+  enabled, 
+  provider,
+  list_id,
+  title, 
+  description, 
+  placeholder,
+  cta,
+  submitting,
+  benefits,
+  privacy,
+  success,
+  already_subscribed
+} = newsletter.data;
+---
+
+<section id="newsletter" class="py-20 bg-primary relative overflow-hidden">
+  <!-- Background pattern -->
+  <div class="absolute inset-0 bg-[url('/images/pattern-dark.svg')] opacity-10"></div>
+  <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
+  <div class="absolute bottom-0 left-0 w-96 h-96 bg-black/10 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
+  
+  <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <!-- Icon -->
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-8">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      
+      <h2 class="text-3xl md:text-4xl font-heading font-bold text-white mb-4">
+        {title}
+      </h2>
+      <p class="text-lg text-white/80 max-w-2xl mx-auto mb-10">
+        {description}
+      </p>
+      
+      <!-- Newsletter form -->
+      <form id="newsletter-form" class="newsletter-form max-w-xl mx-auto" data-enabled={enabled} data-provider={provider}>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex-1 relative">
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder={placeholder}
+              class="w-full px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent transition-all"
+            />
+          </div>
+          <button
+            type="submit"
+            class="px-8 py-4 bg-white text-primary font-semibold rounded-xl hover:bg-white/90 transition-all shadow-lg shadow-black/10 flex items-center justify-center gap-2 group"
+          >
+            <span class="btn-text">{cta}</span>
+            <span class="btn-loading hidden">{submitting}</span>
+            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Success message -->
+        <div id="newsletter-success" class="hidden mt-6 p-4 bg-green-500/20 border border-green-400/30 rounded-xl">
+          <div class="flex items-center justify-center gap-3 text-white">
+            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <div class="text-left">
+              <p class="font-semibold">{success.title}</p>
+              <p class="text-sm text-white/70">{success.message}</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Error message -->
+        <div id="newsletter-error" class="hidden mt-6 p-4 bg-red-500/20 border border-red-400/30 rounded-xl text-white">
+          <p class="font-medium">Something went wrong. Please try again.</p>
+        </div>
+      </form>
+      
+      <!-- Benefits -->
+      {benefits && benefits.length > 0 && (
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-6 text-white/70 text-sm">
+          {benefits.map((benefit) => (
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span>{benefit}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      <!-- Privacy note -->
+      {privacy && (
+        <p class="mt-6 text-sm text-white/50">
+          <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          {privacy}
+        </p>
+      )}
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('newsletter-form') as HTMLFormElement;
+  const successEl = document.getElementById('newsletter-success');
+  const errorEl = document.getElementById('newsletter-error');
+  
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const btn = form.querySelector('button');
+    const btnText = btn?.querySelector('.btn-text');
+    const btnLoading = btn?.querySelector('.btn-loading');
+    
+    // Show loading state
+    btnText?.classList.add('hidden');
+    btnLoading?.classList.remove('hidden');
+    btn?.setAttribute('disabled', 'true');
+    
+    // Simulate API call (replace with real integration)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Show success
+    form.classList.add('hidden');
+    successEl?.classList.remove('hidden');
+  });
+</script>

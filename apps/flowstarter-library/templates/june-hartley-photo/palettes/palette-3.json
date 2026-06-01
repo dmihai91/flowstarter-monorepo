@@ -1,0 +1,26 @@
+{
+  "id": "palette-3",
+  "name": "Warm Sand",
+  "description": "Terracotta and sand tones with a welcoming, human feel.",
+  "colors": {
+    "primary": "#B0714D",
+    "primary-dark": "#9e6645",
+    "secondary": "#F5E8DC",
+    "accent": "#8E5E3B",
+    "background": "#FCF8F2",
+    "surface": "#FFFFFF",
+    "text": "#3D2B20",
+    "text-muted": "#7C6456"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Inter",
+    "weights": {
+      "heading": "600",
+      "body": "400"
+    }
+  },
+  "preview": {
+    "gradient": "from-[#B0714D] to-[#D4B18A]"
+  }
+}

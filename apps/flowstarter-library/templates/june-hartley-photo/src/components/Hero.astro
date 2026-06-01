@@ -1,0 +1,81 @@
+---
+import { frontmatter as hero } from '../../content/hero.md';
+
+interface HeroStat {
+  value: string;
+  label: string;
+}
+
+interface HeroCta {
+  text: string;
+  href: string;
+}
+
+interface HeroContent {
+  headline: string;
+  subheadline?: string;
+  badge?: string;
+  cta_primary?: HeroCta;
+  cta_secondary?: HeroCta;
+  stats?: HeroStat[];
+}
+
+const { headline, subheadline, badge, cta_primary, cta_secondary, stats = [] } = hero as HeroContent;
+const headlineLines: string[] = headline.split('\n');
+---
+
+<section class="relative overflow-hidden px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_color-mix(in_srgb,var(--color-primary)_24%,white)_0%,var(--color-secondary)_38%,var(--color-background)_100%)]"></div>
+  <div class="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-white/35 to-transparent"></div>
+  <div class="relative mx-auto max-w-5xl text-center">
+    {badge && (
+      <div class="mx-auto mb-8 inline-flex items-center gap-3 rounded-full border border-white/45 bg-white/55 px-5 py-2 text-sm font-medium text-[var(--color-text)] shadow-lg shadow-black/5 backdrop-blur-xl">
+        <span class="h-2.5 w-2.5 rounded-full bg-[var(--color-accent)]"></span>
+        <span>{badge}</span>
+      </div>
+    )}
+
+    <h1 class="mx-auto max-w-4xl text-5xl font-semibold leading-[0.95] text-[var(--color-text)] sm:text-6xl lg:text-7xl">
+      {headline}
+    </h1>
+
+    {subheadline && (
+      <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-[color:var(--color-text-muted)] sm:text-xl">
+        {subheadline}
+      </p>
+    )}
+
+    <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+      {cta_primary && (
+        <a
+          href={cta_primary.href}
+          class="inline-flex items-center justify-center rounded-full px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-black/10 transition-transform duration-300 hover:-translate-y-0.5"
+          style="background: var(--color-primary);"
+        >
+          {cta_primary.text}
+          <svg class="ml-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6-6 6 6-6 6"></path>
+          </svg>
+        </a>
+      )}
+      {cta_secondary && (
+        <a
+          href={cta_secondary.href}
+          class="inline-flex items-center justify-center rounded-full border px-7 py-4 text-sm font-semibold transition-colors"
+          style="border-color: color-mix(in srgb, var(--color-primary) 24%, white); color: var(--color-text); background: color-mix(in srgb, white 75%, var(--color-secondary) 25%);"
+        >
+          {cta_secondary.text}
+        </a>
+      )}
+    </div>
+
+    <div class="mt-12 flex flex-wrap items-center justify-center gap-4">
+      {stats.map((stat: HeroStat) => (
+        <div class="min-w-[11rem] rounded-2xl border border-white/45 bg-white/50 px-5 py-4 text-left shadow-lg shadow-black/5 backdrop-blur-xl">
+          <div class="text-2xl font-semibold text-[var(--color-text)]">{stat.value}</div>
+          <div class="mt-1 text-sm text-[color:var(--color-text-muted)]">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,26 @@
+{
+  "id": "palette-4",
+  "name": "Lavender Mist",
+  "description": "Muted purple tones for softer, reflective presentation.",
+  "colors": {
+    "primary": "#8A76A6",
+    "primary-dark": "#7c6a95",
+    "secondary": "#F5F1FA",
+    "accent": "#D6A8E0",
+    "background": "#FBF9FE",
+    "surface": "#FFFFFF",
+    "text": "#30293D",
+    "text-muted": "#756C86"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Inter",
+    "weights": {
+      "heading": "600",
+      "body": "400"
+    }
+  },
+  "preview": {
+    "gradient": "from-[#8A76A6] to-[#D6A8E0]"
+  }
+}

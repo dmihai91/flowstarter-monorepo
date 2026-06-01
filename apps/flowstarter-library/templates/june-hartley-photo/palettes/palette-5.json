@@ -1,0 +1,26 @@
+{
+  "id": "palette-5",
+  "name": "Rose Quartz",
+  "description": "Dusty pink and neutral hues with gentle warmth.",
+  "colors": {
+    "primary": "#B57C8E",
+    "primary-dark": "#a37080",
+    "secondary": "#FBF1F4",
+    "accent": "#D8A48F",
+    "background": "#FFF8FA",
+    "surface": "#FFFFFF",
+    "text": "#3E2830",
+    "text-muted": "#846873"
+  },
+  "fonts": {
+    "heading": "Cormorant Garamond",
+    "body": "Inter",
+    "weights": {
+      "heading": "600",
+      "body": "400"
+    }
+  },
+  "preview": {
+    "gradient": "from-[#B57C8E] to-[#D8A48F]"
+  }
+}

@@ -1,0 +1,174 @@
+---
+import '../../../shared/dorin-ds/tokens.css';
+import '../../../shared/dorin-ds/reset.css';
+import DSHead from '../../../shared/dorin-ds/components/DSHead.astro';
+import Header from '../../../shared/dorin-ds/components/Header.astro';
+import Footer from '../../../shared/dorin-ds/components/Footer.astro';
+import ContactScript from '../../../shared/ContactScript.astro';
+import ScrollToggle from '../../../shared/dorin-ds/components/ScrollToggle.astro';
+import { frontmatter as contactFormData } from '../../content/integrations/contact-form.md';
+
+interface Props {
+  title?: string;
+  description?: string;
+  activeIndex?: number;
+}
+
+interface ContactFormContent {
+  action_url?: string | null;
+  success_message?: string | null;
+}
+
+const {
+  title = 'June Hartley Photography — Weddings & Portraits in Portland',
+  description = 'Documentary wedding, elopement, and portrait photography in Portland and across the Pacific Northwest. Warm, unhurried, shot for the moments you actually want to keep.',
+  activeIndex = -1,
+} = Astro.props;
+
+const contactForm = contactFormData as ContactFormContent;
+const contactFormActionUrl =
+  typeof contactForm.action_url === 'string' ? contactForm.action_url : '';
+const contactFormSuccessMessage =
+  typeof contactForm.success_message === 'string'
+    ? contactForm.success_message
+    : "Thanks for reaching out. I'll get back to you within two days, usually sooner.";
+
+const navLinks = [
+  { label: 'Work', href: '/services' },
+  { label: 'About', href: '/about' },
+  { label: 'Investment', href: '/pricing' },
+  { label: 'Contact', href: '/contact' },
+];
+
+const footerColumns = [
+  {
+    heading: 'Photography',
+    links: [
+      { label: 'Weddings', href: '/services#weddings' },
+      { label: 'Elopements', href: '/services#elopements' },
+      { label: 'Portraits & families', href: '/services#portraits' },
+      { label: 'Galleries', href: '/services' },
+      { label: 'Investment', href: '/pricing' },
+    ],
+  },
+  {
+    heading: 'Studio',
+    links: [
+      { label: 'How I work', href: '/about#approach' },
+      { label: 'About June', href: '/about#about' },
+      { label: 'Common questions', href: '/services#faq' },
+    ],
+  },
+  {
+    heading: 'Get in touch',
+    links: [
+      { label: 'Check your date', href: '/contact' },
+      {
+        label: 'hello@junehartley.com',
+        href: 'mailto:hello@junehartley.com',
+      },
+      { label: '+1 503 555 0147', href: 'tel:+15035550147' },
+    ],
+  },
+];
+
+const socials = [
+  {
+    href: '#',
+    ariaLabel: 'Instagram',
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>',
+  },
+  {
+    href: '#',
+    ariaLabel: 'Pinterest',
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 20.5c-.3-1.6-.1-3.2.3-4.7l1.2-5"/><path d="M8.2 9.6c0-2.4 1.9-4.4 4.6-4.4 2.5 0 4.2 1.5 4.2 3.8 0 2.7-1.4 4.7-3.4 4.7-1 0-1.8-.8-1.5-1.9"/><circle cx="12" cy="12" r="10"/></svg>',
+  },
+  {
+    href: '#',
+    ariaLabel: 'Email',
+    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en" data-template="june-hartley-photo">
+  <head>
+    <DSHead title={title} description={description} fontPair="fraunces-source" />
+    <script is:inline>
+      // Flowstarter preview iframe bridge
+      (function () {
+        if (window.self === window.top) return;
+        document.documentElement.classList.add('fs-preview');
+        window.parent.postMessage(
+          { source: 'fs-template', type: 'ready' },
+          '*',
+        );
+        window.addEventListener('message', function (e) {
+          if (!e.data || e.data.source !== 'fs-preview') return;
+          var d = e.data;
+          var root = document.documentElement;
+          if (d.type === 'setTheme') {
+            root.classList.toggle('theme-dark', d.value === 'dark');
+            try {
+              localStorage.setItem('theme', d.value);
+            } catch (_) {}
+          } else if (d.type === 'setPalette') {
+            if (d.dark !== undefined) {
+              root.classList.toggle('theme-dark', !!d.dark);
+            }
+            if (d.vars) {
+              Object.keys(d.vars).forEach(function (k) {
+                root.style.setProperty(k, d.vars[k]);
+              });
+            }
+          } else if (d.type === 'setFont') {
+            var existing = document.getElementById('fs-font-override');
+            if (existing) existing.remove();
+            if (d.url) {
+              var link = document.createElement('link');
+              link.id = 'fs-font-override';
+              link.rel = 'stylesheet';
+              link.href = d.url;
+              document.head.appendChild(link);
+            }
+            if (d.heading)
+              root.style.setProperty('--font-title', d.heading);
+            if (d.body) root.style.setProperty('--font-body', d.body);
+          }
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <Header
+      brandLabel="June Hartley"
+      links={navLinks}
+      ctaLabel="Check your date"
+      ctaHref="/contact"
+      activeIndex={activeIndex}
+    />
+    <main class="ds-main">
+      <slot />
+    </main>
+    <Footer
+      brandLabel="June Hartley Photography"
+      tagline="Documentary wedding and portrait photography in Portland, Oregon. Available across the Pacific Northwest and for travel."
+      columns={footerColumns}
+      socials={socials}
+      copyrightSuffix="June Hartley Photography. All rights reserved."
+    />
+    <ContactScript
+      actionUrl={contactFormActionUrl}
+      successMessage={contactFormSuccessMessage}
+      templateName="june-hartley-photo"
+    />
+    <ScrollToggle />
+
+    <style is:global>
+      .ds-main {
+        padding-top: 72px;
+      }
+    </style>
+  </body>
+</html>

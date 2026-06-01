@@ -150,6 +150,33 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     // separate /preview/dorin-portfolio build, so point at the real one.
     previewPath: '/preview/freelancer-portfolio/',
   },
+  {
+    slug: 'june-hartley-photo',
+    title: 'June Hartley Photography',
+    kind: 'template',
+    status: 'live',
+    category: 'Photography',
+    year: '2026',
+    kicker:
+      'Editorial wedding and portrait studio template, warm and unhurried.',
+    blurb:
+      "A documentary photographer's site built for the work that fills a season. Full-bleed galleries, collection-based pricing, an honest FAQ, and an inquiry flow built around checking your date rather than a generic contact form. Warm ivory paper, a Fraunces serif, and a soft clay accent keep the attention on the images. Six pages (home, work, about, investment, contact) with a calm dark mode. This is the starter we deploy when a wedding or portrait photographer engages Flowstarter.",
+    built: [
+      'Full-bleed galleries',
+      'Collections pricing',
+      'Inquiry flow',
+      'Dark mode',
+    ],
+    tags: ['photographer', 'wedding', 'portrait', 'creative'],
+    repoUrl: null,
+    liveUrl: null,
+    thumbnail: null,
+    placeholder: {
+      line: 'June Hartley Photography',
+      sub: 'wedding & portrait · template',
+    },
+    previewPath: '/preview/june-hartley-photo/',
+  },
 
   // ── Flowstarter Library starter templates ───────────────────────────
   // Entries below mirror the 5 templates seeded in

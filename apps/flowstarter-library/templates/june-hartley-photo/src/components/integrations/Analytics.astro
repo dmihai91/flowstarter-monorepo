@@ -1,0 +1,40 @@
+---
+import { frontmatter as analyticsFrontmatter } from '../../../content/integrations/analytics.md';
+
+type AnalyticsProvider = 'google' | 'plausible' | 'none';
+
+interface AnalyticsData {
+  enabled: boolean;
+  provider: AnalyticsProvider;
+  google_id?: string;
+  plausible_domain?: string;
+}
+
+const analytics = analyticsFrontmatter as AnalyticsData;
+const isGoogleEnabled: boolean = analytics.enabled && analytics.provider === 'google' && Boolean(analytics.google_id);
+const isPlausibleEnabled: boolean = analytics.enabled && analytics.provider === 'plausible' && Boolean(analytics.plausible_domain);
+const googleId: string = analytics.google_id ?? '';
+const plausibleDomain: string = analytics.plausible_domain ?? '';
+---
+
+{isGoogleEnabled && (
+  <>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleId}`}></script>
+    <script is:inline define:vars={{ googleId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', googleId);
+    </script>
+  </>
+)}
+
+{isPlausibleEnabled && (
+  <script
+    defer
+    data-domain={plausibleDomain}
+    src="https://plausible.io/js/script.js"
+  ></script>
+)}

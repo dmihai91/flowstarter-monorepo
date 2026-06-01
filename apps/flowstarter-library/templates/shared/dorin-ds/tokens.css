@@ -180,6 +180,31 @@
   --title-text-transform: none;
 }
 
+/* June Hartley Photography — Warm clay + Fraunces serif (editorial, intimate)
+ * Personality: unhurried, film-warm. Serif display with sentence-case headlines;
+ * ivory paper surfaces let wedding and portrait imagery carry the page.
+ */
+[data-template='june-hartley-photo'] {
+  --brand-primary: #b0795b;
+  --accent: #c69484;
+  --accent-light: #f2e7df;
+  --surface-base: #f8f3ed;
+  --surface-subtle: #efe5d9;
+  --surface-subtle-hover: #e7dac9;
+  --surface-brand-glow: rgba(176, 121, 91, 0.16);
+  --surface-accent-glow: rgba(198, 148, 132, 0.2);
+  --surface-selected: rgba(176, 121, 91, 0.14);
+  --focus-ring-color: rgba(176, 121, 91, 0.28);
+
+  --font-title: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Source Sans 3', 'Inter', -apple-system, sans-serif;
+  --font-button: 'Source Sans 3', sans-serif;
+  --font-accent: 'Fraunces', Georgia, serif;
+  --title-tracking: -0.01em;
+  --title-line-height: 1.04;
+  --title-text-transform: none;
+}
+
 /* Freelancer Portfolio — Periwinkle + Space Grotesk display, JetBrains accents
  * Personality: studio practitioner, technical confidence. Mono for figures,
  * grotesk for everything else, slight ALL CAPS micro-labels.

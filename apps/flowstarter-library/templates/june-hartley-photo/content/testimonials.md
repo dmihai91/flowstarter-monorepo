@@ -1,0 +1,20 @@
+---
+title: "Kind words"
+subtitle: "A few notes from couples and families I've worked with."
+testimonials:
+  - quote: "We barely noticed June was there, and then the gallery showed up and we cried. She caught the small things, my dad laughing, my niece asleep on a chair, the stuff we'd already half forgotten."
+    author: "Hannah & Theo"
+    role: "Married at Sauvie Island"
+    result: "Full-day wedding"
+    avatar: "/images/testimonials/sarah.jpg"
+  - quote: "We're awkward in photos and said so. June just talked to us and kept shooting, and somehow the pictures look like us on a good day rather than a stiff couple posing."
+    author: "Priya & Sam"
+    role: "Engagement session"
+    result: "Couples session"
+    avatar: "/images/testimonials/james.jpg"
+  - quote: "Our elopement was eight people on a trail in the Gorge. June handled the timing, the light, and a brief rain shower without a fuss. Best decision of the whole plan."
+    author: "Mara & Jess"
+    role: "Eloped in the Columbia Gorge"
+    result: "Elopement coverage"
+    avatar: "/images/testimonials/maria.jpg"
+---

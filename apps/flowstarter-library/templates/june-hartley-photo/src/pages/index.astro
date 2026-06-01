@@ -1,0 +1,710 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
+import Container from '../../../shared/dorin-ds/components/Container.astro';
+import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
+import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
+import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
+import ServiceCard from '../../../shared/dorin-ds/components/ServiceCard.astro';
+import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
+import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
+import TestimonialBlock from '../../../shared/dorin-ds/components/TestimonialBlock.astro';
+import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
+import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
+import HeroIntro from '../../../shared/dorin-ds/components/HeroIntro.astro';
+import VideoBlock from '../../../shared/dorin-ds/components/VideoBlock.astro';
+import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
+import { frontmatter as servicesData } from '../../content/services.md';
+import { frontmatter as testimonialsData } from '../../content/testimonials.md';
+import { frontmatter as videoData } from '../../content/video.md';
+import { frontmatter as bookingData } from '../../content/integrations/booking.md';
+
+interface ServicesContent {
+  title?: string;
+  subtitle?: string;
+  services?: Array<{
+    icon?: string;
+    title: string;
+    description: string;
+    price?: string;
+  }>;
+}
+
+interface TestimonialsContent {
+  title?: string;
+  subtitle?: string;
+  testimonials?: Array<{
+    quote: string;
+    author: string;
+    role: string;
+    result?: string;
+  }>;
+}
+
+interface VideoContent {
+  eyebrow?: string;
+  title: string;
+  duration?: string;
+  caption?: string;
+  poster?: string;
+  src: string;
+  aspect?: '21/9' | '16/9' | '4/3' | '1/1';
+}
+
+interface BookingContent {
+  enabled?: boolean;
+  cal_link?: string;
+  cal_event_label?: string;
+  cal_duration_label?: string;
+  cal_layout?: 'month_view' | 'week_view' | 'column_view';
+  title?: string;
+  description?: string;
+}
+
+const servicesFm = servicesData as ServicesContent;
+const testimonialsFm = testimonialsData as TestimonialsContent;
+const videoFm = videoData as VideoContent;
+const bookingFm = bookingData as BookingContent;
+const showBooking = bookingFm.enabled === true && Boolean(bookingFm.cal_link);
+
+const heroStats = [
+  { number: '180+', label: 'Weddings photographed' },
+  { number: '8 yrs', label: 'Behind the camera' },
+  { number: 'PNW', label: 'Based in Portland' },
+  { number: '4.9', label: 'Average review' },
+];
+
+// Hand-crafted SVG icons stay hardcoded so we don't try to render lucide names
+// at runtime. Order pairs with services.md `services[]` by index.
+const serviceIcons = [
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3Z"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.5 4.04 3 5.5l7 7Z"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m14.31 8 5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16 3.95 6.06M14.31 16H2.83m13.79-4-5.74 9.94"/></svg>',
+  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg>',
+];
+
+const services = (servicesFm.services ?? []).map((service, index) => ({
+  icon: serviceIcons[index] ?? serviceIcons[serviceIcons.length - 1],
+  title: service.title,
+  description: service.description,
+  meta: service.price ?? '',
+}));
+
+const testimonials = testimonialsFm.testimonials ?? [];
+
+const approach = [
+  {
+    number: '01',
+    title: 'We talk first',
+    description:
+      'Before anything is booked we get on a short call. I want to hear about the day you are planning, the people in it, and the kind of photos you actually like, so I can tell you honestly whether I am the right fit.',
+  },
+  {
+    number: '02',
+    title: 'I stay out of the way',
+    description:
+      'On the day I work quietly and document what happens rather than staging it. You will mostly forget I am there, which is exactly the point. The photos end up looking like the day felt.',
+  },
+  {
+    number: '03',
+    title: 'A little direction when it helps',
+    description:
+      'For portraits and family groups I will give gentle prompts so nobody is left standing there wondering what to do with their hands. Enough guidance to feel easy, never so much that it looks posed.',
+  },
+  {
+    number: '04',
+    title: 'Yours quickly, and for good',
+    description:
+      'A few favourites land in your inbox within 48 hours, the full gallery within a month. Every image comes with a print release, and I keep a backup of your wedding for years in case life happens to your laptop.',
+  },
+];
+
+const faqs = [
+  {
+    question: 'How many photos do we get, and when?',
+    answer:
+      'A full wedding day usually delivers 500 to 800 edited images. You will see a sneak peek within 48 hours and the complete gallery within four weeks. Portrait sessions deliver 40 or more images within two weeks.',
+  },
+  {
+    question: 'Do you travel?',
+    answer:
+      'Often. I am based in Portland and shoot all over the Pacific Northwest with no travel fee. For weddings further afield I add travel at cost, no markup, and we sort the details on our call.',
+  },
+  {
+    question: 'What happens if it rains, or gear fails?',
+    answer:
+      'Rain is fine, some of my favourite frames happen under umbrellas. I shoot on two camera bodies and back up every card on the day, so a single failure never costs you the photos. For larger weddings I bring a second shooter.',
+  },
+  {
+    question: 'Do we need an engagement session?',
+    answer:
+      'No, but it helps. An hour together beforehand gets you comfortable in front of the camera, so the wedding photos feel more like you. It is included in the full-day collection.',
+  },
+  {
+    question: 'How do we book?',
+    answer:
+      'Send your date through the contact form and we will set up a call. If it feels right, a signed agreement and a retainer hold the date. I only take a limited number of weddings each season so the calendar fills early.',
+  },
+];
+
+const credentials = [
+  '8+ years photographing weddings',
+  'Two camera bodies, same-day backups',
+  'Second shooter available',
+  'Fully insured, print release on every gallery',
+];
+---
+
+<Layout
+  title="June Hartley Photography — Weddings & Portraits in Portland"
+  description="Documentary wedding, elopement, and portrait photography in Portland and across the Pacific Northwest. Warm, unhurried, shot for the moments you actually want to keep."
+  activeIndex={-1}
+>
+  <HeroIntro text="June Hartley Photography" />
+
+  <!-- ─── Hero ──────────────────────────────────────────────── -->
+  <SectionBlock id="home" tone="light" padding="hero" className="tc-hero">
+    <Container className="tc-hero__inner">
+      <div class="tc-hero__copy">
+        <OverlineText text="Wedding & portrait photography · Portland" tone="accent" />
+        <h1 class="tc-hero__title">
+          The day,<br />
+          honestly <span class="tc-hero__title-accent">remembered</span>.
+        </h1>
+        <p class="tc-hero__lede">
+          I'm <strong>June Hartley</strong> — a wedding and portrait
+          photographer in Portland. I shoot quietly and documentary-style,
+          then hand you back the day the way it actually felt.
+        </p>
+        <div class="tc-hero__actions">
+          <ActionButton
+            href="/contact"
+            label="Check your date"
+            variant="primary"
+            size="large"
+          />
+          <ActionButton
+            href="/services"
+            label="See recent work"
+            variant="outline-dark"
+            size="large"
+          />
+        </div>
+        <div class="tc-hero__pills">
+          <TagPill label="Weddings & elopements" />
+          <TagPill label="Portland + travel" />
+          <TagPill label="Documentary style" />
+        </div>
+      </div>
+
+      <div class="tc-hero__plate" aria-hidden="true">
+        <div class="tc-hero__plate-image"></div>
+        <span class="tc-hero__index">№ 01 — Recent work</span>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Stats ────────────────────────────────────────────── -->
+  <SectionBlock tone="accent-light" padding="compact" topBorder>
+    <Container>
+      <StatsRow items={heroStats} />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── About ────────────────────────────────────────────── -->
+  <SectionBlock id="about" tone="light" padding="default">
+    <Container className="tc-about">
+      <div class="tc-about__heading">
+        <OverlineText text="About" />
+        <h2 class="section-title tc-about__title">
+          Photographs that<br />
+          <em>feel like you</em>.
+        </h2>
+      </div>
+      <div class="tc-about__body">
+        <p class="tc-about__intro">
+          I have spent the last eight years photographing weddings and the
+          people in them. The work is calm and documentary. I would rather
+          catch your grandmother laughing than line everyone up against a
+          wall, and the galleries tend to reflect that.
+        </p>
+        <p class="tc-about__copy">
+          Weddings, elopements, engagements, families, and the odd brand
+          shoot for a maker I admire. Wherever the day takes us, I keep an
+          eye on the light and the small, true moments that get forgotten by
+          the time the cake is cut. You can be as hands-on or hands-off as
+          you like.
+        </p>
+        <ul class="tc-about__credentials" id="credentials">
+          {
+            credentials.map((c) => (
+              <li class="tc-about__credential">
+                <span class="tc-about__credential-mark" aria-hidden="true">
+                  ◆
+                </span>
+                {c}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Services ─────────────────────────────────────────── -->
+  <SectionBlock id="services" tone="subtle" padding="default" topBorder>
+    <Container>
+      <SectionHeading
+        label="What I photograph"
+        title="A short, honest list of ways to work together."
+        maxWidth="24ch"
+      />
+      <div class="tc-services-grid">
+        {
+          services.map((s) => (
+            <ServiceCard
+              icon={s.icon}
+              title={s.title}
+              description={s.description}
+              meta={s.meta}
+            />
+          ))
+        }
+      </div>
+      <div class="tc-services-cta">
+        <ActionButton
+          href="/services"
+          label="See full pricing"
+          variant="outline-dark"
+        />
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Approach ─────────────────────────────────────────── -->
+  <SectionBlock id="approach" tone="dark" padding="default">
+    <Container className="tc-approach">
+      <div class="tc-approach__heading">
+        <OverlineText text="How I work" tone="accent" />
+        <h2 class="section-title tc-approach__title">
+          Quiet on the day, easy to work with.
+        </h2>
+      </div>
+      <div class="tc-approach__list">
+        {
+          approach.map((a) => (
+            <NumberedFeatureItem
+              number={a.number}
+              title={a.title}
+              description={a.description}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Video ────────────────────────────────────────────── -->
+  <SectionBlock id="invitation" tone="light" padding="default" topBorder>
+    <Container className="tc-video">
+      <VideoBlock
+        src={videoFm.src}
+        poster={videoFm.poster}
+        title={videoFm.title}
+        caption={videoFm.caption}
+        eyebrow={videoFm.eyebrow}
+        duration={videoFm.duration}
+        aspect={videoFm.aspect ?? '16/9'}
+      />
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Testimonials ─────────────────────────────────────── -->
+  <SectionBlock id="testimonials" tone="light" padding="default">
+    <Container>
+      <SectionHeading label="Kind words" title="From couples and families." />
+      <div class="tc-testimonials">
+        {
+          testimonials.map((t) => (
+            <TestimonialBlock
+              quote={t.quote}
+              author={t.author}
+              role={t.role}
+              result={t.result}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── FAQ ──────────────────────────────────────────────── -->
+  <SectionBlock id="faq" tone="light" padding="default" topBorder>
+    <Container className="tc-faq">
+      <SectionHeading label="Common questions" title="The things couples usually ask." />
+      <div class="tc-faq__list">
+        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── CTA ──────────────────────────────────────────────── -->
+  <SectionBlock id="contact" tone="dark" padding="default">
+    <Container className="tc-cta">
+      <h2 class="tc-cta__title">
+        When you're ready, so am I.
+      </h2>
+      <p class="tc-cta__lede">
+        Send your date and a few details and we'll set up a short call.
+        No hard sell, and no need to have everything figured out yet.
+        I only take a handful of weddings each season, so earlier is better.
+      </p>
+      <div class="tc-cta__actions">
+        <ActionButton
+          href="/contact"
+          label="Check your date"
+          variant="primary-light"
+          size="large"
+          className="fs-book-btn"
+        />
+        <ActionButton
+          href="mailto:hello@junehartley.com"
+          label="Email the studio"
+          variant="outline-light"
+          size="large"
+        />
+      </div>
+    </Container>
+  </SectionBlock>
+
+  <!-- ─── Direct booking ───────────────────────────────────── -->
+  {
+    showBooking && (
+      <SectionBlock tone="light" padding="default" topBorder>
+        <Container>
+          <CalBookingBlock
+            variant="cta"
+            calLink={bookingFm.cal_link}
+            eventLabel={bookingFm.cal_event_label}
+            title={bookingFm.title}
+            subtitle={bookingFm.description}
+            durationLabel={bookingFm.cal_duration_label}
+            layout={bookingFm.cal_layout}
+          />
+        </Container>
+      </SectionBlock>
+    )
+  }
+</Layout>
+
+<style>
+  .tc-hero {
+    position: relative;
+    overflow: clip;
+  }
+
+  .tc-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 44%);
+    gap: 64px;
+    align-items: center;
+    min-height: 76vh;
+  }
+
+  .tc-hero__copy {
+    max-width: 620px;
+  }
+
+  .tc-hero__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    margin: 24px 0 28px;
+    color: var(--bg-dark);
+  }
+
+  .tc-hero__title-accent {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.03em;
+  }
+
+  .tc-hero__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.6;
+    color: var(--text-primary);
+    max-width: 540px;
+    margin-bottom: 36px;
+  }
+
+  .tc-hero__lede strong {
+    font-weight: var(--fw-semibold);
+  }
+
+  .tc-hero__actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .tc-hero__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tc-hero__plate {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background:
+      radial-gradient(circle at 22% 20%, rgba(255, 255, 255, 0.42), transparent 24%),
+      linear-gradient(180deg, rgba(176, 121, 91, 0.14), rgba(198, 148, 132, 0.08)),
+      var(--surface-subtle);
+    border-radius: 240px 240px 28px 28px / 180px 180px 28px 28px;
+    overflow: hidden;
+    box-shadow: 0 28px 80px rgba(176, 121, 91, 0.14);
+  }
+
+  .tc-hero__plate::before {
+    content: '';
+    position: absolute;
+    inset: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 220px 220px 22px 22px / 164px 164px 22px 22px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .tc-hero__plate-image {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(180deg, rgba(249, 247, 241, 0.02), rgba(10, 10, 10, 0.24)),
+      radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.34), transparent 16%),
+      url('https://images.unsplash.com/photo-1606800052052-a08af7148866?w=900&h=1100&fit=crop');
+    background-size: cover;
+    background-position: center 30%;
+    filter: contrast(1.02) saturate(0.92);
+    transition: transform 1.4s var(--ease-emphasized);
+  }
+
+  .tc-hero:hover .tc-hero__plate-image {
+    transform: scale(1.02);
+  }
+
+  .tc-hero__index {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    font-family: var(--font-title);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-on-dark);
+    background: var(--bg-dark);
+    padding: 6px 10px;
+    z-index: 1;
+  }
+
+  .tc-about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 80px;
+    align-items: start;
+  }
+
+  .tc-about__heading {
+    position: sticky;
+    top: 100px;
+  }
+
+  .tc-about__title {
+    margin-top: 16px;
+  }
+
+  .tc-about__title em {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-weight: var(--fw-regular);
+    color: var(--brand-primary);
+    text-transform: none;
+    letter-spacing: -0.03em;
+  }
+
+  .tc-about__intro {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    color: var(--bg-dark);
+    margin-bottom: 24px;
+    max-width: 56ch;
+  }
+
+  .tc-about__copy {
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--text-primary);
+    max-width: 60ch;
+    margin-bottom: 36px;
+  }
+
+  .tc-about__credentials {
+    display: grid;
+    gap: 14px;
+    padding-top: 28px;
+    border-top: 1px solid var(--surface-subtle-border);
+  }
+
+  .tc-about__credential {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 8px;
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--bg-dark);
+  }
+
+  .tc-about__credential-mark {
+    color: var(--brand-primary);
+    font-size: 0.8em;
+    line-height: 1.5;
+  }
+
+  .tc-services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .tc-services-cta {
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  .tc-approach {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 80px;
+  }
+
+  .tc-approach__heading {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+  }
+
+  .tc-approach__title {
+    color: var(--text-on-dark);
+    margin-top: 16px;
+    max-width: 18ch;
+  }
+
+  .tc-testimonials {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .tc-testimonials :global(figure) {
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.42));
+    border: 1px solid rgba(176, 121, 91, 0.12);
+    box-shadow: 0 12px 30px rgba(176, 121, 91, 0.08);
+  }
+
+  .tc-faq {
+    max-width: 920px;
+  }
+
+  .tc-faq__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .tc-cta {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .tc-cta__title {
+    font-family: var(--font-title);
+    font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+    font-weight: var(--fw-headline);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--text-on-dark);
+    margin-bottom: 28px;
+  }
+
+  .tc-cta__lede {
+    font-size: var(--fs-h5);
+    line-height: 1.55;
+    color: var(--text-nav);
+    margin-bottom: 40px;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .tc-cta__actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 1024px) {
+    .tc-hero__inner {
+      grid-template-columns: 1fr;
+      gap: 48px;
+      min-height: auto;
+    }
+
+    .tc-hero__plate {
+      aspect-ratio: 16 / 11;
+      max-width: 720px;
+      border-radius: 48px 48px 20px 20px / 38px 38px 20px 20px;
+    }
+
+    .tc-about,
+    .tc-approach {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .tc-about__heading,
+    .tc-approach__heading {
+      position: static;
+    }
+
+    .tc-services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tc-testimonials {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .tc-services-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tc-hero__title {
+      font-size: 2.5rem;
+    }
+  }
+</style>

@@ -60,7 +60,10 @@ const faviconHref = withBase('/favicon.svg');
   try {
     const stored = localStorage.getItem('theme');
     if (stored === 'dark') {
-      document.documentElement.classList.add('theme-dark');
+      // `theme-dark` drives the DS tokens; `dark` drives tailwind (darkMode
+      // class) + the html.dark rules in each template's global.css. Both are
+      // needed for a full dark mode (chrome + body), so keep them in sync.
+      document.documentElement.classList.add('theme-dark', 'dark');
     } else if (stored === 'light') {
       document.documentElement.classList.add('theme-light');
     }

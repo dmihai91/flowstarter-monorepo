@@ -92,8 +92,14 @@
 /* Global dark mode token overrides.
  * Applied when DSHead sets <html class="theme-dark"> from localStorage or
  * when the parent preview frame posts a setTheme event.
+ *
+ * Scoped as `html.theme-dark` (specificity 0,1,1) so it OUTWEIGHS the
+ * per-template `[data-template='…']` blocks below (0,1,0) — those set a
+ * light --surface-base etc., and since they come later in the file they'd
+ * otherwise win and the page would never go dark. The per-template
+ * --brand-primary/accent are not set here, so the brand accent persists.
  */
-.theme-dark {
+html.theme-dark {
   --bg-dark: #050505;
   --bg-card: #151515;
   --bg-card-hover: #1f1f1f;

@@ -159,6 +159,9 @@ const resolvedLinks = links.map((link) => ({ ...link, href: withBase(link.href) 
     const root = document.documentElement;
     root.classList.toggle('theme-dark', mode === 'dark');
     root.classList.toggle('theme-light', mode === 'light');
+    // Mirror to `dark` so tailwind (darkMode: class) + global.css html.dark
+    // rules flip the body too, not just the DS-token chrome.
+    root.classList.toggle('dark', mode === 'dark');
     try {
       localStorage.setItem('theme', mode);
     } catch (_) {}

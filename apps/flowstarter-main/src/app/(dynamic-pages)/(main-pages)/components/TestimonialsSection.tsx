@@ -12,6 +12,7 @@ import { LANDING_COPY } from '../landing-copy';
 export function TestimonialsSection() {
   const t = tServer as (key: string) => string;
   const testimonials = LANDING_COPY.testimonials;
+  const isSingle = testimonials.items.length === 1;
 
   return (
     <section
@@ -59,8 +60,14 @@ export function TestimonialsSection() {
         </div>
 
         <ul
-          className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5"
-          style={{ listStyle: 'none', padding: 0, margin: '3.5rem 0 0' }}
+          className={`mt-14 grid grid-cols-1 gap-4 lg:gap-5 ${
+            isSingle ? 'mx-auto max-w-3xl' : 'md:grid-cols-2'
+          }`}
+          style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: isSingle ? '3.5rem auto 0' : '3.5rem 0 0',
+          }}
         >
           {testimonials.items.map((item, i) => (
             <li
@@ -121,7 +128,7 @@ export function TestimonialsSection() {
                     className="ls-link"
                     style={{ fontSize: '0.82rem', whiteSpace: 'nowrap' }}
                   >
-                    {t('landing.proof.statusLive')} →
+                    {t('landing.testimonials.cta')} →
                   </Link>
                 </figcaption>
               </figure>

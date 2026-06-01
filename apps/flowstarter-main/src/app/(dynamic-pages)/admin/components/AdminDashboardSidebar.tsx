@@ -19,6 +19,7 @@ import {
   Sparkles as SparklesIcon,
   FolderOpen,
   Inbox,
+  MessageSquare,
   Server,
   Settings as SettingsIcon,
   type LucideIcon,
@@ -63,6 +64,11 @@ export function AdminDashboardSidebar() {
       labelKey: 'admin.nav.leads',
       href: '/admin/dashboard/leads',
       icon: Inbox,
+    },
+    {
+      labelKey: 'admin.nav.inquiries',
+      href: '/admin/dashboard/inquiries',
+      icon: MessageSquare,
     },
   ];
 

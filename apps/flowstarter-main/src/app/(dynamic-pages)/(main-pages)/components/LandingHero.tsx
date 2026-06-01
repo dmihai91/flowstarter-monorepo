@@ -1,69 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Button } from '@/components/ui/unified-button';
 import { useI18n } from '@/lib/i18n';
 import { useBookingModal } from './booking-modal-store';
 
 const PROGRESS_STEPS = 4;
 
-/** Ensures starter price stat always shows a qualifier (covers stale bundles / shard drift). */
-function heroStatValueWithQualifier(statIndex: number, val: string): string {
-  if (statIndex !== 1) return val;
-  const t = val.trim();
-  if (/^(starting from|from)\s/i.test(t)) return val;
-  return `Starting from ${t}`;
-}
-
-function useBriefTypewriter(
-  sequence: { label: string; value: string }[],
-  startDelay: number
-) {
-  const [values, setValues] = useState<string[]>(() => sequence.map(() => ''));
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const sleep = (ms: number) =>
-      new Promise<void>((resolve) => {
-        const id = setTimeout(resolve, ms);
-        timers.push(id);
-      });
-
-    const run = async () => {
-      await sleep(startDelay);
-      for (let step = 0; step < sequence.length; step++) {
-        if (cancelled) return;
-        setActiveIndex(step);
-        const target = sequence[step].value;
-        for (let i = 1; i <= target.length; i++) {
-          if (cancelled) return;
-          setValues((prev) => {
-            const next = prev.slice();
-            next[step] = target.slice(0, i);
-            return next;
-          });
-          await sleep(28 + Math.random() * 32);
-        }
-        await sleep(520);
-      }
-      if (!cancelled) {
-        setActiveIndex(sequence.length);
-        setDone(true);
-      }
-    };
-
-    run();
-    return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
-    };
-  }, [sequence, startDelay]);
-
-  return { values, activeIndex, done };
-}
+type BriefField = { label: string; value: string };
 
 export function LandingHero() {
   const { t: tStrict } = useI18n();
@@ -73,33 +17,18 @@ export function LandingHero() {
   // JS-gated opacity caused hero flash/reflow on Android Chrome on first paint.
   const revealed = true;
 
-  const briefSequence = useMemo(
-    () => [
-      {
-        label: t('landing.hero.brief.field1Label'),
-        value: t('landing.hero.brief.field1Value'),
-      },
-      {
-        label: t('landing.hero.brief.field2Label'),
-        value: t('landing.hero.brief.field2Value'),
-      },
-      {
-        label: t('landing.hero.brief.field3Label'),
-        value: t('landing.hero.brief.field3Value'),
-      },
-      {
-        label: t('landing.hero.brief.field4Label'),
-        value: t('landing.hero.brief.field4Value'),
-      },
-    ],
-    [t]
-  );
-
-  const {
-    values: briefValues,
-    activeIndex,
-    done: briefDone,
-  } = useBriefTypewriter(briefSequence, 900);
+  const briefFields = useMemo<BriefField[]>(() => {
+    const label1 = t('landing.hero.brief.field1Label');
+    const label2 = t('landing.hero.brief.field2Label');
+    const label3 = t('landing.hero.brief.field3Label');
+    const label4 = t('landing.hero.brief.field4Label');
+    return [
+      { label: label1, value: t('landing.hero.brief.field1Value') },
+      { label: label2, value: t('landing.hero.brief.field2Value') },
+      { label: label3, value: t('landing.hero.brief.field3Value') },
+      { label: label4, value: t('landing.hero.brief.field4Value') },
+    ];
+  }, [t]);
 
   const reveal = (order: number): React.CSSProperties => ({
     opacity: revealed ? 1 : 0,
@@ -109,16 +38,11 @@ export function LandingHero() {
     }ms, transform 900ms cubic-bezier(0.19,1,0.22,1) ${order * 110}ms`,
   });
 
-  const filled = briefDone
-    ? PROGRESS_STEPS
-    : Math.min(PROGRESS_STEPS - 1, Math.max(0, activeIndex));
+  const filled = PROGRESS_STEPS;
 
   const stats = [
     { val: t('landing.hero.stat1Value'), lbl: t('landing.hero.stat1Label') },
-    {
-      val: heroStatValueWithQualifier(1, t('landing.hero.stat2Value')),
-      lbl: t('landing.hero.stat2Label'),
-    },
+    { val: t('landing.hero.stat2Value'), lbl: t('landing.hero.stat2Label') },
     { val: t('landing.hero.stat3Value'), lbl: t('landing.hero.stat3Label') },
     { val: t('landing.hero.stat4Value'), lbl: t('landing.hero.stat4Label') },
   ];
@@ -133,7 +57,7 @@ export function LandingHero() {
       }}
     >
       <div className="ls-container">
-        <div className="grid items-center gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-14 lg:gap-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <div className="ls-hero-content">
             <div
               style={reveal(0)}
@@ -163,12 +87,16 @@ export function LandingHero() {
               </span>
             </h1>
 
-            <p style={reveal(3)} className="ls-body ls-body--lead mt-8">
+            <p style={reveal(3)} className="ls-hero-proof mt-5">
+              {t('landing.hero.proofLine')}
+            </p>
+
+            <p style={reveal(4)} className="ls-body ls-body--lead mt-8">
               {t('landing.hero.subhead')}
             </p>
 
             <div
-              style={reveal(4)}
+              style={reveal(5)}
               className="mt-10 flex w-full flex-wrap items-center gap-3 sm:gap-6"
             >
               <Button
@@ -207,7 +135,7 @@ export function LandingHero() {
 
             <p
               style={{
-                ...reveal(5),
+                ...reveal(6),
                 color: 'var(--ls-ink-faint)',
                 fontFamily: 'var(--ls-mono)',
               }}
@@ -217,7 +145,7 @@ export function LandingHero() {
             </p>
 
             <div
-              style={reveal(6)}
+              style={reveal(7)}
               className="ls-hero-trust mt-10 flex flex-wrap items-stretch border-t"
             >
               {stats.map((s) => (
@@ -229,7 +157,7 @@ export function LandingHero() {
             </div>
 
             <div
-              style={reveal(7)}
+              style={reveal(8)}
               className="mt-6 flex flex-wrap items-center gap-3"
             >
               <span className="ls-pill ls-pill--accent">
@@ -270,20 +198,11 @@ export function LandingHero() {
               {t('landing.hero.brief.subtitle')}
             </div>
 
-            {briefSequence.map((field, i) => {
-              const shown = briefValues[i];
-              const isActive = activeIndex === i && !briefDone;
-              const isPending = activeIndex < i;
+            {briefFields.map((field) => {
               return (
                 <div key={field.label} className="ls-field">
                   <span className="lbl">{field.label}</span>
-                  <span
-                    className="val"
-                    style={{ opacity: isPending ? 0.3 : 1 }}
-                  >
-                    {isPending ? '·' : shown || '\u00A0'}
-                    {isActive && <span className="ls-caret" />}
-                  </span>
+                  <span className="val">{field.value}</span>
                 </div>
               );
             })}
@@ -294,9 +213,7 @@ export function LandingHero() {
                   {t('landing.hero.brief.progressLabel')}
                 </span>
                 <span className="val">
-                  {briefDone
-                    ? t('landing.hero.brief.progressReady')
-                    : t('landing.hero.brief.progressBuilding')}
+                  {t('landing.hero.brief.progressReady')}
                 </span>
               </div>
               <div className="ls-bar">
@@ -313,11 +230,9 @@ export function LandingHero() {
             <button
               type="button"
               onClick={openBookingModal}
-              className={`ls-brief-finish ${briefDone ? 'ready' : ''}`}
+              className="ls-brief-finish ready"
             >
-              {briefDone
-                ? t('landing.hero.brief.ctaReady')
-                : t('landing.hero.brief.ctaPending')}
+              {t('landing.hero.brief.ctaReady')}
               <svg
                 className="h-3.5 w-3.5"
                 fill="none"

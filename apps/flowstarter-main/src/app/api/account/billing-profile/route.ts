@@ -32,7 +32,7 @@ function serviceClient(): SupabaseClient | null {
 
 async function resolveWorkspace(
   supabase: SupabaseClient,
-  userId: string,
+  userId: string
 ): Promise<{ id: string; stripe_customer_id: string | null } | null> {
   const { data: membership } = await supabase
     .from('workspace_memberships')
@@ -47,7 +47,9 @@ async function resolveWorkspace(
     .select('id, stripe_customer_id')
     .eq('id', workspaceId)
     .maybeSingle();
-  return ws ? { id: ws.id as string, stripe_customer_id: ws.stripe_customer_id ?? null } : null;
+  return ws
+    ? { id: ws.id as string, stripe_customer_id: ws.stripe_customer_id ?? null }
+    : null;
 }
 
 const ProfileSchema = z.object({
@@ -61,7 +63,8 @@ const ProfileSchema = z.object({
 
 export async function GET() {
   const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  if (!userId)
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
   const supabase = serviceClient();
   if (!supabase) return NextResponse.json({ error: 'config' }, { status: 503 });
   const ws = await resolveWorkspace(supabase, userId);
@@ -76,7 +79,8 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
+  if (!userId)
+    return NextResponse.json({ error: 'unauthenticated' }, { status: 401 });
   const supabase = serviceClient();
   if (!supabase) return NextResponse.json({ error: 'config' }, { status: 503 });
   const ws = await resolveWorkspace(supabase, userId);
@@ -106,18 +110,26 @@ export async function PUT(req: NextRequest) {
     .upsert(row, { onConflict: 'workspace_id' })
     .select('*')
     .maybeSingle();
-  if (error) return NextResponse.json({ error: 'save-failed' }, { status: 500 });
+  if (error)
+    return NextResponse.json({ error: 'save-failed' }, { status: 500 });
 
   // Best-effort: mirror company billing identity onto the Stripe customer when
   // one exists. Never blocks the save.
   let stripeSynced = false;
   if (process.env.STRIPE_SECRET_KEY && ws.stripe_customer_id) {
     try {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: STRIPE_API_VERSION });
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: STRIPE_API_VERSION,
+      });
       await stripe.customers.update(ws.stripe_customer_id, {
         ...(row.company_name ? { name: row.company_name } : {}),
         ...(row.billing_address
-          ? { address: { line1: row.billing_address, ...(country ? { country } : {}) } }
+          ? {
+              address: {
+                line1: row.billing_address,
+                ...(country ? { country } : {}),
+              },
+            }
           : {}),
         metadata: {
           vat_id: row.vat_id ?? '',

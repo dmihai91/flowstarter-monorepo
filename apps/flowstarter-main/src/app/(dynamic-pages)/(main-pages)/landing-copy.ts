@@ -19,6 +19,11 @@ export interface PricingSectionCopy {
   note: string;
   relaunchNote?: string;
   guarantee: string;
+  secondaryCta?: {
+    lead: string;
+    label: string;
+    href: string;
+  };
 }
 
 export interface PricingPlan {
@@ -32,6 +37,10 @@ export interface PricingPlan {
   status: 'available';
   badge?: string;
   recommended?: boolean;
+  /** When set, the card uses a non-default CTA target (e.g. inquiry form). */
+  kind?: 'custom-inquiry';
+  /** Optional sub-note shown under the card (e.g. intake-process disclaimer). */
+  note?: string;
 }
 
 export interface DifferentiationCard {
@@ -47,7 +56,7 @@ export const LANDING_COPY = {
     headlineHighlight: "Let's aim them your way.",
     subheadlineBold: '',
     subheadline:
-      'New build or a tired site that needs rescuing? We get on one call, learn your business, and shape the site around it. After that you run it yourself with the smart conversational editor. No code piling up, no email chains that go nowhere.',
+      'New build or a tired site that needs rescuing? We get on one call, learn your business, and shape the site around it. After that you run it yourself with the smart editor. No code piling up, no email chains that go nowhere.',
     primaryCta: 'Get my custom plan',
     secondaryCta: 'See plans and pricing',
     trustLine:
@@ -62,13 +71,13 @@ export const LANDING_COPY = {
         number: '01',
         title: 'Custom plan and discovery call',
         description:
-          'Answer a few quick questions and you get a plan made for you. Then we talk for 30 minutes about what you do and what you need. If we are not the right fit, we tell you on that call.',
+          'Answer a few quick questions, get a plan for your business, and hold your call slot with a small refundable deposit. We talk for 30 minutes about what you do and what you need. Not a fit? Deposit refunded, no questions asked.',
       },
       {
         number: '02',
-        title: 'Design and build',
+        title: 'Spec, design, and build',
         description:
-          'We design and build it using your photos, your words and your style. You see progress on a set schedule, so you are never left wondering what is going on.',
+          'We agree the spec in writing first, so we both know exactly what is being built. Then we design and build it using your photos, your words and your style. You see progress on a set schedule, so you are never left wondering what is going on.',
       },
       {
         number: '03',
@@ -80,7 +89,7 @@ export const LANDING_COPY = {
         number: '04',
         title: 'Maintain and grow',
         description:
-          'Between calls you change things yourself, just by asking. When something is bigger than that, we are still here.',
+          'Between calls you change things yourself, just by asking. Your first month of editor access is on us. When something is bigger than that, we are still here.',
       },
     ],
   },
@@ -88,22 +97,23 @@ export const LANDING_COPY = {
     title: 'You know how this usually goes.',
     pains: [
       {
-        icon: 'puzzle',
-        title: 'DIY builders',
-        body: 'Quick to stand up, but it stops looking like a serious practice the moment a prospect compares you to a competitor.',
+        icon: 'sparkles',
+        title: 'AI drafts feel generic',
+        body: 'AI generators draft a site in seconds, but the structure is thin. The pages read like everyone else who used the same tool.',
       },
       {
         icon: 'wallet',
-        title: 'Traditional agencies',
-        body: 'They want €5,000 or more and take months. Then every small change after launch costs you days of waiting on someone else.',
+        title: 'Heavy and slow',
+        body: "Bigger builds take months. Small changes after launch wait for someone else's schedule.",
       },
       {
-        icon: 'sparkles',
-        title: 'AI generators',
-        body: 'Drafts in seconds, but the structure is thin. The pages read like everyone else who used the same tool.',
+        icon: 'puzzle',
+        title: 'You stay dependent',
+        body: 'The site lives in a system you did not build. Every tweak needs the person who set it up.',
       },
     ],
-    closing: 'Flowstarter is the option that is none of those.',
+    closing:
+      'Flowstarter is a new way to build sites and custom software. Specific to your business, then yours to change yourself.',
   },
   included: {
     title: 'Set up before you touch a thing.',
@@ -149,7 +159,7 @@ export const LANDING_COPY = {
   pricing: {
     title: 'Pricing, no surprises.',
     subtitle:
-      'A one-time build, then a monthly plan you pick separately. Both start with a discovery call.',
+      'A one-time build, then a monthly plan you pick separately. Both start with a discovery call. We also build custom software for projects that need more than a site.',
     socialProof:
       'We only open a handful of new builds each month, so nothing turns into conveyor-belt work.',
     note: 'The monthly plan is independent of the build: Starter €49 (30 AI edit sessions), Pro €99 (60, 2×), Max €249 (120, 4× + code). Stores run on a dedicated €129/mo plan with 90 AI edit sessions plus store editing. Relaunches and one-off custom work are quoted on the call.',
@@ -157,12 +167,12 @@ export const LANDING_COPY = {
       {
         name: 'STARTER',
         label: 'Get your professional presence online',
-        setupPrice: 'One-time build from €799',
+        setupPrice: 'Setup starting from €799',
         monthlyPrice: '+ monthly plan from €49',
         features: [
           'Custom-built website (5 to 7 pages)',
           'Hosting and domain included',
-          'Smart conversational editor, sessions set by your monthly plan',
+          'Smart editor, sessions set by your monthly plan',
           'Discovery call and ongoing support',
         ],
         cta: 'Get my custom plan',
@@ -171,7 +181,7 @@ export const LANDING_COPY = {
       {
         name: 'PRO',
         label: 'For service businesses that are growing',
-        setupPrice: 'One-time build from €1,199',
+        setupPrice: 'Setup starting from €1,199',
         monthlyPrice: '+ monthly plan from €49',
         features: [
           'Everything in Starter',
@@ -188,7 +198,7 @@ export const LANDING_COPY = {
       {
         name: 'ECOMMERCE',
         label: 'A full storefront, ready to sell',
-        setupPrice: 'One-time build from €1,499',
+        setupPrice: 'Setup starting from €1,499',
         monthlyPrice: '+ €129 / month store plan',
         features: [
           'Full Shopify-style storefront, built for you',
@@ -201,9 +211,32 @@ export const LANDING_COPY = {
         cta: 'Get my custom plan',
         status: 'available',
       },
+      {
+        name: 'CUSTOM SOLUTIONS',
+        label: 'Real software, built around your business',
+        setupPrice: 'Get your custom quote',
+        monthlyPrice: '',
+        features: [
+          'When your business needs more than a marketing site',
+          'Whatever the brief needs: booking flows, AI agents, automations, integrations',
+          'Fixed quote up front, agreed before we start',
+          'Connects to the tools you already use',
+          'You own the code, data and infrastructure',
+          'Direct line to the people who built it',
+        ],
+        cta: 'Get my custom solution',
+        kind: 'custom-inquiry',
+        note: 'We stay on after launch.',
+        status: 'available',
+      },
     ],
+    secondaryCta: {
+      lead: 'We also build custom software when these tiers are not enough.',
+      label: 'Get a custom quote',
+      href: '/custom-inquiry',
+    },
     guarantee:
-      'You pay half the one-time build upfront so we can start; the rest only once you sign off. The monthly plan is separate, starts after your free first month, and covers the smart conversational editor, hosting, domain and support. Change or cancel the plan anytime.',
+      'You pay half the one-time build upfront so we can start; the rest only once you sign off. The monthly plan is separate, starts after your free first month, and covers the smart editor, hosting, domain and support. Change or cancel the plan anytime.',
   },
   differentiation: {
     title: 'Why people pick us.',
@@ -222,6 +255,11 @@ export const LANDING_COPY = {
         label: 'A few clients at a time, on purpose',
         description:
           'Taking a small number of projects each month keeps the work human. We spend the time listening instead of managing a queue.',
+      },
+      {
+        label: 'Custom software, fixed fee',
+        description:
+          'When the brief is bigger than a website, we build the software too. Booking flows, AI agents, automations, integrations. Quoted up front, agreed before we start.',
         highlighted: true,
       },
     ],
@@ -280,6 +318,54 @@ export const LANDING_COPY = {
         external: false,
         status: 'live' as const,
       },
+      {
+        slug: 'june-hartley-photo',
+        title: 'June Hartley Photography',
+        meta: 'Photography · Starter · Live',
+        kicker:
+          "A documentary wedding photographer's site. Full-bleed galleries, collection pricing, and an inquiry flow built around checking your date.",
+        thumbnail: '/showcase/june-hartley-photo.png',
+        thumbnailDark: '/showcase/june-hartley-photo-dark.png',
+        href: '/library/templates/june-hartley-photo',
+        external: false,
+        status: 'live' as const,
+      },
+      {
+        slug: 'therapist-care',
+        title: 'Elena Marin Therapy',
+        meta: 'Therapy · Starter · Live',
+        kicker:
+          'A calm psychotherapy practice. Warm, plainspoken copy with consultations and credentials handled gently.',
+        thumbnail: '/showcase/therapist-care.png',
+        thumbnailDark: '/showcase/therapist-care-dark.png',
+        href: '/library/templates/therapist-care',
+        external: false,
+        status: 'live' as const,
+      },
+      {
+        slug: 'coach-pro',
+        title: 'Mara Petrescu Advisory',
+        meta: 'Coaching · Starter · Live',
+        kicker:
+          'Leadership coaching for founders and operators. Programs, proof, and a discovery call that respects their time.',
+        thumbnail: '/showcase/coach-pro.png',
+        thumbnailDark: '/showcase/coach-pro-dark.png',
+        href: '/library/templates/coach-pro',
+        external: false,
+        status: 'live' as const,
+      },
+      {
+        slug: 'fitness-coach',
+        title: 'Radu Stoica',
+        meta: 'Fitness · Starter · Live',
+        kicker:
+          'A strength coach for busy adults. Programs by goal, a results wall, and a booking pipeline that converts.',
+        thumbnail: '/showcase/fitness-coach.png',
+        thumbnailDark: '/showcase/fitness-coach-dark.png',
+        href: '/library/templates/fitness-coach',
+        external: false,
+        status: 'live' as const,
+      },
     ],
   },
   testimonials: {
@@ -288,18 +374,10 @@ export const LANDING_COPY = {
       {
         slug: 'lebadusul',
         quote:
-          "I sell fishing tackle, not websites. They built me a proper online shop, catalog, checkout and all, and I can change a price or add a product myself without calling anyone. Orders come in while I'm on the water.",
+          'I sell fishing tackle, so I needed the site to be practical: products easy to find, checkout working, and prices I can change without calling someone. That is what they built. I still spend most days with customers or on the water, but orders can come in without me sitting at the computer.',
         name: 'Daniel Draga',
         role: 'Owner, Lebădușul',
         href: 'https://lebadusularticoledepescuit.ro/',
-      },
-      {
-        slug: 'ux-journey',
-        quote:
-          "My old site didn't say what I actually do. Now the copy, the booking calendar and the credibility all sit on one domain, and it looks like the senior practice it is. People book before the first call.",
-        name: 'Dorin',
-        role: 'UX Journey',
-        href: 'https://ux-journey.com/',
       },
     ],
   },
@@ -314,7 +392,7 @@ export const LANDING_COPY = {
       {
         question: 'How long does it take to build my site?',
         answer:
-          'We set a realistic timeline together on the discovery call and keep you posted the whole way. We move faster than a traditional agency, but we are not going to rush the parts that matter.',
+          'We set a realistic timeline together on the discovery call and keep you posted the whole way. Most builds move in weeks, not months, but we are not going to rush the parts that matter.',
       },
       {
         question: 'Do I own my website?',
@@ -324,7 +402,7 @@ export const LANDING_COPY = {
       {
         question: 'What if I want to make changes after launch?',
         answer:
-          'You describe the change in plain English ("change the hero headline to X", "add a testimonial from Sarah") and the smart conversational editor does it. There is no system to learn.',
+          'You describe the change in plain English ("change the hero headline to X", "add a testimonial from Sarah") and the smart editor does it. There is no system to learn.',
       },
       {
         question: "What's included in the monthly fee?",

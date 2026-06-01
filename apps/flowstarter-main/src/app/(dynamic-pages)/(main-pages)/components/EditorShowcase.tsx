@@ -99,13 +99,6 @@ export function EditorShowcase() {
           <span className="ls-editor-mark ls-editor-mark--bl" aria-hidden />
           <span className="ls-editor-mark ls-editor-mark--br" aria-hidden />
 
-          {/* Technical caption */}
-          <div className="ls-editor-caption" aria-hidden>
-            <span>Fig. 001</span>
-            <span className="ls-editor-caption-rule" />
-            <span>Smart editor, live demo</span>
-          </div>
-
           <div
             className={`ls-editor-surface ${
               mobileEditorExpanded

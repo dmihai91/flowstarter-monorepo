@@ -41,7 +41,8 @@ function fromApi(p: Record<string, unknown> | null): Profile {
 
 const fieldCls =
   'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:focus:border-blue-500/60 dark:focus:ring-blue-500/20';
-const labelCls = 'mb-1 block text-xs font-medium text-slate-600 dark:text-slate-300';
+const labelCls =
+  'mb-1 block text-xs font-medium text-slate-600 dark:text-slate-300';
 
 export function BillingDetailsForm() {
   const [p, setP] = useState<Profile>(EMPTY);
@@ -53,7 +54,9 @@ export function BillingDetailsForm() {
     let active = true;
     (async () => {
       try {
-        const r = await fetch('/api/account/billing-profile', { cache: 'no-store' });
+        const r = await fetch('/api/account/billing-profile', {
+          cache: 'no-store',
+        });
         if (r.ok && active) {
           const d = await r.json();
           setP(fromApi(d.profile));
@@ -89,7 +92,10 @@ export function BillingDetailsForm() {
           text: d.stripeSynced ? 'Saved — billing details updated.' : 'Saved.',
         });
       } else {
-        setMsg({ ok: false, text: 'Could not save your details. Please try again.' });
+        setMsg({
+          ok: false,
+          text: 'Could not save your details. Please try again.',
+        });
       }
     } catch {
       setMsg({ ok: false, text: 'Network error — please try again.' });
@@ -121,40 +127,88 @@ export function BillingDetailsForm() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className={labelCls} htmlFor="company_name">Company name</label>
-            <input id="company_name" className={fieldCls} value={p.company_name}
-              onChange={(e) => set('company_name', e.target.value)} placeholder="Acme SRL" autoComplete="organization" />
+            <label className={labelCls} htmlFor="company_name">
+              Company name
+            </label>
+            <input
+              id="company_name"
+              className={fieldCls}
+              value={p.company_name}
+              onChange={(e) => set('company_name', e.target.value)}
+              placeholder="Acme SRL"
+              autoComplete="organization"
+            />
           </div>
           <div>
-            <label className={labelCls} htmlFor="vat_id">VAT / CUI</label>
-            <input id="vat_id" className={fieldCls} value={p.vat_id}
-              onChange={(e) => set('vat_id', e.target.value)} placeholder="RO12345678" />
+            <label className={labelCls} htmlFor="vat_id">
+              VAT / CUI
+            </label>
+            <input
+              id="vat_id"
+              className={fieldCls}
+              value={p.vat_id}
+              onChange={(e) => set('vat_id', e.target.value)}
+              placeholder="RO12345678"
+            />
           </div>
           <div>
-            <label className={labelCls} htmlFor="registration_no">Registration no.</label>
-            <input id="registration_no" className={fieldCls} value={p.registration_no}
-              onChange={(e) => set('registration_no', e.target.value)} placeholder="J40/1234/2020" />
+            <label className={labelCls} htmlFor="registration_no">
+              Registration no.
+            </label>
+            <input
+              id="registration_no"
+              className={fieldCls}
+              value={p.registration_no}
+              onChange={(e) => set('registration_no', e.target.value)}
+              placeholder="J40/1234/2020"
+            />
           </div>
           <div>
-            <label className={labelCls} htmlFor="country">Country</label>
-            <input id="country" className={fieldCls} value={p.country} maxLength={2}
-              onChange={(e) => set('country', e.target.value.toUpperCase())} placeholder="RO" autoComplete="country" />
+            <label className={labelCls} htmlFor="country">
+              Country
+            </label>
+            <input
+              id="country"
+              className={fieldCls}
+              value={p.country}
+              maxLength={2}
+              onChange={(e) => set('country', e.target.value.toUpperCase())}
+              placeholder="RO"
+              autoComplete="country"
+            />
           </div>
         </div>
 
         <div>
-          <label className={labelCls} htmlFor="billing_address">Billing address</label>
-          <textarea id="billing_address" className={fieldCls} rows={2} value={p.billing_address}
-            onChange={(e) => set('billing_address', e.target.value)} placeholder="Street, city, postal code" />
+          <label className={labelCls} htmlFor="billing_address">
+            Billing address
+          </label>
+          <textarea
+            id="billing_address"
+            className={fieldCls}
+            rows={2}
+            value={p.billing_address}
+            onChange={(e) => set('billing_address', e.target.value)}
+            placeholder="Street, city, postal code"
+          />
         </div>
 
         <div className="flex items-center gap-3 pt-1">
-          <button type="submit" disabled={loading || saving}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60">
+          <button
+            type="submit"
+            disabled={loading || saving}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+          >
             {saving ? 'Saving…' : 'Save details'}
           </button>
           {msg && (
-            <span className={`text-sm ${msg.ok ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+            <span
+              className={`text-sm ${
+                msg.ok
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : 'text-red-600 dark:text-red-400'
+              }`}
+            >
               {msg.text}
             </span>
           )}

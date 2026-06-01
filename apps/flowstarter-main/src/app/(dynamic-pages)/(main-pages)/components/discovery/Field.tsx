@@ -5,7 +5,7 @@
  */
 
 export const fieldInputClass =
-  'w-full rounded-lg border border-[var(--fs-rule)] bg-white dark:bg-white/[0.03] px-3.5 py-2.5 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink-faint)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/30 focus:border-[var(--purple-primary)]/50 transition-colors';
+  'w-full rounded-lg border border-[var(--fs-rule)] bg-white dark:bg-white/[0.03] px-3.5 py-2.5 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink-faint)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] outline-none transition-[box-shadow,border-color] duration-150 hover:border-[var(--purple-primary)]/30 focus:border-[var(--purple-primary)]/40 focus:shadow-[0_0_0_4px_var(--purple-primary-lightest)]';
 
 export function Field({
   label,

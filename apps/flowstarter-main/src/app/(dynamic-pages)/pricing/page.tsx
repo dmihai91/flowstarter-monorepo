@@ -5,7 +5,7 @@ import { tServer } from '@/lib/i18n-server';
 export const metadata = {
   title: 'Pricing',
   description:
-    'Simple pricing. A one-time setup fee plus a monthly subscription that covers hosting, the smart conversational editor, and ongoing support.',
+    'Simple pricing. A one-time setup fee plus a monthly subscription that covers hosting, the smart editor, and ongoing support.',
 };
 
 export default function PricingPage() {

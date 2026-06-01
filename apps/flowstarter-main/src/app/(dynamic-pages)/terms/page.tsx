@@ -31,9 +31,9 @@ export default function TermsPage() {
           <p>
             By booking a discovery call, signing a scope of work, or paying an
             invoice, you accept these terms. They cover everything we do for you
-            — design, build, hosting, smart-editor access, and ongoing support.
-            Specific deliverables, prices, and timelines live in the scope of
-            work we agree on together.
+            including design, build, hosting, smart editor access, and ongoing
+            support. Specific deliverables, prices, and timelines live in the
+            scope of work we agree on together.
           </p>
 
           <h2>What we provide</h2>
@@ -47,8 +47,8 @@ export default function TermsPage() {
               monitoring.
             </li>
             <li>
-              Access to the smart conversational editor — your monthly plan
-              covers a fixed allowance of AI edits. Add-on packs are available.
+              Access to the smart editor. Your monthly plan covers a fixed
+              allowance of AI edits. Add-on packs are available.
             </li>
             <li>
               Ongoing support via email and your discovery-call number, with

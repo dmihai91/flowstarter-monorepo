@@ -772,7 +772,7 @@
     0 32px 80px rgba(78, 94, 218, 0.14),
     0 8px 24px rgba(0, 0, 0, 0.06),
     0 0 0 1px rgba(78, 94, 218, 0.06);
-  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem);
+  padding: clamp(2rem, 4.5vw, 3.5rem) clamp(1.5rem, 6vw, 5rem);
 }
 .dark .ls-cta-card {
   border-color: rgba(255, 255, 255, 0.08);
@@ -1236,11 +1236,14 @@
   );
 }
 .ls-diff-label {
-  font-family: var(--ls-mono);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ls-ink-faint);
+  font-family: var(--ls-sans);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-transform: none;
+  color: var(--ls-ink);
+  margin-bottom: 0.55rem;
 }
 .ls-diff-card--hi .ls-diff-label {
   color: var(--ls-accent);
@@ -1372,36 +1375,6 @@
   .ls-editor-mark--tr,
   .ls-editor-mark--br {
     right: 6px;
-  }
-}
-
-/* Technical caption above the surface */
-.ls-editor-caption {
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  font-family: var(--ls-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ls-ink-faint);
-  z-index: 3;
-  pointer-events: none;
-  white-space: nowrap;
-}
-.ls-editor-caption-rule {
-  display: inline-block;
-  width: 18px;
-  height: 1px;
-  background: var(--ls-ink-faint);
-}
-@media (max-width: 640px) {
-  .ls-editor-caption {
-    display: none;
   }
 }
 
@@ -1617,6 +1590,14 @@
 }
 
 /* ── LandingHero.tsx ── */
+.ls-hero-proof {
+  max-width: 52rem;
+  font-family: var(--ls-sans);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--ls-ink-dim);
+}
 .ls-hero-trust {
   border-color: var(--ls-rule);
   padding-top: 1.6rem;
@@ -1851,9 +1832,10 @@
 }
 .ls-price-cost .setup {
   font-family: var(--ls-sans);
-  font-size: 2.1rem;
+  font-size: clamp(1.4rem, 3vw, 1.75rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
   color: var(--ls-ink);
 }
 .ls-price-cost .setup-label {
@@ -1921,6 +1903,11 @@
   color: var(--ls-accent);
   margin-top: 1px;
 }
+.ls-price-features .check svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
 .ls-price-cta {
   margin-top: auto;
   width: 100%;
@@ -1953,6 +1940,25 @@
   font-family: var(--ls-sans);
   font-size: 0.95rem;
   color: var(--ls-ink-dim);
+}
+.ls-price-plan-note {
+  font-family: var(--ls-sans);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--ls-ink-faint);
+  margin: 0.4rem 0 0.9rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--ls-rule);
+  font-style: italic;
+}
+.ls-price-card--custom {
+  border-color: color-mix(in oklab, var(--ls-accent-warm) 36%, var(--ls-rule));
+}
+.ls-price-card--custom .ls-price-name {
+  color: var(--ls-accent-warm);
+}
+.ls-price-secondary-cta {
+  font-family: var(--ls-sans);
 }
 .ls-price-relaunch {
   font-family: var(--ls-sans);

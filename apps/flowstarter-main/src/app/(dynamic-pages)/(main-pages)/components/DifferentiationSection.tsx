@@ -53,7 +53,7 @@ export function DifferentiationSection() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4 md:gap-6">
           {diff.cards.map((c, i) => {
             const highlighted =
               'highlighted' in c &&

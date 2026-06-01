@@ -81,9 +81,9 @@ export default function PrivacyPage() {
           <h2>3. How we use your data</h2>
           <ul>
             <li>
-              <strong>Service delivery</strong> — scheduling calls, building
-              your site, hosting it, providing the smart conversational editor,
-              and responding to support.
+              <strong>Service delivery</strong>, scheduling calls, building your
+              site, hosting it, providing the smart editor, and responding to
+              support.
             </li>
             <li>
               <strong>Billing</strong> — generating invoices, processing

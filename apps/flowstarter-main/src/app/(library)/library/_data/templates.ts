@@ -262,15 +262,16 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     category: 'Creative',
     year: '2026',
     kicker:
-      'Editorial dark/light portfolio for designers, developers, and independent creatives.',
+      'Editorial light/dark portfolio for designers, developers, and independent creatives.',
     blurb:
-      "A premium portfolio for the freelancer who treats their site like a publication, not a brochure. Editorial typography, dedicated case-study pages, a services section that doesn't over-explain, and a booking flow that respects how busy the visitor is. Light and dark modes share the same restraint so the brand reads the same in either.",
-    built: ['Case-study showcase', 'Services', 'Booking', 'Dark mode'],
+      "Built around Dorin Andrei, a product designer and developer who treats his site like a publication, not a brochure. Editorial Fraunces type, an asymmetric case-study gallery, a services list that doesn't over-explain, and a film-grained warm dark mode that syncs with the platform. Hand-built and lightweight — no template feel, no utility-class soup.",
+    built: ['Case-study gallery', 'Services', 'Light & dark', 'Hand-built'],
     tags: ['freelancer', 'portfolio', 'ux designer', 'developer'],
-    repoUrl: null,
+    repoUrl: 'https://github.com/DorinAndrei007/Portfolio-Template',
     liveUrl: null,
     thumbnail: 'freelancer-portfolio',
     hasDarkThumbnail: true,
+    previewPath: '/preview/freelancer-portfolio/',
   },
   {
     slug: 'therapist-care',

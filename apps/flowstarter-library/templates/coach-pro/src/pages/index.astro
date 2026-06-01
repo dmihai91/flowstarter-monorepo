@@ -1,695 +1,114 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
-import Container from '../../../shared/dorin-ds/components/Container.astro';
-import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
-import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
-import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
-import ServiceCard from '../../../shared/dorin-ds/components/ServiceCard.astro';
-import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
-import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
-import TestimonialBlock from '../../../shared/dorin-ds/components/TestimonialBlock.astro';
-import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
-import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
-import HeroIntro from '../../../shared/dorin-ds/components/HeroIntro.astro';
-import VideoBlock from '../../../shared/dorin-ds/components/VideoBlock.astro';
-import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
-import { frontmatter as heroData } from '../../content/hero.md';
-import { frontmatter as servicesData } from '../../content/services.md';
-import { frontmatter as testimonialsData } from '../../content/testimonials.md';
-import { frontmatter as videoData } from '../../content/video.md';
-import { frontmatter as bookingData } from '../../content/integrations/booking.md';
+import '../../../shared/editorial.css';
 
-interface HeroStat { value: string; label: string }
-interface HeroContent { stats?: HeroStat[] }
-interface ServiceItem { icon: string; title: string; description: string; price: string }
-interface ServicesContent { services?: ServiceItem[] }
-interface TestimonialItem { quote: string; author: string; role: string; result: string }
-interface TestimonialsContent { testimonials?: TestimonialItem[] }
-interface VideoContent {
-  eyebrow?: string;
-  title: string;
-  duration?: string;
-  caption?: string;
-  poster?: string;
-  src: string;
-  aspect?: '21/9' | '16/9' | '4/3' | '1/1';
-}
-interface BookingContent {
-  enabled?: boolean;
-  cal_link?: string;
-  cal_event_label?: string;
-  cal_duration_label?: string;
-  cal_layout?: 'month_view' | 'week_view' | 'column_view';
-  title?: string;
-  description?: string;
-}
-
-const hero = heroData as HeroContent;
-const servicesContent = servicesData as ServicesContent;
-const testimonialsContent = testimonialsData as TestimonialsContent;
-const video = videoData as VideoContent;
-const booking = bookingData as BookingContent;
-const showBooking = booking.enabled === true && Boolean(booking.cal_link);
-
-// Map .md hero stats (value/label) to StatsRow's expected (number/label) shape.
-const heroStats = (hero.stats ?? []).map((s) => ({
-  number: s.value,
-  label: s.label,
-}));
-
-// Inline SVG strings for each `lucide:*` icon name referenced in services.md.
-// Kept here (not in the .md) so authors can edit copy without touching markup.
-const lucideIcons: Record<string, string> = {
-  'lucide:crown':
-    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294zM5 21h14"/></svg>',
-  'lucide:briefcase':
-    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>',
-  'lucide:heart':
-    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676a.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>',
-  'lucide:graduation-cap':
-    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0zM22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>',
-  'lucide:users':
-    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3.128a4 4 0 0 1 0 7.744M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>',
-  'lucide:sparkles':
-    '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594zM20 2v4m2-2h-4"/><circle cx="4" cy="20" r="2"/></svg>',
-};
-
-const services = (servicesContent.services ?? []).map((s) => ({
-  icon: lucideIcons[s.icon] ?? '',
-  title: s.title,
-  description: s.description,
-  meta: s.price,
-}));
-
-const testimonials = testimonialsContent.testimonials ?? [];
-
-const approach = [
-  {
-    number: '01',
-    title: 'Goal clarity',
-    description:
-      'We start by getting crystal clear on what you truly want. Through deep inquiry and assessment, we define your vision, identify obstacles, and create a compelling roadmap for your transformation.',
-  },
-  {
-    number: '02',
-    title: 'Accountability framework',
-    description:
-      'Structured accountability that keeps you on track. Weekly check-ins, progress tracking, and honest feedback ensure you follow through on your commitments and stay aligned with your goals.',
-  },
-  {
-    number: '03',
-    title: 'Mindset mastery',
-    description:
-      'We identify and rewire the limiting beliefs, patterns, and stories that hold you back. Through proven cognitive techniques, you develop an empowered mindset that supports lasting change.',
-  },
-  {
-    number: '04',
-    title: 'Action planning',
-    description:
-      'Every session ends with clear, actionable next steps. We break big goals into manageable milestones, so you always know exactly what to do next to move forward with confidence.',
-  },
+const nav = [
+  { label: 'Coaching', href: '#work' },
+  { label: 'Approach', href: '#studio' },
+  { label: 'Programs', href: '#fees' },
+  { label: 'Contact', href: '#contact' },
 ];
-
-const faqs = [
-  {
-    question: 'What happens in a typical coaching session?',
-    answer:
-      'Each session begins with a check-in on your progress since our last meeting. We dive into the key challenges or opportunities you are facing, using targeted questions and exercises to create breakthroughs. Every session ends with clear action items and accountability commitments. Sessions are 60 minutes, video or in-person.',
-  },
-  {
-    question: 'How often should I have coaching sessions?',
-    answer:
-      'Most clients see the best results with weekly or bi-weekly sessions. Weekly sessions create stronger momentum and faster results, while bi-weekly works well for maintenance and ongoing development. We will determine the right cadence during your discovery call.',
-  },
-  {
-    question: 'What is the ROI of coaching?',
-    answer:
-      'The International Coaching Federation reports that 86% of companies that invested in coaching saw a positive ROI. My clients typically report salary increases of 20–50%, revenue growth, improved leadership effectiveness, better work-life balance, and greater clarity in decision-making.',
-  },
-  {
-    question: 'Do you offer virtual coaching sessions?',
-    answer:
-      'Yes. Most clients work with me online. It keeps the process easier to sustain and gives us enough continuity to work properly. In-person sessions are available in Bucharest when a client prefers that format.',
-  },
-  {
-    question: 'How is coaching different from therapy?',
-    answer:
-      'Therapy typically focuses on healing past wounds and addressing mental health concerns. Coaching is future-focused and action-oriented — it assumes you are resourceful and capable, and helps you bridge the gap between where you are and where you want to be.',
-  },
+const stats = [
+  { n: '120+', l: 'Leaders coached' },
+  { n: '94%', l: 'Clients rebook' },
+  { n: '6 mo', l: 'Typical engagement' },
 ];
-
-const credentials = [
-  'ICF Associate Certified Coach (ACC)',
-  'Systemic coaching & facilitation training',
-  'Former operations advisor for service and SaaS teams',
-  '9+ years coaching founders and team leads',
+const work = [
+  { src: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1400&h=1750&fit=crop', alt: 'A founder in a working session', tag: 'Founders', place: 'Seed → Series B', span: 'tall' },
+  { src: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&h=1050&fit=crop', alt: 'A leadership conversation', tag: 'Operators', place: 'Scaling teams', span: 'wide' },
+  { src: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&h=1500&fit=crop', alt: 'Notes during a strategy call', tag: 'New managers', place: 'First 90 days', span: 'reg' },
+  { src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1400&h=1050&fit=crop', alt: 'A founder, considered', tag: 'Executives', place: 'High-stakes calls', span: 'wide' },
+  { src: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1200&h=1500&fit=crop', alt: 'A coaching session in progress', tag: 'Boards', place: 'Hard conversations', span: 'tall' },
+];
+const offerings = [
+  { k: '01', name: '1:1 coaching', body: 'A standing weekly hour for the decisions and conversations that don\'t wait.', price: 'from €420 / mo' },
+  { k: '02', name: 'The intensive', body: 'A focused two-day reset for a specific transition — a raise, a restructure, a hard pivot.', price: 'from €2,400' },
+  { k: '03', name: 'Retainer advisory', body: 'On-call thinking partner for the founder who needs a steady outside voice.', price: 'from €1,800 / mo' },
+  { k: '04', name: 'Team workshops', body: 'Practical sessions on feedback, decisions, and difficult conversations for the whole team.', price: 'on request' },
 ];
 ---
-
-<Layout
-  title="Mara Petrescu Advisory — Leadership Coach for Founders and Team Leads"
-  description="Executive coaching for founders, operators, and emerging leaders navigating growth, difficult conversations, and high-responsibility roles across Europe, from a base in Lisbon."
-  activeIndex={-1}
->
-  <HeroIntro text="Mara Petrescu" />
-
-  <!-- ─── Hero ──────────────────────────────────────────────── -->
-  <SectionBlock id="home" tone="light" padding="hero" className="cp-hero">
-    <Container className="cp-hero__inner">
-      <div class="cp-hero__copy">
-        <OverlineText text="ICF ACC · Lisbon + online" tone="accent" />
-        <h1 class="cp-hero__title">
-          Unlock your true<br />
-          <span class="cp-hero__title-accent">potential.</span>
-        </h1>
-        <p class="cp-hero__lede">
-          I'm <strong>Mara Petrescu</strong> — I help founders, operators,
-          and newly stretched leaders think more clearly, make cleaner
-          decisions, and lead without living in a permanent state of tension.
-        </p>
-        <div class="cp-hero__actions">
-          <ActionButton
-            href="/contact"
-            label="Book discovery call"
-            variant="primary"
-            size="large"
-          />
-          <ActionButton
-            href="/services"
-            label="Explore programs"
-            variant="outline-dark"
-            size="large"
-          />
+<Layout>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="nav">
+    <a href="#top" class="brand"><span class="brand__mark" aria-hidden="true"></span>Mara&nbsp;Petrescu</a>
+    <nav class="nav__links" aria-label="Primary">{nav.map((i) => <a href={i.href}>{i.label}</a>)}</nav>
+    <div class="nav__right">
+      <button type="button" class="themer" data-themer aria-label="Toggle dark mode"><span class="themer__dot"></span></button>
+      <a href="#contact" class="btn btn--sm">Book a strategy call</a>
+    </div>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div class="hero__copy reveal">
+        <p class="eyebrow">Executive coaching — Lisbon &amp; online</p>
+        <h1 class="display">Lead with<br />more<br /><em>clarity.</em></h1>
+        <p class="lede">I'm Mara Petrescu. I help founders, operators, and newly stretched leaders think more clearly, make cleaner decisions, and lead without living in a permanent state of tension.</p>
+        <div class="hero__cta">
+          <a href="#contact" class="btn">Book a strategy call</a>
+          <a href="#work" class="link-arrow">See client wins →</a>
         </div>
-        <div class="cp-hero__pills">
-          <TagPill label="Online across Europe" />
-          <TagPill label="120+ leaders coached" />
-          <TagPill label="Small retained roster" />
-        </div>
+        <dl class="stats">{stats.map((s) => (<div><dt>{s.n}</dt><dd>{s.l}</dd></div>))}</dl>
       </div>
-
-      <div class="cp-hero__plate" aria-hidden="true">
-        <div class="cp-hero__plate-image"></div>
-        <span class="cp-hero__index">№ 01 — 2026</span>
+      <figure class="hero__plate reveal" style="--d:.15s">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1100&h=1450&fit=crop" alt="Mara Petrescu, executive coach" loading="eager" />
+        <figcaption><span>ICF ACC</span> 120+ leaders coached</figcaption>
+      </figure>
+    </section>
+    <div class="strip" aria-hidden="true"><div class="strip__row">
+      <span>Founders</span><span class="dot">✦</span><span>Operators</span><span class="dot">✦</span><span>New managers</span><span class="dot">✦</span><span>Hard conversations</span><span class="dot">✦</span><span>Decisions</span><span class="dot">✦</span>
+      <span>Founders</span><span class="dot">✦</span><span>Operators</span><span class="dot">✦</span><span>New managers</span><span class="dot">✦</span><span>Hard conversations</span><span class="dot">✦</span><span>Decisions</span><span class="dot">✦</span>
+    </div></div>
+    <section class="section" id="work">
+      <div class="section__head"><p class="eyebrow">Who I work with</p><h2 class="h2">Leaders carrying more than they signed up for.</h2></div>
+      <div class="gallery">{work.map((w, i) => (
+        <figure class={`gal gal--${w.span} reveal`} style={`--d:${i * 0.06}s`}><img src={w.src} alt={w.alt} loading="lazy" /><figcaption><span class="gal__tag">{w.tag}</span><span class="gal__place">{w.place}</span></figcaption></figure>
+      ))}</div>
+    </section>
+    <section class="section studio" id="studio">
+      <figure class="studio__img reveal"><img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1000&h=1250&fit=crop" alt="Mara Petrescu" loading="lazy" /></figure>
+      <div class="studio__copy reveal" style="--d:.1s">
+        <p class="eyebrow">How I work</p>
+        <h2 class="h2">Direct, warm,<br />and practical.</h2>
+        <p>Fifteen years operating and advising taught me that most leadership problems aren't strategy problems — they're clarity problems. We cut through the noise to the two or three things that actually move, then build the habits to hold them.</p>
+        <p>Sessions are confidential, candid, and structured around what's live for you that week. No frameworks for the sake of frameworks. You leave each call knowing exactly what you're doing next, and why.</p>
+        <p class="sig">— Mara</p>
       </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Stats ────────────────────────────────────────────── -->
-  <SectionBlock tone="accent-light" padding="compact" topBorder>
-    <Container>
-      <StatsRow items={heroStats} />
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── About ────────────────────────────────────────────── -->
-  <SectionBlock id="about" tone="light" padding="default">
-    <Container className="cp-about">
-      <div class="cp-about__heading">
-        <OverlineText text="About" />
-        <h2 class="section-title cp-about__title">
-          Your partner in<br />
-          <em>transformation</em>.
-        </h2>
+    </section>
+    <section class="section" id="fees">
+      <div class="section__head"><p class="eyebrow">Programs</p><h2 class="h2">Ways to work together.</h2></div>
+      <ul class="offer">{offerings.map((o) => (
+        <li class="offer__row reveal"><span class="offer__k">{o.k}</span><span class="offer__name">{o.name}</span><span class="offer__body">{o.body}</span><span class="offer__price">{o.price}</span></li>
+      ))}</ul>
+      <p class="offer__note">Every engagement opens with a free 30-minute strategy call and a written plan. No templates, no pitch decks.</p>
+    </section>
+    <section class="quote reveal">
+      <blockquote>“Three months in, my leadership team stopped waiting on me for every call. Mara didn't give me a framework — she gave me back my judgement.”</blockquote>
+      <cite>David Chen — founder &amp; CEO</cite>
+    </section>
+    <section class="cta" id="contact">
+      <p class="eyebrow eyebrow--accent">A free 30-minute strategy call</p>
+      <h2 class="display cta__title">Let's get<br />to&nbsp;clarity.</h2>
+      <p class="cta__lede">Tell me what's on your plate. We'll spend 30 minutes on the real problem and you'll leave with something useful whether or not we work together.</p>
+      <div class="cta__actions"><a href="mailto:hello@marapetrescu.com" class="btn btn--lg">Book a strategy call</a><a href="tel:+351912000000" class="link-arrow">+351 912 000 000</a></div>
+    </section>
+  </main>
+  <footer class="foot">
+    <div class="foot__top">
+      <div class="foot__brand">Mara Petrescu</div>
+      <div class="foot__cols">
+        <div><h4>Coaching</h4><a href="#fees">1:1 coaching</a><a href="#fees">The intensive</a><a href="#fees">Retainer</a></div>
+        <div><h4>About</h4><a href="#studio">Approach</a><a href="#fees">Programs</a><a href="#contact">Contact</a></div>
+        <div><h4>Elsewhere</h4><a href="#">LinkedIn</a><a href="#">Substack</a><a href="mailto:hello@marapetrescu.com">Email</a></div>
       </div>
-      <div class="cp-about__body">
-        <p class="cp-about__intro">
-          For nearly a decade, I've worked with founders, operators, and
-          team leads through promotions, difficult hiring decisions, burnout
-          edges, and the strain that comes with carrying too much alone.
-        </p>
-        <p class="cp-about__copy">
-          The work is practical and direct. We slow things down enough to
-          think properly, then turn that thinking into decisions, boundaries,
-          conversations, and follow-through.
-        </p>
-        <ul class="cp-about__credentials" id="credentials">
-          {
-            credentials.map((c) => (
-              <li class="cp-about__credential">
-                <span class="cp-about__credential-mark" aria-hidden="true">
-                  ◆
-                </span>
-                {c}
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Services ─────────────────────────────────────────── -->
-  <SectionBlock id="services" tone="subtle" padding="default" topBorder>
-    <Container>
-      <SectionHeading
-        label="Programs"
-        title="Coaching, designed for results."
-        maxWidth="20ch"
-      />
-      <div class="cp-services-grid">
-        {
-          services.map((s) => (
-            <ServiceCard
-              icon={s.icon}
-              title={s.title}
-              description={s.description}
-              meta={s.meta}
-            />
-          ))
-        }
-      </div>
-      <div class="cp-services-cta">
-        <ActionButton
-          href="/services"
-          label="See all coaching programs"
-          variant="outline-dark"
-        />
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Approach ─────────────────────────────────────────── -->
-  <SectionBlock id="approach" tone="dark" padding="default">
-    <Container className="cp-approach">
-      <div class="cp-approach__heading">
-        <OverlineText text="The framework" tone="accent" />
-        <h2 class="section-title cp-approach__title">
-          A proven four-pillar approach to lasting change.
-        </h2>
-      </div>
-      <div class="cp-approach__list">
-        {
-          approach.map((a) => (
-            <NumberedFeatureItem
-              number={a.number}
-              title={a.title}
-              description={a.description}
-            />
-          ))
-        }
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Video ────────────────────────────────────────────── -->
-  <SectionBlock id="video" tone="light" padding="default" topBorder>
-    <Container className="cp-video">
-      <VideoBlock
-        src={video.src}
-        poster={video.poster}
-        title={video.title}
-        caption={video.caption}
-        eyebrow={video.eyebrow}
-        duration={video.duration}
-        aspect={video.aspect}
-      />
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Testimonials ─────────────────────────────────────── -->
-  <SectionBlock id="testimonials" tone="light" padding="default">
-    <Container>
-      <SectionHeading label="Success stories" title="Client transformations." />
-      <div class="cp-testimonials">
-        {
-          testimonials.map((t) => (
-            <TestimonialBlock
-              quote={t.quote}
-              author={t.author}
-              role={t.role}
-              result={t.result}
-            />
-          ))
-        }
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── FAQ ──────────────────────────────────────────────── -->
-  <SectionBlock id="faq" tone="light" padding="default" topBorder>
-    <Container className="cp-faq">
-      <SectionHeading label="FAQ" title="Common questions." />
-      <div class="cp-faq__list">
-        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── CTA ──────────────────────────────────────────────── -->
-  <SectionBlock id="contact" tone="dark" padding="default">
-    <Container className="cp-cta">
-      <h2 class="cp-cta__title">
-        Ready to lead with<br />more clarity?
-      </h2>
-      <p class="cp-cta__lede">
-        The first step is a 30-minute discovery call. We talk through what
-        you are carrying, where you feel stuck, and whether this looks like
-        the right kind of support.
-      </p>
-      <div class="cp-cta__actions">
-        <ActionButton
-          href="/contact"
-          label="Book discovery call"
-          variant="primary-light"
-          size="large"
-          className="fs-book-btn"
-        />
-        <ActionButton
-          href="mailto:hello@marapetrescu.com"
-          label="Send an email instead"
-          variant="outline-light"
-          size="large"
-        />
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Cal.com booking CTA ──────────────────────────────── -->
-  {
-    showBooking && (
-      <SectionBlock tone="subtle" padding="default" topBorder>
-        <Container className="cp-cal-cta">
-          <CalBookingBlock
-            variant="cta"
-            calLink={booking.cal_link}
-            eventLabel={booking.cal_event_label}
-            title={booking.title}
-            subtitle={booking.description}
-            durationLabel={booking.cal_duration_label}
-            layout={booking.cal_layout}
-          />
-        </Container>
-      </SectionBlock>
-    )
-  }
+    </div>
+    <div class="foot__base"><span>© 2026 Mara Petrescu Advisory</span><span>Lisbon · Online across Europe</span></div>
+  </footer>
+  <script is:inline>
+    (function () { var btn = document.querySelector('[data-themer]'); if (btn) btn.addEventListener('click', function () { var dark = !document.documentElement.classList.contains('theme-dark'); document.documentElement.classList.toggle('theme-dark', dark); document.documentElement.classList.toggle('dark', dark); try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (_) {} }); })();
+    (function () { var els = document.querySelectorAll('.reveal'); if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; } var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }); }, { threshold: 0.12 }); els.forEach(function (e) { io.observe(e); }); })();
+  </script>
+  <style is:global>
+    :root { --bg:#eef0f7; --bg-2:#e3e7f3; --surface:#f8f9fd; --ink:#191c28; --ink-soft:#414659; --muted:#787f96; --accent:#4a5ed8; --accent-2:#6f80ea; --line:rgba(25,28,40,.13); --line-soft:rgba(25,28,40,.07); --shadow:0 30px 70px -30px rgba(25,28,40,.42); --grain:.035; }
+    html.theme-dark, html.dark { --bg:#0e1018; --bg-2:#141726; --surface:#161a28; --ink:#eef0f8; --ink-soft:#cdd2e3; --muted:#8b92aa; --accent:#8c98f2; --accent-2:#a6b0f6; --line:rgba(238,240,248,.15); --line-soft:rgba(238,240,248,.08); --shadow:0 30px 80px -30px rgba(0,0,0,.7); --grain:.06; }
+  </style>
 </Layout>
-
-<style>
-  /* Hero */
-  .cp-hero {
-    position: relative;
-    overflow: clip;
-  }
-
-  .cp-hero__inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(380px, 44%);
-    gap: 64px;
-    align-items: center;
-    min-height: 76vh;
-  }
-
-  .cp-hero__copy {
-    max-width: 620px;
-  }
-
-  .cp-hero__title {
-    font-family: var(--font-title);
-    font-size: clamp(2.8rem, 6.5vw, 5.4rem);
-    font-weight: var(--fw-headline);
-    line-height: 1;
-    letter-spacing: -0.035em;
-    text-transform: uppercase;
-    margin: 24px 0 28px;
-    color: var(--bg-dark);
-  }
-
-  .cp-hero__title-accent {
-    color: var(--brand-primary);
-    font-style: normal;
-  }
-
-  .cp-hero__lede {
-    font-size: var(--fs-h5);
-    line-height: 1.5;
-    color: var(--text-primary);
-    max-width: 520px;
-    margin-bottom: 36px;
-  }
-
-  .cp-hero__lede strong {
-    font-weight: var(--fw-semibold);
-  }
-
-  .cp-hero__actions {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-  }
-
-  .cp-hero__pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  /* Plate */
-  .cp-hero__plate {
-    position: relative;
-    aspect-ratio: 4 / 5;
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 38%),
-      linear-gradient(180deg, rgba(32, 83, 246, 0.16), rgba(10, 10, 10, 0.08)),
-      var(--surface-subtle);
-    border: 1px solid rgba(32, 83, 246, 0.16);
-    border-radius: 28px 8px 28px 8px;
-    overflow: hidden;
-    box-shadow: 0 24px 60px rgba(32, 83, 246, 0.12);
-  }
-
-  .cp-hero__plate::before {
-    content: '';
-    position: absolute;
-    inset: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.34);
-    border-radius: 18px 6px 18px 6px;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .cp-hero__plate-image {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(180deg, rgba(13, 23, 60, 0.1), rgba(13, 23, 60, 0.68)),
-      linear-gradient(130deg, rgba(255, 138, 91, 0.18), transparent 30%),
-      url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=900&h=1100&fit=crop&crop=faces');
-    background-size: cover;
-    background-position: center 30%;
-    filter: contrast(1.06) saturate(0.9);
-    transition: transform 1.2s var(--ease-emphasized);
-  }
-
-  .cp-hero:hover .cp-hero__plate-image {
-    transform: scale(1.02);
-  }
-
-  .cp-hero__index {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    font-family: var(--font-title);
-    font-size: var(--fs-xs);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-on-dark);
-    background: var(--bg-dark);
-    padding: 6px 10px;
-    z-index: 1;
-  }
-
-  /* About */
-  .cp-about {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: 80px;
-    align-items: start;
-  }
-
-  .cp-about__heading {
-    position: sticky;
-    top: 100px;
-  }
-
-  .cp-about__title {
-    margin-top: 16px;
-  }
-
-  .cp-about__title em {
-    font-style: italic;
-    font-family: 'Georgia', serif;
-    font-weight: var(--fw-regular);
-    color: var(--brand-primary);
-    text-transform: none;
-    letter-spacing: -0.04em;
-  }
-
-  .cp-about__intro {
-    font-size: var(--fs-h5);
-    line-height: 1.5;
-    color: var(--bg-dark);
-    margin-bottom: 24px;
-    max-width: 56ch;
-  }
-
-  .cp-about__copy {
-    font-size: var(--fs-body);
-    line-height: 1.7;
-    color: var(--text-primary);
-    max-width: 60ch;
-    margin-bottom: 36px;
-  }
-
-  .cp-about__credentials {
-    display: grid;
-    gap: 14px;
-    padding-top: 28px;
-    border-top: 1px solid var(--surface-subtle-border);
-  }
-
-  .cp-about__credential {
-    display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 8px;
-    font-family: var(--font-title);
-    font-size: var(--fs-small);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--bg-dark);
-  }
-
-  .cp-about__credential-mark {
-    color: var(--brand-primary);
-    font-size: 0.8em;
-    line-height: 1.5;
-  }
-
-  /* Services grid */
-  .cp-services-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .cp-services-cta {
-    margin-top: 56px;
-    text-align: center;
-  }
-
-  /* Approach (dark) */
-  .cp-approach {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
-    gap: 80px;
-  }
-
-  .cp-approach__heading {
-    position: sticky;
-    top: 100px;
-    align-self: start;
-  }
-
-  .cp-approach__title {
-    color: var(--text-on-dark);
-    margin-top: 16px;
-    max-width: 18ch;
-  }
-
-  /* Testimonials */
-  .cp-testimonials {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  /* FAQ */
-  .cp-faq {
-    max-width: 920px;
-  }
-
-  .cp-faq__list {
-    display: grid;
-    gap: 12px;
-  }
-
-  /* CTA */
-  .cp-cta {
-    text-align: center;
-    max-width: 760px;
-    margin: 0 auto;
-  }
-
-  .cp-cta__title {
-    font-family: var(--font-title);
-    font-size: clamp(2.4rem, 5vw, 4rem);
-    font-weight: var(--fw-headline);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    text-transform: uppercase;
-    color: var(--text-on-dark);
-    margin-bottom: 28px;
-  }
-
-  .cp-cta__lede {
-    font-size: var(--fs-h5);
-    line-height: 1.5;
-    color: var(--text-nav);
-    margin-bottom: 40px;
-    max-width: 56ch;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .cp-cta__actions {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  /* Responsive */
-  @media (max-width: 1024px) {
-    .cp-hero__inner {
-      grid-template-columns: 1fr;
-      gap: 48px;
-      min-height: auto;
-    }
-
-    .cp-hero__plate {
-      aspect-ratio: 16 / 11;
-      max-width: 720px;
-    }
-
-    .cp-about,
-    .cp-approach {
-      grid-template-columns: 1fr;
-      gap: 48px;
-    }
-
-    .cp-about__heading,
-    .cp-approach__heading {
-      position: static;
-    }
-
-    .cp-services-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .cp-testimonials {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .cp-services-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .cp-hero__title {
-      font-size: 2.6rem;
-    }
-  }
-</style>

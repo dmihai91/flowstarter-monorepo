@@ -366,6 +366,18 @@ export const LANDING_COPY = {
         external: false,
         status: 'live' as const,
       },
+      {
+        slug: 'freelancer-portfolio',
+        title: 'Dorin Andrei',
+        meta: 'Portfolio · Starter · Live',
+        kicker:
+          'A product designer & developer portfolio. Case studies do the talking, hand-built and lightweight, with a warm editorial dark mode.',
+        thumbnail: '/showcase/freelancer-portfolio.png',
+        thumbnailDark: '/showcase/freelancer-portfolio-dark.png',
+        href: '/library/templates/freelancer-portfolio',
+        external: false,
+        status: 'live' as const,
+      },
     ],
   },
   testimonials: {

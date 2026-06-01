@@ -1,759 +1,114 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
-import Container from '../../../shared/dorin-ds/components/Container.astro';
-import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
-import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
-import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
-import ServiceCard from '../../../shared/dorin-ds/components/ServiceCard.astro';
-import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
-import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
-import TestimonialBlock from '../../../shared/dorin-ds/components/TestimonialBlock.astro';
-import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
-import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
-import VideoBlock from '../../../shared/dorin-ds/components/VideoBlock.astro';
-import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
+import '../../../shared/editorial.css';
 
-import { frontmatter as siteData } from '../../content/site.md';
-import { frontmatter as heroData } from '../../content/hero.md';
-import { frontmatter as servicesData } from '../../content/services.md';
-import { frontmatter as testimonialsData } from '../../content/testimonials.md';
-import { frontmatter as videoData } from '../../content/video.md';
-import { frontmatter as bookingData } from '../../content/integrations/booking.md';
-
-interface SiteContent {
-  name: string;
-  tagline?: string;
-  description?: string;
-}
-
-interface HeroStat {
-  value: string;
-  label: string;
-}
-
-interface HeroContent {
-  headline?: string;
-  subheadline?: string;
-  badge?: string;
-  stats?: HeroStat[];
-}
-
-interface ServiceItem {
-  icon: string;
-  title: string;
-  description: string;
-  price?: string;
-}
-
-interface ServicesContent {
-  title?: string;
-  subtitle?: string;
-  services: ServiceItem[];
-}
-
-interface TestimonialItem {
-  quote: string;
-  author: string;
-  role?: string;
-  result?: string;
-}
-
-interface TestimonialsContent {
-  title?: string;
-  subtitle?: string;
-  testimonials: TestimonialItem[];
-}
-
-interface VideoContent {
-  eyebrow?: string;
-  title: string;
-  duration?: string;
-  caption?: string;
-  poster?: string;
-  src: string;
-  aspect?: '21/9' | '16/9' | '4/3' | '1/1';
-}
-
-interface BookingContent {
-  enabled?: boolean;
-  cal_link?: string;
-  cal_event_label?: string;
-  cal_duration_label?: string;
-  cal_layout?: 'month_view' | 'week_view' | 'column_view';
-  title?: string;
-  description?: string;
-}
-
-const site = siteData as SiteContent;
-const hero = heroData as HeroContent;
-const services = servicesData as ServicesContent;
-const testimonials = testimonialsData as TestimonialsContent;
-const video = videoData as VideoContent;
-const booking = bookingData as BookingContent;
-const showBooking = booking.enabled === true && Boolean(booking.cal_link);
-
-// Hero stat row — content is in hero.md, but StatsRow uses { number, label }.
-const heroStats = (hero.stats ?? []).map((s) => ({
-  number: s.value,
-  label: s.label,
-}));
-
-// Hand-crafted SVG icon palette, paired by index with services.md so the
-// content file stays clean (lucide:* tokens) while the visual identity
-// remains hand-crafted, not lucide-extracted.
-const serviceIcons: string[] = [
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M18 4v16M3 8h3M3 16h3M18 8h3M18 16h3M9 6v12M15 6v12"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M12 3v18M9 8l3 3 3-3M9 16l3-3 3 3"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8m-4-3v3"/><path d="M7 9h10M7 13h6"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l5 3"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6H4zM4 14h16v6H4zM8 4v6M16 4v6M8 14v6M16 14v6"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0z"/><path d="M12 7v5l3 2M8.5 14.5h7"/></svg>',
+const nav = [
+  { label: 'Programs', href: '#fees' },
+  { label: 'Coaching', href: '#work' },
+  { label: 'Approach', href: '#studio' },
+  { label: 'Contact', href: '#contact' },
 ];
-
-// Approach + FAQ + credentials are bespoke long-form copy (no .md mapping).
-const approach = [
-  {
-    number: '01',
-    title: 'Assess. Honest baseline.',
-    description:
-      'Full movement screen. Squat depth, hip rotation, scapular control, asymmetries. Strength baseline across the big four. We log what is, not what we want.',
-  },
-  {
-    number: '02',
-    title: 'Program. With intent.',
-    description:
-      'Periodised blocks built for your goal, your equipment, your schedule. Volume rises before intensity. Every rep has a job. No filler movements, no random AMRAPs.',
-  },
-  {
-    number: '03',
-    title: 'Train. Track everything.',
-    description:
-      "Sessions logged in the app. RPE on every working set. Form video on the heavy lifts. We don't guess what's working — we look at the numbers.",
-  },
-  {
-    number: '04',
-    title: 'Adapt. On schedule.',
-    description:
-      'Monthly review built into the program. Plateaus get broken with a deload, a tempo shift, a new movement pattern. The plan serves the person, not the other way around.',
-  },
+const stats = [
+  { n: '180+', l: 'Clients coached' },
+  { n: 'NSCA-CPT', l: 'Certified' },
+  { n: 'Hybrid', l: 'In-person + online' },
 ];
-
-const faqs = [
-  {
-    question: 'What does a first session with you actually look like?',
-    answer:
-      "Movement screen and conversation, mostly. We run a full squat / hinge / push / pull / brace assessment, talk about your training history, injury history, and what you actually want to be able to do. You'll lift, but the goal of the first session is data — not exhaustion. You leave with a plan.",
-  },
-  {
-    question: 'How often should I be training?',
-    answer:
-      'For most clients, 3–4 sessions a week — two with me (or self-led from your program) and one or two on your own. Frequency matters more than duration; consistent 50-minute sessions beat sporadic two-hour ones every time.',
-  },
-  {
-    question: 'Do you handle nutrition?',
-    answer:
-      'I build macro targets based on your goals (cut, recomp, gain) and your real eating habits. The add-on includes meal frameworks, weekly reviews, and adjustments. I do not write rigid meal plans — they do not survive contact with a real life.',
-  },
-  {
-    question: 'Can you work around an injury?',
-    answer:
-      "Yes — most of my clients are training around something (old shoulder, cranky knee, lower back). I'm trained in CSCS-level rehab progressions and stay in close communication with your PT or doc when one is involved. Pain is information; we route around it intelligently.",
-  },
-  {
-    question: 'Online coaching vs in-person — which is better?',
-    answer:
-      "In-person if you're new to lifting or coming back from a layoff — the form coaching is irreplaceable in those first months. Online once you can move well: the programming is identical, video reviews catch the form drift, and the cost per week is lower.",
-  },
+const work = [
+  { src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&h=1750&fit=crop', alt: 'Strength training session', tag: 'Strength', place: 'Build the base', span: 'tall' },
+  { src: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1400&h=1050&fit=crop', alt: 'Coaching a lift', tag: 'Technique', place: 'Move well first', span: 'wide' },
+  { src: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1200&h=1500&fit=crop', alt: 'Conditioning work', tag: 'Conditioning', place: 'Built to last', span: 'reg' },
+  { src: 'https://images.unsplash.com/photo-1517438476312-10d79c077509?w=1400&h=1050&fit=crop', alt: 'Training the whole room', tag: 'Small group', place: 'Train together', span: 'wide' },
+  { src: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&h=1500&fit=crop', alt: 'A client mid-session', tag: 'Results', place: 'Honest progress', span: 'tall' },
 ];
-
-const credentials = [
-  'NSCA Certified Personal Trainer',
-  'Precision Nutrition Level 1',
-  'Strength & conditioning focus for busy adults',
-  '7+ years coaching consistency and performance',
+const offerings = [
+  { k: '01', name: '1:1 in person', body: 'Private sessions in Cluj-Napoca, programmed and coached rep by rep.', price: 'from €45 / session' },
+  { k: '02', name: 'Online programming', body: 'A custom plan in your pocket, updated weekly, with video feedback on your lifts.', price: 'from €120 / mo' },
+  { k: '03', name: 'Hybrid coaching', body: 'In-person where it matters, online for the rest. The best of both.', price: 'from €240 / mo' },
+  { k: '04', name: 'Small group', body: 'Train with two or three others on the same goal. Cheaper, and more fun.', price: 'from €25 / session' },
 ];
 ---
-
-<Layout
-  title={`${site.name} — Strength Coach in Cluj-Napoca`}
-  description={site.description ??
-    'Strength and conditioning coaching for busy adults who want to get stronger, move better, and stay consistent. In-person in Cluj-Napoca and online.'}
-  activeIndex={-1}
->
-  <!-- ─── Hero ──────────────────────────────────────────────── -->
-  <SectionBlock id="home" tone="light" padding="hero" className="fc-hero">
-    <Container className="fc-hero__inner">
-      <div class="fc-hero__copy">
-        <OverlineText text="NSCA-CPT · Cluj-Napoca + online" tone="accent" />
-        <h1 class="fc-hero__title">
-          Train with<br />
-          <span class="fc-hero__title-accent">intent</span>.<br />
-          Build something<br />
-          you can use.
-        </h1>
-        <p class="fc-hero__lede">
-          I'm <strong>Radu Stoica</strong> — a strength coach in
-          Cluj-Napoca helping busy adults train with more structure,
-          move better, and make progress they can actually sustain.
-        </p>
-        <div class="fc-hero__actions">
-          <ActionButton
-            href="/contact"
-            label="Start training"
-            variant="primary"
-            size="large"
-          />
-          <ActionButton
-            href="/services"
-            label="See programs"
-            variant="outline-dark"
-            size="large"
-          />
+<Layout>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="nav">
+    <a href="#top" class="brand"><span class="brand__mark" aria-hidden="true"></span>Radu&nbsp;Stoica</a>
+    <nav class="nav__links" aria-label="Primary">{nav.map((i) => <a href={i.href}>{i.label}</a>)}</nav>
+    <div class="nav__right">
+      <button type="button" class="themer" data-themer aria-label="Toggle dark mode"><span class="themer__dot"></span></button>
+      <a href="#contact" class="btn btn--sm">Book a free trial</a>
+    </div>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div class="hero__copy reveal">
+        <p class="eyebrow">Strength coaching — Cluj-Napoca &amp; online</p>
+        <h1 class="display">Train<br />with<br /><em>intent.</em></h1>
+        <p class="lede">I'm Radu Stoica, a strength coach for busy adults. We build something you can actually use — more structure, better movement, and progress you can sustain past January.</p>
+        <div class="hero__cta">
+          <a href="#contact" class="btn">Book a free trial</a>
+          <a href="#fees" class="link-arrow">See programs →</a>
         </div>
-        <div class="fc-hero__pills">
-          <TagPill label="Intro assessment available" />
-          <TagPill label="180+ clients coached" />
-          <TagPill label="In-person & online" />
-        </div>
+        <dl class="stats">{stats.map((s) => (<div><dt>{s.n}</dt><dd>{s.l}</dd></div>))}</dl>
       </div>
-
-      <div class="fc-hero__plate" aria-hidden="true">
-        <div class="fc-hero__plate-image"></div>
-        <span class="fc-hero__index">Block 12 — Week 04</span>
-        <span class="fc-hero__stamp">EST. 2018</span>
+      <figure class="hero__plate reveal" style="--d:.15s">
+        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1100&h=1450&fit=crop" alt="Strength training in the gym" loading="eager" />
+        <figcaption><span>№ 01</span> Build the base, then build on it</figcaption>
+      </figure>
+    </section>
+    <div class="strip" aria-hidden="true"><div class="strip__row">
+      <span>Strength</span><span class="dot">✦</span><span>Conditioning</span><span class="dot">✦</span><span>Technique</span><span class="dot">✦</span><span>Mobility</span><span class="dot">✦</span><span>Sustainable</span><span class="dot">✦</span>
+      <span>Strength</span><span class="dot">✦</span><span>Conditioning</span><span class="dot">✦</span><span>Technique</span><span class="dot">✦</span><span>Mobility</span><span class="dot">✦</span><span>Sustainable</span><span class="dot">✦</span>
+    </div></div>
+    <section class="section" id="work">
+      <div class="section__head"><p class="eyebrow">The work</p><h2 class="h2">Build something you can use.</h2></div>
+      <div class="gallery">{work.map((w, i) => (
+        <figure class={`gal gal--${w.span} reveal`} style={`--d:${i * 0.06}s`}><img src={w.src} alt={w.alt} loading="lazy" /><figcaption><span class="gal__tag">{w.tag}</span><span class="gal__place">{w.place}</span></figcaption></figure>
+      ))}</div>
+    </section>
+    <section class="section studio" id="studio">
+      <figure class="studio__img reveal"><img src="https://images.unsplash.com/photo-1499914485622-a88fac536970?w=1000&h=1250&fit=crop" alt="Radu Stoica, strength coach" loading="lazy" /></figure>
+      <div class="studio__copy reveal" style="--d:.1s">
+        <p class="eyebrow">How I coach</p>
+        <h2 class="h2">Less hype.<br />More progress.</h2>
+        <p>Most people don't need a harder workout — they need a plan that fits their week and a coach who'll keep them honest. We start with how you move, build a base of real strength, and add load only when you've earned it.</p>
+        <p>No crash plans, no fads. Just consistent, well-programmed training that compounds — so you're stronger at forty than you were at thirty, and you stay that way.</p>
+        <p class="sig">— Radu</p>
       </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Stats ────────────────────────────────────────────── -->
-  {
-    heroStats.length > 0 && (
-      <SectionBlock tone="accent-light" padding="compact" topBorder>
-        <Container>
-          <StatsRow items={heroStats} />
-        </Container>
-      </SectionBlock>
-    )
-  }
-
-  <!-- ─── About ────────────────────────────────────────────── -->
-  <SectionBlock id="about" tone="light" padding="default">
-    <Container className="fc-about">
-      <div class="fc-about__heading">
-        <OverlineText text="About" />
-        <h2 class="section-title fc-about__title">
-          Coaching that<br /><em>respects</em> your time<br />and the iron.
-        </h2>
+    </section>
+    <section class="section" id="fees">
+      <div class="section__head"><p class="eyebrow">Programs</p><h2 class="h2">Pick how you want to train.</h2></div>
+      <ul class="offer">{offerings.map((o) => (
+        <li class="offer__row reveal"><span class="offer__k">{o.k}</span><span class="offer__name">{o.name}</span><span class="offer__body">{o.body}</span><span class="offer__price">{o.price}</span></li>
+      ))}</ul>
+      <p class="offer__note">Every program starts with a free assessment session — movement screen, goals, and an honest plan. No lock-in.</p>
+    </section>
+    <section class="quote reveal">
+      <blockquote>“I'd started and quit a dozen times. Radu built something that fit my actual life — eighteen months in, I'm still going, and I'm stronger than I've ever been.”</blockquote>
+      <cite>Andrei T. — training since 2024</cite>
+    </section>
+    <section class="cta" id="contact">
+      <p class="eyebrow eyebrow--accent">A free assessment session</p>
+      <h2 class="display cta__title">Start<br />training.</h2>
+      <p class="cta__lede">Come in for a free assessment — we'll screen your movement, talk through your goals, and map an honest plan. No pressure, no lock-in.</p>
+      <div class="cta__actions"><a href="mailto:hello@radustoica.com" class="btn btn--lg">Book a free trial</a><a href="tel:+40740000000" class="link-arrow">+40 740 000 000</a></div>
+    </section>
+  </main>
+  <footer class="foot">
+    <div class="foot__top">
+      <div class="foot__brand">Radu Stoica</div>
+      <div class="foot__cols">
+        <div><h4>Programs</h4><a href="#fees">1:1 in person</a><a href="#fees">Online</a><a href="#fees">Small group</a></div>
+        <div><h4>About</h4><a href="#studio">Approach</a><a href="#work">The work</a><a href="#contact">Contact</a></div>
+        <div><h4>Elsewhere</h4><a href="#">Instagram</a><a href="#">YouTube</a><a href="mailto:hello@radustoica.com">Email</a></div>
       </div>
-      <div class="fc-about__body">
-        <p class="fc-about__intro">
-          I've coached eight hundred athletes — engineers, parents, weekend
-          lifters, recovering athletes, college kids — through structured
-          training that actually moves the needle.
-        </p>
-        <p class="fc-about__copy">
-          Every program is periodised, tracked, and reviewed monthly. I work
-          out of Iron Forge in East Austin and run online programming for
-          athletes across Texas and beyond. The work is direct, the lifts are
-          heavy, and the results compound.
-        </p>
-        <ul class="fc-about__credentials" id="credentials">
-          {
-            credentials.map((c) => (
-              <li class="fc-about__credential">
-                <span class="fc-about__credential-mark" aria-hidden="true">
-                  ▶
-                </span>
-                {c}
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Services ─────────────────────────────────────────── -->
-  <SectionBlock id="services" tone="subtle" padding="default" topBorder>
-    <Container>
-      <SectionHeading
-        label="Programs"
-        title={services.title ?? 'Six ways to train under coaching.'}
-        maxWidth="22ch"
-      >
-        {
-          services.subtitle && (
-            <p slot="lede" class="fc-services-lede">
-              {services.subtitle}
-            </p>
-          )
-        }
-      </SectionHeading>
-      <div class="fc-services-grid">
-        {
-          services.services.map((s, i) => (
-            <ServiceCard
-              icon={serviceIcons[i % serviceIcons.length]}
-              title={s.title}
-              description={s.description}
-              meta={s.price}
-            />
-          ))
-        }
-      </div>
-      <div class="fc-services-cta">
-        <ActionButton
-          href="/services"
-          label="See programs & pricing"
-          variant="outline-dark"
-        />
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Approach ─────────────────────────────────────────── -->
-  <SectionBlock id="approach" tone="dark" padding="default">
-    <Container className="fc-approach">
-      <div class="fc-approach__heading">
-        <OverlineText text="The method" tone="accent" />
-        <h2 class="section-title fc-approach__title">
-          Assess. Program. Train. Adapt.
-        </h2>
-      </div>
-      <div class="fc-approach__list">
-        {
-          approach.map((a) => (
-            <NumberedFeatureItem
-              number={a.number}
-              title={a.title}
-              description={a.description}
-            />
-          ))
-        }
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Video — inside the gym ───────────────────────────── -->
-  <SectionBlock id="video" tone="light" padding="default" topBorder>
-    <Container className="fc-video">
-      <VideoBlock
-        src={video.src}
-        poster={video.poster}
-        title={video.title}
-        caption={video.caption}
-        eyebrow={video.eyebrow}
-        duration={video.duration}
-        aspect={video.aspect ?? '16/9'}
-      />
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Testimonials ─────────────────────────────────────── -->
-  <SectionBlock id="testimonials" tone="light" padding="default">
-    <Container>
-      <SectionHeading
-        label="The receipts"
-        title={testimonials.title ?? 'Athletes, in numbers.'}
-      >
-        {
-          testimonials.subtitle && (
-            <p slot="lede" class="fc-testimonials-lede">
-              {testimonials.subtitle}
-            </p>
-          )
-        }
-      </SectionHeading>
-      <div class="fc-testimonials">
-        {
-          testimonials.testimonials.map((t) => (
-            <TestimonialBlock
-              quote={t.quote}
-              author={t.author}
-              role={t.role}
-              result={t.result}
-            />
-          ))
-        }
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── FAQ ──────────────────────────────────────────────── -->
-  <SectionBlock id="faq" tone="light" padding="default" topBorder>
-    <Container className="fc-faq">
-      <SectionHeading label="FAQ" title="Common questions." />
-      <div class="fc-faq__list">
-        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── CTA — Cal.com booking ─────────────────────────────── -->
-  {
-    showBooking && (
-      <SectionBlock id="contact" tone="dark" padding="default">
-        <Container className="fc-cta">
-          <CalBookingBlock
-            variant="cta"
-            calLink={booking.cal_link}
-            eventLabel={booking.cal_event_label ?? 'Book a free trial'}
-            title={booking.title ?? 'Stop hoping. Start training.'}
-            subtitle={booking.description ??
-              'First session is on me — a full assessment, a sample workout, and a plain-language conversation about what we would build together.'}
-            durationLabel={booking.cal_duration_label ?? '45 minutes · in-person or video · free'}
-            layout={booking.cal_layout ?? 'month_view'}
-            className="fc-cta__cal"
-          />
-          <div class="fc-cta__actions">
-            <ActionButton
-              href="/services"
-              label="See programs"
-              variant="outline-light"
-              size="large"
-            />
-          </div>
-        </Container>
-      </SectionBlock>
-    )
-  }
+    </div>
+    <div class="foot__base"><span>© 2026 Radu Stoica</span><span>Cluj-Napoca · Online worldwide</span></div>
+  </footer>
+  <script is:inline>
+    (function () { var btn = document.querySelector('[data-themer]'); if (btn) btn.addEventListener('click', function () { var dark = !document.documentElement.classList.contains('theme-dark'); document.documentElement.classList.toggle('theme-dark', dark); document.documentElement.classList.toggle('dark', dark); try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (_) {} }); })();
+    (function () { var els = document.querySelectorAll('.reveal'); if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; } var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }); }, { threshold: 0.12 }); els.forEach(function (e) { io.observe(e); }); })();
+  </script>
+  <style is:global>
+    :root { --bg:#f6f1ea; --bg-2:#efe5d8; --surface:#fcf8f2; --ink:#1d1814; --ink-soft:#473c33; --muted:#867565; --accent:#d6562a; --accent-2:#e8763f; --line:rgba(29,24,20,.14); --line-soft:rgba(29,24,20,.08); --shadow:0 30px 70px -30px rgba(29,24,20,.42); --grain:.04; }
+    html.theme-dark, html.dark { --bg:#120f0c; --bg-2:#1a140f; --surface:#1c1611; --ink:#f4ece2; --ink-soft:#dccfc0; --muted:#9c8c7a; --accent:#f0824f; --accent-2:#f59a6e; --line:rgba(244,236,226,.15); --line-soft:rgba(244,236,226,.08); --shadow:0 30px 80px -30px rgba(0,0,0,.7); --grain:.065; }
+  </style>
 </Layout>
-
-<style>
-  /* Hero — direct entry, blockier than coach-pro */
-  .fc-hero {
-    position: relative;
-    overflow: clip;
-  }
-
-  .fc-hero__inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(380px, 42%);
-    gap: 64px;
-    align-items: center;
-    min-height: 78vh;
-  }
-
-  .fc-hero__copy {
-    max-width: 620px;
-  }
-
-  .fc-hero__title {
-    font-family: var(--font-title);
-    font-size: clamp(2.6rem, 6.8vw, 5.6rem);
-    font-weight: var(--fw-headline);
-    line-height: 0.96;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
-    margin: 24px 0 28px;
-    color: var(--bg-dark);
-  }
-
-  .fc-hero__title-accent {
-    font-family: 'Georgia', serif;
-    font-style: italic;
-    font-weight: var(--fw-regular);
-    color: var(--brand-primary);
-    text-transform: none;
-    letter-spacing: -0.04em;
-  }
-
-  .fc-hero__lede {
-    font-size: var(--fs-h5);
-    line-height: 1.55;
-    color: var(--text-primary);
-    max-width: 540px;
-    margin-bottom: 36px;
-  }
-
-  .fc-hero__lede strong {
-    font-weight: var(--fw-semibold);
-  }
-
-  .fc-hero__actions {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-  }
-
-  .fc-hero__pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  /* Plate — tighter radius, dual stamp for industrial feel */
-  .fc-hero__plate {
-    position: relative;
-    aspect-ratio: 4 / 5;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.18)),
-      var(--bg-dark);
-    border: 1px solid rgba(216, 77, 37, 0.28);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 24px 50px rgba(10, 10, 10, 0.2);
-  }
-
-  .fc-hero__plate::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.06) 0 2px,
-        transparent 2px 18px
-      );
-    mix-blend-mode: screen;
-    opacity: 0.28;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .fc-hero__plate-image {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.48)),
-      linear-gradient(135deg, rgba(216, 77, 37, 0.18), transparent 24%),
-      url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&h=1100&fit=crop');
-    background-size: cover;
-    background-position: center 40%;
-    filter: contrast(1.12) saturate(0.88);
-    transition: transform 1s var(--ease-emphasized);
-  }
-
-  .fc-hero:hover .fc-hero__plate-image {
-    transform: scale(1.03);
-  }
-
-  .fc-hero__index {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    font-family: var(--font-title);
-    font-size: var(--fs-xs);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--bg-dark);
-    background: var(--brand-primary);
-    padding: 6px 10px;
-    z-index: 1;
-  }
-
-  .fc-hero__stamp {
-    position: absolute;
-    bottom: 18px;
-    right: 18px;
-    font-family: var(--font-title);
-    font-size: var(--fs-xs);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: var(--text-on-dark);
-    border: 1px solid var(--text-on-dark);
-    padding: 6px 12px;
-    z-index: 1;
-  }
-
-  /* About */
-  .fc-about {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: 80px;
-    align-items: start;
-  }
-
-  .fc-about__heading {
-    position: sticky;
-    top: 100px;
-  }
-
-  .fc-about__title {
-    margin-top: 16px;
-  }
-
-  .fc-about__title em {
-    font-style: italic;
-    font-family: 'Georgia', serif;
-    font-weight: var(--fw-regular);
-    color: var(--brand-primary);
-    text-transform: none;
-    letter-spacing: -0.04em;
-  }
-
-  .fc-about__intro {
-    font-size: var(--fs-h5);
-    line-height: 1.5;
-    color: var(--bg-dark);
-    margin-bottom: 24px;
-    max-width: 56ch;
-  }
-
-  .fc-about__copy {
-    font-size: var(--fs-body);
-    line-height: 1.7;
-    color: var(--text-primary);
-    max-width: 60ch;
-    margin-bottom: 36px;
-  }
-
-  .fc-about__credentials {
-    display: grid;
-    gap: 14px;
-    padding-top: 28px;
-    border-top: 1px solid var(--surface-subtle-border);
-  }
-
-  .fc-about__credential {
-    display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 8px;
-    font-family: var(--font-title);
-    font-size: var(--fs-small);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--bg-dark);
-  }
-
-  .fc-about__credential-mark {
-    color: var(--brand-primary);
-    font-size: 0.7em;
-    line-height: 1.7;
-  }
-
-  /* Services grid */
-  .fc-services-lede {
-    margin-top: 18px;
-    font-size: var(--fs-body);
-    line-height: 1.6;
-    color: var(--text-primary);
-    max-width: 56ch;
-  }
-
-  .fc-services-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .fc-services-cta {
-    margin-top: 56px;
-    text-align: center;
-  }
-
-  /* Approach (dark) */
-  .fc-approach {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
-    gap: 80px;
-  }
-
-  .fc-approach__heading {
-    position: sticky;
-    top: 100px;
-    align-self: start;
-  }
-
-  .fc-approach__title {
-    color: var(--text-on-dark);
-    margin-top: 16px;
-    max-width: 16ch;
-  }
-
-  /* Video */
-  .fc-video {
-    max-width: 1120px;
-  }
-
-  /* Testimonials */
-  .fc-testimonials-lede {
-    margin-top: 18px;
-    font-size: var(--fs-body);
-    line-height: 1.6;
-    color: var(--text-primary);
-    max-width: 56ch;
-  }
-
-  .fc-testimonials {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .fc-testimonials :global(figure) {
-    border-radius: 10px;
-    border: 1px solid rgba(216, 77, 37, 0.18);
-    box-shadow: inset 0 0 0 1px rgba(10, 10, 10, 0.04);
-  }
-
-  /* FAQ */
-  .fc-faq {
-    max-width: 920px;
-  }
-
-  .fc-faq__list {
-    display: grid;
-    gap: 12px;
-  }
-
-  /* CTA */
-  .fc-cta {
-    display: grid;
-    gap: 32px;
-    max-width: 980px;
-    margin: 0 auto;
-  }
-
-  .fc-cta__actions {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  /* Responsive */
-  @media (max-width: 1024px) {
-    .fc-hero__inner {
-      grid-template-columns: 1fr;
-      gap: 48px;
-      min-height: auto;
-    }
-
-    .fc-hero__plate {
-      aspect-ratio: 16 / 11;
-      max-width: 720px;
-    }
-
-    .fc-about,
-    .fc-approach {
-      grid-template-columns: 1fr;
-      gap: 48px;
-    }
-
-    .fc-about__heading,
-    .fc-approach__heading {
-      position: static;
-    }
-
-    .fc-services-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .fc-testimonials {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .fc-services-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .fc-hero__title {
-      font-size: 2.6rem;
-    }
-  }
-</style>

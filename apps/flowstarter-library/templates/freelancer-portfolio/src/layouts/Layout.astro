@@ -1,165 +1,21 @@
 ---
-import '../../../shared/dorin-ds/tokens.css';
-import '../../../shared/dorin-ds/reset.css';
 import DSHead from '../../../shared/dorin-ds/components/DSHead.astro';
-import Header from '../../../shared/dorin-ds/components/Header.astro';
-import Footer from '../../../shared/dorin-ds/components/Footer.astro';
-import ContactScript from '../../../shared/ContactScript.astro';
-import ScrollToggle from '../../../shared/dorin-ds/components/ScrollToggle.astro';
-
-interface Props {
-  title?: string;
-  description?: string;
-  activeIndex?: number;
-}
-
+interface Props { title?: string; description?: string; }
 const {
-  title = 'Alex Morgan — Independent Product Designer & Developer',
-  description = 'Studio-led product design and development for SaaS startups. Brand strategy, product design, web development. Brooklyn, NY.',
-  activeIndex = -1,
+  title = 'Dorin Andrei — Product Designer & Developer',
+  description = 'Independent product designer and developer. Case-study-led portfolios, web builds, and design systems for founders and independent professionals. Remote, worldwide.',
 } = Astro.props;
-
-const contactFormActionUrl = '';
-const contactFormSuccessMessage =
-  "Thank you. I'll be in touch within two business days.";
-
-const navLinks = [
-  { label: 'Work', href: '/work' },
-  { label: 'Services', href: '/services' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Contact', href: '/contact' },
-];
-
-const footerColumns = [
-  {
-    heading: 'Work',
-    links: [
-      { label: 'Selected case studies', href: '/work' },
-      { label: 'Fintech', href: '/work#fintech' },
-      { label: 'Climate', href: '/work#climate' },
-      { label: 'B2B SaaS', href: '/work#saas' },
-    ],
-  },
-  {
-    heading: 'Studio',
-    links: [
-      { label: 'About', href: '/about' },
-      { label: 'Services', href: '/services' },
-      { label: 'Pricing', href: '/pricing' },
-      { label: 'Contact', href: '/contact' },
-    ],
-  },
-  {
-    heading: 'Stay close',
-    links: [
-      { label: 'hello@alexmorgan.studio', href: 'mailto:hello@alexmorgan.studio' },
-      { label: 'Calendar', href: '/contact' },
-      { label: 'Instagram', href: '#' },
-      { label: 'LinkedIn', href: '#' },
-    ],
-  },
-];
-
-const socials = [
-  {
-    href: '#',
-    ariaLabel: 'Instagram',
-    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8A4 4 0 0 1 16 11.37m1.5-4.87h.01"/></g></svg>',
-  },
-  {
-    href: '#',
-    ariaLabel: 'LinkedIn',
-    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>',
-  },
-  {
-    href: '#',
-    ariaLabel: 'Dribbble',
-    icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"/><path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"/><path d="M8.56 2.75c4.37 6 6 9.42 8 17.72"/></svg>',
-  },
-];
 ---
-
 <!doctype html>
-<html lang="en" data-template="freelancer-portfolio">
+<html lang="en">
   <head>
-    <DSHead title={title} description={description} fontPair="space-grotesk-jet" />
+    <DSHead title={title} description={description} fontPair="fraunces-source" />
     <script is:inline>
-      // Flowstarter preview iframe bridge
-      (function () {
-        if (window.self === window.top) return;
-        document.documentElement.classList.add('fs-preview');
-        window.parent.postMessage(
-          { source: 'fs-template', type: 'ready' },
-          '*',
-        );
-        window.addEventListener('message', function (e) {
-          if (!e.data || e.data.source !== 'fs-preview') return;
-          var d = e.data;
-          var root = document.documentElement;
-          if (d.type === 'setTheme') {
-            root.classList.toggle('theme-dark', d.value === 'dark');
-            root.classList.toggle('dark', d.value === 'dark');
-            try {
-              localStorage.setItem('theme', d.value);
-            } catch (_) {}
-          } else if (d.type === 'setPalette') {
-            if (d.dark !== undefined) {
-              root.classList.toggle('theme-dark', !!d.dark);
-              root.classList.toggle('dark', !!d.dark);
-            }
-            if (d.vars) {
-              Object.keys(d.vars).forEach(function (k) {
-                root.style.setProperty(k, d.vars[k]);
-              });
-            }
-          } else if (d.type === 'setFont') {
-            var existing = document.getElementById('fs-font-override');
-            if (existing) existing.remove();
-            if (d.url) {
-              var link = document.createElement('link');
-              link.id = 'fs-font-override';
-              link.rel = 'stylesheet';
-              link.href = d.url;
-              document.head.appendChild(link);
-            }
-            if (d.heading)
-              root.style.setProperty('--font-title', d.heading);
-            if (d.body) root.style.setProperty('--font-body', d.body);
-          }
-        });
-      })();
+      (function () { try { var t = localStorage.getItem('theme'); if (!t || t === 'system') { t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } document.documentElement.classList.toggle('theme-dark', t === 'dark'); document.documentElement.classList.toggle('dark', t === 'dark'); } catch (_) {} })();
+    </script>
+    <script is:inline>
+      (function () { if (window.self === window.top) return; var root = document.documentElement; root.classList.add('fs-preview'); try { window.parent.postMessage({ source: 'fs-template', type: 'ready' }, '*'); } catch (_) {} window.addEventListener('message', function (e) { if (!e.data || e.data.source !== 'fs-preview') return; if (e.data.type === 'setTheme') { var dark = e.data.value === 'dark'; root.classList.toggle('theme-dark', dark); root.classList.toggle('dark', dark); try { localStorage.setItem('theme', e.data.value); } catch (_) {} } }); })();
     </script>
   </head>
-  <body>
-    <Header
-      brandLabel="Alex Morgan"
-      links={navLinks}
-      ctaLabel="Start a project"
-      ctaHref="/contact"
-      activeIndex={activeIndex}
-    />
-    <main class="ds-main">
-      <slot />
-    </main>
-    <Footer
-      brandLabel="Alex Morgan"
-      tagline="Independent product designer & developer for SaaS startups. Studio-led, considered, shipped."
-      columns={footerColumns}
-      socials={socials}
-      copyrightSuffix="Studio AM. All rights reserved."
-    />
-    <ContactScript
-      actionUrl={contactFormActionUrl}
-      successMessage={contactFormSuccessMessage}
-      templateName="freelancer-portfolio"
-    />
-    <ScrollToggle />
-
-    <style is:global>
-      .ds-main {
-        padding-top: 72px;
-      }
-    </style>
-  </body>
+  <body><slot /></body>
 </html>

@@ -122,7 +122,7 @@ const baseHeaders = createSecureHeaders({
  * Build CSP header value
  * @param nonce - Optional nonce for inline scripts (generated per-request)
  */
-export function buildCSPHeader(nonce?: string): string {
+export function buildCSPHeader(nonce?: string, frameable = false): string {
   const isDev = process.env.NODE_ENV === 'development';
   // `nonce` is intentionally unused for script-src — see below.
   void nonce;
@@ -157,7 +157,10 @@ export function buildCSPHeader(nonce?: string): string {
     }`,
     `font-src ${ALLOWED_FONT_DOMAINS.join(' ')}`,
     `frame-src ${ALLOWED_FRAME_DOMAINS.join(' ')}`,
-    `frame-ancestors 'none'`,
+    // Static template previews under /preview/* must be embeddable by the
+    // same-origin library detail page; everything else stays 'none' to block
+    // clickjacking.
+    `frame-ancestors ${frameable ? "'self'" : "'none'"}`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,
@@ -177,7 +180,11 @@ export function buildCSPHeader(nonce?: string): string {
  * @param response - The NextResponse to modify
  * @param nonce - Optional nonce for CSP (when available from Next.js)
  */
-export function applySecurityHeaders(response: NextResponse, nonce?: string) {
+export function applySecurityHeaders(
+  response: NextResponse,
+  nonce?: string,
+  frameable = false
+) {
   // Apply base headers
   for (const [key, value] of Object.entries(baseHeaders)) {
     if (value !== undefined && value !== null) {
@@ -186,11 +193,13 @@ export function applySecurityHeaders(response: NextResponse, nonce?: string) {
   }
 
   // Apply CSP with nonce if provided
-  response.headers.set('Content-Security-Policy', buildCSPHeader(nonce));
+  response.headers.set('Content-Security-Policy', buildCSPHeader(nonce, frameable));
 
   // Additional security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
+  // SAMEORIGIN (not DENY) for framable previews so the library detail page can
+  // embed /preview/* from the same origin; DENY everywhere else.
+  response.headers.set('X-Frame-Options', frameable ? 'SAMEORIGIN' : 'DENY');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set(
     'Permissions-Policy',

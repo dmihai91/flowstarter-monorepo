@@ -326,6 +326,10 @@ export default clerkMiddleware(async (auth, req) => {
   // Block any request with path traversal patterns in the URL
   const rawUrl = req.url;
   const pathname = req.nextUrl.pathname;
+  // Static template previews must be embeddable by the same-origin library
+  // detail page (DeferredPreviewFrame), so relax frame-ancestors/X-Frame-Options
+  // to 'self'/SAMEORIGIN for /preview/* only — everything else stays locked.
+  const frameable = pathname.startsWith('/preview');
 
   // Check for path traversal patterns (including URL-encoded variants)
   const pathTraversalPatterns = [
@@ -551,8 +555,9 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // Unknown route — not a known app path at all. Let Next.js serve the 404.
+  // (Static /preview/* assets also fall through here.)
   if (!isKnownAppRoute(req)) {
-    applySecurityHeaders(res, nonce);
+    applySecurityHeaders(res, nonce, frameable);
     return res;
   }
 
@@ -635,7 +640,7 @@ export default clerkMiddleware(async (auth, req) => {
       res.headers.set('Expires', '0');
     }
     // Apply baseline security headers even on public routes
-    applySecurityHeaders(res, nonce);
+    applySecurityHeaders(res, nonce, frameable);
     return res;
   }
 

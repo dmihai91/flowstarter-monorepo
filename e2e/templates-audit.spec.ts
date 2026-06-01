@@ -135,7 +135,12 @@ async function captureRoute(page: Page, route: string) {
     // Clerk session polling + analytics beacons, so networkidle never settles
     // and goto times out at 30s (the CI smoke failures). 'load' is enough for
     // a render/error audit.
-    await page.goto(route, { waitUntil: 'load', timeout: 30000 });
+    // 90s timeout (not 30s): pre-push spins a fresh `next dev`, and Turbopack
+    // compiles heavy routes (/library, detail pages) on first hit. Under the
+    // full smoke suite's CPU load that cold compile routinely exceeds 30s,
+    // which was the recurring pre-push flake. A warm-up beforeAll primes the
+    // worst offenders; this headroom covers the rest.
+    await page.goto(route, { waitUntil: 'load', timeout: 90000 });
     await setTheme(page, theme);
     await page.waitForTimeout(400);
     await page.screenshot({ path: shotPath(route, theme), fullPage: true });
@@ -147,6 +152,21 @@ async function captureRoute(page: Page, route: string) {
 }
 
 test.describe('Templates audit — every template, light + dark', () => {
+  // Prime Turbopack's route cache once before the suite so the first real
+  // assertion isn't racing a cold compile. The library gallery + a detail
+  // route are the heavy ones; compiling them here (with generous headroom)
+  // means every subsequent goto in this file hits a warm route.
+  test.beforeAll(async ({ browser }) => {
+    const page = await browser.newPage();
+    try {
+      for (const route of ['/library', '/library/templates/fitness-coach']) {
+        await page.goto(route, { waitUntil: 'load', timeout: 120000 }).catch(() => {});
+      }
+    } finally {
+      await page.close();
+    }
+  });
+
   test('library landing', async ({ page }) => {
     const issues = await captureRoute(page, '/library');
     expect(

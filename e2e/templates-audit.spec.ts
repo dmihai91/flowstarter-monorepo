@@ -38,7 +38,10 @@ const TEMPLATE_ENTRIES: ReadonlyArray<TemplateAuditEntry> = [
   // `dorin-portfolio` is the only one currently shipping a static
   // preview at `/public/preview/dorin-portfolio/`. Flip `hasPreview`
   // for the others as their static builds get published.
-  { slug: 'dorin-portfolio', hasPreview: true },
+  // No /preview/dorin-portfolio/ static build ships (dorin-portfolio reuses the
+  // freelancer-portfolio preview via its previewPath), so skip the slug-based
+  // preview test — it would 404 on /preview/dorin-portfolio/.
+  { slug: 'dorin-portfolio', hasPreview: false },
   { slug: 'coach-pro', hasPreview: false },
   { slug: 'therapist-care', hasPreview: false },
   { slug: 'freelancer-portfolio', hasPreview: false },
@@ -120,7 +123,11 @@ async function captureRoute(page: Page, route: string) {
   });
 
   for (const theme of ['light', 'dark'] as const) {
-    await page.goto(route, { waitUntil: 'networkidle', timeout: 30000 });
+    // 'load', not 'networkidle': the live site keeps the network busy with
+    // Clerk session polling + analytics beacons, so networkidle never settles
+    // and goto times out at 30s (the CI smoke failures). 'load' is enough for
+    // a render/error audit.
+    await page.goto(route, { waitUntil: 'load', timeout: 30000 });
     await setTheme(page, theme);
     await page.waitForTimeout(400);
     await page.screenshot({ path: shotPath(route, theme), fullPage: true });
@@ -161,7 +168,7 @@ test.describe('Templates audit — every template, light + dark', () => {
     for (const sub of PREVIEW_SUBROUTES) {
       test(`preview: ${slug}/${sub || 'index'}`, async ({ page }) => {
         const route = `/preview/${slug}/${sub ? sub + '/' : ''}`;
-        const res = await page.goto(route, { waitUntil: 'networkidle' });
+        const res = await page.goto(route, { waitUntil: 'load' });
         expect(
           res?.status() ?? 0,
           `${route} should return 2xx — `

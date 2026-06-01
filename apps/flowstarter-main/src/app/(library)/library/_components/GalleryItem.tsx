@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import type { TemplateEntry } from '../_data/templates';
 
 interface GalleryItemProps {
@@ -12,6 +15,14 @@ interface GalleryItemProps {
 export function GalleryItem({ template, index, total }: GalleryItemProps) {
   const ord = String(index + 1).padStart(2, '0');
   const tot = String(total).padStart(2, '0');
+  // The library serves at flowstarter.net/library (prefix) and at the clean
+  // library.* subdomain (no prefix). A relative href resolves wrong on
+  // /library (no trailing slash) → /templates/<slug> → 404. Derive the prefix
+  // from the live pathname so links are correct on both surfaces.
+  const pathname = usePathname();
+  const detailHref = pathname?.startsWith('/library')
+    ? `/library/templates/${template.slug}`
+    : `/templates/${template.slug}`;
   const darkThumb =
     template.thumbnail && template.hasDarkThumbnail !== false
       ? `/showcase/${template.thumbnail}-dark.png`
@@ -19,7 +30,7 @@ export function GalleryItem({ template, index, total }: GalleryItemProps) {
 
   return (
     <Link
-      href={`templates/${template.slug}`}
+      href={detailHref}
       className="item reveal"
       data-delay={Math.min(index, 6)}
       aria-label={`${template.title} — ${template.kicker}`}

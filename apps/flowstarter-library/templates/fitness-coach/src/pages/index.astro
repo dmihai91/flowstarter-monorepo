@@ -5,7 +5,7 @@ const nav = [
   { label: 'Programs', href: '#programs' },
   { label: 'Method', href: '#method' },
   { label: 'Results', href: '#results' },
-  { label: 'Start', href: '#start' },
+  { label: 'Book', href: '#book' },
 ];
 const stats = [
   { n: '180+', l: 'Clients coached' },
@@ -61,7 +61,7 @@ const results = [
           past January.
         </p>
         <div class="hero__cta reveal" style="--d:.34s">
-          <a href="#start" class="cta cta--lg">Book a free trial</a>
+          <a href="#book" class="cta cta--lg">Book a free trial</a>
           <a href="#programs" class="ghost">See programs →</a>
         </div>
       </div>
@@ -153,9 +153,21 @@ const results = [
       <h2 class="start__title">START<br />TRAINING.</h2>
       <p class="start__lede">Come in for a free assessment — movement screen, goals, and an honest plan. No pressure, no lock-in.</p>
       <div class="start__cta">
-        <a href="mailto:hello@radustoica.com" class="cta cta--lg cta--inv">Book a free trial</a>
+        <a href="#book" class="cta cta--lg cta--inv">See available times ↓</a>
         <a href="tel:+40740000000" class="ghost ghost--on">+40 740 000 000</a>
       </div>
+    </section>
+
+    <!-- BOOK (Cal.com) -->
+    <section class="section book" id="book">
+      <div class="head">
+        <span class="head__idx">[ 04 ]</span>
+        <h2 class="h2">Grab a free<br />assessment.</h2>
+      </div>
+      <div class="bookwrap reveal">
+        <div id="cal-inline" class="cal-inline"></div>
+      </div>
+      <p class="book__note">Pick a time that works — 45 minutes, no charge, no obligation. You'll get a movement screen and an honest plan to take with you either way.</p>
     </section>
   </main>
 
@@ -172,6 +184,21 @@ const results = [
   <script is:inline>
     (function () { var b = document.querySelector('[data-themer]'); if (b) b.addEventListener('click', function () { var d = !document.documentElement.classList.contains('theme-dark'); document.documentElement.classList.toggle('theme-dark', d); document.documentElement.classList.toggle('dark', d); try { localStorage.setItem('theme', d ? 'dark' : 'light'); } catch (_) {} }); })();
     (function () { var els = document.querySelectorAll('.reveal'); if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; } var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }); }, { threshold: 0.1 }); els.forEach(function (e) { io.observe(e); }); })();
+  </script>
+
+  <!-- Cal.com inline booking. Swap calLink to the client's own Cal handle
+       (e.g. "radu-stoica/free-trial"); "rick" is Cal's public demo page so the
+       template renders a real, working calendar out of the box. -->
+  <script is:inline>
+    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+    (function () {
+      try {
+        var dark = document.documentElement.classList.contains('theme-dark');
+        Cal("init", "trial", { origin: "https://cal.com" });
+        Cal.ns.trial("inline", { elementOrSelector: "#cal-inline", config: { layout: "month_view" }, calLink: "rick" });
+        Cal.ns.trial("ui", { theme: dark ? "dark" : "light", cssVarsPerTheme: { light: { "cal-brand": "#ff5a1f" }, dark: { "cal-brand": "#ff5a1f" } }, hideEventTypeDetails: true, layout: "month_view" });
+      } catch (e) {}
+    })();
   </script>
 
   <style is:global>
@@ -291,6 +318,11 @@ const results = [
     .start__lede { color: color-mix(in srgb, var(--bg) 70%, var(--ink)); max-width: 44ch; margin: 0 auto 2.4rem; font-size: 1.05rem; }
     .start__cta { display: flex; gap: 1.6rem; justify-content: center; align-items: center; flex-wrap: wrap; }
     .start .ghost { color: var(--bg); }
+
+    .book { background: var(--raise); }
+    .bookwrap { border-top: 3px solid var(--accent); background: var(--bg); padding: clamp(.4rem,1.2vw,1rem); }
+    .cal-inline { width: 100%; min-height: 600px; overflow: hidden; }
+    .book__note { color: var(--dim); font-size: .92rem; margin-top: 1.4rem; max-width: 56ch; }
 
     .foot { border-top: 2px solid var(--ink); max-width: 1500px; margin: 0 auto; padding: clamp(3rem,6vw,5rem) clamp(1.2rem,5vw,3.5rem) 2rem; }
     .foot__word { font-family: var(--disp); font-weight: 700; text-transform: uppercase; font-size: clamp(3rem,12vw,9rem); line-height: .85; letter-spacing: -.01em; margin-bottom: 2.5rem; }

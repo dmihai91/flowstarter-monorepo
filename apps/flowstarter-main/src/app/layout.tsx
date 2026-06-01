@@ -7,14 +7,12 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { I18nProvider } from '@/lib/i18n';
 import ro from '@/locales/ro';
 import { getServerT } from '@/lib/i18n-server';
-import { getServerThemeInit } from '@/lib/server-theme';
 import en from '@/locales/en';
 import '@/styles/globals.css';
 import '@fontsource-variable/plus-jakarta-sans';
 import '@fontsource-variable/onest';
 import '@fontsource/roboto-mono/latin.css';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import { ClerkThemeWrapper } from './components/ClerkThemeWrapper';
 import { ClientLayout } from './components/ClientLayout';
 import { NavigationWrapper } from './components/NavigationWrapper';
@@ -60,23 +58,23 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Get nonce from middleware for CSP
-  const headersList = await headers();
-  const nonce = headersList.get('x-nonce') || '';
-  const { initialTheme, initialResolvedTheme } = await getServerThemeInit();
+  // No per-request reads here on purpose: this layout must stay statically
+  // renderable so marketing/legal pages prerender to the CDN (no cold start).
+  // Theme is resolved entirely client-side by the inline <head> script below
+  // (cookie → localStorage → system), guarded by the visibility:hidden rule
+  // so there's no flash before the class is applied — the standard no-SSR
+  // theme pattern. CSP runs with 'unsafe-inline' in prod, so the inline
+  // script needs no nonce.
 
   return (
     <html
       lang="en"
-      className={`${plusJakartaSans.variable} ${roboto_mono.variable}${
-        initialTheme !== 'auto' ? ` ${initialResolvedTheme}` : ''
-      }`}
-      data-theme={initialTheme !== 'auto' ? initialResolvedTheme : undefined}
+      className={`${plusJakartaSans.variable} ${roboto_mono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -99,7 +97,6 @@ export default async function RootLayout({
           <style>{`html:not(.dark):not(.light) body{visibility:visible}`}</style>
         </noscript>
         <script
-          nonce={nonce}
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
@@ -144,10 +141,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <ErrorBoundaryWrapper>
-          <ThemeProvider
-            initialTheme={initialTheme}
-            initialResolvedTheme={initialResolvedTheme}
-          >
+          <ThemeProvider>
             <I18nProvider initialLocale="en" initialMessages={{ en, ro }}>
               <ClerkThemeWrapper>
                 <ClientLayout>

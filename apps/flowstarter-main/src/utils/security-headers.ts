@@ -84,6 +84,11 @@ function devHttpWsConnectSrcExtras(): string {
 }
 
 const ALLOWED_FRAME_DOMAINS = [
+  // Same-origin so the library detail page can embed the static template
+  // previews at /preview/<slug>/ (DeferredPreviewFrame). Without 'self' the
+  // parent page's frame-src blocks the iframe even though the preview itself
+  // allows being framed (frame-ancestors 'self').
+  "'self'",
   'https://accounts.google.com', // Google OAuth
   'https://*.clerk.accounts.dev', // Clerk OAuth
   'https://challenges.cloudflare.com', // Turnstile if used
@@ -193,7 +198,10 @@ export function applySecurityHeaders(
   }
 
   // Apply CSP with nonce if provided
-  response.headers.set('Content-Security-Policy', buildCSPHeader(nonce, frameable));
+  response.headers.set(
+    'Content-Security-Policy',
+    buildCSPHeader(nonce, frameable)
+  );
 
   // Additional security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');

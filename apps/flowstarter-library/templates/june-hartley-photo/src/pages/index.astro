@@ -1,710 +1,659 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SectionBlock from '../../../shared/dorin-ds/components/SectionBlock.astro';
-import Container from '../../../shared/dorin-ds/components/Container.astro';
-import SectionHeading from '../../../shared/dorin-ds/components/SectionHeading.astro';
-import OverlineText from '../../../shared/dorin-ds/components/OverlineText.astro';
-import ActionButton from '../../../shared/dorin-ds/components/ActionButton.astro';
-import ServiceCard from '../../../shared/dorin-ds/components/ServiceCard.astro';
-import StatsRow from '../../../shared/dorin-ds/components/StatsRow.astro';
-import NumberedFeatureItem from '../../../shared/dorin-ds/components/NumberedFeatureItem.astro';
-import TestimonialBlock from '../../../shared/dorin-ds/components/TestimonialBlock.astro';
-import FaqAccordionItem from '../../../shared/dorin-ds/components/FaqAccordionItem.astro';
-import TagPill from '../../../shared/dorin-ds/components/TagPill.astro';
-import HeroIntro from '../../../shared/dorin-ds/components/HeroIntro.astro';
-import VideoBlock from '../../../shared/dorin-ds/components/VideoBlock.astro';
-import CalBookingBlock from '../../../shared/dorin-ds/components/CalBookingBlock.astro';
-import { frontmatter as servicesData } from '../../content/services.md';
-import { frontmatter as testimonialsData } from '../../content/testimonials.md';
-import { frontmatter as videoData } from '../../content/video.md';
-import { frontmatter as bookingData } from '../../content/integrations/booking.md';
 
-interface ServicesContent {
-  title?: string;
-  subtitle?: string;
-  services?: Array<{
-    icon?: string;
-    title: string;
-    description: string;
-    price?: string;
-  }>;
-}
-
-interface TestimonialsContent {
-  title?: string;
-  subtitle?: string;
-  testimonials?: Array<{
-    quote: string;
-    author: string;
-    role: string;
-    result?: string;
-  }>;
-}
-
-interface VideoContent {
-  eyebrow?: string;
-  title: string;
-  duration?: string;
-  caption?: string;
-  poster?: string;
-  src: string;
-  aspect?: '21/9' | '16/9' | '4/3' | '1/1';
-}
-
-interface BookingContent {
-  enabled?: boolean;
-  cal_link?: string;
-  cal_event_label?: string;
-  cal_duration_label?: string;
-  cal_layout?: 'month_view' | 'week_view' | 'column_view';
-  title?: string;
-  description?: string;
-}
-
-const servicesFm = servicesData as ServicesContent;
-const testimonialsFm = testimonialsData as TestimonialsContent;
-const videoFm = videoData as VideoContent;
-const bookingFm = bookingData as BookingContent;
-const showBooking = bookingFm.enabled === true && Boolean(bookingFm.cal_link);
-
-const heroStats = [
-  { number: '180+', label: 'Weddings photographed' },
-  { number: '8 yrs', label: 'Behind the camera' },
-  { number: 'PNW', label: 'Based in Portland' },
-  { number: '4.9', label: 'Average review' },
+const nav = [
+  { label: 'Work', href: '#work' },
+  { label: 'Studio', href: '#studio' },
+  { label: 'Investment', href: '#investment' },
+  { label: 'Contact', href: '#contact' },
 ];
 
-// Hand-crafted SVG icons stay hardcoded so we don't try to render lucide names
-// at runtime. Order pairs with services.md `services[]` by index.
-const serviceIcons = [
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3Z"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.5 4.04 3 5.5l7 7Z"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m14.31 8 5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16 3.95 6.06M14.31 16H2.83m13.79-4-5.74 9.94"/></svg>',
-  '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg>',
+const stats = [
+  { n: '180+', l: 'Weddings' },
+  { n: '8 yrs', l: 'Behind the lens' },
+  { n: 'PNW', l: 'Portland · will travel' },
 ];
 
-const services = (servicesFm.services ?? []).map((service, index) => ({
-  icon: serviceIcons[index] ?? serviceIcons[serviceIcons.length - 1],
-  title: service.title,
-  description: service.description,
-  meta: service.price ?? '',
-}));
-
-const testimonials = testimonialsFm.testimonials ?? [];
-
-const approach = [
+const work = [
   {
-    number: '01',
-    title: 'We talk first',
-    description:
-      'Before anything is booked we get on a short call. I want to hear about the day you are planning, the people in it, and the kind of photos you actually like, so I can tell you honestly whether I am the right fit.',
+    src: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1400&h=1750&fit=crop',
+    alt: 'Couple at an outdoor ceremony',
+    tag: 'Ceremony',
+    place: 'Sauvie Island',
+    span: 'tall',
   },
   {
-    number: '02',
-    title: 'I stay out of the way',
-    description:
-      'On the day I work quietly and document what happens rather than staging it. You will mostly forget I am there, which is exactly the point. The photos end up looking like the day felt.',
+    src: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1400&h=1050&fit=crop',
+    alt: 'Bride in soft window light',
+    tag: 'Portrait',
+    place: 'Getting ready',
+    span: 'wide',
   },
   {
-    number: '03',
-    title: 'A little direction when it helps',
-    description:
-      'For portraits and family groups I will give gentle prompts so nobody is left standing there wondering what to do with their hands. Enough guidance to feel easy, never so much that it looks posed.',
+    src: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1200&h=1500&fit=crop',
+    alt: 'Couple walking at golden hour',
+    tag: 'Couple',
+    place: 'Columbia Gorge',
+    span: 'reg',
   },
   {
-    number: '04',
-    title: 'Yours quickly, and for good',
-    description:
-      'A few favourites land in your inbox within 48 hours, the full gallery within a month. Every image comes with a print release, and I keep a backup of your wedding for years in case life happens to your laptop.',
+    src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1400&h=1050&fit=crop',
+    alt: 'Reception table set with flowers',
+    tag: 'Details',
+    place: 'Reception',
+    span: 'wide',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=1200&h=1500&fit=crop',
+    alt: 'Wedding party laughing together',
+    tag: 'Candid',
+    place: 'The party',
+    span: 'tall',
   },
 ];
 
-const faqs = [
+const offerings = [
   {
-    question: 'How many photos do we get, and when?',
-    answer:
-      'A full wedding day usually delivers 500 to 800 edited images. You will see a sneak peek within 48 hours and the complete gallery within four weeks. Portrait sessions deliver 40 or more images within two weeks.',
+    k: '01',
+    name: 'Weddings',
+    body: 'Full-day documentary coverage, getting-ready to last dance.',
+    price: 'from $4,200',
   },
   {
-    question: 'Do you travel?',
-    answer:
-      'Often. I am based in Portland and shoot all over the Pacific Northwest with no travel fee. For weddings further afield I add travel at cost, no markup, and we sort the details on our call.',
+    k: '02',
+    name: 'Elopements',
+    body: 'Half-day for small ceremonies. Planning help included.',
+    price: 'from $2,600',
   },
   {
-    question: 'What happens if it rains, or gear fails?',
-    answer:
-      'Rain is fine, some of my favourite frames happen under umbrellas. I shoot on two camera bodies and back up every card on the day, so a single failure never costs you the photos. For larger weddings I bring a second shooter.',
+    k: '03',
+    name: 'Engagements',
+    body: 'An hour or two outdoors before the day. Loosens everyone up.',
+    price: 'from $550',
   },
   {
-    question: 'Do we need an engagement session?',
-    answer:
-      'No, but it helps. An hour together beforehand gets you comfortable in front of the camera, so the wedding photos feel more like you. It is included in the full-day collection.',
+    k: '04',
+    name: 'Portraits & family',
+    body: 'Relaxed sessions, no stiff poses, room for kids to be kids.',
+    price: 'from $450',
   },
-  {
-    question: 'How do we book?',
-    answer:
-      'Send your date through the contact form and we will set up a call. If it feels right, a signed agreement and a retainer hold the date. I only take a limited number of weddings each season so the calendar fills early.',
-  },
-];
-
-const credentials = [
-  '8+ years photographing weddings',
-  'Two camera bodies, same-day backups',
-  'Second shooter available',
-  'Fully insured, print release on every gallery',
 ];
 ---
 
-<Layout
-  title="June Hartley Photography — Weddings & Portraits in Portland"
-  description="Documentary wedding, elopement, and portrait photography in Portland and across the Pacific Northwest. Warm, unhurried, shot for the moments you actually want to keep."
-  activeIndex={-1}
->
-  <HeroIntro text="June Hartley Photography" />
+<Layout>
+  <div class="grain" aria-hidden="true"></div>
 
-  <!-- ─── Hero ──────────────────────────────────────────────── -->
-  <SectionBlock id="home" tone="light" padding="hero" className="tc-hero">
-    <Container className="tc-hero__inner">
-      <div class="tc-hero__copy">
-        <OverlineText text="Wedding & portrait photography · Portland" tone="accent" />
-        <h1 class="tc-hero__title">
-          The day,<br />
-          honestly <span class="tc-hero__title-accent">remembered</span>.
+  <!-- ── Nav ─────────────────────────────────────────── -->
+  <header class="nav">
+    <a href="#top" class="brand">
+      <span class="brand__mark" aria-hidden="true"></span>
+      June&nbsp;Hartley
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      {nav.map((i) => <a href={i.href}>{i.label}</a>)}
+    </nav>
+    <div class="nav__right">
+      <button
+        type="button"
+        class="themer"
+        data-themer
+        aria-label="Toggle dark mode"
+      >
+        <span class="themer__dot"></span>
+      </button>
+      <a href="#contact" class="btn btn--sm">Check your date</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ── Hero ──────────────────────────────────────── -->
+    <section class="hero">
+      <div class="hero__copy reveal">
+        <p class="eyebrow">Wedding &amp; portrait photography — Portland, OR</p>
+        <h1 class="display">
+          The day,<br />honestly<br /><em>remembered.</em>
         </h1>
-        <p class="tc-hero__lede">
-          I'm <strong>June Hartley</strong> — a wedding and portrait
-          photographer in Portland. I shoot quietly and documentary-style,
-          then hand you back the day the way it actually felt.
+        <p class="lede">
+          I'm June Hartley. I photograph weddings quietly and
+          documentary-style, then hand you back the day the way it actually
+          felt — not the way a shot-list says it should.
         </p>
-        <div class="tc-hero__actions">
-          <ActionButton
-            href="/contact"
-            label="Check your date"
-            variant="primary"
-            size="large"
-          />
-          <ActionButton
-            href="/services"
-            label="See recent work"
-            variant="outline-dark"
-            size="large"
-          />
+        <div class="hero__cta">
+          <a href="#contact" class="btn">Check your date</a>
+          <a href="#work" class="link-arrow">See recent work →</a>
         </div>
-        <div class="tc-hero__pills">
-          <TagPill label="Weddings & elopements" />
-          <TagPill label="Portland + travel" />
-          <TagPill label="Documentary style" />
-        </div>
-      </div>
-
-      <div class="tc-hero__plate" aria-hidden="true">
-        <div class="tc-hero__plate-image"></div>
-        <span class="tc-hero__index">№ 01 — Recent work</span>
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Stats ────────────────────────────────────────────── -->
-  <SectionBlock tone="accent-light" padding="compact" topBorder>
-    <Container>
-      <StatsRow items={heroStats} />
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── About ────────────────────────────────────────────── -->
-  <SectionBlock id="about" tone="light" padding="default">
-    <Container className="tc-about">
-      <div class="tc-about__heading">
-        <OverlineText text="About" />
-        <h2 class="section-title tc-about__title">
-          Photographs that<br />
-          <em>feel like you</em>.
-        </h2>
-      </div>
-      <div class="tc-about__body">
-        <p class="tc-about__intro">
-          I have spent the last eight years photographing weddings and the
-          people in them. The work is calm and documentary. I would rather
-          catch your grandmother laughing than line everyone up against a
-          wall, and the galleries tend to reflect that.
-        </p>
-        <p class="tc-about__copy">
-          Weddings, elopements, engagements, families, and the odd brand
-          shoot for a maker I admire. Wherever the day takes us, I keep an
-          eye on the light and the small, true moments that get forgotten by
-          the time the cake is cut. You can be as hands-on or hands-off as
-          you like.
-        </p>
-        <ul class="tc-about__credentials" id="credentials">
+        <dl class="stats">
           {
-            credentials.map((c) => (
-              <li class="tc-about__credential">
-                <span class="tc-about__credential-mark" aria-hidden="true">
-                  ◆
-                </span>
-                {c}
-              </li>
+            stats.map((s) => (
+              <div>
+                <dt>{s.n}</dt>
+                <dd>{s.l}</dd>
+              </div>
             ))
           }
-        </ul>
+        </dl>
       </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── Services ─────────────────────────────────────────── -->
-  <SectionBlock id="services" tone="subtle" padding="default" topBorder>
-    <Container>
-      <SectionHeading
-        label="What I photograph"
-        title="A short, honest list of ways to work together."
-        maxWidth="24ch"
-      />
-      <div class="tc-services-grid">
-        {
-          services.map((s) => (
-            <ServiceCard
-              icon={s.icon}
-              title={s.title}
-              description={s.description}
-              meta={s.meta}
-            />
-          ))
-        }
-      </div>
-      <div class="tc-services-cta">
-        <ActionButton
-          href="/services"
-          label="See full pricing"
-          variant="outline-dark"
+      <figure class="hero__plate reveal" style="--d:.15s">
+        <img
+          src="https://images.unsplash.com/photo-1525258946800-98cfd641d0de?w=1100&h=1450&fit=crop"
+          alt="Couple embracing in soft light"
+          loading="eager"
         />
-      </div>
-    </Container>
-  </SectionBlock>
+        <figcaption><span>№ 01</span> Mara &amp; Jess — the Gorge</figcaption>
+      </figure>
+    </section>
 
-  <!-- ─── Approach ─────────────────────────────────────────── -->
-  <SectionBlock id="approach" tone="dark" padding="default">
-    <Container className="tc-approach">
-      <div class="tc-approach__heading">
-        <OverlineText text="How I work" tone="accent" />
-        <h2 class="section-title tc-approach__title">
-          Quiet on the day, easy to work with.
-        </h2>
+    <!-- ── Marquee strip ─────────────────────────────── -->
+    <div class="strip" aria-hidden="true">
+      <div class="strip__row">
+        <span>Weddings</span><span class="dot">✦</span><span>Elopements</span>
+        <span class="dot">✦</span><span>Portraits</span><span class="dot">✦</span>
+        <span>Documentary</span><span class="dot">✦</span><span>Film &amp; digital</span>
+        <span class="dot">✦</span><span>Pacific Northwest</span><span class="dot">✦</span>
+        <span>Weddings</span><span class="dot">✦</span><span>Elopements</span>
+        <span class="dot">✦</span><span>Portraits</span><span class="dot">✦</span>
+        <span>Documentary</span><span class="dot">✦</span><span>Film &amp; digital</span>
+        <span class="dot">✦</span><span>Pacific Northwest</span><span class="dot">✦</span>
       </div>
-      <div class="tc-approach__list">
+    </div>
+
+    <!-- ── Work ──────────────────────────────────────── -->
+    <section class="section" id="work">
+      <div class="section__head">
+        <p class="eyebrow">Selected work</p>
+        <h2 class="h2">A few frames from the last year.</h2>
+      </div>
+      <div class="gallery">
         {
-          approach.map((a) => (
-            <NumberedFeatureItem
-              number={a.number}
-              title={a.title}
-              description={a.description}
-            />
+          work.map((w, i) => (
+            <figure class={`gal gal--${w.span} reveal`} style={`--d:${i * 0.06}s`}>
+              <img src={w.src} alt={w.alt} loading="lazy" />
+              <figcaption>
+                <span class="gal__tag">{w.tag}</span>
+                <span class="gal__place">{w.place}</span>
+              </figcaption>
+            </figure>
           ))
         }
       </div>
-    </Container>
-  </SectionBlock>
+    </section>
 
-  <!-- ─── Video ────────────────────────────────────────────── -->
-  <SectionBlock id="invitation" tone="light" padding="default" topBorder>
-    <Container className="tc-video">
-      <VideoBlock
-        src={videoFm.src}
-        poster={videoFm.poster}
-        title={videoFm.title}
-        caption={videoFm.caption}
-        eyebrow={videoFm.eyebrow}
-        duration={videoFm.duration}
-        aspect={videoFm.aspect ?? '16/9'}
-      />
-    </Container>
-  </SectionBlock>
+    <!-- ── Studio / About ────────────────────────────── -->
+    <section class="section studio" id="studio">
+      <figure class="studio__img reveal">
+        <img
+          src="https://images.unsplash.com/photo-1554080353-a576cf803bda?w=1000&h=1250&fit=crop"
+          alt="June Hartley, photographer"
+          loading="lazy"
+        />
+      </figure>
+      <div class="studio__copy reveal" style="--d:.1s">
+        <p class="eyebrow">The studio</p>
+        <h2 class="h2">Quiet on the day.<br />Easy to work with.</h2>
+        <p>
+          Eight years in, I've learned the best frames happen when nobody's
+          performing. So I show up early, find the light, and mostly
+          disappear — documenting the day rather than staging it.
+        </p>
+        <p>
+          For portraits I'll give gentle direction so nobody's stranded
+          wondering what to do with their hands. Two camera bodies, same-day
+          backups, a second shooter for bigger days. Fully insured, and every
+          gallery comes with a print release.
+        </p>
+        <p class="sig">— June</p>
+      </div>
+    </section>
 
-  <!-- ─── Testimonials ─────────────────────────────────────── -->
-  <SectionBlock id="testimonials" tone="light" padding="default">
-    <Container>
-      <SectionHeading label="Kind words" title="From couples and families." />
-      <div class="tc-testimonials">
+    <!-- ── Investment ────────────────────────────────── -->
+    <section class="section" id="investment">
+      <div class="section__head">
+        <p class="eyebrow">Investment</p>
+        <h2 class="h2">A short, honest list.</h2>
+      </div>
+      <ul class="offer">
         {
-          testimonials.map((t) => (
-            <TestimonialBlock
-              quote={t.quote}
-              author={t.author}
-              role={t.role}
-              result={t.result}
-            />
+          offerings.map((o) => (
+            <li class="offer__row reveal">
+              <span class="offer__k">{o.k}</span>
+              <span class="offer__name">{o.name}</span>
+              <span class="offer__body">{o.body}</span>
+              <span class="offer__price">{o.price}</span>
+            </li>
           ))
         }
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── FAQ ──────────────────────────────────────────────── -->
-  <SectionBlock id="faq" tone="light" padding="default" topBorder>
-    <Container className="tc-faq">
-      <SectionHeading label="Common questions" title="The things couples usually ask." />
-      <div class="tc-faq__list">
-        {faqs.map((f) => <FaqAccordionItem question={f.question} answer={f.answer} />)}
-      </div>
-    </Container>
-  </SectionBlock>
-
-  <!-- ─── CTA ──────────────────────────────────────────────── -->
-  <SectionBlock id="contact" tone="dark" padding="default">
-    <Container className="tc-cta">
-      <h2 class="tc-cta__title">
-        When you're ready, so am I.
-      </h2>
-      <p class="tc-cta__lede">
-        Send your date and a few details and we'll set up a short call.
-        No hard sell, and no need to have everything figured out yet.
-        I only take a handful of weddings each season, so earlier is better.
+      </ul>
+      <p class="offer__note">
+        Every wedding gets a written quote after a quick call. Albums, extra
+        hours, and a second shooter add to any collection.
       </p>
-      <div class="tc-cta__actions">
-        <ActionButton
-          href="/contact"
-          label="Check your date"
-          variant="primary-light"
-          size="large"
-          className="fs-book-btn"
-        />
-        <ActionButton
-          href="mailto:hello@junehartley.com"
-          label="Email the studio"
-          variant="outline-light"
-          size="large"
-        />
+    </section>
+
+    <!-- ── Testimonial ───────────────────────────────── -->
+    <section class="quote reveal">
+      <blockquote>
+        “We barely noticed June was there, and then the gallery showed up and
+        we cried. She caught the small things we'd already half&#8209;forgotten.”
+      </blockquote>
+      <cite>Hannah &amp; Theo — married at Sauvie Island</cite>
+    </section>
+
+    <!-- ── CTA ───────────────────────────────────────── -->
+    <section class="cta" id="contact">
+      <p class="eyebrow eyebrow--accent">Booking 2026 — limited dates</p>
+      <h2 class="display cta__title">When you're<br />ready, so&nbsp;am&nbsp;I.</h2>
+      <p class="cta__lede">
+        Send your date and a few details. No hard sell, no need to have it all
+        figured out — just a short call to see if we're a fit.
+      </p>
+      <div class="cta__actions">
+        <a href="mailto:hello@junehartley.com" class="btn btn--lg">Check your date</a>
+        <a href="tel:+15035550147" class="link-arrow">+1 503 555 0147</a>
       </div>
-    </Container>
-  </SectionBlock>
+    </section>
+  </main>
 
-  <!-- ─── Direct booking ───────────────────────────────────── -->
-  {
-    showBooking && (
-      <SectionBlock tone="light" padding="default" topBorder>
-        <Container>
-          <CalBookingBlock
-            variant="cta"
-            calLink={bookingFm.cal_link}
-            eventLabel={bookingFm.cal_event_label}
-            title={bookingFm.title}
-            subtitle={bookingFm.description}
-            durationLabel={bookingFm.cal_duration_label}
-            layout={bookingFm.cal_layout}
-          />
-        </Container>
-      </SectionBlock>
-    )
-  }
+  <!-- ── Footer ────────────────────────────────────── -->
+  <footer class="foot">
+    <div class="foot__top">
+      <div class="foot__brand">June Hartley</div>
+      <div class="foot__cols">
+        <div>
+          <h4>Photography</h4>
+          <a href="#work">Weddings</a>
+          <a href="#work">Elopements</a>
+          <a href="#investment">Portraits</a>
+        </div>
+        <div>
+          <h4>Studio</h4>
+          <a href="#studio">About</a>
+          <a href="#investment">Investment</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div>
+          <h4>Elsewhere</h4>
+          <a href="#">Instagram</a>
+          <a href="#">Pinterest</a>
+          <a href="mailto:hello@junehartley.com">Email</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot__base">
+      <span>© 2026 June Hartley Photography</span>
+      <span>Portland, Oregon · Available for travel</span>
+    </div>
+  </footer>
+
+  <script is:inline>
+    // Standalone theme toggle (platform sync handled by the layout bridge).
+    (function () {
+      var btn = document.querySelector('[data-themer]');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var dark = !document.documentElement.classList.contains('theme-dark');
+        document.documentElement.classList.toggle('theme-dark', dark);
+        document.documentElement.classList.toggle('dark', dark);
+        try {
+          localStorage.setItem('theme', dark ? 'dark' : 'light');
+        } catch (_) {}
+      });
+    })();
+    // Staggered reveal on scroll.
+    (function () {
+      var els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(function (e) { e.classList.add('in'); });
+        return;
+      }
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) {
+              en.target.classList.add('in');
+              io.unobserve(en.target);
+            }
+          });
+        },
+        { threshold: 0.12 },
+      );
+      els.forEach(function (e) { io.observe(e); });
+    })();
+  </script>
+
+  <style is:global>
+    :root {
+      --bg: #f4eee4;
+      --bg-2: #ece3d4;
+      --surface: #fbf7f0;
+      --ink: #211c16;
+      --ink-soft: #4a4239;
+      --muted: #837868;
+      --accent: #b0542b;
+      --accent-2: #c9744a;
+      --line: rgba(33, 28, 22, 0.14);
+      --line-soft: rgba(33, 28, 22, 0.08);
+      --shadow: 0 30px 70px -30px rgba(33, 28, 22, 0.4);
+      --grain: 0.045;
+      --serif: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Source Sans 3', 'Inter', -apple-system, system-ui, sans-serif;
+    }
+    html.theme-dark,
+    html.dark {
+      --bg: #14100c;
+      --bg-2: #1b1610;
+      --surface: #1d1810;
+      --ink: #f2ebdd;
+      --ink-soft: #d9d0c0;
+      --muted: #9d9180;
+      --accent: #e08a5c;
+      --accent-2: #efa882;
+      --line: rgba(242, 235, 221, 0.16);
+      --line-soft: rgba(242, 235, 221, 0.08);
+      --shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7);
+      --grain: 0.07;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ::selection { background: var(--accent); color: #fff; }
+
+    /* film grain */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: var(--grain);
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    html.theme-dark .grain,
+    html.dark .grain { mix-blend-mode: screen; }
+
+    .eyebrow {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 1.4rem;
+      font-weight: 600;
+    }
+    .eyebrow--accent { color: var(--accent); }
+
+    .display {
+      font-family: var(--serif);
+      font-weight: 340;
+      font-size: clamp(3rem, 9vw, 7rem);
+      line-height: 0.98;
+      letter-spacing: -0.025em;
+      margin: 0;
+      font-optical-sizing: auto;
+    }
+    .display em {
+      font-style: italic;
+      color: var(--accent);
+      font-weight: 360;
+    }
+    .h2 {
+      font-family: var(--serif);
+      font-weight: 360;
+      font-size: clamp(1.9rem, 4.2vw, 3.2rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--ink);
+      color: var(--bg);
+      font-weight: 600;
+      font-size: 0.92rem;
+      letter-spacing: 0.01em;
+      padding: 0.95rem 1.6rem;
+      border-radius: 100px;
+      border: 1px solid var(--ink);
+      transition: transform 0.25s, background 0.3s, color 0.3s;
+    }
+    .btn:hover { transform: translateY(-2px); background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn--sm { padding: 0.62rem 1.1rem; font-size: 0.82rem; }
+    .btn--lg { padding: 1.15rem 2.2rem; font-size: 1rem; }
+    .link-arrow {
+      font-weight: 600;
+      font-size: 0.92rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 2px;
+      transition: color 0.25s, border-color 0.25s;
+    }
+    .link-arrow:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* reveal */
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.9s cubic-bezier(0.19,1,0.22,1) var(--d,0s), transform 0.9s cubic-bezier(0.19,1,0.22,1) var(--d,0s); }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+    /* nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 1.1rem clamp(1.2rem, 5vw, 4rem);
+      background: color-mix(in srgb, var(--bg) 82%, transparent);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .brand {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .brand__mark { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+    .nav__links { display: flex; gap: 1.9rem; }
+    .nav__links a {
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--ink-soft);
+      transition: color 0.25s;
+    }
+    .nav__links a:hover { color: var(--accent); }
+    .nav__right { display: flex; align-items: center; gap: 1rem; }
+    .themer {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--line);
+      background: transparent; cursor: pointer;
+      display: grid; place-items: center;
+      transition: border-color 0.25s;
+    }
+    .themer:hover { border-color: var(--accent); }
+    .themer__dot {
+      width: 15px; height: 15px; border-radius: 50%;
+      background: var(--ink);
+      box-shadow: inset -4px -4px 0 0 var(--bg);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    html.theme-dark .themer__dot, html.dark .themer__dot { box-shadow: inset 4px 4px 0 0 var(--bg); }
+
+    /* hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: clamp(2rem, 6vw, 6rem);
+      align-items: center;
+      padding: clamp(3rem, 9vw, 8rem) clamp(1.2rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem);
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+    .hero__copy { max-width: 38ch; }
+    .lede {
+      font-size: 1.12rem;
+      color: var(--ink-soft);
+      margin: 1.8rem 0 2.2rem;
+      max-width: 42ch;
+    }
+    .hero__cta { display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; }
+    .stats { display: flex; gap: 2.4rem; margin: 3rem 0 0; padding-top: 1.8rem; border-top: 1px solid var(--line); }
+    .stats div { margin: 0; }
+    .stats dt { font-family: var(--serif); font-size: 1.7rem; font-weight: 400; line-height: 1; }
+    .stats dd { margin: 0.4rem 0 0; font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+    .hero__plate { position: relative; margin: 0; }
+    .hero__plate img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      border-radius: 260px 260px 14px 14px;
+      box-shadow: var(--shadow);
+      filter: saturate(0.96) contrast(1.02);
+    }
+    .hero__plate figcaption {
+      position: absolute;
+      bottom: 1.3rem;
+      left: 1.3rem;
+      right: 1.3rem;
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      backdrop-filter: blur(6px);
+      border-radius: 10px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      display: flex;
+      gap: 0.6rem;
+    }
+    .hero__plate figcaption span { color: var(--accent); font-weight: 700; }
+
+    /* strip */
+    .strip { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 1.1rem 0; }
+    .strip__row { display: flex; gap: 2rem; width: max-content; animation: slide 38s linear infinite; font-family: var(--serif); font-size: 1.4rem; color: var(--ink-soft); white-space: nowrap; }
+    .strip .dot { color: var(--accent); }
+    @keyframes slide { to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { .strip__row { animation: none; } }
+
+    /* sections */
+    .section { max-width: 1500px; margin: 0 auto; padding: clamp(4rem, 10vw, 9rem) clamp(1.2rem, 5vw, 4rem); }
+    .section__head { margin-bottom: clamp(2rem, 5vw, 4rem); max-width: 24ch; }
+
+    /* gallery — editorial asymmetric grid */
+    .gallery { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(0.8rem, 1.6vw, 1.4rem); }
+    .gal { position: relative; margin: 0; overflow: hidden; border-radius: 6px; }
+    .gal img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s cubic-bezier(0.19,1,0.22,1); }
+    .gal:hover img { transform: scale(1.04); }
+    .gal figcaption {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      padding: 1rem 1.1rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.5));
+      color: #f6f1e9;
+      opacity: 0; transform: translateY(8px); transition: opacity 0.4s, transform 0.4s;
+    }
+    .gal:hover figcaption { opacity: 1; transform: none; }
+    .gal__tag { font-weight: 700; font-size: 0.82rem; letter-spacing: 0.04em; }
+    .gal__place { font-size: 0.74rem; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.1em; }
+    .gal--tall { grid-column: span 4; aspect-ratio: 4/5.4; }
+    .gal--wide { grid-column: span 8; aspect-ratio: 16/10; }
+    .gal--reg { grid-column: span 4; aspect-ratio: 4/5; }
+
+    /* studio */
+    .studio { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+    .studio__img { margin: 0; }
+    .studio__img img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow); }
+    .studio__copy p { color: var(--ink-soft); margin: 1.4rem 0 0; max-width: 52ch; }
+    .studio__copy .h2 { margin-bottom: 0.4rem; }
+    .sig { font-family: var(--serif); font-style: italic; font-size: 1.4rem; color: var(--ink) !important; margin-top: 2rem !important; }
+
+    /* offerings */
+    .offer { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+    .offer__row {
+      display: grid;
+      grid-template-columns: 3rem 1.2fr 2fr auto;
+      gap: 1.5rem;
+      align-items: baseline;
+      padding: 1.7rem 0;
+      border-bottom: 1px solid var(--line);
+      transition: padding-left 0.3s;
+    }
+    .offer__row:hover { padding-left: 0.8rem; }
+    .offer__k { font-family: var(--serif); color: var(--accent); font-size: 1rem; }
+    .offer__name { font-family: var(--serif); font-size: 1.5rem; }
+    .offer__body { color: var(--muted); font-size: 0.96rem; }
+    .offer__price { font-weight: 700; letter-spacing: 0.02em; white-space: nowrap; }
+    .offer__note { color: var(--muted); font-size: 0.92rem; margin-top: 1.6rem; max-width: 56ch; }
+
+    /* quote */
+    .quote { max-width: 1000px; margin: 0 auto; padding: clamp(3rem, 8vw, 7rem) clamp(1.2rem, 5vw, 4rem); text-align: center; }
+    .quote blockquote {
+      font-family: var(--serif);
+      font-weight: 360;
+      font-size: clamp(1.7rem, 3.6vw, 2.9rem);
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      margin: 0 0 1.6rem;
+    }
+    .quote cite { font-style: normal; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+    /* cta */
+    .cta {
+      max-width: 1500px; margin: clamp(2rem,5vw,4rem) auto; padding: clamp(4rem, 9vw, 8rem) clamp(1.2rem, 5vw, 4rem);
+      background: var(--bg-2);
+      border-radius: 18px;
+      text-align: center;
+    }
+    .cta__title { margin: 0 auto; }
+    .cta__lede { color: var(--ink-soft); max-width: 46ch; margin: 1.8rem auto 2.4rem; font-size: 1.1rem; }
+    .cta__actions { display: flex; gap: 1.6rem; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+    /* footer */
+    .foot { border-top: 1px solid var(--line); padding: clamp(3rem,7vw,5rem) clamp(1.2rem,5vw,4rem) 2.2rem; max-width: 1500px; margin: 0 auto; }
+    .foot__top { display: flex; justify-content: space-between; gap: 3rem; flex-wrap: wrap; }
+    .foot__brand { font-family: var(--serif); font-size: clamp(2.4rem, 7vw, 5rem); font-weight: 380; letter-spacing: -0.02em; line-height: 0.9; }
+    .foot__cols { display: flex; gap: clamp(2rem, 5vw, 4.5rem); }
+    .foot__cols h4 { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 1rem; }
+    .foot__cols a { display: block; color: var(--ink-soft); font-size: 0.94rem; margin-bottom: 0.55rem; transition: color 0.2s; }
+    .foot__cols a:hover { color: var(--accent); }
+    .foot__base { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: clamp(2.5rem,6vw,4rem); padding-top: 1.6rem; border-top: 1px solid var(--line-soft); font-size: 0.82rem; color: var(--muted); }
+
+    /* responsive */
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero__plate { max-width: 460px; }
+      .studio { grid-template-columns: 1fr; }
+      .studio__img { max-width: 460px; }
+      .gal--tall, .gal--wide, .gal--reg { grid-column: span 6; aspect-ratio: 4/5; }
+      .nav__links { display: none; }
+    }
+    @media (max-width: 560px) {
+      body { font-size: 16px; }
+      .gal--tall, .gal--wide, .gal--reg { grid-column: span 12; }
+      .offer__row { grid-template-columns: 2rem 1fr; row-gap: 0.4rem; }
+      .offer__body { grid-column: 2; }
+      .offer__price { grid-column: 2; }
+      .stats { gap: 1.5rem; flex-wrap: wrap; }
+    }
+  </style>
 </Layout>
-
-<style>
-  .tc-hero {
-    position: relative;
-    overflow: clip;
-  }
-
-  .tc-hero__inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(380px, 44%);
-    gap: 64px;
-    align-items: center;
-    min-height: 76vh;
-  }
-
-  .tc-hero__copy {
-    max-width: 620px;
-  }
-
-  .tc-hero__title {
-    font-family: var(--font-title);
-    font-size: clamp(2.6rem, 6vw, 5rem);
-    font-weight: var(--fw-headline);
-    line-height: 1.04;
-    letter-spacing: -0.02em;
-    text-transform: none;
-    margin: 24px 0 28px;
-    color: var(--bg-dark);
-  }
-
-  .tc-hero__title-accent {
-    font-family: 'Georgia', serif;
-    font-style: italic;
-    font-weight: var(--fw-regular);
-    color: var(--brand-primary);
-    text-transform: none;
-    letter-spacing: -0.03em;
-  }
-
-  .tc-hero__lede {
-    font-size: var(--fs-h5);
-    line-height: 1.6;
-    color: var(--text-primary);
-    max-width: 540px;
-    margin-bottom: 36px;
-  }
-
-  .tc-hero__lede strong {
-    font-weight: var(--fw-semibold);
-  }
-
-  .tc-hero__actions {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-  }
-
-  .tc-hero__pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .tc-hero__plate {
-    position: relative;
-    aspect-ratio: 4 / 5;
-    background:
-      radial-gradient(circle at 22% 20%, rgba(255, 255, 255, 0.42), transparent 24%),
-      linear-gradient(180deg, rgba(176, 121, 91, 0.14), rgba(198, 148, 132, 0.08)),
-      var(--surface-subtle);
-    border-radius: 240px 240px 28px 28px / 180px 180px 28px 28px;
-    overflow: hidden;
-    box-shadow: 0 28px 80px rgba(176, 121, 91, 0.14);
-  }
-
-  .tc-hero__plate::before {
-    content: '';
-    position: absolute;
-    inset: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 220px 220px 22px 22px / 164px 164px 22px 22px;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .tc-hero__plate-image {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(180deg, rgba(249, 247, 241, 0.02), rgba(10, 10, 10, 0.24)),
-      radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.34), transparent 16%),
-      url('https://images.unsplash.com/photo-1606800052052-a08af7148866?w=900&h=1100&fit=crop');
-    background-size: cover;
-    background-position: center 30%;
-    filter: contrast(1.02) saturate(0.92);
-    transition: transform 1.4s var(--ease-emphasized);
-  }
-
-  .tc-hero:hover .tc-hero__plate-image {
-    transform: scale(1.02);
-  }
-
-  .tc-hero__index {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    font-family: var(--font-title);
-    font-size: var(--fs-xs);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-on-dark);
-    background: var(--bg-dark);
-    padding: 6px 10px;
-    z-index: 1;
-  }
-
-  .tc-about {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: 80px;
-    align-items: start;
-  }
-
-  .tc-about__heading {
-    position: sticky;
-    top: 100px;
-  }
-
-  .tc-about__title {
-    margin-top: 16px;
-  }
-
-  .tc-about__title em {
-    font-family: 'Georgia', serif;
-    font-style: italic;
-    font-weight: var(--fw-regular);
-    color: var(--brand-primary);
-    text-transform: none;
-    letter-spacing: -0.03em;
-  }
-
-  .tc-about__intro {
-    font-size: var(--fs-h5);
-    line-height: 1.55;
-    color: var(--bg-dark);
-    margin-bottom: 24px;
-    max-width: 56ch;
-  }
-
-  .tc-about__copy {
-    font-size: var(--fs-body);
-    line-height: 1.7;
-    color: var(--text-primary);
-    max-width: 60ch;
-    margin-bottom: 36px;
-  }
-
-  .tc-about__credentials {
-    display: grid;
-    gap: 14px;
-    padding-top: 28px;
-    border-top: 1px solid var(--surface-subtle-border);
-  }
-
-  .tc-about__credential {
-    display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 8px;
-    font-family: var(--font-title);
-    font-size: var(--fs-small);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--bg-dark);
-  }
-
-  .tc-about__credential-mark {
-    color: var(--brand-primary);
-    font-size: 0.8em;
-    line-height: 1.5;
-  }
-
-  .tc-services-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .tc-services-cta {
-    margin-top: 56px;
-    text-align: center;
-  }
-
-  .tc-approach {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
-    gap: 80px;
-  }
-
-  .tc-approach__heading {
-    position: sticky;
-    top: 100px;
-    align-self: start;
-  }
-
-  .tc-approach__title {
-    color: var(--text-on-dark);
-    margin-top: 16px;
-    max-width: 18ch;
-  }
-
-  .tc-testimonials {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .tc-testimonials :global(figure) {
-    border-radius: 24px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.42));
-    border: 1px solid rgba(176, 121, 91, 0.12);
-    box-shadow: 0 12px 30px rgba(176, 121, 91, 0.08);
-  }
-
-  .tc-faq {
-    max-width: 920px;
-  }
-
-  .tc-faq__list {
-    display: grid;
-    gap: 12px;
-  }
-
-  .tc-cta {
-    text-align: center;
-    max-width: 760px;
-    margin: 0 auto;
-  }
-
-  .tc-cta__title {
-    font-family: var(--font-title);
-    font-size: clamp(2.2rem, 4.6vw, 3.6rem);
-    font-weight: var(--fw-headline);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    text-transform: none;
-    color: var(--text-on-dark);
-    margin-bottom: 28px;
-  }
-
-  .tc-cta__lede {
-    font-size: var(--fs-h5);
-    line-height: 1.55;
-    color: var(--text-nav);
-    margin-bottom: 40px;
-    max-width: 60ch;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .tc-cta__actions {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  @media (max-width: 1024px) {
-    .tc-hero__inner {
-      grid-template-columns: 1fr;
-      gap: 48px;
-      min-height: auto;
-    }
-
-    .tc-hero__plate {
-      aspect-ratio: 16 / 11;
-      max-width: 720px;
-      border-radius: 48px 48px 20px 20px / 38px 38px 20px 20px;
-    }
-
-    .tc-about,
-    .tc-approach {
-      grid-template-columns: 1fr;
-      gap: 48px;
-    }
-
-    .tc-about__heading,
-    .tc-approach__heading {
-      position: static;
-    }
-
-    .tc-services-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .tc-testimonials {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 600px) {
-    .tc-services-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .tc-hero__title {
-      font-size: 2.5rem;
-    }
-  }
-</style>

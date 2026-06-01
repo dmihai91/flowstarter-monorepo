@@ -44,8 +44,9 @@ export default function AuthLayout({
 
       <SiteHeader mode="auth" />
 
-      {/* Content — fills remaining space, scrolls if needed */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-8 sm:py-10">
+      {/* Content — sits just below the header; the fixed FlowBackground fills
+          any space beneath it so a short card never floats in a tall void. */}
+      <main className="relative z-10 flex flex-col items-center justify-start px-4 pt-8 pb-10 sm:pt-12">
         <div className="w-full max-w-lg">
           {title && (
             <div className="text-center mb-6">

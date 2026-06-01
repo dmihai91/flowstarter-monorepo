@@ -75,6 +75,18 @@ function mapTone(t: string): SiteCopyInput['brandTone'] {
   return 'professional';
 }
 
+// Prewarm path: the mockup generator is the funnel's first preview call, so a
+// cold start here is felt directly. This route's AI/Supabase deps are
+// top-level imports loaded at module init, so any invocation warms the
+// container — a no-op GET keeps it warm without running a generation (no LLM /
+// DB writes). Hit by the scheduled prewarm function.
+export async function GET(request: NextRequest) {
+  if (request.nextUrl.searchParams.get('warm') === '1') {
+    return NextResponse.json({ warmed: true }, { status: 200 });
+  }
+  return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
+}
+
 export async function POST(request: NextRequest) {
   const ip =
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||

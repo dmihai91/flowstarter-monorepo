@@ -14,6 +14,9 @@ export default async () => {
     '/assistant', // branded sign-in (auth/middleware)
     '/account/billing', // auth-gated SSR (middleware + Clerk)
     '/api/auth/session', // pure function, no DB
+    // Mockup generation — the funnel's first preview call (LLM site copy +
+    // demo build). Warms the container's AI/Supabase deps without generating.
+    '/api/discovery/preview?warm=1',
     // AI live-preview generation — loads the heavy agentic-codegen +
     // daytona-utils module graph (the expensive cold import) without running a
     // real generation, so the funnel's first visitor doesn't wait on it.

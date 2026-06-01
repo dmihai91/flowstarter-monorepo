@@ -170,11 +170,8 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     tags: ['photographer', 'wedding', 'portrait', 'creative'],
     repoUrl: null,
     liveUrl: null,
-    thumbnail: null,
-    placeholder: {
-      line: 'June Hartley Photography',
-      sub: 'wedding & portrait · template',
-    },
+    thumbnail: 'june-hartley-photo',
+    hasDarkThumbnail: true,
     previewPath: '/preview/june-hartley-photo/',
   },
 

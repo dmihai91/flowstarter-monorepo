@@ -81,7 +81,10 @@ export async function POST(req: NextRequest) {
       );
 
       if (!process.env.ANTHROPIC_API_KEY) {
-        updateJob(demoId, { status: 'failed', error: 'ANTHROPIC_API_KEY missing' });
+        updateJob(demoId, {
+          status: 'failed',
+          error: 'ANTHROPIC_API_KEY missing',
+        });
         return;
       }
 
@@ -107,8 +110,11 @@ export async function POST(req: NextRequest) {
       const preview = await previewInSandbox(ws.buildDir, {
         projectId: demoId,
         env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
-        onProgress: (_s, message) =>
-          updateJob(demoId, { phase: message ?? 'Building your live preview' }),
+        // Don't surface Daytona's internal step labels ("Provisioning
+        // sandbox", "Starting dev server") to the visitor — keep one
+        // friendly phase for the whole base-build stage.
+        onProgress: () =>
+          updateJob(demoId, { phase: 'Building your live preview' }),
       });
       if (!preview.success || !preview.previewUrl) {
         updateJob(demoId, {
@@ -172,6 +178,23 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  // Prewarm path: load the heavy codegen + sandbox module graph into this
+  // container so the first real visitor doesn't pay the multi-second import
+  // cost. No generation runs, no AI/Daytona calls are made — we only resolve
+  // the dynamic imports the POST handler depends on. Hit by the scheduled
+  // prewarm function (netlify/functions/prewarm.mjs).
+  if (req.nextUrl.searchParams.get('warm') === '1') {
+    try {
+      await Promise.all([
+        import('@flowstarter/agentic-codegen'),
+        import('@flowstarter/daytona-utils'),
+      ]);
+      return NextResponse.json({ warmed: true }, { status: 200 });
+    } catch {
+      return NextResponse.json({ warmed: false }, { status: 200 });
+    }
+  }
+
   const demoId = req.nextUrl.searchParams.get('demoId');
   if (!demoId)
     return NextResponse.json({ error: 'demoId required' }, { status: 400 });

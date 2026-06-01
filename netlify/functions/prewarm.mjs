@@ -1,5 +1,5 @@
 // Scheduled function — keeps the SSR/auth Lambdas warm so visitors don't pay a
-// multi-second cold start. Pings the dynamic (function-backed) routes every 5
+// multi-second cold start. Pings the dynamic (function-backed) routes every 3
 // minutes. Cached routes (the homepage) are served from the CDN and don't
 // invoke a function, so we hit the SSR/auth paths instead.
 //
@@ -14,6 +14,10 @@ export default async () => {
     '/assistant', // branded sign-in (auth/middleware)
     '/account/billing', // auth-gated SSR (middleware + Clerk)
     '/api/auth/session', // pure function, no DB
+    // AI live-preview generation — loads the heavy agentic-codegen +
+    // daytona-utils module graph (the expensive cold import) without running a
+    // real generation, so the funnel's first visitor doesn't wait on it.
+    '/api/discovery/preview/live?warm=1',
   ];
   await Promise.allSettled(
     routes.map((r) =>

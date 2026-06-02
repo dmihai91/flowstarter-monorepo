@@ -34,19 +34,9 @@ const TEMPLATE_ENTRIES: ReadonlyArray<TemplateAuditEntry> = [
   // Live client sites — externally hosted, no `/preview/` build.
   { slug: 'ux-journey', hasPreview: false },
   { slug: 'lebadusul', hasPreview: false },
-  // Starter templates seeded by the Flowstarter Library MCP.
-  // `dorin-portfolio` is the only one currently shipping a static
-  // preview at `/public/preview/dorin-portfolio/`. Flip `hasPreview`
-  // for the others as their static builds get published.
-  // No /preview/dorin-portfolio/ static build ships (dorin-portfolio reuses the
-  // freelancer-portfolio preview via its previewPath), so skip the slug-based
-  // preview test — it would 404 on /preview/dorin-portfolio/.
-  { slug: 'dorin-portfolio', hasPreview: false },
-  { slug: 'coach-pro', hasPreview: false },
-  { slug: 'therapist-care', hasPreview: false },
-  { slug: 'freelancer-portfolio', hasPreview: false },
-  { slug: 'fitness-coach', hasPreview: false },
-  { slug: 'creative-portfolio', hasPreview: false },
+  // The single portfolio starter — the real Dorin GitHub template,
+  // integrated as its own Astro build at `/preview/dorin-portfolio/`.
+  { slug: 'dorin-portfolio', hasPreview: true },
 ] as const;
 
 // Sub-routes that exist inside each Astro template build. Only iterated

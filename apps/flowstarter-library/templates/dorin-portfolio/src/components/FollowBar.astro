@@ -1,0 +1,32 @@
+---
+import { siteLabels } from '../lib/site-data';
+import SectionBlock from './design-system/SectionBlock.astro';
+import OverlineText from './design-system/OverlineText.astro';
+import SocialTextList from './design-system/SocialTextList.astro';
+
+const { followBar } = siteLabels;
+---
+
+<SectionBlock className="follow-bar" tone="light" padding="tight" topBorder={true} bottomBorder={true}>
+  <div class="follow-bar__inner container">
+    <OverlineText text={followBar.title} tone="secondary" />
+    <SocialTextList links={followBar.socials} targetBlank={true} />
+  </div>
+</SectionBlock>
+
+<style>
+  .follow-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .follow-bar__inner {
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+</style>

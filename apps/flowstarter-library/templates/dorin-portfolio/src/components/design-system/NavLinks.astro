@@ -1,0 +1,80 @@
+---
+interface LinkItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  links: LinkItem[];
+  className?: string;
+  linkClassName?: string;
+  variant?: 'default' | 'header';
+  ariaLabel?: string;
+  activeIndex?: number;
+}
+
+const {
+  links,
+  className = '',
+  linkClassName = '',
+  variant = 'default',
+  ariaLabel,
+  activeIndex = -1,
+} = Astro.props;
+---
+
+<nav class={`ds-nav-links ds-nav-links--${variant} ${className}`.trim()} aria-label={ariaLabel}>
+  {links.map((link, index) => (
+    <a
+      href={link.href}
+      class={`ds-nav-link ${index === activeIndex ? 'ds-nav-link--active' : ''} ${linkClassName}`.trim()}
+      aria-current={index === activeIndex ? 'page' : undefined}
+    >
+      {link.label}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .ds-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .ds-nav-link {
+    font-size: var(--fs-small);
+    color: var(--text-secondary);
+    transition: color var(--transition);
+    letter-spacing: 0.5px;
+  }
+
+  .ds-nav-links--header .ds-nav-link {
+    font-family: var(--font-title);
+    font-weight: var(--fw-medium);
+    text-transform: uppercase;
+    color: var(--text-nav);
+  }
+
+  .ds-nav-link:hover {
+    color: var(--text-primary);
+  }
+
+  .ds-nav-links--header .ds-nav-link:hover {
+    color: var(--text-on-dark);
+  }
+
+  .ds-nav-links--header .ds-nav-link--active {
+    color: var(--text-on-dark);
+    text-decoration: underline;
+    text-decoration-color: var(--text-on-dark);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+
+  @media (max-width: 1024px) {
+    .ds-nav-links--header {
+      display: none;
+    }
+  }
+</style>

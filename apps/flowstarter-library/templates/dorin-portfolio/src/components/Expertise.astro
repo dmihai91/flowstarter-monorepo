@@ -1,0 +1,101 @@
+---
+import { siteLabels } from '../lib/site-data';
+import SectionBlock from './design-system/SectionBlock.astro';
+import SectionHeading from './design-system/SectionHeading.astro';
+import NumberedFeatureItem from './design-system/NumberedFeatureItem.astro';
+
+const { expertise } = siteLabels;
+---
+
+<SectionBlock id="expertise" className="expertise" tone="none">
+  <div class="expertise__inner container">
+    <div class="expertise__left">
+      <SectionHeading
+        label={expertise.sectionLabel}
+        title={expertise.sectionTitle}
+        maxWidth="400px"
+      />
+    </div>
+    <div class="expertise__right is-intro-state" data-expertise-list>
+      {expertise.items.map((item, index) => (
+        <NumberedFeatureItem
+          number={item.number}
+          title={item.title}
+          description={item.description}
+          className={index === 0 ? 'expertise__item--first' : ''}
+        />
+      ))}
+    </div>
+  </div>
+</SectionBlock>
+
+<style>
+  :global(.expertise) {
+    background: var(--surface-base);
+    color: var(--bg-dark);
+  }
+
+  .expertise__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+
+  .expertise__right :global(.expertise__item--first) {
+    padding-top: 0;
+  }
+
+  .expertise__right.is-intro-state :global(.expertise__item--first .ds-numbered-feature__content) {
+    filter: blur(0);
+    opacity: 1;
+  }
+
+  .expertise__right :global(.ds-numbered-feature:last-child) {
+    border-bottom: none;
+    padding-bottom: 4rem;
+  }
+
+  @media (max-width: 768px) {
+    .expertise__inner {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+</style>
+
+<script>
+  const expertiseList = document.querySelector('[data-expertise-list]');
+
+  if (expertiseList) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let introPlayed = false;
+
+    const clearIntroState = () => {
+      expertiseList.classList.remove('is-intro-state');
+    };
+
+    if (reduceMotion.matches) {
+      clearIntroState();
+    } else {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting || introPlayed) return;
+
+          introPlayed = true;
+          expertiseList.classList.add('is-intro-state');
+
+          window.setTimeout(() => {
+            clearIntroState();
+          }, 1400);
+
+          observer.disconnect();
+        },
+        {
+          threshold: 0.35,
+        }
+      );
+
+      observer.observe(expertiseList);
+    }
+  }
+</script>

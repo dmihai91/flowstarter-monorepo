@@ -1,0 +1,218 @@
+---
+import { siteLabels } from '../lib/site-data';
+import { getHeaderNavLinks } from '../lib/site-data';
+import BrandLogo from './design-system/BrandLogo.astro';
+import NavLinks from './design-system/NavLinks.astro';
+import ActionButton from './design-system/ActionButton.astro';
+import MenuButton from './design-system/MenuButton.astro';
+
+const { header } = siteLabels;
+const defaultNavLinks = getHeaderNavLinks();
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  activeIndex?: number;
+  links?: NavLink[];
+  ctaLabel?: string;
+  ctaHref?: string;
+  ctaDisabled?: boolean;
+}
+
+const {
+  activeIndex = 0,
+  links = defaultNavLinks,
+  ctaLabel = 'Book a Discovery Call',
+  ctaHref = '/book',
+  ctaDisabled = false,
+} = Astro.props;
+---
+
+<header class="header">
+  <div class="header__inner container">
+    <BrandLogo label={header.logo} />
+    <NavLinks links={links} variant="header" activeIndex={activeIndex} />
+    <div class="header__cta-wrapper">
+      <ActionButton
+        href={ctaDisabled ? '#' : ctaHref}
+        label={ctaLabel}
+        variant="outline"
+        className={`header__cta ds-action-button--outline-light${ctaDisabled ? ' header__cta--disabled' : ''}`}
+      />
+    </div>
+    <!-- Mobile only -->
+    <div class="header__mobile-toggle">
+      <MenuButton ariaLabel="Open navigation menu" className="header__menu-btn" />
+    </div>
+  </div>
+
+  <!-- Mobile Nav Drawer -->
+  <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+    <nav class="mobile-nav__links">
+      {links.map((link, index) => (
+        <a
+          href={link.href}
+          class={`mobile-nav__link ${index === activeIndex ? 'mobile-nav__link--active' : ''}`}
+          aria-current={index === activeIndex ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+    <div class="mobile-nav__footer">
+      <ActionButton
+        href={ctaHref}
+        label={ctaLabel}
+        variant="outline"
+        className="mobile-nav__cta ds-action-button--outline-light"
+      />
+    </div>
+  </div>
+</header>
+
+<script>
+  const menuBtn = document.querySelector('.header__menu-btn') as HTMLButtonElement;
+  const mobileNav = document.getElementById('mobile-nav');
+  const header = document.querySelector('.header');
+
+  menuBtn?.addEventListener('click', () => {
+    const isOpen = menuBtn.classList.toggle('is-open');
+    mobileNav?.classList.toggle('is-open', isOpen);
+    menuBtn.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+    mobileNav?.setAttribute('aria-hidden', String(!isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  mobileNav?.querySelectorAll('.mobile-nav__link').forEach(link => {
+    link.addEventListener('click', () => {
+      menuBtn?.classList.remove('is-open');
+      mobileNav.classList.remove('is-open');
+      mobileNav.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+
+<style>
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--bg-dark);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .header__cta-wrapper {
+    flex-shrink: 0;
+  }
+
+  :global(.header__cta--disabled) {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  /* Hidden on desktop by default */
+  .header__mobile-toggle {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: none;
+  }
+
+  /* ── Tablet + Mobile (≤1024px) ── */
+  @media (max-width: 1024px) {
+    .header__cta-wrapper {
+      display: none;
+    }
+
+    .header__mobile-toggle {
+      display: flex;
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-dark);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 48px 32px 52px;
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .mobile-nav.is-open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .mobile-nav__links {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .mobile-nav__link {
+      font-family: var(--font-title);
+      font-size: 2.6rem;
+      font-weight: var(--fw-medium);
+      color: var(--text-nav);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-color);
+      transition: color var(--transition);
+    }
+
+    .mobile-nav__link:hover,
+    .mobile-nav__link--active {
+      color: var(--text-on-dark);
+    }
+
+    .mobile-nav__link--active {
+      text-decoration: underline;
+      text-decoration-color: var(--text-on-dark);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 6px;
+    }
+
+    :global(.mobile-nav__cta) {
+      width: 100%;
+      justify-content: center;
+      padding: 18px 24px;
+      font-size: 1rem;
+    }
+  }
+
+  /* ── Mobile-only (≤767px) ── */
+  @media (max-width: 767px) {
+    .mobile-nav {
+      padding: 40px 24px 48px;
+    }
+
+    .mobile-nav__link {
+      font-size: 2rem;
+      padding: 16px 0;
+    }
+  }
+</style>

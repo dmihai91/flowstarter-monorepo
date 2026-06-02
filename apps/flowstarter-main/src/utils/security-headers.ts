@@ -53,6 +53,8 @@ const ALLOWED_IMG_DOMAINS = [
   'https://www.google-analytics.com',
   // Template thumbnails served from Cloudflare R2
   'https://assets.flowstarter.dev',
+  // Avatar placeholders in the Dorin portfolio template demo testimonials
+  'https://i.pravatar.cc',
 ];
 
 const ALLOWED_FONT_DOMAINS = ["'self'", 'https://fonts.gstatic.com', 'data:'];
@@ -104,6 +106,8 @@ const ALLOWED_FRAME_DOMAINS = [
   // own X-Frame-Options / frame-ancestors — that we can't override).
   'https://ux-journey.com',
   'https://lebadusularticoledepescuit.ro',
+  // OpenStreetMap embed used by the Dorin portfolio template contact map
+  'https://www.openstreetmap.org',
   // Concierge discovery funnel (step 7): the live preview embeds the
   // generated site while it runs in its Daytona sandbox. PreviewStep.tsx
   // frames https://<port>-<sandboxId>.daytonaproxy01.net — without this

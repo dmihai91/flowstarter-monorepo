@@ -1,0 +1,14 @@
+{
+    "name": "dorin-portfolio",
+    "dependencies": {
+        "astro": "^5.1.1"
+    },
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "astro": "astro",
+        "preview": "astro preview",
+        "build": "astro build",
+        "dev": "astro dev"
+    }
+}

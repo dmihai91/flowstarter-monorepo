@@ -1,0 +1,262 @@
+---
+import type { CountryCodeOption } from '../../lib/contact-country-codes';
+
+interface Props {
+  label: string;
+  codeName: string;
+  phoneName: string;
+  phonePlaceholder?: string;
+  required?: boolean;
+  options: CountryCodeOption[];
+  defaultOption: CountryCodeOption;
+}
+
+const {
+  label,
+  codeName,
+  phoneName,
+  phonePlaceholder = '',
+  required = false,
+  options = [],
+  defaultOption,
+} = Astro.props;
+---
+
+<div
+  class="phone-field"
+  data-country-picker
+  data-default-flag={defaultOption.flag}
+  data-default-code={defaultOption.dial}
+  data-default-label={defaultOption.dial}
+  data-default-example={defaultOption.example}
+>
+  <span class="phone-field__label">{label}</span>
+
+  <div class="phone-field__input-wrap">
+    <button
+      type="button"
+      class="phone-field__code-trigger"
+      data-country-trigger
+      aria-expanded="false"
+      aria-haspopup="listbox"
+    >
+      <span class="phone-field__flag" data-country-flag>{defaultOption.flag}</span>
+      <span class="phone-field__dial" data-country-label>{defaultOption.dial}</span>
+      <svg class="phone-field__caret" aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <span class="phone-field__divider" aria-hidden="true"></span>
+
+    <input
+      type="tel"
+      name={phoneName}
+      placeholder={defaultOption.example}
+      required={required}
+      class="phone-field__number-input"
+      data-phone-number-input
+    />
+    <input type="hidden" name={codeName} value={defaultOption.dial} data-country-input />
+  </div>
+
+  <div class="phone-field__panel" data-country-panel hidden>
+    <label class="phone-field__search">
+      <span class="phone-field__sr-only">Search country code</span>
+      <input type="search" placeholder="Search country or code" data-country-search />
+    </label>
+    <div class="phone-field__options">
+      {options.map((country) => (
+        <button
+          type="button"
+          class="phone-field__option"
+          data-country-option
+          data-country={country.name}
+          data-code={country.dial}
+          data-flag={country.flag}
+          data-example={country.example}
+          data-search={`${country.name.toLowerCase()} ${country.dial.toLowerCase()}`}
+        >
+          <span><span>{country.flag}</span> {country.name}</span>
+          <span>{country.dial}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .phone-field {
+    position: relative;
+    display: grid;
+    gap: var(--form-field-gap, 10px);
+  }
+
+  .phone-field__label {
+    font-family: var(--font-title);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    color: var(--bg-dark);
+  }
+
+  /* Unified bordered row */
+  .phone-field__input-wrap {
+    display: flex;
+    align-items: center;
+    min-height: var(--field-height, 58px);
+    border: 1px solid var(--surface-field-border);
+    border-radius: 8px;
+    background: var(--surface-field);
+  }
+
+  .phone-field__input-wrap:focus-within {
+    border: 1.5px solid var(--bg-dark);
+  }
+
+  /* Country trigger */
+  .phone-field__code-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px 0 18px;
+    height: 100%;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    color: var(--bg-dark);
+    background: transparent;
+    border: none;
+  }
+
+  .phone-field__flag {
+    font-style: normal;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  .phone-field__dial {
+    font-size: var(--fs-body);
+    color: var(--bg-dark);
+  }
+
+  .phone-field__caret {
+    flex-shrink: 0;
+    display: block;
+    opacity: 0.55;
+    transition: transform var(--transition);
+  }
+
+  .phone-field__code-trigger[aria-expanded="true"] .phone-field__caret {
+    transform: rotate(180deg);
+  }
+
+  /* Divider */
+  .phone-field__divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--surface-field-border);
+    flex-shrink: 0;
+  }
+
+  /* Phone number input */
+  .phone-field__number-input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 18px;
+    border: none;
+    background: transparent;
+    color: var(--bg-dark);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    outline: none;
+  }
+
+  .phone-field__number-input::placeholder {
+    color: var(--surface-placeholder);
+  }
+
+  /* Dropdown panel */
+  .phone-field__panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    padding: 12px;
+    background: var(--surface-base);
+    border: 1px solid var(--surface-panel-border);
+    box-shadow: var(--shadow-float);
+  }
+
+  .phone-field__search {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .phone-field__search input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--surface-field-border);
+    background: var(--surface-field);
+    color: var(--bg-dark);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    outline: none;
+    transition: border-color var(--transition);
+  }
+
+  .phone-field__search input:focus {
+    border-color: var(--bg-dark);
+  }
+
+  .phone-field__search input::placeholder {
+    color: var(--surface-placeholder);
+  }
+
+  .phone-field__options {
+    display: grid;
+    gap: 4px;
+    max-height: 240px;
+    overflow-y: auto;
+  }
+
+  .phone-field__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--bg-dark);
+    text-align: left;
+    background: transparent;
+    transition: background-color var(--transition), border-color var(--transition);
+  }
+
+  .phone-field__option:hover,
+  .phone-field__option:focus-visible {
+    background: var(--surface-selected);
+    border-color: var(--surface-panel-border);
+    outline: none;
+  }
+
+  .phone-field__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

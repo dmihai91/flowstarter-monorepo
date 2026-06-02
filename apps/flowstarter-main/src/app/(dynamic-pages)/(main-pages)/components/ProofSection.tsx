@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { withAssetVersion } from '@/utils/asset-version';
 import Link from 'next/link';
 
 import { tServer } from '@/lib/i18n-server';
@@ -95,7 +96,7 @@ export function ProofSection() {
                   {item.thumbnail ? (
                     <>
                       <Image
-                        src={item.thumbnail}
+                        src={withAssetVersion(item.thumbnail)}
                         alt={`${item.title} preview`}
                         width={1200}
                         height={750}
@@ -105,7 +106,7 @@ export function ProofSection() {
                       />
                       {item.thumbnailDark ? (
                         <Image
-                          src={item.thumbnailDark}
+                          src={withAssetVersion(item.thumbnailDark)}
                           alt={`${item.title} preview dark`}
                           width={1200}
                           height={750}

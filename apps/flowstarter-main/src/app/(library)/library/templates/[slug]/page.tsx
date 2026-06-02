@@ -9,6 +9,7 @@ import {
   getTemplate,
   getTemplateSlugs,
 } from '../../_data/templates';
+import { withAssetVersion } from '@/utils/asset-version';
 
 export const dynamic = 'force-static';
 
@@ -150,11 +151,13 @@ export default async function TemplateDetailPage({ params }: PageProps) {
             isExternal={isExternalPreview}
             title={template.title}
             thumbnailPath={
-              template.thumbnail ? `/showcase/${template.thumbnail}.png` : null
+              template.thumbnail
+                ? withAssetVersion(`/showcase/${template.thumbnail}.png`)
+                : null
             }
             thumbnailPathDark={
               template.thumbnail && template.hasDarkThumbnail !== false
-                ? `/showcase/${template.thumbnail}-dark.png`
+                ? withAssetVersion(`/showcase/${template.thumbnail}-dark.png`)
                 : null
             }
           />

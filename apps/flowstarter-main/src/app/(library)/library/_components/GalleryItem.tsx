@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import type { TemplateEntry } from '../_data/templates';
+import { withAssetVersion } from '@/utils/asset-version';
 
 interface GalleryItemProps {
   template: TemplateEntry;
@@ -25,7 +26,7 @@ export function GalleryItem({ template, index, total }: GalleryItemProps) {
     : `/templates/${template.slug}`;
   const darkThumb =
     template.thumbnail && template.hasDarkThumbnail !== false
-      ? `/showcase/${template.thumbnail}-dark.png`
+      ? withAssetVersion(`/showcase/${template.thumbnail}-dark.png`)
       : null;
 
   return (
@@ -39,7 +40,7 @@ export function GalleryItem({ template, index, total }: GalleryItemProps) {
         {template.thumbnail ? (
           <>
             <Image
-              src={`/showcase/${template.thumbnail}.png`}
+              src={withAssetVersion(`/showcase/${template.thumbnail}.png`)}
               alt={`${template.title} preview`}
               width={1200}
               height={750}

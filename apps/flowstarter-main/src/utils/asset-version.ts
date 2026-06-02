@@ -9,7 +9,7 @@
  * purely a cache-busting token. Bump ASSET_VERSION whenever showcase
  * thumbnails (or other versioned static assets) are regenerated.
  */
-export const ASSET_VERSION = '2';
+export const ASSET_VERSION = '3';
 
 export function withAssetVersion(path: string): string {
   const sep = path.includes('?') ? '&' : '?';

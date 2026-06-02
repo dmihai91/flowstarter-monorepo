@@ -92,6 +92,12 @@ export default {
     '@flowstarter/daytona-utils',
   ],
   images: {
+    // With no localPatterns, Next.js serves local images but rejects any query
+    // string. We append a ?v=<ASSET_VERSION> cache-bust to /showcase/* thumbnails
+    // (see src/utils/asset-version.ts), so allow local images with any query.
+    // An omitted `search` permits any query (same as the remotePatterns below);
+    // '/**' keeps every existing local image working.
+    localPatterns: [{ pathname: '/**' }],
     remotePatterns: [
       {
         protocol: 'https',

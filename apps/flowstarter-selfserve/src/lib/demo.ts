@@ -88,13 +88,29 @@ Page rules:
 - Single file: all CSS inline in one <style> tag. NO JavaScript, NO external assets, NO web fonts (system font stack), NO images (use CSS gradients/shapes for visuals).
 - Structure: nav (brand + CTA), hero (kicker, headline, subcopy, CTA button, decorative visual), three feature sections, an about/why strip, contact/booking section with a mailto CTA, footer.
 - Bespoke to THIS business: concrete copy in its voice, palette that fits the trade. Mobile-responsive, readable contrast, generous whitespace.
-- Never invent statistics, testimonials, awards, or client names. Mark unknown details (address, hours, prices) as e.g. "123 Your Street" placeholders sparingly.`;
+- Never invent statistics, testimonials, awards, or client names. Mark unknown details (address, hours, prices) as e.g. "123 Your Street" placeholders sparingly.
+
+QUALITY BASELINE — adapt Flowstarter's house design system (do NOT design from scratch; substitute colors/copy to fit the business, keep the bones):
+:root tokens (rename values to the business palette, keep the scale):
+  --surface-base: warm off-white paper (e.g. #F9F7F1); --bg-dark: near-black (#0a0a0a) for dark sections & footer;
+  --brand-primary: one saturated accent fitting the trade; --accent: one soft secondary;
+  --text-primary: #0a0a0a; --text-secondary: #999; --text-on-dark: #fff;
+  --surface-panel: rgba(255,255,255,.72) with 1px rgba(10,10,10,.14) border; --shadow-float: 0 18px 36px rgba(10,10,10,.12);
+  --section-padding: 100px 0 (64px on mobile); --container: 1200px max, 24px side padding;
+  type scale: display 3rem / h2 2.75rem / h3 1.9rem / body 1.1rem; headings tight (line-height 1.1, letter-spacing -0.02em);
+  radius: 8/12/16px; transitions .3s ease.
+Patterns to reuse:
+  - section labels: small UPPERCASE kicker, letter-spacing 2px, brand color, above every section title;
+  - alternate light sections on --surface-base with one or two FULL-BLEED dark sections (--bg-dark, white text) for rhythm (e.g. about/why strip and footer);
+  - cards: panel surface, 16px radius, subtle border, lift on hover (translateY(-4px) + shadow-float);
+  - hero: huge display headline (uppercase or tight-case), kicker above, subcopy max ~52ch, primary button (brand bg, white text, 12px radius) + ghost secondary; decorative CSS shape/gradient block on the right;
+  - footer: dark, brand wordmark, contact mailto, small legal line.`;
 
 function stripScripts(html: string): string {
   return html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/\son\w+="[^"]*"/gi, '');
 }
 
-async function callSiteModel(messages: Array<{ role: string; content: string }>): Promise<{ spec: SiteSpec; html: string } | null> {
+async function callSiteModel(messages: Array<{ role: string; content: string }>): Promise<{ spec: SiteSpec | null; html: string } | null> {
   if (!MODELS.openrouterApiKey) return null;
   try {
     const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -104,7 +120,7 @@ async function callSiteModel(messages: Array<{ role: string; content: string }>)
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ model: MODELS.demo, messages, temperature: 0.7, max_tokens: 10_000 }),
-      signal: AbortSignal.timeout(90_000),
+      signal: AbortSignal.timeout(150_000),
     });
     if (!res.ok) {
       console.error('[selfserve demo-site] model call failed', res.status, await res.text().catch(() => ''));
@@ -114,13 +130,15 @@ async function callSiteModel(messages: Array<{ role: string; content: string }>)
     const raw = data.choices?.[0]?.message?.content ?? '';
     const specMatch = raw.match(/<!--SPEC([\s\S]*?)SPEC-->/);
     const htmlStart = raw.indexOf('<!DOCTYPE');
-    if (!specMatch || htmlStart < 0) {
-      console.warn('[selfserve demo-site] missing SPEC comment or doctype — falling back');
+    if (htmlStart < 0) {
+      console.warn('[selfserve demo-site] no doctype in output — falling back');
       return null;
     }
-    // Lenient parse: the agent's spec only feeds our own UI; normalize rather than reject.
-    let spec: SiteSpec;
+    // Lenient parse: the agent's spec only feeds our own UI; normalize rather
+    // than reject — and NEVER discard a valid page over a broken spec comment.
+    let spec: SiteSpec | null = null;
     try {
+      if (!specMatch) throw new Error('no SPEC comment');
       const rawSpec = JSON.parse(specMatch[1]) as SiteSpec;
       spec = {
         brand: {
@@ -143,8 +161,8 @@ async function callSiteModel(messages: Array<{ role: string; content: string }>)
       };
       while (spec.copy.sections.length < 3) spec.copy.sections.push({ h: '', p: '' });
     } catch (e) {
-      console.warn('[selfserve demo-site] spec JSON invalid — falling back', e);
-      return null;
+      console.warn('[selfserve demo-site] spec comment unusable — keeping page, spec recovered separately', e);
+      spec = null;
     }
     let html = raw.slice(htmlStart).trim();
     html = html.replace(/```\s*$/m, '').trim(); // tolerate trailing code fence
@@ -167,7 +185,10 @@ export async function generateDemoSite(
     { role: 'system', content: SITE_SYSTEM },
     { role: 'user', content: `Business description:\n${businessDescription}` },
   ]);
-  if (fromModel) return { ...fromModel, agentBuilt: true };
+  if (fromModel) {
+    const spec = fromModel.spec ?? (await generateDemoSpec(businessDescription));
+    return { spec, html: fromModel.html, agentBuilt: true };
+  }
   const spec = await generateDemoSpec(businessDescription);
   const { renderSiteHtml } = await import('@flowstarter/build-engine');
   return { spec, html: renderSiteHtml(spec), agentBuilt: false };
@@ -187,7 +208,7 @@ export async function refineDemoSite(
       content: `Business description:\n${businessDescription}\n\nCurrent spec JSON:\n${JSON.stringify(currentSpec)}\n\nCurrent page (may be truncated):\n${(currentHtml ?? '').slice(0, 12_000)}\n\nApply this refinement and return the full updated output (spec comment + complete page): ${prompt}`,
     },
   ]);
-  if (fromModel) return fromModel;
+  if (fromModel) return { spec: fromModel.spec ?? currentSpec, html: fromModel.html };
   const spec = await refineDemoSpec(businessDescription, currentSpec, prompt);
   const { renderSiteHtml } = await import('@flowstarter/build-engine');
   return { spec, html: renderSiteHtml(spec) };

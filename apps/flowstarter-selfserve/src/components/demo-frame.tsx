@@ -48,57 +48,13 @@ export function DemoFrame({
             demo preview · {spec.brand.name.toLowerCase().replace(/\s+/g, '')}.com
           </div>
         </div>
-        <div style={{ position: 'relative' }}>
-          <iframe
-            title={`${spec.brand.name} demo`}
-            srcDoc={html}
-            sandbox=""
-            style={{ width: '100%', height: 560, border: 'none', display: 'block', background: '#fff', pointerEvents: 'none' }}
-          />
-          {/* veil over the lower part — full page unlocks with the build */}
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: '55%',
-              backdropFilter: 'blur(9px)',
-              WebkitBackdropFilter: 'blur(9px)',
-              background: 'linear-gradient(to bottom, transparent, color-mix(in srgb, var(--paper) 55%, transparent) 40%)',
-              maskImage: 'linear-gradient(to bottom, transparent, #000 28%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 28%)',
-              display: 'grid',
-              placeItems: 'center',
-            }}
-          >
-            <div
-              className="glass"
-              style={{ borderRadius: 16, padding: '16px 22px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 380, margin: 16 }}
-            >
-              <div
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 10,
-                  background: 'var(--accent-soft)',
-                  color: 'var(--accent)',
-                  display: 'grid',
-                  placeItems: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <Icons.lock size={18} />
-              </div>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>The rest unlocks with the build</div>
-                <div style={{ fontSize: 12.5, color: 'var(--ink-2)' }}>
-                  {lockNote ?? 'Full sections, contact & booking, mobile layout — built by the crew.'}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* the full agent-built page — scrollable, nothing hidden */}
+        <iframe
+          title={`${spec.brand.name} demo`}
+          srcDoc={html}
+          sandbox=""
+          style={{ width: '100%', height: 640, border: 'none', display: 'block', background: '#fff' }}
+        />
       </div>
     );
   }

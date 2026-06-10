@@ -289,55 +289,19 @@ export function FunnelOverlay({
                       sneak peek · {draft.brand.name.toLowerCase().replace(/\s+/g, '')}.com
                     </span>
                   </div>
-                  <div style={{ position: 'relative' }}>
-                    <iframe
-                      title={`${draft.brand.name} preview`}
-                      srcDoc={draftHtml ?? renderSiteHtml(draft)}
-                      style={{ width: '100%', height: 430, border: 'none', display: 'block', background: '#fff', pointerEvents: 'none' }}
-                      sandbox=""
-                    />
-                    {/* veil over the lower half — the full site unlocks with the build */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        height: '52%',
-                        backdropFilter: 'blur(9px)',
-                        WebkitBackdropFilter: 'blur(9px)',
-                        background: 'linear-gradient(to bottom, transparent, color-mix(in srgb, var(--paper) 55%, transparent) 40%)',
-                        maskImage: 'linear-gradient(to bottom, transparent, #000 28%)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 28%)',
-                        display: 'grid',
-                        placeItems: 'center',
-                      }}
-                    >
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 8,
-                          padding: '9px 16px',
-                          borderRadius: 12,
-                          background: 'var(--card)',
-                          border: '1px solid var(--line)',
-                          boxShadow: 'var(--shadow)',
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color: 'var(--ink)',
-                        }}
-                      >
-                        🔒 The full site unlocks with the build
-                      </span>
-                    </div>
-                  </div>
+                  {/* the full agent-built page — scroll it, inspect everything */}
+                  <iframe
+                    title={`${draft.brand.name} preview`}
+                    srcDoc={draftHtml ?? renderSiteHtml(draft)}
+                    style={{ width: '100%', height: 460, border: 'none', display: 'block', background: '#fff' }}
+                    sandbox=""
+                  />
                 </div>
                 <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setStep(3)}>
                   I like it — see the full demo →
                 </button>
                 <p style={{ fontSize: 12.5, textAlign: 'center', marginTop: 10, color: 'var(--ink-2)' }}>
-                  This is a real page the agent built from your prompt · free account · 10 agent prompts · the build starts at {pricing.build}
+                  Scroll it — this is a real page the agent built from your prompt · free account unlocks 10 agent prompts
                 </p>
               </div>
             )}

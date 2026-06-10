@@ -206,10 +206,11 @@
 /* ============ funnel overlay ============ */
 .funnel-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(22, 22, 30, 0.45); backdrop-filter: blur(8px); display: grid; place-items: center; padding: 24px; animation: fadeIn 0.25s var(--ease) both; }
 [data-theme='midnight'] .funnel-overlay { background: rgba(8, 8, 12, 0.6); }
-.funnel-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-xl); width: min(640px, 100%); max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg); padding: 34px 36px; position: relative; animation: fadeUp 0.35s var(--ease-out) both; }
+.funnel-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-xl); width: min(780px, 100%); max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg); padding: 34px 40px; position: relative; animation: fadeUp 0.35s var(--ease-out) both; }
 .funnel-close { position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink-3); cursor: pointer; display: grid; place-items: center; font-size: 16px; }
 .funnel-close:hover { color: var(--ink); border-color: var(--ink-3); }
-.funnel-steps { display: flex; gap: 6px; margin-bottom: 26px; }
+/* keep the progress bar clear of the absolute-positioned close button */
+.funnel-steps { display: flex; gap: 6px; margin-bottom: 26px; padding-right: 48px; }
 .funnel-step-dot { height: 4px; flex: 1; border-radius: 99px; background: var(--line); transition: background 0.3s; }
 .funnel-step-dot.on { background: var(--accent); }
 

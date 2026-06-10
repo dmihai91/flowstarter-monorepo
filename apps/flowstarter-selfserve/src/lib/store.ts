@@ -457,17 +457,10 @@ class SupabaseStore implements Store {
   }
 
   async bumpRateLimit(bucket: string) {
-    // Upsert-then-increment without a stored procedure: read, then upsert.
-    const existing = await this.one<{ count: number }>(
-      this.sb.from('selfserve_rate_limits').select('count').eq('bucket', bucket).maybeSingle(),
-    );
-    const next = (existing?.count ?? 0) + 1;
-    await this.one(
-      this.sb
-        .from('selfserve_rate_limits')
-        .upsert({ bucket, count: next, updated_at: new Date().toISOString() }),
-    );
-    return next;
+    // Atomic insert-or-increment via SQL function (see init_schema migration).
+    const { data, error } = await this.sb.rpc('selfserve_bump_rate_limit', { p_bucket: bucket });
+    if (error) throw new Error(`[selfserve store] rate limit bump: ${error.message}`);
+    return data as number;
   }
 }
 

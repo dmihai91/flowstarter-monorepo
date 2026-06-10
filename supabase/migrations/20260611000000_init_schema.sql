@@ -1,8 +1,21 @@
--- Self-serve v1 funnel: projects, builds, payments, rate limits.
--- Accessed exclusively via the service role from the selfserve app's server
--- routes (Clerk owns identity); RLS is enabled with no policies = deny-all
--- for anon/authenticated keys.
+-- ============================================================
+-- Flowstarter schema — from-scratch baseline (self-serve v1).
+-- Replaces all concierge-era migrations (profiles/workspaces/
+-- discovery_leads/billing) per the self-serve pivot: this file
+-- is the single source of truth for a fresh database.
+--
+-- Identity lives in Clerk; recurring billing lives in Clerk
+-- Billing; one-time payments in Stripe. These tables are
+-- accessed exclusively with the service role from the selfserve
+-- app's server routes — RLS is enabled with no policies, which
+-- denies anon/authenticated keys entirely.
+--
+-- NOTE: intentionally contains no DROPs of legacy tables. On an
+-- existing branch, reset the branch (or drop legacy tables
+-- explicitly) to converge; a fresh branch replays just this file.
+-- ============================================================
 
+-- ---------- projects: one funnel run per business description ----------
 create table if not exists public.selfserve_projects (
   id uuid primary key default gen_random_uuid(),
   clerk_user_id text not null,
@@ -22,6 +35,7 @@ create table if not exists public.selfserve_projects (
 create index if not exists selfserve_projects_user_idx on public.selfserve_projects (clerk_user_id);
 create index if not exists selfserve_projects_email_idx on public.selfserve_projects (email);
 
+-- ---------- builds: agent build runs (feed = the live theater) ----------
 create table if not exists public.selfserve_builds (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.selfserve_projects (id) on delete cascade,
@@ -42,6 +56,9 @@ create table if not exists public.selfserve_builds (
 create index if not exists selfserve_builds_project_idx on public.selfserve_builds (project_id);
 create index if not exists selfserve_builds_status_idx on public.selfserve_builds (status);
 
+-- ---------- payments: Stripe one-time fees (€50 build, €149 delivery) ----------
+-- The €39/mo hosting subscription is a Clerk Billing plan and is NOT mirrored
+-- here; entitlement checks go through Clerk's has({ plan }).
 create table if not exists public.selfserve_payments (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.selfserve_projects (id) on delete cascade,
@@ -65,13 +82,31 @@ create unique index if not exists selfserve_payments_session_idx
   on public.selfserve_payments (stripe_checkout_session_id)
   where stripe_checkout_session_id is not null;
 
--- Hard rate limits per email/IP for demo generation (daily windows).
+-- ---------- rate limits: hard demo caps per email/IP, daily buckets ----------
 create table if not exists public.selfserve_rate_limits (
   bucket text primary key, -- e.g. 'email:a@b.c:2026-06-10' or 'ip:1.2.3.4:2026-06-10'
   count int not null default 0,
   updated_at timestamptz not null default now()
 );
 
+-- Atomic bump (insert-or-increment) so concurrent demo requests can't slip
+-- past the cap via read-then-write races.
+create or replace function public.selfserve_bump_rate_limit(p_bucket text)
+returns int
+language sql
+security definer
+set search_path = public
+as $$
+  insert into public.selfserve_rate_limits as rl (bucket, count, updated_at)
+  values (p_bucket, 1, now())
+  on conflict (bucket)
+  do update set count = rl.count + 1, updated_at = now()
+  returning count;
+$$;
+
+revoke all on function public.selfserve_bump_rate_limit(text) from public, anon, authenticated;
+
+-- ---------- lock everything down: service role only ----------
 alter table public.selfserve_projects enable row level security;
 alter table public.selfserve_builds enable row level security;
 alter table public.selfserve_payments enable row level security;

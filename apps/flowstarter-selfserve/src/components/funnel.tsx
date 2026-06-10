@@ -1,0 +1,328 @@
+'use client';
+
+// "Try it" funnel overlay — ported from the design bundle's funnel.jsx, wired
+// to the real backend: idea → crew drafts (anonymous /api/demo-preview) →
+// create account & continue (project created from the draft, on to /demo).
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
+import type { SiteSpec } from '@flowstarter/build-engine';
+import { api } from '@/lib/client-api';
+import { track } from '@/lib/analytics';
+
+export const OPEN_FUNNEL_EVENT = 'open-funnel';
+const PENDING_KEY = 'fs-pending-draft';
+
+const FUNNEL_EXAMPLES = [
+  'A weekend pottery studio for total beginners',
+  'A two-chair barbershop, walk-ins welcome',
+  'A sourdough subscription for my neighborhood',
+];
+
+const DRAFT_TASKS = [
+  { who: 'Vera', color: '#3E86E8', text: 'Checking demand signals for your business…' },
+  { who: 'Iris', color: '#B964E8', text: 'Drafting a name and palette…' },
+  { who: 'Quinn', color: '#E89B2F', text: 'Writing a hero line in your voice…' },
+];
+
+export function openFunnel() {
+  window.dispatchEvent(new CustomEvent(OPEN_FUNNEL_EVENT));
+}
+
+export function FunnelOverlay({
+  pricing,
+}: {
+  pricing: { build: string; final: string; total: string; monthly: string };
+}) {
+  const router = useRouter();
+  const { isSignedIn } = useAuth();
+  const [open, setOpen] = React.useState(false);
+  const [step, setStep] = React.useState(1); // 1 idea · 2 draft · 3 continue
+  const [idea, setIdea] = React.useState('');
+  const [draft, setDraft] = React.useState<SiteSpec | null>(null);
+  const [taskIdx, setTaskIdx] = React.useState(0);
+  const [starting, setStarting] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const on = () => setOpen(true);
+    window.addEventListener(OPEN_FUNNEL_EVENT, on);
+    return () => window.removeEventListener(OPEN_FUNNEL_EVENT, on);
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  // Resume a draft stashed before the auth redirect (account → project → demo).
+  const startBuild = React.useCallback(
+    async (description: string, spec: SiteSpec) => {
+      if (!isSignedIn) {
+        try {
+          sessionStorage.setItem(PENDING_KEY, JSON.stringify({ description, spec }));
+        } catch {}
+        setStarting(true);
+        router.push('/sign-up?redirect_url=/');
+        return;
+      }
+      setStarting(true);
+      setError(null);
+      try {
+        const { projectId } = await api<{ projectId: string }>('/api/projects', {
+          method: 'POST',
+          body: JSON.stringify({ businessDescription: description, demoSpec: spec }),
+        });
+        router.push(`/p/${projectId}/demo`);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Something went wrong.');
+        setStarting(false);
+      }
+    },
+    [isSignedIn, router],
+  );
+
+  React.useEffect(() => {
+    if (!isSignedIn) return;
+    try {
+      const raw = sessionStorage.getItem(PENDING_KEY);
+      if (raw) {
+        sessionStorage.removeItem(PENDING_KEY);
+        const pending = JSON.parse(raw) as { description: string; spec: SiteSpec };
+        setOpen(true);
+        setIdea(pending.description);
+        setDraft(pending.spec);
+        setStep(3);
+        void startBuild(pending.description, pending.spec);
+      }
+    } catch {}
+  }, [isSignedIn, startBuild]);
+
+  // step 2: stream the drafting tasks while the real preview generates.
+  const startDraft = async (text?: string) => {
+    const v = (text ?? idea).trim();
+    if (v.length < 10) {
+      setError('Tell us a bit more — a sentence is plenty.');
+      return;
+    }
+    setIdea(v);
+    setError(null);
+    setStep(2);
+    setTaskIdx(0);
+    setDraft(null);
+    track('business_submitted', { anonymous: true, length: v.length });
+
+    const ticker = setInterval(() => setTaskIdx((i) => Math.min(i + 1, DRAFT_TASKS.length)), 1100);
+    try {
+      const res = await api<{ spec: SiteSpec }>('/api/demo-preview', {
+        method: 'POST',
+        body: JSON.stringify({ businessDescription: v }),
+      });
+      setDraft(res.spec);
+      setTaskIdx(DRAFT_TASKS.length);
+      track('demo_generated', { anonymous: true });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Something went wrong.');
+      setStep(1);
+    } finally {
+      clearInterval(ticker);
+    }
+  };
+
+  const close = () => {
+    setOpen(false);
+    setTimeout(() => {
+      setStep(1);
+      setError(null);
+    }, 300);
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="funnel-overlay" onClick={close}>
+      <div className="funnel-card" onClick={(e) => e.stopPropagation()}>
+        <button className="funnel-close" onClick={close} aria-label="Close">
+          ✕
+        </button>
+
+        <div className="funnel-steps">
+          {[1, 2, 3].map((n) => (
+            <span key={n} className={'funnel-step-dot' + (step >= n ? ' on' : '')} />
+          ))}
+        </div>
+
+        {step === 1 && (
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>Free · no account needed</div>
+            <h2 className="serif" style={{ fontSize: 30, marginBottom: 10 }}>What do you do?</h2>
+            <p style={{ fontSize: 15, marginBottom: 22, color: 'var(--ink-2)' }}>
+              One sentence is plenty. The crew drafts a name, brand and hero line — free, right now.
+            </p>
+            <textarea
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              autoFocus
+              rows={2}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  void startDraft();
+                }
+              }}
+              placeholder={'e.g. ' + FUNNEL_EXAMPLES[0]}
+              style={{
+                width: '100%',
+                font: 'inherit',
+                fontSize: 16,
+                lineHeight: 1.5,
+                color: 'var(--ink)',
+                background: 'var(--card)',
+                border: '1.5px solid var(--line)',
+                borderRadius: 16,
+                padding: '15px 17px',
+                resize: 'none',
+                outline: 'none',
+                marginBottom: 14,
+              }}
+            />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+              {FUNNEL_EXAMPLES.map((ex) => (
+                <button
+                  key={ex}
+                  onClick={() => void startDraft(ex)}
+                  style={{
+                    font: 'inherit',
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    background: 'var(--card)',
+                    border: '1.5px dashed var(--line)',
+                    color: 'var(--ink-2)',
+                    borderRadius: 99,
+                    padding: '7px 14px',
+                  }}
+                >
+                  {ex}
+                </button>
+              ))}
+            </div>
+            {error && <p style={{ color: 'var(--neg)', fontSize: 13.5, marginBottom: 12, fontWeight: 600 }}>{error}</p>}
+            <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={() => void startDraft()}>
+              Let the crew draft it →
+            </button>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>The crew is drafting</div>
+            <h2 className="serif" style={{ fontSize: 24, marginBottom: 6, lineHeight: 1.25 }}>“{idea}”</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 13, margin: '24px 0' }}>
+              {DRAFT_TASKS.map((t, i) => (
+                <div
+                  key={i}
+                  style={{ display: 'flex', alignItems: 'center', gap: 11, opacity: i < taskIdx + 1 ? 1 : 0.35, transition: 'opacity .3s' }}
+                >
+                  <span
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      flexShrink: 0,
+                      display: 'grid',
+                      placeItems: 'center',
+                      fontFamily: 'var(--mono)',
+                      fontSize: 11.5,
+                      fontWeight: 600,
+                      color: t.color,
+                      background: t.color + '1f',
+                      border: `1px solid ${t.color}66`,
+                    }}
+                  >
+                    {t.who[0]}
+                  </span>
+                  <span style={{ fontSize: 14.5, color: 'var(--ink-2)' }}>{t.text}</span>
+                  {i < taskIdx ? (
+                    <span style={{ color: 'var(--pos)', fontWeight: 700 }}>✓</span>
+                  ) : i === taskIdx && !draft ? (
+                    <span className="dots" style={{ color: t.color }}>
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+
+            {draft && (
+              <div style={{ animation: 'fadeUp .5s var(--ease-out) both' }}>
+                <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 18, padding: '22px 24px', marginBottom: 20 }}>
+                  <div className="serif" style={{ fontWeight: 600, fontSize: 34, letterSpacing: '-.02em' }}>{draft.brand.name}</div>
+                  <div style={{ fontSize: 14.5, marginBottom: 14, color: 'var(--ink-2)' }}>{draft.brand.tagline}</div>
+                  <div style={{ display: 'flex', gap: 7, marginBottom: 14 }}>
+                    {draft.brand.palette.map((c) => (
+                      <span key={c} style={{ width: 34, height: 34, borderRadius: 9, background: c, border: '1px solid var(--line)' }} />
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 15, fontStyle: 'italic', color: 'var(--ink-2)' }}>“{draft.copy.hero}”</div>
+                </div>
+                <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setStep(3)}>
+                  I like it — see the full demo →
+                </button>
+                <p style={{ fontSize: 12.5, textAlign: 'center', marginTop: 10, color: 'var(--ink-2)' }}>
+                  Free account · 3 refinements · the build starts at {pricing.build}, only when you say so
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {step === 3 && draft && (
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>Almost there</div>
+            <h2 className="serif" style={{ fontSize: 28, marginBottom: 8 }}>
+              Save {draft.brand.name} & keep going.
+            </h2>
+            <p style={{ fontSize: 14.5, marginBottom: 18, color: 'var(--ink-2)', lineHeight: 1.55 }}>
+              A free account saves your draft and unlocks the full demo with 3 refinement prompts.
+              When you’re happy, {pricing.build} starts the real build — you watch the crew live, and
+              pay {pricing.final} only after you’ve seen the finished site. Then {pricing.monthly}/month
+              covers hosting, your domain and AI edits.
+            </p>
+            <ul style={{ margin: '0 0 22px', padding: 0, listStyle: 'none', display: 'grid', gap: 8 }}>
+              {[
+                'Free account — just an email',
+                `Total is ${pricing.total} + ${pricing.monthly}/mo if you launch with us — no other costs`,
+                `Change your mind after the build? Keep a brand kit (assets + strategy); the ${pricing.build} is non-refundable`,
+              ].map((t) => (
+                <li key={t} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.5 }}>
+                  <span style={{ color: 'var(--pos)', fontWeight: 700 }}>✓</span> {t}
+                </li>
+              ))}
+            </ul>
+            {error && <p style={{ color: 'var(--neg)', fontSize: 13.5, marginBottom: 12, fontWeight: 600 }}>{error}</p>}
+            <button
+              className="btn btn-primary btn-lg"
+              disabled={starting}
+              style={{ width: '100%', justifyContent: 'center', opacity: starting ? 0.7 : 1 }}
+              onClick={() => void startBuild(idea, draft)}
+            >
+              {starting
+                ? isSignedIn
+                  ? 'Setting up your project…'
+                  : 'Taking you to sign-up…'
+                : isSignedIn
+                  ? 'Continue to my demo →'
+                  : 'Create my free account →'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

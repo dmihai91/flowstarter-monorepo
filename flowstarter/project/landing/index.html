@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
   <title>Flowstarter — You advise. The agents build it.</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="theme.js"></script>
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -34,7 +36,8 @@
         <a href="#pricing">Pricing</a>
       </div>
       <div class="nav-cta-row">
-        <a class="nav-login" href="../Flowstarter%20Product%20Flow.html">Log in</a>
+        <button class="theme-toggle" type="button"></button>
+        <a class="nav-login" href="login.html">Log in</a>
         <button class="btn btn-primary nav-cta" data-funnel>Try it free</button>
       </div>
     </div>
@@ -58,6 +61,12 @@
           <span class="live-dot"></span>
           <span>Free to try · <strong>€30</strong> to reserve your build · <strong>€120</strong> when it's live · then one subscription covers it all</span>
         </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><b>Validated first</b><span>Go / no-go verdict</span></div>
+          <div class="hero-stat"><b>Built by agents</b><span>Live, in front of you</span></div>
+          <div class="hero-stat"><b>Yours to edit</b><span>Plain-language changes</span></div>
+        </div>
+        <div class="hero-capacity">Limited capacity — we open a small number of new builds each month</div>
       </div>
 
       <!-- live build mock -->
@@ -76,6 +85,34 @@
       </div>
     </div>
   </header>
+
+  <!-- ============ PROBLEM ============ -->
+  <section class="section section-alt" id="problem">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">What you've tried so far</div>
+        <h2>You know how this usually goes</h2>
+      </div>
+      <div class="prob-grid">
+        <div class="prob-card reveal">
+          <div class="prob-mark">×</div>
+          <h3>AI drafts feel generic</h3>
+          <p class="muted">One-shot generators spit out a site in seconds — and it reads like everyone else who used the same tool. Thin structure, nobody checked if the idea holds.</p>
+        </div>
+        <div class="prob-card reveal">
+          <div class="prob-mark">×</div>
+          <h3>Agencies are heavy and slow</h3>
+          <p class="muted">Bigger builds take months and real money. After launch, every small change waits on someone else's schedule.</p>
+        </div>
+        <div class="prob-card reveal">
+          <div class="prob-mark">×</div>
+          <h3>You stay dependent</h3>
+          <p class="muted">The site lives in a system you didn't build. Every tweak needs the person who set it up — or a weekend lost to tutorials.</p>
+        </div>
+      </div>
+      <p class="prob-note reveal">Flowstarter is different: the idea gets <strong>validated first</strong>, agents build it <strong>in front of you</strong>, and afterwards you change anything <strong>just by asking</strong>.</p>
+    </div>
+  </section>
 
   <!-- ============ HOW IT WORKS ============ -->
   <section class="section" id="how">
@@ -134,6 +171,34 @@
     </div>
   </section>
 
+  <!-- ============ WHY US ============ -->
+  <section class="section section-alt" id="why">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Why Flowstarter</div>
+        <h2>Why people choose this over the rest</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-item reveal">
+          <h3>Validation before building</h3>
+          <p class="muted">Most builders skip straight to pixels. Here, an advisor pressure-tests the idea and researches the market first — you get an honest go / no-go before spending real money.</p>
+        </div>
+        <div class="why-item reveal">
+          <h3>Built for you, not off a shelf</h3>
+          <p class="muted">No template. The crew builds around one business — yours: your voice, your customers, your booking flow.</p>
+        </div>
+        <div class="why-item reveal">
+          <h3>The editor stays yours</h3>
+          <p class="muted">Change wording, photos or sections after launch just by asking in plain words. No software to learn, no freelancer to chase.</p>
+        </div>
+        <div class="why-item reveal">
+          <h3>A human when it matters</h3>
+          <p class="muted">When the brief outgrows the agents — custom features, migrations, bigger software — Mara and the team scope it with you at a fixed quote.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ SHOWCASE ============ -->
   <section class="section section-alt" id="examples">
     <div class="wrap">
@@ -153,6 +218,28 @@
         <h2>They advised. The agents built.</h2>
       </div>
       <div class="testi-grid" id="testi-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ WHO IT'S FOR ============ -->
+  <section class="section" id="who">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Who it's for</div>
+        <h2>Built for people who sell their craft</h2>
+      </div>
+      <div class="who-chips reveal">
+        <span class="who-chip">Coaches</span>
+        <span class="who-chip">Consultants</span>
+        <span class="who-chip">Therapists</span>
+        <span class="who-chip">Photographers</span>
+        <span class="who-chip">Studios &amp; classes</span>
+        <span class="who-chip">Barbers &amp; salons</span>
+        <span class="who-chip">Bakers &amp; makers</span>
+        <span class="who-chip">Local services</span>
+        <span class="who-chip">Side-hustles becoming real</span>
+      </div>
+      <p class="who-note muted reveal">If you sell your time, your hands, or your products — and you'd rather run the business than build websites — this is for you.</p>
     </div>
   </section>
 
@@ -227,6 +314,19 @@
     </div>
   </section>
 
+  <!-- ============ FINAL CTA ============ -->
+  <section class="section" id="cta">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <div class="eyebrow" style="color: rgba(255,255,255,.75)">Ready when you are</div>
+        <h2>Let's find out if your idea deserves a business.</h2>
+        <p>Describe it in one sentence. The crew validates it and drafts the brand — free, before you pay a cent. We'll tell you honestly if it's not worth building.</p>
+        <button class="btn btn-lg cta-band-btn" data-funnel>Try it with your idea →</button>
+        <span class="cta-band-note">Free to try · €30 to reserve · €120 only when it's live</span>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <div class="wrap footer-inner">
@@ -240,8 +340,15 @@
         </span>
         <span>Flowstarter</span>
       </div>
-      <span class="muted">Validate → Build → Launch</span>
-      <a class="muted" href="../Flowstarter%20Product%20Flow.html">Open the app →</a>
+      <nav class="footer-links">
+        <a href="#how">Process</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="login.html">Sign in</a>
+        <a href="#" onclick="return false">Privacy</a>
+        <a href="#" onclick="return false">Terms</a>
+      </nav>
+      <button class="btn btn-primary" style="padding: 10px 20px; font-size: 14px;" data-funnel>Try it free</button>
     </div>
   </footer>
 

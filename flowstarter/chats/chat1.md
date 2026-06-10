@@ -1851,3 +1851,127 @@ Everything from your message is resolved. Flowstarter now has:
 
 Open options whenever you want them: **multiple subscription tiers** on the landing (Care vs. Pro), tailoring more funnel draft variations, or a real Astro port of the landing source.
 
+## User
+
+Maybe show a bit more info on the landing?
+
+## Assistant
+
+_[tool: list_files]_
+
+_[tool: read_file]_
+
+_[tool: read_file]_
+
+_[tool: grep]_
+
+_[tool: read_file]_
+
+_[tool: str_replace_edit]_
+
+_[tool: str_replace_edit]_
+
+Now populate the three sections in `landing.js`:
+
+_[tool: str_replace_edit]_
+
+Let me add the mobile hero button fix, then design the login screen.
+
+_[tool: write_file]_
+
+_[tool: str_replace_edit]_
+
+Now the login screen — same brand, its own page in the landing app:
+
+_[tool: done]_
+
+All three pieces are in. Let me hand off and verify.
+
+_[tool: fork_verifier_agent]_
+
+All three additions are live:
+
+**1. More info on the landing** — the three sections that were empty shells are now filled:
+- **"Inside Flowstarter" product tour** — an auto-advancing, clickable 3-step walkthrough of real product moments: the validation report (score ring + market signals + your wedge), the live build feed (all four agents shipping), and My Site management (plain-language edit → done, monthly snapshot). This is the "what do I actually get" section the page was missing.
+- **"Built by the crew" showcase** — four example businesses with site thumbnails, domains, and "live in N days."
+- **Testimonials** — three solopreneur quotes tied to the showcase businesses.
+
+**2. Mobile hero buttons** — both CTAs now go full-width and stack at narrow widths.
+
+**3. Login screen** (`landing/login.html`) — a split layout: the form card (email/password, keep-me-signed-in, forgot password, Google/Apple, "Try it free" for newcomers) beside an indigo brand pane themed *"Your crew never stopped"* — showing what the agents did while you were away, which gives returning users a reason to log back in. Empty-field validation shows an error; successful sign-in routes into the product app. The nav "Log in" now points here. Fully responsive — single column on mobile.
+
+The verifier is walking all of it now; I'll flag anything that needs fixing.
+
+## User
+
+But on tablets and foldables the buttons should be on the same row
+
+## Assistant
+
+_[tool: str_replace_edit]_
+
+_[tool: grep]_
+
+_[tool: read_file]_
+
+_[tool: str_replace_edit]_
+
+_[tool: done]_
+
+Done — the full-width stacking now only kicks in below 600px (phones). Tablets and foldables (600–900px) keep "Try it with your idea" and "See how it works" side by side on one row, since there's plenty of width for both.
+
+## User
+
+Improve the responsive design
+
+## Assistant
+
+_[tool: str_replace_edit]_
+
+The screenshot reveals three real issues: Android's **forced dark mode** is mangling the palette (the page has no dark theme — Chrome is auto-inverting it), there's a **horizontal scrollbar** at the bottom, and the hero-note's pulsing live-dot renders as an odd floating ring next to the wrapped text. Let me fix all three.
+
+_[tool: str_replace_edit]_
+
+_[tool: str_replace_edit]_
+
+Now add the `color-scheme` meta to both pages so mobile browsers don't force-darken them:
+
+_[tool: done]_
+
+_[tool: fork_verifier_agent]_
+
+Three fixes from your screenshot:
+
+1. **Forced dark mode blocked** — what you're seeing is Android Chrome auto-inverting the page (the landing has no dark theme). Added `color-scheme: only light` (meta + CSS) to both the landing and login pages, so mobile browsers stop mangling the palette and render the real indigo-on-light design.
+
+2. **Horizontal scrollbar killed** — `overflow-x: clip` on the page root, so nothing can push the layout sideways anymore.
+
+3. **Mobile polish** — the pulsing live-dot in the pricing note now anchors to the first line of wrapped text (no more floating ring), plus tighter phone-width spacing: slimmer page padding, compact nav ("Try it free" button and logo scale down), and right-sized headline and cards.
+
+Verifier is checking the overflow + color-scheme fixes now. Worth a re-test on your phone — the page should now look like the light design even with battery-saver/dark-mode on.
+
+## User
+
+Where is toggle for light / dark / auto
+
+## Assistant
+
+_[tool: snip]_
+
+The theme toggle lives in the **product app** (`Flowstarter Product Flow.html`), in two places:
+
+1. **Dashboard header** — the small square icon button next to "New project". It cycles **Auto → Light → Dark** (half-circle = auto, sun = light, moon = dark). Auto follows your device setting live.
+2. **Profile → Preferences** — click your avatar → View profile → the "Appearance" segmented control (Auto / Light / Dark).
+
+The **landing page** deliberately has no toggle — it's a light-only marketing design. What you saw on your phone wasn't our dark mode; it was Android Chrome force-inverting the page, which corrupted the colors — that's why I blocked it with `color-scheme: only light`.
+
+If you'd like, I can give the landing (and login) a **proper dark theme + the same Auto/Light/Dark toggle** as the app — a designed dark palette rather than the browser's auto-inversion. Want me to?
+
+## User
+
+I don't see the toggle button
+
+## User
+
+Also the open the app button on the footer should actually be try it for free with the demo funnel
+

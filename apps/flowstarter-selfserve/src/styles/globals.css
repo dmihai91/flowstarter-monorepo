@@ -8,6 +8,7 @@
 @import url('https://api.fontshare.com/v2/css?f[]=general-sans@500,600,700&display=swap');
 
 @import 'tailwindcss';
+@import './landing.css';
 
 :root {
   /* type — General Sans (display) + Inter (UI) + JetBrains Mono (machine voice) */

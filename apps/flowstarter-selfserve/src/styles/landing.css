@@ -361,3 +361,99 @@
   border-color: var(--glass-border);
 }
 .funnel-card textarea { background: var(--glass-2) !important; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+
+/* ============================================================
+   3D glass — the prototype's .glass-3d depth applied to landing
+   cards: top-light sheen, layered inset highlights, hover lift.
+   ============================================================ */
+.landing .step-card,
+.landing .prob-card,
+.landing .crew-card,
+.landing .why-item,
+.landing .price-step,
+.landing .show-card,
+.landing .sub-card,
+.landing .demo-card,
+.landing .pin-panel,
+.landing .faq-item,
+.landing .hero-prompt {
+  position: relative;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px rgba(60, 60, 130, 0.06),
+    0 1px 2px rgba(30, 30, 80, 0.04),
+    0 18px 40px -22px rgba(40, 50, 140, 0.4);
+}
+.landing .step-card::before,
+.landing .prob-card::before,
+.landing .crew-card::before,
+.landing .why-item::before,
+.landing .price-step::before,
+.landing .show-card::before,
+.landing .sub-card::before,
+.landing .demo-card::before,
+.landing .pin-panel::before,
+.landing .hero-prompt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.4), transparent 38%);
+  pointer-events: none;
+  z-index: 0;
+}
+/* grid cards lift on hover (not the inputs/panels) */
+.landing .step-card,
+.landing .prob-card,
+.landing .crew-card,
+.landing .why-item,
+.landing .price-step,
+.landing .show-card {
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.landing .step-card:hover,
+.landing .prob-card:hover,
+.landing .crew-card:hover,
+.landing .why-item:hover,
+.landing .price-step:hover,
+.landing .show-card:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 2px 4px rgba(30, 30, 80, 0.05),
+    0 28px 60px -24px rgba(40, 50, 140, 0.5);
+}
+/* midnight: dimmer highlights, deeper shadow */
+[data-theme='midnight'] .landing .step-card,
+[data-theme='midnight'] .landing .prob-card,
+[data-theme='midnight'] .landing .crew-card,
+[data-theme='midnight'] .landing .why-item,
+[data-theme='midnight'] .landing .price-step,
+[data-theme='midnight'] .landing .show-card,
+[data-theme='midnight'] .landing .sub-card,
+[data-theme='midnight'] .landing .demo-card,
+[data-theme='midnight'] .landing .pin-panel,
+[data-theme='midnight'] .landing .faq-item,
+[data-theme='midnight'] .landing .hero-prompt {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3),
+    0 18px 44px -22px rgba(0, 0, 0, 0.7);
+}
+[data-theme='midnight'] .landing .step-card::before,
+[data-theme='midnight'] .landing .prob-card::before,
+[data-theme='midnight'] .landing .crew-card::before,
+[data-theme='midnight'] .landing .why-item::before,
+[data-theme='midnight'] .landing .price-step::before,
+[data-theme='midnight'] .landing .show-card::before,
+[data-theme='midnight'] .landing .sub-card::before,
+[data-theme='midnight'] .landing .demo-card::before,
+[data-theme='midnight'] .landing .pin-panel::before,
+[data-theme='midnight'] .landing .hero-prompt::before {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), transparent 40%);
+}
+/* keep card content above the sheen */
+.landing .demo-card > *,
+.landing .hero-prompt > *,
+.landing .sub-card > * { position: relative; z-index: 1; }

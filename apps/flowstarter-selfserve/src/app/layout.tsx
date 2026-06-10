@@ -16,24 +16,14 @@ export const metadata: Metadata = {
     'Describe your business. A crew of AI agents builds your brand, copy and website — you watch it happen live.',
 };
 
-// Resolve theme before paint to avoid a flash (cookie-less: localStorage + system).
-const themeScript = `
-(function(){
-  try {
-    var m = localStorage.getItem('fs-theme-mode');
-    var sys = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'midnight' : 'studio';
-    var t = (m === 'studio' || m === 'midnight') ? m : sys;
-    document.documentElement.setAttribute('data-theme', t);
-  } catch (e) { document.documentElement.setAttribute('data-theme', 'studio'); }
-})();`;
-
+// Theme before paint is handled WITHOUT an inline script (those trip React's
+// script-tag warning whenever hydration recovers): the "auto" mode resolves in
+// pure CSS via prefers-color-scheme (globals.css); explicit picks are applied
+// by ThemeProvider after mount.
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en" data-theme="studio" suppressHydrationWarning>
-        <head>
-          <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        </head>
+      <html lang="en" suppressHydrationWarning>
         {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject
             body attributes before hydration; only attribute diffs are suppressed. */}
         <body suppressHydrationWarning>

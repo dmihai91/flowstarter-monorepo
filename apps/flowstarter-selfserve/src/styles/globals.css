@@ -39,6 +39,7 @@
 }
 
 /* ---------- STUDIO (default, light) ---------- */
+:root,
 [data-theme='studio'] {
   --paper: #f4f4f6;
   --paper-2: #fbfbfc;
@@ -106,6 +107,43 @@
   --accent-grad: linear-gradient(120deg, #7c85ff 0%, #93a4ff 100%);
   --text-grad: linear-gradient(105deg, #98a2ff 0%, #aebcff 100%);
 }
+
+/* auto mode: follow the OS until ThemeProvider sets an explicit theme */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --paper: #121116;
+    --paper-2: #18171e;
+    --card: #1d1c24;
+    --ink: #f2f1f5;
+    --ink-2: #b4b2be;
+    --ink-3: #807e8a;
+    --line: #2c2a33;
+    --line-2: #232128;
+    --accent: #8a90ff;
+    --accent-2: #9aa4ff;
+    --accent-ink: #15141a;
+    --accent-soft: #272a48;
+    --primary: #6d66f5;
+    --primary-ink: #ffffff;
+    --canvas-bg: #0c0b10;
+    --canvas-card: #18171e;
+    --canvas-line: #2c2a33;
+    --canvas-ink: #f2f1f5;
+    --canvas-ink-2: #9795a0;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.5), 0 30px 60px -24px rgba(0, 0, 0, 0.7);
+    --glass: rgba(34, 32, 42, 0.55);
+    --glass-2: rgba(26, 24, 32, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --glass-blur: 22px;
+    --blob-1: #6e7ce8;
+    --blob-2: #f0917a;
+    --blob-3: #f0c45c;
+    --accent-grad: linear-gradient(120deg, #7c85ff 0%, #93a4ff 100%);
+    --text-grad: linear-gradient(105deg, #98a2ff 0%, #aebcff 100%);
+  }
+}
+
 
 * {
   box-sizing: border-box;

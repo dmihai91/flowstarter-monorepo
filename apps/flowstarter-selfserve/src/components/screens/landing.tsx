@@ -339,15 +339,15 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
       <header className="hero" id="top">
         <div className="wrap hero-grid">
           <div className="hero-copy reveal">
-            <div className="eyebrow">From business to online — agents do the building</div>
+            <div className="eyebrow">A crew of agents does the building</div>
             <h1>
-              You advise.
+              Your business,
               <br />
-              <span className="grad-text">The agents build it.</span>
+              <span className="grad-text">online this week.</span>
             </h1>
             <p className="hero-sub muted">
-              Tell Flowstarter what you do. A team of smart specialists works for you 24/7 —
-              designing your brand, writing your copy, and shipping your site.
+              Describe what you do in one sentence. A crew of specialist agents designs your brand,
+              writes your copy and ships your site, while you watch.
             </p>
             {/* the funnel entry: prompt box front and center */}
             <HeroPrompt />

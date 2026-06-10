@@ -457,3 +457,7 @@
 .landing .demo-card > *,
 .landing .hero-prompt > *,
 .landing .sub-card > * { position: relative; z-index: 1; }
+
+/* anchored sections clear the sticky nav when scrolled to */
+.landing section[id],
+.landing header[id] { scroll-margin-top: 76px; }

@@ -118,6 +118,13 @@ body {
   height: 100%;
 }
 
+/* smooth anchor scrolling (prototype parity); disabled for reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   font-family: var(--sans);
   background: var(--paper);

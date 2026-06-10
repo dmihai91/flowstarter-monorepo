@@ -34,7 +34,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head>
           <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         </head>
-        <body>
+        {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject
+            body attributes before hydration; only attribute diffs are suppressed. */}
+        <body suppressHydrationWarning>
           <Providers>
             <div className="app-shell">
               <div className="ambient">

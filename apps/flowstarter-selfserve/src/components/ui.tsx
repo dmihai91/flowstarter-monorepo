@@ -8,44 +8,28 @@ import { Icons, ROLE_ICON } from './icons';
 import { ThemeCtx, useIsMobile } from './theme';
 import type { AgentMeta } from '@/lib/agents';
 
+// Logo ported from the main flowstarter app (flow-design-system Logo.tsx):
+// indigo→cyan gradient rounded square with the stylized flowing F, and the
+// "Flow{starter}" wordmark with a gradient tail.
 export function LogoMark({ size = 34 }: { size?: number }) {
+  const id = React.useId();
   return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size * 0.26,
-        flexShrink: 0,
-        position: 'relative',
-        background: 'var(--accent-grad)',
-        boxShadow: '0 4px 12px -4px var(--accent), inset 0 1px 0 rgba(255,255,255,.35)',
-        display: 'grid',
-        placeItems: 'center',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(110% 90% at 25% 0%, rgba(255,255,255,.4), transparent 60%)',
-        }}
-      />
-      <svg
-        width={size * 0.62}
-        height={size * 0.62}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        style={{ position: 'relative' }}
-      >
-        {/* F drawn from streamlines — stem + two arms flowing like a current */}
-        <path d="M7.5 5.2v14" />
-        <path d="M7.5 5.8c3-1.6 5.6.9 8.2.4 1-.2 1.8-.6 2.6-1.2" />
-        <path d="M7.5 12.2c2.4-1.3 4.4.7 6.5.3.8-.15 1.5-.5 2.1-1" opacity=".85" />
-        <path d="M19.6 8.6c.5-.1.9-.3 1.3-.6" opacity=".45" />
+    <div style={{ width: size, height: size, flexShrink: 0, position: 'relative' }}>
+      <svg viewBox="-2 -2 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
+        <defs>
+          <linearGradient id={`${id}-bg`} x1="0" y1="40" x2="40" y2="0" gradientUnits="userSpaceOnUse">
+            <stop stopColor="var(--accent)" />
+            <stop offset="0.5" stopColor="var(--accent)" />
+            <stop offset="1" stopColor="#06B6D4" />
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="11" fill={`url(#${id}-bg)`} />
+        <rect x="1" y="1" width="38" height="38" rx="10" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+        {/* Stylized "F" — centered at x=13, arms balanced around the optical center */}
+        <path d="M13 10 L13 30" stroke="white" strokeWidth="3" strokeLinecap="round" />
+        <path d="M13 11 C17 10, 22 10, 27 11" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <path d="M13 20 C16 19, 20 19, 24 20" stroke="white" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <path d="M13 30 C16 30, 20 29, 25 28" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
       </svg>
     </div>
   );
@@ -60,12 +44,22 @@ export function Logo({ size = 22, light = false }: { size?: number; light?: bool
           fontFamily: 'var(--sans)',
           fontWeight: 700,
           fontSize: size,
-          letterSpacing: '-.03em',
+          letterSpacing: '-.02em',
           lineHeight: 1,
           color: light ? 'var(--canvas-ink)' : 'var(--ink)',
         }}
       >
-        Flowstarter
+        Flow
+        <span
+          style={{
+            background: 'linear-gradient(to right, var(--accent), #06B6D4)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            color: 'transparent',
+          }}
+        >
+          starter
+        </span>
       </span>
     </div>
   );

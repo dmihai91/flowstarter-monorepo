@@ -10,7 +10,7 @@ import { Icons } from '@/components/icons';
 
 export const clerkAppearance: SignInProps['appearance'] = {
   variables: {
-    colorPrimary: '#3A3F9E',
+    colorPrimary: '#3D3FE0',
     colorText: 'var(--ink)',
     colorTextSecondary: 'var(--ink-2)',
     colorBackground: 'transparent',

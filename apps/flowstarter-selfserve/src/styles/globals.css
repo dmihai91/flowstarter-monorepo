@@ -48,11 +48,12 @@
   --ink-3: #8c8c96;
   --line: #e6e6ea;
   --line-2: #f1f1f4;
-  --accent: #4d5dd9;
-  --accent-2: #5b74c8;
+  /* saturated indigo button/accent family */
+  --accent: #3d4ff0;
+  --accent-2: #5e6cf2;
   --accent-ink: #ffffff;
-  --accent-soft: #e9ebf8;
-  --primary: #3a3f9e;
+  --accent-soft: #e7eafd;
+  --primary: #3d3fe0;
   --primary-ink: #ffffff;
   --canvas-bg: #efeff2;
   --canvas-card: #ffffff;
@@ -68,8 +69,8 @@
   --blob-1: #5562e6;
   --blob-2: #f0846a;
   --blob-3: #f2c24c;
-  --accent-grad: linear-gradient(120deg, #4d5dd9 0%, #5e7be0 100%);
-  --text-grad: linear-gradient(105deg, #3d4ac8 0%, #5570d8 100%);
+  --accent-grad: linear-gradient(120deg, #3d4ff0 0%, #5e7bf7 100%);
+  --text-grad: linear-gradient(105deg, #3340e8 0%, #4d6af5 100%);
 }
 
 /* ---------- MIDNIGHT (dark) ---------- */
@@ -82,11 +83,11 @@
   --ink-3: #807e8a;
   --line: #2c2a33;
   --line-2: #232128;
-  --accent: #8c97f2;
-  --accent-2: #8390e8;
+  --accent: #8a90ff;
+  --accent-2: #9aa4ff;
   --accent-ink: #15141a;
-  --accent-soft: #25242e;
-  --primary: #6a74de;
+  --accent-soft: #272a48;
+  --primary: #6d66f5;
   --primary-ink: #ffffff;
   --canvas-bg: #0c0b10;
   --canvas-card: #18171e;
@@ -102,8 +103,8 @@
   --blob-1: #6e7ce8;
   --blob-2: #f0917a;
   --blob-3: #f0c45c;
-  --accent-grad: linear-gradient(120deg, #7c8af0 0%, #8fa4f4 100%);
-  --text-grad: linear-gradient(105deg, #9aa4f4 0%, #adbaf8 100%);
+  --accent-grad: linear-gradient(120deg, #7c85ff 0%, #93a4ff 100%);
+  --text-grad: linear-gradient(105deg, #98a2ff 0%, #aebcff 100%);
 }
 
 * {

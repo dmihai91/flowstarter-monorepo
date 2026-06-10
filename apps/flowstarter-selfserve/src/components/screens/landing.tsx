@@ -6,7 +6,7 @@
 // concierge replaced by the contact email.
 import React from 'react';
 import { useAuth, UserButton } from '@clerk/nextjs';
-import { Logo, LogoMark, ThemeToggle } from '@/components/ui';
+import { Logo, ThemeToggle } from '@/components/ui';
 import { Icons } from '@/components/icons';
 import { AGENT_LIST } from '@/lib/agents';
 import { FunnelOverlay, openFunnel } from '@/components/funnel';
@@ -278,8 +278,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
       <nav className="nav glass-2">
         <div className="wrap nav-inner">
           <a href="#top" className="logo-row" style={{ textDecoration: 'none' }}>
-            <LogoMark size={30} />
-            <span className="logo-word">Flowstarter</span>
+            <Logo size={19} />
           </a>
           <div className="nav-links">
             <a href="#how">How it works</a>
@@ -702,8 +701,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
       <footer className="footer">
         <div className="wrap footer-inner">
           <div className="logo-row">
-            <LogoMark size={24} />
-            <span>Flowstarter</span>
+            <Logo size={15} />
           </div>
           <nav className="footer-links">
             <a href="#how">Process</a>

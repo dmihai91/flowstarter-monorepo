@@ -4,11 +4,15 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireIdentity, clientIp } from '@/lib/auth';
 import { getStore } from '@/lib/store';
-import { generateDemoSpec } from '@/lib/demo';
+import { generateDemoSpec, SpecSchema } from '@/lib/demo';
 import { DEMO } from '@/lib/config';
+import type { SiteSpec } from '@flowstarter/build-engine';
 
 const Body = z.object({
   businessDescription: z.string().trim().min(10).max(2000),
+  // Sneak-peek handoff: the spec already generated anonymously on the landing
+  // page, so sign-up doesn't regenerate (or change) what the visitor saw.
+  demoSpec: SpecSchema.optional(),
 });
 
 export async function POST(req: Request) {
@@ -44,13 +48,20 @@ export async function POST(req: Request) {
       clientIp: ip,
     });
 
-    await store.updateProject(project.id, { demo_status: 'generating' });
-    try {
-      const spec = await generateDemoSpec(body.data.businessDescription);
-      await store.updateProject(project.id, { demo_spec: spec, demo_status: 'ready' });
-    } catch (e) {
-      console.error('[selfserve] demo generation failed', e);
-      await store.updateProject(project.id, { demo_status: 'failed' });
+    if (body.data.demoSpec) {
+      await store.updateProject(project.id, {
+        demo_spec: body.data.demoSpec as SiteSpec,
+        demo_status: 'ready',
+      });
+    } else {
+      await store.updateProject(project.id, { demo_status: 'generating' });
+      try {
+        const spec = await generateDemoSpec(body.data.businessDescription);
+        await store.updateProject(project.id, { demo_spec: spec, demo_status: 'ready' });
+      } catch (e) {
+        console.error('[selfserve] demo generation failed', e);
+        await store.updateProject(project.id, { demo_status: 'failed' });
+      }
     }
 
     return NextResponse.json({ projectId: project.id });

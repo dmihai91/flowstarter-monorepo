@@ -10,7 +10,7 @@ import {
 } from '@flowstarter/build-engine';
 import { MODELS } from './config';
 
-const SpecSchema = z.object({
+export const SpecSchema = z.object({
   brand: z.object({
     name: z.string().min(1).max(40),
     tagline: z.string().min(1).max(80),

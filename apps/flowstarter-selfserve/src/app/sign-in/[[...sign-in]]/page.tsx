@@ -141,7 +141,7 @@ function LoginInner() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <ThemeToggle />
             <a className="login-back" href="/">
-              ← Back to site
+              ← Back home
             </a>
           </div>
         </div>

@@ -254,7 +254,7 @@
 .login-main { flex: 1; display: grid; place-items: center; padding: 36px 0; }
 .login-card { width: min(400px, 100%); }
 .login-card h1 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.022em; font-size: 32px; margin: 0 0 8px; line-height: 1.08; }
-.login-sub { font-size: 15px; margin-bottom: 28px; color: var(--ink-2); }
+.landing .login-sub { font-size: 15px; margin-bottom: 28px; color: var(--ink-2); }
 .login-field { margin-bottom: 14px; }
 .login-label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); margin-bottom: 7px; }
 .login-input { width: 100%; font: inherit; font-size: 15px; color: var(--ink); background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; padding: 13px 15px; outline: none; transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease); }
@@ -269,9 +269,9 @@
 .login-socials { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .login-social { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 9px; transition: border-color 0.18s, transform 0.18s; }
 .login-social:hover { border-color: var(--ink-3); transform: translateY(-1px); }
-.login-foot { text-align: center; font-size: 14px; color: var(--ink-2); margin-top: 26px; }
+.landing .login-foot { text-align: center; font-size: 14px; color: var(--ink-2); margin-top: 26px; }
 .login-foot a { color: var(--accent); font-weight: 600; text-decoration: none; }
-.login-legal { text-align: center; font-size: 12px; color: var(--ink-3); padding: 18px 0 4px; }
+.landing .login-legal { text-align: center; font-size: 12px; color: var(--ink-3); padding: 18px 0 4px; margin: 0; }
 .login-error { background: #fbeae7; border: 1px solid #efb9ae; color: #b23a22; font-size: 13.5px; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; animation: fadeUp 0.3s var(--ease-out) both; }
 [data-theme='midnight'] .login-error { background: #3a201b; border-color: #5e3329; color: #f0a294; }
 .brand-pane { position: relative; overflow: hidden; background: radial-gradient(120% 90% at 80% -10%, #6e7be0 0%, transparent 55%), radial-gradient(110% 80% at -10% 110%, #3a48b8 0%, transparent 60%), #4d5dd9; color: #fff; display: flex; flex-direction: column; justify-content: center; padding: 64px; }

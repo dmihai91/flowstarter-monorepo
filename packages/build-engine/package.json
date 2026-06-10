@@ -1,0 +1,19 @@
+{
+  "name": "@flowstarter/build-engine",
+  "version": "0.1.0",
+  "description": "Build engine contract + mock engine for the self-serve funnel. The real engine (agent orchestrator) implements the same interface.",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2",
+    "@types/node": "20.19.9"
+  }
+}

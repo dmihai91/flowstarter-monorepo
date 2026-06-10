@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flowstarter — You advise. The agents build it.</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- ambient background -->
+  <div class="ambient" aria-hidden="true"></div>
+
+  <!-- ============ NAV ============ -->
+  <nav class="nav glass">
+    <div class="wrap nav-inner">
+      <div class="logo-row">
+        <span class="logo-mark">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+            <path d="M7.5 5.2v14"></path>
+            <path d="M7.5 5.8c3-1.6 5.6.9 8.2.4 1-.2 1.8-.6 2.6-1.2"></path>
+            <path d="M7.5 12.2c2.4-1.3 4.4.7 6.5.3.8-.15 1.5-.5 2.1-1" opacity=".85"></path>
+          </svg>
+        </span>
+        <span class="logo-word">Flowstarter</span>
+      </div>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#product">Product</a>
+        <a href="#examples">Examples</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <div class="nav-cta-row">
+        <a class="nav-login" href="../Flowstarter%20Product%20Flow.html">Log in</a>
+        <button class="btn btn-primary nav-cta" data-funnel>Try it free</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy reveal">
+        <div class="eyebrow">From idea to online — agents do the building</div>
+        <h1>You advise.<br /><span class="grad-text">The agents build it.</span></h1>
+        <p class="hero-sub muted">
+          Tell Flowstarter what you'd like to build. A team of smart specialists works for you
+          24/7 — validating your idea, designing your brand, writing your copy, and shipping your site.
+        </p>
+        <div class="hero-cta-row">
+          <button class="btn btn-primary btn-lg" data-funnel>Try it with your idea</button>
+          <a class="btn btn-ghost btn-lg" href="#how">See how it works</a>
+        </div>
+        <div class="hero-note muted">
+          <span class="live-dot"></span>
+          <span>Free to try · <strong>€30</strong> to reserve your build · <strong>€120</strong> when it's live · then one subscription covers it all</span>
+        </div>
+      </div>
+
+      <!-- live build mock -->
+      <div class="hero-demo reveal">
+        <div class="demo-card">
+          <div class="demo-head">
+            <span class="demo-pill">BUILDING</span>
+            <span class="demo-domain mono">mudroom.studio</span>
+          </div>
+          <div class="demo-feed" id="demo-feed"></div>
+          <div class="demo-foot">
+            <div class="demo-avatars" id="demo-avatars"></div>
+            <span class="demo-progress mono" id="demo-progress">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="section" id="how">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">How it works</div>
+        <h2>Three steps. You approve, they execute.</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <div class="step-num mono">01</div>
+          <div class="step-icon" style="color:#3E86E8"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4-4"></path></svg></div>
+          <h3>Validate</h3>
+          <p class="muted">An advisor interviews you, pressure-tests the idea, and researches your market. You get a real go / no-go verdict — before spending a cent on building.</p>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num mono">02</div>
+          <div class="step-icon" style="color:#4D5DD9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"></path></svg></div>
+          <h3>Build</h3>
+          <p class="muted">Four specialist agents build your brand, write your copy, assemble your site and wire up booking — live, in front of you. You direct; they do.</p>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-num mono">03</div>
+          <div class="step-icon" style="color:#2FB87A"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3c3 1 6 4 6 9l-3 3H9l-3-3c0-5 3-8 6-9z"></path><circle cx="12" cy="9" r="1.6"></circle><path d="M9 15l-2 4M15 15l2 4"></path></svg></div>
+          <h3>Launch</h3>
+          <p class="muted">Approve it and it goes live on your domain — hosting, SSL, and a crew that keeps maintaining, fixing and improving it every month.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRODUCT (pinned scroll tour) ============ -->
+  <section class="pin-section" id="product">
+    <div class="pin-stage">
+      <div class="wrap pin-inner">
+        <div class="pin-copy">
+          <div class="eyebrow">Inside Flowstarter</div>
+          <h2>Not just a site builder.<br />A team you direct.</h2>
+          <div class="pin-dots" id="pin-dots"></div>
+          <p class="muted pin-hint">Keep scrolling ↓</p>
+        </div>
+        <div class="pin-panels" id="pin-panels"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CREW ============ -->
+  <section class="section" id="crew">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Your build team</div>
+        <h2>Meet the crew that works for you 24/7</h2>
+      </div>
+      <div class="crew-grid" id="crew-grid"></div>
+      <p class="crew-note muted reveal">…and when you need a human, <strong>Mara</strong> — your build strategist — is one call away.</p>
+    </div>
+  </section>
+
+  <!-- ============ SHOWCASE ============ -->
+  <section class="section section-alt" id="examples">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Built by the crew</div>
+        <h2>Real businesses, live in days</h2>
+      </div>
+      <div class="show-grid" id="show-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="section" id="testimonials">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">From solopreneurs like you</div>
+        <h2>They advised. The agents built.</h2>
+      </div>
+      <div class="testi-grid" id="testi-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="section" id="pricing">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Pricing</div>
+        <h2>Pay when it's real. Not before.</h2>
+      </div>
+      <div class="price-flow reveal">
+        <div class="price-step">
+          <div class="price-amount"><span class="grad-text">€0</span></div>
+          <div class="price-label">Try it</div>
+          <p class="muted">Describe your idea, get it validated, and watch the agents draft your brand. Free.</p>
+        </div>
+        <div class="price-arrow" aria-hidden="true">→</div>
+        <div class="price-step price-step-hi">
+          <div class="price-amount">€30</div>
+          <div class="price-label">Reserve your build</div>
+          <p class="muted">A deposit puts the crew to work on the full site. Credited toward your total.</p>
+        </div>
+        <div class="price-arrow" aria-hidden="true">→</div>
+        <div class="price-step">
+          <div class="price-amount">€120</div>
+          <div class="price-label">When it's live</div>
+          <p class="muted">Pay the rest only when your site is built and you've approved it. <strong>€150 total.</strong></p>
+        </div>
+      </div>
+      <div class="price-foot reveal">
+        <!-- subscription card: everything ongoing, one plan -->
+        <div class="sub-card">
+          <div class="sub-head">
+            <div>
+              <div class="eyebrow" style="margin-bottom:8px">Then · one subscription covers everything</div>
+              <h3>Care plan — €39.99/mo</h3>
+            </div>
+            <button class="btn btn-primary" data-funnel>Start free</button>
+          </div>
+          <div class="sub-grid">
+            <div class="sub-item">
+              <span class="sub-icon" style="color:#2FB87A"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"></path></svg></span>
+              <div><strong>All services included</strong><p class="muted">Hosting, your domain, SSL, backups — nothing extra to buy.</p></div>
+            </div>
+            <div class="sub-item">
+              <span class="sub-icon" style="color:#4D5DD9"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"></path></svg></span>
+              <div><strong>Ongoing AI usage</strong><p class="muted">10 AI edits a month — ask in plain language, the crew ships it.</p></div>
+            </div>
+            <div class="sub-item">
+              <span class="sub-icon" style="color:#E89B2F"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg></span>
+              <div><strong>Monitoring &amp; auto-fixes</strong><p class="muted">Uptime watched 24/7; broken things get fixed before you notice.</p></div>
+            </div>
+            <div class="sub-item">
+              <span class="sub-icon" style="color:#B964E8"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></span>
+              <div><strong>1–2 human interventions</strong><p class="muted">When something needs a person, our team steps in — included monthly.</p></div>
+            </div>
+          </div>
+          <p class="sub-foot muted">Cancel anytime — your domain stays yours.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section section-alt" id="faq">
+    <div class="wrap wrap-narrow">
+      <div class="sec-head reveal">
+        <div class="eyebrow">Questions</div>
+        <h2>Fair questions, straight answers</h2>
+      </div>
+      <div class="faq-list reveal" id="faq-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div class="logo-row">
+        <span class="logo-mark logo-mark-sm">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+            <path d="M7.5 5.2v14"></path>
+            <path d="M7.5 5.8c3-1.6 5.6.9 8.2.4 1-.2 1.8-.6 2.6-1.2"></path>
+            <path d="M7.5 12.2c2.4-1.3 4.4.7 6.5.3.8-.15 1.5-.5 2.1-1" opacity=".85"></path>
+          </svg>
+        </span>
+        <span>Flowstarter</span>
+      </div>
+      <span class="muted">Validate → Build → Launch</span>
+      <a class="muted" href="../Flowstarter%20Product%20Flow.html">Open the app →</a>
+    </div>
+  </footer>
+
+  <!-- funnel mounts here -->
+  <div id="funnel-root"></div>
+
+  <script src="landing.js"></script>
+  <script type="text/babel" src="funnel.jsx"></script>
+</body>
+</html>

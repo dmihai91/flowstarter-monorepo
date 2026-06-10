@@ -1,0 +1,19 @@
+{
+  "name": "flowstarter-selfserve",
+  "projectType": "application",
+  "tags": ["app:selfserve"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": { "command": "pnpm run build", "cwd": "apps/flowstarter-selfserve" }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": { "command": "pnpm run dev", "cwd": "apps/flowstarter-selfserve" }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": { "command": "tsc --noEmit", "cwd": "apps/flowstarter-selfserve" }
+    }
+  }
+}

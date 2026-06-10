@@ -48,6 +48,45 @@ const HERO_FEED = [
   { who: 'Dash', color: '#2FB87A', text: 'Ready for your review. ✓' },
 ];
 
+// Hero prompt box — typing here drops the visitor straight into the funnel
+// with the crew already drafting their site.
+function HeroPrompt() {
+  const [val, setVal] = React.useState('');
+  const [hint, setHint] = React.useState(false);
+  const go = () => {
+    if (val.trim().length < 10) {
+      setHint(true);
+      return;
+    }
+    openFunnel(val.trim());
+  };
+  return (
+    <div className="hero-prompt">
+      <textarea
+        value={val}
+        onChange={(e) => {
+          setVal(e.target.value);
+          setHint(false);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            go();
+          }
+        }}
+        rows={2}
+        placeholder="e.g. A weekend pottery studio for total beginners — drop-in classes"
+      />
+      <div className="hero-prompt-row">
+        <span className="mono hero-prompt-hint">{hint ? 'a sentence is plenty — tell us a bit more' : 'free · no account needed'}</span>
+        <button className="btn btn-primary" onClick={go}>
+          Draft my site free →
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function HeroDemoCard() {
   const [count, setCount] = React.useState(0);
   React.useEffect(() => {
@@ -289,7 +328,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
           <div className="nav-cta-row">
             <ThemeToggle />
             {isSignedIn ? <UserButton /> : <a className="nav-login" href="/sign-in">Log in</a>}
-            <button className="btn btn-primary nav-cta" onClick={openFunnel}>
+            <button className="btn btn-primary nav-cta" onClick={() => openFunnel()}>
               Try it free
             </button>
           </div>
@@ -310,12 +349,11 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
               Tell Flowstarter what you do. A team of smart specialists works for you 24/7 —
               designing your brand, writing your copy, and shipping your site.
             </p>
-            <div className="hero-cta-row">
-              <button className="btn btn-primary btn-lg" onClick={openFunnel}>
-                Try it with your business
-              </button>
-              <a className="btn btn-ghost btn-lg" href="#how">
-                See how it works
+            {/* the funnel entry: prompt box front and center */}
+            <HeroPrompt />
+            <div style={{ marginTop: 14 }}>
+              <a href="#how" style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink-2)' }}>
+                or see how it works ↓
               </a>
             </div>
             <div className="hero-note muted">
@@ -606,7 +644,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
                   <div className="eyebrow" style={{ marginBottom: 8 }}>Then · one subscription covers everything</div>
                   <h3>Care plan — {pricing.monthly}/mo</h3>
                 </div>
-                <button className="btn btn-primary" onClick={openFunnel}>
+                <button className="btn btn-primary" onClick={() => openFunnel()}>
                   Start free
                 </button>
               </div>
@@ -687,7 +725,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
               Describe it in one sentence. The agents draft your brand and homepage — free, before you
               pay a cent.
             </p>
-            <button className="btn btn-lg cta-band-btn" onClick={openFunnel}>
+            <button className="btn btn-lg cta-band-btn" onClick={() => openFunnel()}>
               Try it with your business →
             </button>
             <span className="cta-band-note">
@@ -710,7 +748,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
             <a href="/sign-in">Sign in</a>
             <a href={`mailto:${contactEmail}`}>Contact</a>
           </nav>
-          <button className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }} onClick={openFunnel}>
+          <button className="btn btn-primary" style={{ padding: '10px 20px', fontSize: 14 }} onClick={() => openFunnel()}>
             Try it free
           </button>
         </div>

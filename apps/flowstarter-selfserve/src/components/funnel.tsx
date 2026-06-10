@@ -6,7 +6,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
-import type { SiteSpec } from '@flowstarter/build-engine';
+import { renderSiteHtml, type SiteSpec } from '@flowstarter/build-engine';
 import { api } from '@/lib/client-api';
 import { track } from '@/lib/analytics';
 
@@ -25,8 +25,9 @@ const DRAFT_TASKS = [
   { who: 'Quinn', color: '#E89B2F', text: 'Writing a hero line in your voice…' },
 ];
 
-export function openFunnel() {
-  window.dispatchEvent(new CustomEvent(OPEN_FUNNEL_EVENT));
+/** Open the funnel; pass a description to start drafting immediately. */
+export function openFunnel(idea?: string) {
+  window.dispatchEvent(new CustomEvent(OPEN_FUNNEL_EVENT, { detail: { idea } }));
 }
 
 export function FunnelOverlay({
@@ -44,8 +45,18 @@ export function FunnelOverlay({
   const [starting, setStarting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
+  // Keep a stable handle on startDraft for the open-event listener.
+  const startDraftRef = React.useRef<(text?: string) => Promise<void>>(async () => {});
+
   React.useEffect(() => {
-    const on = () => setOpen(true);
+    const on = (e: Event) => {
+      setOpen(true);
+      const idea = (e as CustomEvent<{ idea?: string }>).detail?.idea?.trim();
+      if (idea && idea.length >= 10) {
+        setIdea(idea);
+        void startDraftRef.current(idea);
+      }
+    };
     window.addEventListener(OPEN_FUNNEL_EVENT, on);
     return () => window.removeEventListener(OPEN_FUNNEL_EVENT, on);
   }, []);
@@ -132,6 +143,7 @@ export function FunnelOverlay({
       clearInterval(ticker);
     }
   };
+  startDraftRef.current = startDraft;
 
   const close = () => {
     setOpen(false);
@@ -261,21 +273,67 @@ export function FunnelOverlay({
 
             {draft && (
               <div style={{ animation: 'fadeUp .5s var(--ease-out) both' }}>
-                <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 18, padding: '22px 24px', marginBottom: 20 }}>
-                  <div className="serif" style={{ fontWeight: 600, fontSize: 34, letterSpacing: '-.02em' }}>{draft.brand.name}</div>
-                  <div style={{ fontSize: 14.5, marginBottom: 14, color: 'var(--ink-2)' }}>{draft.brand.tagline}</div>
-                  <div style={{ display: 'flex', gap: 7, marginBottom: 14 }}>
-                    {draft.brand.palette.map((c) => (
-                      <span key={c} style={{ width: 34, height: 34, borderRadius: 9, background: c, border: '1px solid var(--line)' }} />
-                    ))}
+                {/* the ACTUAL generated site, sneak-peeked: top visible, rest veiled */}
+                <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 18, overflow: 'hidden', marginBottom: 20, boxShadow: 'var(--shadow-lg)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderBottom: '1px solid var(--line)', background: 'var(--paper-2)' }}>
+                    <span style={{ display: 'flex', gap: 6 }}>
+                      {['#E0655A', '#E8B14C', '#5FB97A'].map((c) => (
+                        <span key={c} style={{ width: 10, height: 10, borderRadius: 99, background: c }} />
+                      ))}
+                    </span>
+                    <span className="mono" style={{ flex: 1, textAlign: 'center', fontSize: 11.5, color: 'var(--ink-3)' }}>
+                      sneak peek · {draft.brand.name.toLowerCase().replace(/\s+/g, '')}.com
+                    </span>
                   </div>
-                  <div style={{ fontSize: 15, fontStyle: 'italic', color: 'var(--ink-2)' }}>“{draft.copy.hero}”</div>
+                  <div style={{ position: 'relative' }}>
+                    <iframe
+                      title={`${draft.brand.name} preview`}
+                      srcDoc={renderSiteHtml(draft)}
+                      style={{ width: '100%', height: 430, border: 'none', display: 'block', background: '#fff', pointerEvents: 'none' }}
+                      sandbox=""
+                    />
+                    {/* veil over the lower half — the full site unlocks with the build */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        height: '52%',
+                        backdropFilter: 'blur(9px)',
+                        WebkitBackdropFilter: 'blur(9px)',
+                        background: 'linear-gradient(to bottom, transparent, color-mix(in srgb, var(--paper) 55%, transparent) 40%)',
+                        maskImage: 'linear-gradient(to bottom, transparent, #000 28%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 28%)',
+                        display: 'grid',
+                        placeItems: 'center',
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          padding: '9px 16px',
+                          borderRadius: 12,
+                          background: 'var(--card)',
+                          border: '1px solid var(--line)',
+                          boxShadow: 'var(--shadow)',
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: 'var(--ink)',
+                        }}
+                      >
+                        🔒 The full site unlocks with the build
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setStep(3)}>
                   I like it — see the full demo →
                 </button>
                 <p style={{ fontSize: 12.5, textAlign: 'center', marginTop: 10, color: 'var(--ink-2)' }}>
-                  Free account · 3 refinements · the build starts at {pricing.build}, only when you say so
+                  This is a real draft of your site · free account · 3 refinements · the build starts at {pricing.build}
                 </p>
               </div>
             )}

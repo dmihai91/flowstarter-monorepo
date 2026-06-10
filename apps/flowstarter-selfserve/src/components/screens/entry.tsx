@@ -40,6 +40,10 @@ export function EntryScreen({
       }
       if (!isSignedIn) {
         // Email/account required before demo generation — Clerk gate.
+        // Set busy first: in dev the /sign-up route compiles on first hit and
+        // the click otherwise looks like it did nothing.
+        setBusy(true);
+        setError(null);
         try {
           sessionStorage.setItem(PENDING_KEY, text);
         } catch {}
@@ -171,12 +175,28 @@ export function EntryScreen({
                 ⌘↵ to continue · free demo, no card needed
               </span>
               <button className="btn btn-grad" disabled={busy} onClick={() => void submit(val)}>
-                {busy ? 'Spinning up the crew…' : 'Show me my demo'} <Icons.arrow size={16} />
+                {busy ? (isSignedIn ? 'Spinning up the crew…' : 'Taking you to sign-up…') : 'Show me my demo'}{' '}
+                <Icons.arrow size={16} />
               </button>
             </div>
           </div>
           {error && (
-            <div style={{ marginTop: 12, color: 'var(--neg)', fontSize: 14, textAlign: 'center' }}>{error}</div>
+            <div
+              className="fade-up"
+              style={{
+                marginTop: 12,
+                padding: '10px 16px',
+                borderRadius: 12,
+                background: 'color-mix(in srgb, var(--neg) 10%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--neg) 35%, transparent)',
+                color: 'var(--neg)',
+                fontSize: 14,
+                fontWeight: 600,
+                textAlign: 'center',
+              }}
+            >
+              {error}
+            </div>
           )}
           {!isSignedIn && (
             <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--ink-3)', marginTop: 12 }}>

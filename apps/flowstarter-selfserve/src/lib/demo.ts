@@ -119,7 +119,7 @@ async function callSiteModel(messages: Array<{ role: string; content: string }>)
         Authorization: `Bearer ${MODELS.openrouterApiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ model: MODELS.demo, messages, temperature: 0.7, max_tokens: 10_000 }),
+      body: JSON.stringify({ model: MODELS.demo, messages, temperature: 0.7, max_tokens: 13_000 }),
       signal: AbortSignal.timeout(150_000),
     });
     if (!res.ok) {
@@ -167,8 +167,17 @@ async function callSiteModel(messages: Array<{ role: string; content: string }>)
     let html = raw.slice(htmlStart).trim();
     html = html.replace(/```\s*$/m, '').trim(); // tolerate trailing code fence
     if (!/<\/html>\s*$/i.test(html)) {
-      console.warn('[selfserve demo-site] page truncated (no </html>) — falling back');
-      return null;
+      // Salvage near-complete pages: drop the last (possibly half-written) tag
+      // and close the document. Only give up when there's too little to show.
+      if (html.length > 5_000 && /<body[\s>]/i.test(html)) {
+        console.warn('[selfserve demo-site] page truncated — repairing close tags');
+        const lastClose = html.lastIndexOf('</');
+        if (lastClose > html.length - 400) html = html.slice(0, lastClose);
+        html += '\n</body>\n</html>';
+      } else {
+        console.warn('[selfserve demo-site] page truncated beyond repair — falling back');
+        return null;
+      }
     }
     return { spec, html: stripScripts(html) };
   } catch (e) {
@@ -181,10 +190,15 @@ async function callSiteModel(messages: Array<{ role: string; content: string }>)
 export async function generateDemoSite(
   businessDescription: string,
 ): Promise<{ spec: SiteSpec; html: string; agentBuilt: boolean }> {
-  const fromModel = await callSiteModel([
+  const messages = [
     { role: 'system', content: SITE_SYSTEM },
     { role: 'user', content: `Business description:\n${businessDescription}` },
-  ]);
+  ];
+  let fromModel = await callSiteModel(messages);
+  if (!fromModel && MODELS.openrouterApiKey) {
+    console.warn('[selfserve demo-site] first attempt failed — retrying once');
+    fromModel = await callSiteModel(messages);
+  }
   if (fromModel) {
     const spec = fromModel.spec ?? (await generateDemoSpec(businessDescription));
     return { spec, html: fromModel.html, agentBuilt: true };

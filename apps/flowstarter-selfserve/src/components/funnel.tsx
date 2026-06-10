@@ -43,6 +43,7 @@ export function FunnelOverlay({
   const [idea, setIdea] = React.useState('');
   const [draft, setDraft] = React.useState<SiteSpec | null>(null);
   const [draftHtml, setDraftHtml] = React.useState<string | null>(null);
+  const [agentBuilt, setAgentBuilt] = React.useState(true);
   const [taskIdx, setTaskIdx] = React.useState(0);
   const [starting, setStarting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -132,12 +133,13 @@ export function FunnelOverlay({
 
     const ticker = setInterval(() => setTaskIdx((i) => Math.min(i + 1, DRAFT_TASKS.length - 1)), 2600);
     try {
-      const res = await api<{ spec: SiteSpec; html: string }>('/api/demo-preview', {
+      const res = await api<{ spec: SiteSpec; html: string; agentBuilt: boolean }>('/api/demo-preview', {
         method: 'POST',
         body: JSON.stringify({ businessDescription: v }),
       });
       setDraft(res.spec);
       setDraftHtml(res.html);
+      setAgentBuilt(res.agentBuilt);
       setTaskIdx(DRAFT_TASKS.length);
       track('demo_generated', { anonymous: true });
     } catch (e) {
@@ -277,6 +279,31 @@ export function FunnelOverlay({
 
             {draft && (
               <div style={{ animation: 'fadeUp .5s var(--ease-out) both' }}>
+                {!agentBuilt && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '10px 14px',
+                      marginBottom: 14,
+                      borderRadius: 12,
+                      background: 'color-mix(in srgb, var(--warn) 12%, transparent)',
+                      border: '1px solid color-mix(in srgb, var(--warn) 35%, transparent)',
+                      fontSize: 13.5,
+                      color: 'var(--ink-2)',
+                    }}
+                  >
+                    <span style={{ fontWeight: 700, color: 'var(--warn)' }}>Heads up:</span>
+                    the agent was overloaded, so this is a rough sketch — not its real work.
+                    <button
+                      onClick={() => void startDraft(idea)}
+                      style={{ font: 'inherit', fontWeight: 700, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', marginLeft: 'auto', whiteSpace: 'nowrap' }}
+                    >
+                      Ask the agent again →
+                    </button>
+                  </div>
+                )}
                 {/* the ACTUAL generated site, sneak-peeked: top visible, rest veiled */}
                 <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 18, overflow: 'hidden', marginBottom: 20, boxShadow: 'var(--shadow-lg)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderBottom: '1px solid var(--line)', background: 'var(--paper-2)' }}>

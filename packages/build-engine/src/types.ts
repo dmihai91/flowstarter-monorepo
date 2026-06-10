@@ -87,6 +87,8 @@ export interface BuildRequest {
   refinements: string[];
   /** Demo spec approved by the user — the build must stay consistent with it. */
   demoSpec?: SiteSpec | null;
+  /** The agent-generated demo page the user approved (build seeds from it). */
+  demoHtml?: string | null;
   /** Attempt counter (0 = first run). */
   attempt: number;
 }

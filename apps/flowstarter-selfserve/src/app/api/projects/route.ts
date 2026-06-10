@@ -13,6 +13,7 @@ const Body = z.object({
   // Sneak-peek handoff: the spec already generated anonymously on the landing
   // page, so sign-up doesn't regenerate (or change) what the visitor saw.
   demoSpec: SpecSchema.optional(),
+  demoHtml: z.string().max(300_000).optional(),
 });
 
 export async function POST(req: Request) {
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
     if (body.data.demoSpec) {
       await store.updateProject(project.id, {
         demo_spec: body.data.demoSpec as SiteSpec,
+        demo_html: body.data.demoHtml ?? null,
         demo_status: 'ready',
       });
     } else {

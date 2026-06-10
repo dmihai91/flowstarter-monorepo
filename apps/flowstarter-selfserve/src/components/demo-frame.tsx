@@ -6,8 +6,103 @@ import React from 'react';
 import type { SiteSpec } from '@flowstarter/build-engine';
 import { Icons } from '@/components/icons';
 
-export function DemoFrame({ spec, lockNote }: { spec: SiteSpec; lockNote?: string }) {
+export function DemoFrame({
+  spec,
+  html,
+  lockNote,
+}: {
+  spec: SiteSpec;
+  /** Agent-generated page — when present it IS the preview (still veiled). */
+  html?: string | null;
+  lockNote?: string;
+}) {
   const [c1, c2] = spec.brand.palette;
+
+  if (html) {
+    return (
+      <div
+        style={{
+          background: 'var(--card)',
+          border: '1px solid var(--line)',
+          borderRadius: 'var(--r-lg)',
+          overflow: 'hidden',
+          boxShadow: 'var(--shadow-lg)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '11px 16px',
+            borderBottom: '1px solid var(--line)',
+            background: 'var(--paper-2)',
+          }}
+        >
+          <div style={{ display: 'flex', gap: 6 }}>
+            {['#E0655A', '#E8B14C', '#5FB97A'].map((c) => (
+              <span key={c} style={{ width: 11, height: 11, borderRadius: 99, background: c }} />
+            ))}
+          </div>
+          <div className="mono" style={{ flex: 1, textAlign: 'center', fontSize: 12, color: 'var(--ink-3)' }}>
+            demo preview · {spec.brand.name.toLowerCase().replace(/\s+/g, '')}.com
+          </div>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <iframe
+            title={`${spec.brand.name} demo`}
+            srcDoc={html}
+            sandbox=""
+            style={{ width: '100%', height: 560, border: 'none', display: 'block', background: '#fff', pointerEvents: 'none' }}
+          />
+          {/* veil over the lower part — full page unlocks with the build */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: '55%',
+              backdropFilter: 'blur(9px)',
+              WebkitBackdropFilter: 'blur(9px)',
+              background: 'linear-gradient(to bottom, transparent, color-mix(in srgb, var(--paper) 55%, transparent) 40%)',
+              maskImage: 'linear-gradient(to bottom, transparent, #000 28%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent, #000 28%)',
+              display: 'grid',
+              placeItems: 'center',
+            }}
+          >
+            <div
+              className="glass"
+              style={{ borderRadius: 16, padding: '16px 22px', display: 'flex', alignItems: 'center', gap: 12, maxWidth: 380, margin: 16 }}
+            >
+              <div
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  background: 'var(--accent-soft)',
+                  color: 'var(--accent)',
+                  display: 'grid',
+                  placeItems: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Icons.lock size={18} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>The rest unlocks with the build</div>
+                <div style={{ fontSize: 12.5, color: 'var(--ink-2)' }}>
+                  {lockNote ?? 'Full sections, contact & booking, mobile layout — built by the crew.'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{

@@ -4,7 +4,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getStore } from '@/lib/store';
-import { generateDemoSpec } from '@/lib/demo';
+import { generateDemoSite } from '@/lib/demo';
 import { DEMO } from '@/lib/config';
 import { clientIp } from '@/lib/auth';
 
@@ -26,8 +26,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Too many previews from this network today.' }, { status: 429 });
       }
     }
-    const spec = await generateDemoSpec(body.data.businessDescription);
-    return NextResponse.json({ spec });
+    const { spec, html, agentBuilt } = await generateDemoSite(body.data.businessDescription);
+    return NextResponse.json({ spec, html, agentBuilt });
   } catch (e) {
     console.error('[selfserve demo-preview]', e);
     return NextResponse.json({ error: 'Something went wrong.' }, { status: 500 });

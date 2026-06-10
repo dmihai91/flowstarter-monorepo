@@ -81,7 +81,8 @@ export class MockEngine implements BuildEngine {
 
     return {
       spec,
-      siteHtml: renderSiteHtml(spec),
+      // the approved demo page IS the site in mock mode — continuity from peek to build
+      siteHtml: req.demoHtml ?? renderSiteHtml(spec),
       previewUrl: this.opts.previewUrl ? this.opts.previewUrl(req.buildId) : `/site/${req.buildId}`,
     };
   }

@@ -16,6 +16,7 @@ interface ProjectPayload {
   project: {
     id: string;
     demo_spec: SiteSpec | null;
+    demo_html: string | null;
     demo_status: 'none' | 'generating' | 'ready' | 'failed';
     refinement_count: number;
     business_description: string;
@@ -32,6 +33,7 @@ export function DemoScreen({
   maxRefinements: number;
 }) {
   const [spec, setSpec] = React.useState<SiteSpec | null>(null);
+  const [demoHtml, setDemoHtml] = React.useState<string | null>(null);
   const [status, setStatus] = React.useState<string>('loading');
   const [refsUsed, setRefsUsed] = React.useState(0);
   const [prompt, setPrompt] = React.useState('');
@@ -44,6 +46,7 @@ export function DemoScreen({
   const load = React.useCallback(async () => {
     const data = await api<ProjectPayload>(`/api/projects/${projectId}`);
     setSpec(data.project.demo_spec);
+    setDemoHtml(data.project.demo_html);
     setStatus(data.project.demo_status);
     setRefsUsed(data.project.refinement_count);
     return data.project.demo_status;
@@ -84,6 +87,7 @@ export function DemoScreen({
         body: JSON.stringify({ prompt: p }),
       });
       setSpec(res.project.demo_spec);
+      setDemoHtml(res.project.demo_html);
       setRefsUsed(res.project.refinement_count);
       setPrompt('');
     } catch (e) {
@@ -150,20 +154,20 @@ export function DemoScreen({
                     Meet <span className="grad-text">{spec.brand.name}</span>.
                   </h1>
                   <p style={{ fontSize: 15, color: 'var(--ink-2)', margin: '8px 0 0', maxWidth: 480, lineHeight: 1.5 }}>
-                    Brand direction and homepage hero, drafted by the crew. The full site unlocks with the build.
+                    A real page, built by the agent from your description. Prompt it below — it rebuilds live. The full site unlocks with the build.
                   </p>
                 </div>
                 <div
                   className="mono"
                   style={{ fontSize: 12, color: 'var(--ink-3)', padding: '7px 13px', border: '1px solid var(--line)', borderRadius: 99 }}
                 >
-                  {refsLeft} of {maxRefinements} refinements left
+                  {refsLeft} of {maxRefinements} agent prompts left
                 </div>
               </div>
 
               {/* demo preview: hero visible, rest locked (shared frame) */}
               <div className="fade-up">
-                <DemoFrame spec={spec} />
+                <DemoFrame spec={spec} html={demoHtml} />
               </div>
 
               {/* refinement composer */}
@@ -189,13 +193,13 @@ export function DemoScreen({
                         void refine();
                       }
                     }}
-                    placeholder={refsLeft > 0 ? 'e.g. Make it warmer and friendlier, or: a punchier headline' : 'Refinements used — the full crew takes it from here'}
+                    placeholder={refsLeft > 0 ? 'Tell the agent what to change — colors, copy, sections, anything' : 'Free prompts used — the full crew takes it from here'}
                     rows={1}
                     disabled={refsLeft <= 0 || busy}
                     style={{ flex: 1, minWidth: 0, fontFamily: 'var(--sans)', fontSize: 15, lineHeight: 1.45, color: 'var(--ink)', background: 'transparent', border: 'none', outline: 'none', resize: 'none', padding: '9px 6px', maxHeight: 140 }}
                   />
                   <button className="btn btn-primary" onClick={() => void refine()} disabled={refsLeft <= 0 || busy} style={{ padding: '11px 18px', fontSize: 14 }}>
-                    {busy ? <Dots /> : <Icons.spark size={16} />} Refine
+                    {busy ? <Dots /> : <Icons.spark size={16} />} Send to the agent
                   </button>
                 </div>
               </div>
@@ -239,7 +243,7 @@ export function DemoScreen({
                     <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.55, margin: 0 }}>{pricing.headline}</p>
                     <ul style={{ margin: '14px 0 0', padding: 0, listStyle: 'none', display: 'grid', gap: 7 }}>
                       {[
-                        'Full multi-section site, mobile-ready',
+                        'The full multi-page site, built by the senior crew',
                         'Brand identity, voice & all the copy',
                         `Preview everything before the ${pricing.final} delivery payment`,
                       ].map((t) => (

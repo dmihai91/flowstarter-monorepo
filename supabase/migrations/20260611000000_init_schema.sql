@@ -23,6 +23,8 @@ create table if not exists public.selfserve_projects (
   business_description text not null,
   refinement_count int not null default 0,
   demo_spec jsonb,
+  -- the agent-generated demo page (single-file HTML, sneak-peeked until paid)
+  demo_html text,
   demo_status text not null default 'none'
     check (demo_status in ('none', 'generating', 'ready', 'failed')),
   outcome text

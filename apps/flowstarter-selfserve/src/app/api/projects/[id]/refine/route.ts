@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireIdentity } from '@/lib/auth';
 import { getStore } from '@/lib/store';
-import { refineDemoSpec } from '@/lib/demo';
+import { refineDemoSite } from '@/lib/demo';
 import { DEMO } from '@/lib/config';
 
 const Body = z.object({ prompt: z.string().trim().min(3).max(500) });
@@ -27,9 +27,15 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     const body = Body.safeParse(await req.json());
     if (!body.success) return NextResponse.json({ error: 'Tell us what to change.' }, { status: 400 });
 
-    const spec = await refineDemoSpec(project.business_description, project.demo_spec, body.data.prompt);
+    const { spec, html } = await refineDemoSite(
+      project.business_description,
+      project.demo_spec,
+      project.demo_html,
+      body.data.prompt,
+    );
     const updated = await store.updateProject(id, {
       demo_spec: spec,
+      demo_html: html,
       refinement_count: project.refinement_count + 1,
     });
     return NextResponse.json({

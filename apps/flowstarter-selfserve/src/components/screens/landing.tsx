@@ -283,7 +283,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
     },
     {
       q: 'What if I don’t like what the agents build?',
-      a: `You see a free demo before paying anything, and you get refinement prompts to steer it. If you don't approve the finished site, you don't pay the ${pricing.final} — you keep a brand kit (assets + strategy) instead. The ${pricing.build} build fee is non-refundable once the crew starts: you agree to that explicitly at checkout.`,
+      a: `You see a free agent-built draft before paying anything, with 10 free prompts to steer it. If you don't approve the finished site, you don't pay the ${pricing.final} — you keep a brand kit (assets + strategy) instead. The ${pricing.build} build fee is non-refundable once the crew starts: you agree to that explicitly at checkout.`,
     },
     {
       q: 'Do I own my website?',
@@ -436,8 +436,8 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
               </div>
               <h3>Demo</h3>
               <p className="muted">
-                Describe your business in a sentence. The crew drafts your name, brand and homepage hero —
-                free, before you pay a cent. Refine it up to three times.
+                Describe your business in a sentence and a real agent builds a draft of your site —
+                free, before you pay a cent. Shape it with up to 10 prompts.
               </p>
             </div>
             <div className="step-card reveal">
@@ -515,7 +515,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
             {[
               {
                 h: 'A demo before any money',
-                p: 'Most builders charge first and show later. Here the crew drafts your brand and homepage free — you decide with the result in front of you.',
+                p: 'Most builders charge first and show later. Here a real agent builds your draft free and takes 10 of your prompts — you decide with the result in front of you.',
               },
               {
                 h: 'Built for you, not off a shelf',

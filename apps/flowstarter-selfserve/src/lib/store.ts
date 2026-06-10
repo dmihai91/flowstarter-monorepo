@@ -13,6 +13,7 @@ export interface ProjectRow {
   business_description: string;
   refinement_count: number;
   demo_spec: SiteSpec | null;
+  demo_html: string | null;
   demo_status: 'none' | 'generating' | 'ready' | 'failed';
   outcome: 'launch' | 'code_only' | 'walked_away' | null;
   client_ip: string | null;
@@ -128,6 +129,7 @@ class MemoryStore implements Store {
       business_description: p.businessDescription,
       refinement_count: 0,
       demo_spec: null,
+      demo_html: null,
       demo_status: 'none',
       outcome: null,
       client_ip: p.clientIp ?? null,

@@ -46,7 +46,8 @@ export function pricingCopy() {
 export const CLERK_HOSTING_PLAN = process.env.CLERK_HOSTING_PLAN_SLUG ?? 'hosting';
 
 export const DEMO = {
-  maxRefinements: int('SELFSERVE_DEMO_MAX_REFINEMENTS', 3),
+  /** Free real-agent prompts before the paywall. */
+  maxRefinements: int('SELFSERVE_DEMO_MAX_REFINEMENTS', 10),
   /** Hard rate limits per email/IP for demo generation. */
   maxDemosPerEmailPerDay: int('SELFSERVE_MAX_DEMOS_PER_EMAIL_PER_DAY', 3),
   maxDemosPerIpPerDay: int('SELFSERVE_MAX_DEMOS_PER_IP_PER_DAY', 8),
@@ -75,6 +76,6 @@ export const EMAIL = {
 
 export const MODELS = {
   /** Cheap/fast model for demo generation + demo refinements (never the build model). */
-  demo: process.env.SELFSERVE_DEMO_MODEL ?? 'moonshotai/kimi-k2',
+  demo: process.env.SELFSERVE_DEMO_MODEL ?? 'openai/gpt-5.4-nano',
   openrouterApiKey: process.env.OPENROUTER_API_KEY,
 } as const;

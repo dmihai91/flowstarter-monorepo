@@ -95,6 +95,7 @@ async function runToCompletion(buildId: string): Promise<void> {
       businessDescription: project.business_description,
       refinements: [],
       demoSpec: project.demo_spec,
+      demoHtml: project.demo_html,
       attempt,
     };
 

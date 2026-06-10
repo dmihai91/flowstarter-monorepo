@@ -22,7 +22,8 @@ const FUNNEL_EXAMPLES = [
 const DRAFT_TASKS = [
   { who: 'Vera', color: '#3E86E8', text: 'Checking demand signals for your business…' },
   { who: 'Iris', color: '#B964E8', text: 'Drafting a name and palette…' },
-  { who: 'Quinn', color: '#E89B2F', text: 'Writing a hero line in your voice…' },
+  { who: 'Quinn', color: '#E89B2F', text: 'Writing your copy, in your voice…' },
+  { who: 'Dash', color: '#2FB87A', text: 'Assembling the page — layout, sections, mobile…' },
 ];
 
 /** Open the funnel; pass a description to start drafting immediately. */
@@ -41,6 +42,7 @@ export function FunnelOverlay({
   const [step, setStep] = React.useState(1); // 1 idea · 2 draft · 3 continue
   const [idea, setIdea] = React.useState('');
   const [draft, setDraft] = React.useState<SiteSpec | null>(null);
+  const [draftHtml, setDraftHtml] = React.useState<string | null>(null);
   const [taskIdx, setTaskIdx] = React.useState(0);
   const [starting, setStarting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -72,10 +74,10 @@ export function FunnelOverlay({
 
   // Resume a draft stashed before the auth redirect (account → project → demo).
   const startBuild = React.useCallback(
-    async (description: string, spec: SiteSpec) => {
+    async (description: string, spec: SiteSpec, html: string | null) => {
       if (!isSignedIn) {
         try {
-          sessionStorage.setItem(PENDING_KEY, JSON.stringify({ description, spec }));
+          sessionStorage.setItem(PENDING_KEY, JSON.stringify({ description, spec, html }));
         } catch {}
         setStarting(true);
         router.push('/sign-up?redirect_url=/');
@@ -86,7 +88,7 @@ export function FunnelOverlay({
       try {
         const { projectId } = await api<{ projectId: string }>('/api/projects', {
           method: 'POST',
-          body: JSON.stringify({ businessDescription: description, demoSpec: spec }),
+          body: JSON.stringify({ businessDescription: description, demoSpec: spec, demoHtml: html ?? undefined }),
         });
         router.push(`/p/${projectId}/demo`);
       } catch (e) {
@@ -103,12 +105,13 @@ export function FunnelOverlay({
       const raw = sessionStorage.getItem(PENDING_KEY);
       if (raw) {
         sessionStorage.removeItem(PENDING_KEY);
-        const pending = JSON.parse(raw) as { description: string; spec: SiteSpec };
+        const pending = JSON.parse(raw) as { description: string; spec: SiteSpec; html?: string | null };
         setOpen(true);
         setIdea(pending.description);
         setDraft(pending.spec);
+        setDraftHtml(pending.html ?? null);
         setStep(3);
-        void startBuild(pending.description, pending.spec);
+        void startBuild(pending.description, pending.spec, pending.html ?? null);
       }
     } catch {}
   }, [isSignedIn, startBuild]);
@@ -127,13 +130,14 @@ export function FunnelOverlay({
     setDraft(null);
     track('business_submitted', { anonymous: true, length: v.length });
 
-    const ticker = setInterval(() => setTaskIdx((i) => Math.min(i + 1, DRAFT_TASKS.length)), 1100);
+    const ticker = setInterval(() => setTaskIdx((i) => Math.min(i + 1, DRAFT_TASKS.length - 1)), 2600);
     try {
-      const res = await api<{ spec: SiteSpec }>('/api/demo-preview', {
+      const res = await api<{ spec: SiteSpec; html: string }>('/api/demo-preview', {
         method: 'POST',
         body: JSON.stringify({ businessDescription: v }),
       });
       setDraft(res.spec);
+      setDraftHtml(res.html);
       setTaskIdx(DRAFT_TASKS.length);
       track('demo_generated', { anonymous: true });
     } catch (e) {
@@ -173,7 +177,7 @@ export function FunnelOverlay({
             <div className="eyebrow" style={{ marginBottom: 12 }}>Free · no account needed</div>
             <h2 className="serif" style={{ fontSize: 30, marginBottom: 10 }}>What do you do?</h2>
             <p style={{ fontSize: 15, marginBottom: 22, color: 'var(--ink-2)' }}>
-              One sentence is plenty. The crew drafts a name, brand and hero line — free, right now.
+              One sentence is plenty. A real agent builds a first draft of your site — free, right now.
             </p>
             <textarea
               value={idea}
@@ -288,7 +292,7 @@ export function FunnelOverlay({
                   <div style={{ position: 'relative' }}>
                     <iframe
                       title={`${draft.brand.name} preview`}
-                      srcDoc={renderSiteHtml(draft)}
+                      srcDoc={draftHtml ?? renderSiteHtml(draft)}
                       style={{ width: '100%', height: 430, border: 'none', display: 'block', background: '#fff', pointerEvents: 'none' }}
                       sandbox=""
                     />
@@ -333,7 +337,7 @@ export function FunnelOverlay({
                   I like it — see the full demo →
                 </button>
                 <p style={{ fontSize: 12.5, textAlign: 'center', marginTop: 10, color: 'var(--ink-2)' }}>
-                  This is a real draft of your site · free account · 3 refinements · the build starts at {pricing.build}
+                  This is a real page the agent built from your prompt · free account · 10 agent prompts · the build starts at {pricing.build}
                 </p>
               </div>
             )}
@@ -347,14 +351,14 @@ export function FunnelOverlay({
               Save {draft.brand.name} & keep going.
             </h2>
             <p style={{ fontSize: 14.5, marginBottom: 18, color: 'var(--ink-2)', lineHeight: 1.55 }}>
-              A free account saves your draft and unlocks the full demo with 3 refinement prompts.
+              A free account saves your draft and unlocks 10 prompts with a real agent — it rebuilds the page after every message.
               When you’re happy, {pricing.build} starts the real build — you watch the crew live, and
               pay {pricing.final} only after you’ve seen the finished site. Then {pricing.monthly}/month
               covers hosting, your domain and AI edits.
             </p>
             <ul style={{ margin: '0 0 22px', padding: 0, listStyle: 'none', display: 'grid', gap: 8 }}>
               {[
-                'Free account — just an email',
+                'Free account — just an email, then 10 real agent prompts',
                 `Total is ${pricing.total} + ${pricing.monthly}/mo if you launch with us — no other costs`,
                 `Change your mind after the build? Keep a brand kit (assets + strategy); the ${pricing.build} is non-refundable`,
               ].map((t) => (
@@ -368,7 +372,7 @@ export function FunnelOverlay({
               className="btn btn-primary btn-lg"
               disabled={starting}
               style={{ width: '100%', justifyContent: 'center', opacity: starting ? 0.7 : 1 }}
-              onClick={() => void startBuild(idea, draft)}
+              onClick={() => void startBuild(idea, draft, draftHtml)}
             >
               {starting
                 ? isSignedIn

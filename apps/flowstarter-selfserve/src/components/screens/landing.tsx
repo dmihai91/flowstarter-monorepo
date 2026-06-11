@@ -401,7 +401,7 @@ const DRAFTS = [
 
 const TESTIMONIAL = {
   quote:
-    'I needed a website to sell my fishing equipment, selling only offline was becoming a burden. I contacted Darius, and he and his platform deliver exactly what I need.',
+    'I needed a website to sell my fishing equipment, selling only offline was becoming a burden. I contacted Darius, and he and his platform deliver exactly what I need. Now I can take orders from anywhere, even when I’m fishing.',
   name: 'Daniel Draga',
   role: 'Owner, Lebădușul',
   href: 'https://lebadusularticoledepescuit.ro/',

@@ -228,8 +228,16 @@ function normalizeFill(raw: unknown): TemplateFill | null {
   }
 }
 
-/** One small model call → content fill. Fast, cheap, no layout risk. */
-async function callFillModel(messages: Array<{ role: string; content: string }>): Promise<TemplateFill | null> {
+/** Real progress stages emitted while the agent works (and consumed by the funnel feed). */
+export type DemoStage = (stage: string, detail?: string) => void;
+
+/** One small model call → content fill. Fast, cheap, no layout risk.
+ *  With onStage, the call streams and emits milestones as the agent's JSON
+ *  actually arrives — this is what the funnel's crew feed shows. */
+async function callFillModel(
+  messages: Array<{ role: string; content: string }>,
+  onStage?: DemoStage,
+): Promise<TemplateFill | null> {
   if (!MODELS.openrouterApiKey) return null;
   try {
     const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -238,15 +246,49 @@ async function callFillModel(messages: Array<{ role: string; content: string }>)
         Authorization: `Bearer ${MODELS.openrouterApiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ model: MODELS.demo, messages, temperature: 0.7, max_tokens: 2_500 }),
-      signal: AbortSignal.timeout(60_000),
+      body: JSON.stringify({ model: MODELS.demo, messages, temperature: 0.7, max_tokens: 2_500, stream: Boolean(onStage) }),
+      signal: AbortSignal.timeout(90_000),
     });
     if (!res.ok) {
       console.error('[selfserve demo-fill] model call failed', res.status, await res.text().catch(() => ''));
       return null;
     }
-    const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-    const raw = data.choices?.[0]?.message?.content;
+    let raw = '';
+    if (onStage && res.body) {
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+      const fired = new Set<string>();
+      const fire = (k: string, detail?: string) => {
+        if (fired.has(k)) return;
+        fired.add(k);
+        onStage(k, detail);
+      };
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split('\n');
+        buf = lines.pop() ?? '';
+        for (const line of lines) {
+          const m = line.match(/^data: (.+)$/);
+          if (!m || m[1] === '[DONE]') continue;
+          try {
+            const delta = (JSON.parse(m[1]) as { choices?: Array<{ delta?: { content?: string } }> }).choices?.[0]?.delta?.content;
+            if (delta) raw += delta;
+          } catch {}
+        }
+        if (raw.includes('"brand"')) fire('brand');
+        const name = raw.match(/"name"\s*:\s*"([^"]{2,60})"/);
+        if (name) fire('name', name[1]);
+        if (raw.includes('"offer"')) fire('positioning');
+        if (raw.includes('"services"')) fire('copy');
+        if (raw.includes('"style"')) fire('style');
+      }
+    } else {
+      const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
+      raw = data.choices?.[0]?.message?.content ?? '';
+    }
     if (!raw) return null;
     const fill = normalizeFill(JSON.parse(cleanJson(raw)));
     if (!fill) console.warn('[selfserve demo-fill] fill JSON unusable — falling back');
@@ -281,28 +323,42 @@ function directionSeed(description: string): string {
   return `Suggested starting direction (depart from it if it doesn't fit this business): hero="${heroes[Math.abs(h) % 4]}", visual="${visuals[Math.abs(h >> 2) % 4]}", caseStyle="${cases[Math.abs(h >> 4) % 2]}", layout="${layouts[Math.abs(h >> 6) % 4]}".`;
 }
 
+/** Cache lookup without generating — lets the API skip rate-limit charges for free cache hits. */
+export function peekDemoCache(businessDescription: string): DemoSite | undefined {
+  const hit = demoCache().get(businessDescription.trim().toLowerCase());
+  return hit?.agentBuilt ? hit : undefined;
+}
+
 export async function generateDemoSite(
   businessDescription: string,
-): Promise<DemoSite> {
+  onStage?: DemoStage,
+): Promise<DemoSite & { cached?: boolean }> {
   const cacheKey = businessDescription.trim().toLowerCase();
   const cached = demoCache().get(cacheKey);
-  if (cached?.agentBuilt) return cached;
+  if (cached?.agentBuilt) {
+    onStage?.('cached', cached.spec.brand.name);
+    return { ...cached, cached: true };
+  }
   const messages = [
     { role: 'system', content: FILL_SYSTEM },
     { role: 'user', content: `Business description:\n${businessDescription}\n\n${directionSeed(businessDescription)}` },
   ];
-  let fill = await callFillModel(messages);
+  onStage?.('start');
+  let fill = await callFillModel(messages, onStage);
   if (!fill && MODELS.openrouterApiKey) {
     console.warn('[selfserve demo-fill] first attempt failed — retrying once');
-    fill = await callFillModel(messages);
+    onStage?.('retry');
+    fill = await callFillModel(messages, onStage);
   }
   if (fill) {
+    onStage?.('render');
     const out: DemoSite = { spec: fillToSpec(fill), html: renderTemplate(fill), agentBuilt: true };
     const cache = demoCache();
     cache.set(cacheKey, out);
     if (cache.size > 200) cache.delete(cache.keys().next().value!);
     return out;
   }
+  onStage?.('fallback');
   const spec = await generateDemoSpec(businessDescription);
   const fallback = fillFromSpec(spec);
   return { spec, html: renderTemplate(fallback), agentBuilt: false };

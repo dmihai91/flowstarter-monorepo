@@ -21,10 +21,10 @@ const FUNNEL_EXAMPLES = [
 ];
 
 const DRAFT_TASKS = [
-  { who: 'Vera', color: '#3E86E8', text: 'Checking demand signals for your business…' },
+  { who: 'Vera', color: '#3E86E8', text: 'Reading your description…' },
   { who: 'Iris', color: '#B964E8', text: 'Drafting a name and palette…' },
   { who: 'Quinn', color: '#E89B2F', text: 'Writing your copy, in your voice…' },
-  { who: 'Dash', color: '#2FB87A', text: 'Assembling the page — layout, sections, mobile…' },
+  { who: 'Dash', color: '#2FB87A', text: 'Assembling the page: layout, sections, photos…' },
 ];
 
 /** Open the funnel; pass a description to start drafting immediately. */
@@ -48,6 +48,7 @@ export function FunnelOverlay({
   const [draftHtml, setDraftHtml] = React.useState<string | null>(null);
   const [agentBuilt, setAgentBuilt] = React.useState(true);
   const [taskIdx, setTaskIdx] = React.useState(0);
+  const [tasks, setTasks] = React.useState(DRAFT_TASKS);
   const [starting, setStarting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [leadEmail, setLeadEmail] = React.useState('');
@@ -146,32 +147,81 @@ export function FunnelOverlay({
   const startDraft = async (text?: string) => {
     const v = (text ?? idea).trim();
     if (v.length < 10) {
-      setError('Tell us a bit more — a sentence is plenty.');
+      setError('Tell us a bit more, a sentence is plenty.');
       return;
     }
     setIdea(v);
     setError(null);
     setStep(2);
     setTaskIdx(0);
+    setTasks(DRAFT_TASKS);
     setDraft(null);
     track('business_submitted', { anonymous: true, length: v.length });
 
-    const ticker = setInterval(() => setTaskIdx((i) => Math.min(i + 1, DRAFT_TASKS.length - 1)), 2600);
+    // The feed below is driven by REAL events from the generation stream:
+    // stages fire as the agent's output actually arrives, not on a timer.
+    const STAGE_IDX: Record<string, number> = { start: 0, retry: 0, brand: 1, name: 1, positioning: 2, copy: 2, style: 3, render: 3 };
     try {
-      const res = await api<{ spec: SiteSpec; html: string; agentBuilt: boolean }>('/api/demo-preview', {
+      const res = await fetch('/api/demo-preview?stream=1', {
         method: 'POST',
+        headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ businessDescription: v }),
       });
-      setDraft(res.spec);
-      setDraftHtml(res.html);
-      setAgentBuilt(res.agentBuilt);
-      setTaskIdx(DRAFT_TASKS.length);
-      track('demo_generated', { anonymous: true });
+      if (!res.ok) {
+        const err = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(err?.error ?? 'Something went wrong.');
+      }
+      if (!res.body) throw new Error('Something went wrong.');
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+      let finished = false;
+      for (;;) {
+        const chunk = await reader.read();
+        if (chunk.done) break;
+        buf += dec.decode(chunk.value, { stream: true });
+        const parts = buf.split('\n\n');
+        buf = parts.pop() ?? '';
+        for (const part of parts) {
+          const m = part.match(/^data: (.+)$/m);
+          if (!m) continue;
+          const ev = JSON.parse(m[1]) as {
+            type: string;
+            stage?: string;
+            detail?: string;
+            message?: string;
+            spec?: SiteSpec;
+            html?: string;
+            agentBuilt?: boolean;
+            cached?: boolean;
+          };
+          if (ev.type === 'stage') {
+            if (ev.stage === 'cached') {
+              setTasks([{ who: 'Dash', color: '#2FB87A', text: 'You asked for this one before. Restoring your saved draft…' }]);
+              setTaskIdx(0);
+            } else if (ev.stage === 'name' && ev.detail) {
+              const name = ev.detail;
+              setTasks((ts) => ts.map((t, i) => (i === 1 ? { ...t, text: `Name locked: “${name}”. Palette next…` } : t)));
+              setTaskIdx((i) => Math.max(i, 1));
+            } else if (ev.stage && ev.stage in STAGE_IDX) {
+              setTaskIdx((i) => Math.max(i, STAGE_IDX[ev.stage!]));
+            }
+          } else if (ev.type === 'done' && ev.spec && ev.html) {
+            setDraft(ev.spec);
+            setDraftHtml(ev.html);
+            setAgentBuilt(ev.agentBuilt ?? false);
+            setTaskIdx(99);
+            finished = true;
+            track('demo_generated', { anonymous: true, cached: ev.cached ?? false });
+          } else if (ev.type === 'error') {
+            throw new Error(ev.message ?? 'Something went wrong.');
+          }
+        }
+      }
+      if (!finished) throw new Error('The crew got interrupted, please try again.');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong.');
       setStep(1);
-    } finally {
-      clearInterval(ticker);
     }
   };
   startDraftRef.current = startDraft;
@@ -264,9 +314,9 @@ export function FunnelOverlay({
         {step === 2 && (
           <div>
             <div className="eyebrow" style={{ marginBottom: 12 }}>The crew is drafting</div>
-            <h2 className="serif" style={{ fontSize: 24, marginBottom: 6, lineHeight: 1.25 }}>“{idea}”</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 13, margin: '24px 0' }}>
-              {DRAFT_TASKS.map((t, i) => (
+            <h2 className="serif" style={{ fontSize: 24, marginBottom: 10, lineHeight: 1.3, paddingRight: 12 }}>“{idea}”</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 15, margin: '26px 0 30px' }}>
+              {tasks.map((t, i) => (
                 <div
                   key={i}
                   style={{ display: 'flex', alignItems: 'center', gap: 11, opacity: i < taskIdx + 1 ? 1 : 0.35, transition: 'opacity .3s' }}
@@ -323,7 +373,7 @@ export function FunnelOverlay({
                     }}
                   >
                     <span style={{ fontWeight: 700, color: 'var(--warn)' }}>Heads up:</span>
-                    the agent was overloaded, so this is a rough sketch — not its real work.
+                    the agent was overloaded, so this is a rough sketch, not its real work.
                     <button
                       onClick={() => void startDraft(idea)}
                       style={{ font: 'inherit', fontWeight: 700, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', marginLeft: 'auto', whiteSpace: 'nowrap' }}
@@ -333,7 +383,7 @@ export function FunnelOverlay({
                   </div>
                 )}
                 {/* the ACTUAL generated site, sneak-peeked: top visible, rest veiled */}
-                <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 18, overflow: 'hidden', marginBottom: 20, boxShadow: 'var(--shadow-lg)' }}>
+                <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 18, overflow: 'hidden', marginBottom: 24, boxShadow: 'var(--shadow-lg)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderBottom: '1px solid var(--line)', background: 'var(--paper-2)' }}>
                     <span style={{ display: 'flex', gap: 6 }}>
                       {['#E0655A', '#E8B14C', '#5FB97A'].map((c) => (
@@ -361,18 +411,18 @@ export function FunnelOverlay({
                     borderRadius: 14,
                     overflow: 'hidden',
                     border: '1px solid var(--line)',
-                    marginBottom: 16,
+                    marginBottom: 20,
                   }}
                 >
-                  <div style={{ padding: '16px 18px', background: 'var(--paper-2)' }}>
+                  <div style={{ padding: '18px 22px', background: 'var(--paper-2)' }}>
                     <div className="mono" style={{ fontSize: 10.5, letterSpacing: '.1em', color: 'var(--ink-3)', marginBottom: 8 }}>
                       THIS DRAFT · FREE
                     </div>
                     {['Real page from your prompt', '10 agent prompts to shape it', 'Yours to explore'].map((t) => (
-                      <div key={t} style={{ fontSize: 13, color: 'var(--ink-2)', padding: '3px 0' }}>✓ {t}</div>
+                      <div key={t} style={{ fontSize: 13, color: 'var(--ink-2)', padding: '4px 0', lineHeight: 1.5 }}>✓ {t}</div>
                     ))}
                   </div>
-                  <div style={{ padding: '16px 18px', background: 'color-mix(in srgb, var(--accent) 9%, var(--card))' }}>
+                  <div style={{ padding: '18px 22px', background: 'color-mix(in srgb, var(--accent) 9%, var(--card))' }}>
                     <div className="mono" style={{ fontSize: 10.5, letterSpacing: '.1em', color: 'var(--accent)', marginBottom: 8 }}>
                       THE FULL BUILD · {pricing.build} TO START
                       {slots && slots.left > 0 && slots.left <= slots.cap / 2 ? ` · ${slots.left} SLOTS LEFT` : ''}
@@ -383,20 +433,20 @@ export function FunnelOverlay({
                       'Live on your domain, hosted & managed',
                       `${pricing.build} counts toward your ${pricing.total} total`,
                     ].map((t) => (
-                      <div key={t} style={{ fontSize: 13, color: 'var(--ink)', padding: '3px 0', fontWeight: 500 }}>✦ {t}</div>
+                      <div key={t} style={{ fontSize: 13, color: 'var(--ink)', padding: '4px 0', fontWeight: 500, lineHeight: 1.5 }}>✦ {t}</div>
                     ))}
                   </div>
                 </div>
                 <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setStep(3)}>
-                  I like it — see the full demo →
+                  I like it, see the full demo →
                 </button>
-                <p style={{ fontSize: 12.5, textAlign: 'center', marginTop: 10, color: 'var(--ink-2)' }}>
-                  Scroll it — this is a real page the agent built from your prompt · free account unlocks 10 agent prompts
+                <p style={{ fontSize: 12.5, textAlign: 'center', marginTop: 12, color: 'var(--ink-2)' }}>
+                  Scroll it, this is a real page the agent built from your prompt · free account unlocks 10 agent prompts
                 </p>
                 {/* bounce-cohort capture: save the draft to their inbox */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 18, paddingBottom: 2, flexWrap: 'wrap' }}>
                   {leadState === 'sent' ? (
-                    <span style={{ fontSize: 13, color: 'var(--pos)', fontWeight: 600 }}>✓ Sent — your draft link is in your inbox.</span>
+                    <span style={{ fontSize: 13, color: 'var(--pos)', fontWeight: 600 }}>✓ Sent. Your draft link is in your inbox.</span>
                   ) : (
                     <>
                       <span style={{ fontSize: 13, color: 'var(--ink-3)' }}>Not ready?</span>

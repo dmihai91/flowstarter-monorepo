@@ -68,7 +68,32 @@ export interface StyleFill {
   dark: string;
   /** Hero visual motif. */
   visual: 'blob' | 'arch' | 'rings' | 'tiles';
+  /** Stock photo category (see STOCK_CATEGORIES); inferred from copy when missing. */
+  image?: string;
 }
+
+/** Vendored photo library in /public/stock — <cat>-hero.jpg + <cat>-about.jpg each. */
+export const STOCK_CATEGORIES = [
+  'barber', 'beauty', 'cafe', 'restaurant', 'bakery', 'florist', 'fitness', 'craft',
+  'retail', 'coaching', 'wellness', 'photography', 'auto', 'outdoor', 'generic',
+] as const;
+
+const CATEGORY_HINTS: Array<[RegExp, string]> = [
+  [/barber|haircut|fade/i, 'barber'],
+  [/salon|hair|beauty|nail|lash/i, 'beauty'],
+  [/coffee|cafe|café|espresso|brew/i, 'cafe'],
+  [/baker|bread|pastry|cake|sourdough/i, 'bakery'],
+  [/restaurant|bistro|menu|chef|kitchen|food/i, 'restaurant'],
+  [/flower|floral|florist|bouquet/i, 'florist'],
+  [/gym|fitness|strength|training|workout|trainer/i, 'fitness'],
+  [/fish|angl|outdoor|hik|hunt|river|mountain/i, 'outdoor'],
+  [/photo|camera|portrait|shoot/i, 'photography'],
+  [/car|auto|garage|mechanic|repair|detail/i, 'auto'],
+  [/massage|spa|wellness|therap|yoga/i, 'wellness'],
+  [/wood|craft|atelier|workshop|maker|pottery|ceramic/i, 'craft'],
+  [/boutique|store|shop|retail|tackle/i, 'retail'],
+  [/coach|consult|advis|mentor|strateg/i, 'coaching'],
+];
 
 export const DISPLAY_FONTS = [
   'Space Grotesk',
@@ -102,6 +127,7 @@ export function resolveStyle(fill: TemplateFill): Required<StyleFill> {
     paper: hex(st?.paper, '#F9F7F1'),
     dark: hex(st?.dark, '#0a0a0a'),
     visual: pick(st?.visual, ['blob', 'arch', 'rings', 'tiles'] as const, 'blob'),
+    image: String(st?.image ?? '').slice(0, 24),
   };
 }
 
@@ -135,6 +161,13 @@ export function renderTemplate(fill: TemplateFill): string {
     tiles: '<div class="tiles"><span></span><span></span><span></span><span></span></div>',
   };
   const heroVisual = VISUALS[st.visual];
+  // topical photography for the hero/about from the vendored /stock library:
+  // the fill model picks a category; when missing we infer one from the copy.
+  // The brand-tinted gradient stays underneath as the graceful fallback.
+  const inferText = `${f.brand.name} ${f.brand.tagline} ${f.hero.kicker} ${f.services.label} ${f.services.titleLine1} ${f.services.titleLine2}`;
+  const imageCat = (STOCK_CATEGORIES as readonly string[]).includes(st.image)
+    ? st.image
+    : (CATEGORY_HINTS.find(([re]) => re.test(inferText))?.[1] ?? 'generic');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -170,6 +203,8 @@ export function renderTemplate(fill: TemplateFill): string {
     --case: ${st.caseStyle === 'uppercase' ? 'uppercase' : 'none'};
     --font: '${st.fontBody}', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-display: '${st.fontDisplay}', '${st.fontBody}', -apple-system, sans-serif;
+    --hero-img: url('/stock/${imageCat}-hero.jpg');
+    --about-img: url('/stock/${imageCat}-about.jpg');
   }
   body { font-family: var(--font); background: var(--surface-base); color: var(--text-primary); font-size: var(--fs-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
   .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
@@ -223,20 +258,20 @@ export function renderTemplate(fill: TemplateFill): string {
   .hero-text .hl { color: var(--accent); }
   .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .48s; }
   .hero-visual { position: relative; min-height: 440px; align-self: stretch; }
-  .hero-visual .blob { position: absolute; inset: 8% 0 12% 6%; border-radius: 32px 120px 32px 32px; background: linear-gradient(160deg, var(--accent), var(--brand-primary) 75%); }
-  .hero-visual .arch { position: absolute; inset: 8% 4% 0 10%; border-radius: 999px 999px 0 0; background: linear-gradient(180deg, var(--accent), var(--brand-primary) 85%); }
+  .hero-visual .blob { position: absolute; inset: 8% 0 12% 6%; border-radius: 32px 120px 32px 32px; background-color: var(--brand-primary); background-image: linear-gradient(160deg, color-mix(in srgb, var(--accent) 26%, transparent), color-mix(in srgb, var(--brand-primary) 34%, transparent) 75%), var(--hero-img), linear-gradient(160deg, var(--accent), var(--brand-primary) 75%); background-size: cover; background-position: center; }
+  .hero-visual .arch { position: absolute; inset: 8% 4% 0 10%; border-radius: 999px 999px 0 0; background-color: var(--brand-primary); background-image: linear-gradient(180deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--brand-primary) 30%, transparent) 85%), var(--hero-img), linear-gradient(180deg, var(--accent), var(--brand-primary) 85%); background-size: cover; background-position: center; }
   .hero-visual .rings { position: absolute; inset: 0; display: grid; place-items: center; }
   .hero-visual .rings span { position: absolute; border-radius: 50%; border: 2px solid var(--accent); }
   .hero-visual .rings span:nth-child(1) { width: 78%; aspect-ratio: 1; opacity: .35; }
-  .hero-visual .rings span:nth-child(2) { width: 56%; aspect-ratio: 1; opacity: .6; border-color: var(--brand-primary); background: radial-gradient(circle at 35% 30%, var(--accent), transparent 70%); }
-  .hero-visual .rings span:nth-child(3) { width: 30%; aspect-ratio: 1; background: var(--brand-primary); border: none; }
+  .hero-visual .rings span:nth-child(2) { width: 62%; aspect-ratio: 1; opacity: 1; border-color: var(--brand-primary); background-color: var(--brand-primary); background-image: linear-gradient(color-mix(in srgb, var(--brand-primary) 18%, transparent), color-mix(in srgb, var(--brand-primary) 18%, transparent)), var(--hero-img), radial-gradient(circle at 35% 30%, var(--accent), transparent 70%); background-size: cover; background-position: center; }
+  .hero-visual .rings span:nth-child(3) { width: 26%; aspect-ratio: 1; background: var(--accent); border: none; transform: translate(120%, 95%); }
   .hero-visual .tiles { position: absolute; inset: 6% 2% 10% 8%; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .hero-visual .tiles span { border-radius: var(--r-lg); }
-  .hero-visual .tiles span:nth-child(1) { background: linear-gradient(150deg, var(--accent), var(--brand-primary)); }
+  .hero-visual .tiles span:nth-child(1) { background-color: var(--brand-primary); background-image: linear-gradient(150deg, color-mix(in srgb, var(--accent) 24%, transparent), color-mix(in srgb, var(--brand-primary) 30%, transparent)), var(--hero-img), linear-gradient(150deg, var(--accent), var(--brand-primary)); background-size: cover; background-position: top; }
   .hero-visual .tiles span:nth-child(2) { background: var(--brand-primary); border-radius: 50% 50% var(--r-lg) var(--r-lg); }
   .hero-visual .tiles span:nth-child(3) { border: 2px solid var(--accent); }
-  .hero-visual .tiles span:nth-child(4) { background: linear-gradient(40deg, var(--brand-primary), var(--accent)); border-radius: var(--r-lg) var(--r-lg) 50% 50%; }
-  .hero-visual .blob::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 28% 8%, rgba(255,255,255,.32), transparent 55%); }
+  .hero-visual .tiles span:nth-child(4) { border-radius: var(--r-lg) var(--r-lg) 50% 50%; background-color: var(--brand-primary); background-image: linear-gradient(40deg, color-mix(in srgb, var(--brand-primary) 30%, transparent), color-mix(in srgb, var(--accent) 24%, transparent)), var(--hero-img), linear-gradient(40deg, var(--brand-primary), var(--accent)); background-size: cover; background-position: bottom; }
+  .hero-visual .blob::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 28% 8%, rgba(255,255,255,.16), transparent 55%); }
   .hero-visual .ring { position: absolute; width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--accent); bottom: 4%; left: -8px; opacity: .8; }
   .hero-visual .dot { position: absolute; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); top: 4%; right: 10%; }
   .hv-card { position: absolute; left: -4%; bottom: 12%; background: #fff; color: var(--text-primary); border-radius: var(--r-md); box-shadow: var(--shadow-float); padding: 16px 20px; max-width: 250px; display: flex; flex-direction: column; gap: 4px; animation: hv-float 7s ease-in-out infinite; }
@@ -287,6 +322,7 @@ export function renderTemplate(fill: TemplateFill): string {
   .pin-panel { border-left: 3px solid var(--brand-primary); padding: 6px 0 6px 20px; margin-top: 24px; font-size: 1.02rem; line-height: 1.5; }
   .pin-panel b { color: var(--brand-primary); display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; margin-bottom: 6px; }
   .pin-hint { display: none; }
+  .pin-circles { display: none; }
   @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
     .audience { padding: 0; }
     .pin-wrap { height: 240vh; }
@@ -296,6 +332,12 @@ export function renderTemplate(fill: TemplateFill): string {
     .pin-panel.is-on { opacity: 1; transform: none; }
     .pin-panel p { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1.2; letter-spacing: -0.02em; font-weight: 650; max-width: 26ch; }
     .pin-hint { display: block; margin-top: 48px; font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); }
+    .pin-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+    .pin-circles { display: flex; align-items: center; justify-content: center; --apart: calc((1 - var(--pin-p, 0)) * 78px); }
+    .pin-circles span { width: clamp(110px, 11vw, 168px); height: clamp(110px, 11vw, 168px); border-radius: 50%; mix-blend-mode: multiply; will-change: transform; }
+    .pin-circles span:nth-child(1) { background: var(--accent); transform: translateX(calc(var(--apart) * -1)); }
+    .pin-circles span:nth-child(2) { background: #EBE8DF; margin-left: -30px; }
+    .pin-circles span:nth-child(3) { background: var(--brand-primary); margin-left: -30px; transform: translateX(var(--apart)); }
   }
 
   /* about — dark strip with the dorin circles */
@@ -303,11 +345,7 @@ export function renderTemplate(fill: TemplateFill): string {
   .about-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 64px; align-items: center; }
   .about p { color: rgba(255,255,255,.78); margin-top: 18px; line-height: 1.6; }
   .about .section-title { color: #fff; }
-  .circles { display: flex; align-items: center; justify-content: center; }
-  .circles span { width: clamp(110px, 12vw, 170px); height: clamp(110px, 12vw, 170px); border-radius: 50%; margin-left: -28px; mix-blend-mode: screen; }
-  .circles span:nth-child(1) { background: var(--accent); margin-left: 0; }
-  .circles span:nth-child(2) { background: #EBE8DF; }
-  .circles span:nth-child(3) { background: var(--brand-primary); }
+  .about-photo { aspect-ratio: 4 / 3; border-radius: var(--r-lg); background-color: var(--brand-primary); background-image: linear-gradient(color-mix(in srgb, var(--bg-dark) 14%, transparent), color-mix(in srgb, var(--bg-dark) 14%, transparent)), var(--about-img), linear-gradient(150deg, var(--accent), var(--brand-primary)); background-size: cover; background-position: center; box-shadow: var(--shadow-float); }
 
   /* CTA band */
   .cta { padding: var(--section-pad); }
@@ -420,13 +458,16 @@ export function renderTemplate(fill: TemplateFill): string {
   <section class="audience">
     <div class="pin-wrap">
       <div class="pin-stage">
-        <div class="container">
+        <div class="container pin-grid">
+          <div>
           <div class="section-label">Is this you?</div>
           <h2 class="section-title">This is for you if</h2>
           <div class="pin-panels">
             ${f.audience.slice(0, 3).map((a, i) => `<div class="pin-panel${i === 0 ? ' is-on' : ''}"><b>0${i + 1} · 0${Math.min(f.audience.length, 3)}</b><p>${esc(a)}</p></div>`).join('\n            ')}
           </div>
           <div class="pin-hint">Keep scrolling</div>
+          </div>
+          <div class="pin-circles" aria-hidden="true"><span></span><span></span><span></span></div>
         </div>
       </div>
     </div>
@@ -440,7 +481,7 @@ export function renderTemplate(fill: TemplateFill): string {
         <p>${esc(f.about.p1)}</p>
         <p>${esc(f.about.p2)}</p>
       </div>
-      <div class="circles" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="about-photo" aria-hidden="true"></div>
     </div>
   </section>
 
@@ -483,6 +524,7 @@ export function renderTemplate(fill: TemplateFill): string {
       var total = wrap.offsetHeight - innerHeight;
       if (total <= 0) return;
       var passed = Math.min(Math.max(-wrap.getBoundingClientRect().top, 0), total);
+      wrap.style.setProperty('--pin-p', (passed / total).toFixed(3));
       var idx = Math.min(panels.length - 1, Math.floor((passed / total) * panels.length));
       for (var i = 0; i < panels.length; i++) panels[i].classList.toggle('is-on', i === idx);
     }

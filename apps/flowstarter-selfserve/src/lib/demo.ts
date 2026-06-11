@@ -99,7 +99,7 @@ const FILL_SYSTEM = `You are the content agent for Flowstarter's house site temp
 "about":{"label":string,"title":string(<=60 chars),"p1":string(<=240 chars),"p2":string(<=240 chars)},
 "cta":{"title":string(<=48 chars),"text":string(<=160 chars),"button":string(<=24 chars)},
 "contact":{"heading":string(<=40 chars),"text":string(<=160 chars),"email":string(plausible address on the business's own domain)},
-"style":{"fontDisplay":one of ${JSON.stringify([...DISPLAY_FONTS])},"fontBody":one of ${JSON.stringify([...BODY_FONTS])},"hero":"dark"|"light"|"gradient"|"split","caseStyle":"uppercase"|"normal","radius":"sharp"|"soft"|"round","paper":"#hex near-white tint","dark":"#hex near-black, may lean toward the brand","visual":"blob"|"arch"|"rings"|"tiles"}}
+"style":{"fontDisplay":one of ${JSON.stringify([...DISPLAY_FONTS])},"fontBody":one of ${JSON.stringify([...BODY_FONTS])},"hero":"dark"|"light"|"gradient"|"split","caseStyle":"uppercase"|"normal","radius":"sharp"|"soft"|"round","paper":"#hex near-white tint","dark":"#hex near-black, may lean toward the brand","visual":"blob"|"arch"|"rings"|"tiles","image":one of ["barber","beauty","cafe","restaurant","bakery","florist","fitness","craft","retail","coaching","wellness","photography","auto","outdoor","generic"], the closest match to the trade}}
 
 You are the POSITIONING STRATEGIST and ART DIRECTOR, not just a copywriter. The page must make the offer feel inevitable: the positioning line is the spine, the signature offer makes it concrete, the audience section makes the right visitor feel seen.
 

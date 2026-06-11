@@ -563,3 +563,19 @@ html.no-motion *::after {
   pointer-events: none;
   user-select: none;
 }
+
+/* typewriter caret (AI fields) */
+.tw-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: currentColor;
+  margin-left: 2px;
+  vertical-align: -0.12em;
+  animation: twBlink 1s steps(1) infinite;
+}
+@keyframes twBlink {
+  50% {
+    opacity: 0;
+  }
+}

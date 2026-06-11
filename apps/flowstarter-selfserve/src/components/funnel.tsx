@@ -9,6 +9,7 @@ import { useAuth } from '@clerk/nextjs';
 import { renderSiteHtml, type SiteSpec } from '@flowstarter/build-engine';
 import { api } from '@/lib/client-api';
 import { track } from '@/lib/analytics';
+import { TypeOnce } from '@/components/typewriter';
 
 export const OPEN_FUNNEL_EVENT = 'open-funnel';
 const PENDING_KEY = 'fs-pending-draft';
@@ -287,7 +288,9 @@ export function FunnelOverlay({
                   >
                     {t.who[0]}
                   </span>
-                  <span style={{ fontSize: 14.5, color: 'var(--ink-2)' }}>{t.text}</span>
+                  <span style={{ fontSize: 14.5, color: 'var(--ink-2)' }}>
+                    <TypeOnce text={t.text} active={i === taskIdx && !draft} />
+                  </span>
                   {i < taskIdx ? (
                     <span style={{ color: 'var(--pos)', fontWeight: 700 }}>✓</span>
                   ) : i === taskIdx && !draft ? (

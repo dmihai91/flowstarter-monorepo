@@ -558,3 +558,11 @@
 .landing .show-card:hover {
   background-image: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--accent) 13%, transparent), transparent 70%);
 }
+
+/* scroll-pinned product tour: the stage is 300vh tall, the content sticks —
+   scrolling advances panels instead of the page (desktop only) */
+.landing .pin-sticky { width: 100%; }
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .landing .pin-section { padding: 0; min-height: 300vh; position: relative; }
+  .landing .pin-sticky { position: sticky; top: 0; min-height: 100vh; display: flex; align-items: center; padding: 80px 0; }
+}

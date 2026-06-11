@@ -11,6 +11,7 @@ import { Icons } from '@/components/icons';
 import { AGENTS } from '@/lib/agents';
 import { api } from '@/lib/client-api';
 import { track } from '@/lib/analytics';
+import { useTypewriter } from '@/components/typewriter';
 
 interface ProjectPayload {
   project: {
@@ -117,6 +118,16 @@ export function DemoScreen({
   };
 
   const refsLeft = maxRefinements - refsUsed;
+  const typedSuggestion = useTypewriter(
+    [
+      'Make the whole thing warmer and friendlier',
+      'Try a serif font and softer colors',
+      'Rewrite the hero for people in a hurry',
+      'Add a section about weekend availability',
+      'Make it bolder. Much bolder.',
+    ],
+    { enabled: prompt.length === 0 && refsLeft > 0 && status === 'ready' },
+  );
 
   return (
     <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
@@ -195,7 +206,7 @@ export function DemoScreen({
                         void refine();
                       }
                     }}
-                    placeholder={refsLeft > 0 ? 'Tell the agent what to change — colors, copy, sections, anything' : 'Free prompts used — the full crew takes it from here'}
+                    placeholder={refsLeft > 0 ? typedSuggestion || 'Tell the agent what to change' : 'Free prompts used — the full crew takes it from here'}
                     rows={1}
                     disabled={refsLeft <= 0 || busy}
                     style={{ flex: 1, minWidth: 0, fontFamily: 'var(--sans)', fontSize: 15, lineHeight: 1.45, color: 'var(--ink)', background: 'transparent', border: 'none', outline: 'none', resize: 'none', padding: '9px 6px', maxHeight: 140 }}

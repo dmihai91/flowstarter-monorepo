@@ -10,6 +10,7 @@ import { Logo, ThemeToggle } from '@/components/ui';
 import { Icons } from '@/components/icons';
 import { AGENT_LIST } from '@/lib/agents';
 import { FunnelOverlay, openFunnel } from '@/components/funnel';
+import { useTypewriter, usePrefersReducedMotion } from '@/components/typewriter';
 
 type Pricing = { build: string; final: string; total: string; monthly: string; headline: string };
 
@@ -67,9 +68,18 @@ const HERO_FEED = [
 
 // Hero prompt box — typing here drops the visitor straight into the funnel
 // with the crew already drafting their site.
+const PROMPT_IDEAS = [
+  'A weekend pottery studio for total beginners — drop-in classes',
+  'A two-chair barbershop in Oakland, walk-ins welcome',
+  'A florist making wild, seasonal wedding arrangements',
+  'A fitness coach helping men over 30 get strong again',
+  'A sourdough subscription for my neighborhood',
+];
+
 function HeroPrompt() {
   const [val, setVal] = React.useState('');
   const [hint, setHint] = React.useState(false);
+  const typedPlaceholder = useTypewriter(PROMPT_IDEAS, { enabled: val.length === 0 });
   const go = () => {
     if (val.trim().length < 10) {
       setHint(true);
@@ -92,7 +102,7 @@ function HeroPrompt() {
           }
         }}
         rows={2}
-        placeholder="e.g. A weekend pottery studio for total beginners — drop-in classes"
+        placeholder={typedPlaceholder || 'Describe your business in one sentence'}
       />
       <div className="hero-prompt-row">
         <span className="mono hero-prompt-hint">{hint ? 'a sentence is plenty — tell us a bit more' : 'free · no account needed'}</span>
@@ -105,14 +115,36 @@ function HeroPrompt() {
 }
 
 function HeroDemoCard() {
-  const [count, setCount] = React.useState(0);
+  const reduced = usePrefersReducedMotion();
+  const [line, setLine] = React.useState(0);
+  const [chars, setChars] = React.useState(0);
+
   React.useEffect(() => {
-    const id = setInterval(() => {
-      setCount((c) => (c >= HERO_FEED.length ? 0 : c + 1));
-    }, 1700);
-    return () => clearInterval(id);
-  }, []);
-  const visible = HERO_FEED.slice(Math.max(0, count - 4), count);
+    if (reduced) return;
+    let t: ReturnType<typeof setTimeout>;
+    if (line >= HERO_FEED.length) {
+      t = setTimeout(() => {
+        setLine(0);
+        setChars(0);
+      }, 3200);
+    } else if (chars < HERO_FEED[line].text.length) {
+      t = setTimeout(() => setChars((c) => c + 1), 18 + Math.random() * 26);
+    } else {
+      t = setTimeout(() => {
+        setLine((l) => l + 1);
+        setChars(0);
+      }, 760);
+    }
+    return () => clearTimeout(t);
+  }, [line, chars, reduced]);
+
+  const count = reduced ? HERO_FEED.length : Math.min(line + 1, HERO_FEED.length);
+  const visible = HERO_FEED.slice(0, count).slice(-4);
+  const offset = count - visible.length;
+  const progress = reduced
+    ? 100
+    : Math.min(100, Math.round(((line + (HERO_FEED[line] ? chars / HERO_FEED[line].text.length : 0)) / HERO_FEED.length) * 100));
+
   return (
     <div className="demo-card">
       <div className="demo-head">
@@ -120,16 +152,22 @@ function HeroDemoCard() {
         <span className="demo-domain mono">sample · mudroom pottery</span>
       </div>
       <div className="demo-feed">
-        {visible.map((l, i) => (
-          <div className="demo-line" key={`${count}-${i}`}>
-            <span className="demo-line-avatar" style={{ color: l.color, background: l.color + '1f', borderColor: l.color + '66' }}>
-              {l.who[0]}
-            </span>
-            <span className="demo-line-body">
-              <strong style={{ color: l.color }}>{l.who}</strong> {l.text}
-            </span>
-          </div>
-        ))}
+        {visible.map((l, i) => {
+          const absolute = offset + i;
+          const isActive = !reduced && absolute === line;
+          const text = isActive ? l.text.slice(0, chars) : l.text;
+          return (
+            <div className="demo-line" key={absolute} style={{ animation: 'none' }}>
+              <span className="demo-line-avatar" style={{ color: l.color, background: l.color + '1f', borderColor: l.color + '66' }}>
+                {l.who[0]}
+              </span>
+              <span className="demo-line-body">
+                <strong style={{ color: l.color }}>{l.who}</strong> {text}
+                {isActive && <span className="tw-caret" aria-hidden />}
+              </span>
+            </div>
+          );
+        })}
       </div>
       <div className="demo-foot">
         <div className="demo-avatars">
@@ -139,16 +177,46 @@ function HeroDemoCard() {
             </span>
           ))}
         </div>
-        <span className="demo-progress mono">{Math.round((count / HERO_FEED.length) * 100)}%</span>
+        <span className="demo-progress mono">{progress}%</span>
       </div>
     </div>
   );
 }
 
-// product tour (auto-advancing panels)
+// product tour — pinned on desktop: the section holds the viewport while
+// scrolling advances the panels (Railway-style storytelling); auto-advances
+// on mobile/reduced-motion.
 function ProductTour({ pricing }: { pricing: Pricing }) {
   const [idx, setIdx] = React.useState(0);
+  const stageRef = React.useRef<HTMLElement | null>(null);
+  const [pinned, setPinned] = React.useState(false);
+  const reduced = usePrefersReducedMotion();
   const timer = React.useRef<ReturnType<typeof setInterval> | null>(null);
+
+  React.useEffect(() => {
+    const mq = window.matchMedia('(min-width: 900px)');
+    const set = () => setPinned(mq.matches);
+    set();
+    mq.addEventListener('change', set);
+    return () => mq.removeEventListener('change', set);
+  }, []);
+
+  // scroll position → active panel while the stage is pinned
+  React.useEffect(() => {
+    if (!pinned || reduced) return;
+    const onScroll = () => {
+      const el = stageRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const total = el.offsetHeight - window.innerHeight;
+      if (total <= 0) return;
+      const passed = Math.min(Math.max(-r.top, 0), total);
+      setIdx(Math.min(2, Math.floor((passed / total) * 3)));
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [pinned, reduced]);
   const tour = [
     {
       title: 'A free demo, drafted in seconds',
@@ -225,20 +293,38 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
     },
   ];
 
+  // auto-advance only when not scroll-pinned
   const restart = React.useCallback(() => {
     if (timer.current) clearInterval(timer.current);
     timer.current = setInterval(() => setIdx((i) => (i + 1) % 3), 4200);
   }, []);
   React.useEffect(() => {
+    if (pinned && !reduced) {
+      if (timer.current) clearInterval(timer.current);
+      return;
+    }
     restart();
     return () => {
       if (timer.current) clearInterval(timer.current);
     };
-  }, [restart]);
+  }, [restart, pinned, reduced]);
+
+  const jump = (i: number) => {
+    if (!pinned || reduced) {
+      setIdx(i);
+      restart();
+      return;
+    }
+    const el = stageRef.current;
+    if (!el) return;
+    const total = el.offsetHeight - window.innerHeight;
+    window.scrollTo({ top: el.offsetTop + (total * (i + 0.5)) / 3, behavior: 'smooth' });
+  };
 
   return (
-    <section className="pin-section" id="product">
-      <div className="wrap pin-inner">
+    <section className="pin-section" id="product" ref={stageRef}>
+      <div className="pin-sticky">
+        <div className="wrap pin-inner">
         <div className="pin-copy">
           <div className="eyebrow">Inside Flowstarter</div>
           <h2>
@@ -250,10 +336,7 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
               <button
                 key={t.title}
                 className={'pin-dot' + (i === idx ? ' on' : '')}
-                onClick={() => {
-                  setIdx(i);
-                  restart();
-                }}
+                onClick={() => jump(i)}
               >
                 <span className="pin-dot-bar" />
                 <span>
@@ -264,7 +347,7 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
               </button>
             ))}
           </div>
-          <p className="muted pin-hint">Auto-playing — click a step to jump</p>
+          <p className="muted pin-hint">{pinned && !reduced ? 'Keep scrolling — the page waits for you ↓' : 'Auto-playing — tap a step to jump'}</p>
         </div>
         <div className="pin-panels">
           {tour.map((t, i) => (
@@ -275,6 +358,7 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
               {t.body}
             </div>
           ))}
+          </div>
         </div>
       </div>
     </section>

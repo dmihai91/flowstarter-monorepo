@@ -157,6 +157,7 @@ function LoginInner() {
                   <div className="login-field">
                     <label className="login-label" htmlFor="email">Email</label>
                     <input
+                      suppressHydrationWarning
                       className="login-input"
                       id="email"
                       type="email"
@@ -169,6 +170,7 @@ function LoginInner() {
                   <div className="login-field">
                     <label className="login-label" htmlFor="password">Password</label>
                     <input
+                      suppressHydrationWarning
                       className="login-input"
                       id="password"
                       type="password"
@@ -228,6 +230,7 @@ function LoginInner() {
                   <div className="login-field">
                     <label className="login-label" htmlFor="code">Code</label>
                     <input
+                      suppressHydrationWarning
                       className="login-input"
                       id="code"
                       inputMode="numeric"

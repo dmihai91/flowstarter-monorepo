@@ -118,6 +118,7 @@ function SignUpInner() {
                     <div className="login-field">
                       <label className="login-label" htmlFor="firstName">First name</label>
                       <input
+                        suppressHydrationWarning
                         className="login-input"
                         id="firstName"
                         autoComplete="given-name"
@@ -129,6 +130,7 @@ function SignUpInner() {
                     <div className="login-field">
                       <label className="login-label" htmlFor="lastName">Last name</label>
                       <input
+                        suppressHydrationWarning
                         className="login-input"
                         id="lastName"
                         autoComplete="family-name"
@@ -141,6 +143,7 @@ function SignUpInner() {
                   <div className="login-field">
                     <label className="login-label" htmlFor="email">Email</label>
                     <input
+                      suppressHydrationWarning
                       className="login-input"
                       id="email"
                       type="email"
@@ -153,6 +156,7 @@ function SignUpInner() {
                   <div className="login-field">
                     <label className="login-label" htmlFor="password">Password</label>
                     <input
+                      suppressHydrationWarning
                       className="login-input"
                       id="password"
                       type="password"
@@ -203,6 +207,7 @@ function SignUpInner() {
                   <div className="login-field">
                     <label className="login-label" htmlFor="code">Code</label>
                     <input
+                      suppressHydrationWarning
                       className="login-input"
                       id="code"
                       inputMode="numeric"

@@ -90,6 +90,7 @@ function HeroPrompt() {
   return (
     <div className="hero-prompt">
       <textarea
+        suppressHydrationWarning
         value={val}
         onChange={(e) => {
           setVal(e.target.value);

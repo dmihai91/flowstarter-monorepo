@@ -207,6 +207,7 @@ export function FunnelOverlay({
               One sentence is plenty. A real agent builds a first draft of your site — free, right now.
             </p>
             <textarea
+              suppressHydrationWarning
               value={idea}
               onChange={(e) => setIdea(e.target.value)}
               autoFocus
@@ -400,6 +401,7 @@ export function FunnelOverlay({
                     <>
                       <span style={{ fontSize: 13, color: 'var(--ink-3)' }}>Not ready?</span>
                       <input
+                        suppressHydrationWarning
                         type="email"
                         value={leadEmail}
                         onChange={(e) => setLeadEmail(e.target.value)}

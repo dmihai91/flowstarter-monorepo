@@ -198,6 +198,7 @@ export function DemoScreen({
                   }}
                 >
                   <textarea
+                    suppressHydrationWarning
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     onKeyDown={(e) => {

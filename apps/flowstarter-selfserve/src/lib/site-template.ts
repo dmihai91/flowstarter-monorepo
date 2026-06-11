@@ -185,7 +185,7 @@ export function renderTemplate(fill: TemplateFill): string {
   .section-title { font-size: var(--fs-h2); text-transform: var(--case); }
 
   /* intro overlay — brand name blur-in, then the page reveals (dorin hero) */
-  .intro { position: fixed; inset: 0; z-index: 200; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; padding: 0 clamp(20px,5vw,80px); pointer-events: none; animation: intro-exit .6s cubic-bezier(.4,0,.2,1) forwards; animation-delay: 1.4s; }
+  .intro { position: fixed; inset: 0; z-index: 200; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; padding: 0 clamp(20px,5vw,80px); pointer-events: none; animation: intro-exit .6s cubic-bezier(.4,0,.2,1) forwards; animation-delay: .9s; }
   .intro span { font-family: var(--font-display); font-weight: 650; text-transform: var(--case); letter-spacing: -0.03em; color: #fff; text-align: center; line-height: 1.05; font-size: clamp(2.6rem, 9vw, 7rem); opacity: 0; animation: intro-text .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .08s; }
   @keyframes intro-text { from { opacity: 0; filter: blur(24px); transform: scale(.88); } to { opacity: 1; filter: blur(0); transform: scale(1); } }
   @keyframes intro-exit { to { opacity: 0; visibility: hidden; } }
@@ -216,12 +216,12 @@ export function renderTemplate(fill: TemplateFill): string {
   .hero--split .hero-visual::before { content: ''; position: absolute; inset: -120px -100vw -120px 18%; background: var(--brand-primary); z-index: -1; }
   .hero--split .hero-visual .blob, .hero--split .hero-visual .arch { inset: 12% 4% 16% 26%; }
   .hero-inner { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,44%); gap: 56px; align-items: center; min-height: max(680px, 92vh); padding-block: 120px 80px; }
-  .hero-kicker { font-size: .85rem; text-transform: uppercase; letter-spacing: 2.4px; color: var(--accent); font-weight: 700; margin-bottom: 18px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.5s; }
+  .hero-kicker { font-size: .85rem; text-transform: uppercase; letter-spacing: 2.4px; color: var(--accent); font-weight: 700; margin-bottom: 18px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .12s; }
   .hero--light .hero-kicker { color: var(--brand-primary); }
-  .hero-title { font-size: var(--fs-display); text-transform: var(--case); letter-spacing: -0.03em; margin-bottom: 24px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.6s; }
-  .hero-text { font-size: 1.25rem; line-height: 1.45; max-width: 480px; margin-bottom: 32px; color: rgba(255,255,255,.82); opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.8s; }
+  .hero-title { font-size: var(--fs-display); text-transform: var(--case); letter-spacing: -0.03em; margin-bottom: 24px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .22s; }
+  .hero-text { font-size: 1.25rem; line-height: 1.45; max-width: 480px; margin-bottom: 32px; color: rgba(255,255,255,.82); opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .35s; }
   .hero-text .hl { color: var(--accent); }
-  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 2s; }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .48s; }
   .hero-visual { position: relative; min-height: 440px; align-self: stretch; }
   .hero-visual .blob { position: absolute; inset: 8% 0 12% 6%; border-radius: 32px 120px 32px 32px; background: linear-gradient(160deg, var(--accent), var(--brand-primary) 75%); }
   .hero-visual .arch { position: absolute; inset: 8% 4% 0 10%; border-radius: 999px 999px 0 0; background: linear-gradient(180deg, var(--accent), var(--brand-primary) 85%); }
@@ -239,6 +239,13 @@ export function renderTemplate(fill: TemplateFill): string {
   .hero-visual .blob::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 28% 8%, rgba(255,255,255,.32), transparent 55%); }
   .hero-visual .ring { position: absolute; width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--accent); bottom: 4%; left: -8px; opacity: .8; }
   .hero-visual .dot { position: absolute; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); top: 4%; right: 10%; }
+  .hv-card { position: absolute; left: -4%; bottom: 12%; background: #fff; color: var(--text-primary); border-radius: var(--r-md); box-shadow: var(--shadow-float); padding: 16px 20px; max-width: 250px; display: flex; flex-direction: column; gap: 4px; animation: hv-float 7s ease-in-out infinite; }
+  .hv-card .hv-k { font-weight: 700; font-size: .95rem; line-height: 1.3; }
+  .hv-card .hv-t { font-size: .8rem; color: var(--text-secondary); line-height: 1.45; }
+  .hv-chip { position: absolute; top: 10%; right: 0; background: var(--bg-dark); color: #fff; border-radius: 99px; padding: 10px 18px; font-size: .85rem; font-weight: 600; box-shadow: var(--shadow-float); animation: hv-float 9s ease-in-out infinite reverse; }
+  .hv-chip b { color: var(--accent); margin-right: 7px; }
+  @keyframes hv-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  @media (prefers-reduced-motion: reduce) { .hv-card, .hv-chip { animation: none; } }
 
   /* stats strip — accent background (dorin Stats) */
   .stats { background: var(--accent); padding: 72px 0; }
@@ -275,11 +282,21 @@ export function renderTemplate(fill: TemplateFill): string {
   .offer-list li { list-style: none; display: flex; gap: 12px; align-items: flex-start; font-size: 1rem; line-height: 1.45; }
   .offer-list li::before { content: '✓'; font-weight: 800; flex-shrink: 0; }
 
-  /* audience — for you if */
+  /* audience — scroll-pinned "for you if" tour; static list on mobile/reduced motion */
   .audience { padding: 0 0 100px; }
-  .aud-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 42px; }
-  .aud { border-left: 3px solid var(--brand-primary); padding: 6px 0 6px 20px; font-size: 1.02rem; line-height: 1.5; }
-  .aud b { color: var(--brand-primary); display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; margin-bottom: 6px; }
+  .pin-panel { border-left: 3px solid var(--brand-primary); padding: 6px 0 6px 20px; margin-top: 24px; font-size: 1.02rem; line-height: 1.5; }
+  .pin-panel b { color: var(--brand-primary); display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; margin-bottom: 6px; }
+  .pin-hint { display: none; }
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    .audience { padding: 0; }
+    .pin-wrap { height: 240vh; }
+    .pin-stage { position: sticky; top: 0; min-height: 100vh; display: flex; align-items: center; }
+    .pin-panels { position: relative; min-height: 10em; margin-top: 36px; }
+    .pin-panel { position: absolute; inset: 0; margin: 0; border: none; padding: 0; opacity: 0; transform: translateY(16px); transition: opacity .45s ease, transform .45s ease; }
+    .pin-panel.is-on { opacity: 1; transform: none; }
+    .pin-panel p { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1.2; letter-spacing: -0.02em; font-weight: 650; max-width: 26ch; }
+    .pin-hint { display: block; margin-top: 48px; font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); }
+  }
 
   /* about — dark strip with the dorin circles */
   .about { background: var(--bg-dark); color: var(--text-on-dark); padding: var(--section-pad); }
@@ -347,6 +364,8 @@ export function renderTemplate(fill: TemplateFill): string {
       </div>
       <div class="hero-visual" aria-hidden="true">
         ${heroVisual}
+        ${f.offer.name ? `<div class="hv-card"><span class="hv-k">${esc(f.offer.name)}</span><span class="hv-t">${esc(f.offer.note || f.brand.tagline)}</span></div>` : ''}
+        ${f.stats[0]?.number ? `<div class="hv-chip"><b>${esc(f.stats[0].number)}</b>${esc(f.stats[0].label)}</div>` : ''}
       </div>
     </div>
   </section>
@@ -399,11 +418,16 @@ export function renderTemplate(fill: TemplateFill): string {
   </section>
 
   <section class="audience">
-    <div class="container">
-      <div class="section-label">Is this you?</div>
-      <h2 class="section-title">This is for you if</h2>
-      <div class="aud-grid">
-        ${f.audience.slice(0, 3).map((a, i) => `<div class="aud"><b>0${i + 1}</b>${esc(a)}</div>`).join('\n        ')}
+    <div class="pin-wrap">
+      <div class="pin-stage">
+        <div class="container">
+          <div class="section-label">Is this you?</div>
+          <h2 class="section-title">This is for you if</h2>
+          <div class="pin-panels">
+            ${f.audience.slice(0, 3).map((a, i) => `<div class="pin-panel${i === 0 ? ' is-on' : ''}"><b>0${i + 1} · 0${Math.min(f.audience.length, 3)}</b><p>${esc(a)}</p></div>`).join('\n            ')}
+          </div>
+          <div class="pin-hint">Keep scrolling</div>
+        </div>
       </div>
     </div>
   </section>
@@ -446,6 +470,26 @@ export function renderTemplate(fill: TemplateFill): string {
       <a href="mailto:${esc(f.contact.email)}">${esc(f.contact.email)}</a>
     </div>
   </footer>
+  <script>
+  (function () {
+    var wrap = document.querySelector('.pin-wrap');
+    if (!wrap) return;
+    var panels = wrap.querySelectorAll('.pin-panel');
+    if (!panels.length) return;
+    var mq = matchMedia('(min-width: 900px)');
+    var rm = matchMedia('(prefers-reduced-motion: reduce)');
+    function onScroll() {
+      if (!mq.matches || rm.matches) return;
+      var total = wrap.offsetHeight - innerHeight;
+      if (total <= 0) return;
+      var passed = Math.min(Math.max(-wrap.getBoundingClientRect().top, 0), total);
+      var idx = Math.min(panels.length - 1, Math.floor((passed / total) * panels.length));
+      for (var i = 0; i < panels.length; i++) panels[i].classList.toggle('is-on', i === idx);
+    }
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+  </script>
 </body>
 </html>`;
 }

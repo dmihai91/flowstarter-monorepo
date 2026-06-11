@@ -619,3 +619,33 @@
 @media (max-width: 900px) {
   .landing .team-row { grid-template-columns: 1fr; }
 }
+
+/* static pages (about / privacy / terms / 404 / 500) */
+.landing.static-shell { min-height: 100vh; display: flex; flex-direction: column; }
+.landing .static-head { position: sticky; top: 0; z-index: 50; background: var(--glass); -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur)); border-bottom: 1px solid var(--glass-border); }
+.landing .static-head-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.landing .static-head-links { display: flex; gap: 22px; font-size: 14px; }
+.landing .static-head-links a { color: var(--ink-2); }
+.landing .static-head-links a:hover { color: var(--ink); }
+.landing .static-head-cta { padding: 9px 18px; font-size: 14px; }
+.landing .static-main { flex: 1; display: flex; flex-direction: column; padding: clamp(48px, 7vw, 88px) 0; }
+.landing .static-prose { max-width: 760px; }
+.landing .static-prose h1 { font-size: clamp(30px, 4.5vw, 44px); margin: 10px 0 8px; }
+.landing .static-prose .static-updated { font-size: 12.5px; color: var(--ink-3); margin-bottom: 28px; }
+.landing .static-prose h2 { font-size: 21px; margin: 34px 0 10px; }
+.landing .static-prose p, .landing .static-prose li { color: var(--ink-2); font-size: 15.5px; line-height: 1.7; }
+.landing .static-prose p { margin: 0 0 14px; }
+.landing .static-prose ul { margin: 0 0 14px; padding-left: 22px; list-style: disc; }
+.landing .static-prose li { margin-bottom: 6px; }
+.landing .static-prose a { color: var(--accent); font-weight: 500; }
+.landing .static-prose strong { color: var(--ink); }
+.landing .about-team { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 6px; }
+.landing .static-hero { flex: 1; display: grid; place-items: center; text-align: center; padding: 0 24px; }
+.landing .static-code { font-family: var(--font-mono, 'JetBrains Mono', monospace); font-size: 13px; letter-spacing: 0.3em; color: var(--accent); }
+.landing .static-hero h1 { font-size: clamp(30px, 5vw, 48px); margin: 12px 0 10px; }
+.landing .static-hero p { color: var(--ink-2); max-width: 480px; margin: 0 auto 24px; line-height: 1.65; }
+.landing .static-hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+@media (max-width: 720px) {
+  .landing .static-head-links { display: none; }
+  .landing .about-team { grid-template-columns: 1fr; }
+}

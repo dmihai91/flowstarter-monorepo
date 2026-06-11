@@ -971,7 +971,9 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
           <nav className="footer-links">
             <a href="#how">Process</a>
             <a href="#pricing">Pricing</a>
-            <a href="#faq">FAQ</a>
+            <a href="/about">About</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
             <a href="/sign-in">Sign in</a>
             <a href={`mailto:${contactEmail}`}>Contact</a>
           </nav>

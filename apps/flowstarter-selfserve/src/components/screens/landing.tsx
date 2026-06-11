@@ -786,7 +786,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               <img className="team-photo" src="/team/dorin.jpeg" alt="Dorin" width={56} height={56} loading="lazy" />
               <div>
                 <b>Dorin</b>
-                <span className="muted">Design. His portfolio design system is the one our agents build on.</span>
+                <span className="muted">Co-founder. His design system is the one our agents build on.</span>
               </div>
             </div>
             <div className="team-card team-card--crew">

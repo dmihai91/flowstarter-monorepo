@@ -59,9 +59,9 @@ const ROLE_HEX: Record<string, string> = {
 
 // hero demo card: looping live build feed
 const HERO_FEED = [
-  { who: 'Vera', color: '#3E86E8', text: 'Positioning locked: “A Saturday, not a 6-week course.”' },
-  { who: 'Iris', color: '#B964E8', text: 'Brand direction locked: warm, earthy, anti-precious.' },
-  { who: 'Quinn', color: '#E89B2F', text: 'Hero written: “Make something with your hands this Saturday.”' },
+  { who: 'Vera', color: '#3E86E8', text: 'Positioning locked: “Walk in, walk out sharp.”' },
+  { who: 'Iris', color: '#B964E8', text: 'Brand direction locked: classic, clean, no fuss.' },
+  { who: 'Quinn', color: '#E89B2F', text: 'Hero written: “A proper cut, no appointment needed.”' },
   { who: 'Dash', color: '#2FB87A', text: 'Homepage assembled. Contact & booking wired.' },
   { who: 'Dash', color: '#2FB87A', text: 'Ready for your review. ✓' },
 ];
@@ -69,8 +69,8 @@ const HERO_FEED = [
 // Hero prompt box — typing here drops the visitor straight into the funnel
 // with the crew already drafting their site.
 const PROMPT_IDEAS = [
-  'A weekend pottery studio for total beginners — drop-in classes',
-  'A two-chair barbershop in Oakland, walk-ins welcome',
+  'An auto repair garage, honest prices, same-day fixes',
+  'A guesthouse by the Danube taking direct bookings',
   'A florist making wild, seasonal wedding arrangements',
   'A fitness coach helping men over 30 get strong again',
   'A sourdough subscription for my neighborhood',
@@ -150,7 +150,7 @@ function HeroDemoCard() {
     <div className="demo-card">
       <div className="demo-head">
         <span className="demo-pill">BUILDING</span>
-        <span className="demo-domain mono">sample · mudroom pottery</span>
+        <span className="demo-domain mono">sample · tudor barbershop</span>
       </div>
       <div className="demo-feed">
         {visible.map((l, i) => {
@@ -179,6 +179,136 @@ function HeroDemoCard() {
           ))}
         </div>
         <span className="demo-progress mono">{progress}%</span>
+      </div>
+    </div>
+  );
+}
+
+
+// after-launch editing demo: the owner texts a change, Dash applies it, and
+// the mock site preview updates live. Loops; starts when scrolled into view;
+// renders the finished state under reduced motion.
+const EDIT_STEPS = [
+  { ask: 'Add a banner: 10% off feeder rods this week', doneMsg: 'Banner is live on the homepage. ✓' },
+  { ask: 'We open Saturdays until 14:00 now, update the hours', doneMsg: 'Hours updated everywhere. ✓' },
+  { ask: 'Put the landing net at 39 lei', doneMsg: 'Price changed, checkout matches. ✓' },
+];
+const DASH = '#2FB87A';
+
+function EditDemo() {
+  const reduced = usePrefersReducedMotion();
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const [started, setStarted] = React.useState(false);
+  const [step, setStep] = React.useState(0);
+  const [phase, setPhase] = React.useState<'typing' | 'working' | 'done'>('typing');
+  const [chars, setChars] = React.useState(0);
+
+  React.useEffect(() => {
+    const el = rootRef.current;
+    if (!el || reduced) return;
+    const io = new IntersectionObserver(
+      (es) => {
+        if (es[0]?.isIntersecting) {
+          setStarted(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduced]);
+
+  React.useEffect(() => {
+    if (!started || reduced) return;
+    let t: ReturnType<typeof setTimeout>;
+    const msg = EDIT_STEPS[step].ask;
+    if (phase === 'typing') {
+      if (chars < msg.length) t = setTimeout(() => setChars((c) => c + 1), 16 + Math.random() * 24);
+      else t = setTimeout(() => setPhase('working'), 380);
+    } else if (phase === 'working') {
+      t = setTimeout(() => setPhase('done'), 1150);
+    } else {
+      const last = step === EDIT_STEPS.length - 1;
+      t = setTimeout(() => {
+        setStep(last ? 0 : step + 1);
+        setPhase('typing');
+        setChars(0);
+      }, last ? 4600 : 2100);
+    }
+    return () => clearTimeout(t);
+  }, [started, reduced, step, phase, chars]);
+
+  const appliedCount = reduced ? EDIT_STEPS.length : step + (phase === 'done' ? 1 : 0);
+  const applied = (i: number) => appliedCount > i;
+
+  const agentLine = (text: string) => (
+    <div className="edit-msg-agent">
+      <span className="demo-line-avatar" style={{ color: DASH, background: DASH + '1f', borderColor: DASH + '66' }}>D</span>
+      <span>
+        <strong style={{ color: DASH }}>Dash</strong> {text}
+      </span>
+    </div>
+  );
+
+  return (
+    <div className="edit-grid reveal" ref={rootRef}>
+      <div className="edit-chat">
+        <div className="edit-chat-head mono">YOU → YOUR SITE CREW</div>
+        {EDIT_STEPS.map((sStep, i) => {
+          if (!reduced && i > step) return null;
+          const current = !reduced && i === step;
+          if (current && phase === 'typing' && chars === 0) return null;
+          const text = current && phase === 'typing' ? sStep.ask.slice(0, chars) : sStep.ask;
+          return (
+            <React.Fragment key={i}>
+              <div className="edit-msg-user">
+                {text}
+                {current && phase === 'typing' && <span className="tw-caret" aria-hidden />}
+              </div>
+              {(!current || phase !== 'typing') &&
+                agentLine(current && phase === 'working' ? 'On it, editing your live site…' : sStep.doneMsg)}
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      <div className="edit-site" aria-hidden>
+        <div className="edit-chrome">
+          <span className="edit-dot" />
+          <span className="edit-dot" />
+          <span className="edit-dot" />
+          <span className="mono edit-url">sample · danube tackle shop</span>
+          <span className="mono edit-live">● live</span>
+        </div>
+        <div className="edit-page">
+          {applied(0) && (
+            <div className="edit-banner" key="banner">
+              This week: 10% off feeder rods
+            </div>
+          )}
+          <div className="edit-shop-name serif">Danube Tackle</div>
+          <div className="edit-shop-sub">Rods, reels and bait, right by the river</div>
+          <div className="edit-row">
+            <span>Feeder rod 3.6 m</span>
+            <b>189 lei</b>
+          </div>
+          <div className="edit-row">
+            <span>Landing net 50 cm</span>
+            <b key={applied(2) ? 'p1' : 'p0'} className={applied(2) ? 'edit-flash' : ''}>
+              {applied(2) ? '39 lei' : '35 lei'}
+            </b>
+          </div>
+          <div className="edit-row">
+            <span>Benzar Mix groundbait</span>
+            <b>21 lei</b>
+          </div>
+          <div className="edit-hours" key={applied(1) ? 'h1' : 'h0'}>
+            <span className={applied(1) ? 'edit-flash' : ''}>
+              Open Mon to Fri 9:00 to 18:00{applied(1) ? ', Sat to 14:00' : ''}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -225,14 +355,14 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
       pill: 'DEMO PREVIEW',
       body: (
         <div className="mock-card" style={{ flex: 1 }}>
-          <div className="serif" style={{ fontSize: 30, fontWeight: 600, letterSpacing: '-.02em' }}>Mudroom</div>
-          <div style={{ fontSize: 13.5, color: 'var(--ink-2)', marginBottom: 12 }}>Drop in. Get your hands dirty.</div>
+          <div className="serif" style={{ fontSize: 30, fontWeight: 600, letterSpacing: '-.02em' }}>Tudor Barbershop</div>
+          <div style={{ fontSize: 13.5, color: 'var(--ink-2)', marginBottom: 12 }}>Walk in. Walk out sharp.</div>
           <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-            {['#C2683F', '#E8B07A', '#3C3A34', '#F2EBDD'].map((c) => (
+            {['#1F2A44', '#C73E3E', '#E9E2D2', '#2B2B2B'].map((c) => (
               <span key={c} style={{ width: 30, height: 30, borderRadius: 8, background: c, border: '1px solid var(--line)' }} />
             ))}
           </div>
-          <div style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--ink-2)' }}>“Make something with your hands this Saturday.”</div>
+          <div style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--ink-2)' }}>“A proper cut, no appointment needed.”</div>
           <div className="mono" style={{ fontSize: 10.5, letterSpacing: '.08em', color: 'var(--ink-3)', marginTop: 12 }}>
             SAMPLE DRAFT · YOURS IS GENERATED FROM YOUR DESCRIPTION
           </div>
@@ -247,8 +377,8 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
         <>
           <div className="mock-card" style={{ flex: 1 }}>
             {[
-              { c: '#3E86E8', n: 'Vera', t: 'Positioning locked: “A Saturday, not a 6-week course.”' },
-              { c: '#B964E8', n: 'Iris', t: 'Brand direction: warm, earthy, anti-precious. Palette ready.' },
+              { c: '#3E86E8', n: 'Vera', t: 'Positioning locked: “Walk in, walk out sharp in 30 minutes.”' },
+              { c: '#B964E8', n: 'Iris', t: 'Brand direction: classic, clean, no fuss. Palette ready.' },
               { c: '#E89B2F', n: 'Quinn', t: 'Hero + 3 sections written in your voice.' },
               { c: '#2FB87A', n: 'Dash', t: 'Homepage assembled. Contact & booking wired. ✓' },
             ].map((l) => (
@@ -762,6 +892,22 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               </a>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* AFTER LAUNCH — edit your live site by talking to the crew */}
+      <section className="section section-alt" id="updates">
+        <div className="wrap">
+          <div className="sec-head reveal">
+            <div className="eyebrow">After launch</div>
+            <h2>Change anything with a sentence.</h2>
+            <p>
+              Your site doesn&rsquo;t freeze the day it ships. Tell the crew what changed, the way
+              you&rsquo;d text a friend, and it&rsquo;s live in minutes. Hosting and edits are part
+              of the monthly plan.
+            </p>
+          </div>
+          <EditDemo />
         </div>
       </section>
 

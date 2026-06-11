@@ -612,3 +612,10 @@
 /* funnel modal: width adapts to the step (wide only for the draft preview) */
 .funnel-card { width: min(620px, 100%); transition: width 0.35s var(--ease); }
 .funnel-card--wide { width: min(940px, 100%); }
+
+/* team photos + 3-up row */
+.landing .team-row { grid-template-columns: repeat(3, 1fr); max-width: 1080px; }
+.landing .team-photo { width: 56px; height: 56px; flex-shrink: 0; border-radius: 50%; object-fit: cover; border: 2px solid var(--glass-border); box-shadow: var(--shadow); }
+@media (max-width: 900px) {
+  .landing .team-row { grid-template-columns: 1fr; }
+}

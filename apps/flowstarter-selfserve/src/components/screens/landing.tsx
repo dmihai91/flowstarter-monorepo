@@ -401,7 +401,7 @@ const DRAFTS = [
 
 const TESTIMONIAL = {
   quote:
-    'I sell fishing tackle, so I needed the site to be practical: products easy to find, checkout working, and prices I can change without calling someone. That is what they built. I still spend most days with customers or on the water, but orders can come in without me sitting at the computer.',
+    'I sell fishing tackle. I didn’t need anything fancy, just a site where people can find the product, the checkout works, and I can change a price myself without calling anyone. That’s what they built. Most days I’m with customers or out on the water, and orders still come in without me sitting at a computer.',
   name: 'Daniel Draga',
   role: 'Owner, Lebădușul',
   href: 'https://lebadusularticoledepescuit.ro/',
@@ -774,10 +774,19 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
           </div>
           <div className="team-row reveal">
             <div className="team-card">
-              <span className="team-avatar" aria-hidden>DP</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="team-photo" src="/team/darius.png" alt="Darius Popescu" loading="lazy" />
               <div>
                 <b>Darius Popescu</b>
-                <span className="muted">Founder — builds the platform, answers the emails, takes the blame.</span>
+                <span className="muted">Founder. Builds the platform, answers the emails, takes the blame.</span>
+              </div>
+            </div>
+            <div className="team-card">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="team-photo" src="/team/dorin.jpeg" alt="Dorin" loading="lazy" />
+              <div>
+                <b>Dorin</b>
+                <span className="muted">Design. His portfolio design system is the one our agents build on.</span>
               </div>
             </div>
             <div className="team-card team-card--crew">
@@ -790,7 +799,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               </div>
               <div>
                 <b>Vera, Iris, Quinn & Dash</b>
-                <span className="muted">The agent crew — research, brand, copy and code, around the clock.</span>
+                <span className="muted">The agent crew. Research, brand, copy and code, around the clock.</span>
               </div>
             </div>
           </div>

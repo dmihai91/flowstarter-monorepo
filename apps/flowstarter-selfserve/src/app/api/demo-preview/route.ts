@@ -26,6 +26,13 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Too many previews from this network today.' }, { status: 429 });
       }
     }
+    const globalCount = await getStore().bumpRateLimit(`global:gen:${day}`);
+    if (globalCount > DEMO.globalGenPerDay) {
+      return NextResponse.json(
+        { error: 'The crew is at capacity today — please try again tomorrow.' },
+        { status: 429 },
+      );
+    }
     const { spec, html, agentBuilt } = await generateDemoSite(body.data.businessDescription);
     return NextResponse.json({ spec, html, agentBuilt });
   } catch (e) {

@@ -37,6 +37,59 @@ export interface TemplateFill {
   about: { label: string; title: string; p1: string; p2: string };
   cta: { title: string; text: string; button: string };
   contact: { heading: string; text: string; email: string };
+  /** Art direction the agent designs — template is inspiration, not a cage. */
+  style?: StyleFill;
+}
+
+export interface StyleFill {
+  /** Display font (curated Google Fonts whitelist). */
+  fontDisplay: string;
+  /** Body font (curated whitelist). */
+  fontBody: string;
+  hero: 'dark' | 'light' | 'gradient' | 'split';
+  caseStyle: 'uppercase' | 'normal';
+  radius: 'sharp' | 'soft' | 'round';
+  /** Page background tint (light, near-white). */
+  paper: string;
+  /** Dark surface tint (near-black, may lean toward the brand). */
+  dark: string;
+  /** Hero visual motif. */
+  visual: 'blob' | 'arch' | 'rings' | 'tiles';
+}
+
+export const DISPLAY_FONTS = [
+  'Space Grotesk',
+  'Fraunces',
+  'Playfair Display',
+  'Sora',
+  'Bricolage Grotesque',
+  'DM Serif Display',
+  'Syne',
+  'Manrope',
+] as const;
+export const BODY_FONTS = ['Inter', 'Manrope', 'DM Sans', 'Work Sans', 'Source Sans 3', 'Karla'] as const;
+
+const RADIUS: Record<StyleFill['radius'], { sm: string; md: string; lg: string }> = {
+  sharp: { sm: '2px', md: '4px', lg: '8px' },
+  soft: { sm: '8px', md: '12px', lg: '16px' },
+  round: { sm: '12px', md: '18px', lg: '26px' },
+};
+
+export function resolveStyle(fill: TemplateFill): Required<StyleFill> {
+  const st = fill.style;
+  const pick = <T extends string>(v: unknown, list: readonly T[], fb: T): T =>
+    list.includes(v as T) ? (v as T) : fb;
+  const hex = (v: unknown, fb: string) => (/^#[0-9a-fA-F]{3,8}$/.test(String(v ?? '')) ? String(v) : fb);
+  return {
+    fontDisplay: pick(st?.fontDisplay, DISPLAY_FONTS, 'Space Grotesk'),
+    fontBody: pick(st?.fontBody, BODY_FONTS, 'Inter'),
+    hero: pick(st?.hero, ['dark', 'light', 'gradient', 'split'] as const, 'dark'),
+    caseStyle: pick(st?.caseStyle, ['uppercase', 'normal'] as const, 'uppercase'),
+    radius: pick(st?.radius, ['sharp', 'soft', 'round'] as const, 'soft'),
+    paper: hex(st?.paper, '#F9F7F1'),
+    dark: hex(st?.dark, '#0a0a0a'),
+    visual: pick(st?.visual, ['blob', 'arch', 'rings', 'tiles'] as const, 'blob'),
+  };
 }
 
 const esc = (s: string) =>
@@ -54,11 +107,21 @@ const ICONS = [
 
 export function renderTemplate(fill: TemplateFill): string {
   const f = fill;
+  const st = resolveStyle(fill);
+  const r = RADIUS[st.radius];
   const heroText = esc(f.hero.text).replace(
     esc(f.hero.highlight),
     `<span class="hl">${esc(f.hero.highlight)}</span>`,
   );
-  const slug = f.brand.name.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const fontHref = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(st.fontDisplay).replace(/%20/g, '+')}:wght@500;600;700&family=${encodeURIComponent(st.fontBody).replace(/%20/g, '+')}:wght@400;500;600;700&display=swap`;
+  // hero visual motif variants (pure CSS art)
+  const VISUALS: Record<string, string> = {
+    blob: '<div class="blob"></div><span class="ring"></span><span class="dot"></span>',
+    arch: '<div class="arch"></div><span class="dot"></span>',
+    rings: '<div class="rings"><span></span><span></span><span></span></div>',
+    tiles: '<div class="tiles"><span></span><span></span><span></span><span></span></div>',
+  };
+  const heroVisual = VISUALS[st.visual];
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -66,13 +129,16 @@ export function renderTemplate(fill: TemplateFill): string {
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${esc(f.brand.name)} · ${esc(f.brand.tagline)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="${fontHref}" rel="stylesheet" />
 <!--FILL${JSON.stringify(fill)}FILL-->
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   :root {
-    --bg-dark: #0a0a0a;
-    --surface-base: #F9F7F1;
+    --bg-dark: ${esc(st.dark)};
+    --surface-base: ${esc(st.paper)};
     --brand-primary: ${esc(f.brand.primary)};
     --accent: ${esc(f.brand.accent)};
     --text-primary: #0a0a0a;
@@ -87,24 +153,27 @@ export function renderTemplate(fill: TemplateFill): string {
     --fs-h2: clamp(2rem, 4vw, 2.75rem);
     --fs-h4: 1.35rem;
     --fs-body: 1.05rem;
-    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+    --r-sm: ${r.sm}; --r-md: ${r.md}; --r-lg: ${r.lg};
+    --case: ${st.caseStyle === 'uppercase' ? 'uppercase' : 'none'};
+    --font: '${st.fontBody}', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: '${st.fontDisplay}', '${st.fontBody}', -apple-system, sans-serif;
   }
   body { font-family: var(--font); background: var(--surface-base); color: var(--text-primary); font-size: var(--fs-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
   .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
-  h1,h2,h3,h4 { line-height: 1.08; letter-spacing: -0.02em; font-weight: 650; }
+  h1,h2,h3,h4 { line-height: 1.08; letter-spacing: -0.02em; font-weight: 650; font-family: var(--font-display); }
   a { color: inherit; text-decoration: none; }
-  .btn { display: inline-block; font-weight: 600; font-size: .95rem; padding: 14px 28px; border-radius: 12px; transition: transform .3s ease, box-shadow .3s ease; text-align: center; }
+  .btn { display: inline-block; font-weight: 600; font-size: .95rem; padding: 14px 28px; border-radius: var(--r-md); transition: transform .3s ease, box-shadow .3s ease; text-align: center; }
   .btn:hover { transform: translateY(-2px); }
   .btn-primary { background: var(--brand-primary); color: #fff; box-shadow: 0 10px 22px -10px var(--brand-primary); }
   .btn-outline-light { border: 1.5px solid rgba(255,255,255,.4); color: #fff; }
   .btn-on-dark { background: var(--accent); color: var(--bg-dark); box-shadow: 0 10px 22px -10px rgba(0,0,0,.5); }
   .btn-outline-light:hover { border-color: #fff; }
   .section-label { font-size: .85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; color: var(--brand-primary); font-weight: 600; }
-  .section-title { font-size: var(--fs-h2); text-transform: uppercase; }
+  .section-title { font-size: var(--fs-h2); text-transform: var(--case); }
 
   /* intro overlay — brand name blur-in, then the page reveals (dorin hero) */
   .intro { position: fixed; inset: 0; z-index: 200; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; padding: 0 clamp(20px,5vw,80px); pointer-events: none; animation: intro-exit .6s cubic-bezier(.4,0,.2,1) forwards; animation-delay: 1.4s; }
-  .intro span { font-weight: 650; text-transform: uppercase; letter-spacing: -0.03em; color: #fff; text-align: center; line-height: 1.05; font-size: clamp(2.6rem, 9vw, 7rem); opacity: 0; animation: intro-text .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .08s; }
+  .intro span { font-family: var(--font-display); font-weight: 650; text-transform: var(--case); letter-spacing: -0.03em; color: #fff; text-align: center; line-height: 1.05; font-size: clamp(2.6rem, 9vw, 7rem); opacity: 0; animation: intro-text .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .08s; }
   @keyframes intro-text { from { opacity: 0; filter: blur(24px); transform: scale(.88); } to { opacity: 1; filter: blur(0); transform: scale(1); } }
   @keyframes intro-exit { to { opacity: 0; visibility: hidden; } }
   @keyframes enter { from { opacity: 0; transform: translateX(-28px); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
@@ -118,15 +187,40 @@ export function renderTemplate(fill: TemplateFill): string {
   .nav nav a:hover { color: #fff; }
   .nav .btn { padding: 10px 20px; }
 
-  /* hero — full-height dark (dorin) */
+  /* hero — variants (dorin-inspired) */
   .hero { background: var(--bg-dark); color: var(--text-on-dark); overflow: clip; }
+  .hero--gradient { background: linear-gradient(140deg, var(--bg-dark) 30%, var(--brand-primary) 160%); }
+  .hero--light { background: var(--surface-base); color: var(--text-primary); }
+  .hero--light .hero-text { color: rgba(10,10,10,.72); }
+  .hero--light .hero-text .hl { color: var(--brand-primary); }
+  .hero--light .btn-on-dark { background: var(--brand-primary); color: #fff; }
+  .hero--light .btn-outline-light { border-color: rgba(10,10,10,.3); color: var(--text-primary); }
+  .hero--light + .stats { border-top: 1px solid var(--panel-border); }
+  header.on-light, header.on-light .nav { color: var(--text-primary); }
+  header.on-light .nav nav { color: rgba(10,10,10,.6); }
+  header.on-light .nav nav a:hover { color: var(--text-primary); }
+  header.on-light + .intro { display: none; }
+  .hero--split .hero-visual::before { content: ''; position: absolute; inset: -120px -100vw -120px 18%; background: var(--brand-primary); z-index: -1; }
+  .hero--split .hero-visual .blob, .hero--split .hero-visual .arch { inset: 12% 4% 16% 26%; }
   .hero-inner { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,44%); gap: 56px; align-items: center; min-height: max(680px, 92vh); padding-block: 120px 80px; }
-  .hero-title { font-size: var(--fs-display); text-transform: uppercase; letter-spacing: -0.03em; margin-bottom: 24px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.6s; }
+  .hero-title { font-size: var(--fs-display); text-transform: var(--case); letter-spacing: -0.03em; margin-bottom: 24px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.6s; }
   .hero-text { font-size: 1.25rem; line-height: 1.45; max-width: 480px; margin-bottom: 32px; color: rgba(255,255,255,.82); opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.8s; }
   .hero-text .hl { color: var(--accent); }
   .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 2s; }
   .hero-visual { position: relative; min-height: 440px; align-self: stretch; }
   .hero-visual .blob { position: absolute; inset: 8% 0 12% 6%; border-radius: 32px 120px 32px 32px; background: linear-gradient(160deg, var(--accent), var(--brand-primary) 75%); }
+  .hero-visual .arch { position: absolute; inset: 8% 4% 0 10%; border-radius: 999px 999px 0 0; background: linear-gradient(180deg, var(--accent), var(--brand-primary) 85%); }
+  .hero-visual .rings { position: absolute; inset: 0; display: grid; place-items: center; }
+  .hero-visual .rings span { position: absolute; border-radius: 50%; border: 2px solid var(--accent); }
+  .hero-visual .rings span:nth-child(1) { width: 78%; aspect-ratio: 1; opacity: .35; }
+  .hero-visual .rings span:nth-child(2) { width: 56%; aspect-ratio: 1; opacity: .6; border-color: var(--brand-primary); background: radial-gradient(circle at 35% 30%, var(--accent), transparent 70%); }
+  .hero-visual .rings span:nth-child(3) { width: 30%; aspect-ratio: 1; background: var(--brand-primary); border: none; }
+  .hero-visual .tiles { position: absolute; inset: 6% 2% 10% 8%; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .hero-visual .tiles span { border-radius: var(--r-lg); }
+  .hero-visual .tiles span:nth-child(1) { background: linear-gradient(150deg, var(--accent), var(--brand-primary)); }
+  .hero-visual .tiles span:nth-child(2) { background: var(--brand-primary); border-radius: 50% 50% var(--r-lg) var(--r-lg); }
+  .hero-visual .tiles span:nth-child(3) { border: 2px solid var(--accent); }
+  .hero-visual .tiles span:nth-child(4) { background: linear-gradient(40deg, var(--brand-primary), var(--accent)); border-radius: var(--r-lg) var(--r-lg) 50% 50%; }
   .hero-visual .blob::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 28% 8%, rgba(255,255,255,.32), transparent 55%); }
   .hero-visual .ring { position: absolute; width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--accent); bottom: 4%; left: -8px; opacity: .8; }
   .hero-visual .dot { position: absolute; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); top: 4%; right: 10%; }
@@ -141,7 +235,7 @@ export function renderTemplate(fill: TemplateFill): string {
   .services { padding: var(--section-pad); }
   .services-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 56px; flex-wrap: wrap; }
   .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
-  .card { background: var(--surface-panel); border: 1px solid var(--panel-border); border-radius: 16px; padding: 30px 26px; transition: transform .3s ease, box-shadow .3s ease; }
+  .card { background: var(--surface-panel); border: 1px solid var(--panel-border); border-radius: var(--r-lg); padding: 30px 26px; transition: transform .3s ease, box-shadow .3s ease; }
   .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); }
   .card .icon { color: var(--brand-primary); margin-bottom: 18px; }
   .card h4 { font-size: var(--fs-h4); margin-bottom: 10px; }
@@ -184,9 +278,9 @@ export function renderTemplate(fill: TemplateFill): string {
 </style>
 </head>
 <body>
-  <div class="intro" aria-hidden="true"><span>${esc(f.brand.name)}</span></div>
+  ${st.hero === 'light' ? '' : `<div class="intro" aria-hidden="true"><span>${esc(f.brand.name)}</span></div>`}
 
-  <header>
+  <header class="${st.hero === 'light' ? 'on-light' : ''}">
     <div class="nav">
       <span class="word">${esc(f.brand.name)}</span>
       <nav>
@@ -198,7 +292,7 @@ export function renderTemplate(fill: TemplateFill): string {
     </div>
   </header>
 
-  <section class="hero">
+  <section class="hero hero--${st.hero}">
     <div class="container hero-inner">
       <div>
         <h1 class="hero-title">${esc(f.hero.title)}</h1>
@@ -209,9 +303,7 @@ export function renderTemplate(fill: TemplateFill): string {
         </div>
       </div>
       <div class="hero-visual" aria-hidden="true">
-        <div class="blob"></div>
-        <span class="ring"></span>
-        <span class="dot"></span>
+        ${heroVisual}
       </div>
     </div>
   </section>

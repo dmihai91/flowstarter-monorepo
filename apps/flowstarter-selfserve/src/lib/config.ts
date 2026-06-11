@@ -51,6 +51,8 @@ export const DEMO = {
   /** Hard rate limits per email/IP for demo generation. */
   maxDemosPerEmailPerDay: int('SELFSERVE_MAX_DEMOS_PER_EMAIL_PER_DAY', 3),
   maxDemosPerIpPerDay: int('SELFSERVE_MAX_DEMOS_PER_IP_PER_DAY', 8),
+  /** Hard global ceiling on model generations per day (demos + refinements) — the cost fuse. */
+  globalGenPerDay: int('SELFSERVE_GLOBAL_GEN_PER_DAY', 400),
 } as const;
 
 export const ENGINE = {

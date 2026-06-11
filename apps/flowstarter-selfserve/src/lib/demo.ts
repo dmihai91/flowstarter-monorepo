@@ -14,7 +14,10 @@ import {
   parseFillFromHtml,
   fillToSpec,
   fillFromSpec,
+  DISPLAY_FONTS,
+  BODY_FONTS,
   type TemplateFill,
+  type StyleFill,
 } from './site-template';
 
 export const SpecSchema = z.object({
@@ -92,7 +95,14 @@ const FILL_SYSTEM = `You are the content agent for Flowstarter's house site temp
 "services":{"label":string(<=20 chars),"titleLine1":string(<=18 chars),"titleLine2":string(<=18 chars),"items":[{"title":string(<=30 chars),"description":string(<=140 chars)} x6]},
 "about":{"label":string,"title":string(<=60 chars),"p1":string(<=240 chars),"p2":string(<=240 chars)},
 "cta":{"title":string(<=48 chars),"text":string(<=160 chars),"button":string(<=24 chars)},
-"contact":{"heading":string(<=40 chars),"text":string(<=160 chars),"email":string(plausible address on the business's own domain)}}
+"contact":{"heading":string(<=40 chars),"text":string(<=160 chars),"email":string(plausible address on the business's own domain)},
+"style":{"fontDisplay":one of ${JSON.stringify([...DISPLAY_FONTS])},"fontBody":one of ${JSON.stringify([...BODY_FONTS])},"hero":"dark"|"light"|"gradient"|"split","caseStyle":"uppercase"|"normal","radius":"sharp"|"soft"|"round","paper":"#hex near-white tint","dark":"#hex near-black, may lean toward the brand","visual":"blob"|"arch"|"rings"|"tiles"}}
+
+You are the ART DIRECTOR, not just the copywriter. The template is your structure; the style block is where you make it unmistakably THIS business. Design a combination that feels premium and would impress a paying client:
+- a tasteful but characterful font pairing (serif display for crafted/warm trades, grotesque for modern/technical ones),
+- a hero treatment and visual motif that match the trade's energy (dark = bold/premium, light = airy/calm, gradient = energetic, split = editorial),
+- tinted surfaces (paper/dark) that carry the brand instead of defaults.
+Avoid the obvious default (dark + uppercase + blob) unless it truly fits best.
 
 Rules:
 - Respond with ONLY the JSON object. No prose, no code fences.
@@ -155,6 +165,7 @@ function normalizeFill(raw: unknown): TemplateFill | null {
         text: str(r.contact?.text, 190),
         email: str(r.contact?.email, 80, 'hello@example.com'),
       },
+      style: (r as { style?: StyleFill }).style,
     };
     if (!fill.hero.title || !fill.hero.text || fill.services.items.length < 3) return null;
     while (fill.stats.length < 4) fill.stats.push({ number: '1:1', label: 'Personal service' });
@@ -196,15 +207,38 @@ async function callFillModel(messages: Array<{ role: string; content: string }>)
   }
 }
 
+type DemoSite = { spec: SiteSpec; html: string; agentBuilt: boolean };
+
+// Cost control: identical descriptions reuse the cached generation (the
+// landing example chips, double-clicks and retries cost nothing).
+function demoCache(): Map<string, DemoSite> {
+  const g = globalThis as { __selfserveDemoCache?: Map<string, DemoSite> };
+  g.__selfserveDemoCache ??= new Map();
+  return g.__selfserveDemoCache;
+}
+
 /** Agent fills the house template (dorin-portfolio elements); design is ours,
  *  so quality is constant. Keyless fallback maps the mock spec onto the same
  *  template — even the fallback looks like the house design. */
+/** Deterministic per-description style nudge so directions don't converge. */
+function directionSeed(description: string): string {
+  let h = 0;
+  for (const c of description) h = (h * 31 + c.charCodeAt(0)) | 0;
+  const heroes = ['dark', 'light', 'gradient', 'split'] as const;
+  const visuals = ['blob', 'arch', 'rings', 'tiles'] as const;
+  const cases = ['uppercase', 'normal'] as const;
+  return `Suggested starting direction (depart from it if it doesn't fit this business): hero="${heroes[Math.abs(h) % 4]}", visual="${visuals[Math.abs(h >> 2) % 4]}", caseStyle="${cases[Math.abs(h >> 4) % 2]}".`;
+}
+
 export async function generateDemoSite(
   businessDescription: string,
-): Promise<{ spec: SiteSpec; html: string; agentBuilt: boolean }> {
+): Promise<DemoSite> {
+  const cacheKey = businessDescription.trim().toLowerCase();
+  const cached = demoCache().get(cacheKey);
+  if (cached?.agentBuilt) return cached;
   const messages = [
     { role: 'system', content: FILL_SYSTEM },
-    { role: 'user', content: `Business description:\n${businessDescription}` },
+    { role: 'user', content: `Business description:\n${businessDescription}\n\n${directionSeed(businessDescription)}` },
   ];
   let fill = await callFillModel(messages);
   if (!fill && MODELS.openrouterApiKey) {
@@ -212,7 +246,11 @@ export async function generateDemoSite(
     fill = await callFillModel(messages);
   }
   if (fill) {
-    return { spec: fillToSpec(fill), html: renderTemplate(fill), agentBuilt: true };
+    const out: DemoSite = { spec: fillToSpec(fill), html: renderTemplate(fill), agentBuilt: true };
+    const cache = demoCache();
+    cache.set(cacheKey, out);
+    if (cache.size > 200) cache.delete(cache.keys().next().value!);
+    return out;
   }
   const spec = await generateDemoSpec(businessDescription);
   const fallback = fillFromSpec(spec);

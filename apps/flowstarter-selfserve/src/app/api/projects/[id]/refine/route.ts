@@ -7,6 +7,8 @@ import { getStore } from '@/lib/store';
 import { refineDemoSite } from '@/lib/demo';
 import { DEMO } from '@/lib/config';
 
+const today = () => new Date().toISOString().slice(0, 10);
+
 const Body = z.object({ prompt: z.string().trim().min(3).max(500) });
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -26,6 +28,11 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     }
     const body = Body.safeParse(await req.json());
     if (!body.success) return NextResponse.json({ error: 'Tell us what to change.' }, { status: 400 });
+
+    const globalCount = await store.bumpRateLimit(`global:gen:${today()}`);
+    if (globalCount > DEMO.globalGenPerDay) {
+      return NextResponse.json({ error: 'The crew is at capacity today — try again tomorrow.' }, { status: 429 });
+    }
 
     const { spec, html } = await refineDemoSite(
       project.business_description,

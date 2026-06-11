@@ -30,7 +30,9 @@ export type FunnelEvent =
   | 'paid_149_subscription'
   | 'paid_149_code_only'
   | 'abandoned_after_build'
-  | 'brand_kit_downloaded';
+  | 'brand_kit_downloaded'
+  | 'draft_email_captured'
+  | 'draft_resumed';
 
 export function track(event: FunnelEvent, props?: Record<string, unknown>) {
   if (!initialized) return;

@@ -7,6 +7,7 @@ import { requireIdentity } from '@/lib/auth';
 import { getStore } from '@/lib/store';
 import { createBuildFeeCheckout, createFinalCheckout } from '@/lib/stripe';
 import { PRICING } from '@/lib/config';
+import { slotsLeftThisMonth } from '@/lib/slots';
 
 const Body = z.object({
   projectId: z.string().uuid(),
@@ -38,6 +39,13 @@ export async function POST(req: Request) {
       }
       if (payments.some((p) => p.kind === 'build_fee' && p.status === 'paid')) {
         return NextResponse.json({ error: 'Build fee already paid.' }, { status: 409 });
+      }
+      // The slot counter shown on the landing page is real — enforce it.
+      if ((await slotsLeftThisMonth()) <= 0) {
+        return NextResponse.json(
+          { error: 'This month’s build slots are full. Your draft and free prompts stay — builds reopen on the 1st.' },
+          { status: 409 },
+        );
       }
       const waiverAcceptedAt = new Date().toISOString();
       const { url, sessionId } = await createBuildFeeCheckout({

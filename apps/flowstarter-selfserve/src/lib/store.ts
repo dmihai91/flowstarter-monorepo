@@ -87,6 +87,26 @@ export interface Store {
 
   /** Increment a daily rate-limit bucket; returns the new count. */
   bumpRateLimit(bucket: string): Promise<number>;
+
+  /** Paid build fees since the given ISO timestamp (slots taken this month). */
+  countPaidBuildFeesSince(sinceIso: string): Promise<number>;
+
+  createLead(l: {
+    email: string;
+    businessDescription: string;
+    demoSpec: SiteSpec | null;
+    demoHtml: string | null;
+  }): Promise<LeadRow>;
+  getLead(id: string): Promise<LeadRow | null>;
+}
+
+export interface LeadRow {
+  id: string;
+  email: string;
+  business_description: string;
+  demo_spec: SiteSpec | null;
+  demo_html: string | null;
+  created_at: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -98,6 +118,7 @@ interface MemoryDb {
   builds: Map<string, BuildRow>;
   payments: Map<string, PaymentRow>;
   rateLimits: Map<string, number>;
+  leads: Map<string, LeadRow>;
 }
 
 function memoryDb(): MemoryDb {
@@ -107,7 +128,10 @@ function memoryDb(): MemoryDb {
     builds: new Map(),
     payments: new Map(),
     rateLimits: new Map(),
+    leads: new Map(),
   };
+  // upgrade instances created before newer maps existed (survives HMR)
+  g.__selfserveMemDb.leads ??= new Map();
   return g.__selfserveMemDb;
 }
 
@@ -268,6 +292,34 @@ class MemoryStore implements Store {
     const next = (this.db.rateLimits.get(bucket) ?? 0) + 1;
     this.db.rateLimits.set(bucket, next);
     return next;
+  }
+
+  async countPaidBuildFeesSince(sinceIso: string) {
+    return [...this.db.payments.values()].filter(
+      (p) => p.kind === 'build_fee' && p.status === 'paid' && p.updated_at >= sinceIso,
+    ).length;
+  }
+
+  async createLead(l: {
+    email: string;
+    businessDescription: string;
+    demoSpec: SiteSpec | null;
+    demoHtml: string | null;
+  }): Promise<LeadRow> {
+    const row: LeadRow = {
+      id: randomUUID(),
+      email: l.email,
+      business_description: l.businessDescription,
+      demo_spec: l.demoSpec,
+      demo_html: l.demoHtml,
+      created_at: now(),
+    };
+    this.db.leads.set(row.id, row);
+    return row;
+  }
+
+  async getLead(id: string) {
+    return this.db.leads.get(id) ?? null;
   }
 }
 
@@ -463,6 +515,41 @@ class SupabaseStore implements Store {
     const { data, error } = await this.sb.rpc('selfserve_bump_rate_limit', { p_bucket: bucket });
     if (error) throw new Error(`[selfserve store] rate limit bump: ${error.message}`);
     return data as number;
+  }
+
+  async countPaidBuildFeesSince(sinceIso: string) {
+    const { count, error } = await this.sb
+      .from('selfserve_payments')
+      .select('id', { count: 'exact', head: true })
+      .eq('kind', 'build_fee')
+      .eq('status', 'paid')
+      .gte('updated_at', sinceIso);
+    if (error) throw new Error(`[selfserve store] count slots: ${error.message}`);
+    return count ?? 0;
+  }
+
+  async createLead(l: {
+    email: string;
+    businessDescription: string;
+    demoSpec: SiteSpec | null;
+    demoHtml: string | null;
+  }) {
+    return (await this.one<LeadRow>(
+      this.sb
+        .from('selfserve_leads')
+        .insert({
+          email: l.email,
+          business_description: l.businessDescription,
+          demo_spec: l.demoSpec,
+          demo_html: l.demoHtml,
+        })
+        .select()
+        .single(),
+    ))!;
+  }
+
+  async getLead(id: string) {
+    return this.one<LeadRow>(this.sb.from('selfserve_leads').select().eq('id', id).maybeSingle());
   }
 }
 

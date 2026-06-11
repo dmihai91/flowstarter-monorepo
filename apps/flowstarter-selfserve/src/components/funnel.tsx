@@ -33,8 +33,10 @@ export function openFunnel(idea?: string) {
 
 export function FunnelOverlay({
   pricing,
+  slots,
 }: {
   pricing: { build: string; final: string; total: string; monthly: string };
+  slots?: { left: number; cap: number };
 }) {
   const router = useRouter();
   const { isSignedIn } = useAuth();
@@ -47,6 +49,28 @@ export function FunnelOverlay({
   const [taskIdx, setTaskIdx] = React.useState(0);
   const [starting, setStarting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [leadEmail, setLeadEmail] = React.useState('');
+  const [leadState, setLeadState] = React.useState<'idle' | 'sending' | 'sent'>('idle');
+
+  const emailDraft = async () => {
+    if (!draft || leadState !== 'idle' || !/.+@.+\..+/.test(leadEmail)) return;
+    setLeadState('sending');
+    try {
+      await api('/api/leads', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: leadEmail.trim(),
+          businessDescription: idea,
+          demoSpec: draft,
+          demoHtml: draftHtml ?? undefined,
+        }),
+      });
+      track('draft_email_captured');
+      setLeadState('sent');
+    } catch {
+      setLeadState('idle');
+    }
+  };
 
   // Keep a stable handle on startDraft for the open-event listener.
   const startDraftRef = React.useRef<(text?: string) => Promise<void>>(async () => {});
@@ -347,6 +371,7 @@ export function FunnelOverlay({
                   <div style={{ padding: '16px 18px', background: 'color-mix(in srgb, var(--accent) 9%, var(--card))' }}>
                     <div className="mono" style={{ fontSize: 10.5, letterSpacing: '.1em', color: 'var(--accent)', marginBottom: 8 }}>
                       THE FULL BUILD · {pricing.build} TO START
+                      {slots && slots.left > 0 && slots.left <= slots.cap / 2 ? ` · ${slots.left} SLOTS LEFT` : ''}
                     </div>
                     {[
                       'Gallery, packages, FAQ & booking wired',
@@ -364,6 +389,31 @@ export function FunnelOverlay({
                 <p style={{ fontSize: 12.5, textAlign: 'center', marginTop: 10, color: 'var(--ink-2)' }}>
                   Scroll it — this is a real page the agent built from your prompt · free account unlocks 10 agent prompts
                 </p>
+                {/* bounce-cohort capture: save the draft to their inbox */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
+                  {leadState === 'sent' ? (
+                    <span style={{ fontSize: 13, color: 'var(--pos)', fontWeight: 600 }}>✓ Sent — your draft link is in your inbox.</span>
+                  ) : (
+                    <>
+                      <span style={{ fontSize: 13, color: 'var(--ink-3)' }}>Not ready?</span>
+                      <input
+                        type="email"
+                        value={leadEmail}
+                        onChange={(e) => setLeadEmail(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') void emailDraft(); }}
+                        placeholder="you@business.com"
+                        style={{ font: 'inherit', fontSize: 13.5, padding: '8px 12px', borderRadius: 10, border: '1.5px solid var(--line)', background: 'var(--card)', color: 'var(--ink)', outline: 'none', width: 200 }}
+                      />
+                      <button
+                        onClick={() => void emailDraft()}
+                        disabled={leadState === 'sending'}
+                        style={{ font: 'inherit', fontSize: 13.5, fontWeight: 700, color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer' }}
+                      >
+                        {leadState === 'sending' ? 'Sending…' : 'Email me this draft'}
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -383,6 +433,9 @@ export function FunnelOverlay({
             </p>
             <ul style={{ margin: '0 0 22px', padding: 0, listStyle: 'none', display: 'grid', gap: 8 }}>
               {[
+                ...(slots && slots.left > 0 && slots.left <= slots.cap / 2
+                  ? [`${slots.left} of ${slots.cap} build slots left this month`]
+                  : []),
                 'Free account — just an email, then 10 real agent prompts',
                 `Total is ${pricing.total} + ${pricing.monthly}/mo if you launch with us — no other costs`,
                 `Change your mind after the build? Keep a brand kit (assets + strategy); the ${pricing.build} is non-refundable`,

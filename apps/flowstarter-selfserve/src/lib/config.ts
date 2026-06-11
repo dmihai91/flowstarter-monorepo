@@ -55,6 +55,11 @@ export const DEMO = {
   globalGenPerDay: int('SELFSERVE_GLOBAL_GEN_PER_DAY', 400),
 } as const;
 
+/** Honest scarcity: real monthly build capacity, enforced at checkout. */
+export const CAPACITY = {
+  buildsPerMonth: int('SELFSERVE_BUILDS_PER_MONTH', 20),
+} as const;
+
 export const ENGINE = {
   /** 'mock' streams the prototype feed; 'orchestrator' runs the real agent pipeline. */
   mode: (process.env.BUILD_ENGINE_MODE ?? 'mock') as 'mock' | 'orchestrator',

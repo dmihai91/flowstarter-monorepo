@@ -27,10 +27,12 @@ export function DemoScreen({
   projectId,
   pricing,
   maxRefinements,
+  slots,
 }: {
   projectId: string;
   pricing: { headline: string; build: string; final: string; total: string; monthly: string };
   maxRefinements: number;
+  slots?: { left: number; cap: number };
 }) {
   const [spec, setSpec] = React.useState<SiteSpec | null>(null);
   const [demoHtml, setDemoHtml] = React.useState<string | null>(null);
@@ -276,6 +278,16 @@ export function DemoScreen({
                     <div className="mono" style={{ fontSize: 11, color: 'var(--ink-3)', textAlign: 'center', marginTop: 9 }}>
                       {pricing.total} total · then {pricing.monthly}/mo only if you launch with us
                     </div>
+                    {slots && slots.left > 0 && slots.left <= slots.cap / 2 && (
+                      <div className="mono" style={{ fontSize: 11, color: 'var(--warn)', textAlign: 'center', marginTop: 6, fontWeight: 600 }}>
+                        {slots.left} of {slots.cap} build slots left this month
+                      </div>
+                    )}
+                    {slots && slots.left <= 0 && (
+                      <div className="mono" style={{ fontSize: 11, color: 'var(--neg)', textAlign: 'center', marginTop: 6, fontWeight: 600 }}>
+                        This month’s build slots are full — builds reopen on the 1st
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

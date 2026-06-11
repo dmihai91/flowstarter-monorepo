@@ -84,6 +84,18 @@ create unique index if not exists selfserve_payments_session_idx
   on public.selfserve_payments (stripe_checkout_session_id)
   where stripe_checkout_session_id is not null;
 
+-- ---------- leads: 'email me my draft' captures (pre-account) ----------
+create table if not exists public.selfserve_leads (
+  id uuid primary key default gen_random_uuid(),
+  email text not null,
+  business_description text not null,
+  demo_spec jsonb,
+  demo_html text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists selfserve_leads_email_idx on public.selfserve_leads (email);
+
 -- ---------- rate limits: hard demo caps per email/IP, daily buckets ----------
 create table if not exists public.selfserve_rate_limits (
   bucket text primary key, -- e.g. 'email:a@b.c:2026-06-10' or 'ip:1.2.3.4:2026-06-10'
@@ -113,3 +125,4 @@ alter table public.selfserve_projects enable row level security;
 alter table public.selfserve_builds enable row level security;
 alter table public.selfserve_payments enable row level security;
 alter table public.selfserve_rate_limits enable row level security;
+alter table public.selfserve_leads enable row level security;

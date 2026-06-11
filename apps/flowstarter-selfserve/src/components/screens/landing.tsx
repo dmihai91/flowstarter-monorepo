@@ -272,7 +272,7 @@ const SAMPLES = [
   { name: 'Lumen Yoga', kind: 'Sunrise rooftop yoga', grad: 'linear-gradient(135deg, #9AD0C2, #5BA89A)' },
 ];
 
-export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; contactEmail: string }) {
+export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Pricing; contactEmail: string; slots: { left: number; cap: number } }) {
   useReveal();
   const { isSignedIn } = useAuth();
 
@@ -377,7 +377,11 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
                 <span>Plain-language changes</span>
               </div>
             </div>
-            <div className="hero-capacity">Limited capacity — we open a small number of new builds each month</div>
+            <div className="hero-capacity">
+              {slots.left > 0
+                ? `${slots.left} of ${slots.cap} build slots left this month`
+                : 'This month’s build slots are full — drafts stay free, builds reopen next month'}
+            </div>
           </div>
           <div className="hero-demo reveal">
             <HeroDemoCard />
@@ -754,7 +758,7 @@ export function LandingScreen({ pricing, contactEmail }: { pricing: Pricing; con
         </div>
       </footer>
 
-      <FunnelOverlay pricing={pricing} />
+      <FunnelOverlay pricing={pricing} slots={slots} />
     </div>
   );
 }

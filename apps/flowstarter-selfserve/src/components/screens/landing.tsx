@@ -401,7 +401,7 @@ const DRAFTS = [
 
 const TESTIMONIAL = {
   quote:
-    'I won’t pretend I understand websites. I sell fishing tackle, that’s what I know. But this one doesn’t need me. Orders come in while I’m at the water, I pack them when I get back, and when a price changes I fix it myself, two minutes. I haven’t had to call anyone once. That’s the part I like.',
+    'I needed a website to sell my fishing equipment, selling only offline was becoming a burden. I contacted Darius, and he and his platform deliver exactly what I need.',
   name: 'Daniel Draga',
   role: 'Owner, Lebădușul',
   href: 'https://lebadusularticoledepescuit.ro/',

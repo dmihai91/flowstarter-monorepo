@@ -461,3 +461,100 @@
 /* anchored sections clear the sticky nav when scrolled to */
 .landing section[id],
 .landing header[id] { scroll-margin-top: 76px; }
+
+/* ============================================================
+   Spectacular pass — Railway-inspired elements, theme-aware:
+   aurora + fine dot grid behind the glass hero, glowing animated
+   border on the build panel, trades marquee, cursor spotlights.
+   Works in studio AND midnight; glassmorphism stays.
+   ============================================================ */
+
+.landing .hero {
+  position: relative;
+  overflow: clip;
+  padding: 96px 0 0;
+}
+.landing .hero .wrap { position: relative; z-index: 2; }
+/* aurora — intensified theme blobs behind the hero glass */
+.landing .hero::before {
+  content: '';
+  position: absolute;
+  inset: -20% -10%;
+  background:
+    radial-gradient(42% 50% at 16% 10%, color-mix(in srgb, var(--blob-1) 34%, transparent), transparent 70%),
+    radial-gradient(36% 44% at 86% 18%, color-mix(in srgb, #06b6d4 18%, transparent), transparent 70%),
+    radial-gradient(40% 44% at 60% 98%, color-mix(in srgb, var(--blob-2) 16%, transparent), transparent 70%);
+  filter: blur(48px);
+  animation: floatBlob 26s var(--ease) infinite alternate;
+  pointer-events: none;
+}
+/* fine dot grid, masked to the stage */
+.landing .hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--ink) 22%, transparent) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(85% 80% at 50% 28%, #000 25%, transparent 75%);
+  mask-image: radial-gradient(85% 80% at 50% 28%, #000 25%, transparent 75%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.landing .hero h1 { font-size: clamp(46px, 6.4vw, 82px); }
+.landing .hero .hero-prompt { box-shadow: 0 24px 70px -28px color-mix(in srgb, var(--accent) 35%, rgba(20, 20, 50, 0.4)); }
+
+/* glowing animated border + halo on the live build panel */
+@property --ang {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes spinAng { to { --ang: 360deg; } }
+.landing .hero .demo-card {
+  position: relative;
+  box-shadow: 0 0 80px -22px color-mix(in srgb, var(--accent) 55%, transparent), var(--shadow-lg);
+}
+.landing .hero .demo-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--r-lg);
+  padding: 1px;
+  background: conic-gradient(from var(--ang), transparent 0 64%, color-mix(in srgb, var(--accent) 90%, transparent) 76%, rgba(6, 182, 212, 0.85) 84%, transparent 96%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: spinAng 7s linear infinite;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing .hero .demo-card::after { animation: none; }
+}
+
+/* trades marquee — who this is for, in motion (honest: trades, not fake logos) */
+.landing .trade-marquee {
+  position: relative;
+  z-index: 2;
+  margin-top: 60px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line-2);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.landing .tm-track { display: flex; gap: 44px; width: max-content; animation: tmScroll 36s linear infinite; }
+.landing .tm-track span { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.landing .tm-track span::after { content: '·'; margin-left: 44px; opacity: 0.4; }
+@keyframes tmScroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .landing .tm-track { animation: none; } }
+
+/* cursor spotlight on cards (Railway/Linear-style), theme-aware */
+.landing .step-card:hover,
+.landing .prob-card:hover,
+.landing .crew-card:hover,
+.landing .why-item:hover,
+.landing .price-step:hover,
+.landing .show-card:hover {
+  background-image: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--accent) 13%, transparent), transparent 70%);
+}

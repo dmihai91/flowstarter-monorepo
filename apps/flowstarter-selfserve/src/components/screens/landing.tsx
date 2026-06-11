@@ -13,6 +13,23 @@ import { FunnelOverlay, openFunnel } from '@/components/funnel';
 
 type Pricing = { build: string; final: string; total: string; monthly: string; headline: string };
 
+// cursor spotlight: cards light up under the pointer (Railway-style)
+function useSpotlight() {
+  React.useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const t = (e.target as HTMLElement | null)?.closest?.(
+        '.landing .step-card, .landing .prob-card, .landing .crew-card, .landing .why-item, .landing .price-step, .landing .show-card',
+      ) as HTMLElement | null;
+      if (!t) return;
+      const r = t.getBoundingClientRect();
+      t.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      t.style.setProperty('--my', `${e.clientY - r.top}px`);
+    };
+    document.addEventListener('mousemove', onMove, { passive: true });
+    return () => document.removeEventListener('mousemove', onMove);
+  }, []);
+}
+
 // scroll-reveal hook (IntersectionObserver, like landing.js)
 function useReveal() {
   React.useEffect(() => {
@@ -272,8 +289,14 @@ const SAMPLES = [
   { name: 'Lumen Yoga', kind: 'Sunrise rooftop yoga', grad: 'linear-gradient(135deg, #9AD0C2, #5BA89A)' },
 ];
 
+const TRADES = [
+  'Barbershops', 'Bakeries', 'Coaches', 'Pottery studios', 'Florists', 'Photographers',
+  'Therapists', 'Yoga studios', 'Dog groomers', 'Consultants', 'Cafés', 'Local services',
+];
+
 export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Pricing; contactEmail: string; slots: { left: number; cap: number } }) {
   useReveal();
+  useSpotlight();
   const { isSignedIn } = useAuth();
 
   const faq = [
@@ -385,6 +408,14 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
           </div>
           <div className="hero-demo reveal">
             <HeroDemoCard />
+          </div>
+        </div>
+        {/* trades marquee — who this is for, in motion */}
+        <div className="trade-marquee" aria-hidden>
+          <div className="tm-track">
+            {[...TRADES, ...TRADES].map((t, i) => (
+              <span key={i}>{t}</span>
+            ))}
           </div>
         </div>
       </header>

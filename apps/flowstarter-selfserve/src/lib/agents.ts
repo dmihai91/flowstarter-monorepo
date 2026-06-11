@@ -17,28 +17,28 @@ export const AGENTS: Record<AgentId, AgentMeta> = {
     name: 'Vera',
     role: 'Researcher',
     color: 'var(--role-research)',
-    blurb: 'Market & demand analysis',
+    blurb: 'Figures out who your customers are and what makes them pick you.',
   },
   brand: {
     id: 'brand',
     name: 'Iris',
     role: 'Brand',
     color: 'var(--role-brand)',
-    blurb: 'Identity, naming, visual system',
+    blurb: 'Gives your business a face: the name, the colors, the look.',
   },
   copy: {
     id: 'copy',
     name: 'Quinn',
     role: 'Copywriter',
     color: 'var(--role-copy)',
-    blurb: 'Voice, messaging, page copy',
+    blurb: 'Writes your pages the way you actually talk.',
   },
   dev: {
     id: 'dev',
     name: 'Dash',
     role: 'Developer',
     color: 'var(--role-dev)',
-    blurb: 'Site assembly, booking, deploy',
+    blurb: 'Puts the site together and makes the forms work.',
   },
 };
 

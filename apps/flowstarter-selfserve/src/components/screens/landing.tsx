@@ -59,21 +59,21 @@ const ROLE_HEX: Record<string, string> = {
 
 // hero demo card: looping live build feed
 const HERO_FEED = [
-  { who: 'Vera', color: '#3E86E8', text: 'Positioning locked: “Walk in, walk out sharp.”' },
-  { who: 'Iris', color: '#B964E8', text: 'Brand direction locked: classic, clean, no fuss.' },
-  { who: 'Quinn', color: '#E89B2F', text: 'Hero written: “A proper cut, no appointment needed.”' },
-  { who: 'Dash', color: '#2FB87A', text: 'Homepage assembled. Contact & booking wired.' },
-  { who: 'Dash', color: '#2FB87A', text: 'Ready for your review. ✓' },
+  { who: 'Vera', color: '#3E86E8', text: 'Most barbers around you are booking-only. Walk-ins are your edge, I’d lead with that.' },
+  { who: 'Iris', color: '#B964E8', text: 'Going navy and cream, old-school barber colors. Trendy fonts would fight the name.' },
+  { who: 'Quinn', color: '#E89B2F', text: 'Kept the headline plain: “A proper cut, no appointment needed.”' },
+  { who: 'Dash', color: '#2FB87A', text: 'Booking form is in, it sends straight to your phone.' },
+  { who: 'Dash', color: '#2FB87A', text: 'Done on my end. Have a look.' },
 ];
 
 // Hero prompt box — typing here drops the visitor straight into the funnel
 // with the crew already drafting their site.
 const PROMPT_IDEAS = [
-  'An auto repair garage, honest prices, same-day fixes',
-  'A guesthouse by the Danube taking direct bookings',
-  'A florist making wild, seasonal wedding arrangements',
-  'A fitness coach helping men over 30 get strong again',
-  'A sourdough subscription for my neighborhood',
+  'My auto repair garage, we fix most cars the same day',
+  'Our guesthouse by the Danube, we want direct bookings',
+  'I do wedding flowers, wild and seasonal, from my studio',
+  'I coach men over 30 who want to get strong again',
+  'I bake sourdough and want to sell weekly subscriptions',
 ];
 
 function HeroPrompt() {
@@ -106,7 +106,7 @@ function HeroPrompt() {
         placeholder={typedPlaceholder || 'Describe your business in one sentence'}
       />
       <div className="hero-prompt-row">
-        <span className="mono hero-prompt-hint">{hint ? 'a sentence is plenty — tell us a bit more' : 'free · no account needed'}</span>
+        <span className="mono hero-prompt-hint">{hint ? 'a sentence is plenty, tell us a bit more' : 'free · no account needed'}</span>
         <button className="btn btn-primary" onClick={go}>
           Draft my site free →
         </button>
@@ -189,9 +189,9 @@ function HeroDemoCard() {
 // the mock site preview updates live. Loops; starts when scrolled into view;
 // renders the finished state under reduced motion.
 const EDIT_STEPS = [
-  { ask: 'Add a banner: 10% off feeder rods this week', doneMsg: 'Banner is live on the homepage. ✓' },
-  { ask: 'We open Saturdays until 14:00 now, update the hours', doneMsg: 'Hours updated everywhere. ✓' },
-  { ask: 'Put the landing net at 39 lei', doneMsg: 'Price changed, checkout matches. ✓' },
+  { ask: 'Add a banner: 10% off feeder rods this week', doneMsg: 'Done, the banner’s up. ✓' },
+  { ask: 'We open Saturdays until 14:00 now, update the hours', doneMsg: 'Changed, in the footer too. ✓' },
+  { ask: 'Put the landing net at 39 lei', doneMsg: 'Done, 39 lei in the shop and at checkout. ✓' },
 ];
 const DASH = '#2FB87A';
 
@@ -267,7 +267,7 @@ function EditDemo() {
                 {current && phase === 'typing' && <span className="tw-caret" aria-hidden />}
               </div>
               {(!current || phase !== 'typing') &&
-                agentLine(current && phase === 'working' ? 'On it, editing your live site…' : sStep.doneMsg)}
+                agentLine(current && phase === 'working' ? 'On it, give me a second…' : sStep.doneMsg)}
             </React.Fragment>
           );
         })}
@@ -351,7 +351,7 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
   const tour = [
     {
       title: 'A free demo, drafted in seconds',
-      sub: 'Name, brand direction and hero — before you pay anything',
+      sub: 'The name, the look and the headline, before you pay anything',
       pill: 'DEMO PREVIEW',
       body: (
         <div className="mock-card" style={{ flex: 1 }}>
@@ -371,16 +371,16 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
     },
     {
       title: 'Watch the crew build it live',
-      sub: 'Four agents, one feed — you direct, they execute',
+      sub: 'Four agents in one feed, with you in charge',
       pill: 'LIVE BUILD',
       body: (
         <>
           <div className="mock-card" style={{ flex: 1 }}>
             {[
-              { c: '#3E86E8', n: 'Vera', t: 'Positioning locked: “Walk in, walk out sharp in 30 minutes.”' },
-              { c: '#B964E8', n: 'Iris', t: 'Brand direction: classic, clean, no fuss. Palette ready.' },
-              { c: '#E89B2F', n: 'Quinn', t: 'Hero + 3 sections written in your voice.' },
-              { c: '#2FB87A', n: 'Dash', t: 'Homepage assembled. Contact & booking wired. ✓' },
+              { c: '#3E86E8', n: 'Vera', t: 'Checked the area: everyone takes bookings, nobody does walk-ins. That’s the angle.' },
+              { c: '#B964E8', n: 'Iris', t: 'Palette’s ready, navy and cream. Like a shop that’s been there twenty years.' },
+              { c: '#E89B2F', n: 'Quinn', t: 'Wrote the homepage the way you’d say it out loud, short sentences.' },
+              { c: '#2FB87A', n: 'Dash', t: 'Assembled. The booking form works, I tested it twice. ✓' },
             ].map((l) => (
               <div className="mock-feed-line" key={l.n + l.t}>
                 <span className="mock-mini-avatar" style={{ color: l.c, background: l.c + '1f', borderColor: l.c + '66' }}>{l.n[0]}</span>
@@ -399,7 +399,7 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
     },
     {
       title: 'It stays managed after launch',
-      sub: `Hosting, your domain and plain-language edits — ${pricing.monthly}/mo`,
+      sub: `Hosting, your domain and edits, ${pricing.monthly}/mo`,
       pill: 'AFTER LAUNCH',
       body: (
         <>
@@ -478,7 +478,7 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
               </button>
             ))}
           </div>
-          <p className="muted pin-hint">{pinned && !reduced ? 'Keep scrolling — the page waits for you ↓' : 'Auto-playing — tap a step to jump'}</p>
+          <p className="muted pin-hint">{pinned && !reduced ? 'Keep scrolling, the page waits for you ↓' : 'Auto-playing. Tap a step to jump'}</p>
         </div>
         <div className="pin-panels">
           {tour.map((t, i) => (
@@ -516,7 +516,7 @@ const PROJECTS = [
   },
   {
     title: 'Portfolio starter',
-    kicker: 'Dorin’s portfolio starter — the design system our demo agent builds on today.',
+    kicker: 'Dorin’s portfolio starter, the design system our demo agent builds on today.',
     meta: 'Portfolio · Template',
     img: '/showcase/dorin-portfolio.png',
     href: null,
@@ -550,15 +550,15 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
   const faq = [
     {
       q: `What do I actually get for ${pricing.total}?`,
-      a: `A complete online presence: brand identity, written copy, a responsive website with contact & booking flows — built by the agents, approved by you. ${pricing.build} starts the build; ${pricing.final} is due on delivery, after you've reviewed the finished site.`,
+      a: `Brand identity, written copy and a responsive website with contact and booking flows, built by the agents and approved by you. ${pricing.build} starts the build. ${pricing.final} is due on delivery, after you've reviewed the finished site.`,
     },
     {
       q: 'What if I don’t like what the agents build?',
-      a: `You see a free agent-built draft before paying anything, with 10 free prompts to steer it. If you don't approve the finished site, you don't pay the ${pricing.final} — you keep a brand kit (assets + strategy) instead. The ${pricing.build} build fee is non-refundable once the crew starts: you agree to that explicitly at checkout.`,
+      a: `You see a free agent-built draft before paying anything, with 10 free prompts to steer it. If you don't approve the finished site, you don't pay the ${pricing.final}. You keep a brand kit with the assets and strategy instead. The ${pricing.build} build fee is non-refundable once the crew starts, and you agree to that explicitly at checkout.`,
     },
     {
       q: 'Do I own my website?',
-      a: `Yes. Launch with us and it runs on your domain with everything managed; or take the code-only option for the same ${pricing.final} and host it anywhere — no lock-in, no platform cut.`,
+      a: `Yes. Launch with us and it runs on your domain with everything managed, or take the code-only option for the same ${pricing.final} and host it anywhere. No lock-in, no platform cut.`,
     },
     {
       q: 'How long does the build take?',
@@ -566,15 +566,15 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
     },
     {
       q: `What does the ${pricing.monthly}/mo cover?`,
-      a: 'Everything ongoing, in one subscription: hosting on our servers, your domain, SSL, monitoring with automatic fixes, and AI edits — ask in plain language, the crew ships it. Cancel anytime.',
+      a: 'Everything ongoing, in one subscription: hosting on our servers, your domain, SSL, monitoring with automatic fixes, and AI edits. Ask in plain words and the crew ships it. Cancel anytime.',
     },
     {
-      q: 'I have a bigger project — e-commerce or a custom app.',
+      q: 'I have a bigger project, like e-commerce or a custom app.',
       a: `That's beyond the self-serve crew for now. Email us at ${contactEmail} and a human will scope it with you.`,
     },
     {
       q: 'I already have a website.',
-      a: 'We do relaunches too. Describe your business and mention your current site — the crew keeps what works and rebuilds the rest properly.',
+      a: 'We do relaunches too. Describe your business and mention your current site. The crew keeps what works and rebuilds the rest.',
     },
     {
       q: 'Is my idea kept confidential?',
@@ -651,7 +651,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
             <div className="hero-capacity">
               {slots.left > 0
                 ? `${slots.left} of ${slots.cap} build slots left this month`
-                : 'This month’s build slots are full — drafts stay free, builds reopen next month'}
+                : 'This month’s build slots are full. Drafts stay free, builds reopen next month'}
             </div>
           </div>
           <div className="hero-demo reveal">
@@ -679,7 +679,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
             {[
               {
                 h: 'AI drafts feel generic',
-                p: 'One-shot generators spit out a site in seconds — and it reads like everyone else who used the same tool. Thin structure, nothing specific to your business.',
+                p: 'One-shot generators spit out a site in seconds, and it reads like everyone else who used the same tool. Nothing in it is specific to your business.',
               },
               {
                 h: 'Agencies are heavy and slow',
@@ -687,7 +687,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               },
               {
                 h: 'You stay dependent',
-                p: 'The site lives in a system you didn’t build. Every tweak needs the person who set it up — or a weekend lost to tutorials.',
+                p: 'The site lives in a system you didn’t build. Every tweak needs the person who set it up, or a weekend lost to tutorials.',
               },
             ].map((c) => (
               <div className="prob-card reveal" key={c.h}>
@@ -719,7 +719,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               </div>
               <h3>Demo</h3>
               <p className="muted">
-                Describe your business in a sentence and a real agent builds a draft of your site —
+                Describe your business in a sentence and a real agent builds a draft of your site,
                 free, before you pay a cent. Shape it with up to 10 prompts.
               </p>
             </div>
@@ -730,8 +730,8 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               </div>
               <h3>Build</h3>
               <p className="muted">
-                {pricing.build} puts four specialist agents to work: brand, copy, site, booking — live, in
-                front of you, every step visible. You direct; they do.
+                {pricing.build} puts four specialist agents to work on your brand, copy and site, live
+                in front of you. You stay in charge the whole way.
               </p>
             </div>
             <div className="step-card reveal">
@@ -742,7 +742,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               <h3>Launch</h3>
               <p className="muted">
                 Review the finished site, then {pricing.final} on delivery: go live on your domain with
-                hosting and AI edits for {pricing.monthly}/mo — or take the code and host it yourself.
+                hosting and AI edits for {pricing.monthly}/mo, or take the code and host it yourself.
               </p>
             </div>
           </div>
@@ -782,7 +782,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
             <a href={`mailto:${contactEmail}`} style={{ color: 'var(--accent)', fontWeight: 600 }}>
               email us
             </a>{' '}
-            — a human will scope it with you.
+            and a human will scope it with you.
           </p>
         </div>
       </section>
@@ -798,11 +798,11 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
             {[
               {
                 h: 'A demo before any money',
-                p: 'Most builders charge first and show later. Here a real agent builds your draft free and takes 10 of your prompts — you decide with the result in front of you.',
+                p: 'Most builders charge first and show later. Here a real agent builds your draft free and takes 10 of your prompts. You decide with the result in front of you.',
               },
               {
                 h: 'Built for you, not off a shelf',
-                p: 'No template. The crew builds around one business — yours: your voice, your customers, your booking flow.',
+                p: 'One design system, shaped around one business: yours. The crew writes in your voice and builds for how your customers actually book.',
               },
               {
                 h: 'The editor stays yours',
@@ -810,7 +810,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               },
               {
                 h: 'Honest pricing, no drip',
-                p: `${pricing.total} total plus ${pricing.monthly}/mo if you launch with us — visible before you pay anything, including on this page.`,
+                p: `${pricing.total} total plus ${pricing.monthly}/mo if you launch with us, visible before you pay anything, including on this page.`,
               },
             ].map((c) => (
               <div className="why-item reveal" key={c.h}>
@@ -864,7 +864,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               <figure key={d.name} className="draft-card reveal" style={{ animationDelay: `${i * 0.07}s` }}>
                 <div className="proj-thumb">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={d.img} alt={`${d.name} — agent-generated draft`} loading="lazy" />
+                  <img src={d.img} alt={`${d.name}, agent-generated draft`} loading="lazy" />
                 </div>
                 <figcaption>
                   <b>{d.name}</b>
@@ -916,7 +916,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
         <div className="wrap">
           <div className="sec-head reveal">
             <div className="eyebrow">Who’s behind this</div>
-            <h2>A small team, four tireless agents</h2>
+            <h2>Two people and four agents</h2>
           </div>
           <div className="team-row reveal">
             <div className="team-card">
@@ -967,8 +967,8 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
             ))}
           </div>
           <p className="who-note muted reveal">
-            If you sell your time, your hands, or your products — and you’d rather run the business than
-            build websites — this is for you.
+            If you sell your time, your hands or your products, and you’d rather run the business
+            than build websites, this is for you.
           </p>
         </div>
       </section>
@@ -995,8 +995,8 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               <div className="price-amount">{pricing.build}</div>
               <div className="price-label">Start the build</div>
               <p className="muted">
-                Puts the crew to work on the full site, live in front of you. Non-refundable once they
-                start — you confirm that explicitly.
+                Puts the crew to work on the full site, live in front of you. Non-refundable once
+                they start, and you confirm that explicitly.
               </p>
             </div>
             <div className="price-arrow" aria-hidden>
@@ -1015,7 +1015,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
               <div className="sub-head">
                 <div>
                   <div className="eyebrow" style={{ marginBottom: 8 }}>Then · one subscription covers everything</div>
-                  <h3>Care plan — {pricing.monthly}/mo</h3>
+                  <h3>Care plan · {pricing.monthly}/mo</h3>
                 </div>
                 <button className="btn btn-primary" onClick={() => openFunnel()}>
                   Start free
@@ -1028,7 +1028,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
                   </span>
                   <div>
                     <strong>Hosting & your domain</strong>
-                    <p className="muted">On our servers, with SSL and backups — nothing extra to buy.</p>
+                    <p className="muted">On our servers, with SSL and backups. Nothing extra to buy.</p>
                   </div>
                 </div>
                 <div className="sub-item">
@@ -1037,7 +1037,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
                   </span>
                   <div>
                     <strong>Ongoing AI edits</strong>
-                    <p className="muted">Ask in plain language — the crew ships the change.</p>
+                    <p className="muted">Ask in plain words and the crew ships the change.</p>
                   </div>
                 </div>
                 <div className="sub-item">
@@ -1059,7 +1059,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
                   </div>
                 </div>
               </div>
-              <p className="sub-foot muted">Cancel anytime — your domain stays yours.</p>
+              <p className="sub-foot muted">Cancel anytime. Your domain stays yours.</p>
             </div>
           </div>
         </div>
@@ -1095,7 +1095,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
             <div className="eyebrow" style={{ color: 'rgba(255,255,255,.75)' }}>Ready when you are</div>
             <h2>Let’s see what the crew would build for your business.</h2>
             <p>
-              Describe it in one sentence. The agents draft your brand and homepage — free, before you
+              Describe it in one sentence. The agents draft your brand and homepage free, before you
               pay a cent.
             </p>
             <button className="btn btn-lg cta-band-btn" onClick={() => openFunnel()}>

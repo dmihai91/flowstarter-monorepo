@@ -162,6 +162,8 @@ function SignUpInner() {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
+                  {/* Clerk Smart CAPTCHA mounts here in custom flows (bot sign-up protection) */}
+                  <div id="clerk-captcha" style={{ margin: '4px 0 10px' }} />
                   <button className="btn btn-primary btn-lg login-submit" type="submit" disabled={busy || !isLoaded} style={{ marginTop: 6 }}>
                     {busy ? <Dots /> : 'Create my account'}
                   </button>

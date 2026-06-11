@@ -210,6 +210,9 @@ function LoginInner() {
                   </button>
                 </div>
 
+                {/* Clerk Smart CAPTCHA mount — used when Google/Apple sign-in creates a new account */}
+                <div id="clerk-captcha" style={{ marginTop: 12 }} />
+
                 <p className="login-foot">
                   New to Flowstarter? <a href="/#top">Try it free</a> — no account needed.
                 </p>

@@ -401,7 +401,7 @@ const DRAFTS = [
 
 const TESTIMONIAL = {
   quote:
-    'I sell fishing tackle. I didn’t need anything fancy, just a site where people can find the product, the checkout works, and I can change a price myself without calling anyone. That’s what they built. Most days I’m with customers or out on the water, and orders still come in without me sitting at a computer.',
+    'A website was the thing I kept putting off. I’m behind the counter all day or out on the Danube, and I didn’t want something I’d have to call somebody about every week. Now a guy who needs a feeder rod or a box of hooks finds it, orders it, and I pack it when I’m back. When a price changes in the shop, I change it on the site myself. Takes a minute.',
   name: 'Daniel Draga',
   role: 'Owner, Lebădușul',
   href: 'https://lebadusularticoledepescuit.ro/',

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cluj Board &amp; Brew · Play great games, sip proper coffee.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<!--FILL{"brand":{"name":"Cluj Board & Brew","tagline":"Play great games, sip proper coffee.","primary":"#FF4D2E","accent":"#B8F1E6","voice":["welcoming","playful","craft-focused"]},"hero":{"kicker":"A board game café built for play","title":"PLAY A GAME, FIND YOUR BREW.","text":"Cluj’s board game café with 300 games on the shelves and proper coffee. Drop in, pick a game, settle into a great table.","highlight":"300 games on the shelves","cta1":"Find a table","cta2":"Browse game vibes"},"positioning":"Cluj’s board game café, where a real coffee ritual meets a huge, ready-to-play shelf.","offer":{"name":"Table-Ready Game + Coffee","description":"Walk in for a game and stay for your coffee. We help you choose from 300 games, then you get the space and support to start playing fast.","includes":["300 games on the shelves","Proper coffee drinks","Game help to choose fast","A table-ready playing space"],"note":"Drop in and pick a game"},"audience":["You want a café in Cluj that feels built for actually playing games.","You and your friends need 300 game options without the awkward deciding.","You love proper coffee, not just “something to drink” between turns."],"stats":[{"number":"300","label":"Games on the shelves"},{"number":"2","label":"Perfect pair: coffee + play"},{"number":"1","label":"Easy, drop-in experience"},{"number":"Cluj","label":"Your local game café"}],"services":{"label":"What you get","titleLine1":"Coffee that","titleLine2":"keeps you playing","items":[{"title":"Game shelf browsing","description":"Pick from 300 games, from quick hits to deeper sessions, right on the shelves."},{"title":"Staff help to choose","description":"Tell us your mood and we’ll point you to a game that fits your group and time."},{"title":"Proper coffee, always","description":"Order your coffee and settle in, made with care to match the experience."},{"title":"Table-first setup","description":"Get to the fun faster with a table-ready flow that supports starting quickly."},{"title":"Group-friendly play","description":"Bring friends for shared laughs, tense turns, and games that feel good together."},{"title":"Stay as long as you like","description":"Play through the moment, take your time, and keep the coffee rhythm going."}]},"about":{"label":"About","title":"A café for gamers and coffee people","p1":"Cluj Board & Brew is a board game café with a serious game shelf and proper coffee, designed so you can start playing without friction.","p2":"We focus on the moment you sit down, the game you choose, and the drink that makes the whole visit feel complete."},"cta":{"title":"Come for the coffee, stay for the game","text":"Walk in, pick from 300 games, and get a table that makes starting feel effortless.","button":"Plan your visit"},"contact":{"heading":"Visit Cluj Board & Brew","text":"Stop by with friends or come solo and we’ll help you find a game that matches your vibe.","email":"hello@clujboardandbrew.ro"},"style":{"fontDisplay":"Sora","fontBody":"Manrope","hero":"light","caseStyle":"uppercase","radius":"soft","paper":"#F6F3EE","dark":"#161616","visual":"arch"}}FILL-->
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root {
+    --bg-dark: #161616;
+    --surface-base: #F6F3EE;
+    --brand-primary: #FF4D2E;
+    --accent: #B8F1E6;
+    --text-primary: #0a0a0a;
+    --text-secondary: #6b6b6b;
+    --text-on-dark: #ffffff;
+    --surface-panel: rgba(255,255,255,.72);
+    --panel-border: rgba(10,10,10,.14);
+    --shadow-float: 0 18px 36px rgba(10,10,10,.12);
+    --container: 1200px;
+    --section-pad: 100px 0;
+    --fs-display: clamp(2.6rem, 6vw, 4.2rem);
+    --fs-h2: clamp(2rem, 4vw, 2.75rem);
+    --fs-h4: 1.35rem;
+    --fs-body: 1.05rem;
+    --r-sm: 8px; --r-md: 12px; --r-lg: 16px;
+    --case: uppercase;
+    --font: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Sora', 'Manrope', -apple-system, sans-serif;
+  }
+  body { font-family: var(--font); background: var(--surface-base); color: var(--text-primary); font-size: var(--fs-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+  h1,h2,h3,h4 { line-height: 1.08; letter-spacing: -0.02em; font-weight: 650; font-family: var(--font-display); }
+  a { color: inherit; text-decoration: none; }
+  .btn { display: inline-block; font-weight: 600; font-size: .95rem; padding: 14px 28px; border-radius: var(--r-md); transition: transform .3s ease, box-shadow .3s ease; text-align: center; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--brand-primary); color: #fff; box-shadow: 0 10px 22px -10px var(--brand-primary); }
+  .btn-outline-light { border: 1.5px solid rgba(255,255,255,.4); color: #fff; }
+  .btn-on-dark { background: var(--accent); color: var(--bg-dark); box-shadow: 0 10px 22px -10px rgba(0,0,0,.5); }
+  .btn-outline-light:hover { border-color: #fff; }
+  .section-label { font-size: .85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; color: var(--brand-primary); font-weight: 600; }
+  .section-title { font-size: var(--fs-h2); text-transform: var(--case); }
+
+  /* intro overlay — brand name blur-in, then the page reveals (dorin hero) */
+  .intro { position: fixed; inset: 0; z-index: 200; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; padding: 0 clamp(20px,5vw,80px); pointer-events: none; animation: intro-exit .6s cubic-bezier(.4,0,.2,1) forwards; animation-delay: 1.4s; }
+  .intro span { font-family: var(--font-display); font-weight: 650; text-transform: var(--case); letter-spacing: -0.03em; color: #fff; text-align: center; line-height: 1.05; font-size: clamp(2.6rem, 9vw, 7rem); opacity: 0; animation: intro-text .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .08s; }
+  @keyframes intro-text { from { opacity: 0; filter: blur(24px); transform: scale(.88); } to { opacity: 1; filter: blur(0); transform: scale(1); } }
+  @keyframes intro-exit { to { opacity: 0; visibility: hidden; } }
+  @keyframes enter { from { opacity: 0; transform: translateX(-28px); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
+  @media (prefers-reduced-motion: reduce) { .intro { display: none; } .hero-title, .hero-text, .hero-actions { opacity: 1 !important; animation: none !important; } }
+
+  /* header */
+  header { position: absolute; top: 0; left: 0; right: 0; z-index: 10; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px; max-width: var(--container); margin: 0 auto; color: #fff; }
+  .nav .word { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+  .nav nav { display: flex; gap: 26px; font-size: .92rem; color: rgba(255,255,255,.75); align-items: center; }
+  .nav nav a:hover { color: #fff; }
+  .nav .btn { padding: 10px 20px; }
+
+  /* hero — variants (dorin-inspired) */
+  .hero { background: var(--bg-dark); color: var(--text-on-dark); overflow: clip; }
+  .hero--gradient { background: linear-gradient(140deg, var(--bg-dark) 30%, var(--brand-primary) 160%); }
+  .hero--light { background: var(--surface-base); color: var(--text-primary); }
+  .hero--light .hero-text { color: rgba(10,10,10,.72); }
+  .hero--light .hero-text .hl { color: var(--brand-primary); }
+  .hero--light .btn-on-dark { background: var(--brand-primary); color: #fff; }
+  .hero--light .btn-outline-light { border-color: rgba(10,10,10,.3); color: var(--text-primary); }
+  .hero--light + .stats { border-top: 1px solid var(--panel-border); }
+  header.on-light, header.on-light .nav { color: var(--text-primary); }
+  header.on-light .nav nav { color: rgba(10,10,10,.6); }
+  header.on-light .nav nav a:hover { color: var(--text-primary); }
+  header.on-light + .intro { display: none; }
+  .hero--split .hero-visual::before { content: ''; position: absolute; inset: -120px -100vw -120px 18%; background: var(--brand-primary); z-index: -1; }
+  .hero--split .hero-visual .blob, .hero--split .hero-visual .arch { inset: 12% 4% 16% 26%; }
+  .hero-inner { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,44%); gap: 56px; align-items: center; min-height: max(680px, 92vh); padding-block: 120px 80px; }
+  .hero-kicker { font-size: .85rem; text-transform: uppercase; letter-spacing: 2.4px; color: var(--accent); font-weight: 700; margin-bottom: 18px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.5s; }
+  .hero--light .hero-kicker { color: var(--brand-primary); }
+  .hero-title { font-size: var(--fs-display); text-transform: var(--case); letter-spacing: -0.03em; margin-bottom: 24px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.6s; }
+  .hero-text { font-size: 1.25rem; line-height: 1.45; max-width: 480px; margin-bottom: 32px; color: rgba(255,255,255,.82); opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.8s; }
+  .hero-text .hl { color: var(--accent); }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 2s; }
+  .hero-visual { position: relative; min-height: 440px; align-self: stretch; }
+  .hero-visual .blob { position: absolute; inset: 8% 0 12% 6%; border-radius: 32px 120px 32px 32px; background: linear-gradient(160deg, var(--accent), var(--brand-primary) 75%); }
+  .hero-visual .arch { position: absolute; inset: 8% 4% 0 10%; border-radius: 999px 999px 0 0; background: linear-gradient(180deg, var(--accent), var(--brand-primary) 85%); }
+  .hero-visual .rings { position: absolute; inset: 0; display: grid; place-items: center; }
+  .hero-visual .rings span { position: absolute; border-radius: 50%; border: 2px solid var(--accent); }
+  .hero-visual .rings span:nth-child(1) { width: 78%; aspect-ratio: 1; opacity: .35; }
+  .hero-visual .rings span:nth-child(2) { width: 56%; aspect-ratio: 1; opacity: .6; border-color: var(--brand-primary); background: radial-gradient(circle at 35% 30%, var(--accent), transparent 70%); }
+  .hero-visual .rings span:nth-child(3) { width: 30%; aspect-ratio: 1; background: var(--brand-primary); border: none; }
+  .hero-visual .tiles { position: absolute; inset: 6% 2% 10% 8%; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .hero-visual .tiles span { border-radius: var(--r-lg); }
+  .hero-visual .tiles span:nth-child(1) { background: linear-gradient(150deg, var(--accent), var(--brand-primary)); }
+  .hero-visual .tiles span:nth-child(2) { background: var(--brand-primary); border-radius: 50% 50% var(--r-lg) var(--r-lg); }
+  .hero-visual .tiles span:nth-child(3) { border: 2px solid var(--accent); }
+  .hero-visual .tiles span:nth-child(4) { background: linear-gradient(40deg, var(--brand-primary), var(--accent)); border-radius: var(--r-lg) var(--r-lg) 50% 50%; }
+  .hero-visual .blob::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 28% 8%, rgba(255,255,255,.32), transparent 55%); }
+  .hero-visual .ring { position: absolute; width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--accent); bottom: 4%; left: -8px; opacity: .8; }
+  .hero-visual .dot { position: absolute; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); top: 4%; right: 10%; }
+
+  /* stats strip — accent background (dorin Stats) */
+  .stats { background: var(--accent); padding: 72px 0; }
+  .stats-inner { display: grid; grid-template-columns: repeat(4,1fr); gap: 48px; }
+  .stat b { display: block; font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; }
+  .stat span { font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; color: rgba(10,10,10,.6); font-weight: 600; }
+
+  /* services — card grid (dorin ServiceCard) */
+  .services { padding: var(--section-pad); }
+  .services-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 56px; flex-wrap: wrap; }
+  .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  .card { background: var(--surface-panel); border: 1px solid var(--panel-border); border-radius: var(--r-lg); padding: 30px 26px; transition: transform .3s ease, box-shadow .3s ease; }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); }
+  .card .icon { color: var(--brand-primary); margin-bottom: 18px; }
+  .card h4 { font-size: var(--fs-h4); margin-bottom: 10px; }
+  .card p { font-size: .95rem; color: var(--text-secondary); line-height: 1.55; }
+
+  /* positioning pull-quote strip */
+  .position { padding: 88px 0; background: #fff; border-top: 1px solid var(--panel-border); border-bottom: 1px solid var(--panel-border); }
+  .position blockquote { font-family: var(--font-display); font-size: clamp(1.7rem, 3.4vw, 2.6rem); line-height: 1.2; letter-spacing: -0.02em; max-width: 22ch; font-weight: 650; }
+  .position blockquote em { font-style: normal; color: var(--brand-primary); }
+  .position .who { margin-top: 18px; font-size: .85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); font-weight: 600; }
+
+  /* signature offer showcase */
+  .offer { padding: var(--section-pad); }
+  .offer-card { display: grid; grid-template-columns: 1.1fr .9fr; gap: 0; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-float); margin-top: 48px; }
+  .offer-main { background: var(--bg-dark); color: #fff; padding: clamp(32px, 5vw, 56px); }
+  .offer-main .tagp { font-size: .8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 700; }
+  .offer-main h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 14px; text-transform: var(--case); }
+  .offer-main p { color: rgba(255,255,255,.78); line-height: 1.6; margin-bottom: 22px; }
+  .offer-main .note { display: inline-block; background: var(--accent); color: var(--bg-dark); font-weight: 700; font-size: .85rem; padding: 8px 14px; border-radius: 99px; }
+  .offer-list { background: var(--brand-primary); color: #fff; padding: clamp(32px, 5vw, 56px); display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+  .offer-list b { font-size: .8rem; text-transform: uppercase; letter-spacing: 2px; opacity: .8; }
+  .offer-list li { list-style: none; display: flex; gap: 12px; align-items: flex-start; font-size: 1rem; line-height: 1.45; }
+  .offer-list li::before { content: '✓'; font-weight: 800; flex-shrink: 0; }
+
+  /* audience — for you if */
+  .audience { padding: 0 0 100px; }
+  .aud-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 42px; }
+  .aud { border-left: 3px solid var(--brand-primary); padding: 6px 0 6px 20px; font-size: 1.02rem; line-height: 1.5; }
+  .aud b { color: var(--brand-primary); display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; margin-bottom: 6px; }
+
+  /* about — dark strip with the dorin circles */
+  .about { background: var(--bg-dark); color: var(--text-on-dark); padding: var(--section-pad); }
+  .about-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 64px; align-items: center; }
+  .about p { color: rgba(255,255,255,.78); margin-top: 18px; line-height: 1.6; }
+  .about .section-title { color: #fff; }
+  .circles { display: flex; align-items: center; justify-content: center; }
+  .circles span { width: clamp(110px, 12vw, 170px); height: clamp(110px, 12vw, 170px); border-radius: 50%; margin-left: -28px; mix-blend-mode: screen; }
+  .circles span:nth-child(1) { background: var(--accent); margin-left: 0; }
+  .circles span:nth-child(2) { background: #EBE8DF; }
+  .circles span:nth-child(3) { background: var(--brand-primary); }
+
+  /* CTA band */
+  .cta { padding: var(--section-pad); }
+  .cta-band { background: var(--brand-primary); color: #fff; border-radius: 24px; padding: clamp(48px, 7vw, 88px) clamp(28px, 6vw, 80px); text-align: center; box-shadow: 0 30px 60px -30px var(--brand-primary); }
+  .cta-band h2 { font-size: var(--fs-h2); text-transform: uppercase; max-width: 18ch; margin: 0 auto 14px; }
+  .cta-band p { color: rgba(255,255,255,.85); max-width: 52ch; margin: 0 auto 32px; }
+  .cta-band .btn { background: #fff; color: var(--text-primary); }
+
+  /* contact + footer */
+  .contact { padding: 0 0 100px; text-align: center; }
+  .contact p { color: var(--text-secondary); max-width: 52ch; margin: 14px auto 26px; }
+  footer { background: var(--bg-dark); color: rgba(255,255,255,.7); padding: 34px 0; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: .9rem; }
+  .foot b { color: #fff; font-size: 1.05rem; }
+
+  @media (max-width: 820px) {
+    .hero-inner { grid-template-columns: 1fr; min-height: auto; padding: 110px 0 56px; gap: 36px; }
+    .hero-visual { min-height: 300px; }
+    .stats-inner { grid-template-columns: repeat(2,1fr); gap: 32px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    .offer-card { grid-template-columns: 1fr; }
+    .aud-grid { grid-template-columns: 1fr; }
+    .nav nav { display: none; }
+    :root { --section-pad: 64px 0; }
+  }
+</style>
+</head>
+<body>
+  
+
+  <header class="on-light">
+    <div class="nav">
+      <span class="word">Cluj Board &amp; Brew</span>
+      <nav>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a class="btn btn-on-dark" href="#contact">Find a table</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero hero--light">
+    <div class="container hero-inner">
+      <div>
+        <div class="hero-kicker">A board game café built for play</div>
+        <h1 class="hero-title">PLAY A GAME, FIND YOUR BREW.</h1>
+        <p class="hero-text">Cluj’s board game café with <span class="hl">300 games on the shelves</span> and proper coffee. Drop in, pick a game, settle into a great table.</p>
+        <div class="hero-actions">
+          <a class="btn btn-on-dark" href="#contact">Find a table</a>
+          <a class="btn btn-outline-light" href="#services">Browse game vibes</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="arch"></div><span class="dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="container stats-inner">
+      <div class="stat"><b>300</b><span>Games on the shelves</span></div>
+      <div class="stat"><b>2</b><span>Perfect pair: coffee + play</span></div>
+      <div class="stat"><b>1</b><span>Easy, drop-in experience</span></div>
+      <div class="stat"><b>Cluj</b><span>Your local game café</span></div>
+    </div>
+  </section>
+
+  <section class="position">
+    <div class="container">
+      <blockquote>“<em>Cluj’s board game café, where a real coffee ritual meets a huge, ready-to-play shelf.</em>”</blockquote>
+      <div class="who">Cluj Board &amp; Brew · Play great games, sip proper coffee.</div>
+    </div>
+  </section>
+
+  <section class="services" id="services">
+    <div class="container">
+      <div class="services-head">
+        <div>
+          <div class="section-label">What you get</div>
+          <h2 class="section-title">Coffee that<br/>keeps you playing</h2>
+        </div>
+        <a class="btn btn-primary" href="#contact">Plan your visit</a>
+      </div>
+      <div class="services-grid">
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div><h4>Game shelf browsing</h4><p>Pick from 300 games, from quick hits to deeper sessions, right on the shelves.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><h4>Staff help to choose</h4><p>Tell us your mood and we’ll point you to a game that fits your group and time.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><h4>Proper coffee, always</h4><p>Order your coffee and settle in, made with care to match the experience.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><h4>Table-first setup</h4><p>Get to the fun faster with a table-ready flow that supports starting quickly.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><h4>Group-friendly play</h4><p>Bring friends for shared laughs, tense turns, and games that feel good together.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><h4>Stay as long as you like</h4><p>Play through the moment, take your time, and keep the coffee rhythm going.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="offer">
+    <div class="container">
+      <div class="section-label">The signature offer</div>
+      <h2 class="section-title">Table-Ready Game + Coffee</h2>
+      <div class="offer-card">
+        <div class="offer-main">
+          <div class="tagp">What it is</div>
+          <h3>Table-Ready Game + Coffee</h3>
+          <p>Walk in for a game and stay for your coffee. We help you choose from 300 games, then you get the space and support to start playing fast.</p>
+          <span class="note">Drop in and pick a game</span>
+        </div>
+        <ul class="offer-list">
+          <b>What you get</b>
+          <li>300 games on the shelves</li>
+          <li>Proper coffee drinks</li>
+          <li>Game help to choose fast</li>
+          <li>A table-ready playing space</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="audience">
+    <div class="container">
+      <div class="section-label">Is this you?</div>
+      <h2 class="section-title">This is for you if</h2>
+      <div class="aud-grid">
+        <div class="aud"><b>01</b>You want a café in Cluj that feels built for actually playing games.</div>
+        <div class="aud"><b>02</b>You and your friends need 300 game options without the awkward deciding.</div>
+        <div class="aud"><b>03</b>You love proper coffee, not just “something to drink” between turns.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="container about-inner">
+      <div>
+        <div class="section-label">About</div>
+        <h2 class="section-title">A café for gamers and coffee people</h2>
+        <p>Cluj Board &amp; Brew is a board game café with a serious game shelf and proper coffee, designed so you can start playing without friction.</p>
+        <p>We focus on the moment you sit down, the game you choose, and the drink that makes the whole visit feel complete.</p>
+      </div>
+      <div class="circles" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <div class="cta-band">
+        <h2>Come for the coffee, stay for the game</h2>
+        <p>Walk in, pick from 300 games, and get a table that makes starting feel effortless.</p>
+        <a class="btn" href="mailto:hello@clujboardandbrew.ro">Plan your visit</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Visit Cluj Board &amp; Brew</h2>
+      <p>Stop by with friends or come solo and we’ll help you find a game that matches your vibe.</p>
+      <a class="btn btn-primary" href="mailto:hello@clujboardandbrew.ro">Plan your visit</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container foot">
+      <b>Cluj Board &amp; Brew</b>
+      <span>Play great games, sip proper coffee.</span>
+      <a href="mailto:hello@clujboardandbrew.ro">hello@clujboardandbrew.ro</a>
+    </div>
+  </footer>
+</body>
+</html>

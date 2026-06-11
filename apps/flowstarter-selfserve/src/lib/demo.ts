@@ -124,11 +124,18 @@ function cleanJson(raw: string): string {
 function normalizeFill(raw: unknown): TemplateFill | null {
   try {
     const r = raw as TemplateFill;
-    const str = (v: unknown, max: number, fb = '') =>
-      String(v ?? fb)
+    const str = (v: unknown, max: number, fb = '') => {
+      const s = String(v ?? fb)
         .replace(/\s*[—–]\s*/g, ', ') // voice rules: no em/en dashes
         .replace(/,\s*,/g, ',')
-        .slice(0, max);
+        .trim();
+      if (s.length <= max) return s;
+      // over budget: cut on a word boundary so we never ship half a word,
+      // and drop an orphaned comma/conjunction left at the cut
+      const cut = s.slice(0, max);
+      const atWord = cut.includes(' ') ? cut.slice(0, cut.lastIndexOf(' ')) : cut;
+      return atWord.replace(/[,;:\s]+$/, '').replace(/\s(and|or|with|that|the|a|to|of|in|for)$/i, '');
+    };
     const hex = (v: unknown, fb: string) => (/^#[0-9a-fA-F]{3,8}$/.test(String(v ?? '')) ? String(v) : fb);
     const fill: TemplateFill = {
       brand: {

@@ -534,9 +534,24 @@ const PROJECTS = [
 ];
 
 const DRAFTS = [
-  { img: '/showcase/draft-cafe.png', name: 'Cluj Board & Brew', prompt: 'a cozy board game café in Cluj with 300+ games' },
-  { img: '/showcase/draft-florist.png', name: 'Vienna Wildflower Studio', prompt: 'a florist making wild, seasonal wedding arrangements' },
-  { img: '/showcase/draft-fitness.png', name: 'FlowFit Coach', prompt: 'a fitness coach helping men under 30 get in shape' },
+  {
+    img: '/showcase/draft-cafe.png',
+    href: '/showcase/draft-cafe.html',
+    name: 'Cluj Board & Brew',
+    prompt: 'our board game café in Cluj, 300 games on the shelves and proper coffee',
+  },
+  {
+    img: '/showcase/draft-florist.png',
+    href: '/showcase/draft-florist.html',
+    name: 'Wild Bloom Vienna',
+    prompt: 'I make wedding flowers in Vienna, wild and seasonal, built around what blooms that week',
+  },
+  {
+    img: '/showcase/draft-fitness.png',
+    href: '/showcase/draft-fitness.html',
+    name: 'Forge Fit Timisoara',
+    prompt: 'personal trainer for men over 30, morning sessions in a bright garage gym in Timisoara',
+  },
 ];
 
 const TESTIMONIAL = {
@@ -871,16 +886,24 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
           </div>
           <div className="draft-strip">
             {DRAFTS.map((d, i) => (
-              <figure key={d.name} className="draft-card reveal" style={{ animationDelay: `${i * 0.07}s` }}>
-                <div className="proj-thumb">
+              <a
+                key={d.name}
+                className="draft-card reveal"
+                href={d.href}
+                target="_blank"
+                rel="noreferrer"
+                style={{ animationDelay: `${i * 0.07}s` }}
+              >
+                <div className="proj-thumb proj-thumb--tall">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={d.img} alt={`${d.name}, agent-generated draft`} loading="lazy" />
                 </div>
                 <figcaption>
                   <b>{d.name}</b>
                   <span className="mono">“{d.prompt}”</span>
+                  <span className="draft-open">open the real draft →</span>
                 </figcaption>
-              </figure>
+              </a>
             ))}
           </div>
         </div>

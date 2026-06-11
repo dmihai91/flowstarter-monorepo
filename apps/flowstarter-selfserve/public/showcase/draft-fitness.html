@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Forge Fit Timisoara · Stronger mornings for men over 30</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<!--FILL{"brand":{"name":"Forge Fit Timisoara","tagline":"Stronger mornings for men over 30","primary":"#FF4D2E","accent":"#BFE9FF","voice":["direct","energizing","coach-led"]},"hero":{"kicker":"Morning strength, built for 30+","title":"START STRONG, BEFORE THE DAY","text":"Personal training for men over 30, in a bright garage gym in Timisoara. Short, focused morning sessions that leave you ready to move.","highlight":"in a bright garage gym in Timisoara","cta1":"Book a morning","cta2":"See training plan"},"positioning":"I train men over 30 to get stronger in the morning, in Timisoara’s bright garage gym","offer":{"name":"Morning Strength Sessions","description":"A focused 1:1 personal training session in the bright garage gym in Timisoara, built around your goals, current level, and available mornings.","includes":["1:1 morning training session","Goal-based warm-up and prep","Form-focused strength work","Simple next-step plan"],"note":"Morning sessions, scheduled around you"},"audience":["You are a man over 30 who wants training that actually works with your routine.","You want to build strength and confidence, not guess with random exercises.","You prefer bright, focused morning sessions over long, drawn-out workouts."],"stats":[{"number":"30+","label":"Men over 30"},{"number":"1:1","label":"Personal training"},{"number":"Morning","label":"Bright garage sessions"},{"number":"Timisoara","label":"Based in"}],"services":{"label":"How it works","titleLine1":"Train smarter","titleLine2":"Train mornings","items":[{"title":"Bright garage 1:1","description":"Meet in a bright garage gym in Timisoara for a focused, no-fluff morning session."},{"title":"Strength built from your level","description":"We start where you are and build progressively, with exercises that match your body and goals."},{"title":"Technique that sticks","description":"Coached form and movement cues so you feel the right muscles and stay safe."},{"title":"Time-efficient programming","description":"Sessions designed for real schedules, so you can train consistently in the morning."},{"title":"A clear next step","description":"You leave with a simple plan for what to do next, so progress feels predictable."},{"title":"Momentum over hype","description":"We focus on habits and performance, not trends, to keep you moving forward week after week."}]},"about":{"label":"About","title":"Coaching that gets results early","p1":"Forge Fit Timisoara is a personal training experience for men over 30 who want strength without the chaos. Morning sessions in a bright garage gym set the tone for the day.","p2":"You will train 1:1 with clear coaching on technique and a plan that fits your current level and available mornings. Consistency, form, and practical progression are the whole method."},"cta":{"title":"Get your morning strength plan","text":"Book a morning session in Timisoara and start building strength the simple, coached way.","button":"Book morning"},"contact":{"heading":"Train in Timisoara","text":"Tell me your goal and your available mornings, and I will match you with the right training approach.","email":"hello@forgefittimisoara.com"},"style":{"fontDisplay":"Syne","fontBody":"Manrope","hero":"dark","caseStyle":"uppercase","radius":"soft","paper":"#F3F7FB","dark":"#0E1116","visual":"tiles"}}FILL-->
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root {
+    --bg-dark: #0E1116;
+    --surface-base: #F3F7FB;
+    --brand-primary: #FF4D2E;
+    --accent: #BFE9FF;
+    --text-primary: #0a0a0a;
+    --text-secondary: #6b6b6b;
+    --text-on-dark: #ffffff;
+    --surface-panel: rgba(255,255,255,.72);
+    --panel-border: rgba(10,10,10,.14);
+    --shadow-float: 0 18px 36px rgba(10,10,10,.12);
+    --container: 1200px;
+    --section-pad: 100px 0;
+    --fs-display: clamp(2.6rem, 6vw, 4.2rem);
+    --fs-h2: clamp(2rem, 4vw, 2.75rem);
+    --fs-h4: 1.35rem;
+    --fs-body: 1.05rem;
+    --r-sm: 8px; --r-md: 12px; --r-lg: 16px;
+    --case: uppercase;
+    --font: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Syne', 'Manrope', -apple-system, sans-serif;
+  }
+  body { font-family: var(--font); background: var(--surface-base); color: var(--text-primary); font-size: var(--fs-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+  h1,h2,h3,h4 { line-height: 1.08; letter-spacing: -0.02em; font-weight: 650; font-family: var(--font-display); }
+  a { color: inherit; text-decoration: none; }
+  .btn { display: inline-block; font-weight: 600; font-size: .95rem; padding: 14px 28px; border-radius: var(--r-md); transition: transform .3s ease, box-shadow .3s ease; text-align: center; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--brand-primary); color: #fff; box-shadow: 0 10px 22px -10px var(--brand-primary); }
+  .btn-outline-light { border: 1.5px solid rgba(255,255,255,.4); color: #fff; }
+  .btn-on-dark { background: var(--accent); color: var(--bg-dark); box-shadow: 0 10px 22px -10px rgba(0,0,0,.5); }
+  .btn-outline-light:hover { border-color: #fff; }
+  .section-label { font-size: .85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; color: var(--brand-primary); font-weight: 600; }
+  .section-title { font-size: var(--fs-h2); text-transform: var(--case); }
+
+  /* intro overlay — brand name blur-in, then the page reveals (dorin hero) */
+  .intro { position: fixed; inset: 0; z-index: 200; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; padding: 0 clamp(20px,5vw,80px); pointer-events: none; animation: intro-exit .6s cubic-bezier(.4,0,.2,1) forwards; animation-delay: 1.4s; }
+  .intro span { font-family: var(--font-display); font-weight: 650; text-transform: var(--case); letter-spacing: -0.03em; color: #fff; text-align: center; line-height: 1.05; font-size: clamp(2.6rem, 9vw, 7rem); opacity: 0; animation: intro-text .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .08s; }
+  @keyframes intro-text { from { opacity: 0; filter: blur(24px); transform: scale(.88); } to { opacity: 1; filter: blur(0); transform: scale(1); } }
+  @keyframes intro-exit { to { opacity: 0; visibility: hidden; } }
+  @keyframes enter { from { opacity: 0; transform: translateX(-28px); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
+  @media (prefers-reduced-motion: reduce) { .intro { display: none; } .hero-title, .hero-text, .hero-actions { opacity: 1 !important; animation: none !important; } }
+
+  /* header */
+  header { position: absolute; top: 0; left: 0; right: 0; z-index: 10; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px; max-width: var(--container); margin: 0 auto; color: #fff; }
+  .nav .word { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+  .nav nav { display: flex; gap: 26px; font-size: .92rem; color: rgba(255,255,255,.75); align-items: center; }
+  .nav nav a:hover { color: #fff; }
+  .nav .btn { padding: 10px 20px; }
+
+  /* hero — variants (dorin-inspired) */
+  .hero { background: var(--bg-dark); color: var(--text-on-dark); overflow: clip; }
+  .hero--gradient { background: linear-gradient(140deg, var(--bg-dark) 30%, var(--brand-primary) 160%); }
+  .hero--light { background: var(--surface-base); color: var(--text-primary); }
+  .hero--light .hero-text { color: rgba(10,10,10,.72); }
+  .hero--light .hero-text .hl { color: var(--brand-primary); }
+  .hero--light .btn-on-dark { background: var(--brand-primary); color: #fff; }
+  .hero--light .btn-outline-light { border-color: rgba(10,10,10,.3); color: var(--text-primary); }
+  .hero--light + .stats { border-top: 1px solid var(--panel-border); }
+  header.on-light, header.on-light .nav { color: var(--text-primary); }
+  header.on-light .nav nav { color: rgba(10,10,10,.6); }
+  header.on-light .nav nav a:hover { color: var(--text-primary); }
+  header.on-light + .intro { display: none; }
+  .hero--split .hero-visual::before { content: ''; position: absolute; inset: -120px -100vw -120px 18%; background: var(--brand-primary); z-index: -1; }
+  .hero--split .hero-visual .blob, .hero--split .hero-visual .arch { inset: 12% 4% 16% 26%; }
+  .hero-inner { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,44%); gap: 56px; align-items: center; min-height: max(680px, 92vh); padding-block: 120px 80px; }
+  .hero-kicker { font-size: .85rem; text-transform: uppercase; letter-spacing: 2.4px; color: var(--accent); font-weight: 700; margin-bottom: 18px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.5s; }
+  .hero--light .hero-kicker { color: var(--brand-primary); }
+  .hero-title { font-size: var(--fs-display); text-transform: var(--case); letter-spacing: -0.03em; margin-bottom: 24px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.6s; }
+  .hero-text { font-size: 1.25rem; line-height: 1.45; max-width: 480px; margin-bottom: 32px; color: rgba(255,255,255,.82); opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.8s; }
+  .hero-text .hl { color: var(--accent); }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 2s; }
+  .hero-visual { position: relative; min-height: 440px; align-self: stretch; }
+  .hero-visual .blob { position: absolute; inset: 8% 0 12% 6%; border-radius: 32px 120px 32px 32px; background: linear-gradient(160deg, var(--accent), var(--brand-primary) 75%); }
+  .hero-visual .arch { position: absolute; inset: 8% 4% 0 10%; border-radius: 999px 999px 0 0; background: linear-gradient(180deg, var(--accent), var(--brand-primary) 85%); }
+  .hero-visual .rings { position: absolute; inset: 0; display: grid; place-items: center; }
+  .hero-visual .rings span { position: absolute; border-radius: 50%; border: 2px solid var(--accent); }
+  .hero-visual .rings span:nth-child(1) { width: 78%; aspect-ratio: 1; opacity: .35; }
+  .hero-visual .rings span:nth-child(2) { width: 56%; aspect-ratio: 1; opacity: .6; border-color: var(--brand-primary); background: radial-gradient(circle at 35% 30%, var(--accent), transparent 70%); }
+  .hero-visual .rings span:nth-child(3) { width: 30%; aspect-ratio: 1; background: var(--brand-primary); border: none; }
+  .hero-visual .tiles { position: absolute; inset: 6% 2% 10% 8%; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .hero-visual .tiles span { border-radius: var(--r-lg); }
+  .hero-visual .tiles span:nth-child(1) { background: linear-gradient(150deg, var(--accent), var(--brand-primary)); }
+  .hero-visual .tiles span:nth-child(2) { background: var(--brand-primary); border-radius: 50% 50% var(--r-lg) var(--r-lg); }
+  .hero-visual .tiles span:nth-child(3) { border: 2px solid var(--accent); }
+  .hero-visual .tiles span:nth-child(4) { background: linear-gradient(40deg, var(--brand-primary), var(--accent)); border-radius: var(--r-lg) var(--r-lg) 50% 50%; }
+  .hero-visual .blob::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 28% 8%, rgba(255,255,255,.32), transparent 55%); }
+  .hero-visual .ring { position: absolute; width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--accent); bottom: 4%; left: -8px; opacity: .8; }
+  .hero-visual .dot { position: absolute; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); top: 4%; right: 10%; }
+
+  /* stats strip — accent background (dorin Stats) */
+  .stats { background: var(--accent); padding: 72px 0; }
+  .stats-inner { display: grid; grid-template-columns: repeat(4,1fr); gap: 48px; }
+  .stat b { display: block; font-size: 2.4rem; font-weight: 700; letter-spacing: -0.02em; }
+  .stat span { font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; color: rgba(10,10,10,.6); font-weight: 600; }
+
+  /* services — card grid (dorin ServiceCard) */
+  .services { padding: var(--section-pad); }
+  .services-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 56px; flex-wrap: wrap; }
+  .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  .card { background: var(--surface-panel); border: 1px solid var(--panel-border); border-radius: var(--r-lg); padding: 30px 26px; transition: transform .3s ease, box-shadow .3s ease; }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); }
+  .card .icon { color: var(--brand-primary); margin-bottom: 18px; }
+  .card h4 { font-size: var(--fs-h4); margin-bottom: 10px; }
+  .card p { font-size: .95rem; color: var(--text-secondary); line-height: 1.55; }
+
+  /* positioning pull-quote strip */
+  .position { padding: 88px 0; background: #fff; border-top: 1px solid var(--panel-border); border-bottom: 1px solid var(--panel-border); }
+  .position blockquote { font-family: var(--font-display); font-size: clamp(1.7rem, 3.4vw, 2.6rem); line-height: 1.2; letter-spacing: -0.02em; max-width: 22ch; font-weight: 650; }
+  .position blockquote em { font-style: normal; color: var(--brand-primary); }
+  .position .who { margin-top: 18px; font-size: .85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); font-weight: 600; }
+
+  /* signature offer showcase */
+  .offer { padding: var(--section-pad); }
+  .offer-card { display: grid; grid-template-columns: 1.1fr .9fr; gap: 0; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-float); margin-top: 48px; }
+  .offer-main { background: var(--bg-dark); color: #fff; padding: clamp(32px, 5vw, 56px); }
+  .offer-main .tagp { font-size: .8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 700; }
+  .offer-main h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 14px; text-transform: var(--case); }
+  .offer-main p { color: rgba(255,255,255,.78); line-height: 1.6; margin-bottom: 22px; }
+  .offer-main .note { display: inline-block; background: var(--accent); color: var(--bg-dark); font-weight: 700; font-size: .85rem; padding: 8px 14px; border-radius: 99px; }
+  .offer-list { background: var(--brand-primary); color: #fff; padding: clamp(32px, 5vw, 56px); display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+  .offer-list b { font-size: .8rem; text-transform: uppercase; letter-spacing: 2px; opacity: .8; }
+  .offer-list li { list-style: none; display: flex; gap: 12px; align-items: flex-start; font-size: 1rem; line-height: 1.45; }
+  .offer-list li::before { content: '✓'; font-weight: 800; flex-shrink: 0; }
+
+  /* audience — for you if */
+  .audience { padding: 0 0 100px; }
+  .aud-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 42px; }
+  .aud { border-left: 3px solid var(--brand-primary); padding: 6px 0 6px 20px; font-size: 1.02rem; line-height: 1.5; }
+  .aud b { color: var(--brand-primary); display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; margin-bottom: 6px; }
+
+  /* about — dark strip with the dorin circles */
+  .about { background: var(--bg-dark); color: var(--text-on-dark); padding: var(--section-pad); }
+  .about-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 64px; align-items: center; }
+  .about p { color: rgba(255,255,255,.78); margin-top: 18px; line-height: 1.6; }
+  .about .section-title { color: #fff; }
+  .circles { display: flex; align-items: center; justify-content: center; }
+  .circles span { width: clamp(110px, 12vw, 170px); height: clamp(110px, 12vw, 170px); border-radius: 50%; margin-left: -28px; mix-blend-mode: screen; }
+  .circles span:nth-child(1) { background: var(--accent); margin-left: 0; }
+  .circles span:nth-child(2) { background: #EBE8DF; }
+  .circles span:nth-child(3) { background: var(--brand-primary); }
+
+  /* CTA band */
+  .cta { padding: var(--section-pad); }
+  .cta-band { background: var(--brand-primary); color: #fff; border-radius: 24px; padding: clamp(48px, 7vw, 88px) clamp(28px, 6vw, 80px); text-align: center; box-shadow: 0 30px 60px -30px var(--brand-primary); }
+  .cta-band h2 { font-size: var(--fs-h2); text-transform: uppercase; max-width: 18ch; margin: 0 auto 14px; }
+  .cta-band p { color: rgba(255,255,255,.85); max-width: 52ch; margin: 0 auto 32px; }
+  .cta-band .btn { background: #fff; color: var(--text-primary); }
+
+  /* contact + footer */
+  .contact { padding: 0 0 100px; text-align: center; }
+  .contact p { color: var(--text-secondary); max-width: 52ch; margin: 14px auto 26px; }
+  footer { background: var(--bg-dark); color: rgba(255,255,255,.7); padding: 34px 0; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: .9rem; }
+  .foot b { color: #fff; font-size: 1.05rem; }
+
+  @media (max-width: 820px) {
+    .hero-inner { grid-template-columns: 1fr; min-height: auto; padding: 110px 0 56px; gap: 36px; }
+    .hero-visual { min-height: 300px; }
+    .stats-inner { grid-template-columns: repeat(2,1fr); gap: 32px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    .offer-card { grid-template-columns: 1fr; }
+    .aud-grid { grid-template-columns: 1fr; }
+    .nav nav { display: none; }
+    :root { --section-pad: 64px 0; }
+  }
+</style>
+</head>
+<body>
+  <div class="intro" aria-hidden="true"><span>Forge Fit Timisoara</span></div>
+
+  <header class="">
+    <div class="nav">
+      <span class="word">Forge Fit Timisoara</span>
+      <nav>
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a class="btn btn-on-dark" href="#contact">Book a morning</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero hero--dark">
+    <div class="container hero-inner">
+      <div>
+        <div class="hero-kicker">Morning strength, built for 30+</div>
+        <h1 class="hero-title">START STRONG, BEFORE THE DAY</h1>
+        <p class="hero-text">Personal training for men over 30, <span class="hl">in a bright garage gym in Timisoara</span>. Short, focused morning sessions that leave you ready to move.</p>
+        <div class="hero-actions">
+          <a class="btn btn-on-dark" href="#contact">Book a morning</a>
+          <a class="btn btn-outline-light" href="#services">See training plan</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="tiles"><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="container stats-inner">
+      <div class="stat"><b>30+</b><span>Men over 30</span></div>
+      <div class="stat"><b>1:1</b><span>Personal training</span></div>
+      <div class="stat"><b>Morning</b><span>Bright garage sessions</span></div>
+      <div class="stat"><b>Timisoara</b><span>Based in</span></div>
+    </div>
+  </section>
+
+  <section class="position">
+    <div class="container">
+      <blockquote>“<em>I train men over 30 to get stronger in the morning, in Timisoara’s bright garage gym</em>”</blockquote>
+      <div class="who">Forge Fit Timisoara · Stronger mornings for men over 30</div>
+    </div>
+  </section>
+
+  <section class="services" id="services">
+    <div class="container">
+      <div class="services-head">
+        <div>
+          <div class="section-label">How it works</div>
+          <h2 class="section-title">Train smarter<br/>Train mornings</h2>
+        </div>
+        <a class="btn btn-primary" href="#contact">Book morning</a>
+      </div>
+      <div class="services-grid">
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div><h4>Bright garage 1:1</h4><p>Meet in a bright garage gym in Timisoara for a focused, no-fluff morning session.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><h4>Strength built from your level</h4><p>We start where you are and build progressively, with exercises that match your body and goals.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><h4>Technique that sticks</h4><p>Coached form and movement cues so you feel the right muscles and stay safe.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><h4>Time-efficient programming</h4><p>Sessions designed for real schedules, so you can train consistently in the morning.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><h4>A clear next step</h4><p>You leave with a simple plan for what to do next, so progress feels predictable.</p></div>
+        <div class="card"><div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><h4>Momentum over hype</h4><p>We focus on habits and performance, not trends, to keep you moving forward week after week.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="offer">
+    <div class="container">
+      <div class="section-label">The signature offer</div>
+      <h2 class="section-title">Morning Strength Sessions</h2>
+      <div class="offer-card">
+        <div class="offer-main">
+          <div class="tagp">What it is</div>
+          <h3>Morning Strength Sessions</h3>
+          <p>A focused 1:1 personal training session in the bright garage gym in Timisoara, built around your goals, current level, and available mornings.</p>
+          <span class="note">Morning sessions, scheduled around you</span>
+        </div>
+        <ul class="offer-list">
+          <b>What you get</b>
+          <li>1:1 morning training session</li>
+          <li>Goal-based warm-up and prep</li>
+          <li>Form-focused strength work</li>
+          <li>Simple next-step plan</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="audience">
+    <div class="container">
+      <div class="section-label">Is this you?</div>
+      <h2 class="section-title">This is for you if</h2>
+      <div class="aud-grid">
+        <div class="aud"><b>01</b>You are a man over 30 who wants training that actually works with your routine.</div>
+        <div class="aud"><b>02</b>You want to build strength and confidence, not guess with random exercises.</div>
+        <div class="aud"><b>03</b>You prefer bright, focused morning sessions over long, drawn-out workouts.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="container about-inner">
+      <div>
+        <div class="section-label">About</div>
+        <h2 class="section-title">Coaching that gets results early</h2>
+        <p>Forge Fit Timisoara is a personal training experience for men over 30 who want strength without the chaos. Morning sessions in a bright garage gym set the tone for the day.</p>
+        <p>You will train 1:1 with clear coaching on technique and a plan that fits your current level and available mornings. Consistency, form, and practical progression are the whole method.</p>
+      </div>
+      <div class="circles" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="container">
+      <div class="cta-band">
+        <h2>Get your morning strength plan</h2>
+        <p>Book a morning session in Timisoara and start building strength the simple, coached way.</p>
+        <a class="btn" href="mailto:hello@forgefittimisoara.com">Book morning</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Train in Timisoara</h2>
+      <p>Tell me your goal and your available mornings, and I will match you with the right training approach.</p>
+      <a class="btn btn-primary" href="mailto:hello@forgefittimisoara.com">Book morning</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container foot">
+      <b>Forge Fit Timisoara</b>
+      <span>Stronger mornings for men over 30</span>
+      <a href="mailto:hello@forgefittimisoara.com">hello@forgefittimisoara.com</a>
+    </div>
+  </footer>
+</body>
+</html>

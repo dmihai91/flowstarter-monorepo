@@ -691,3 +691,10 @@
 .landing .tsite-row:last-child { border-bottom: none; padding-bottom: 0; }
 .landing .tsite-row b { font-weight: 600; }
 .landing .tsite-foot { font-size: 9.5px; letter-spacing: 0.08em; color: var(--ink-3); padding: 8px 16px; background: var(--paper-2); border-top: 1px solid var(--glass-border); }
+
+/* draft cards: tall thumbs that pan through the whole page on hover, click-through to the live draft */
+.landing .draft-card { display: block; text-decoration: none; color: inherit; }
+.landing .proj-thumb--tall { aspect-ratio: 4 / 3.4; }
+.landing .proj-thumb--tall img { object-position: top; transition: object-position 6s linear, transform 0.5s var(--ease); }
+.landing .draft-card:hover .proj-thumb--tall img { object-position: bottom; transform: none; }
+.landing .draft-open { font-size: 11.5px; font-weight: 600; color: var(--accent); margin-top: 4px; }

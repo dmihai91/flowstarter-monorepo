@@ -39,6 +39,9 @@ export interface TemplateFill {
   };
   /** "This is for you if…" — 3 sharp audience checks. */
   audience: string[];
+  /** Optional bespoke modules, included only when they fit the trade. */
+  process?: { title: string; steps: Array<{ title: string; text: string }> };
+  faq?: Array<{ q: string; a: string }>;
   /** Exactly 4 — facts from the description only (offer, hours, format), never invented metrics. */
   stats: Array<{ number: string; label: string }>;
   services: {
@@ -70,6 +73,8 @@ export interface StyleFill {
   visual: 'blob' | 'arch' | 'rings' | 'tiles';
   /** Stock photo category (see STOCK_CATEGORIES); inferred from copy when missing. */
   image?: string;
+  /** Section order: which story the page tells first. */
+  layout?: string;
 }
 
 /** Vendored photo library in /public/stock — <cat>-hero.jpg + <cat>-about.jpg each. */
@@ -128,6 +133,7 @@ export function resolveStyle(fill: TemplateFill): Required<StyleFill> {
     dark: hex(st?.dark, '#0a0a0a'),
     visual: pick(st?.visual, ['blob', 'arch', 'rings', 'tiles'] as const, 'blob'),
     image: String(st?.image ?? '').slice(0, 24),
+    layout: pick(st?.layout, ['classic', 'offer-first', 'story', 'proof-first'] as const, 'classic'),
   };
 }
 
@@ -168,6 +174,121 @@ export function renderTemplate(fill: TemplateFill): string {
   const imageCat = (STOCK_CATEGORIES as readonly string[]).includes(st.image)
     ? st.image
     : (CATEGORY_HINTS.find(([re]) => re.test(inferText))?.[1] ?? 'generic');
+
+  const statsHtml = `  <section class="stats">
+    <div class="container stats-inner">
+      ${f.stats.slice(0, 4).map((s) => `<div class="stat"><b>${esc(s.number)}</b><span>${esc(s.label)}</span></div>`).join('\n      ')}
+    </div>
+  </section>`;
+
+  const quoteHtml = `  <section class="position">
+    <div class="container">
+      <blockquote>“<em>${esc(f.positioning)}</em>”</blockquote>
+      <div class="who">${esc(f.brand.name)} · ${esc(f.brand.tagline)}</div>
+    </div>
+  </section>`;
+
+  const servicesHtml = `  <section class="services" id="services">
+    <div class="container">
+      <div class="services-head">
+        <div>
+          <div class="section-label">${esc(f.services.label)}</div>
+          <h2 class="section-title">${esc(f.services.titleLine1)}<br/>${esc(f.services.titleLine2)}</h2>
+        </div>
+        <a class="btn btn-primary" href="#contact">${esc(f.cta.button)}</a>
+      </div>
+      <div class="services-grid">
+        ${f.services.items.slice(0, 6).map((it, i) => `<div class="card"><div class="icon">${ICONS[i % ICONS.length]}</div><h4>${esc(it.title)}</h4><p>${esc(it.description)}</p></div>`).join('\n        ')}
+      </div>
+    </div>
+  </section>`;
+
+  const offerHtml = `  <section class="offer">
+    <div class="container">
+      <div class="section-label">The signature offer</div>
+      <h2 class="section-title">${esc(f.offer.name)}</h2>
+      <div class="offer-card">
+        <div class="offer-main">
+          <div class="tagp">What it is</div>
+          <h3>${esc(f.offer.name)}</h3>
+          <p>${esc(f.offer.description)}</p>
+          <span class="note">${esc(f.offer.note)}</span>
+        </div>
+        <ul class="offer-list">
+          <b>What you get</b>
+          ${f.offer.includes.slice(0, 4).map((x) => `<li>${esc(x)}</li>`).join('\n          ')}
+        </ul>
+      </div>
+    </div>
+  </section>`;
+
+  const audienceHtml = `  <section class="audience">
+    <div class="pin-wrap">
+      <div class="pin-stage">
+        <div class="container pin-grid">
+          <div>
+          <div class="section-label">Is this you?</div>
+          <h2 class="section-title">This is for you if</h2>
+          <div class="pin-panels">
+            ${f.audience.slice(0, 3).map((a, i) => `<div class="pin-panel${i === 0 ? ' is-on' : ''}"><b>0${i + 1} · 0${Math.min(f.audience.length, 3)}</b><p>${esc(a)}</p></div>`).join('\n            ')}
+          </div>
+          <div class="pin-hint">Keep scrolling</div>
+          </div>
+          <div class="pin-circles" aria-hidden="true"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+
+  const aboutHtml = `  <section class="about" id="about">
+    <div class="container about-inner">
+      <div>
+        <div class="section-label">${esc(f.about.label)}</div>
+        <h2 class="section-title">${esc(f.about.title)}</h2>
+        <p>${esc(f.about.p1)}</p>
+        <p>${esc(f.about.p2)}</p>
+      </div>
+      <div class="about-photo" aria-hidden="true"></div>
+    </div>
+  </section>`;
+
+  // bespoke modules the agent includes only when they fit the trade
+  const processHtml = f.process?.steps?.length
+    ? `  <section class="process" id="process">
+    <div class="container">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">${esc(f.process.title)}</h2>
+      <div class="process-grid">
+        ${f.process.steps.slice(0, 4).map((sp, i) => `<div class="step"><i>0${i + 1}</i><h4>${esc(sp.title)}</h4><p>${esc(sp.text)}</p></div>`).join('\n        ')}
+      </div>
+    </div>
+  </section>`
+    : '';
+  const faqHtml = f.faq?.length
+    ? `  <section class="faqs">
+    <div class="container">
+      <div class="section-label">Good to know</div>
+      <h2 class="section-title">Questions, answered</h2>
+      ${f.faq.slice(0, 4).map((x) => `<details><summary>${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`).join('\n      ')}
+    </div>
+  </section>`
+    : '';
+
+  // the agent picks the narrative order; modules slot in where they belong
+  const LAYOUTS: Record<string, string[]> = {
+    classic: ['stats', 'quote', 'services', 'offer', 'audience', 'about'],
+    'offer-first': ['offer', 'stats', 'services', 'quote', 'audience', 'about'],
+    story: ['quote', 'about', 'services', 'stats', 'offer', 'audience'],
+    'proof-first': ['stats', 'services', 'quote', 'audience', 'offer', 'about'],
+  };
+  const sectionMap: Record<string, string> = {
+    stats: statsHtml, quote: quoteHtml, services: servicesHtml, offer: offerHtml,
+    audience: audienceHtml, about: aboutHtml, process: processHtml, faq: faqHtml,
+  };
+  const order = [...(LAYOUTS[st.layout] ?? LAYOUTS.classic)];
+  if (processHtml) order.splice(order.indexOf('services') + 1, 0, 'process');
+  if (faqHtml) order.push('faq');
+  const sectionsHtml = order.filter((k) => sectionMap[k]).map((k) => sectionMap[k]).join('\n\n');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -340,6 +461,21 @@ export function renderTemplate(fill: TemplateFill): string {
     .pin-circles span:nth-child(3) { background: var(--brand-primary); margin-left: -30px; transform: translateX(var(--apart)); }
   }
 
+  /* process timeline + faq (agent-included modules) */
+  .process { padding: var(--section-pad); }
+  .process-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 48px; }
+  .step { border-top: 2px solid var(--brand-primary); padding-top: 22px; }
+  .step i { font-style: normal; font-weight: 700; font-size: .85rem; color: var(--brand-primary); letter-spacing: 2px; }
+  .step h4 { margin: 10px 0; font-size: var(--fs-h4); }
+  .step p { color: var(--text-secondary); font-size: .95rem; line-height: 1.55; }
+  .faqs { padding: 0 0 100px; }
+  .faqs details { border: 1px solid var(--panel-border); border-radius: 14px; background: #fff; padding: 0 22px; margin-top: 10px; }
+  .faqs summary { cursor: pointer; font-weight: 650; padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 14px; }
+  .faqs summary::-webkit-details-marker { display: none; }
+  .faqs summary::after { content: '+'; color: var(--brand-primary); font-size: 1.3rem; line-height: 1; }
+  .faqs details[open] summary::after { content: '–'; }
+  .faqs details p { padding: 0 0 18px; color: var(--text-secondary); line-height: 1.6; }
+
   /* about — dark strip with the dorin circles */
   .about { background: var(--bg-dark); color: var(--text-on-dark); padding: var(--section-pad); }
   .about-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 64px; align-items: center; }
@@ -366,6 +502,7 @@ export function renderTemplate(fill: TemplateFill): string {
     .hero-visual { min-height: 300px; }
     .stats-inner { grid-template-columns: repeat(2,1fr); gap: 32px; }
     .services-grid { grid-template-columns: 1fr; }
+    .process-grid { grid-template-columns: 1fr; }
     .about-inner { grid-template-columns: 1fr; gap: 40px; }
     .offer-card { grid-template-columns: 1fr; }
     .aud-grid { grid-template-columns: 1fr; }
@@ -408,82 +545,7 @@ export function renderTemplate(fill: TemplateFill): string {
     </div>
   </section>
 
-  <section class="stats">
-    <div class="container stats-inner">
-      ${f.stats.slice(0, 4).map((s) => `<div class="stat"><b>${esc(s.number)}</b><span>${esc(s.label)}</span></div>`).join('\n      ')}
-    </div>
-  </section>
-
-  <section class="position">
-    <div class="container">
-      <blockquote>“<em>${esc(f.positioning)}</em>”</blockquote>
-      <div class="who">${esc(f.brand.name)} · ${esc(f.brand.tagline)}</div>
-    </div>
-  </section>
-
-  <section class="services" id="services">
-    <div class="container">
-      <div class="services-head">
-        <div>
-          <div class="section-label">${esc(f.services.label)}</div>
-          <h2 class="section-title">${esc(f.services.titleLine1)}<br/>${esc(f.services.titleLine2)}</h2>
-        </div>
-        <a class="btn btn-primary" href="#contact">${esc(f.cta.button)}</a>
-      </div>
-      <div class="services-grid">
-        ${f.services.items.slice(0, 6).map((it, i) => `<div class="card"><div class="icon">${ICONS[i % ICONS.length]}</div><h4>${esc(it.title)}</h4><p>${esc(it.description)}</p></div>`).join('\n        ')}
-      </div>
-    </div>
-  </section>
-
-  <section class="offer">
-    <div class="container">
-      <div class="section-label">The signature offer</div>
-      <h2 class="section-title">${esc(f.offer.name)}</h2>
-      <div class="offer-card">
-        <div class="offer-main">
-          <div class="tagp">What it is</div>
-          <h3>${esc(f.offer.name)}</h3>
-          <p>${esc(f.offer.description)}</p>
-          <span class="note">${esc(f.offer.note)}</span>
-        </div>
-        <ul class="offer-list">
-          <b>What you get</b>
-          ${f.offer.includes.slice(0, 4).map((x) => `<li>${esc(x)}</li>`).join('\n          ')}
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="audience">
-    <div class="pin-wrap">
-      <div class="pin-stage">
-        <div class="container pin-grid">
-          <div>
-          <div class="section-label">Is this you?</div>
-          <h2 class="section-title">This is for you if</h2>
-          <div class="pin-panels">
-            ${f.audience.slice(0, 3).map((a, i) => `<div class="pin-panel${i === 0 ? ' is-on' : ''}"><b>0${i + 1} · 0${Math.min(f.audience.length, 3)}</b><p>${esc(a)}</p></div>`).join('\n            ')}
-          </div>
-          <div class="pin-hint">Keep scrolling</div>
-          </div>
-          <div class="pin-circles" aria-hidden="true"><span></span><span></span><span></span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="about" id="about">
-    <div class="container about-inner">
-      <div>
-        <div class="section-label">${esc(f.about.label)}</div>
-        <h2 class="section-title">${esc(f.about.title)}</h2>
-        <p>${esc(f.about.p1)}</p>
-        <p>${esc(f.about.p2)}</p>
-      </div>
-      <div class="about-photo" aria-hidden="true"></div>
-    </div>
-  </section>
+${sectionsHtml}
 
   <section class="cta">
     <div class="container">
@@ -756,9 +818,11 @@ export function renderPremiumTemplate(fill: TemplateFill): string {
     })();
   </script>`;
 
+  const hasOwnProcess = html.includes('id="process"');
+  const hasOwnFaq = html.includes('class="faqs"');
   html = html.replace('</style>', extraCss + '\n</style>');
-  html = html.replace('  <section class="cta">', gallery + '\n' + process + '\n' + packages + '\n\n  <section class="cta">');
-  html = html.replace('  <section class="contact"', faq + '\n\n  <section class="contact"');
+  html = html.replace('  <section class="cta">', gallery + '\n' + (hasOwnProcess ? '' : process + '\n') + packages + '\n\n  <section class="cta">');
+  if (!hasOwnFaq) html = html.replace('  <section class="contact"', faq + '\n\n  <section class="contact"');
   html = html.replace('</body>', revealJs + '\n</body>');
   return html;
 }

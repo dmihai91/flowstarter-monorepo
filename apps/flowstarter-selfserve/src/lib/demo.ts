@@ -95,11 +95,15 @@ const FILL_SYSTEM = `You are the content agent for Flowstarter's house site temp
 "offer":{"name":string(<=40 chars, the signature offer),"description":string(<=220 chars, concrete: what happens, for whom, how),"includes":[4 x string(<=70 chars, tangible things the client gets)],"note":string(<=40 chars, a true low-risk hook from the description, e.g. "First chat is free", NEVER invented discounts)},
 "audience":[3 x string(<=110 chars, "you..." statements that make the right client feel seen)],
 "stats":[{"number":string(<=8 chars),"label":string(<=26 chars)} x4],
+"process": OPTIONAL {"title":string(<=36),"steps":[{"title":string(<=28),"text":string(<=120)} x3]}, include ONLY when the work has a clear start-to-finish flow worth showing,
+"faq": OPTIONAL [{"q":string(<=64, a real hesitation this trade's customers have),"a":string(<=180, honest answer)} x3], include ONLY when customers typically hesitate or compare,
 "services":{"label":string(<=20 chars),"titleLine1":string(<=18 chars),"titleLine2":string(<=18 chars),"items":[{"title":string(<=30 chars),"description":string(<=140 chars)} x6]},
 "about":{"label":string,"title":string(<=60 chars),"p1":string(<=240 chars),"p2":string(<=240 chars)},
 "cta":{"title":string(<=48 chars),"text":string(<=160 chars),"button":string(<=24 chars)},
 "contact":{"heading":string(<=40 chars),"text":string(<=160 chars),"email":string(plausible address on the business's own domain)},
-"style":{"fontDisplay":one of ${JSON.stringify([...DISPLAY_FONTS])},"fontBody":one of ${JSON.stringify([...BODY_FONTS])},"hero":"dark"|"light"|"gradient"|"split","caseStyle":"uppercase"|"normal","radius":"sharp"|"soft"|"round","paper":"#hex near-white tint","dark":"#hex near-black, may lean toward the brand","visual":"blob"|"arch"|"rings"|"tiles","image":one of ["barber","beauty","cafe","restaurant","bakery","florist","fitness","craft","retail","coaching","wellness","photography","auto","outdoor","generic"], the closest match to the trade}}
+"style":{"fontDisplay":one of ${JSON.stringify([...DISPLAY_FONTS])},"fontBody":one of ${JSON.stringify([...BODY_FONTS])},"hero":"dark"|"light"|"gradient"|"split","caseStyle":"uppercase"|"normal","radius":"sharp"|"soft"|"round","paper":"#hex near-white tint","dark":"#hex near-black, may lean toward the brand","visual":"blob"|"arch"|"rings"|"tiles","image":one of ["barber","beauty","cafe","restaurant","bakery","florist","fitness","craft","retail","coaching","wellness","photography","auto","outdoor","generic"], the closest match to the trade,"layout":"classic"|"offer-first"|"story"|"proof-first", the order that sells THIS business: offer-first when one signature package is the whole pitch, story when the person and trust matter most, proof-first when hard facts impress, classic otherwise}}
+
+Every page should feel structured for its business, not assembled from the same checklist: vary the layout, include process/faq only when they earn their place.
 
 You are the POSITIONING STRATEGIST and ART DIRECTOR, not just a copywriter. The page must make the offer feel inevitable: the positioning line is the spine, the signature offer makes it concrete, the audience section makes the right visitor feel seen.
 
@@ -162,6 +166,19 @@ function normalizeFill(raw: unknown): TemplateFill | null {
       },
       audience: (r.audience ?? []).map((x) => str(x, 130)).filter(Boolean).slice(0, 3),
       stats: (r.stats ?? []).slice(0, 4).map((x) => ({ number: str(x?.number, 10), label: str(x?.label, 30) })),
+      process: r.process?.steps?.length
+        ? {
+            title: str(r.process.title, 40, 'How it works'),
+            steps: r.process.steps
+              .slice(0, 4)
+              .map((x) => ({ title: str(x?.title, 30), text: str(x?.text, 130) }))
+              .filter((x) => x.title),
+          }
+        : undefined,
+      faq: (r.faq ?? [])
+        .slice(0, 4)
+        .map((x) => ({ q: str(x?.q, 70), a: str(x?.a, 200) }))
+        .filter((x) => x.q && x.a),
       services: {
         label: str(r.services?.label, 24, 'What we do'),
         titleLine1: str(r.services?.titleLine1, 22),
@@ -260,7 +277,8 @@ function directionSeed(description: string): string {
   const heroes = ['dark', 'light', 'gradient', 'split'] as const;
   const visuals = ['blob', 'arch', 'rings', 'tiles'] as const;
   const cases = ['uppercase', 'normal'] as const;
-  return `Suggested starting direction (depart from it if it doesn't fit this business): hero="${heroes[Math.abs(h) % 4]}", visual="${visuals[Math.abs(h >> 2) % 4]}", caseStyle="${cases[Math.abs(h >> 4) % 2]}".`;
+  const layouts = ['classic', 'offer-first', 'story', 'proof-first'] as const;
+  return `Suggested starting direction (depart from it if it doesn't fit this business): hero="${heroes[Math.abs(h) % 4]}", visual="${visuals[Math.abs(h >> 2) % 4]}", caseStyle="${cases[Math.abs(h >> 4) % 2]}", layout="${layouts[Math.abs(h >> 6) % 4]}".`;
 }
 
 export async function generateDemoSite(

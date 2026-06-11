@@ -537,19 +537,19 @@ const DRAFTS = [
   {
     img: '/showcase/draft-cafe.png',
     href: '/showcase/draft-cafe.html',
-    name: 'Cluj Board & Brew',
+    name: 'Cluj Board Game Café',
     prompt: 'our board game café in Cluj, 300 games on the shelves and proper coffee',
   },
   {
     img: '/showcase/draft-florist.png',
     href: '/showcase/draft-florist.html',
-    name: 'Wild Bloom Vienna',
+    name: 'Vienna Wildflower Atelier',
     prompt: 'I make wedding flowers in Vienna, wild and seasonal, built around what blooms that week',
   },
   {
     img: '/showcase/draft-fitness.png',
     href: '/showcase/draft-fitness.html',
-    name: 'Forge Fit Timisoara',
+    name: 'Morning Forge Training',
     prompt: 'personal trainer for men over 30, morning sessions in a bright garage gym in Timisoara',
   },
 ];

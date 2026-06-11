@@ -206,7 +206,7 @@
 /* ============ funnel overlay ============ */
 .funnel-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(22, 22, 30, 0.45); backdrop-filter: blur(8px); display: grid; place-items: center; padding: 24px; animation: fadeIn 0.25s var(--ease) both; }
 [data-theme='midnight'] .funnel-overlay { background: rgba(8, 8, 12, 0.6); }
-.funnel-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-xl); width: min(780px, 100%); max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg); padding: 34px 40px; position: relative; animation: fadeUp 0.35s var(--ease-out) both; }
+.funnel-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-xl); width: min(940px, 100%); max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg); padding: 34px 40px; position: relative; animation: fadeUp 0.35s var(--ease-out) both; }
 .funnel-close { position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink-3); cursor: pointer; display: grid; place-items: center; font-size: 16px; }
 .funnel-close:hover { color: var(--ink); border-color: var(--ink-3); }
 /* keep the progress bar clear of the absolute-positioned close button */
@@ -355,9 +355,9 @@
 }
 .login-input:focus { background: var(--glass); }
 .funnel-card {
-  background: color-mix(in srgb, var(--paper) 78%, transparent);
-  -webkit-backdrop-filter: blur(26px) saturate(150%);
-  backdrop-filter: blur(26px) saturate(150%);
+  background: color-mix(in srgb, var(--paper) 95%, transparent);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  backdrop-filter: blur(30px) saturate(150%);
   border-color: var(--glass-border);
 }
 .funnel-card textarea { background: var(--glass-2) !important; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }

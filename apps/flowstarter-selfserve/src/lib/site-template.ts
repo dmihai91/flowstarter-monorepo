@@ -65,7 +65,7 @@ export function renderTemplate(fill: TemplateFill): string {
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>${esc(f.brand.name)} — ${esc(f.brand.tagline)}</title>
+<title>${esc(f.brand.name)} · ${esc(f.brand.tagline)}</title>
 <!--FILL${JSON.stringify(fill)}FILL-->
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -97,6 +97,7 @@ export function renderTemplate(fill: TemplateFill): string {
   .btn:hover { transform: translateY(-2px); }
   .btn-primary { background: var(--brand-primary); color: #fff; box-shadow: 0 10px 22px -10px var(--brand-primary); }
   .btn-outline-light { border: 1.5px solid rgba(255,255,255,.4); color: #fff; }
+  .btn-on-dark { background: var(--accent); color: var(--bg-dark); box-shadow: 0 10px 22px -10px rgba(0,0,0,.5); }
   .btn-outline-light:hover { border-color: #fff; }
   .section-label { font-size: .85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; color: var(--brand-primary); font-weight: 600; }
   .section-title { font-size: var(--fs-h2); text-transform: uppercase; }
@@ -119,10 +120,10 @@ export function renderTemplate(fill: TemplateFill): string {
 
   /* hero — full-height dark (dorin) */
   .hero { background: var(--bg-dark); color: var(--text-on-dark); overflow: clip; }
-  .hero-inner { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,44%); gap: 56px; align-items: center; min-height: max(680px, 92vh); padding: 120px 0 80px; }
+  .hero-inner { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,44%); gap: 56px; align-items: center; min-height: max(680px, 92vh); padding-block: 120px 80px; }
   .hero-title { font-size: var(--fs-display); text-transform: uppercase; letter-spacing: -0.03em; margin-bottom: 24px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.6s; }
   .hero-text { font-size: 1.25rem; line-height: 1.45; max-width: 480px; margin-bottom: 32px; color: rgba(255,255,255,.82); opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.8s; }
-  .hero-text .hl { color: var(--brand-primary); }
+  .hero-text .hl { color: var(--accent); }
   .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 2s; }
   .hero-visual { position: relative; min-height: 440px; align-self: stretch; }
   .hero-visual .blob { position: absolute; inset: 8% 0 12% 6%; border-radius: 32px 120px 32px 32px; background: linear-gradient(160deg, var(--accent), var(--brand-primary) 75%); }
@@ -192,7 +193,7 @@ export function renderTemplate(fill: TemplateFill): string {
         <a href="#services">Services</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
-        <a class="btn btn-primary" href="#contact">${esc(f.hero.cta1)}</a>
+        <a class="btn btn-on-dark" href="#contact">${esc(f.hero.cta1)}</a>
       </nav>
     </div>
   </header>
@@ -203,7 +204,7 @@ export function renderTemplate(fill: TemplateFill): string {
         <h1 class="hero-title">${esc(f.hero.title)}</h1>
         <p class="hero-text">${heroText}</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#contact">${esc(f.hero.cta1)}</a>
+          <a class="btn btn-on-dark" href="#contact">${esc(f.hero.cta1)}</a>
           <a class="btn btn-outline-light" href="#services">${esc(f.hero.cta2)}</a>
         </div>
       </div>
@@ -361,3 +362,129 @@ export function fillFromSpec(spec: SiteSpec, email = 'hello@example.com'): Templ
     },
   };
 }
+
+// ---------------------------------------------------------------------------
+// PREMIUM render — the paid build. Same fill, visibly richer page: fixed
+// blurred nav, scroll-reveal motion, gallery, process timeline, packages and
+// FAQ (all derived from the agent's fill — nothing fabricated). This is the
+// quality gap that justifies the delivery payment.
+// ---------------------------------------------------------------------------
+
+export function renderPremiumTemplate(fill: TemplateFill): string {
+  const f = fill;
+  let html = renderTemplate(fill);
+
+  const extraCss = `
+  /* premium: fixed blurred nav */
+  header { position: fixed; background: rgba(10,10,10,.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255,255,255,.08); }
+  /* premium: scroll reveal */
+  .rv { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+  .rv.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
+  /* gallery */
+  .gallery { padding: var(--section-pad); background: #fff; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 48px; }
+  .tile { border-radius: 16px; aspect-ratio: 4/3; position: relative; overflow: hidden; }
+  .tile::after { content: ''; position: absolute; inset: 0; background: radial-gradient(120% 90% at 30% 10%, rgba(255,255,255,.28), transparent 55%); }
+  .tile:nth-child(1) { background: linear-gradient(150deg, var(--accent), var(--brand-primary)); }
+  .tile:nth-child(2) { background: linear-gradient(220deg, var(--brand-primary), #0a0a0a 130%); border-radius: 16px 80px 16px 16px; }
+  .tile:nth-child(3) { background: linear-gradient(120deg, #EBE8DF, var(--accent)); }
+  .tile:nth-child(4) { background: linear-gradient(40deg, var(--brand-primary) 10%, var(--accent)); border-radius: 80px 16px 16px 16px; }
+  .tile:nth-child(5) { background: linear-gradient(190deg, #0a0a0a, var(--brand-primary) 140%); }
+  .tile:nth-child(6) { background: linear-gradient(320deg, var(--accent), #EBE8DF); border-radius: 16px 16px 80px 16px; }
+  .tile b { position: absolute; left: 18px; bottom: 14px; color: #fff; font-size: .95rem; letter-spacing: .02em; text-shadow: 0 1px 8px rgba(0,0,0,.35); z-index: 1; }
+  /* process timeline */
+  .process { padding: var(--section-pad); }
+  .process-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 48px; counter-reset: step; }
+  .step { border-top: 2px solid var(--brand-primary); padding-top: 22px; position: relative; }
+  .step i { font-style: normal; font-weight: 700; font-size: .85rem; color: var(--brand-primary); letter-spacing: 2px; }
+  .step h4 { margin: 10px 0; font-size: var(--fs-h4); }
+  .step p { color: var(--text-secondary); font-size: .95rem; line-height: 1.55; }
+  /* packages */
+  .packages { padding: var(--section-pad); background: #fff; }
+  .pack-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 48px; }
+  .pack { border: 1px solid var(--panel-border); border-radius: 16px; padding: 30px 26px; background: var(--surface-base); transition: transform .3s ease, box-shadow .3s ease; }
+  .pack:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); }
+  .pack.hi { border: 2px solid var(--brand-primary); background: #fff; }
+  .pack .tagp { font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; color: var(--brand-primary); font-weight: 700; }
+  .pack h4 { margin: 10px 0 8px; }
+  .pack p { color: var(--text-secondary); font-size: .95rem; line-height: 1.55; margin-bottom: 20px; }
+  .pack .note { font-weight: 700; font-size: .95rem; color: var(--text-primary); }
+  /* FAQ */
+  .faqs { padding: 0 0 100px; }
+  .faqs details { border: 1px solid var(--panel-border); border-radius: 14px; background: #fff; padding: 0 22px; margin-top: 10px; }
+  .faqs summary { cursor: pointer; font-weight: 650; padding: 18px 0; list-style: none; display: flex; justify-content: space-between; gap: 14px; }
+  .faqs summary::-webkit-details-marker { display: none; }
+  .faqs summary::after { content: '+'; color: var(--brand-primary); font-size: 1.3rem; line-height: 1; }
+  .faqs details[open] summary::after { content: '–'; }
+  .faqs details p { padding: 0 0 18px; color: var(--text-secondary); line-height: 1.6; }
+  @media (max-width: 820px) { .gallery-grid, .process-grid, .pack-grid { grid-template-columns: 1fr; } }
+`;
+
+  const items = f.services.items;
+  const gallery = `
+  <section class="gallery" id="work">
+    <div class="container">
+      <div class="section-label rv">In practice</div>
+      <h2 class="section-title rv">${esc(f.services.titleLine1)} ${esc(f.services.titleLine2)}</h2>
+      <div class="gallery-grid">
+        ${items.slice(0, 6).map((it) => `<div class="tile rv"><b>${esc(it.title)}</b></div>`).join('\n        ')}
+      </div>
+    </div>
+  </section>`;
+
+  const process = `
+  <section class="process" id="process">
+    <div class="container">
+      <div class="section-label rv">How it works</div>
+      <h2 class="section-title rv">Simple from day one</h2>
+      <div class="process-grid">
+        ${items.slice(0, 3).map((it, i) => `<div class="step rv"><i>0${i + 1}</i><h4>${esc(it.title)}</h4><p>${esc(it.description)}</p></div>`).join('\n        ')}
+      </div>
+    </div>
+  </section>`;
+
+  const packages = `
+  <section class="packages" id="packages">
+    <div class="container">
+      <div class="section-label rv">Ways to work together</div>
+      <h2 class="section-title rv">Pick your pace</h2>
+      <div class="pack-grid">
+        <div class="pack rv"><div class="tagp">Starter</div><h4>${esc(items[0]?.title ?? 'Getting started')}</h4><p>${esc(items[0]?.description ?? '')}</p><div class="note">Pricing on request</div></div>
+        <div class="pack hi rv"><div class="tagp">Most popular</div><h4>${esc(items[1]?.title ?? 'The full experience')}</h4><p>${esc(items[1]?.description ?? '')}</p><div class="note">Pricing on request</div></div>
+        <div class="pack rv"><div class="tagp">Ongoing</div><h4>${esc(items[2]?.title ?? 'Stay with us')}</h4><p>${esc(items[2]?.description ?? '')}</p><div class="note">Pricing on request</div></div>
+      </div>
+    </div>
+  </section>`;
+
+  const faq = `
+  <section class="faqs">
+    <div class="container">
+      <div class="section-label rv">Good to know</div>
+      <h2 class="section-title rv">Questions, answered</h2>
+      <details class="rv"><summary>What exactly do you offer?</summary><p>${esc(items[0]?.description ?? f.hero.text)}</p></details>
+      <details class="rv"><summary>How do we get started?</summary><p>${esc(f.cta.text)}</p></details>
+      <details class="rv"><summary>Who is this for?</summary><p>${esc(f.about.p1)}</p></details>
+      <details class="rv"><summary>How do I reach you?</summary><p>${esc(f.contact.text)} Write to ${esc(f.contact.email)}.</p></details>
+    </div>
+  </section>`;
+
+  const revealJs = `
+  <script>
+    (function () {
+      var els = document.querySelectorAll('.rv');
+      if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { threshold: 0.18 });
+      els.forEach(function (e) { io.observe(e); });
+    })();
+  </script>`;
+
+  html = html.replace('</style>', extraCss + '\n</style>');
+  html = html.replace('  <section class="cta">', gallery + '\n' + process + '\n' + packages + '\n\n  <section class="cta">');
+  html = html.replace('  <section class="contact"', faq + '\n\n  <section class="contact"');
+  html = html.replace('</body>', revealJs + '\n</body>');
+  return html;
+}
+

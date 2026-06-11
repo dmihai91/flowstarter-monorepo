@@ -98,7 +98,9 @@ Rules:
 - Respond with ONLY the JSON object. No prose, no code fences.
 - Every word bespoke to THIS business, in its voice. Use its real name if given.
 - stats: ONLY facts present in the description (counts, hours, formats like "1:1") or qualities of the offer. NEVER invent client numbers, years, ratings or percentages.
-- No invented testimonials, awards or statistics anywhere.`;
+- No invented testimonials, awards or statistics anywhere.
+- No em dashes anywhere in the copy; use commas, periods or colons.
+- primary: a saturated MID-brightness color (must read as a button on white AND near-black; never navy/near-black). accent: a LIGHT pastel companion (must read as text on near-black).`;
 
 function cleanJson(raw: string): string {
   return raw.replace(/^```(?:json)?/m, '').replace(/```\s*$/m, '').trim();
@@ -107,7 +109,11 @@ function cleanJson(raw: string): string {
 function normalizeFill(raw: unknown): TemplateFill | null {
   try {
     const r = raw as TemplateFill;
-    const str = (v: unknown, max: number, fb = '') => String(v ?? fb).slice(0, max);
+    const str = (v: unknown, max: number, fb = '') =>
+      String(v ?? fb)
+        .replace(/\s*[—–]\s*/g, ', ') // voice rules: no em/en dashes
+        .replace(/,\s*,/g, ',')
+        .slice(0, max);
     const hex = (v: unknown, fb: string) => (/^#[0-9a-fA-F]{3,8}$/.test(String(v ?? '')) ? String(v) : fb);
     const fill: TemplateFill = {
       brand: {

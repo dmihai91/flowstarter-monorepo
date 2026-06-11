@@ -14,6 +14,7 @@ import { alertAdmin } from './alerts';
 import { sendEmail, apologyEmail } from './emails';
 import { refundPaymentIntent } from './stripe';
 import { trackServer } from './analytics-server';
+import { renderPremiumTemplate, parseFillFromHtml } from './site-template';
 
 // One runner per process — prevents double-running a build across HMR reloads.
 function activeRuns(): Set<string> {
@@ -101,6 +102,13 @@ async function runToCompletion(buildId: string): Promise<void> {
 
     try {
       const outputs = await engine.run(req, emit);
+      // Paid tier: upgrade the approved demo into the premium render (richer
+      // sections, motion, packages/FAQ) so the delivery visibly outclasses the
+      // free demo. The real orchestrator ships its own site untouched.
+      if (engine.kind === 'mock' && project.demo_html) {
+        const fill = parseFillFromHtml(project.demo_html);
+        if (fill) outputs.siteHtml = renderPremiumTemplate(fill);
+      }
       const done = await store.updateBuild(buildId, {
         status: 'completed',
         progress: 100,

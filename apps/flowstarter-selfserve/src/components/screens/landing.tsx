@@ -351,21 +351,31 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
   const tour = [
     {
       title: 'A free demo, drafted in seconds',
-      sub: 'The name, the look and the headline, before you pay anything',
+      sub: 'A real homepage draft, before you pay anything',
       pill: 'DEMO PREVIEW',
       body: (
-        <div className="mock-card" style={{ flex: 1 }}>
-          <div className="serif" style={{ fontSize: 30, fontWeight: 600, letterSpacing: '-.02em' }}>Tudor Barbershop</div>
-          <div style={{ fontSize: 13.5, color: 'var(--ink-2)', marginBottom: 12 }}>Walk in. Walk out sharp.</div>
-          <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-            {['#1F2A44', '#C73E3E', '#E9E2D2', '#2B2B2B'].map((c) => (
-              <span key={c} style={{ width: 30, height: 30, borderRadius: 8, background: c, border: '1px solid var(--line)' }} />
-            ))}
+        <div className="tsite" style={{ flex: 1 }}>
+          <div className="tsite-chrome">
+            <span className="edit-dot" />
+            <span className="edit-dot" />
+            <span className="edit-dot" />
+            <span className="mono tsite-url">sample · tudor barbershop</span>
           </div>
-          <div style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--ink-2)' }}>“A proper cut, no appointment needed.”</div>
-          <div className="mono" style={{ fontSize: 10.5, letterSpacing: '.08em', color: 'var(--ink-3)', marginTop: 12 }}>
-            SAMPLE DRAFT · YOURS IS GENERATED FROM YOUR DESCRIPTION
+          <div className="tsite-hero">
+            <div className="tsite-nav">
+              <b>TUDOR</b>
+              <span>Cuts · Prices · Find us</span>
+            </div>
+            <div className="tsite-h serif">Walk in. Walk out sharp.</div>
+            <div className="tsite-sub">A proper cut, no appointment needed. Two chairs, no waiting list.</div>
+            <span className="tsite-btn">See prices ↓</span>
           </div>
+          <div className="tsite-rows">
+            <div className="tsite-row"><span>Cut</span><b>60 lei</b></div>
+            <div className="tsite-row"><span>Cut + beard</span><b>85 lei</b></div>
+            <div className="tsite-row"><span>Kids under 10</span><b>40 lei</b></div>
+          </div>
+          <div className="mono tsite-foot">SAMPLE DRAFT · YOURS IS GENERATED FROM YOUR DESCRIPTION</div>
         </div>
       ),
     },

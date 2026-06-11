@@ -90,7 +90,10 @@ export async function generateDemoSpec(businessDescription: string): Promise<Sit
 const FILL_SYSTEM = `You are the content agent for Flowstarter's house site template. From a business description, produce ONLY a JSON object filling the template's content slots:
 
 {"brand":{"name":string,"tagline":string(<=70 chars),"primary":"#hex saturated, fits the trade","accent":"#hex soft pastel companion","voice":[3 adjectives]},
-"hero":{"title":string(<=58 chars, punchy, works in HUGE uppercase type),"text":string(1-2 sentences, <=200 chars),"highlight":string(a short phrase copied VERBATIM from text),"cta1":string(<=22 chars action),"cta2":string(<=24 chars secondary)},
+"hero":{"kicker":string(<=38 chars, the positioning angle),"title":string(<=58 chars, punchy, works in HUGE uppercase type),"text":string(1-2 sentences, <=200 chars),"highlight":string(a short phrase copied VERBATIM from text),"cta1":string(<=22 chars action),"cta2":string(<=24 chars secondary)},
+"positioning":string(<=90 chars, the ONE line that separates this business from everyone else, quotable),
+"offer":{"name":string(<=40 chars, the signature offer),"description":string(<=220 chars, concrete: what happens, for whom, how),"includes":[4 x string(<=70 chars, tangible things the client gets)],"note":string(<=40 chars, a true low-risk hook from the description, e.g. "First chat is free", NEVER invented discounts)},
+"audience":[3 x string(<=110 chars, "you..." statements that make the right client feel seen)],
 "stats":[{"number":string(<=8 chars),"label":string(<=26 chars)} x4],
 "services":{"label":string(<=20 chars),"titleLine1":string(<=18 chars),"titleLine2":string(<=18 chars),"items":[{"title":string(<=30 chars),"description":string(<=140 chars)} x6]},
 "about":{"label":string,"title":string(<=60 chars),"p1":string(<=240 chars),"p2":string(<=240 chars)},
@@ -98,7 +101,9 @@ const FILL_SYSTEM = `You are the content agent for Flowstarter's house site temp
 "contact":{"heading":string(<=40 chars),"text":string(<=160 chars),"email":string(plausible address on the business's own domain)},
 "style":{"fontDisplay":one of ${JSON.stringify([...DISPLAY_FONTS])},"fontBody":one of ${JSON.stringify([...BODY_FONTS])},"hero":"dark"|"light"|"gradient"|"split","caseStyle":"uppercase"|"normal","radius":"sharp"|"soft"|"round","paper":"#hex near-white tint","dark":"#hex near-black, may lean toward the brand","visual":"blob"|"arch"|"rings"|"tiles"}}
 
-You are the ART DIRECTOR, not just the copywriter. The template is your structure; the style block is where you make it unmistakably THIS business. Design a combination that feels premium and would impress a paying client:
+You are the POSITIONING STRATEGIST and ART DIRECTOR, not just a copywriter. The page must make the offer feel inevitable: the positioning line is the spine, the signature offer makes it concrete, the audience section makes the right visitor feel seen.
+
+ The template is your structure; the style block is where you make it unmistakably THIS business. Design a combination that feels premium and would impress a paying client:
 - a tasteful but characterful font pairing (serif display for crafted/warm trades, grotesque for modern/technical ones),
 - a hero treatment and visual motif that match the trade's energy (dark = bold/premium, light = airy/calm, gradient = energetic, split = editorial),
 - tinted surfaces (paper/dark) that carry the brand instead of defaults.
@@ -134,12 +139,21 @@ function normalizeFill(raw: unknown): TemplateFill | null {
         voice: (r.brand?.voice ?? []).map((v) => str(v, 20)).slice(0, 3),
       },
       hero: {
+        kicker: str(r.hero?.kicker, 44),
         title: str(r.hero?.title, 70),
         text: str(r.hero?.text, 260),
         highlight: str(r.hero?.highlight, 80),
         cta1: str(r.hero?.cta1, 26, 'Get in touch'),
         cta2: str(r.hero?.cta2, 28, 'Learn more'),
       },
+      positioning: str(r.positioning, 110),
+      offer: {
+        name: str(r.offer?.name, 48),
+        description: str(r.offer?.description, 260),
+        includes: (r.offer?.includes ?? []).map((x) => str(x, 80)).filter(Boolean).slice(0, 4),
+        note: str(r.offer?.note, 48),
+      },
+      audience: (r.audience ?? []).map((x) => str(x, 130)).filter(Boolean).slice(0, 3),
       stats: (r.stats ?? []).slice(0, 4).map((x) => ({ number: str(x?.number, 10), label: str(x?.label, 30) })),
       services: {
         label: str(r.services?.label, 24, 'What we do'),
@@ -168,6 +182,18 @@ function normalizeFill(raw: unknown): TemplateFill | null {
       style: (r as { style?: StyleFill }).style,
     };
     if (!fill.hero.title || !fill.hero.text || fill.services.items.length < 3) return null;
+    if (!fill.positioning) fill.positioning = fill.brand.tagline;
+    if (!fill.hero.kicker) fill.hero.kicker = fill.brand.tagline;
+    if (!fill.offer.name) {
+      fill.offer = {
+        name: fill.services.items[0]?.title ?? 'How we work',
+        description: fill.services.items[0]?.description ?? fill.hero.text,
+        includes: fill.services.items.slice(0, 4).map((i) => i.title),
+        note: 'No obligation to start',
+      };
+    }
+    while (fill.offer.includes.length < 4) fill.offer.includes.push(fill.services.items[fill.offer.includes.length]?.title ?? 'Personal attention, start to finish');
+    while (fill.audience.length < 3) fill.audience.push('You want this done properly, by someone who cares.');
     while (fill.stats.length < 4) fill.stats.push({ number: '1:1', label: 'Personal service' });
     while (fill.services.items.length < 6) {
       fill.services.items.push({ title: 'Made for you', description: 'Shaped around how you actually work.' });

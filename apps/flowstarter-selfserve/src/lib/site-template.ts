@@ -18,6 +18,8 @@ export interface TemplateFill {
     voice: string[];
   };
   hero: {
+    /** Tiny kicker line above the title — the positioning angle (≤ 40 chars). */
+    kicker: string;
     /** Short, punchy — set in huge uppercase display type (≤ 60 chars). */
     title: string;
     /** 1–2 sentences; `highlight` must appear verbatim inside it. */
@@ -26,6 +28,17 @@ export interface TemplateFill {
     cta1: string;
     cta2: string;
   };
+  /** The one-liner that separates this business from everyone else. */
+  positioning: string;
+  /** The signature offer, made concrete. */
+  offer: {
+    name: string;
+    description: string;
+    includes: string[]; // 4 concrete things the client gets
+    note: string; // e.g. "First session free" or "No long contracts"
+  };
+  /** "This is for you if…" — 3 sharp audience checks. */
+  audience: string[];
   /** Exactly 4 — facts from the description only (offer, hours, format), never invented metrics. */
   stats: Array<{ number: string; label: string }>;
   services: {
@@ -203,6 +216,8 @@ export function renderTemplate(fill: TemplateFill): string {
   .hero--split .hero-visual::before { content: ''; position: absolute; inset: -120px -100vw -120px 18%; background: var(--brand-primary); z-index: -1; }
   .hero--split .hero-visual .blob, .hero--split .hero-visual .arch { inset: 12% 4% 16% 26%; }
   .hero-inner { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,44%); gap: 56px; align-items: center; min-height: max(680px, 92vh); padding-block: 120px 80px; }
+  .hero-kicker { font-size: .85rem; text-transform: uppercase; letter-spacing: 2.4px; color: var(--accent); font-weight: 700; margin-bottom: 18px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.5s; }
+  .hero--light .hero-kicker { color: var(--brand-primary); }
   .hero-title { font-size: var(--fs-display); text-transform: var(--case); letter-spacing: -0.03em; margin-bottom: 24px; opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.6s; }
   .hero-text { font-size: 1.25rem; line-height: 1.45; max-width: 480px; margin-bottom: 32px; color: rgba(255,255,255,.82); opacity: 0; animation: enter .75s cubic-bezier(.22,1,.36,1) forwards; animation-delay: 1.8s; }
   .hero-text .hl { color: var(--accent); }
@@ -241,6 +256,31 @@ export function renderTemplate(fill: TemplateFill): string {
   .card h4 { font-size: var(--fs-h4); margin-bottom: 10px; }
   .card p { font-size: .95rem; color: var(--text-secondary); line-height: 1.55; }
 
+  /* positioning pull-quote strip */
+  .position { padding: 88px 0; background: #fff; border-top: 1px solid var(--panel-border); border-bottom: 1px solid var(--panel-border); }
+  .position blockquote { font-family: var(--font-display); font-size: clamp(1.7rem, 3.4vw, 2.6rem); line-height: 1.2; letter-spacing: -0.02em; max-width: 22ch; font-weight: 650; }
+  .position blockquote em { font-style: normal; color: var(--brand-primary); }
+  .position .who { margin-top: 18px; font-size: .85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-secondary); font-weight: 600; }
+
+  /* signature offer showcase */
+  .offer { padding: var(--section-pad); }
+  .offer-card { display: grid; grid-template-columns: 1.1fr .9fr; gap: 0; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-float); margin-top: 48px; }
+  .offer-main { background: var(--bg-dark); color: #fff; padding: clamp(32px, 5vw, 56px); }
+  .offer-main .tagp { font-size: .8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 700; }
+  .offer-main h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 14px; text-transform: var(--case); }
+  .offer-main p { color: rgba(255,255,255,.78); line-height: 1.6; margin-bottom: 22px; }
+  .offer-main .note { display: inline-block; background: var(--accent); color: var(--bg-dark); font-weight: 700; font-size: .85rem; padding: 8px 14px; border-radius: 99px; }
+  .offer-list { background: var(--brand-primary); color: #fff; padding: clamp(32px, 5vw, 56px); display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+  .offer-list b { font-size: .8rem; text-transform: uppercase; letter-spacing: 2px; opacity: .8; }
+  .offer-list li { list-style: none; display: flex; gap: 12px; align-items: flex-start; font-size: 1rem; line-height: 1.45; }
+  .offer-list li::before { content: '✓'; font-weight: 800; flex-shrink: 0; }
+
+  /* audience — for you if */
+  .audience { padding: 0 0 100px; }
+  .aud-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 42px; }
+  .aud { border-left: 3px solid var(--brand-primary); padding: 6px 0 6px 20px; font-size: 1.02rem; line-height: 1.5; }
+  .aud b { color: var(--brand-primary); display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: 1.6px; margin-bottom: 6px; }
+
   /* about — dark strip with the dorin circles */
   .about { background: var(--bg-dark); color: var(--text-on-dark); padding: var(--section-pad); }
   .about-inner { display: grid; grid-template-columns: 1.1fr .9fr; gap: 64px; align-items: center; }
@@ -272,6 +312,8 @@ export function renderTemplate(fill: TemplateFill): string {
     .stats-inner { grid-template-columns: repeat(2,1fr); gap: 32px; }
     .services-grid { grid-template-columns: 1fr; }
     .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    .offer-card { grid-template-columns: 1fr; }
+    .aud-grid { grid-template-columns: 1fr; }
     .nav nav { display: none; }
     :root { --section-pad: 64px 0; }
   }
@@ -295,6 +337,7 @@ export function renderTemplate(fill: TemplateFill): string {
   <section class="hero hero--${st.hero}">
     <div class="container hero-inner">
       <div>
+        <div class="hero-kicker">${esc(f.hero.kicker)}</div>
         <h1 class="hero-title">${esc(f.hero.title)}</h1>
         <p class="hero-text">${heroText}</p>
         <div class="hero-actions">
@@ -314,6 +357,13 @@ export function renderTemplate(fill: TemplateFill): string {
     </div>
   </section>
 
+  <section class="position">
+    <div class="container">
+      <blockquote>“<em>${esc(f.positioning)}</em>”</blockquote>
+      <div class="who">${esc(f.brand.name)} · ${esc(f.brand.tagline)}</div>
+    </div>
+  </section>
+
   <section class="services" id="services">
     <div class="container">
       <div class="services-head">
@@ -325,6 +375,35 @@ export function renderTemplate(fill: TemplateFill): string {
       </div>
       <div class="services-grid">
         ${f.services.items.slice(0, 6).map((it, i) => `<div class="card"><div class="icon">${ICONS[i % ICONS.length]}</div><h4>${esc(it.title)}</h4><p>${esc(it.description)}</p></div>`).join('\n        ')}
+      </div>
+    </div>
+  </section>
+
+  <section class="offer">
+    <div class="container">
+      <div class="section-label">The signature offer</div>
+      <h2 class="section-title">${esc(f.offer.name)}</h2>
+      <div class="offer-card">
+        <div class="offer-main">
+          <div class="tagp">What it is</div>
+          <h3>${esc(f.offer.name)}</h3>
+          <p>${esc(f.offer.description)}</p>
+          <span class="note">${esc(f.offer.note)}</span>
+        </div>
+        <ul class="offer-list">
+          <b>What you get</b>
+          ${f.offer.includes.slice(0, 4).map((x) => `<li>${esc(x)}</li>`).join('\n          ')}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="audience">
+    <div class="container">
+      <div class="section-label">Is this you?</div>
+      <h2 class="section-title">This is for you if</h2>
+      <div class="aud-grid">
+        ${f.audience.slice(0, 3).map((a, i) => `<div class="aud"><b>0${i + 1}</b>${esc(a)}</div>`).join('\n        ')}
       </div>
     </div>
   </section>
@@ -396,7 +475,7 @@ export function fillToSpec(f: TemplateFill): SiteSpec {
       cta: f.hero.cta1,
       sections: f.services.items.slice(0, 3).map((s) => ({ h: s.title, p: s.description })),
     },
-    positioning: f.brand.tagline,
+    positioning: f.positioning || f.brand.tagline,
   };
 }
 
@@ -418,12 +497,30 @@ export function fillFromSpec(spec: SiteSpec, email = 'hello@example.com'): Templ
       voice: spec.brand.voice,
     },
     hero: {
+      kicker: spec.brand.tagline,
       title: spec.copy.hero,
       text: spec.copy.sub,
       highlight: '',
       cta1: spec.copy.cta,
       cta2: 'See what we do',
     },
+    positioning: spec.positioning,
+    offer: {
+      name: spec.copy.sections[0]?.h ?? 'How we work',
+      description: spec.copy.sections[0]?.p ?? spec.copy.sub,
+      includes: [
+        'A first conversation about what you need',
+        'A clear plan before anything starts',
+        'Honest pricing up front',
+        'One person who knows your name',
+      ],
+      note: 'No obligation to start',
+    },
+    audience: [
+      'You want this handled properly, without doing it yourself.',
+      'You value clear communication and honest pricing.',
+      'You\u2019d rather work with someone local who cares.',
+    ],
     stats: [
       { number: '1:1', label: 'Personal service' },
       { number: '7/7', label: 'Here for you' },

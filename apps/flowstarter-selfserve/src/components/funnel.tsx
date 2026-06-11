@@ -324,6 +324,40 @@ export function FunnelOverlay({
                     sandbox=""
                   />
                 </div>
+                {/* the incentive: what the paid build adds on top of this draft */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1.2fr',
+                    gap: 0,
+                    borderRadius: 14,
+                    overflow: 'hidden',
+                    border: '1px solid var(--line)',
+                    marginBottom: 16,
+                  }}
+                >
+                  <div style={{ padding: '16px 18px', background: 'var(--paper-2)' }}>
+                    <div className="mono" style={{ fontSize: 10.5, letterSpacing: '.1em', color: 'var(--ink-3)', marginBottom: 8 }}>
+                      THIS DRAFT · FREE
+                    </div>
+                    {['Real page from your prompt', '10 agent prompts to shape it', 'Yours to explore'].map((t) => (
+                      <div key={t} style={{ fontSize: 13, color: 'var(--ink-2)', padding: '3px 0' }}>✓ {t}</div>
+                    ))}
+                  </div>
+                  <div style={{ padding: '16px 18px', background: 'color-mix(in srgb, var(--accent) 9%, var(--card))' }}>
+                    <div className="mono" style={{ fontSize: 10.5, letterSpacing: '.1em', color: 'var(--accent)', marginBottom: 8 }}>
+                      THE FULL BUILD · {pricing.build} TO START
+                    </div>
+                    {[
+                      'Gallery, packages, FAQ & booking wired',
+                      'Senior crew pass: design, copy, mobile polish',
+                      'Live on your domain, hosted & managed',
+                      `${pricing.build} counts toward your ${pricing.total} total`,
+                    ].map((t) => (
+                      <div key={t} style={{ fontSize: 13, color: 'var(--ink)', padding: '3px 0', fontWeight: 500 }}>✦ {t}</div>
+                    ))}
+                  </div>
+                </div>
                 <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setStep(3)}>
                   I like it — see the full demo →
                 </button>

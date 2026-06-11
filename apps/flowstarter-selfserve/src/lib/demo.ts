@@ -9,6 +9,13 @@ import {
   type SiteSpec,
 } from '@flowstarter/build-engine';
 import { MODELS } from './config';
+import {
+  renderTemplate,
+  parseFillFromHtml,
+  fillToSpec,
+  fillFromSpec,
+  type TemplateFill,
+} from './site-template';
 
 export const SpecSchema = z.object({
   brand: z.object({
@@ -77,40 +84,85 @@ export async function generateDemoSpec(businessDescription: string): Promise<Sit
 // blurred sneak peek until the build is paid.
 // ---------------------------------------------------------------------------
 
-const SITE_SYSTEM = `You are Dash, Flowstarter's site agent. From a business description, produce a COMPLETE, polished single-file website draft.
+const FILL_SYSTEM = `You are the content agent for Flowstarter's house site template. From a business description, produce ONLY a JSON object filling the template's content slots:
 
-Output format — exactly this, nothing else:
-Line 1: an HTML comment containing the brand spec JSON:
-<!--SPEC{"brand":{"name":string,"tagline":string,"palette":[primaryHex,secondaryHex,inkHex,paperHex],"voice":[2-3 adjectives]},"copy":{"hero":string,"sub":string,"cta":string,"sections":[{"h":string,"p":string} x3]},"positioning":string}SPEC-->
-Then: a complete <!DOCTYPE html> document.
+{"brand":{"name":string,"tagline":string(<=70 chars),"primary":"#hex saturated, fits the trade","accent":"#hex soft pastel companion","voice":[3 adjectives]},
+"hero":{"title":string(<=58 chars, punchy, works in HUGE uppercase type),"text":string(1-2 sentences, <=200 chars),"highlight":string(a short phrase copied VERBATIM from text),"cta1":string(<=22 chars action),"cta2":string(<=24 chars secondary)},
+"stats":[{"number":string(<=8 chars),"label":string(<=26 chars)} x4],
+"services":{"label":string(<=20 chars),"titleLine1":string(<=18 chars),"titleLine2":string(<=18 chars),"items":[{"title":string(<=30 chars),"description":string(<=140 chars)} x6]},
+"about":{"label":string,"title":string(<=60 chars),"p1":string(<=240 chars),"p2":string(<=240 chars)},
+"cta":{"title":string(<=48 chars),"text":string(<=160 chars),"button":string(<=24 chars)},
+"contact":{"heading":string(<=40 chars),"text":string(<=160 chars),"email":string(plausible address on the business's own domain)}}
 
-Page rules:
-- Single file: all CSS inline in one <style> tag. NO JavaScript, NO external assets, NO web fonts (system font stack), NO images (use CSS gradients/shapes for visuals).
-- Structure: nav (brand + CTA), hero (kicker, headline, subcopy, CTA button, decorative visual), three feature sections, an about/why strip, contact/booking section with a mailto CTA, footer.
-- Bespoke to THIS business: concrete copy in its voice, palette that fits the trade. Mobile-responsive, readable contrast, generous whitespace.
-- Never invent statistics, testimonials, awards, or client names. Mark unknown details (address, hours, prices) as e.g. "123 Your Street" placeholders sparingly.
+Rules:
+- Respond with ONLY the JSON object. No prose, no code fences.
+- Every word bespoke to THIS business, in its voice. Use its real name if given.
+- stats: ONLY facts present in the description (counts, hours, formats like "1:1") or qualities of the offer. NEVER invent client numbers, years, ratings or percentages.
+- No invented testimonials, awards or statistics anywhere.`;
 
-QUALITY BASELINE — adapt Flowstarter's house design system (do NOT design from scratch; substitute colors/copy to fit the business, keep the bones):
-:root tokens (rename values to the business palette, keep the scale):
-  --surface-base: warm off-white paper (e.g. #F9F7F1); --bg-dark: near-black (#0a0a0a) for dark sections & footer;
-  --brand-primary: one saturated accent fitting the trade; --accent: one soft secondary;
-  --text-primary: #0a0a0a; --text-secondary: #999; --text-on-dark: #fff;
-  --surface-panel: rgba(255,255,255,.72) with 1px rgba(10,10,10,.14) border; --shadow-float: 0 18px 36px rgba(10,10,10,.12);
-  --section-padding: 100px 0 (64px on mobile); --container: 1200px max, 24px side padding;
-  type scale: display 3rem / h2 2.75rem / h3 1.9rem / body 1.1rem; headings tight (line-height 1.1, letter-spacing -0.02em);
-  radius: 8/12/16px; transitions .3s ease.
-Patterns to reuse:
-  - section labels: small UPPERCASE kicker, letter-spacing 2px, brand color, above every section title;
-  - alternate light sections on --surface-base with one or two FULL-BLEED dark sections (--bg-dark, white text) for rhythm (e.g. about/why strip and footer);
-  - cards: panel surface, 16px radius, subtle border, lift on hover (translateY(-4px) + shadow-float);
-  - hero: huge display headline (uppercase or tight-case), kicker above, subcopy max ~52ch, primary button (brand bg, white text, 12px radius) + ghost secondary; decorative CSS shape/gradient block on the right;
-  - footer: dark, brand wordmark, contact mailto, small legal line.`;
-
-function stripScripts(html: string): string {
-  return html.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/\son\w+="[^"]*"/gi, '');
+function cleanJson(raw: string): string {
+  return raw.replace(/^```(?:json)?/m, '').replace(/```\s*$/m, '').trim();
 }
 
-async function callSiteModel(messages: Array<{ role: string; content: string }>): Promise<{ spec: SiteSpec | null; html: string } | null> {
+function normalizeFill(raw: unknown): TemplateFill | null {
+  try {
+    const r = raw as TemplateFill;
+    const str = (v: unknown, max: number, fb = '') => String(v ?? fb).slice(0, max);
+    const hex = (v: unknown, fb: string) => (/^#[0-9a-fA-F]{3,8}$/.test(String(v ?? '')) ? String(v) : fb);
+    const fill: TemplateFill = {
+      brand: {
+        name: str(r.brand?.name, 60) || 'Your business',
+        tagline: str(r.brand?.tagline, 90),
+        primary: hex(r.brand?.primary, '#3D4FF0'),
+        accent: hex(r.brand?.accent, '#B3B6FF'),
+        voice: (r.brand?.voice ?? []).map((v) => str(v, 20)).slice(0, 3),
+      },
+      hero: {
+        title: str(r.hero?.title, 70),
+        text: str(r.hero?.text, 260),
+        highlight: str(r.hero?.highlight, 80),
+        cta1: str(r.hero?.cta1, 26, 'Get in touch'),
+        cta2: str(r.hero?.cta2, 28, 'Learn more'),
+      },
+      stats: (r.stats ?? []).slice(0, 4).map((x) => ({ number: str(x?.number, 10), label: str(x?.label, 30) })),
+      services: {
+        label: str(r.services?.label, 24, 'What we do'),
+        titleLine1: str(r.services?.titleLine1, 22),
+        titleLine2: str(r.services?.titleLine2, 22),
+        items: (r.services?.items ?? [])
+          .slice(0, 6)
+          .map((x) => ({ title: str(x?.title, 36), description: str(x?.description, 170) })),
+      },
+      about: {
+        label: str(r.about?.label, 24, 'About'),
+        title: str(r.about?.title, 70),
+        p1: str(r.about?.p1, 280),
+        p2: str(r.about?.p2, 280),
+      },
+      cta: {
+        title: str(r.cta?.title, 56),
+        text: str(r.cta?.text, 190),
+        button: str(r.cta?.button, 26, 'Get in touch'),
+      },
+      contact: {
+        heading: str(r.contact?.heading, 46, 'Let\u2019s talk'),
+        text: str(r.contact?.text, 190),
+        email: str(r.contact?.email, 80, 'hello@example.com'),
+      },
+    };
+    if (!fill.hero.title || !fill.hero.text || fill.services.items.length < 3) return null;
+    while (fill.stats.length < 4) fill.stats.push({ number: '1:1', label: 'Personal service' });
+    while (fill.services.items.length < 6) {
+      fill.services.items.push({ title: 'Made for you', description: 'Shaped around how you actually work.' });
+    }
+    return fill;
+  } catch {
+    return null;
+  }
+}
+
+/** One small model call → content fill. Fast, cheap, no layout risk. */
+async function callFillModel(messages: Array<{ role: string; content: string }>): Promise<TemplateFill | null> {
   if (!MODELS.openrouterApiKey) return null;
   try {
     const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -119,113 +171,66 @@ async function callSiteModel(messages: Array<{ role: string; content: string }>)
         Authorization: `Bearer ${MODELS.openrouterApiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ model: MODELS.demo, messages, temperature: 0.7, max_tokens: 13_000 }),
-      signal: AbortSignal.timeout(150_000),
+      body: JSON.stringify({ model: MODELS.demo, messages, temperature: 0.7, max_tokens: 2_500 }),
+      signal: AbortSignal.timeout(60_000),
     });
     if (!res.ok) {
-      console.error('[selfserve demo-site] model call failed', res.status, await res.text().catch(() => ''));
+      console.error('[selfserve demo-fill] model call failed', res.status, await res.text().catch(() => ''));
       return null;
     }
     const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-    const raw = data.choices?.[0]?.message?.content ?? '';
-    const specMatch = raw.match(/<!--SPEC([\s\S]*?)SPEC-->/);
-    const htmlStart = raw.indexOf('<!DOCTYPE');
-    if (htmlStart < 0) {
-      console.warn('[selfserve demo-site] no doctype in output — falling back');
-      return null;
-    }
-    // Lenient parse: the agent's spec only feeds our own UI; normalize rather
-    // than reject — and NEVER discard a valid page over a broken spec comment.
-    let spec: SiteSpec | null = null;
-    try {
-      if (!specMatch) throw new Error('no SPEC comment');
-      const rawSpec = JSON.parse(specMatch[1]) as SiteSpec;
-      spec = {
-        brand: {
-          name: String(rawSpec.brand?.name ?? '').slice(0, 60) || 'Your business',
-          tagline: String(rawSpec.brand?.tagline ?? '').slice(0, 120),
-          palette: (Array.isArray(rawSpec.brand?.palette) && rawSpec.brand.palette.length >= 4
-            ? (rawSpec.brand.palette.slice(0, 4) as SiteSpec['brand']['palette'])
-            : ['#4D5DD9', '#9DB0F2', '#1D2030', '#F4F4F8']),
-          voice: (rawSpec.brand?.voice ?? []).map(String).slice(0, 3),
-        },
-        copy: {
-          hero: String(rawSpec.copy?.hero ?? '').slice(0, 160),
-          sub: String(rawSpec.copy?.sub ?? '').slice(0, 400),
-          cta: String(rawSpec.copy?.cta ?? 'Get in touch').slice(0, 60),
-          sections: (rawSpec.copy?.sections ?? [])
-            .slice(0, 3)
-            .map((x) => ({ h: String(x?.h ?? '').slice(0, 90), p: String(x?.p ?? '').slice(0, 300) })),
-        },
-        positioning: String(rawSpec.positioning ?? '').slice(0, 160),
-      };
-      while (spec.copy.sections.length < 3) spec.copy.sections.push({ h: '', p: '' });
-    } catch (e) {
-      console.warn('[selfserve demo-site] spec comment unusable — keeping page, spec recovered separately', e);
-      spec = null;
-    }
-    let html = raw.slice(htmlStart).trim();
-    html = html.replace(/```\s*$/m, '').trim(); // tolerate trailing code fence
-    if (!/<\/html>\s*$/i.test(html)) {
-      // Salvage near-complete pages: drop the last (possibly half-written) tag
-      // and close the document. Only give up when there's too little to show.
-      if (html.length > 5_000 && /<body[\s>]/i.test(html)) {
-        console.warn('[selfserve demo-site] page truncated — repairing close tags');
-        const lastClose = html.lastIndexOf('</');
-        if (lastClose > html.length - 400) html = html.slice(0, lastClose);
-        html += '\n</body>\n</html>';
-      } else {
-        console.warn('[selfserve demo-site] page truncated beyond repair — falling back');
-        return null;
-      }
-    }
-    return { spec, html: stripScripts(html) };
+    const raw = data.choices?.[0]?.message?.content;
+    if (!raw) return null;
+    const fill = normalizeFill(JSON.parse(cleanJson(raw)));
+    if (!fill) console.warn('[selfserve demo-fill] fill JSON unusable — falling back');
+    return fill;
   } catch (e) {
-    console.error('[selfserve demo-site] model error', e);
+    console.error('[selfserve demo-fill] model error', e);
     return null;
   }
 }
 
-/** Agent-built demo page from the prompt; template fallback when keyless. */
+/** Agent fills the house template (dorin-portfolio elements); design is ours,
+ *  so quality is constant. Keyless fallback maps the mock spec onto the same
+ *  template — even the fallback looks like the house design. */
 export async function generateDemoSite(
   businessDescription: string,
 ): Promise<{ spec: SiteSpec; html: string; agentBuilt: boolean }> {
   const messages = [
-    { role: 'system', content: SITE_SYSTEM },
+    { role: 'system', content: FILL_SYSTEM },
     { role: 'user', content: `Business description:\n${businessDescription}` },
   ];
-  let fromModel = await callSiteModel(messages);
-  if (!fromModel && MODELS.openrouterApiKey) {
-    console.warn('[selfserve demo-site] first attempt failed — retrying once');
-    fromModel = await callSiteModel(messages);
+  let fill = await callFillModel(messages);
+  if (!fill && MODELS.openrouterApiKey) {
+    console.warn('[selfserve demo-fill] first attempt failed — retrying once');
+    fill = await callFillModel(messages);
   }
-  if (fromModel) {
-    const spec = fromModel.spec ?? (await generateDemoSpec(businessDescription));
-    return { spec, html: fromModel.html, agentBuilt: true };
+  if (fill) {
+    return { spec: fillToSpec(fill), html: renderTemplate(fill), agentBuilt: true };
   }
   const spec = await generateDemoSpec(businessDescription);
-  const { renderSiteHtml } = await import('@flowstarter/build-engine');
-  return { spec, html: renderSiteHtml(spec), agentBuilt: false };
+  const fallback = fillFromSpec(spec);
+  return { spec, html: renderTemplate(fallback), agentBuilt: false };
 }
 
-/** Refinement that regenerates the actual page, not just the spec. */
+/** Refinement edits the fill (recovered from the page) and re-renders. */
 export async function refineDemoSite(
   businessDescription: string,
   currentSpec: SiteSpec,
   currentHtml: string | null,
   prompt: string,
 ): Promise<{ spec: SiteSpec; html: string }> {
-  const fromModel = await callSiteModel([
-    { role: 'system', content: SITE_SYSTEM },
+  const currentFill = (currentHtml && parseFillFromHtml(currentHtml)) || fillFromSpec(currentSpec);
+  const fill = await callFillModel([
+    { role: 'system', content: FILL_SYSTEM },
     {
       role: 'user',
-      content: `Business description:\n${businessDescription}\n\nCurrent spec JSON:\n${JSON.stringify(currentSpec)}\n\nCurrent page (may be truncated):\n${(currentHtml ?? '').slice(0, 12_000)}\n\nApply this refinement and return the full updated output (spec comment + complete page): ${prompt}`,
+      content: `Business description:\n${businessDescription}\n\nCurrent content JSON:\n${JSON.stringify(currentFill)}\n\nApply this change and return the FULL updated JSON (all slots, not just the changed ones): ${prompt}`,
     },
   ]);
-  if (fromModel) return { spec: fromModel.spec ?? currentSpec, html: fromModel.html };
+  if (fill) return { spec: fillToSpec(fill), html: renderTemplate(fill) };
   const spec = await refineDemoSpec(businessDescription, currentSpec, prompt);
-  const { renderSiteHtml } = await import('@flowstarter/build-engine');
-  return { spec, html: renderSiteHtml(spec) };
+  return { spec, html: renderTemplate(fillFromSpec(spec)) };
 }
 
 export async function refineDemoSpec(

@@ -76,6 +76,6 @@ export const EMAIL = {
 
 export const MODELS = {
   /** Cheap/fast model for demo generation + demo refinements (never the build model). */
-  demo: process.env.SELFSERVE_DEMO_MODEL ?? 'deepseek/deepseek-v4-flash',
+  demo: process.env.SELFSERVE_DEMO_MODEL ?? 'openai/gpt-5.4-nano',
   openrouterApiKey: process.env.OPENROUTER_API_KEY,
 } as const;

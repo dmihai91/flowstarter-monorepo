@@ -365,13 +365,46 @@ function ProductTour({ pricing }: { pricing: Pricing }) {
   );
 }
 
-// sample brand directions — honest reframe of the prototype's showcase
-const SAMPLES = [
-  { name: 'Mudroom', kind: 'Drop-in pottery studio', grad: 'linear-gradient(135deg, #E8B07A, #C2683F)' },
-  { name: 'Northside Cuts', kind: 'Two-chair barbershop', grad: 'linear-gradient(135deg, #5C6B8A, #2E3A57)' },
-  { name: 'Fernwood Bakery', kind: 'Neighborhood sourdough', grad: 'linear-gradient(135deg, #E8C495, #C98A3D)' },
-  { name: 'Lumen Yoga', kind: 'Sunrise rooftop yoga', grad: 'linear-gradient(135deg, #9AD0C2, #5BA89A)' },
+// REAL work — projects shipped on the platform (assets + facts from
+// flowstarter-main's proof section) and real agent drafts (screenshots of
+// actual generations, captured from the demo engine).
+const PROJECTS = [
+  {
+    title: 'UX Journey',
+    kicker: 'A senior UX coaching practice. Copy, calendar and credibility, all on one domain.',
+    meta: 'Coaching · Live · 2026',
+    img: '/showcase/ux-journey.png',
+    href: 'https://ux-journey.com/',
+  },
+  {
+    title: 'Lebădușul',
+    kicker: 'A Danube-side tackle shop. Catalog, checkout and logistics copy written for serious anglers.',
+    meta: 'Retail · Live · 2026',
+    img: '/showcase/lebadusul.png',
+    href: 'https://lebadusularticoledepescuit.ro/',
+  },
+  {
+    title: 'Portfolio starter',
+    kicker: 'Dorin’s portfolio starter — the design system our demo agent builds on today.',
+    meta: 'Portfolio · Template',
+    img: '/showcase/dorin-portfolio.png',
+    href: null,
+  },
 ];
+
+const DRAFTS = [
+  { img: '/showcase/draft-cafe.png', name: 'Cluj Board & Brew', prompt: 'a cozy board game café in Cluj with 300+ games' },
+  { img: '/showcase/draft-florist.png', name: 'Vienna Wildflower Studio', prompt: 'a florist making wild, seasonal wedding arrangements' },
+  { img: '/showcase/draft-fitness.png', name: 'FlowFit Coach', prompt: 'a fitness coach helping men under 30 get in shape' },
+];
+
+const TESTIMONIAL = {
+  quote:
+    'I sell fishing tackle, so I needed the site to be practical: products easy to find, checkout working, and prices I can change without calling someone. That is what they built. I still spend most days with customers or on the water, but orders can come in without me sitting at the computer.',
+  name: 'Daniel Draga',
+  role: 'Owner, Lebădușul',
+  href: 'https://lebadusularticoledepescuit.ro/',
+};
 
 const TRADES = [
   'Barbershops', 'Bakeries', 'Coaches', 'Pottery studios', 'Florists', 'Photographers',
@@ -658,42 +691,107 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
         </div>
       </section>
 
-      {/* SAMPLE DIRECTIONS */}
+      {/* REAL WORK — projects from the platform + live agent drafts */}
       <section className="section section-alt" id="examples" style={{ borderTop: 'none' }}>
         <div className="wrap">
           <div className="sec-head reveal">
-            <div className="eyebrow">Sample directions</div>
-            <h2>The kind of work the crew drafts</h2>
-            <p className="muted" style={{ marginTop: 10, fontSize: 14.5 }}>
-              Illustrative brand directions — yours is generated from your own description.
-            </p>
+            <div className="eyebrow">Real work</div>
+            <h2>Built on Flowstarter, live today</h2>
           </div>
-          <div className="show-grid">
-            {SAMPLES.map((s, i) => (
-              <div className="show-card reveal" key={s.name} style={{ animationDelay: `${i * 0.07}s` }}>
-                <div className="show-thumb" style={{ background: s.grad }}>
-                  <div className="st-nav">
-                    <span className="st-dot" />
-                    <span className="st-links">
-                      <span />
-                      <span />
-                      <span />
-                    </span>
-                  </div>
-                  <div className="st-hero">
-                    <span className="st-h1" />
-                    <span className="st-h2" />
-                  </div>
+          <div className="proj-grid">
+            {PROJECTS.map((pr, i) => (
+              <a
+                key={pr.title}
+                className="proj-card reveal"
+                href={pr.href ?? '#examples'}
+                target={pr.href ? '_blank' : undefined}
+                rel={pr.href ? 'noreferrer' : undefined}
+                style={{ animationDelay: `${i * 0.07}s` }}
+              >
+                <div className="proj-thumb">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={pr.img} alt={pr.title} loading="lazy" />
                 </div>
-                <div className="show-body">
-                  <div className="show-name">{s.name}</div>
-                  <div className="show-kind">{s.kind}</div>
-                  <div className="show-meta">
-                    <span className="mono" style={{ color: 'var(--ink-3)' }}>sample direction</span>
+                <div className="proj-body">
+                  <div className="proj-title-row">
+                    <span className="proj-title">{pr.title}</span>
+                    <span className="mono proj-meta">{pr.meta}</span>
                   </div>
+                  <p className="muted">{pr.kicker}</p>
                 </div>
-              </div>
+              </a>
             ))}
+          </div>
+
+          {/* agent drafts — generated, not mocked */}
+          <div className="drafts-head reveal">
+            <div className="eyebrow">From one sentence</div>
+            <h3 className="drafts-title">Real drafts our agent generated, in seconds</h3>
+          </div>
+          <div className="draft-strip">
+            {DRAFTS.map((d, i) => (
+              <figure key={d.name} className="draft-card reveal" style={{ animationDelay: `${i * 0.07}s` }}>
+                <div className="proj-thumb">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={d.img} alt={`${d.name} — agent-generated draft`} loading="lazy" />
+                </div>
+                <figcaption>
+                  <b>{d.name}</b>
+                  <span className="mono">“{d.prompt}”</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIAL — one real client, in his words */}
+      <section className="section" id="testimonial">
+        <div className="wrap wrap-narrow">
+          <div className="testi-block reveal">
+            <div className="eyebrow" style={{ textAlign: 'center' }}>In their words</div>
+            <blockquote>“{TESTIMONIAL.quote}”</blockquote>
+            <div className="testi-who">
+              <span className="testi-avatar" aria-hidden>DD</span>
+              <span>
+                <b>{TESTIMONIAL.name}</b> · {TESTIMONIAL.role}
+              </span>
+              <a href={TESTIMONIAL.href} target="_blank" rel="noreferrer">
+                visit the site →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TEAM — the humans behind the agents */}
+      <section className="section section-alt" id="team">
+        <div className="wrap">
+          <div className="sec-head reveal">
+            <div className="eyebrow">Who’s behind this</div>
+            <h2>A small team, four tireless agents</h2>
+          </div>
+          <div className="team-row reveal">
+            <div className="team-card">
+              <span className="team-avatar" aria-hidden>DP</span>
+              <div>
+                <b>Darius Popescu</b>
+                <span className="muted">Founder — builds the platform, answers the emails, takes the blame.</span>
+              </div>
+            </div>
+            <div className="team-card team-card--crew">
+              <div style={{ display: 'flex' }}>
+                {AGENT_LIST.map((a) => (
+                  <span key={a.id} className="team-crew-dot" style={{ color: ROLE_HEX[a.id], background: ROLE_HEX[a.id] + '1f', borderColor: ROLE_HEX[a.id] + '66' }}>
+                    {a.name[0]}
+                  </span>
+                ))}
+              </div>
+              <div>
+                <b>Vera, Iris, Quinn & Dash</b>
+                <span className="muted">The agent crew — research, brand, copy and code, around the clock.</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

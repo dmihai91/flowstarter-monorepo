@@ -566,3 +566,49 @@
   .landing .pin-section { padding: 0; min-height: 300vh; position: relative; }
   .landing .pin-sticky { position: sticky; top: 0; min-height: 100vh; display: flex; align-items: center; padding: 80px 0; }
 }
+
+/* ============ real work: projects + agent drafts ============ */
+.landing .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.landing .proj-card { display: block; background: var(--glass); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%); backdrop-filter: blur(var(--glass-blur)) saturate(150%); border: 1px solid var(--glass-border); border-radius: var(--r-lg); overflow: hidden; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), var(--shadow); transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease); }
+.landing .proj-card:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--accent) 40%, var(--glass-border)); box-shadow: 0 28px 60px -24px rgba(40, 50, 140, 0.45); }
+.landing .proj-thumb { aspect-ratio: 16 / 10; overflow: hidden; background: var(--paper-2); border-bottom: 1px solid var(--line-2); }
+.landing .proj-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform 0.5s var(--ease); }
+.landing .proj-card:hover .proj-thumb img, .landing .draft-card:hover .proj-thumb img { transform: scale(1.03); }
+.landing .proj-body { padding: 18px 20px 20px; }
+.landing .proj-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.landing .proj-title { font-family: var(--serif); font-weight: 600; font-size: 19px; }
+.landing .proj-meta { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; }
+.landing .proj-body p { font-size: 13.5px; line-height: 1.5; }
+
+.landing .drafts-head { text-align: center; margin: 64px 0 28px; }
+.landing .drafts-title { font-size: clamp(20px, 2.4vw, 26px); margin-top: 12px; }
+.landing .draft-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.landing .draft-card { margin: 0; border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--glass-border); background: var(--glass); -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur)); box-shadow: var(--shadow); transition: transform 0.3s var(--ease); }
+.landing .draft-card:hover { transform: translateY(-4px); }
+.landing .draft-card figcaption { padding: 14px 18px; display: flex; flex-direction: column; gap: 3px; }
+.landing .draft-card figcaption b { font-size: 14.5px; }
+.landing .draft-card figcaption .mono { font-size: 11px; color: var(--ink-3); }
+
+/* testimonial — one real client */
+.landing .testi-block blockquote { font-family: var(--serif); font-weight: 600; letter-spacing: -0.015em; font-size: clamp(19px, 2.4vw, 26px); line-height: 1.45; text-align: center; margin: 22px 0 26px; color: var(--ink); }
+.landing .testi-block .testi-who { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 14px; color: var(--ink-2); flex-wrap: wrap; }
+.landing .testi-block .testi-avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-grad); color: #fff; font-weight: 700; font-size: 13px; }
+.landing .testi-block .testi-who a { color: var(--accent); font-weight: 600; }
+
+/* team */
+.landing .team-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 880px; margin: 0 auto; }
+.landing .team-card { display: flex; align-items: center; gap: 16px; padding: 22px 24px; border-radius: var(--r-lg); background: var(--glass); -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--glass-border); box-shadow: var(--shadow); }
+.landing .team-card b { display: block; font-size: 15.5px; margin-bottom: 2px; }
+.landing .team-card .muted { font-size: 13.5px; line-height: 1.45; }
+.landing .team-avatar { width: 52px; height: 52px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; background: var(--accent-grad); color: #fff; font-weight: 700; font-size: 17px; }
+.landing .team-crew-dot { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-size: 13px; font-weight: 600; border: 1px solid; margin-left: -8px; background: var(--card); }
+.landing .team-crew-dot:first-child { margin-left: 0; }
+
+@media (max-width: 900px) {
+  .landing .proj-grid, .landing .draft-strip { grid-template-columns: 1fr; }
+  .landing .team-row { grid-template-columns: 1fr; }
+}
+
+/* funnel modal: width adapts to the step (wide only for the draft preview) */
+.funnel-card { width: min(620px, 100%); transition: width 0.35s var(--ease); }
+.funnel-card--wide { width: min(940px, 100%); }

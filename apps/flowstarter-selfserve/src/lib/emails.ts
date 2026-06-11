@@ -36,7 +36,10 @@ export async function sendEmail(args: {
   });
   if (!res.ok) {
     console.error('[selfserve email] send failed', res.status, await res.text().catch(() => ''));
+    return;
   }
+  const { id } = (await res.json().catch(() => ({}))) as { id?: string };
+  console.info(`[selfserve email] sent to ${args.to} (resend id: ${id ?? 'n/a'})`);
 }
 
 export function apologyEmail(brandName: string | undefined, refunded: boolean): { subject: string; text: string } {

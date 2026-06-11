@@ -188,7 +188,7 @@ export function FunnelOverlay({
 
   return (
     <div className="funnel-overlay" onClick={close}>
-      <div className="funnel-card" onClick={(e) => e.stopPropagation()}>
+      <div className={`funnel-card${step === 2 && draft ? ' funnel-card--wide' : ''}`} onClick={(e) => e.stopPropagation()}>
         <button className="funnel-close" onClick={close} aria-label="Close">
           ✕
         </button>

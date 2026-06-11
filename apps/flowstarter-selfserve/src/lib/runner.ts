@@ -171,7 +171,7 @@ export async function handleTerminalFailure(buildId: string): Promise<void> {
       }
     }
     const mail = apologyEmail(project.demo_spec?.brand.name, refunded);
-    await sendEmail({ to: project.email, subject: mail.subject, text: mail.text });
+    await sendEmail({ to: project.email, subject: mail.subject, text: mail.text, html: mail.html });
     await trackServer(project.clerk_user_id, 'build_failed_terminal', { projectId: project.id, buildId });
     if (refunded) {
       await trackServer(project.clerk_user_id, 'build_refunded', { projectId: project.id, buildId });

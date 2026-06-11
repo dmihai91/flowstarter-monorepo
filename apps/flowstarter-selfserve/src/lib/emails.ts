@@ -3,11 +3,14 @@
 // provider + sender domain before production.
 import 'server-only';
 import { EMAIL } from './config';
+import { renderEmailHtml } from './email-template';
 
 export async function sendEmail(args: {
   to: string;
   subject: string;
   text: string;
+  /** Branded HTML body (renderEmailHtml); text remains the fallback part. */
+  html?: string;
   attachments?: Array<{ filename: string; content: Buffer }>;
 }): Promise<void> {
   if (!EMAIL.resendApiKey) {
@@ -28,6 +31,7 @@ export async function sendEmail(args: {
       to: [args.to],
       subject: args.subject,
       text: args.text,
+      html: args.html,
       attachments: args.attachments?.map((a) => ({
         filename: a.filename,
         content: a.content.toString('base64'),
@@ -42,20 +46,25 @@ export async function sendEmail(args: {
   console.info(`[selfserve email] sent to ${args.to} (resend id: ${id ?? 'n/a'})`);
 }
 
-export function apologyEmail(brandName: string | undefined, refunded: boolean): { subject: string; text: string } {
+export function apologyEmail(
+  brandName: string | undefined,
+  refunded: boolean,
+): { subject: string; text: string; html: string } {
+  const paragraphs = [
+    `We're sorry — our agents ran into a problem we couldn't recover from while building${brandName ? ` ${brandName}` : ' your site'}.`,
+    refunded
+      ? 'We have automatically refunded your build fee in full. It should appear on your statement within a few business days.'
+      : 'We are processing a full refund of your build fee — if you do not see it within a few business days, reply to this email.',
+    'If you’d like, just reply here and a human on our team will pick the build up personally.',
+  ];
   return {
     subject: 'We couldn’t finish your build — your payment has been refunded',
-    text: [
-      'Hi,',
-      '',
-      `We're sorry — our agents ran into a problem we couldn't recover from while building${brandName ? ` ${brandName}` : ' your site'}.`,
-      refunded
-        ? 'We have automatically refunded your build fee in full. It should appear on your statement within a few business days.'
-        : 'We are processing a full refund of your build fee — if you do not see it within a few business days, reply to this email.',
-      '',
-      'If you’d like, just reply here and a human on our team will pick the build up personally.',
-      '',
-      '— The Flowstarter team',
-    ].join('\n'),
+    text: ['Hi,', '', ...paragraphs, '', '— The Flowstarter team'].join('\n'),
+    html: renderEmailHtml({
+      preheader: 'Your build fee has been refunded in full.',
+      heading: 'We couldn’t finish your build',
+      paragraphs,
+      footnote: 'The refund is automatic — no action needed on your side.',
+    }),
   };
 }

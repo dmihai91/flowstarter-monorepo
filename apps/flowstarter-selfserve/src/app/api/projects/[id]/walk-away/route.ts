@@ -5,6 +5,7 @@ import { requireIdentity } from '@/lib/auth';
 import { getStore } from '@/lib/store';
 import { generateBrandKitPdf } from '@/lib/brand-kit';
 import { sendEmail } from '@/lib/emails';
+import { renderEmailHtml } from '@/lib/email-template';
 import { trackServer } from '@/lib/analytics-server';
 
 export async function POST(_req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -35,6 +36,15 @@ export async function POST(_req: Request, ctx: { params: Promise<{ id: string }>
         '',
         '— The Flowstarter team',
       ].join('\n'),
+      html: renderEmailHtml({
+        preheader: `The ${spec.brand.name} brand kit — assets, palette, copy and strategy, attached as PDF.`,
+        heading: `Your ${spec.brand.name} brand kit`,
+        paragraphs: [
+          `Attached is the brand kit the agents built for ${spec.brand.name}: logo direction, color palette, voice, the full homepage copy and a strategy one-pager. It's yours to keep.`,
+          'If you change your mind, your finished site stays ready for 30 days — just open your project again.',
+        ],
+        footnote: 'The PDF is attached to this email.',
+      }),
       attachments: [{ filename: `${spec.brand.name.replace(/\s+/g, '-').toLowerCase()}-brand-kit.pdf`, content: pdf }],
     });
 

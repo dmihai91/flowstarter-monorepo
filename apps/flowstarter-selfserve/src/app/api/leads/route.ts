@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getStore } from '@/lib/store';
 import { sendEmail } from '@/lib/emails';
+import { renderEmailHtml } from '@/lib/email-template';
 import { clientIp } from '@/lib/auth';
 import { SpecSchema } from '@/lib/demo';
 import type { SiteSpec } from '@flowstarter/build-engine';
@@ -37,6 +38,7 @@ export async function POST(req: Request) {
 
     const origin = new URL(req.url).origin;
     const name = body.data.demoSpec?.brand.name ?? 'your site';
+    const draftUrl = `${origin}/draft/${lead.id}`;
     await sendEmail({
       to: body.data.email,
       subject: `Your draft of ${name} is saved`,
@@ -45,12 +47,22 @@ export async function POST(req: Request) {
         '',
         `The draft our agent built for "${body.data.businessDescription.slice(0, 80)}" is saved here:`,
         '',
-        `${origin}/draft/${lead.id}`,
+        draftUrl,
         '',
         'Open it any time to keep going — a free account unlocks 10 prompts with the agent, and the full build starts whenever you say so.',
         '',
         '— The Flowstarter crew',
       ].join('\n'),
+      html: renderEmailHtml({
+        preheader: `${name} — the page our agent drafted from your one-sentence description.`,
+        heading: `Your draft of ${name} is saved`,
+        paragraphs: [
+          `Our agent built a first draft of your site from: “${body.data.businessDescription.slice(0, 120)}”.`,
+          'Open it any time to keep going — a free account unlocks 10 prompts with the agent, and the full build starts only when you say so.',
+        ],
+        cta: { label: 'Open your draft', url: draftUrl },
+        footnote: 'Your draft stays saved at this link. Nothing is charged without your say-so.',
+      }),
     });
 
     return NextResponse.json({ ok: true });

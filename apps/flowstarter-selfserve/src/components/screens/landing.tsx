@@ -775,7 +775,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
           <div className="team-row reveal">
             <div className="team-card">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="team-photo" src="/team/darius.png" alt="Darius Popescu" loading="lazy" />
+              <img className="team-photo" src="/team/darius.png" alt="Darius Popescu" width={56} height={56} loading="lazy" />
               <div>
                 <b>Darius Popescu</b>
                 <span className="muted">Founder. Builds the platform, answers the emails, takes the blame.</span>
@@ -783,7 +783,7 @@ export function LandingScreen({ pricing, contactEmail, slots }: { pricing: Prici
             </div>
             <div className="team-card">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="team-photo" src="/team/dorin.jpeg" alt="Dorin" loading="lazy" />
+              <img className="team-photo" src="/team/dorin.jpeg" alt="Dorin" width={56} height={56} loading="lazy" />
               <div>
                 <b>Dorin</b>
                 <span className="muted">Design. His portfolio design system is the one our agents build on.</span>

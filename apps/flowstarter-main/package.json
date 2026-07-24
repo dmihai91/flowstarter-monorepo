@@ -204,7 +204,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "playwright": "^1.55.1",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.0",
     "typescript": "^5.9.2"
   }
 }

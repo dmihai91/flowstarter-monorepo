@@ -140,7 +140,7 @@
     "npm-check-updates": "^16.14.20",
     "openai": "^5.1.0",
     "path-to-regexp": "^8.2.0",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.23",
     "prettier": "^2.8.8",
     "react": "19.1.0",
     "react-day-picker": "8.10.1",

@@ -139,6 +139,8 @@ export interface ScaffoldData {
   files: Array<{
     path: string;
     content: string;
+    /** Present for binary assets; the content is then base64. */
+    encoding?: 'base64';
     type: 'file';
   }>;
 }

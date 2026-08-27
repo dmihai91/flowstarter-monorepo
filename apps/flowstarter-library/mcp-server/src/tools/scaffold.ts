@@ -2,7 +2,7 @@ import { z } from 'zod';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { TemplateFetcher } from '../utils/template-fetcher.js';
-import { getAllFiles, buildFileTree } from '../utils/file-reader.js';
+import { getAllFiles, buildFileTree, collectScaffoldAssets } from '../utils/file-reader.js';
 import { ScaffoldData } from '../types/templates.js';
 
 export const ScaffoldTemplateSchema = z.object({
@@ -72,15 +72,29 @@ export async function scaffoldTemplate(
 		// Get all files with their contents
 		const files = await getAllFiles(scaffoldPath, fileTree);
 
-		console.log(`📄 Found ${files.length} files to scaffold`);
+		// The code tree excludes binaries; the template's artwork and fonts
+		// still have to ship, or the scaffolded site loses its visual design.
+		const assetFiles = await collectScaffoldAssets(scaffoldPath);
+
+		console.log(
+			`📄 Found ${files.length} files and ${assetFiles.length} binary assets to scaffold`
+		);
 
 		const scaffold: ScaffoldData = {
 			template,
-			files: files.map((f) => ({
-				path: f.path,
-				content: f.content,
-				type: 'file' as const,
-			})),
+			files: [
+				...files.map((f) => ({
+					path: f.path,
+					content: f.content,
+					type: 'file' as const,
+				})),
+				...assetFiles.map((f) => ({
+					path: f.path,
+					content: f.content,
+					encoding: f.encoding,
+					type: 'file' as const,
+				})),
+			],
 		};
 
 		return { scaffold };

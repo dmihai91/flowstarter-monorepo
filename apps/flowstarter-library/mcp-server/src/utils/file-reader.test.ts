@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildFileTree, countLinesOfCode } from './file-reader.js';
+import { buildFileTree, countLinesOfCode, collectScaffoldAssets } from './file-reader.js';
+import * as fs from 'fs/promises';
+import * as os from 'os';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -108,6 +110,53 @@ describe('file-reader', () => {
       // We can't test the exact count, but it should be reasonable
       expect(countWithExclusion).toBeGreaterThan(0);
       expect(countWithExclusion).toBeLessThan(100000); // Sanity check
+    });
+  });
+
+  describe('collectScaffoldAssets', () => {
+    async function makeFixture(): Promise<string> {
+      const root = await fs.mkdtemp(path.join(os.tmpdir(), 'scaffold-assets-'));
+      await fs.mkdir(path.join(root, 'public', 'images'), { recursive: true });
+      await fs.mkdir(path.join(root, 'node_modules', 'dep'), { recursive: true });
+      // A tiny real binary payload; content round-trips through base64.
+      await fs.writeFile(
+        path.join(root, 'public', 'images', 'hero.png'),
+        Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x00, 0x01, 0x02, 0x03])
+      );
+      await fs.writeFile(path.join(root, 'public', 'images', 'notes.txt'), 'text');
+      await fs.writeFile(path.join(root, 'thumbnail.png'), Buffer.from([1, 2]));
+      await fs.writeFile(
+        path.join(root, 'node_modules', 'dep', 'sprite.png'),
+        Buffer.from([9, 9])
+      );
+      return root;
+    }
+
+    it('collects binary assets as base64 with POSIX paths', async () => {
+      const root = await makeFixture();
+      try {
+        const assets = await collectScaffoldAssets(root);
+        expect(assets).toHaveLength(1);
+        expect(assets[0].path).toBe('public/images/hero.png');
+        expect(assets[0].encoding).toBe('base64');
+        expect(Buffer.from(assets[0].content, 'base64')).toEqual(
+          Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x00, 0x01, 0x02, 0x03])
+        );
+      } finally {
+        await fs.rm(root, { recursive: true, force: true });
+      }
+    });
+
+    it('excludes library thumbnails and dependency directories', async () => {
+      const root = await makeFixture();
+      try {
+        const assets = await collectScaffoldAssets(root);
+        const paths = assets.map((a) => a.path);
+        expect(paths).not.toContain('thumbnail.png');
+        expect(paths.some((p) => p.includes('node_modules'))).toBe(false);
+      } finally {
+        await fs.rm(root, { recursive: true, force: true });
+      }
     });
   });
 });

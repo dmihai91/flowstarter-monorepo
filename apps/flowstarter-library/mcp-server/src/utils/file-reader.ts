@@ -51,6 +51,74 @@ const BINARY_EXTENSIONS = new Set([
 // Pattern for generated timestamp files (e.g., app.config.timestamp_1234567890.js)
 const TIMESTAMP_FILE_PATTERN = /\.(config|vite)\.timestamp_\d+\.js$/;
 
+// Binary assets that scaffolding must carry as base64. Images are the
+// template's finished artwork and fonts are its typography — without them a
+// scaffolded workspace degrades to whatever text placeholders remain.
+const SCAFFOLD_ASSET_EXTENSIONS = new Set([
+	'.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico',
+	'.woff', '.woff2', '.ttf', '.otf',
+]);
+const MAX_SCAFFOLD_ASSET_BYTES = 4 * 1024 * 1024;
+
+export interface ScaffoldAssetFile {
+	path: string;
+	content: string;
+	encoding: 'base64';
+}
+
+// Only servable site content; root-level screenshots and docs stay behind.
+const SCAFFOLD_ASSET_ROOTS = new Set(['public', 'src']);
+
+/**
+ * Collects the template's binary assets (images, fonts) as base64 entries.
+ * `buildFileTree`/`getAllFiles` deliberately exclude binaries from the code
+ * tree agents browse; scaffolding needs them anyway or the cloned site ships
+ * without its artwork.
+ */
+export async function collectScaffoldAssets(
+	rootPath: string
+): Promise<ScaffoldAssetFile[]> {
+	const assets: ScaffoldAssetFile[] = [];
+
+	async function walk(dir: string, rel: string): Promise<void> {
+		const entries = await fs.readdir(dir, { withFileTypes: true });
+		for (const entry of entries) {
+			const fullPath = path.join(dir, entry.name);
+			const relPath = rel ? `${rel}/${entry.name}` : entry.name;
+			if (entry.isDirectory()) {
+				const allowed = rel
+					? !EXCLUDED_DIRS.has(entry.name)
+					: SCAFFOLD_ASSET_ROOTS.has(entry.name);
+				if (allowed) {
+					await walk(fullPath, relPath);
+				}
+				continue;
+			}
+			if (!entry.isFile()) continue;
+			if (!rel) continue;
+			if (EXCLUDED_FILES.has(entry.name)) continue;
+			const ext = path.extname(entry.name).toLowerCase();
+			if (!SCAFFOLD_ASSET_EXTENSIONS.has(ext)) continue;
+			const stats = await fs.stat(fullPath);
+			if (stats.size > MAX_SCAFFOLD_ASSET_BYTES) {
+				console.warn(
+					`⚠️ Skipping oversized scaffold asset ${relPath} (${stats.size} bytes)`
+				);
+				continue;
+			}
+			const content = await fs.readFile(fullPath);
+			assets.push({
+				path: normalizePath(relPath),
+				content: content.toString('base64'),
+				encoding: 'base64',
+			});
+		}
+	}
+
+	await walk(rootPath, '');
+	return assets;
+}
+
 export async function buildFileTree(
 	dirPath: string,
 	relativePath: string = ''

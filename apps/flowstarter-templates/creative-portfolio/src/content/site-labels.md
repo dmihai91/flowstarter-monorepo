@@ -23,7 +23,7 @@ header:
 hero:
   label: "Independent design studio"
   title: "We make work worth looking at twice."
-  image: ""
+  image: "/images/hero.png"
   text: |
     Atelier Verso is a small studio for brands that would rather be specific than safe. We work in identity, art direction, and digital — close to the people making the decisions.
 
@@ -54,19 +54,19 @@ caseStudies:
       category: "Brand Identity"
       description: "A full identity and editorial system for an independent publisher of art and architecture books — type-led, restrained, built to age well across covers, catalogues, and the shop."
       color: "#1C1B20"
-      imageSrc: "/images/work-halden.svg"
+      imageSrc: "/images/somalia.png"
       href: "/case-studies/halden-press"
     - title: "Marrow & Vine"
       category: "Brand & Packaging"
       description: "Naming, identity, and packaging for a natural-wine importer. A confident wordmark and a label system flexible enough to carry forty bottles without losing its nerve."
       color: "#4A1F17"
-      imageSrc: "/images/work-marrow.svg"
+      imageSrc: "/images/sweet-box.webp"
       href: "/case-studies/marrow-and-vine"
     - title: "Kestrel Studio Site"
       category: "Art Direction & Web"
       description: "Art direction and a custom site for an architecture practice. The portfolio does the talking; everything else gets out of its way."
       color: "#1A2622"
-      imageSrc: "/images/work-kestrel.svg"
+      imageSrc: "/images/masonry.png"
       href: "/case-studies/kestrel-studio-site"
     - title: "Field Notes Magazine"
       category: "Editorial Design"
@@ -78,7 +78,7 @@ caseStudies:
       category: "Identity & Retail"
       description: "Identity, signage, and the in-shop experience for a single-origin roaster. Warm without being soft, exact without being cold."
       color: "#231A14"
-      imageSrc: "/images/work-sable.svg"
+      imageSrc: "/images/boutique.png"
       href: "/case-studies/sable-coffee-roasters"
     - title: "Lumen Festival"
       category: "Campaign & Motion"
@@ -159,10 +159,10 @@ servicesPage:
     - text: "EARNS A"
       accent: "SECOND LOOK"
   heroImages:
-    - imageSrc: "/images/studio-desk.svg"
-      imageAlt: "An abstract editorial composition of overlapping type frames"
-    - imageSrc: "/images/studio-detail.svg"
-      imageAlt: "A close composition of grid rules and a single accent mark"
+    - imageSrc: "/images/working.png"
+      imageAlt: "Working through design details on a pen tablet"
+    - imageSrc: "/images/about.png"
+      imageAlt: "At the studio desk, mid-project"
   faq:
     title: "The questions we usually get"
     items:
@@ -187,8 +187,8 @@ aboutStory:
     - "We keep the studio deliberately small. Fewer clients, more attention, and a standard of finish we are willing to defend."
   buttonLabel: "More about us"
   buttonHref: "/about"
-  imageSrc: "/images/studio-portrait.svg"
-  imageAlt: "An editorial composition representing the studio"
+  imageSrc: "/images/about.png"
+  imageAlt: "In the studio, at the desk where the work happens"
 
 aboutPage:
   heroLines:
@@ -204,8 +204,8 @@ aboutPage:
       - "Staying small is a choice. It keeps the work close to the people doing it and the standard where we want it."
     buttonLabel: "CONNECT ON LINKEDIN"
     buttonHref: "#"
-    imageSrc: "/images/studio-portrait.svg"
-    imageAlt: "An editorial composition representing the studio"
+    imageSrc: "/images/working.png"
+    imageAlt: "Close work on a pen tablet, in the studio"
   freeTime:
     titleLines:
       - text: "WHEN WE ARE NOT IN THE STUDIO WE ARE STILL"
@@ -215,13 +215,13 @@ aboutPage:
     paragraphs:
       - "Time away from the desk is part of the method. Print fairs, type archives, long walks past good and bad signage."
       - "It keeps the eye sharp and the references honest. The best ideas rarely arrive while staring at the screen that needs them."
-    imageSrc: "/images/studio-field.svg"
-    imageAlt: "An abstract composition referencing observation and reference gathering"
+    imageSrc: "/images/travel.png"
+    imageAlt: "Away from the desk — palms, shade, and time to look at things"
   backgroundExperience:
     eyebrow: "Background"
     title: "What sets the studio apart is that we genuinely care how it ends up"
-    imageSrc: "/images/studio-detail.svg"
-    imageAlt: "A close composition of grid rules and a single accent mark"
+    imageSrc: "/images/hotBlocks.png"
+    imageAlt: "A design-system collage — dashboards, charts, and components"
     uvps:
       - "A decade across identity, editorial, and digital"
       - "Editorial discipline applied to modern brands"

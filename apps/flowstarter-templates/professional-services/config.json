@@ -1,0 +1,10 @@
+{
+  "name": "Professional Services",
+  "slug": "professional-services",
+  "description": "Credibility-led multi-page template for consultancies, agencies, advisors, legal, finance, operations, and other expert service firms.",
+  "category": "general",
+  "framework": "astro",
+  "tags": ["consultancy", "agency", "advisor", "professional services", "B2B", "expertise", "lead generation"],
+  "features": ["service pages", "case-study structure", "authority content", "consultation CTA", "contact flow"],
+  "bestFor": ["businesses selling expertise", "high-trust considered purchases", "consultation-led conversion"]
+}

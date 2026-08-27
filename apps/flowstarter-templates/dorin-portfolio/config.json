@@ -1,0 +1,9 @@
+{
+  "name": "Dorin Portfolio (Legacy)",
+  "slug": "dorin-portfolio",
+  "description": "Legacy portfolio baseline retained for compatibility; use Creative Portfolio for new projects.",
+  "category": "personal-brand",
+  "framework": "astro",
+  "catalogEnabled": false,
+  "tags": ["legacy"]
+}

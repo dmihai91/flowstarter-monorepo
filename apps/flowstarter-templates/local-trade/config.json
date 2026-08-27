@@ -1,0 +1,10 @@
+{
+  "name": "Local Trade",
+  "slug": "local-trade",
+  "description": "Practical local-conversion template for trades, salons, cleaners, instructors, repair services, and other location-based operators.",
+  "category": "local-business",
+  "framework": "astro",
+  "tags": ["local business", "trade", "salon", "cleaner", "contractor", "repair", "quote request", "service area"],
+  "features": ["service-area proof", "services grid", "trust signals", "quote CTA", "mobile contact flow"],
+  "bestFor": ["local service businesses", "phone or quote conversion", "clear service-area communication"]
+}

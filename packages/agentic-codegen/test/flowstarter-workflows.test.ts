@@ -66,7 +66,12 @@ describe('Flowstarter preview-to-build orchestration', () => {
         expect(input.templateConfig).toEqual({ palettes: [] });
         const source = join(input.workspaceRoot, 'src/content/site.md');
         expect(await readFile(source, 'utf8')).toBe('Template copy');
-        await writeFile(source, 'Calm Path Therapy preview', 'utf8');
+        // References the client's cached portrait, satisfying the media check.
+        await writeFile(
+          source,
+          'Calm Path Therapy preview /assets/portrait.webp',
+          'utf8',
+        );
         return {
           summary: 'Preview tailored',
           changedPaths: ['src/content/site.md'],
@@ -110,7 +115,7 @@ describe('Flowstarter preview-to-build orchestration', () => {
         calls.push(`validator:${phase}`);
         expect(
           await readFile(join(workspaceRoot, 'src/content/site.md'), 'utf8'),
-        ).toBe('Calm Path Therapy preview');
+        ).toBe('Calm Path Therapy preview /assets/portrait.webp');
       },
     };
 
@@ -145,7 +150,7 @@ describe('Flowstarter preview-to-build orchestration', () => {
 
     expect(result.template.slug).toBe('wellness-therapy');
     expect(result.previewUrl).toBe('https://preview.flowstarter.net/calm-path');
-    expect(result.files[0]?.content).toBe('Calm Path Therapy preview');
+    expect(result.files[0]?.content).toBe('Calm Path Therapy preview /assets/portrait.webp');
     expect(calls).toEqual([
       'agent:brand-intelligence',
       'agent:template-selector',
@@ -155,6 +160,68 @@ describe('Flowstarter preview-to-build orchestration', () => {
       'publisher:preview',
     ]);
     await expect(access(previewWorkspace)).rejects.toThrow();
+  });
+
+  it('materializes cachedAssetFiles into the workspace and hands them to the agent', async () => {
+    const intake = validIntake();
+    const photo = Buffer.from([7, 7, 7]).toString('base64');
+    let seenAssets: Array<{ sourceId: string; publicPath: string }> = [];
+    let assetBytesInWorkspace: Buffer | undefined;
+    const mediaFeedbacks: Array<string | undefined> = [];
+
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        cachedAssets: Array<{ sourceId: string; publicPath: string }>;
+        feedback?: string;
+      }) => {
+        mediaFeedbacks.push(input.feedback);
+        seenAssets = input.cachedAssets;
+        assetBytesInWorkspace = await readFile(
+          join(input.workspaceRoot, 'public/flowstarter-assets/profile.jpg'),
+        );
+        const source = join(input.workspaceRoot, 'src/content/site.md');
+        // First pass ignores the client's photos; the trusted media check
+        // must trigger exactly one repair pass that names them.
+        const content = input.feedback
+          ? 'Calm Path Therapy preview /flowstarter-assets/profile.jpg'
+          : 'Calm Path Therapy preview';
+        await writeFile(source, content, 'utf8');
+        return { summary: 'done', changedPaths: ['src/content/site.md'] };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      staticLibrary(),
+      { validate: async () => undefined },
+      staticPublisher(),
+    );
+    await pipeline.run({
+      intake,
+      corpus: validCorpus(intake.projectId),
+      cachedAssets: [{ sourceId: 'seed', publicPath: '/assets/seed.webp' }],
+      cachedAssetFiles: [
+        { sourceId: 'profile', fileName: 'profile.jpg', contentBase64: photo },
+      ],
+    });
+
+    expect(seenAssets).toEqual([
+      { sourceId: 'seed', publicPath: '/assets/seed.webp' },
+      { sourceId: 'profile', publicPath: '/flowstarter-assets/profile.jpg' },
+    ]);
+    expect(assetBytesInWorkspace).toEqual(Buffer.from([7, 7, 7]));
+    expect(mediaFeedbacks).toHaveLength(2);
+    expect(mediaFeedbacks[0]).toBeUndefined();
+    expect(mediaFeedbacks[1]).toContain("client's own photos");
+    expect(mediaFeedbacks[1]).toContain('/flowstarter-assets/profile.jpg');
   });
 
   it('retries personalization with feedback when the agent leaves the template untouched', async () => {

@@ -41,6 +41,9 @@ import { PiSdkFlowstarterAgents as __Agents } from '../src/flowstarter/pi-sdk';
 
 import { TemplateClassifier, buildIntakeText as __bit, describeCandidate as __dc } from '../src/flowstarter/template-classifier';
 
+import { materializeScaffold } from '../src/flowstarter/worktree';
+import { materializeCachedAssets } from '../src/flowstarter/preview-assets';
+
 describe('sigma template classifier', () => {
   // Stub embedder: axis-aligned vectors keyed by trigger words — deterministic.
   const stub = {
@@ -212,6 +215,58 @@ describe('workspace safety', () => {
     expect(() =>
       assertSafeScaffoldPath('src/content/site-labels.md'),
     ).not.toThrow();
+  });
+
+  it('materializes base64 scaffold files as exact binary bytes', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'flowstarter-scaffold-test-'));
+    temporaryDirectories.push(root);
+    const bytes = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x00, 0xff, 0x10]);
+
+    await materializeScaffold(root, [
+      { path: 'src/content/site-labels.md', content: 'copy', type: 'file' },
+      {
+        path: 'public/images/hero.png',
+        content: bytes.toString('base64'),
+        encoding: 'base64',
+        type: 'file',
+      },
+    ]);
+
+    expect(await readFile(join(root, 'src/content/site-labels.md'), 'utf8')).toBe('copy');
+    expect(await readFile(join(root, 'public/images/hero.png'))).toEqual(bytes);
+  });
+
+  it('materializes client media into flowstarter-assets and refuses unsafe names', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'flowstarter-assets-test-'));
+    temporaryDirectories.push(root);
+    const photo = Buffer.from([1, 2, 3, 4]);
+
+    const entries = await materializeCachedAssets(root, [
+      { sourceId: 'post0', fileName: 'post0.jpg', contentBase64: photo.toString('base64') },
+    ]);
+
+    expect(entries).toEqual([
+      { sourceId: 'post0', publicPath: '/flowstarter-assets/post0.jpg' },
+    ]);
+    expect(
+      await readFile(join(root, 'public/flowstarter-assets/post0.jpg')),
+    ).toEqual(photo);
+
+    await expect(
+      materializeCachedAssets(root, [
+        { sourceId: 'x', fileName: '../escape.png', contentBase64: photo.toString('base64') },
+      ]),
+    ).rejects.toThrow('Unsafe cached asset file name');
+    await expect(
+      materializeCachedAssets(root, [
+        { sourceId: 'x', fileName: 'logo.svg', contentBase64: photo.toString('base64') },
+      ]),
+    ).rejects.toThrow('Unsafe cached asset file name');
+    await expect(
+      materializeCachedAssets(root, [
+        { sourceId: 'x', fileName: 'empty.png', contentBase64: '' },
+      ]),
+    ).rejects.toThrow('empty or too large');
   });
 
   it('allows preview content edits but blocks config and symlink escapes', async () => {

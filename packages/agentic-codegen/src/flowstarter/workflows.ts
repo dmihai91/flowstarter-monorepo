@@ -4,6 +4,7 @@ import { PiSdkFlowstarterAgents, type AgentBuildResult } from './pi-sdk';
 import type { TemplateClassifier } from './template-classifier';
 import { buildIntakeText } from './template-classifier';
 import { injectPreviewTeaser, type PreviewTeaserOptions } from './preview-teaser';
+import { materializeCachedAssets, type CachedAssetFile } from './preview-assets';
 import { assertSafeBusinessIntake } from './intake-guard';
 import type { TemplateLibrary } from './template-library-mcp';
 import {
@@ -95,6 +96,12 @@ export class PreviewGenerationPipeline {
     intake: BusinessIntakePayload;
     corpus: ScrapeCorpus;
     cachedAssets: Array<{ sourceId: string; publicPath: string }>;
+    /**
+     * Client media bytes (scraped brand photos) the trusted orchestrator
+     * writes into public/flowstarter-assets/ after scaffolding; the resulting
+     * entries are merged into cachedAssets for the agent.
+     */
+    cachedAssetFiles?: CachedAssetFile[];
     onPhase?: (phase: string) => void;
   }): Promise<PreviewPipelineResult> {
     assertSafeBusinessIntake(input.intake);
@@ -109,13 +116,20 @@ export class PreviewGenerationPipeline {
     const scaffold = await this.library.scaffold(template.slug);
     const workspace = await createPreviewWorkspace(scaffold);
     try {
+      const cachedAssets = [
+        ...input.cachedAssets,
+        ...(await materializeCachedAssets(
+          workspace.root,
+          input.cachedAssetFiles ?? [],
+        )),
+      ];
       const personalize = (feedback?: string) =>
         this.agents.buildPreview({
           workspaceRoot: workspace.root,
           intake: input.intake,
           brandConfig,
           templateSlug: template.slug,
-          cachedAssets: input.cachedAssets,
+          cachedAssets,
           templateConfig: scaffold.template.config,
           feedback,
           fullTemplateContext: this.options.fullTemplateContext,
@@ -151,6 +165,19 @@ export class PreviewGenerationPipeline {
         if (issue) {
           throw new Error(`Preview personalization failed: ${issue}`);
         }
+      }
+
+      // Soft check: the client's own media should actually appear. One repair
+      // pass; unlike the checks above this never fails the pipeline, because
+      // a stubborn image slot must not cost the client their whole preview.
+      const mediaIssue = await findClientMediaIssue(
+        workspace.root,
+        cachedAssets,
+        build,
+      );
+      if (mediaIssue) {
+        input.onPhase?.('Placing your own photos');
+        build = await personalize(mediaIssue);
       }
 
       input.onPhase?.('Checking the preview');
@@ -276,6 +303,40 @@ async function findPersonalizationIssue(
     `the client's business name "${businessName}" does not appear in any ` +
     'file you changed; replace the template\'s sample brand copy with the ' +
     'client\'s real content'
+  );
+}
+
+/**
+ * Trusted post-session check that the client's own media made it into the
+ * site. Returns bounded repair feedback, or undefined when at least one
+ * cached asset is referenced (or there is none to place).
+ */
+async function findClientMediaIssue(
+  workspaceRoot: string,
+  cachedAssets: Array<{ sourceId: string; publicPath: string }>,
+  build: AgentBuildResult,
+): Promise<string | undefined> {
+  if (cachedAssets.length === 0 || build.changedPaths.length === 0) {
+    return undefined;
+  }
+  for (const path of build.changedPaths) {
+    try {
+      const content = await readFile(join(workspaceRoot, path), 'utf8');
+      if (cachedAssets.some((asset) => content.includes(asset.publicPath))) {
+        return undefined;
+      }
+    } catch {
+      // A changed file may since be unreadable; keep scanning the rest.
+    }
+  }
+  const available = cachedAssets
+    .map((asset) => `${asset.publicPath} (source ${asset.sourceId})`)
+    .join(', ');
+  return (
+    'none of the client\'s own photos appear anywhere in the site; per the ' +
+    'asset policy, use the client\'s photo for the primary portrait and ' +
+    'about-page slots (replacing demo-persona or abstract portrait art), and ' +
+    `use further client media where the evidence matches. Available: ${available}`
   );
 }
 

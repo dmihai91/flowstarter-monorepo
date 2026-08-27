@@ -384,6 +384,7 @@ export class PiSdkFlowstarterAgents {
         editableFiles,
         templateFiles,
         designOptions: extractDesignOptions(input.templateConfig),
+        assetLibrary: extractAssetLibrary(input.templateConfig),
         feedback: input.feedback,
       }),
       customTools: tools,
@@ -858,6 +859,26 @@ function extractDesignOptions(
     return undefined;
   }
   return options;
+}
+
+/**
+ * The template's curated artwork manifest: honest descriptions of each
+ * shipped image so a text-only agent can pick fitting art. Trusted template
+ * metadata, size-bounded like designOptions.
+ */
+function extractAssetLibrary(
+  config: Record<string, unknown> | undefined,
+): Array<Record<string, unknown>> | undefined {
+  if (!isRecord(config) || !Array.isArray(config.assetLibrary)) return undefined;
+  const entries = config.assetLibrary.filter(
+    (entry): entry is Record<string, unknown> =>
+      isRecord(entry) &&
+      typeof entry.path === 'string' &&
+      typeof entry.description === 'string',
+  );
+  if (entries.length === 0) return undefined;
+  if (JSON.stringify(entries).length > MAX_DESIGN_OPTIONS_CHARS) return undefined;
+  return entries;
 }
 
 function parseTemplateSelection(

@@ -185,6 +185,8 @@ export interface TemplateSelection {
 export interface TemplateScaffoldFile {
   path: string;
   content: string;
+  /** Present for binary assets (images, fonts); content is then base64. */
+  encoding?: 'base64';
   type: 'file';
 }
 

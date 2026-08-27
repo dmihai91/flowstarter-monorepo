@@ -90,7 +90,11 @@ export async function materializeScaffold(root: string, files: readonly Template
     const target = resolve(canonicalRoot, file.path);
     assertContained(canonicalRoot, target);
     await mkdir(dirname(target), { recursive: true });
-    await writeFile(target, file.content, { encoding: 'utf8', flag: 'wx', mode: 0o644 });
+    if (file.encoding === 'base64') {
+      await writeFile(target, Buffer.from(file.content, 'base64'), { flag: 'wx', mode: 0o644 });
+    } else {
+      await writeFile(target, file.content, { encoding: 'utf8', flag: 'wx', mode: 0o644 });
+    }
   }
 }
 

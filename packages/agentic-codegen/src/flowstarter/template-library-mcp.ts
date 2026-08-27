@@ -3,7 +3,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import type { TemplateCandidate, TemplateScaffold } from './types';
 
 const MAX_SCAFFOLD_FILES = 1_000;
-const MAX_SCAFFOLD_BYTES = 15 * 1024 * 1024;
+const MAX_SCAFFOLD_BYTES = 48 * 1024 * 1024;
 
 export interface TemplateLibrary {
   search(query: string): Promise<TemplateCandidate[]>;
@@ -82,9 +82,17 @@ export class FlowstarterMcpTemplateLibrary implements TemplateLibrary {
         throw new Error(`Template scaffold file ${index} is invalid`);
       }
       assertSafeScaffoldPath(file.path);
-      totalBytes += Buffer.byteLength(file.content, 'utf8');
+      const binary = file.encoding === 'base64';
+      if (binary && !/^[A-Za-z0-9+/]*={0,2}$/.test(file.content)) {
+        throw new Error(`Template scaffold file ${index} is not valid base64`);
+      }
+      totalBytes += binary
+        ? Math.floor((file.content.length * 3) / 4)
+        : Buffer.byteLength(file.content, 'utf8');
       if (totalBytes > MAX_SCAFFOLD_BYTES) throw new Error('Template scaffold exceeds size limit');
-      return { path: file.path, content: file.content, type: 'file' as const };
+      return binary
+        ? { path: file.path, content: file.content, encoding: 'base64' as const, type: 'file' as const }
+        : { path: file.path, content: file.content, type: 'file' as const };
     });
 
     const template = scaffold.template;

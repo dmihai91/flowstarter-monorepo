@@ -122,7 +122,15 @@ const pipeline = new PreviewGenerationPipeline(agents, library, validator, publi
   qualitySweep: true,
   teaser: { keepHomeSections: 3, keepSubpageSections: 1 },
 });
-const result = await pipeline.run({ intake, corpus, cachedAssets: [],
+// The client's own Instagram media, written into public/flowstarter-assets/
+// so the agent can use his real photos for portrait and project slots.
+const cachedAssetFiles = readdirSync('/tmp/ig-media').map((f) => ({
+  sourceId: f.replace('.jpg', ''),
+  fileName: f,
+  contentBase64: readFileSync(`/tmp/ig-media/${f}`).toString('base64'),
+}));
+
+const result = await pipeline.run({ intake, corpus, cachedAssets: [], cachedAssetFiles,
   onPhase: (p) => console.log(`[phase] ${p}`) });
 
 console.log('\n=== RESULT ===');

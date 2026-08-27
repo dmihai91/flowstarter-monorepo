@@ -68,6 +68,11 @@ button {
   --paper-deep: #ECE7DC;
   --signal: #FF3B1F;
   --signal-deep: #E22E13;
+  /* Accent tint for dark surfaces (hero, CTA). --signal is authored against
+     the light paper; on a dark panel a deep brand accent can fall to ~1.3:1
+     and vanish. Mixing 30% accent into white keeps the hue and clears WCAG AA
+     for small text against every dark background the palettes produce. */
+  --signal-on-dark: color-mix(in srgb, var(--signal) 30%, #FFFFFF);
 
   --bg-dark: var(--ink);
   --bg-card: #18171B;
@@ -382,7 +387,7 @@ h5 {
 @media (max-width: 768px) {
   :root {
     --section-padding: 68px 0;
-    --container-padding: 0 18px;
+    --container-padding: 0 22px;
     --fs-display: 2.35rem;
     --fs-h1: 2.2rem;
     --fs-h2: 2rem;

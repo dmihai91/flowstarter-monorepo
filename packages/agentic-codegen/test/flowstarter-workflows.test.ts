@@ -803,6 +803,82 @@ describe('preview teaser injection', () => {
     expect(again.split('flowstarter-preview-teaser.css').length).toBe(2);
   });
 
+  it('turns the locked overlay into a checkout link that escapes the frame', async () => {
+    const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
+    const { mkdtemp, mkdir, writeFile, readFile } = await import('node:fs/promises');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const root = await mkdtemp(join(tmpdir(), 'fs-teaser-'));
+    temporaryDirectories.push(root);
+    await mkdir(join(root, 'src/layouts'), { recursive: true });
+    await writeFile(
+      join(root, 'src/layouts/Base.astro'),
+      '<html><head></head><body><slot /></body></html>',
+      'utf8',
+    );
+
+    await injectPreviewTeaser(root, {
+      unlockUrl: 'https://app.flowstarter.dev/unlock/9ab5',
+      unlockLabel: 'Unlock the full site',
+    });
+
+    const js = await readFile(
+      join(root, 'public/flowstarter-preview-teaser.js'),
+      'utf8',
+    );
+    expect(js).toContain('var UNLOCK_URL = "https://app.flowstarter.dev/unlock/9ab5"');
+    expect(js).toContain('var UNLOCK_LABEL = "Unlock the full site"');
+    // Anchor, not a div, and it must break out of the funnel's iframe.
+    expect(js).toContain("createElement(UNLOCK_URL ? 'a' : 'div')");
+    expect(js).toContain("veil.target = '_top'");
+    expect(js).toContain("veil.rel = 'noopener'");
+  });
+
+  it('keeps the overlay inert when no unlock destination is configured', async () => {
+    const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
+    const { mkdtemp, mkdir, writeFile, readFile } = await import('node:fs/promises');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const root = await mkdtemp(join(tmpdir(), 'fs-teaser-'));
+    temporaryDirectories.push(root);
+    await mkdir(join(root, 'src/layouts'), { recursive: true });
+    await writeFile(
+      join(root, 'src/layouts/Base.astro'),
+      '<html><head></head><body><slot /></body></html>',
+      'utf8',
+    );
+
+    await injectPreviewTeaser(root, {});
+    const js = await readFile(
+      join(root, 'public/flowstarter-preview-teaser.js'),
+      'utf8',
+    );
+    expect(js).toContain('var UNLOCK_URL = ""');
+  });
+
+  it('refuses an unlock destination that is not a navigable https origin', async () => {
+    const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
+    const { mkdtemp } = await import('node:fs/promises');
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const root = await mkdtemp(join(tmpdir(), 'fs-teaser-'));
+    temporaryDirectories.push(root);
+
+    await expect(
+      injectPreviewTeaser(root, { unlockUrl: 'javascript:alert(1)' }),
+    ).rejects.toThrow(/must use HTTPS/);
+    await expect(
+      injectPreviewTeaser(root, { unlockUrl: 'http://evil.example.com/pay' }),
+    ).rejects.toThrow(/must use HTTPS/);
+    await expect(
+      injectPreviewTeaser(root, { unlockUrl: '/relative/path' }),
+    ).rejects.toThrow(/must be absolute/);
+    // Loopback stays usable for local development.
+    await expect(
+      injectPreviewTeaser(root, { unlockUrl: 'http://localhost:3000/unlock/x' }),
+    ).resolves.toBeTruthy();
+  });
+
   it('leaves the agent boundary intact — teaser is operator code on layouts', async () => {
     const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
     const { mkdtemp } = await import('node:fs/promises');

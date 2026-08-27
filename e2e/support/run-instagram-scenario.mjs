@@ -120,7 +120,13 @@ const classifier = new TemplateClassifier(
 const pipeline = new PreviewGenerationPipeline(agents, library, validator, publisher, classifier, {
   fullTemplateContext: true,
   qualitySweep: true,
-  teaser: { keepHomeSections: 3, keepSubpageSections: 1 },
+  teaser: {
+    keepHomeSections: 3,
+    keepSubpageSections: 1,
+    label: 'Part of your full site',
+    unlockUrl: `${process.env.SCENARIO_APP_ORIGIN || 'http://localhost:3000'}/unlock/${projectId}`,
+    unlockLabel: 'Unlock the full site',
+  },
 });
 // The client's own Instagram media, written into public/flowstarter-assets/
 // so the agent can use his real photos for portrait and project slots.

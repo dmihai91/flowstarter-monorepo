@@ -1,8 +1,5 @@
-import { spawn } from 'node:child_process';
-import { readFile, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { writeFile } from 'node:fs/promises';
 import type { DiscoverySpec } from './spec';
-import { buildSystemPrompt, buildTaskPrompt } from './prompt';
 import {
   createWorkspace,
   selectBaseTemplate,
@@ -10,6 +7,15 @@ import {
   TEMPLATE_CATALOG,
 } from './workspace';
 import { runBuild } from './build';
+import { generate as defaultGenerate, type GenerateFn } from './llm';
+import {
+  orchestrateGeneration,
+  orchestrateEdit,
+  type OrchestrateOptions,
+  type EditResult,
+} from './orchestrator';
+
+export type { EditResult } from './orchestrator';
 
 export interface CodegenEvent {
   phase: string;
@@ -18,11 +24,11 @@ export interface CodegenEvent {
 
 export interface CodegenOptions {
   baseOverride?: string;
-  /** Default 'claude-haiku-4-5' — single-shot content rewrite needs speed. */
-  model?: string;
-  /** Native CLI hard cost ceiling. Default 1 USD. */
-  maxBudgetUsd?: number;
-  /** Wall-clock kill for the single generation call. Default 150s. */
+  /** Injectable LLM seam (tests). Defaults to OpenRouter. */
+  generate?: GenerateFn;
+  /** Lite mode: single Kimi pass, no planner/critic (budget degrade). */
+  lite?: boolean;
+  /** Wall-clock per implementer call. Default 120s. */
   wallClockMs?: number;
   /** astro build afterwards to prove the personalized site compiles. */
   verifyBuild?: boolean;
@@ -39,174 +45,128 @@ export interface CodegenResult {
   indexHtml: string;
   base: string;
   costUsd: number;
-  /** The number the funnel latency budget cares about: the LLM call. */
+  /** The number the funnel latency budget cares about: the LLM work. */
   generationMs: number;
   totalMs: number;
   contentChanged: boolean;
+  /** Implementer passes that ran (waves + revision). */
+  attempts: number;
   failure?: { stage: 'generation' | 'invalid-output' | 'build'; log: string };
   cleanup: () => Promise<void>;
 }
 
-interface GenOut {
-  resultText: string;
-  costUsd: number;
-  ok: boolean;
-  err?: string;
-}
-
 /**
- * Single-shot, tool-less generation. No --add-dir (so the CLI never scans the
- * 130MB workspace — that was the 175s killer), neutral cwd, JSON output. The
- * model returns the rewritten file body as text; the worker writes it.
+ * LLM template router: pick the best-fit template from the catalog (one brain
+ * call). Better than keyword regex for fuzzy cases. Fail-safe: returns null on
+ * any error so the caller falls back to the regex selector.
  */
-function runGeneration(
-  systemPrompt: string,
-  taskPrompt: string,
-  model: string,
-  maxBudgetUsd: number,
-  wallClockMs: number
-): Promise<GenOut> {
-  return new Promise((resolve) => {
-    const child = spawn(
-      'claude',
-      [
-        '-p',
-        taskPrompt,
-        '--append-system-prompt',
-        systemPrompt,
-        '--output-format',
-        'json',
-        '--model',
-        model,
-        '--max-budget-usd',
-        String(maxBudgetUsd),
-      ],
-      { cwd: tmpdir(), env: { ...process.env } }
-    );
-    let out = '';
-    let err = '';
-    child.stdout.on('data', (b: Buffer) => (out += b.toString()));
-    child.stderr.on('data', (b: Buffer) => (err += b.toString()));
-    const timer = setTimeout(() => child.kill('SIGKILL'), wallClockMs);
-    child.on('close', () => {
-      clearTimeout(timer);
-      try {
-        const j = JSON.parse(out) as {
-          result?: string;
-          total_cost_usd?: number;
-          is_error?: boolean;
-          subtype?: string;
-        };
-        resolve({
-          resultText: j.result ?? '',
-          costUsd: j.total_cost_usd ?? 0,
-          ok: !j.is_error && j.subtype === 'success' && !!j.result,
-          err: j.is_error ? j.subtype : undefined,
-        });
-      } catch {
-        resolve({ resultText: '', costUsd: 0, ok: false, err: err.slice(-300) || 'no JSON' });
-      }
-    });
-    child.on('error', (e) => {
-      clearTimeout(timer);
-      resolve({ resultText: '', costUsd: 0, ok: false, err: String(e) });
-    });
+async function classifyTemplate(
+  spec: DiscoverySpec,
+  gen: GenerateFn
+): Promise<string | null> {
+  const system =
+    'You choose the single best website template for a business. Reply with ONLY the template id — no other text.';
+  const prompt = [
+    'Templates:',
+    ...TEMPLATE_CATALOG.map((t) => `- ${t.id}: ${t.bestFor}`),
+    '',
+    'Business:',
+    `- Name: ${spec.businessName}`,
+    `- Industry: ${spec.industry ?? ''}`,
+    `- What they do: ${spec.description}`,
+    `- Audience: ${spec.targetAudience ?? ''}`,
+    `- Goal: ${spec.goal ?? ''}`,
+    `- Tone: ${spec.brandTone ?? ''}`,
+    '',
+    'Reply with exactly one id from the list above.',
+  ].join('\n');
+  const g = await gen({
+    role: 'brain',
+    system,
+    prompt,
+    temperature: 0.2,
+    maxOutputTokens: 40,
+    wallClockMs: 20_000,
   });
-}
-
-/** Split a markdown-frontmatter file into its `---` envelope + body. */
-function splitFrontmatter(raw: string): { hasFm: boolean; yaml: string; body: string } {
-  const m = raw.match(/^﻿?---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
-  if (!m) return { hasFm: false, yaml: raw, body: '' };
-  return { hasFm: true, yaml: m[1] ?? '', body: m[2] ?? '' };
-}
-
-/** Strip code fences / stray `---` lines / prose the model may have added. */
-function cleanYaml(text: string): string {
-  let t = text.trim();
-  const fence = t.match(/^```[a-zA-Z]*\n([\s\S]*?)\n```$/);
-  if (fence) t = fence[1]!.trim();
-  t = t.replace(/^---\s*\n/, '').replace(/\n---\s*$/, '').trim();
-  return t;
+  if (!g.ok || !g.text) return null;
+  const out = g.text.toLowerCase();
+  for (const { id } of TEMPLATE_CATALOG) if (out.includes(id)) return id;
+  return null;
 }
 
 /**
- * Rebuild the content file from the model's YAML, re-wrapping it in the
- * ORIGINAL frontmatter envelope (the model tends to drop the `---`), and
- * sanity-check structure so we never write garbage that silently breaks
- * every component.
+ * Pick the best-fit template (LLM router, regex fallback). Exposed so the
+ * funnel can choose + show the base template live BEFORE personalizing
+ * (progressive "base first, hot-swap personalized" flow).
  */
-function assembleAndValidate(
-  originalRaw: string,
-  modelText: string
-): { ok: boolean; content?: string; reason?: string } {
-  const orig = splitFrontmatter(originalRaw);
-  const yaml = cleanYaml(modelText);
-  if (yaml.length < orig.yaml.length * 0.4) {
-    return { ok: false, reason: `output too short (${yaml.length} vs ${orig.yaml.length})` };
+export async function selectBaseTemplateSmart(
+  spec: DiscoverySpec,
+  baseOverride?: string,
+  gen: GenerateFn = defaultGenerate
+): Promise<ReturnType<typeof selectBaseTemplate>> {
+  if (baseOverride && BASE_TEMPLATES[baseOverride]) {
+    return BASE_TEMPLATES[baseOverride]!;
   }
-  const topKeys = (s: string) =>
-    new Set((s.match(/^[a-zA-Z_][\w]*:/gm) ?? []).map((k) => k.trim()));
-  const want = topKeys(orig.yaml);
-  const got = topKeys(yaml);
-  const missing = Array.from(want).filter((k) => !got.has(k));
-  // site-data.ts accessors are fallback-safe, but a wholesale key loss means
-  // the model reformatted instead of personalizing — reject it.
-  if (want.size > 0 && missing.length > want.size * 0.25) {
-    return { ok: false, reason: `lost ${missing.length}/${want.size} top-level keys` };
-  }
-  const content = orig.hasFm ? `---\n${yaml}\n---\n${orig.body}` : `${yaml}\n`;
-  return { ok: true, content };
+  const chosen = await classifyTemplate(spec, gen).catch(() => null);
+  return chosen && BASE_TEMPLATES[chosen]
+    ? BASE_TEMPLATES[chosen]!
+    : selectBaseTemplate(spec);
 }
 
 /**
- * LLM template router: pick the best-fit template from the catalog for this
- * spec (a fast Haiku call). Far better than keyword regex for fuzzy cases
- * (e.g. a fashion-guide creator → creative-portfolio, not the regex's
- * professional-services default). Fail-safe: returns null on any
- * error/timeout so the caller falls back to the regex selector.
+ * Just the content generation: spec + the template's current site-labels.md →
+ * the personalized, envelope-safe file content. No workspace/build — the
+ * funnel pushes the result into the already-live sandbox via HMR. For
+ * streaming wave-by-wave, call `orchestrateGeneration` directly with `onWave`.
  */
-async function classifyTemplate(spec: DiscoverySpec): Promise<string | null> {
+export async function generateSiteContent(
+  spec: DiscoverySpec,
+  contentBefore: string,
+  opts: Pick<OrchestrateOptions, 'generate' | 'lite' | 'wallClockMs' | 'onWave' | 'onPhase'> = {}
+): Promise<{ ok: boolean; content?: string; costUsd: number; reason?: string }> {
+  const r = await orchestrateGeneration(spec, contentBefore, opts);
+  return {
+    ok: r.ok,
+    content: r.ok ? r.content : undefined,
+    costUsd: r.costUsd,
+    reason: r.reason,
+  };
+}
+
+/**
+ * Apply ONE plain-English instruction to the site's single content file (the
+ * 15-prompt edit loop), writing the result back to disk. Thin wrapper over
+ * `orchestrateEdit` for the host-side path.
+ */
+export async function editContent(
+  contentFile: string,
+  instruction: string,
+  opts: { generate?: GenerateFn; wallClockMs?: number } = {}
+): Promise<EditResult> {
+  const { readFile } = await import('node:fs/promises');
+  let current: string;
   try {
-    const system =
-      'You choose the single best website template for a business. Reply with ONLY the template id — no other text.';
-    const task = [
-      'Templates:',
-      ...TEMPLATE_CATALOG.map((t) => `- ${t.id}: ${t.bestFor}`),
-      '',
-      'Business:',
-      `- Name: ${spec.businessName}`,
-      `- Industry: ${spec.industry ?? ''}`,
-      `- What they do: ${spec.description}`,
-      `- Audience: ${spec.targetAudience ?? ''}`,
-      `- Goal: ${spec.goal ?? ''}`,
-      `- Tone: ${spec.brandTone ?? ''}`,
-      '',
-      'Reply with exactly one id from the list above.',
-    ].join('\n');
-    const g = await runGeneration(system, task, 'claude-haiku-4-5', 0.2, 20_000);
-    if (!g.ok || !g.resultText) return null;
-    const out = g.resultText.toLowerCase();
-    for (const { id } of TEMPLATE_CATALOG) if (out.includes(id)) return id;
-    return null;
+    current = await readFile(contentFile, 'utf8');
   } catch {
-    return null;
+    return { ok: false, costUsd: 0, usageByModel: {}, changed: false, reason: 'content file missing' };
   }
+  const r = await orchestrateEdit(current, instruction, opts);
+  if (r.ok && r.content) await writeFile(contentFile, r.content, 'utf8');
+  return r;
 }
 
 /**
- * Discovery spec in → personalized industry-matched site out, fast: LLM
- * template routing, warm workspace (no install), one tool-less LLM call
- * rewriting the single content file, envelope-safe write, optional build.
+ * Discovery spec in → personalized industry-matched site built on disk: LLM
+ * template routing, warm workspace (no install), the gretly-light orchestrator
+ * rewriting the content file, optional build proof. Used by the speed harness
+ * and the (future) on-disk concierge build.
  */
 export async function runCodegen(
   spec: DiscoverySpec,
   options: CodegenOptions = {}
 ): Promise<CodegenResult> {
   const t0 = Date.now();
-  const model = options.model ?? 'claude-haiku-4-5';
-  const maxBudgetUsd = options.maxBudgetUsd ?? 1;
-  const wallClockMs = options.wallClockMs ?? 150_000;
+  const gen = options.generate ?? defaultGenerate;
   const verifyBuild = options.verifyBuild ?? true;
 
   let base;
@@ -214,11 +174,7 @@ export async function runCodegen(
     base = BASE_TEMPLATES[options.baseOverride]!;
   } else {
     options.onEvent?.({ phase: 'Choosing the best template for you' });
-    const chosen = await classifyTemplate(spec);
-    base =
-      chosen && BASE_TEMPLATES[chosen]
-        ? BASE_TEMPLATES[chosen]!
-        : selectBaseTemplate(spec);
+    base = await selectBaseTemplateSmart(spec, undefined, gen);
   }
   options.onEvent?.({ phase: 'Preparing', detail: `${base.name} (warm)` });
   const ws = await createWorkspace(base);
@@ -235,40 +191,33 @@ export async function runCodegen(
     generationMs: 0,
     totalMs: 0,
     contentChanged: false,
+    attempts: 0,
     cleanup: ws.cleanup,
   };
 
-  options.onEvent?.({ phase: 'Personalizing your site' });
   const tGen = Date.now();
-  const gen = await runGeneration(
-    buildSystemPrompt(),
-    buildTaskPrompt(spec, ws.contentFile, ws.contentBefore),
-    model,
-    maxBudgetUsd,
-    wallClockMs
-  );
+  const orch = await orchestrateGeneration(spec, ws.contentBefore, {
+    generate: gen,
+    lite: options.lite,
+    wallClockMs: options.wallClockMs,
+    onPhase: (phase) => options.onEvent?.({ phase }),
+  });
   result.generationMs = Date.now() - tGen;
-  result.costUsd = gen.costUsd;
+  result.costUsd = orch.costUsd;
+  result.attempts = orch.attempts;
+  result.contentChanged = orch.ok;
 
-  if (!gen.ok || !gen.resultText) {
-    result.failure = { stage: 'generation', log: gen.err ?? 'no result' };
+  if (!orch.ok) {
+    result.failure = { stage: 'invalid-output', log: orch.reason ?? 'no personalization' };
     result.totalMs = Date.now() - t0;
     if (options.keepWorkspace === false) await ws.cleanup();
     return result;
   }
 
-  const asm = assembleAndValidate(ws.contentBefore, gen.resultText);
-  if (!asm.ok || !asm.content) {
-    result.failure = { stage: 'invalid-output', log: asm.reason ?? 'unknown' };
-    result.totalMs = Date.now() - t0;
-    if (options.keepWorkspace === false) await ws.cleanup();
-    return result;
-  }
-  await writeFile(ws.contentFile, asm.content, 'utf8');
-  result.contentChanged = asm.content.trim() !== ws.contentBefore.trim();
+  await writeFile(ws.contentFile, orch.content, 'utf8');
 
   if (!verifyBuild) {
-    result.ok = result.contentChanged;
+    result.ok = true;
     result.totalMs = Date.now() - t0;
     options.onEvent?.({ phase: 'Done', detail: `${(result.generationMs / 1000).toFixed(1)}s` });
     return result;
@@ -276,7 +225,7 @@ export async function runCodegen(
 
   options.onEvent?.({ phase: 'Verifying build' });
   const build = await runBuild(ws.buildDir, { installTimeoutMs: 60_000 });
-  result.ok = build.ok && result.contentChanged;
+  result.ok = build.ok;
   if (!build.ok) result.failure = { stage: 'build', log: build.log };
   result.totalMs = Date.now() - t0;
   if (options.keepWorkspace === false) await ws.cleanup();
@@ -285,112 +234,4 @@ export async function runCodegen(
     detail: `gen ${(result.generationMs / 1000).toFixed(1)}s`,
   });
   return result;
-}
-
-/**
- * Pick the best-fit template (LLM router, regex fallback). Exposed so the
- * funnel can choose + show the base template live BEFORE personalizing
- * (progressive "base first, hot-swap personalized" flow).
- */
-export async function selectBaseTemplateSmart(
-  spec: DiscoverySpec,
-  baseOverride?: string
-): Promise<ReturnType<typeof selectBaseTemplate>> {
-  if (baseOverride && BASE_TEMPLATES[baseOverride]) {
-    return BASE_TEMPLATES[baseOverride]!;
-  }
-  const chosen = await classifyTemplate(spec);
-  return chosen && BASE_TEMPLATES[chosen]
-    ? BASE_TEMPLATES[chosen]!
-    : selectBaseTemplate(spec);
-}
-
-/**
- * Just the single-shot content generation: spec + the template's current
- * site-labels.md → the personalized, envelope-safe file content. No
- * workspace/build — the funnel pushes the result into the already-live
- * sandbox via HMR.
- */
-export async function generateSiteContent(
-  spec: DiscoverySpec,
-  contentBefore: string,
-  opts: { model?: string; maxBudgetUsd?: number; wallClockMs?: number } = {}
-): Promise<{ ok: boolean; content?: string; costUsd: number; reason?: string }> {
-  const gen = await runGeneration(
-    buildSystemPrompt(),
-    buildTaskPrompt(spec, '', contentBefore),
-    opts.model ?? 'claude-haiku-4-5',
-    opts.maxBudgetUsd ?? 1,
-    opts.wallClockMs ?? 150_000
-  );
-  if (!gen.ok || !gen.resultText) {
-    return { ok: false, costUsd: gen.costUsd, reason: gen.err ?? 'no result' };
-  }
-  const asm = assembleAndValidate(contentBefore, gen.resultText);
-  if (!asm.ok || !asm.content) {
-    return { ok: false, costUsd: gen.costUsd, reason: asm.reason };
-  }
-  return {
-    ok: asm.content.trim() !== contentBefore.trim(),
-    content: asm.content,
-    costUsd: gen.costUsd,
-    reason: asm.content.trim() === contentBefore.trim() ? 'no changes' : undefined,
-  };
-}
-
-export interface EditResult {
-  ok: boolean;
-  costUsd: number;
-  changed: boolean;
-  /** The new file content (also written to disk) — caller pushes it to the sandbox. */
-  content?: string;
-  failure?: string;
-}
-
-/**
- * Apply ONE plain-English instruction to the site's single content file
- * (the 15-prompt edit loop). Same fast single-shot path as generation:
- * tool-less, structure-preserving, envelope-safe. The caller pushes the new
- * content into the running sandbox for HMR.
- */
-export async function editContent(
-  contentFile: string,
-  instruction: string,
-  opts: { model?: string; maxBudgetUsd?: number; wallClockMs?: number } = {}
-): Promise<EditResult> {
-  const model = opts.model ?? 'claude-haiku-4-5';
-  const maxBudgetUsd = opts.maxBudgetUsd ?? 0.5;
-  const wallClockMs = opts.wallClockMs ?? 120_000;
-
-  let current: string;
-  try {
-    current = await readFile(contentFile, 'utf8');
-  } catch {
-    return { ok: false, costUsd: 0, changed: false, failure: 'content file missing' };
-  }
-
-  const system = [
-    `You apply ONE change to a website's YAML content file (markdown frontmatter). Every component reads from it through typed accessors.`,
-    `# Output contract
-- Your ENTIRE response is the complete updated file content: no code fences, no \`---\` lines, no commentary.
-- Apply only the requested change. Preserve every other value, all keys, nesting, array item shapes/counts, \`href\` routes and image \`src\` paths.
-- Keep YAML valid (indentation; quote strings with colons; preserve block scalars \`|\`). Human, specific copy; never fabricate real contact details, prices, or quotes.`,
-  ].join('\n\n');
-  const task = `Change requested by the site owner:\n"${instruction}"\n\nCurrent file:\n${current}\n\nOutput the complete updated file now — only the file.`;
-
-  const gen = await runGeneration(system, task, model, maxBudgetUsd, wallClockMs);
-  if (!gen.ok || !gen.resultText) {
-    return { ok: false, costUsd: gen.costUsd, changed: false, failure: gen.err ?? 'no result' };
-  }
-  const asm = assembleAndValidate(current, gen.resultText);
-  if (!asm.ok || !asm.content) {
-    return { ok: false, costUsd: gen.costUsd, changed: false, failure: asm.reason };
-  }
-  await writeFile(contentFile, asm.content, 'utf8');
-  return {
-    ok: true,
-    costUsd: gen.costUsd,
-    changed: asm.content.trim() !== current.trim(),
-    content: asm.content,
-  };
 }

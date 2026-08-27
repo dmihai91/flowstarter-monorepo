@@ -6,6 +6,7 @@ siteMeta:
 header:
   logo: "Halden & Roe"
   menuAriaLabel: "Toggle menu"
+  ctaLabel: "Book a working session"
   navLinks:
     - label: "Home"
       href: "/"

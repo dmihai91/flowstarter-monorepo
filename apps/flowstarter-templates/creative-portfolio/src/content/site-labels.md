@@ -6,6 +6,7 @@ siteMeta:
 header:
   logo: "ATELIER VERSO"
   menuAriaLabel: "Toggle menu"
+  ctaLabel: "Start a project"
   navLinks:
     - label: "Home"
       href: "/"

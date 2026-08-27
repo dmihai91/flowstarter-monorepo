@@ -6,6 +6,7 @@ siteMeta:
 header:
   logo: "HEARTHSTONE JOINERY"
   menuAriaLabel: "Toggle menu"
+  ctaLabel: "Get a Free Quote"
   navLinks:
     - label: "Home"
       href: "/"

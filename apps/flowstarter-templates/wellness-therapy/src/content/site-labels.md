@@ -6,6 +6,7 @@ siteMeta:
 header:
   logo: "Marsh & Fern"
   menuAriaLabel: "Toggle menu"
+  ctaLabel: "Book a free intro call"
   navLinks:
     - label: "Home"
       href: "/"

@@ -65,6 +65,19 @@ function StatusPill({
   );
 }
 
+/**
+ * Displays a milestone's share of the setup fee exactly as the invoice route
+ * charges it: `resolveAmountMinor` computes `round(setupFee × percent)` minor
+ * units, so €799 splits into €159.80 / €639.20 — not round euros.
+ */
+function formatSetupSplit(setupFeeMajor: number, percent: number): string {
+  const major = Math.round(setupFeeMajor * percent) / 100;
+  return major.toLocaleString(undefined, {
+    minimumFractionDigits: Number.isInteger(major) ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 export function BillingTab({ project }: { project: Project }) {
   const qc = useQueryClient();
   const [busy, setBusy] = useState<string | null>(null);
@@ -161,7 +174,7 @@ export function BillingTab({ project }: { project: Project }) {
               Setup fee
             </h3>
             <p className="text-xs text-[var(--fs-ink-faint)]">
-              Two invoices: 50% deposit upfront + 50% on approval.
+              Two invoices: 20% deposit upfront + 80% on approval.
             </p>
           </div>
           <p className="text-sm font-bold text-[var(--fs-ink)]">
@@ -174,12 +187,12 @@ export function BillingTab({ project }: { project: Project }) {
           <div className="rounded-lg border border-[var(--fs-rule)] p-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-[var(--fs-ink-dim)]">
-                Deposit (50%)
+                Deposit (20%)
               </span>
               <StatusPill status={depositStatus} tone={INVOICE_TONE} />
             </div>
             <p className="text-lg font-semibold text-[var(--fs-ink)]">
-              €{Math.round(setupFee * 0.5).toLocaleString()}
+              €{formatSetupSplit(setupFee, 20)}
             </p>
             {depositInvoiceUrl && (
               <a
@@ -218,12 +231,12 @@ export function BillingTab({ project }: { project: Project }) {
           <div className="rounded-lg border border-[var(--fs-rule)] p-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-[var(--fs-ink-dim)]">
-                Final (50%)
+                Final (80%)
               </span>
               <StatusPill status={finalStatus} tone={INVOICE_TONE} />
             </div>
             <p className="text-lg font-semibold text-[var(--fs-ink)]">
-              €{Math.round(setupFee * 0.5).toLocaleString()}
+              €{formatSetupSplit(setupFee, 80)}
             </p>
             {finalInvoiceUrl && (
               <a

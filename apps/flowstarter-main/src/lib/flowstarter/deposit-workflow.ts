@@ -1,0 +1,290 @@
+import type Stripe from 'stripe';
+import { depositAmountMinor } from '@flowstarter/agentic-codegen/src/flowstarter/state-machine';
+import { ProjectState } from '@flowstarter/agentic-codegen/src/flowstarter/types';
+import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
+
+const UUID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export interface DepositBuildEnqueueResult {
+  workspaceId: string;
+  jobId: string;
+  duplicate: boolean;
+}
+
+/** States a deposit may advance the concierge lifecycle from. */
+const DEPOSIT_READY_STATES = [
+  ProjectState.PREVIEW_READY,
+  ProjectState.DEPOSIT_PAID,
+];
+
+/**
+ * Verifies the signed Stripe deposit event against the server-owned quote,
+ * advances PREVIEW_READY -> DEPOSIT_PAID, and durably enqueues one full build.
+ * Stripe may redeliver events: unique database constraints make this idempotent.
+ */
+export async function enqueueFullBuildFromDeposit(
+  event: Stripe.Event,
+  paymentIntent: Stripe.PaymentIntent
+): Promise<DepositBuildEnqueueResult | null> {
+  if (paymentIntent.metadata['kind'] !== 'flowstarter_deposit') return null;
+  if (paymentIntent.status !== 'succeeded')
+    throw new Error('Deposit PaymentIntent is not succeeded');
+
+  const workspaceId = paymentIntent.metadata['workspaceId'];
+  if (!workspaceId || !UUID.test(workspaceId))
+    throw new Error('Deposit is missing a valid workspaceId');
+
+  const supabase = createSupabaseServiceRoleClient();
+  const { data: workspace, error: workspaceError } = await supabase
+    .from('workspaces')
+    .select(
+      'id, project_state, final_value_minor, billing_currency, deposit_payment_intent_id'
+    )
+    .eq('id', workspaceId)
+    .maybeSingle();
+  if (workspaceError) throw workspaceError;
+  if (!workspace) throw new Error('Deposit workspace does not exist');
+  if (!DEPOSIT_READY_STATES.includes(workspace.project_state as ProjectState)) {
+    throw new Error(
+      `Deposit cannot start a build from state ${workspace.project_state}`
+    );
+  }
+  if (!workspace.final_value_minor)
+    throw new Error('Workspace final value is not configured');
+  if (
+    workspace.billing_currency.toLowerCase() !==
+    paymentIntent.currency.toLowerCase()
+  ) {
+    throw new Error('Deposit currency does not match the workspace quote');
+  }
+
+  const expectedAmount = depositAmountMinor(workspace.final_value_minor);
+  if (paymentIntent.amount_received !== expectedAmount) {
+    throw new Error(`Deposit amount mismatch: expected ${expectedAmount}`);
+  }
+  if (
+    workspace.deposit_payment_intent_id &&
+    workspace.deposit_payment_intent_id !== paymentIntent.id
+  ) {
+    throw new Error(
+      'Workspace is already associated with a different deposit payment'
+    );
+  }
+
+  return enqueueBuildAndAdvance({
+    supabase,
+    workspaceId,
+    eventId: event.id,
+    paymentIntentId: paymentIntent.id,
+    source: 'payment_intent',
+    workspaceUpdate: { deposit_payment_intent_id: paymentIntent.id },
+  });
+}
+
+/**
+ * The operator-invoiced half of the same gate.
+ *
+ * `deposit-invoice` prices off `setup_fee` (or an explicit operator override),
+ * so the 20%-of-`final_value_minor` check that guards the self-serve Checkout
+ * path cannot authorize these. What authorizes them instead is the invoice ID
+ * the server itself recorded on the workspace when it created the invoice —
+ * a client cannot mint one, and it is written before any money moves.
+ *
+ * Returns null (rather than throwing) for invoices that are not a concierge
+ * deposit. Those are ordinary billing invoices and must not fail the webhook,
+ * or Stripe would retry them forever.
+ */
+export async function enqueueFullBuildFromDepositInvoice(
+  event: Stripe.Event,
+  invoice: Stripe.Invoice
+): Promise<DepositBuildEnqueueResult | null> {
+  if (invoice.metadata?.['invoiceType'] !== 'deposit') return null;
+  if (typeof invoice.id !== 'string' || invoice.id.length === 0) return null;
+
+  const workspaceId =
+    invoice.metadata['workspaceId'] || invoice.metadata['projectId'];
+  if (!workspaceId || !UUID.test(workspaceId)) return null;
+
+  const supabase = createSupabaseServiceRoleClient();
+  const { data: workspace, error: workspaceError } = await supabase
+    .from('workspaces')
+    .select('id, project_state, billing_currency, deposit_invoice_id')
+    .eq('id', workspaceId)
+    .maybeSingle();
+  if (workspaceError) throw workspaceError;
+  if (!workspace) return null;
+
+  // A workspace outside the concierge lifecycle still gets its billing fields
+  // updated by the caller; it just has no preview to build from.
+  if (!DEPOSIT_READY_STATES.includes(workspace.project_state as ProjectState)) {
+    console.info(
+      `[Flowstarter] deposit invoice ${invoice.id} paid for workspace ${workspaceId} ` +
+        `in state ${workspace.project_state}; no build enqueued`
+    );
+    return null;
+  }
+
+  if (workspace.deposit_invoice_id !== invoice.id) {
+    throw new Error(
+      'Paid deposit invoice does not match the invoice recorded on the workspace'
+    );
+  }
+  if (
+    workspace.billing_currency.toLowerCase() !== invoice.currency.toLowerCase()
+  ) {
+    throw new Error('Deposit currency does not match the workspace quote');
+  }
+  if (!invoice.amount_paid || invoice.amount_paid <= 0) {
+    throw new Error('Deposit invoice reports no amount paid');
+  }
+
+  return enqueueBuildAndAdvance({
+    supabase,
+    workspaceId,
+    eventId: event.id,
+    source: 'deposit_invoice',
+    workspaceUpdate: {},
+  });
+}
+
+type SupabaseServiceClient = ReturnType<typeof createSupabaseServiceRoleClient>;
+
+/**
+ * The shared, idempotent half of both deposit paths: enqueue exactly one
+ * FULL_SITE_BUILD, advance the workspace, and dispatch to the build worker.
+ *
+ * Two unique constraints make redelivery safe — one job per workspace, and one
+ * job per Stripe event — so a retried webhook converges on the same job rather
+ * than starting a second build.
+ */
+async function enqueueBuildAndAdvance(input: {
+  supabase: SupabaseServiceClient;
+  workspaceId: string;
+  eventId: string;
+  paymentIntentId?: string;
+  source: 'payment_intent' | 'deposit_invoice';
+  workspaceUpdate: Record<string, unknown>;
+}): Promise<DepositBuildEnqueueResult> {
+  const { supabase, workspaceId } = input;
+  const now = new Date().toISOString();
+
+  const insert = await supabase
+    .from('flowstarter_agent_jobs')
+    .insert({
+      workspace_id: workspaceId,
+      kind: 'FULL_SITE_BUILD',
+      status: 'queued',
+      stripe_event_id: input.eventId,
+      stripe_payment_intent_id: input.paymentIntentId ?? null,
+      payload: {
+        trigger: 'deposit_paid',
+        source: input.source,
+        depositPercent: 20,
+        balancePercent: 80,
+      },
+      updated_at: now,
+    })
+    .select('id, status')
+    .single();
+
+  let jobId: string;
+  let duplicate = false;
+  if (insert.error?.code === '23505') {
+    duplicate = true;
+    const existing = await supabase
+      .from('flowstarter_agent_jobs')
+      .select('id, status')
+      .eq('workspace_id', workspaceId)
+      .eq('kind', 'FULL_SITE_BUILD')
+      .single();
+    if (existing.error || !existing.data)
+      throw existing.error ?? new Error('Existing build job was not found');
+    jobId = existing.data.id;
+    if (
+      existing.data.status === 'succeeded' ||
+      existing.data.status === 'canceled'
+    ) {
+      return { workspaceId, jobId, duplicate: true };
+    }
+  } else if (insert.error || !insert.data) {
+    throw insert.error ?? new Error('Could not enqueue full site build');
+  } else {
+    jobId = insert.data.id;
+  }
+
+  const stateUpdate = await supabase
+    .from('workspaces')
+    .update({
+      project_state: ProjectState.DEPOSIT_PAID,
+      deposit_status: 'paid',
+      deposit_paid_at: now,
+      outstanding_payment: false,
+      ...input.workspaceUpdate,
+    })
+    .eq('id', workspaceId)
+    .in('project_state', DEPOSIT_READY_STATES)
+    .select('id')
+    .single();
+  if (stateUpdate.error) throw stateUpdate.error;
+
+  await dispatchBuildJob(jobId);
+  return { workspaceId, jobId, duplicate };
+}
+
+async function dispatchBuildJob(jobId: string): Promise<void> {
+  const endpoint = process.env.FLOWSTARTER_BUILD_WORKER_URL;
+  const secret = process.env.FLOWSTARTER_BUILD_WORKER_SECRET;
+  if (!endpoint || !secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Flowstarter build worker is not configured');
+    }
+    console.warn(
+      `[Flowstarter] build job ${jobId} queued; local worker dispatch is not configured`
+    );
+    return;
+  }
+  if (secret.length < 32)
+    throw new Error(
+      'FLOWSTARTER_BUILD_WORKER_SECRET must be at least 32 characters'
+    );
+  const url = new URL('/jobs/full-site', endpoint);
+  if (
+    url.protocol !== 'https:' &&
+    url.hostname !== '127.0.0.1' &&
+    url.hostname !== 'localhost'
+  ) {
+    throw new Error('Flowstarter build worker must use HTTPS');
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${secret}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({ jobId }),
+    signal: AbortSignal.timeout(8_000),
+    cache: 'no-store',
+  });
+  if (!response.ok)
+    throw new Error(
+      `Flowstarter build worker rejected job with ${response.status}`
+    );
+}
+
+export function productionActivationAllowed(input: {
+  projectState: string;
+  finalStatus: string;
+  stripeSubscriptionId: string | null;
+  subscriptionStatus: string | null;
+}): boolean {
+  return (
+    input.projectState === ProjectState.HUMAN_QA &&
+    input.finalStatus === 'paid' &&
+    Boolean(input.stripeSubscriptionId) &&
+    (input.subscriptionStatus === 'active' ||
+      input.subscriptionStatus === 'trialing' ||
+      input.subscriptionStatus === 'trial')
+  );
+}

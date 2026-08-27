@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { sendEmail } from '@/lib/email';
+import {
+  enqueueFullBuildFromDeposit,
+  enqueueFullBuildFromDepositInvoice,
+} from '@/lib/flowstarter/deposit-workflow';
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -24,7 +28,10 @@ function workspaceIdFromMetadata(
   return undefined;
 }
 
-async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
+async function handleInvoicePaymentSucceeded(
+  event: Stripe.Event,
+  invoice: Stripe.Invoice
+) {
   const workspaceId = workspaceIdFromMetadata(invoice.metadata);
   const invoiceType = invoice.metadata?.invoiceType;
   if (!workspaceId || !invoiceType) return;
@@ -40,19 +47,25 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
         outstanding_payment: false,
       })
       .eq('id', workspaceId);
+
+    // A concierge workspace also advances PREVIEW_READY -> DEPOSIT_PAID and
+    // enqueues the full-site build. Marking the invoice paid without this is
+    // what stalled the lifecycle: the money landed and no build was queued.
+    const enqueued = await enqueueFullBuildFromDepositInvoice(event, invoice);
+    if (enqueued) {
+      console.info(
+        `[Stripe] deposit invoice queued build ${enqueued.jobId} for workspace ${workspaceId}` +
+          (enqueued.duplicate ? ' (redelivery)' : '')
+      );
+    }
   }
   if (invoiceType === 'final') {
-    const trialEnd = new Date();
-    trialEnd.setDate(trialEnd.getDate() + 30);
     await supabase
       .from('workspaces')
       .update({
         final_status: 'paid',
         final_paid_at: now,
         outstanding_payment: false,
-        setup_go_live_at: now,
-        subscription_status: 'trial',
-        subscription_trial_ends: trialEnd.toISOString(),
       })
       .eq('id', workspaceId);
   }
@@ -313,8 +326,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     switch (event.type) {
+      case 'payment_intent.succeeded':
+        await enqueueFullBuildFromDeposit(
+          event,
+          event.data.object as Stripe.PaymentIntent
+        );
+        break;
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(
+          event,
           event.data.object as Stripe.Invoice
         );
         break;

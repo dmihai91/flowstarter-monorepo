@@ -1,12 +1,9 @@
 /**
- * Scenario: a client like Darius — brand identity from the public Instagram
- * profile darius.flowstarter (owner's consent given in chat).
- *
- * Drives the real pipeline directly: ScrapeCorpus (bio + captions + images)
- * -> analyzeBrand (vision) -> selectTemplate (local MCP) -> scaffold ->
- * buildPreview -> validate -> publish via the template's own dev server.
+ * Scenario: a Romanian fitness coach — a text-only intake in Romanian, no
+ * social scrape. Exercises locale handling (ro-RO copy end to end) and the
+ * sigma classifier on a coaching business rather than a portfolio.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { mkdir, rm, cp, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -23,41 +20,43 @@ const env = Object.fromEntries(readFileSync('apps/flowstarter-main/.env.local','
 const projectId = randomUUID();
 const now = new Date().toISOString();
 
-const docs = JSON.parse(readFileSync('/tmp/ig-docs.json','utf8'));
-const images = readdirSync('/tmp/ig-media').map((f,i)=>({
-  sourceId: f.replace('.jpg',''),
-  objectKey: `local/ig/${f}`,
-  mediaType: 'image/jpeg',
-  base64: readFileSync(`/tmp/ig-media/${f}`).toString('base64'),
-  sourceUrl: 'https://www.instagram.com/darius.flowstarter/',
-}));
-
 const intake = {
   projectId,
   business: {
-    name: 'Darius Popescu — Web Developer',
-    niche: 'Freelance web & app development — personal portfolio',
-    location: 'Bucharest, Romania',
-    description: 'Personal portfolio for a solo web developer. Strict content rules: first-person singular voice everywhere (I, my — never we, our, studio). Only real work may appear: (1) Flowstarter — an AI-powered website concierge platform I am building, where agents generate personalized sites from a client brief and Instagram identity; (2) an experiment building a working app from scratch purely with AI tools, documented on my Instagram; (3) my AI-assisted development workflow itself. Do not invent clients, testimonials, case studies, metrics or awards. If a section has no real content, repurpose it to describe my process or remove its filler. Warm, direct, technically credible.',
-    targetAudience: 'Founders and small businesses who need an app or website',
-    primaryGoal: 'portfolio',
+    name: 'Andrei Munteanu — Antrenor Personal',
+    niche: 'Antrenor personal și coaching de fitness',
+    location: 'Cluj-Napoca, România',
+    description: [
+      'Site pentru un antrenor personal independent din Cluj-Napoca.',
+      'TOATĂ interfața și tot conținutul vizibil trebuie scrise în limba română,',
+      'inclusiv meniul, butoanele, titlurile, formularul de contact și subsolul.',
+      'Vorbește la persoana întâi singular (eu, meu) — niciodată "noi" sau "echipa".',
+      'Servicii reale: antrenamente personale 1-la-1 în sală, planuri de antrenament',
+      'individualizate, îndrumare pentru nutriție și antrenamente online prin video.',
+      'Nu inventa clienți, testimoniale, rezultate, cifre, premii sau certificări.',
+      'Dacă o secțiune nu are conținut real, descrie procesul de lucru.',
+      'Ton: direct, cald, profesionist, fără promisiuni exagerate.',
+    ].join(' '),
+    targetAudience: 'Adulți ocupați din Cluj-Napoca care vor să înceapă sau să revină la antrenamente',
+    primaryGoal: 'Programări pentru o ședință de consultanță',
   },
-  socialMedia: [{ platform: 'instagram', handle: 'darius.flowstarter',
-    profileUrl: 'https://www.instagram.com/darius.flowstarter/',
-    scraper: { provider: 'session-fetch', status: 'complete' } }],
-  locale: 'en-RO',
+  socialMedia: [],
+  locale: 'ro-RO',
   submittedAt: now,
-  consent: { publicProfileAnalysis: true, acceptedAt: now },
+  consent: { publicProfileAnalysis: false, acceptedAt: now },
 };
-const NO_IMAGES = process.env.SCENARIO_NO_IMAGES === '1';
-// The brief itself is evidence the brand agent may cite ('intake' source id).
-docs.push({
-  sourceId: 'intake',
-  platform: 'intake',
-  kind: 'intake_answer',
-  text: intake.business.description,
-});
-const corpus = { projectId, documents: docs, images: NO_IMAGES ? [] : images, completedAt: now };
+
+// Text-only evidence: the brief plus the coach's own answers, all Romanian.
+const docs = [
+  { sourceId: 'intake', platform: 'intake', kind: 'intake_answer', text: intake.business.description },
+  { sourceId: 'answer-servicii', platform: 'intake', kind: 'intake_answer',
+    text: 'Lucrez 1-la-1 în sală, fac planuri individualizate și ofer îndrumare pentru nutriție. Am și antrenamente online pentru cei care nu ajung la sală.' },
+  { sourceId: 'answer-abordare', platform: 'intake', kind: 'intake_answer',
+    text: 'Încep cu o evaluare a mobilității și a istoricului de accidentări. Progresăm treptat, cu tehnică corectă înainte de greutăți mari.' },
+  { sourceId: 'answer-public', platform: 'intake', kind: 'intake_answer',
+    text: 'Majoritatea oamenilor cu care lucrez stau mult la birou și nu au mai făcut sport de ani de zile. Vor să se simtă mai bine, nu să concureze.' },
+];
+const corpus = { projectId, documents: docs, images: [], completedAt: now };
 
 const GLM_53_FLASH = {
   id: 'z-ai/glm-5.3-flash',
@@ -81,12 +80,16 @@ const agents = new PiSdkFlowstarterAgents({
   apiKey: env.OPENROUTER_API_KEY, thinkingLevel: 'medium', timeoutMs: 420_000, maxOutputTokens: 24_000,
   roles: {
     // Free preview: flash with the whole template in context, multi-pass.
-    preview: { modelId: 'z-ai/glm-5.3-flash', modelOverride: GLM_53_FLASH, maxOutputTokens: 30_000, timeoutMs: 600_000 },
+    // Flash idled out upstream on this template twice; SCENARIO_PREVIEW_MODEL
+    // lets the run fall back to the proven tier without editing the file.
+    preview: process.env.SCENARIO_PREVIEW_MODEL
+      ? { modelId: process.env.SCENARIO_PREVIEW_MODEL, maxOutputTokens: 30_000, timeoutMs: 900_000 }
+      : { modelId: 'z-ai/glm-5.3-flash', modelOverride: GLM_53_FLASH, maxOutputTokens: 30_000, timeoutMs: 600_000 },
     // Paid full-site build: the heavy tier.
     fullSite: { modelId: 'moonshotai/kimi-k3', thinkingLevel: 'high' },
   },
 });
-console.log('[models] brand=glm-5.2, preview=glm-5.3-flash, fullSite=kimi-k3, selection=sigma');
+console.log(`[models] brand=glm-5.2, preview=${process.env.SCENARIO_PREVIEW_MODEL || 'z-ai/glm-5.3-flash'}, fullSite=kimi-k3, selection=sigma`);
 const library = new FlowstarterMcpTemplateLibrary({
   endpoint: 'http://127.0.0.1:3001/mcp',
   internalToken: 'e2e-local-mcp-internal-token-0123456789abcdef0123',
@@ -143,25 +146,12 @@ const pipeline = new PreviewGenerationPipeline(agents, library, validator, publi
   teaser: {
     keepHomeSections: 3,
     keepSubpageSections: 1,
-    label: 'Part of your full site',
+    label: 'Face parte din site-ul complet',
     unlockUrl: `${process.env.SCENARIO_APP_ORIGIN || 'http://localhost:3000'}/unlock/${projectId}`,
-    unlockLabel: 'Unlock the full site',
+    unlockLabel: 'Deblochează site-ul complet',
   },
 });
-// The client's own Instagram media, written into public/flowstarter-assets/
-// so the agent can use his real photos for portrait and project slots.
-// heroEligible models the intake question a concierge would ask ("which
-// photo represents you professionally?"). post2 is the only well-composed
-// portrait; the profile picture is 320px and is disqualified on size anyway.
-const HERO_ELIGIBLE = new Set(['post2']);
-const cachedAssetFiles = readdirSync('/tmp/ig-media').map((f) => ({
-  sourceId: f.replace('.jpg', ''),
-  fileName: f,
-  contentBase64: readFileSync(`/tmp/ig-media/${f}`).toString('base64'),
-  heroEligible: HERO_ELIGIBLE.has(f.replace('.jpg', '')),
-}));
-
-const result = await pipeline.run({ intake, corpus, cachedAssets: [], cachedAssetFiles,
+const result = await pipeline.run({ intake, corpus, cachedAssets: [],
   onPhase: (p) => console.log(`[phase] ${p}`) });
 
 console.log('\n=== RESULT ===');
@@ -173,5 +163,5 @@ console.log('brand primary:', result.brandConfig.colors.primary, '| heading font
 console.log('voice adjectives:', result.brandConfig.voice.adjectives.join(', '));
 console.log('headline:', result.brandConfig.voice.sampleHeadline);
 console.log('evidence text:', result.brandConfig.evidence.textSourceIds.join(','));
-console.log('evidence images:', result.brandConfig.evidence.imageSourceIds.join(','));
+
 await library.close();

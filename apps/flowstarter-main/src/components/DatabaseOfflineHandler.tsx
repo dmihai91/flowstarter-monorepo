@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { useTranslations } from '@/lib/i18n';
 import { AlertTriangle, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface DatabaseOfflineHandlerProps {
@@ -16,6 +17,11 @@ export function DatabaseOfflineHandler({
 }: DatabaseOfflineHandlerProps) {
   const { t } = useTranslations();
   const queryClient = useQueryClient();
+  const pathname = usePathname();
+  const isWorkflowShowcase =
+    pathname.startsWith('/workflow-showcase') ||
+    (typeof window !== 'undefined' &&
+      window.location.hostname === 'workflows.flowstarter.dev');
 
   const dbQuery = useQuery({
     queryKey: ['health', 'database'],
@@ -46,7 +52,7 @@ export function DatabaseOfflineHandler({
   };
 
   // Show fallback when database is offline
-  if (!isOnline) {
+  if (!isOnline && !isWorkflowShowcase) {
     if (fallback) {
       return <>{fallback}</>;
     }

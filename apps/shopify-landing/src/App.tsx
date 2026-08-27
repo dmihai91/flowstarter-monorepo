@@ -1,73 +1,7 @@
-import type { ReactNode } from "react";
-import { useUsage, isUsageOk, type PlanKey, type GetToken } from "./useUsage";
 import { siteConfig } from "./siteConfig";
 
-const TIER_LABEL: Record<PlanKey, string> = {
-  starter: "Starter",
-  pro: "Pro",
-  max: "Max",
-  ecommerce: "Ecommerce",
-  admin: "Concierge",
-};
-
-function utcMonthShort(): string {
-  try {
-    return new Date().toLocaleString("en-US", { month: "short", timeZone: "UTC" });
-  } catch {
-    return "this month";
-  }
-}
-
-/** The session metric — live "used / total" for a signed-in owner, a neutral
- *  dash for anonymous visitors (we never render a fabricated count). */
-function EditsValue({ used, total }: { used: number; total: number | null }) {
-  if (total == null) {
-    return (
-      <>
-        <span className="accent">{used}</span> used
-      </>
-    );
-  }
-  return (
-    <>
-      <span className="accent">{used}</span> / {total}
-    </>
-  );
-}
-
-export function App({
-  getToken,
-  authReady,
-  signedIn,
-  onSignIn,
-}: {
-  getToken?: GetToken;
-  authReady?: boolean;
-  signedIn?: boolean;
-  onSignIn?: () => void;
-} = {}) {
+export function App() {
   const s = siteConfig;
-  // Wait for Clerk to load before fetching (so the token is available); the
-  // no-Clerk build passes nothing and fetches immediately.
-  const { data } = useUsage({
-    getToken,
-    enabled: getToken ? authReady !== false : true,
-    signedIn,
-  });
-  const ok = isUsageOk(data) ? data : null;
-  const tierLabel = ok ? (TIER_LABEL[ok.usage.tier] ?? ok.usage.tier) : null;
-  const month = utcMonthShort();
-
-  // The usage tiles are gated on a Clerk session. When Clerk is loaded and the
-  // visitor is signed out, prompt sign-in instead of a bare "—"; the no-Clerk
-  // build (no onSignIn) just shows the value/placeholder.
-  const needsSignIn = !!onSignIn && authReady === true && signedIn === false;
-  const signInLink = (
-    <button type="button" onClick={onSignIn} className="metric-signin">
-      Sign in
-    </button>
-  );
-  const gated = (content: ReactNode) => (needsSignIn ? signInLink : content);
 
   return (
     <div className="shell">
@@ -81,11 +15,6 @@ export function App({
           </div>
         </div>
         <div className="topbar-right">
-          {needsSignIn && (
-            <button type="button" onClick={onSignIn} className="signin-btn">
-              Sign in
-            </button>
-          )}
           <div className="status" title="Your store is live and published">
             <span className="dot" aria-hidden="true" />
             <span>Live</span>
@@ -184,15 +113,13 @@ export function App({
 
       <section className="metrics" aria-label="At-a-glance">
         <div className="metric">
-          <div className="label">Edits · {month}</div>
-          <div className="value">
-            {gated(ok ? <EditsValue used={ok.usage.used} total={ok.usage.total} /> : "—")}
-          </div>
-          <div className="sub">{tierLabel ? `${tierLabel} plan · ` : ""}resets monthly</div>
+          <div className="label">Assistant</div>
+          <div className="value">Claude Code</div>
+          <div className="sub">usage is managed by Claude</div>
         </div>
         <div className="metric">
-          <div className="label">Your plan</div>
-          <div className="value">{gated(tierLabel ?? "—")}</div>
+          <div className="label">Workspace</div>
+          <div className="value">{s.workspaceSlug}</div>
           <div className="sub">concierge included</div>
         </div>
         <div className="metric">

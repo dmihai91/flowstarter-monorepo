@@ -5,14 +5,14 @@ import { StripeBillingError } from './stripe';
  * Convert a request-body amount field into the smallest currency unit (e.g.
  * "minor" — cents for EUR/USD). Two paths:
  *   1. Caller passed an explicit `amount` in major units (e.g. 399.5 → 39950)
- *   2. Caller passed nothing → derive from `setupFeeMajor` (whole or half)
+ *   2. Caller passed nothing → derive the requested percentage of `setupFeeMajor`
  *
  * Returns 0 when no valid amount can be derived. Caller decides 400 vs 0.
  */
 export function resolveAmountMinor(
   raw: unknown,
   setupFeeMajor: number,
-  halfOfSetup: boolean
+  percentageOfSetup: number
 ): number {
   if (raw !== undefined && raw !== null) {
     const n = Number(raw);
@@ -22,8 +22,14 @@ export function resolveAmountMinor(
     return 0;
   }
   if (!Number.isFinite(setupFeeMajor) || setupFeeMajor <= 0) return 0;
-  const factor = halfOfSetup ? 0.5 : 1;
-  return Math.round(setupFeeMajor * factor * 100);
+  if (
+    !Number.isFinite(percentageOfSetup) ||
+    percentageOfSetup <= 0 ||
+    percentageOfSetup > 100
+  ) {
+    return 0;
+  }
+  return Math.round(setupFeeMajor * percentageOfSetup);
 }
 
 /** Clamps days_until_due to [1, 90]; defaults to 14. */

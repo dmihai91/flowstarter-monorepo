@@ -10,7 +10,6 @@ import {
   EMPTY_DISCOVERY,
   LAST_STEP,
   STEPS,
-  bookingDepositFor,
   canProceed,
   recommendTier,
 } from './discovery.logic';
@@ -136,57 +135,21 @@ export function DiscoveryWizard({
     const tier = (data.selectedTier as Tier | '') || recommendTier(data).tier;
 
     // Best-effort lead capture — never block the user from booking.
-    // Capture the persisted lead id so the deposit webhook can mark it paid.
-    let leadId: string | null = null;
     try {
       const leadRes = await fetch('/api/discovery/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, selectedTier: tier, source }),
       });
-      const leadJson = (await leadRes.json().catch(() => ({}))) as {
-        leadId?: string | null;
-      };
-      leadId = leadJson.leadId ?? null;
+      await leadRes.json().catch(() => ({}));
     } catch {
       // Swallow — capture is non-blocking
     }
 
-    // Submitted — drop the autosaved draft (covers both the Stripe
-    // redirect-away path and the straight-to-Calendly fallback below).
+    // Submitted — drop the autosaved draft. Payment is deliberately not part
+    // of discovery: the exact 20% build deposit is offered only after the
+    // generated preview and server-owned final quote are approved.
     clearDraft();
-
-    // Booking deposit: send the prospect to Stripe Checkout. On success
-    // Stripe redirects back with ?deposit=paid and the modal reopens on the
-    // calendar step. If Stripe is unconfigured or errors, the endpoint
-    // returns { skip:true } and we fall through straight to Calendly so the
-    // funnel never dead-ends.
-    try {
-      const res = await fetch('/api/discovery/deposit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tier,
-          fullName: data.fullName,
-          email: data.email,
-          businessName: data.businessName,
-          subscription: data.subscription,
-          source,
-          leadId,
-        }),
-      });
-      const json = (await res.json().catch(() => ({}))) as {
-        url?: string;
-        skip?: boolean;
-      };
-      if (res.ok && json.url) {
-        window.location.href = json.url;
-        return; // leaving the SPA — keep the spinner until navigation
-      }
-    } catch {
-      // Fail open — proceed to booking without the deposit gate
-    }
-
     setSubmitting(false);
     onComplete({ tier: tier as Tier, data });
   }, [data, onComplete, proceed, source]);
@@ -363,10 +326,8 @@ export function DiscoveryWizard({
             iconPosition="right"
           >
             {submitting
-              ? t('landing.discovery.nav.redirecting')
-              : `${t('landing.discovery.nav.payPrefix')} ${bookingDepositFor(
-                  (data.selectedTier as Tier | '') || recommendTier(data).tier
-                )} · ${t('landing.discovery.nav.bookCall')}`}
+              ? t('landing.discovery.nav.submitting')
+              : t('landing.discovery.nav.saveAndBook')}
           </Button>
         )}
       </div>

@@ -1,17 +1,19 @@
 'use client';
 
+import Image from 'next/image';
 import { useI18n } from '@/lib/i18n';
-
-interface MockSite {
-  hasContactForm: boolean;
-  hasTestimonials: boolean;
-  hasPricingSection: boolean;
-  primaryColor: string;
-  hasAboutPage: boolean;
-  headerStyle: string;
-  hasFAQ: boolean;
-  hasNewsletter: boolean;
-}
+import type {
+  GuidedPriceAmount,
+  GuidedPriceCadence,
+  GuidedRewriteDirection,
+  GuidedRewriteTarget,
+  GuidedTone,
+  GuidedToneTarget,
+  GuidedTranslationLanguage,
+  GuidedTranslationTarget,
+  MockSiteState,
+} from './useMockEditor';
+import { MockEditorControls } from './MockEditorControls';
 
 interface Message {
   role: 'user' | 'ai';
@@ -26,9 +28,23 @@ interface MockEditorPreviewProps {
   isTyping: boolean;
   typingText: string;
   isTypewriting: boolean;
-  mockSite: MockSite;
+  mockSite: MockSiteState;
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
   handleSend: (msg?: string) => void;
+  handleGuidedRewrite: (
+    target: GuidedRewriteTarget,
+    direction: GuidedRewriteDirection
+  ) => void;
+  handleGuidedPrice: (
+    amount: GuidedPriceAmount,
+    cadence: GuidedPriceCadence,
+    deliveryIncluded: boolean
+  ) => void;
+  handleGuidedTone: (target: GuidedToneTarget, tone: GuidedTone) => void;
+  handleGuidedTranslation: (
+    target: GuidedTranslationTarget,
+    language: GuidedTranslationLanguage
+  ) => void;
 }
 
 /**
@@ -46,6 +62,10 @@ export function MockEditorPreview({
   mockSite,
   messagesEndRef,
   handleSend,
+  handleGuidedRewrite,
+  handleGuidedPrice,
+  handleGuidedTone,
+  handleGuidedTranslation,
 }: MockEditorPreviewProps) {
   const { t } = useI18n();
 
@@ -236,104 +256,123 @@ export function MockEditorPreview({
                   </button>
                 </div>
 
-                {/* Quick prompts */}
-                <div className="flex flex-wrap gap-2 mt-2.5">
-                  {[
-                    t('mockEditor.quickPrompt.pricing'),
-                    t('mockEditor.quickPrompt.contact'),
-                    t('mockEditor.quickPrompt.colors'),
-                    'Add a FAQ section',
-                    'Add newsletter signup',
-                    'Add an about page',
-                  ].map((prompt) => (
-                    <button
-                      key={prompt}
-                      onClick={() => handleSend(prompt)}
-                      disabled={isTyping}
-                      className="px-3.5 py-2 text-[0.8125rem] rounded-full bg-white/55 dark:bg-white/[0.04] backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/[0.08] border border-gray-200/30 dark:border-white/10 text-gray-600 dark:text-white/50 transition-all disabled:opacity-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
-                    >
-                      {prompt}
-                    </button>
-                  ))}
-                </div>
+                <MockEditorControls
+                  isTyping={isTyping}
+                  handleGuidedRewrite={handleGuidedRewrite}
+                  handleGuidedPrice={handleGuidedPrice}
+                  handleGuidedTone={handleGuidedTone}
+                  handleGuidedTranslation={handleGuidedTranslation}
+                />
               </div>
             </div>
 
             {/* Mock Site Preview */}
-            <div className="w-full sm:w-1/2 bg-white dark:bg-[#0f0f12] overflow-hidden overflow-y-auto relative flex flex-col">
-              {/* Right edge mask */}
-              <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white dark:from-[#0f0f12] to-transparent pointer-events-none z-10" />
+            <div className="relative flex w-full flex-col overflow-hidden overflow-y-auto bg-[#f3f3eb] text-[#12352c] sm:w-1/2">
               {/* Realistic site header */}
-              <div
-                className={`flex items-center justify-between px-4 py-2.5 border-b transition-all duration-500 ${
-                  mockSite.headerStyle === 'minimal'
-                    ? 'bg-transparent border-transparent'
-                    : 'bg-gray-50/80 dark:bg-gray-900/50 border-gray-100 dark:border-gray-800'
+              <header
+                className={`sticky top-0 z-10 flex min-h-14 items-center justify-between border-b border-[#12352c]/10 bg-[#f3f3eb]/95 px-5 backdrop-blur-sm transition-colors duration-200 ${
+                  mockSite.headerStyle === 'minimal' ? 'border-transparent' : ''
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-5 h-5 rounded-md flex items-center justify-center text-[0.5rem] font-bold text-white transition-colors duration-500 ${
-                      mockSite.primaryColor === 'violet'
-                        ? 'bg-[var(--fs-accent)]/50'
-                        : 'bg-emerald-500'
-                    }`}
-                  >
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-[#12352c] text-[0.6875rem] font-bold text-[#f3f3eb]">
                     {t('mockEditor.site.brandInitial')}
                   </div>
-                  <span className="text-[0.8125rem] font-semibold text-[var(--fs-ink)]">
+                  <span className="text-[0.875rem] font-bold tracking-[-0.02em]">
                     {t('mockEditor.site.brand')}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-[0.6875rem] text-[var(--fs-ink-faint)]">
-                  <span className="hover:text-gray-900 dark:hover:text-white cursor-default">
+                <nav className="flex items-center gap-3 text-[0.6875rem] font-medium text-[#12352c]/65">
+                  <span className="text-[#12352c]">
                     {t('mockEditor.site.nav.home')}
                   </span>
                   {mockSite.hasAboutPage && (
-                    <span
-                      className={`font-medium transition-all duration-500 ${
-                        mockSite.primaryColor === 'violet'
-                          ? 'text-[var(--fs-accent)]'
-                          : 'text-emerald-500'
-                      }`}
-                    >
-                      {t('mockEditor.site.nav.about')}
-                    </span>
+                    <span>{t('mockEditor.site.nav.about')}</span>
                   )}
                   <span>{t('mockEditor.site.nav.shop')}</span>
                   <span>{t('mockEditor.site.nav.contact')}</span>
-                </div>
-              </div>
+                </nav>
+              </header>
 
-              {/* Hero section with image placeholder */}
-              <div className="px-4 py-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <div className="h-2.5 w-24 bg-gray-800 dark:bg-white rounded mb-1.5" />
+              {/* Live hero copy */}
+              <section className="grid min-h-[19rem] grid-cols-[1.08fr_0.92fr] border-b border-[#12352c]/10">
+                <div className="flex flex-col justify-center px-5 py-8">
+                  <div className="mb-4 flex items-center gap-2 text-[0.625rem] font-semibold text-[#12352c]/65">
+                    <span>Roasted weekly</span>
+                    <span className="h-px w-5 bg-[#ef5b45]" aria-hidden />
+                    <span>Cluj</span>
+                  </div>
+                  <h4
+                    data-preview-field="headline"
+                    className={`-ml-1 max-w-[17rem] rounded-[4px] px-1 py-0.5 text-[1.65rem] font-bold leading-[0.98] tracking-[-0.055em] transition-colors duration-500 ${
+                      mockSite.updatedField === 'headline'
+                        ? 'bg-[#ef5b45]/20'
+                        : 'bg-transparent'
+                    }`}
+                  >
+                    {mockSite.headline}
+                  </h4>
+                  <p
+                    data-preview-field="introduction"
+                    className={`-ml-1 mt-4 max-w-[15rem] rounded-[4px] px-1 py-0.5 text-[0.75rem] leading-[1.5] text-[#12352c]/70 transition-colors duration-500 ${
+                      mockSite.updatedField === 'introduction'
+                        ? 'bg-[#ef5b45]/20'
+                        : 'bg-transparent'
+                    }`}
+                  >
+                    {mockSite.introduction}
+                  </p>
+                  <div className="mt-5 flex items-center gap-3">
                     <div
-                      className={`h-3 w-20 rounded mb-2 transition-colors duration-500 ${
-                        mockSite.primaryColor === 'violet'
-                          ? 'bg-[var(--fs-accent)]/50'
-                          : 'bg-emerald-500'
-                      }`}
-                    />
-                    <div className="h-1.5 w-28 bg-gray-300 dark:bg-gray-600 rounded mb-1" />
-                    <div className="h-1.5 w-24 bg-gray-300 dark:bg-gray-600 rounded mb-3" />
-                    <div
-                      className={`h-5 w-16 rounded-full text-[0.5625rem] text-white flex items-center justify-center transition-colors duration-500 ${
-                        mockSite.primaryColor === 'violet'
-                          ? 'bg-[var(--fs-accent)]/50'
-                          : 'bg-emerald-500'
+                      data-preview-field="cta"
+                      className={`flex min-h-9 w-fit max-w-[9.5rem] items-center justify-center rounded-[7px] bg-[#ef5b45] px-4 text-[0.6875rem] font-bold text-white transition-[box-shadow,background-color] duration-200 ${
+                        mockSite.updatedField === 'cta'
+                          ? 'ring-2 ring-[#ef5b45]/30 ring-offset-2 ring-offset-[#f3f3eb]'
+                          : ''
                       }`}
                     >
-                      {t('mockEditor.site.shopNow')}
+                      {mockSite.ctaLabel}
                     </div>
-                  </div>
-                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-amber-200 to-amber-400 dark:from-amber-700 dark:to-amber-900 flex items-center justify-center">
-                    <span className="text-2xl">☕</span>
+                    <span className="text-[0.625rem] font-semibold text-[#12352c] underline decoration-[#12352c]/25 underline-offset-4">
+                      How we roast
+                    </span>
                   </div>
                 </div>
-              </div>
+                <div className="relative min-h-[19rem] overflow-hidden bg-[#12352c]">
+                  <Image
+                    src="/images/demo/coffeeroast-hero-v2.png"
+                    alt="Forest-green coffee bag beside a ceramic cup"
+                    fill
+                    sizes="(min-width: 640px) 25vw, 46vw"
+                    className="object-cover object-[54%_55%]"
+                  />
+                </div>
+              </section>
+
+              <section
+                data-demo-section="trust"
+                className="grid grid-cols-3 border-b border-[#12352c]/10 px-5 py-4"
+              >
+                {[
+                  ['48 hours', 'Roast to dispatch'],
+                  ['4.9 / 5', '320 coffee lovers'],
+                  ['Over €35', 'Free delivery'],
+                ].map(([value, label], index) => (
+                  <div
+                    key={label}
+                    className={
+                      index === 0 ? 'pr-3' : 'border-l border-[#12352c]/10 px-3'
+                    }
+                  >
+                    <div className="text-[0.75rem] font-bold tracking-[-0.02em]">
+                      {value}
+                    </div>
+                    <div className="mt-1 text-[0.5625rem] leading-tight text-[#12352c]/55">
+                      {label}
+                    </div>
+                  </div>
+                ))}
+              </section>
 
               {/* Contact form - animated in */}
               <div
@@ -376,30 +415,122 @@ export function MockEditorPreview({
                 </div>
               </div>
 
-              {/* Products/Features section */}
-              <div className="px-4 py-3">
-                <div className="text-xs font-semibold text-[var(--fs-ink-dim)] mb-2">
-                  {t('mockEditor.site.blends')}
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {['☕', '🫘', '✨'].map((emoji, i) => (
-                    <div
-                      key={i}
-                      className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 text-center"
+              {/* Products section */}
+              <section data-demo-section="products" className="px-5 py-7">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <h5 className="text-[1.25rem] font-bold tracking-[-0.04em]">
+                      Coffee worth waking up for.
+                    </h5>
+                    <p
+                      data-preview-field="service"
+                      lang={mockSite.language}
+                      className={`-ml-1 mt-2 rounded-[4px] px-1 py-0.5 text-[0.6875rem] leading-relaxed text-[#12352c]/65 transition-colors duration-500 ${
+                        mockSite.updatedField === 'service'
+                          ? 'bg-[#ef5b45]/20'
+                          : 'bg-transparent'
+                      }`}
                     >
-                      <div className="text-base mb-1">{emoji}</div>
-                      <div className="h-1.5 w-10 mx-auto bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-                      <div
-                        className={`h-1.5 w-6 mx-auto rounded transition-colors duration-500 ${
-                          mockSite.primaryColor === 'violet'
-                            ? 'bg-[var(--fs-accent)]/40'
-                            : 'bg-emerald-400'
-                        }`}
-                      />
+                      {mockSite.serviceDescription}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-[0.625rem] font-bold text-[#ef5b45]">
+                    Shop all
+                  </span>
+                </div>
+                <div className="mt-5 border-y border-[#12352c]/15">
+                  {[
+                    ['01', 'House Blend', 'Cocoa, caramel', '€14'],
+                    ['02', 'Transylvania', 'Plum, hazelnut', '€16'],
+                    ['03', 'Golden Hour', 'Honey, citrus', '€18'],
+                  ].map(([number, name, notes, price], index) => (
+                    <div
+                      key={name}
+                      className={`grid grid-cols-[1.7rem_1fr_auto] items-center gap-3 py-3.5 ${
+                        index > 0 ? 'border-t border-[#12352c]/10' : ''
+                      }`}
+                    >
+                      <span className="text-[0.5625rem] font-bold text-[#ef5b45]">
+                        {number}
+                      </span>
+                      <div>
+                        <div className="text-[0.75rem] font-bold">{name}</div>
+                        <div className="mt-0.5 text-[0.5625rem] text-[#12352c]/55">
+                          {notes}
+                        </div>
+                      </div>
+                      <span className="text-[0.6875rem] font-bold">
+                        {price}
+                      </span>
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
+
+              <section
+                data-demo-section="brand-story"
+                className="grid grid-cols-[1fr_7.5rem] gap-5 border-y border-[#12352c]/10 bg-[#e4eadf] px-5 py-7"
+              >
+                <div>
+                  <h5 className="max-w-[15rem] text-[1.25rem] font-bold leading-[1.05] tracking-[-0.04em]">
+                    Small batches. Serious attention.
+                  </h5>
+                  <p className="mt-3 max-w-[17rem] text-[0.6875rem] leading-relaxed text-[#12352c]/70">
+                    We source with care, roast in Cluj, and print the roast date
+                    on every bag.
+                  </p>
+                  <div className="mt-4 text-[0.625rem] font-bold text-[#ef5b45]">
+                    Meet the roastery
+                  </div>
+                </div>
+                <div className="border-l border-[#12352c]/15 pl-4">
+                  <div className="text-[2.25rem] font-bold leading-none tracking-[-0.06em]">
+                    12
+                  </div>
+                  <div className="mt-2 text-[0.625rem] leading-relaxed text-[#12352c]/65">
+                    farms we buy from directly
+                  </div>
+                </div>
+              </section>
+
+              <section data-demo-section="customer-proof" className="px-5 py-7">
+                <div className="text-[0.6875rem] tracking-[0.14em] text-[#ef5b45]">
+                  ★★★★★
+                </div>
+                <blockquote className="mt-3 max-w-[25rem] text-[1.05rem] font-bold leading-[1.25] tracking-[-0.025em]">
+                  “The first coffee subscription I actually look forward to.”
+                </blockquote>
+                <div className="mt-3 text-[0.625rem] text-[#12352c]/55">
+                  Ana M., subscriber since 2024
+                </div>
+              </section>
+
+              <section
+                data-demo-section="subscription"
+                className="mx-5 mb-7 grid grid-cols-[1fr_auto] items-end gap-4 rounded-[8px] bg-[#12352c] px-5 py-5 text-[#f3f3eb]"
+              >
+                <div>
+                  <div className="text-[0.875rem] font-bold">
+                    Never run out of good coffee.
+                  </div>
+                  <div className="mt-1 text-[0.625rem] text-[#f3f3eb]/65">
+                    Save 10%. Pause whenever you like.
+                  </div>
+                  <div
+                    data-preview-field="price"
+                    className={`-ml-1 mt-2 w-fit rounded-[4px] px-1 py-0.5 text-[0.6875rem] font-bold transition-colors duration-500 ${
+                      mockSite.updatedField === 'price'
+                        ? 'bg-[#ef5b45]/45'
+                        : 'bg-transparent'
+                    }`}
+                  >
+                    {mockSite.subscriptionPrice}
+                  </div>
+                </div>
+                <div className="shrink-0 rounded-[7px] bg-[#ef5b45] px-3 py-2.5 text-[0.625rem] font-bold text-white">
+                  Build a subscription
+                </div>
+              </section>
 
               {/* Testimonials - animated in */}
               <div

@@ -22,14 +22,10 @@ export function getStaticPaths() {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
-  const slugFromHref = (href?: string) => {
-    if (!href) return '';
-    const segments = href.split('/').filter(Boolean);
-    return segments[segments.length - 1] ?? '';
-  };
-
   return getCaseStudyProjects().map((project: Project) => {
-    const slug = slugFromHref(project.href) || slugify(project.title);
+    // Card hrefs may intentionally point to a shared service page. Static
+    // detail routes still need a stable, unique path for every project.
+    const slug = slugify(project.title);
     return {
       params: { slug },
       props: { project },

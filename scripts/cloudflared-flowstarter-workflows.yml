@@ -1,0 +1,14 @@
+tunnel: 9e39eaf5-69f6-437b-ac3c-eab194f1a5b7
+credentials-file: /Users/darius91/.cloudflared/9e39eaf5-69f6-437b-ac3c-eab194f1a5b7.json
+protocol: http2
+
+ingress:
+  - hostname: workflows.flowstarter.dev
+    service: http://127.0.0.1:3000
+  - hostname: flowstarter.dev
+    service: http://127.0.0.1:5733
+  - hostname: admin.flowstarter.dev
+    service: http://127.0.0.1:5734
+  - hostname: "*.flowstarter.dev"
+    service: http://127.0.0.1:5733
+  - service: http_status:404

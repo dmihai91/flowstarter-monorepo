@@ -107,3 +107,7 @@ apps/flowstarter-library/templates/*/package-lock.json
 .archive-wip-*/
 
 .demo-screenshots/
+
+# Generated demo artifacts (rebuildable from the pipeline)
+artifacts/darius-portfolio/
+workflow-showcase-static/

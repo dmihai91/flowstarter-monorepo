@@ -43,6 +43,11 @@ const EXCLUDED_FILES = new Set([
 	'config.json.tmp',
 ]);
 
+const BINARY_EXTENSIONS = new Set([
+	'.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico', '.pdf',
+	'.woff', '.woff2', '.ttf', '.otf', '.zip', '.gz',
+]);
+
 // Pattern for generated timestamp files (e.g., app.config.timestamp_1234567890.js)
 const TIMESTAMP_FILE_PATTERN = /\.(config|vite)\.timestamp_\d+\.js$/;
 
@@ -92,7 +97,12 @@ export async function buildFileTree(
 		};
 	} else {
 		// Check excluded files list
-		if (EXCLUDED_FILES.has(name)) {
+		if (
+			EXCLUDED_FILES.has(name) ||
+			name === '.env' ||
+			name.startsWith('.env.') ||
+			BINARY_EXTENSIONS.has(path.extname(name).toLowerCase())
+		) {
 			throw new Error(`Excluded file: ${name}`);
 		}
 

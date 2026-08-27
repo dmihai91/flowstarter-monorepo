@@ -334,6 +334,124 @@ export type Database = {
           },
         ]
       }
+      flowstarter_agent_jobs: {
+        Row: {
+          attempt_count: number
+          created_at: string
+          error_code: string | null
+          error_detail: string | null
+          finished_at: string | null
+          id: string
+          kind: string
+          payload: Json
+          pull_request_url: string | null
+          started_at: string | null
+          status: string
+          stripe_event_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          workspace_id: string
+          worktree_branch: string | null
+          worktree_path: string | null
+        }
+        Insert: {
+          attempt_count?: number
+          created_at?: string
+          error_code?: string | null
+          error_detail?: string | null
+          finished_at?: string | null
+          id?: string
+          kind: string
+          payload?: Json
+          pull_request_url?: string | null
+          started_at?: string | null
+          status?: string
+          stripe_event_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          workspace_id: string
+          worktree_branch?: string | null
+          worktree_path?: string | null
+        }
+        Update: {
+          attempt_count?: number
+          created_at?: string
+          error_code?: string | null
+          error_detail?: string | null
+          finished_at?: string | null
+          id?: string
+          kind?: string
+          payload?: Json
+          pull_request_url?: string | null
+          started_at?: string | null
+          status?: string
+          stripe_event_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          workspace_id?: string
+          worktree_branch?: string | null
+          worktree_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flowstarter_agent_jobs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flowstarter_project_artifacts: {
+        Row: {
+          brand_config: Json | null
+          created_at: string
+          intake_payload: Json
+          preview_artifact_url: string | null
+          preview_manifest: Json
+          scrape_manifest: Json
+          template_selection_reason: string | null
+          template_slug: string | null
+          template_version: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          brand_config?: Json | null
+          created_at?: string
+          intake_payload?: Json
+          preview_artifact_url?: string | null
+          preview_manifest?: Json
+          scrape_manifest?: Json
+          template_selection_reason?: string | null
+          template_slug?: string | null
+          template_version?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          brand_config?: Json | null
+          created_at?: string
+          intake_payload?: Json
+          preview_artifact_url?: string | null
+          preview_manifest?: Json
+          scrape_manifest?: Json
+          template_selection_reason?: string | null
+          template_slug?: string | null
+          template_version?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flowstarter_project_artifacts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hosting_servers: {
         Row: {
           caddy_admin_url: string | null
@@ -649,7 +767,10 @@ export type Database = {
       }
       workspaces: {
         Row: {
+          balance_payment_intent_id: string | null
+          balance_percent: number
           billing_interval: string
+          billing_currency: string
           client_business_name: string | null
           client_email: string | null
           client_name: string | null
@@ -670,12 +791,15 @@ export type Database = {
           deposit_invoice_id: string | null
           deposit_invoice_url: string | null
           deposit_paid_at: string | null
+          deposit_payment_intent_id: string | null
+          deposit_percent: number
           deposit_status: string
           final_amount: number | null
           final_invoice_id: string | null
           final_invoice_url: string | null
           final_paid_at: string | null
           final_status: string
+          final_value_minor: number | null
           founding_locked_until: string | null
           hosting_server_id: string | null
           id: string
@@ -685,6 +809,7 @@ export type Database = {
           monthly_fee: number | null
           name: string
           outstanding_payment: boolean
+          project_state: string
           setup_fee: number | null
           setup_go_live_at: string | null
           setup_mockup_approved_at: string | null
@@ -706,7 +831,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          balance_payment_intent_id?: string | null
+          balance_percent?: number
           billing_interval?: string
+          billing_currency?: string
           client_business_name?: string | null
           client_email?: string | null
           client_name?: string | null
@@ -727,12 +855,15 @@ export type Database = {
           deposit_invoice_id?: string | null
           deposit_invoice_url?: string | null
           deposit_paid_at?: string | null
+          deposit_payment_intent_id?: string | null
+          deposit_percent?: number
           deposit_status?: string
           final_amount?: number | null
           final_invoice_id?: string | null
           final_invoice_url?: string | null
           final_paid_at?: string | null
           final_status?: string
+          final_value_minor?: number | null
           founding_locked_until?: string | null
           hosting_server_id?: string | null
           id?: string
@@ -742,6 +873,7 @@ export type Database = {
           monthly_fee?: number | null
           name: string
           outstanding_payment?: boolean
+          project_state?: string
           setup_fee?: number | null
           setup_go_live_at?: string | null
           setup_mockup_approved_at?: string | null
@@ -763,7 +895,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          balance_payment_intent_id?: string | null
+          balance_percent?: number
           billing_interval?: string
+          billing_currency?: string
           client_business_name?: string | null
           client_email?: string | null
           client_name?: string | null
@@ -784,12 +919,15 @@ export type Database = {
           deposit_invoice_id?: string | null
           deposit_invoice_url?: string | null
           deposit_paid_at?: string | null
+          deposit_payment_intent_id?: string | null
+          deposit_percent?: number
           deposit_status?: string
           final_amount?: number | null
           final_invoice_id?: string | null
           final_invoice_url?: string | null
           final_paid_at?: string | null
           final_status?: string
+          final_value_minor?: number | null
           founding_locked_until?: string | null
           hosting_server_id?: string | null
           id?: string
@@ -799,6 +937,7 @@ export type Database = {
           monthly_fee?: number | null
           name?: string
           outstanding_payment?: boolean
+          project_state?: string
           setup_fee?: number | null
           setup_go_live_at?: string | null
           setup_mockup_approved_at?: string | null

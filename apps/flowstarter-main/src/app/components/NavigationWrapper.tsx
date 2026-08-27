@@ -16,6 +16,7 @@ import { ExternalNavigation, ExternalNavigationWithAuth } from './Navbar';
 // List of public routes that don't require authentication
 const publicRoutes = [
   '/',
+  '/workflow-showcase',
   '/about',
   '/login',
   '/sign-up',
@@ -26,6 +27,7 @@ const publicRoutes = [
 // Routes where we hide the default navbar (they have their own header)
 const noNavbarRoutes = [
   '/',
+  '/workflow-showcase',
   '/404',
   // Auth screens render their own <SiteHeader mode="auth" /> via AuthLayout —
   // without these the global ExternalNavigation stacks a second header on top.

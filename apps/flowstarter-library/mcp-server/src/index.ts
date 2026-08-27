@@ -8,14 +8,15 @@ import { startHttpServer } from './http-server.js';
 async function main() {
   // Check if authentication is configured
   const clerkConfigured = isClerkConfigured();
+  const internalAuthConfigured = Boolean(process.env.FLOWSTARTER_MCP_INTERNAL_TOKEN);
 
-  if (!clerkConfigured) {
-    console.error('ERROR: Clerk authentication is required but not configured!');
-    console.error('Please set CLERK_SECRET_KEY and CLERK_PUBLISHABLE_KEY in .env');
+  if (!clerkConfigured && !internalAuthConfigured) {
+    console.error('ERROR: MCP authentication is not configured!');
+    console.error('Configure Clerk or FLOWSTARTER_MCP_INTERNAL_TOKEN.');
     process.exit(1);
   }
 
-  console.error('Clerk authentication configured and required for all requests');
+  console.error('Flowstarter MCP authentication configured');
 
   // Parse command line arguments
   const args = process.argv.slice(2);
@@ -23,11 +24,11 @@ async function main() {
   const mode = modeArg ? modeArg.split('=')[1] : 'stdio';
 
   // Create MCP server with tools
-  const { server } = await createMcpServer();
+  const { server, fetcher } = await createMcpServer();
 
   if (mode === 'http') {
     // Start HTTP server
-    await startHttpServer(server);
+    await startHttpServer(fetcher);
     console.error('Flowstarter MCP Server is running in HTTP mode');
   } else {
     // Start stdio server (default)

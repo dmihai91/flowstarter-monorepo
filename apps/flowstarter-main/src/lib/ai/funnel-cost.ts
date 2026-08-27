@@ -85,6 +85,13 @@ export async function recordGenerationCost(input: {
   kind: GenerationKind;
   model?: string;
   usage?: FunnelUsage;
+  /**
+   * Actual cost (USD) reported by the provider. When given, it's used verbatim
+   * (treated ~1:1 with EUR for the kill-switch rail — slightly conservative)
+   * instead of the token-rate estimate. Pass this whenever the provider
+   * returns real cost so the cap tracks true spend, not a guess.
+   */
+  costUsd?: number;
   demoId?: string | null;
   ip?: string | null;
   leadEmail?: string | null;
@@ -93,13 +100,17 @@ export async function recordGenerationCost(input: {
     const sb = serviceClient();
     if (!sb) return;
     const { tokensIn, tokensOut } = normalizeUsage(input.usage);
+    const cost =
+      typeof input.costUsd === 'number' && input.costUsd > 0
+        ? input.costUsd
+        : estimateCostEur(input.model, input.usage);
     await sb.from('demo_generation_costs').insert({
       demo_id: input.demoId ?? null,
       kind: input.kind,
       model: input.model ?? null,
       tokens_in: tokensIn,
       tokens_out: tokensOut,
-      cost_eur: estimateCostEur(input.model, input.usage),
+      cost_eur: cost,
       ip: input.ip ?? null,
       lead_email: input.leadEmail ?? null,
     });

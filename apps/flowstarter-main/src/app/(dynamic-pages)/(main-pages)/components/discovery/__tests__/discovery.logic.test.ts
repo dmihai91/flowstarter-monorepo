@@ -103,6 +103,17 @@ describe('tier recommendation', () => {
     expect(rec.tier).toBe('custom');
   });
 
+  it('keeps standard booking, payment, and newsletter integrations in Pro', () => {
+    const rec = recommendTier({
+      ...base,
+      goal: 'bookings',
+      commerceMode: 'few-services',
+      customIntegrations:
+        'Cal.com for bookings, Stripe payment links, and a newsletter signup',
+    });
+    expect(rec.tier).toBe('pro');
+  });
+
   it('defaults a simple service site to starter', () => {
     const rec = recommendTier({
       ...base,

@@ -16,6 +16,7 @@ function baseProject(
     client_business_name: 'Acme Coaching',
     setup_fee: 799,
     monthly_fee: 49,
+    billing_interval: 'monthly',
     stripe_customer_id: null,
     stripe_subscription_id: null,
     subscription_status: null,
@@ -190,7 +191,8 @@ describe('StripeBilling.activateSubscription', () => {
     const out = await billing.activateSubscription({
       project: baseProject({ stripe_customer_id: 'cus_1' }),
       customerId: 'cus_1',
-      monthlyAmountMinor: 4900,
+      recurringAmountMinor: 4900,
+      cadence: 'monthly',
       productId: 'prod_concierge',
     });
     expect(out.subscriptionId).toBe('sub_1');
@@ -214,6 +216,36 @@ describe('StripeBilling.activateSubscription', () => {
     });
   });
 
+  it('creates a yearly subscription when yearly cadence is selected', async () => {
+    const subscriptions = {
+      create: vi.fn(async () => ({
+        id: 'sub_yearly',
+        status: 'active',
+        trial_end: null,
+        items: { data: [{ current_period_end: 1767225600 }] },
+      })),
+    };
+    const billing = new StripeBilling({
+      client: fakeStripe({ subscriptions }),
+    });
+
+    await billing.activateSubscription({
+      project: baseProject(),
+      customerId: 'cus_1',
+      recurringAmountMinor: 49_000,
+      cadence: 'yearly',
+      productId: 'prod_concierge',
+      trialPeriodDays: 0,
+    });
+
+    const arg = (subscriptions.create as AnyMock).mock.calls[0]?.[0];
+    expect(arg?.items[0].price_data).toMatchObject({
+      unit_amount: 49_000,
+      recurring: { interval: 'year' },
+    });
+    expect(arg?.metadata).toMatchObject({ cadence: 'yearly' });
+  });
+
   it('refuses if subscription already exists', async () => {
     const billing = new StripeBilling({
       client: fakeStripe({ subscriptions: { create: vi.fn() } }),
@@ -222,13 +254,14 @@ describe('StripeBilling.activateSubscription', () => {
       billing.activateSubscription({
         project: baseProject({ stripe_subscription_id: 'sub_existing' }),
         customerId: 'cus_1',
-        monthlyAmountMinor: 4900,
+        recurringAmountMinor: 4900,
+        cadence: 'monthly',
         productId: 'prod_x',
       })
     ).rejects.toMatchObject({ code: 'subscription_exists' });
   });
 
-  it('refuses non-positive monthlyAmountMinor', async () => {
+  it('refuses non-positive recurringAmountMinor', async () => {
     const billing = new StripeBilling({
       client: fakeStripe({ subscriptions: { create: vi.fn() } }),
     });
@@ -236,7 +269,8 @@ describe('StripeBilling.activateSubscription', () => {
       billing.activateSubscription({
         project: baseProject(),
         customerId: 'cus_1',
-        monthlyAmountMinor: 0,
+        recurringAmountMinor: 0,
+        cadence: 'monthly',
         productId: 'prod_x',
       })
     ).rejects.toMatchObject({ code: 'invalid_amount' });
@@ -253,7 +287,8 @@ describe('StripeBilling.activateSubscription', () => {
         billing.activateSubscription({
           project: baseProject(),
           customerId: 'cus_1',
-          monthlyAmountMinor: 4900,
+          recurringAmountMinor: 4900,
+          cadence: 'monthly',
         })
       ).rejects.toMatchObject({ code: 'missing_product_id' });
     } finally {

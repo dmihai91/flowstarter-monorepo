@@ -143,6 +143,13 @@ export async function ensureSandboxRunning(sandbox: Sandbox): Promise<boolean> {
  * port is actually serving HTTP (curl localhost) and only return that one —
  * otherwise the caller gets a 502 (e.g. picking 5173 when `astro dev` is on
  * 4321). 4321 (astro dev default) is probed first.
+ *
+ * The returned URL embeds the proxy auth token as `DAYTONA_SANDBOX_AUTH_KEY`.
+ * Without it, daytonaproxy01.net renders an Auth0 interstitial on first hit
+ * — when loaded in an iframe, the visitor sees a generic "verifying"
+ * warning instead of our demo site. The token comes back from
+ * `getPreviewLink()` for every sandbox (public or private); appending it
+ * here means every caller gets an iframe-ready URL transparently.
  */
 export async function getPreviewUrl(
   sandbox: Sandbox,
@@ -169,9 +176,15 @@ export async function getPreviewUrl(
 
   try {
     const previewLink = await sandbox.getPreviewLink(livePort);
-    const url =
-      typeof previewLink === 'string' ? previewLink : previewLink?.url;
-    return url || undefined;
+    if (typeof previewLink === 'string') {
+      return previewLink || undefined;
+    }
+    const baseUrl = previewLink?.url;
+    if (!baseUrl) return undefined;
+    const token = previewLink?.token;
+    if (!token) return baseUrl;
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    return `${baseUrl}${separator}DAYTONA_SANDBOX_AUTH_KEY=${encodeURIComponent(token)}`;
   } catch {
     return undefined;
   }

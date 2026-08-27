@@ -198,7 +198,7 @@ export default function AnalyticsPage() {
             <StatCard
               icon={<Sparkles className="w-4 h-4 text-[var(--purple)]" />}
               iconBg="bg-[var(--purple)]/10"
-              label="AI credits used"
+              label="AI usage units"
               value={totalCredits.toLocaleString()}
               sub={`${aiGeneratedCount} sites generated`}
             />

@@ -7,13 +7,13 @@
  *
  * Concierge billing flow:
  *   1. Discovery call → team scopes setup fee + monthly fee
- *   2. team clicks "Send deposit invoice" → createDepositInvoice (50%)
+ *   2. team clicks "Send deposit invoice" → createDepositInvoice (20%)
  *   3. Client pays via Stripe-hosted invoice URL → webhook marks deposit_status='paid'
  *   4. Team builds the site
- *   5. Site approved → team clicks "Send final invoice" → createFinalInvoice (50%)
- *   6. Client pays → webhook marks final_status='paid' + sets trial state
- *   7. Team clicks "Activate subscription" → activateSubscription with trial_period_days
- *   8. Stripe auto-bills monthly after trial ends
+ *   5. Site approved → team clicks "Send final invoice" → createFinalInvoice (80%)
+ *   6. Client pays → webhook marks final_status='paid'
+ *   7. Team activates a monthly or yearly care subscription
+ *   8. Production activation waits for final payment and a real subscription
  *
  * Pairs with /api/webhooks/stripe/route.ts which is already implemented.
  */
@@ -35,6 +35,7 @@ export type WorkspaceBillingRow = {
   client_business_name: string | null;
   setup_fee: number | null;
   monthly_fee: number | null;
+  billing_interval: string | null;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   subscription_status: string | null;
@@ -119,14 +120,14 @@ export class StripeBilling {
   }
 
   /**
-   * Create a 50% deposit invoice for a workspace's setup fee.
+   * Create a 20% deposit invoice for a workspace's setup fee.
    * Returns the invoice's hosted URL + the Stripe invoice ID.
    * Caller persists invoice ID + URL onto workspaces.deposit_invoice_*.
    */
   async createDepositInvoice(opts: {
     project: WorkspaceBillingRow;
     customerId: string;
-    /** amount in the smallest currency unit, e.g. 39950 for €399.50 */
+    /** amount in the smallest currency unit, e.g. 15980 for 20% of €799 */
     amountMinor: number;
     daysUntilDue?: number;
     description?: string;
@@ -139,12 +140,12 @@ export class StripeBilling {
       ...opts,
       invoiceType: 'deposit',
       defaultDescription:
-        opts.description ?? 'Flowstarter setup fee — 50% deposit',
+        opts.description ?? 'Flowstarter setup fee — 20% deposit',
     });
   }
 
   /**
-   * Create the final 50% invoice once the site is approved.
+   * Create the final 80% invoice once the site is approved.
    */
   async createFinalInvoice(opts: {
     project: WorkspaceBillingRow;
@@ -161,12 +162,12 @@ export class StripeBilling {
       ...opts,
       invoiceType: 'final',
       defaultDescription:
-        opts.description ?? 'Flowstarter setup fee — final 50% on approval',
+        opts.description ?? 'Flowstarter setup fee — final 80% on approval',
     });
   }
 
   /**
-   * Create a Stripe Subscription for the monthly fee.
+   * Create a Stripe Subscription for the monthly or yearly care fee.
    * `trialPeriodDays` defaults to 30 (first month free) per pricing copy.
    * Caller is responsible for persisting subscription_id and resetting any
    * older subscription state.
@@ -180,8 +181,9 @@ export class StripeBilling {
   async activateSubscription(opts: {
     project: WorkspaceBillingRow;
     customerId: string;
-    /** monthly amount in the smallest currency unit */
-    monthlyAmountMinor: number;
+    /** amount billed per selected interval, in the smallest currency unit */
+    recurringAmountMinor: number;
+    cadence: 'monthly' | 'yearly';
     /** Stripe Product ID (or set STRIPE_CONCIERGE_PRODUCT_ID in env) */
     productId?: string;
     trialPeriodDays?: number;
@@ -191,17 +193,17 @@ export class StripeBilling {
     trialEnd: Date | null;
     currentPeriodEnd: Date | null;
   }> {
-    const { project, customerId, monthlyAmountMinor } = opts;
+    const { project, customerId, recurringAmountMinor } = opts;
     if (project.stripe_subscription_id) {
       throw new StripeBillingError(
         'subscription_exists',
         `Project already has subscription ${project.stripe_subscription_id}; cancel it first`
       );
     }
-    if (!Number.isFinite(monthlyAmountMinor) || monthlyAmountMinor <= 0) {
+    if (!Number.isInteger(recurringAmountMinor) || recurringAmountMinor <= 0) {
       throw new StripeBillingError(
         'invalid_amount',
-        'monthlyAmountMinor must be a positive integer'
+        'recurringAmountMinor must be a positive integer'
       );
     }
     const productId = opts.productId ?? process.env.STRIPE_CONCIERGE_PRODUCT_ID;
@@ -220,13 +222,15 @@ export class StripeBilling {
         {
           price_data: {
             currency: this.currency,
-            unit_amount: monthlyAmountMinor,
-            recurring: { interval: 'month' },
+            unit_amount: recurringAmountMinor,
+            recurring: {
+              interval: opts.cadence === 'yearly' ? 'year' : 'month',
+            },
             product: productId,
           },
         },
       ],
-      metadata: { workspaceId: project.id },
+      metadata: { workspaceId: project.id, cadence: opts.cadence },
       // Auto-charge collection: Stripe attempts the card on file when the
       // trial ends. If no payment method is on file, the subscription enters
       // 'incomplete' state and we surface that in the webhook.
@@ -388,7 +392,7 @@ export async function ensureBillingCustomer(
     .from('workspaces')
     .select(
       `id, client_email, client_name, client_business_name,
-       setup_fee, monthly_fee, stripe_customer_id, stripe_subscription_id,
+       setup_fee, monthly_fee, billing_interval, stripe_customer_id, stripe_subscription_id,
        subscription_status, subscription_trial_ends,
        deposit_status, deposit_invoice_id,
        final_status, final_invoice_id`

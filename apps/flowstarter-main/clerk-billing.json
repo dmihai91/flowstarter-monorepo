@@ -1,18 +1,59 @@
 {
-  "_comment": "Clerk Billing config for Flowstarter (B2C user plans). Apply with: `clerk config patch --file apps/flowstarter-main/clerk-billing.json` (after `clerk auth login` + `clerk link`). Slugs MUST match PlanKey in apps/flowstarter-editor/server/src/usage/planEntitlements.ts so the billing webhook can mirror plan -> workspaces.tier_name. Amounts in minor units (cents), EUR. Dev instance uses Clerk's dev billing gateway (no Stripe needed); prod connects Stripe. Billing APIs are experimental — verify field names against `clerk config pull --keys billing` before applying.",
   "billing": {
     "user_enabled": true,
-    "organization_enabled": false,
-    "plans": [
-      { "slug": "starter",   "name": "Starter",   "amount": 4900,  "currency": "eur", "payer_type": "user", "is_recurring": true },
-      { "slug": "pro",       "name": "Pro",       "amount": 9900,  "currency": "eur", "payer_type": "user", "is_recurring": true },
-      { "slug": "ecommerce", "name": "Ecommerce", "amount": 12900, "currency": "eur", "payer_type": "user", "is_recurring": true },
-      { "slug": "max",       "name": "Max",       "amount": 24900, "currency": "eur", "payer_type": "user", "is_recurring": true }
-    ],
-    "features": [
-      { "slug": "manual_model_picker",   "name": "Manual model picker" },
-      { "slug": "code_experimentation",  "name": "Code experimentation" },
-      { "slug": "store_ops",             "name": "Store operations" }
-    ]
+    "plans": {
+      "starter": {
+        "name": "Starter",
+        "amount": 4900,
+        "annual_monthly_amount": 0,
+        "currency": "USD",
+        "description": "5–7 page service site, AI edits.",
+        "features": [],
+        "free_trial_days": null,
+        "free_trial_enabled": false,
+        "is_recurring": true,
+        "payer_type": "user",
+        "publicly_visible": true
+      },
+      "pro": {
+        "name": "Pro",
+        "amount": 9900,
+        "annual_monthly_amount": 0,
+        "currency": "USD",
+        "description": "More pages + integrations, manual model picker.",
+        "features": [],
+        "free_trial_days": null,
+        "free_trial_enabled": false,
+        "is_recurring": true,
+        "payer_type": "user",
+        "publicly_visible": true
+      },
+      "ecommerce": {
+        "name": "Ecommerce",
+        "amount": 12900,
+        "annual_monthly_amount": 0,
+        "currency": "USD",
+        "description": "Storefront + product/collection ops.",
+        "features": [],
+        "free_trial_days": null,
+        "free_trial_enabled": false,
+        "is_recurring": true,
+        "payer_type": "user",
+        "publicly_visible": true
+      },
+      "max": {
+        "name": "Max",
+        "amount": 24900,
+        "annual_monthly_amount": 0,
+        "currency": "USD",
+        "description": "Pro + code experimentation.",
+        "features": [],
+        "free_trial_days": null,
+        "free_trial_enabled": false,
+        "is_recurring": true,
+        "payer_type": "user",
+        "publicly_visible": true
+      }
+    }
   }
 }

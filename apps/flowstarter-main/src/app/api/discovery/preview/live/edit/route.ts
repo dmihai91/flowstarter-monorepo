@@ -57,8 +57,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Fast content edits run Kimi+Haiku over OpenRouter; structural edits use the
+  // autonomous Claude agent (ANTHROPIC_API_KEY). Require at least OpenRouter.
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
   const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
-  if (!anthropicApiKey) {
+  if (!openRouterKey) {
     return NextResponse.json({ error: 'unavailable' }, { status: 503 });
   }
 
@@ -82,41 +85,61 @@ export async function POST(req: NextRequest) {
         /\b(re-?structure|re-?layout|re-?build|rework the (layout|structure)|new layout|change the layout|add a page|new page)\b/i.test(
           instruction
         );
-      const editModel = structural ? 'claude-sonnet-4-6' : 'claude-haiku-4-5';
       const repoRoot = join(process.cwd(), '..', '..');
       const { fastEditInSandbox, editSiteInSandbox } = await import(
         '@flowstarter/daytona-utils'
       );
-      updateJob(demoId, {
-        editPhase: structural
-          ? 'Planning a structural change'
-          : 'Applying your change',
-      });
 
-      const r = structural
-        ? await editSiteInSandbox(job.sandboxId!, instruction, {
-            anthropicApiKey,
-            model: editModel,
-            env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
-            onProgress: (e) =>
-              updateJob(demoId, {
-                editPhase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
-              }),
-          })
-        : await fastEditInSandbox(job.sandboxId!, instruction, {
-            anthropicApiKey,
-            runnerPath: join(
-              repoRoot,
-              'packages/agentic-codegen/sandbox/fast-edit-runner.mjs'
-            ),
-            model: editModel,
-            env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+      let r: {
+        ok: boolean;
+        error?: string;
+        costUsd?: number;
+        tokensIn?: number;
+        tokensOut?: number;
+      };
+      let editModel: string;
+      if (structural) {
+        // Autonomous multi-file change — needs the Claude Agent SDK. Fails open
+        // (the visitor just retries) if no Anthropic key is configured.
+        if (!anthropicApiKey) {
+          updateJob(demoId, {
+            editStatus: 'failed',
+            editError: 'structural edits unavailable',
           });
+          return;
+        }
+        editModel = 'claude-sonnet-4-6';
+        updateJob(demoId, { editPhase: 'Planning a structural change' });
+        r = await editSiteInSandbox(job.sandboxId!, instruction, {
+          anthropicApiKey,
+          model: editModel,
+          env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+          onProgress: (e) =>
+            updateJob(demoId, {
+              editPhase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
+            }),
+        });
+      } else {
+        // Fast content edit: Kimi implements, Haiku critic checks, 1 retry.
+        editModel = 'moonshotai/kimi-k2.6';
+        updateJob(demoId, { editPhase: 'Applying your change' });
+        r = await fastEditInSandbox(job.sandboxId!, instruction, {
+          openRouterKey,
+          runnerPath: join(
+            repoRoot,
+            'packages/agentic-codegen/sandbox/fast-edit-runner.mjs'
+          ),
+          model: editModel,
+          criticModel: 'anthropic/claude-haiku-4.5',
+          env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+        });
+      }
 
       await recordGenerationCost({
         kind: 'edit',
         model: editModel,
-        usage: {},
+        usage: { inputTokens: r.tokensIn ?? 0, outputTokens: r.tokensOut ?? 0 },
+        costUsd: r.costUsd,
         demoId,
         ip,
       }).catch(() => {});

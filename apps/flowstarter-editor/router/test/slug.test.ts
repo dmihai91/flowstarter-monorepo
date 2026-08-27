@@ -23,7 +23,7 @@ describe("parseWorkspaceSlugFromHost (mirror of clerkGate)", () => {
   test("workspace subdomain → slug (port + case stripped)", () => {
     expect(parse("acme.flowstarter.net")).toBe("acme");
     expect(parse("acme.flowstarter.net:443")).toBe("acme");
-    expect(parse("ACME.FlowStarter.NET")).toBe("acme");
+    expect(parse("ACME.Flowstarter.NET")).toBe("acme");
     expect(parse("a1-b2.flowstarter.net")).toBe("a1-b2");
   });
 

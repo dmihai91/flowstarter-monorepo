@@ -15,7 +15,7 @@ import {
 /**
  * POST /api/admin/projects/[id]/billing/final-invoice
  *
- * Creates the final 50% invoice once the site is approved by the client.
+ * Creates the final 80% invoice once the site is approved by the client.
  * Refuses if deposit hasn't been paid (we don't want to send the final
  * before the deposit lands), or if final is already paid.
  *
@@ -87,7 +87,7 @@ export async function POST(
   const amountMinor = resolveAmountMinor(
     body.amount,
     row.setup_fee ?? 0,
-    /* halfOfSetup */ true
+    /* percentageOfSetup */ 80
   );
   if (amountMinor <= 0) {
     return NextResponse.json(

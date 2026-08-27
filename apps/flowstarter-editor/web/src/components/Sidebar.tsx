@@ -140,7 +140,6 @@ import {
   useThreadJumpHintVisibility,
   ThreadStatusPill,
 } from "./Sidebar.logic";
-import { UsageChip } from "./UsageChip";
 import { PowerUserOnly } from "./auth/TierGate";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { readEnvironmentApi } from "../environmentApi";
@@ -2149,11 +2148,7 @@ const SidebarChromeHeader = memo(function SidebarChromeHeader() {
 
 const SidebarChromeFooter = memo(function SidebarChromeFooter() {
   return (
-    <SidebarFooter className="px-3 py-2">
-      <div className="flex min-h-0 justify-center">
-        <UsageChip />
-      </div>
-    </SidebarFooter>
+    <SidebarFooter className="px-3 py-2" />
   );
 });
 

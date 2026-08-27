@@ -107,6 +107,32 @@ export function BusinessStep({
           className={fieldInputClass}
         />
       </Field>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field
+          label={t('landing.discovery.fields.instagramUrl')}
+          hint={t('landing.discovery.hints.socialProfiles')}
+        >
+          <input
+            type="url"
+            value={data.instagramUrl}
+            onChange={(e) => update('instagramUrl', e.target.value)}
+            placeholder="https://instagram.com/yourbusiness"
+            className={fieldInputClass}
+            autoComplete="url"
+          />
+        </Field>
+        <Field label={t('landing.discovery.fields.linkedinUrl')}>
+          <input
+            type="url"
+            value={data.linkedinUrl}
+            onChange={(e) => update('linkedinUrl', e.target.value)}
+            placeholder="https://linkedin.com/company/yourbusiness"
+            className={fieldInputClass}
+            autoComplete="url"
+          />
+        </Field>
+      </div>
     </div>
   );
 }

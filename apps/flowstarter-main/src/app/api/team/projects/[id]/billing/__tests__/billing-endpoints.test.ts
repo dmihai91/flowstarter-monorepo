@@ -5,7 +5,7 @@
  * route logic (auth, validation, ensure-customer, persist, error mapping)
  * without hitting Stripe live.
  *
- * Tests the 50/50 + subscription flow end-to-end:
+ * Tests the 20/80 + subscription flow end-to-end:
  *   1. POST /api/team/projects/[id]/billing/deposit-invoice
  *   2. POST /api/team/projects/[id]/billing/final-invoice
  *   3. POST /api/team/projects/[id]/billing/activate-subscription
@@ -119,6 +119,7 @@ const baseProject = {
   client_business_name: 'Acme Coaching',
   setup_fee: 799,
   monthly_fee: 49,
+  billing_interval: 'monthly',
   stripe_customer_id: null,
   stripe_subscription_id: null,
   subscription_status: null,
@@ -173,7 +174,7 @@ describe('POST /api/team/projects/[id]/billing/deposit-invoice', () => {
     expect(res.status).toBe(200);
     expect(body.invoice.id).toBe('in_final');
     expect(body.invoice.hostedUrl).toBe('https://invoice.stripe.com/abc');
-    expect(body.invoice.amountMinor).toBe(39950); // €799 × 0.5 × 100
+    expect(body.invoice.amountMinor).toBe(15980); // €799 × 0.2 × 100
     expect(stripeMock.customers.create).toHaveBeenCalledOnce();
     expect(stripeMock.invoices.create).toHaveBeenCalledOnce();
     expect(stripeMock.invoiceItems.create).toHaveBeenCalledOnce();
@@ -242,7 +243,7 @@ describe('POST /api/team/projects/[id]/billing/final-invoice', () => {
     expect(body.deposit_status).toBe('sent');
   });
 
-  it('creates the second 50% when deposit is paid', async () => {
+  it('creates the remaining 80% when deposit is paid', async () => {
     setupProjectFetchAndUpdate({
       ...baseProject,
       stripe_customer_id: 'cus_existing',
@@ -261,7 +262,7 @@ describe('POST /api/team/projects/[id]/billing/final-invoice', () => {
     });
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.invoice.amountMinor).toBe(39950); // remaining 50%
+    expect(body.invoice.amountMinor).toBe(63920); // remaining 80%
     expect(stripeMock.invoices.create).toHaveBeenCalledOnce();
   });
 

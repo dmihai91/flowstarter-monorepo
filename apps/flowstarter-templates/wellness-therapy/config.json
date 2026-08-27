@@ -1,0 +1,10 @@
+{
+  "name": "Wellness & Therapy",
+  "slug": "wellness-therapy",
+  "description": "Warm, reassuring service template for therapists, counsellors, psychologists, wellness practitioners, nutritionists, and coaches.",
+  "category": "health-wellness",
+  "framework": "astro",
+  "tags": ["therapist", "counsellor", "psychologist", "wellness", "nutrition", "coach", "appointments"],
+  "features": ["services overview", "practitioner story", "trust-building content", "booking CTA", "accessible calm layout"],
+  "bestFor": ["personal care practices", "appointment-led services", "clients who need reassurance before booking"]
+}

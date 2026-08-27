@@ -12,36 +12,29 @@ export type Tier = 'starter' | 'pro' | 'commerce' | 'custom';
 /**
  * Monthly subscription is INDEPENDENT of the one-time setup package. The
  * client picks a build package (Tier) and, separately, a monthly plan sized
- * by AI edit sessions. The Commerce build package is the exception: it has a
- * dedicated flat store subscription instead of the 3-tier picker.
+ * by editor capabilities. The Commerce build package is the exception: it has
+ * a dedicated flat store subscription instead of the 3-tier picker.
  */
 export type SubscriptionTier = 'starter' | 'pro' | 'max';
+export type BillingCadence = 'monthly' | 'yearly';
 
 export const SUBSCRIPTIONS: Record<
   SubscriptionTier,
-  { priceEur: number; sessions: number }
+  { priceEur: number; summary: string }
 > = {
-  // Mirrors PLAN_ENTITLEMENTS in
-  // apps/flowstarter-editor/server/src/usage/planEntitlements.ts (the
-  // runtime source of truth). Change that table, then mirror here.
-  starter: { priceEur: 49, sessions: 30 },
-  pro: { priceEur: 99, sessions: 60 },
-  max: { priceEur: 249, sessions: 120 },
+  starter: { priceEur: 49, summary: 'Guided editor access' },
+  pro: { priceEur: 99, summary: 'Manual model picker included' },
+  max: { priceEur: 249, summary: 'Code experimentation included' },
 };
 
 /**
- * Commerce build → dedicated "Pro+" store plan: more AI sessions than Pro
- * plus store editing (products/collections from a separate ops pool).
+ * Commerce build → dedicated store plan with product and collection editing.
  * Mirrors PLAN_ENTITLEMENTS.ecommerce.
  */
-export const ECOMMERCE_SUBSCRIPTION = { priceEur: 129, sessions: 90 };
-
-/** Session multiple vs Starter, for "2×"/"4×" style labels (no drift). */
-export function sessionMultiple(tier: SubscriptionTier): number {
-  return Math.round(
-    SUBSCRIPTIONS[tier].sessions / SUBSCRIPTIONS.starter.sessions
-  );
-}
+export const ECOMMERCE_SUBSCRIPTION = {
+  priceEur: 129,
+  summary: 'Store editing for products and collections',
+};
 
 /** True when the build tier uses the dedicated store subscription. */
 export function usesDedicatedSubscription(tier: Tier | ''): boolean {
@@ -105,6 +98,8 @@ export interface DiscoveryData {
   industry: string;
   description: string;
   targetAudience: string;
+  instagramUrl: string;
+  linkedinUrl: string;
 
   // Step 3 — goals. Free-form: chip presets + freetext, comma-joined.
   goal: string;
@@ -127,6 +122,7 @@ export interface DiscoveryData {
   // Step 6 — monthly plan (independent of setup; n/a for Commerce, which
   // uses the dedicated store subscription)
   subscription: SubscriptionTier | '';
+  billingCadence: BillingCadence;
 }
 
 export const EMPTY_DISCOVERY: DiscoveryData = {
@@ -136,6 +132,8 @@ export const EMPTY_DISCOVERY: DiscoveryData = {
   industry: '',
   description: '',
   targetAudience: '',
+  instagramUrl: '',
+  linkedinUrl: '',
   goal: '',
   secondaryGoals: [],
   brandTone: '',
@@ -146,6 +144,7 @@ export const EMPTY_DISCOVERY: DiscoveryData = {
   customIntegrations: '',
   selectedTier: '',
   subscription: '',
+  billingCadence: 'monthly',
 };
 
 export const STEPS: Array<{ n: Step; key: string }> = [
@@ -325,8 +324,8 @@ const DEFAULT_ORDER: DemoSectionId[] = [
 
 /**
  * Compose the editable DemoSite from the generated copy + wizard answers.
- * Value props are distilled from the first services; the testimonial is a
- * neutral placeholder (clearly a demo, not a fabricated real review).
+ * Value props are distilled from the first services. Testimonials stay hidden
+ * until the client supplies approved evidence.
  */
 export function buildDemoSite(
   d: Pick<
@@ -369,10 +368,8 @@ export function buildDemoSite(
     },
     about: copy.about,
     testimonial: {
-      quote: d.targetAudience.trim()
-        ? `Exactly what ${d.targetAudience.trim()} were looking for.`
-        : 'Exactly what our clients were looking for.',
-      author: 'Sample testimonial — replace with a real one',
+      quote: 'Client-approved testimonial content can appear here.',
+      author: 'Hidden until evidence is supplied',
     },
     cta: {
       headline: copy.finalCta.headline,
@@ -380,7 +377,7 @@ export function buildDemoSite(
       button: copy.finalCta.button,
     },
     order: [...DEFAULT_ORDER],
-    hidden: [],
+    hidden: ['testimonial'],
   };
 }
 
@@ -412,7 +409,15 @@ export function recommendTier(d: DiscoveryData): Recommendation {
   const reasons: string[] = [];
 
   const integrations = d.customIntegrations.trim();
-  const hasCustomIntegrations = integrations.length > 5;
+  const integrationRequests = integrations
+    .split(/[,;\n]|\band\b/gi)
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const standardIntegration =
+    /\b(cal\.com|calendly|stripe|payment links?|newsletter|mailchimp|convertkit|brevo|contact forms?|booking)\b/i;
+  const hasCustomIntegrations = integrationRequests.some(
+    (request) => !standardIntegration.test(request)
+  );
 
   const physicalOrMixed =
     d.commerceMode === 'physical' || d.commerceMode === 'mixed';

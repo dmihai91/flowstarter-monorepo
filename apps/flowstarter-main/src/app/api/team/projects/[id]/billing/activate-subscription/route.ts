@@ -11,12 +11,13 @@ import { mapBillingError } from '@/lib/billing/route-helpers';
 /**
  * POST /api/team/projects/[id]/billing/activate-subscription
  *
- * Creates the recurring monthly subscription with a 30-day trial (first
- * month free). Refuses if both setup invoices haven't been paid (we want
+ * Creates the recurring monthly or yearly care subscription. Refuses if
+ * both setup invoices haven't been paid (we want
  * the client fully onboarded financially before the recurring clock starts).
  *
- * Body: { monthlyAmount?: number, trialPeriodDays?: number }
- *   - monthlyAmount defaults to projects.monthly_fee (in major units)
+ * Body: { recurringAmount?: number, cadence?: 'monthly' | 'yearly', trialPeriodDays?: number }
+ *   - recurringAmount defaults to monthly_fee, multiplied by 12 for yearly billing
+ *   - cadence defaults to workspaces.billing_interval, then monthly
  *   - trialPeriodDays defaults to 30
  *
  * Response: { subscription: { id, status, trialEnd, currentPeriodEnd } }
@@ -30,7 +31,9 @@ export async function POST(
 
   const { id: workspaceId } = await params;
   const body = (await req.json().catch(() => ({}))) as {
+    recurringAmount?: unknown;
     monthlyAmount?: unknown;
+    cadence?: unknown;
     trialPeriodDays?: unknown;
   };
 
@@ -93,16 +96,23 @@ export async function POST(
     }
   }
 
-  // Resolve monthly amount.
-  const monthlyAmountMinor = resolveMonthlyAmount(
-    body.monthlyAmount,
-    row.monthly_fee ?? 0
+  const cadence = resolveCadence(body.cadence, row.billing_interval);
+  if (!cadence) {
+    return NextResponse.json(
+      { error: 'cadence must be monthly or yearly' },
+      { status: 400 }
+    );
+  }
+  const recurringAmountMinor = resolveRecurringAmount(
+    body.recurringAmount ?? body.monthlyAmount,
+    row.monthly_fee ?? 0,
+    cadence
   );
-  if (monthlyAmountMinor <= 0) {
+  if (recurringAmountMinor <= 0) {
     return NextResponse.json(
       {
         error:
-          'Cannot derive monthly amount. Set workspaces.monthly_fee or pass monthlyAmount in major units.',
+          'Cannot derive recurring amount. Set workspaces.monthly_fee or pass recurringAmount in major units.',
       },
       { status: 400 }
     );
@@ -114,7 +124,8 @@ export async function POST(
     result = await billing.activateSubscription({
       project: row,
       customerId,
-      monthlyAmountMinor,
+      recurringAmountMinor,
+      cadence,
       trialPeriodDays,
     });
   } catch (e) {
@@ -151,14 +162,26 @@ export async function POST(
   });
 }
 
-function resolveMonthlyAmount(raw: unknown, monthlyFeeMajor: number): number {
+function resolveRecurringAmount(
+  raw: unknown,
+  monthlyFeeMajor: number,
+  cadence: 'monthly' | 'yearly'
+): number {
   if (raw !== undefined && raw !== null) {
     const n = Number(raw);
     if (Number.isFinite(n) && n > 0) return Math.round(n * 100);
     return 0;
   }
   if (!Number.isFinite(monthlyFeeMajor) || monthlyFeeMajor <= 0) return 0;
-  return Math.round(monthlyFeeMajor * 100);
+  return Math.round(monthlyFeeMajor * (cadence === 'yearly' ? 12 : 1) * 100);
+}
+
+function resolveCadence(
+  raw: unknown,
+  stored: string | null
+): 'monthly' | 'yearly' | null {
+  const value = raw ?? stored ?? 'monthly';
+  return value === 'monthly' || value === 'yearly' ? value : null;
 }
 
 function sanitizeTrialDays(raw: unknown): number {

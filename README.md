@@ -34,9 +34,10 @@ This is an Nx + pnpm monorepo.
    the deploy-agent onto a Hetzner Caddy host.
 3. The client gets a constrained editor (`flowstarter-editor`); the team has
    the full editor. Pricing: one-time build, plus a **separate** monthly
-   plan sized by AI edit sessions.
+   plan sized by editor capabilities.
 
 Canonical product/pricing decisions: **`docs/FLOWSTARTER_MASTER_DECISIONS.md`**.
+Anthropic org user workflow: **`docs/ANTHROPIC_ORG_USERS.md`**.
 
 ## Develop
 

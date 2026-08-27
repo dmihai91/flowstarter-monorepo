@@ -181,7 +181,10 @@ export async function parseTemplate(
     description: config.description || description || `Premium ${templateName} template`,
     category,
     useCase,
-    targetAudience: targetAudience || 'Various businesses',
+    targetAudience:
+      targetAudience ||
+      (Array.isArray(config.bestFor) ? config.bestFor.join('; ') : '') ||
+      'Various businesses',
     features: config.features || features,
     techStack: {
       framework,

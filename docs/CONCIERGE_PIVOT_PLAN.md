@@ -34,8 +34,8 @@ Sections of this doc that mention Cloudflare Pages, `pages.dev` URLs, or Daytona
 ## Pricing (current — superseded by FLOWSTARTER_MASTER_DECISIONS.md)
 
 The build (one-time setup) and the monthly plan are **decoupled**: a client
-picks a build package and, separately, a monthly plan sized by AI edit
-sessions. All setup prices are "from" minimums; final scope is agreed on the
+picks a build package and, separately, a monthly plan sized by editor
+capabilities. All setup prices are "from" minimums; final scope is agreed on the
 call. Storefront/Commerce is **open to everyone** (no longer coming-soon).
 
 **Build packages (one-time, from):**
@@ -47,10 +47,11 @@ call. Storefront/Commerce is **open to everyone** (no longer coming-soon).
 | **Ecommerce** | €1,499 | A real catalog: custom Astro storefront headless against **Shopify** (physical) or **Lemon Squeezy / Paddle** (digital). Open to everyone. |
 | **Custom** | €2,499 | Bespoke web apps / integrations, quoted on the call. |
 
-**Monthly plan (independent of the build):** Starter €49/mo (30 AI edit
-sessions), Pro €99/mo (60, 2×), Max €249/mo (120, 4×). The Ecommerce package
-uses a dedicated store plan: **€129/mo** (90 AI edit sessions + storefront
-ops). First month free; change or cancel anytime.
+**Monthly plan (independent of the build):** Starter €49/mo for guided editor
+access, Pro €99/mo with manual model selection, Max €249/mo with code
+experimentation. The Ecommerce package uses a dedicated store plan:
+**€129/mo** with product and collection editing. First month free; change or
+cancel anytime.
 
 **Booking deposit:** 10% of the build setup to book the discovery call
 (Starter €79 / Pro €119 / Commerce €149) or **€199 flat for Custom**.

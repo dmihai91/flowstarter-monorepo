@@ -246,8 +246,31 @@ describe('workspace safety', () => {
     ]);
 
     expect(entries).toEqual([
-      { sourceId: 'post0', publicPath: '/flowstarter-assets/post0.jpg' },
+      {
+        sourceId: 'post0',
+        publicPath: '/flowstarter-assets/post0.jpg',
+        heroEligible: false,
+      },
     ]);
+
+    // A parseable PNG header yields pixel dimensions on the entry.
+    const png = Buffer.concat([
+      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      Buffer.from([0, 0, 0, 13]),
+      Buffer.from('IHDR', 'ascii'),
+      Buffer.from([0, 0, 0x03, 0x20, 0, 0, 0x02, 0x58, 8, 6, 0, 0, 0]),
+    ]);
+    const [pngEntry] = await materializeCachedAssets(root, [
+      { sourceId: 'shot', fileName: 'shot.png', contentBase64: png.toString('base64') },
+    ]);
+    expect(pngEntry).toEqual({
+      sourceId: 'shot',
+      publicPath: '/flowstarter-assets/shot.png',
+      width: 800,
+      height: 600,
+      // Big enough, but the caller never vouched for it.
+      heroEligible: false,
+    });
     expect(
       await readFile(join(root, 'public/flowstarter-assets/post0.jpg')),
     ).toEqual(photo);

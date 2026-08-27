@@ -124,10 +124,15 @@ const pipeline = new PreviewGenerationPipeline(agents, library, validator, publi
 });
 // The client's own Instagram media, written into public/flowstarter-assets/
 // so the agent can use his real photos for portrait and project slots.
+// heroEligible models the intake question a concierge would ask ("which
+// photo represents you professionally?"). post2 is the only well-composed
+// portrait; the profile picture is 320px and is disqualified on size anyway.
+const HERO_ELIGIBLE = new Set(['post2']);
 const cachedAssetFiles = readdirSync('/tmp/ig-media').map((f) => ({
   sourceId: f.replace('.jpg', ''),
   fileName: f,
   contentBase64: readFileSync(`/tmp/ig-media/${f}`).toString('base64'),
+  heroEligible: HERO_ELIGIBLE.has(f.replace('.jpg', '')),
 }));
 
 const result = await pipeline.run({ intake, corpus, cachedAssets: [], cachedAssetFiles,

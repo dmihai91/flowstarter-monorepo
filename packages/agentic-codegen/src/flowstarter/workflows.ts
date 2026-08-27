@@ -4,7 +4,11 @@ import { PiSdkFlowstarterAgents, type AgentBuildResult } from './pi-sdk';
 import type { TemplateClassifier } from './template-classifier';
 import { buildIntakeText } from './template-classifier';
 import { injectPreviewTeaser, type PreviewTeaserOptions } from './preview-teaser';
-import { materializeCachedAssets, type CachedAssetFile } from './preview-assets';
+import {
+  materializeCachedAssets,
+  type CachedAssetEntry,
+  type CachedAssetFile,
+} from './preview-assets';
 import { assertSafeBusinessIntake } from './intake-guard';
 import type { TemplateLibrary } from './template-library-mcp';
 import {
@@ -167,9 +171,9 @@ export class PreviewGenerationPipeline {
         }
       }
 
-      // Soft check: the client's own media should actually appear. One repair
-      // pass; unlike the checks above this never fails the pipeline, because
-      // a stubborn image slot must not cost the client their whole preview.
+      // Soft checks on image placement. Both run one repair pass at most and
+      // never fail the pipeline: a stubborn image slot must not cost the
+      // client their whole preview.
       const mediaIssue = await findClientMediaIssue(
         workspace.root,
         cachedAssets,
@@ -178,6 +182,16 @@ export class PreviewGenerationPipeline {
       if (mediaIssue) {
         input.onPhase?.('Placing your own photos');
         build = await personalize(mediaIssue);
+      }
+
+      const heroIssue = await findHeroAssetIssue(
+        workspace.root,
+        cachedAssets,
+        build,
+      );
+      if (heroIssue) {
+        input.onPhase?.('Choosing the right hero image');
+        build = await personalize(heroIssue);
       }
 
       input.onPhase?.('Checking the preview');
@@ -307,13 +321,57 @@ async function findPersonalizationIssue(
 }
 
 /**
+ * Trusted post-session check that the hero image is one the caller vouched
+ * for. Aesthetic suitability is not something the orchestrator can judge from
+ * bytes, so the gate is mechanical: only `heroEligible` client media may sit
+ * in a hero slot, and everything else falls back to the template's own
+ * art-directed asset.
+ */
+async function findHeroAssetIssue(
+  workspaceRoot: string,
+  cachedAssets: CachedAssetEntry[],
+  build: AgentBuildResult,
+): Promise<string | undefined> {
+  const barred = cachedAssets.filter((asset) => !asset.heroEligible);
+  if (barred.length === 0) return undefined;
+
+  for (const path of build.changedPaths) {
+    let content: string;
+    try {
+      content = await readFile(join(workspaceRoot, path), 'utf8');
+    } catch {
+      continue;
+    }
+    // The hero image key sits at the top of the template's content file; a
+    // barred asset on that line is the failure this check exists to catch.
+    const heroLine = content
+      .split('\n')
+      .find((line) => /^\s{0,4}image:\s*["']?\/flowstarter-assets\//.test(line));
+    if (!heroLine) continue;
+    const used = barred.find((asset) => heroLine.includes(asset.publicPath));
+    if (!used) continue;
+    const allowed = cachedAssets.filter((asset) => asset.heroEligible);
+    return (
+      `the hero image is ${used.publicPath}, which is not marked ` +
+      '"heroEligible" and must not fill a hero slot. ' +
+      (allowed.length > 0
+        ? `Use ${allowed.map((asset) => asset.publicPath).join(' or ')} instead.`
+        : 'Use the template\'s own art-directed asset, or leave the hero ' +
+          'image empty so the template renders its designed art panel.') +
+      ` Keep ${used.publicPath} only in a secondary about, project, or mood slot.`
+    );
+  }
+  return undefined;
+}
+
+/**
  * Trusted post-session check that the client's own media made it into the
  * site. Returns bounded repair feedback, or undefined when at least one
  * cached asset is referenced (or there is none to place).
  */
 async function findClientMediaIssue(
   workspaceRoot: string,
-  cachedAssets: Array<{ sourceId: string; publicPath: string }>,
+  cachedAssets: CachedAssetEntry[],
   build: AgentBuildResult,
 ): Promise<string | undefined> {
   if (cachedAssets.length === 0 || build.changedPaths.length === 0) {

@@ -215,13 +215,137 @@ describe('Flowstarter preview-to-build orchestration', () => {
 
     expect(seenAssets).toEqual([
       { sourceId: 'seed', publicPath: '/assets/seed.webp' },
-      { sourceId: 'profile', publicPath: '/flowstarter-assets/profile.jpg' },
+      {
+        sourceId: 'profile',
+        publicPath: '/flowstarter-assets/profile.jpg',
+        // Unparseable stub bytes: no dimensions, so not hero-eligible.
+        heroEligible: false,
+      },
     ]);
     expect(assetBytesInWorkspace).toEqual(Buffer.from([7, 7, 7]));
     expect(mediaFeedbacks).toHaveLength(2);
     expect(mediaFeedbacks[0]).toBeUndefined();
     expect(mediaFeedbacks[1]).toContain("client's own photos");
     expect(mediaFeedbacks[1]).toContain('/flowstarter-assets/profile.jpg');
+  });
+
+  it('bars a client photo that is not hero-eligible from the hero slot', async () => {
+    const intake = validIntake();
+    const big = Buffer.concat([
+      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      Buffer.from([0, 0, 0, 13]),
+      Buffer.from('IHDR', 'ascii'),
+      // 1080x1350 — clears the hero resolution floor.
+      Buffer.from([0, 0, 0x04, 0x38, 0, 0, 0x05, 0x46, 8, 6, 0, 0, 0]),
+    ]).toString('base64');
+    const feedbacks: Array<string | undefined> = [];
+
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        feedbacks.push(input.feedback);
+        // First pass puts the barred snapshot in the hero.
+        const hero = input.feedback?.includes('heroEligible')
+          ? '/flowstarter-assets/portrait.png'
+          : '/flowstarter-assets/snapshot.png';
+        await writeFile(
+          join(input.workspaceRoot, 'src/content/site.md'),
+          `Calm Path Therapy preview\n  image: "${hero}"\n`,
+          'utf8',
+        );
+        return { summary: 'done', changedPaths: ['src/content/site.md'] };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      staticLibrary(),
+      { validate: async () => undefined },
+      staticPublisher(),
+    );
+    await pipeline.run({
+      intake,
+      corpus: validCorpus(intake.projectId),
+      cachedAssets: [],
+      cachedAssetFiles: [
+        { sourceId: 'snap', fileName: 'snapshot.png', contentBase64: big },
+        {
+          sourceId: 'portrait',
+          fileName: 'portrait.png',
+          contentBase64: big,
+          heroEligible: true,
+        },
+      ],
+    });
+
+    const heroFeedback = feedbacks.find((f) => f?.includes('heroEligible'));
+    expect(heroFeedback).toBeDefined();
+    expect(heroFeedback).toContain('/flowstarter-assets/snapshot.png');
+    expect(heroFeedback).toContain('/flowstarter-assets/portrait.png');
+  });
+
+  it('leaves an eligible hero photo alone', async () => {
+    const intake = validIntake();
+    const big = Buffer.concat([
+      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      Buffer.from([0, 0, 0, 13]),
+      Buffer.from('IHDR', 'ascii'),
+      Buffer.from([0, 0, 0x04, 0x38, 0, 0, 0x05, 0x46, 8, 6, 0, 0, 0]),
+    ]).toString('base64');
+    const feedbacks: Array<string | undefined> = [];
+
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        feedbacks.push(input.feedback);
+        await writeFile(
+          join(input.workspaceRoot, 'src/content/site.md'),
+          'Calm Path Therapy preview\n  image: "/flowstarter-assets/portrait.png"\n',
+          'utf8',
+        );
+        return { summary: 'done', changedPaths: ['src/content/site.md'] };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      staticLibrary(),
+      { validate: async () => undefined },
+      staticPublisher(),
+    );
+    await pipeline.run({
+      intake,
+      corpus: validCorpus(intake.projectId),
+      cachedAssets: [],
+      cachedAssetFiles: [
+        {
+          sourceId: 'portrait',
+          fileName: 'portrait.png',
+          contentBase64: big,
+          heroEligible: true,
+        },
+      ],
+    });
+
+    expect(feedbacks.some((f) => f?.includes('heroEligible'))).toBe(false);
   });
 
   it('retries personalization with feedback when the agent leaves the template untouched', async () => {

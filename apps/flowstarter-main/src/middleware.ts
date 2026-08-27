@@ -284,6 +284,18 @@ const isKnownAppRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  // ── Workflow showcase subdomain rewrite ──────────────────────────────────
+  // Keep the public demo URL clean while preserving the real app route and
+  // its same-origin video assets under the hood.
+  {
+    const host = (req.headers.get('host') ?? '').toLowerCase().split(':')[0];
+    if (host === 'workflows.flowstarter.dev' && req.nextUrl.pathname === '/') {
+      const url = req.nextUrl.clone();
+      url.pathname = '/workflow-showcase';
+      return NextResponse.rewrite(url);
+    }
+  }
+
   // ── Library subdomain rewrite ─────────────────────────────────────────────
   // The library lives at https://library.flowstarter.net but is served from
   // the same Next.js app under /library/*. Rewrite the host to the internal

@@ -159,40 +159,51 @@ export default {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  allowedDevOrigins: ['192.168.3.119', '127.0.0.1', 'localhost', 'flowstarter.dev', 'editor.flowstarter.dev', 'library.flowstarter.dev'],
+  allowedDevOrigins: ['192.168.3.119', '127.0.0.1', 'localhost', 'flowstarter.dev', 'editor.flowstarter.dev', 'library.flowstarter.dev', 'workflows.flowstarter.dev'],
   turbopack: {
     resolveExtensions: ['.tsx', '.ts', '.jsx', '.js'],
   },
-  // Keep webpack config for production builds (turbopack covers dev)
-  webpack: (config, { isServer }) => {
-    // Exclude templates directory from the build
-    config.watchOptions = {
-      ...config.watchOptions,
-      ignored: ['**/templates/**', '**/node_modules/**'],
-    };
+  // Webpack is for production builds only — Turbopack covers dev.
+  //
+  // This has to stay conditional. Next 16 runs dev on Turbopack by default,
+  // but merely *defining* a `webpack` key opts the whole dev server back onto
+  // webpack, whose CSS pipeline resolves `@import './animations.css'` in
+  // src/styles/globals.css against `<repo>/apps` and 500s every page. Tailwind
+  // v4 handles that import correctly on its own; only the webpack fallback
+  // gets it wrong. Exporting the key unconditionally is what broke `next dev`.
+  ...(process.env.NODE_ENV === 'development'
+    ? {}
+    : {
+        webpack: (config, { isServer }) => {
+          // Exclude templates directory from the build
+          config.watchOptions = {
+            ...config.watchOptions,
+            ignored: ['**/templates/**', '**/node_modules/**'],
+          };
 
-    // Prevent webpack from trying to resolve template files
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@/templates': false,
-    };
+          // Prevent webpack from trying to resolve template files
+          config.resolve.alias = {
+            ...config.resolve.alias,
+            '@/templates': false,
+          };
 
-    // Optimize caching and compilation speed
-    config.cache = {
-      type: 'filesystem',
-      buildDependencies: {
-        config: [CONFIG_FILE],
-      },
-    };
+          // Optimize caching and compilation speed
+          config.cache = {
+            type: 'filesystem',
+            buildDependencies: {
+              config: [CONFIG_FILE],
+            },
+          };
 
-    // Optimize module resolution
-    config.resolve.extensionAlias = {
-      '.js': ['.js', '.ts', '.tsx'],
-      '.jsx': ['.jsx', '.tsx'],
-    };
+          // Optimize module resolution
+          config.resolve.extensionAlias = {
+            '.js': ['.js', '.ts', '.tsx'],
+            '.jsx': ['.jsx', '.tsx'],
+          };
 
-    return config;
-  },
+          return config;
+        },
+      }),
   // Keep heavy native deps as external `require()` calls so they aren't
   // re-bundled per route — keeps Lambda cold starts smaller.
   serverExternalPackages: ['@daytonaio/sdk'],

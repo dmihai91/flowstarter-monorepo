@@ -1,0 +1,10 @@
+{
+  "name": "Creative Portfolio",
+  "slug": "creative-portfolio",
+  "description": "Editorial portfolio template for designers, photographers, makers, artists, stylists, creators, and expressive personal brands.",
+  "category": "personal-brand",
+  "framework": "astro",
+  "tags": ["portfolio", "designer", "photographer", "artist", "maker", "stylist", "creator", "personal brand"],
+  "features": ["project-led storytelling", "visual portfolio", "personal profile", "inquiry CTA", "editorial rhythm"],
+  "bestFor": ["visual work", "creative services", "personality-led differentiation"]
+}

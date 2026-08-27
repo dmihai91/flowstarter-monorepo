@@ -60,7 +60,8 @@ button {
    Ink black + warm gallery paper + one electric vermilion accent.
    Display face: Fraunces (high-contrast serif). Text face: Space Grotesk.
    ============================================================ */
-:root {
+  :root {
+  color-scheme: light dark;
   /* Colors — light "gallery paper" mode */
   --ink: #111014;
   --paper: #F4F1EA;
@@ -392,5 +393,22 @@ h5 {
   .section-label {
     letter-spacing: 0.2em;
     margin-bottom: 14px;
+  }
+}
+
+/* Dark-mode repair: 'light band' sections previously kept ink-colored text
+   (class selectors outspecify the global heading rescue rule) over the dark
+   page — invisible. In dark, a light band is an elevated card with light text. */
+@media (prefers-color-scheme: dark) {
+  /* !important: Astro's scoped [data-astro-cid] selectors (0,2,0) outrank any
+     unscoped repair rule; this block is a terminal override layer. */
+  .ds-section--light {
+    background: var(--bg-card) !important;
+  }
+  .ds-section--light :is(h1, h2, h3, h4, h5, h6, p, li, a, span, figcaption, blockquote) {
+    color: var(--text-primary) !important;
+  }
+  .ds-section--light :is(.text-muted, [class*='__meta'], [class*='__sub']) {
+    color: var(--text-secondary) !important;
   }
 }

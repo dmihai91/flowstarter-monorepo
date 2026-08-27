@@ -25,6 +25,7 @@ export interface EditorAuthorizationContext {
 
 export type EditorPolicyDecision =
   | { action: 'inline_content_agent'; reason: string }
+  | { action: 'client_media_upload'; reason: string }
   | { action: 'operator_workbench'; reason: string }
   | { action: 'maintenance_request'; reason: string }
   | { action: 'deny'; reason: string };
@@ -60,6 +61,14 @@ export function resolveEditorPolicy(
       action: 'inline_content_agent',
       reason:
         'Localized plain-text changes are included in client self-service',
+    };
+  }
+  if (capability === 'image') {
+    // Swapping the picture in a slot the template already renders cannot
+    // change the structure of the site, so clients own their own photographs.
+    return {
+      action: 'client_media_upload',
+      reason: 'Clients replace the photos in their own site slots',
     };
   }
   return {

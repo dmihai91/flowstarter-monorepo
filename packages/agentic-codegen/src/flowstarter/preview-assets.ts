@@ -37,7 +37,7 @@ export interface CachedAssetEntry {
 }
 
 /** Best-effort dimensions from the image header; undefined when unknown. */
-function probeImageSize(
+export function probeImageSize(
   bytes: Buffer,
 ): { width: number; height: number } | undefined {
   // PNG: IHDR directly after the 8-byte signature.

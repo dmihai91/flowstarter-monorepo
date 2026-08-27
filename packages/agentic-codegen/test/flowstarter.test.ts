@@ -43,6 +43,11 @@ import { TemplateClassifier, buildIntakeText as __bit, describeCandidate as __dc
 
 import { materializeScaffold } from '../src/flowstarter/worktree';
 import { materializeCachedAssets } from '../src/flowstarter/preview-assets';
+import {
+  assertSafeUploadedImage,
+  listSiteImageSlots,
+  replaceSiteImage,
+} from '../src/flowstarter/site-media';
 
 describe('sigma template classifier', () => {
   // Stub embedder: axis-aligned vectors keyed by trigger words — deterministic.
@@ -485,3 +490,129 @@ function validBrandConfig(): BrandConfig {
     },
   };
 }
+
+describe('client media on a delivered site', () => {
+
+  /** A real PNG header: 800x600, enough to clear the resolution floor. */
+  function png(width = 800, height = 600): Buffer {
+    const ihdr = Buffer.alloc(13);
+    ihdr.writeUInt32BE(width, 0);
+    ihdr.writeUInt32BE(height, 4);
+    return Buffer.concat([
+      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      Buffer.from([0, 0, 0, 13]),
+      Buffer.from('IHDR', 'ascii'),
+      ihdr,
+    ]);
+  }
+
+  const CONTENT = [
+    'header:',
+    '  logo: "ATELIER VERSO"',
+    'hero:',
+    '  image: "/images/hero.png"',
+    'caseStudies:',
+    '  projects:',
+    '    - title: "One"',
+    '      imageSrc: "/images/boutique.png"',
+    '      imageAlt: "A stock bakery app"',
+    'testimonials:',
+    '  - quote: "Great"',
+    '    authorImage: "/images/face.png"',
+    'blogPage:',
+    '  articles:',
+    '    - imageSrc: "/images/journal-clarity.svg"',
+    '',
+  ].join('\n');
+
+  async function fixture(): Promise<string> {
+    const root = await mkdtemp(join(tmpdir(), 'fs-media-'));
+    temporaryDirectories.push(root);
+    await mkdir(join(root, 'src/content'), { recursive: true });
+    await writeFile(join(root, 'src/content/site-labels.md'), CONTENT, 'utf8');
+    return root;
+  }
+
+  it('lists every rendered image slot with its section and alt text', async () => {
+    const slots = await listSiteImageSlots(await fixture());
+    expect(slots.map((s) => [s.section, s.key, s.currentPath])).toEqual([
+      ['hero', 'image', '/images/hero.png'],
+      ['caseStudies', 'imageSrc', '/images/boutique.png'],
+      ['testimonials', 'authorImage', '/images/face.png'],
+      // Placeholder SVG art is replaceable too; only the upload must be raster.
+      ['blogPage', 'imageSrc', '/images/journal-clarity.svg'],
+    ]);
+    expect(slots[1]?.alt).toBe('A stock bakery app');
+    // `header.logo` is a text wordmark in this template, not an image.
+    expect(slots.some((s) => s.section === 'header')).toBe(false);
+  });
+
+  it('swaps one slot in place and leaves every other line untouched', async () => {
+    const root = await fixture();
+    const slots = await listSiteImageSlots(root);
+    const project = slots[1]!;
+
+    const result = await replaceSiteImage(root, {
+      slot: project,
+      bytes: png(),
+      alt: 'My bakery rebrand',
+    });
+
+    expect(result.previousPath).toBe('/images/boutique.png');
+    expect(result.publicPath).toMatch(/^\/flowstarter-media\/boutique-8\.png$/);
+    const updated = await readFile(
+      join(root, 'src/content/site-labels.md'),
+      'utf8',
+    );
+    expect(updated).toContain('imageSrc: "/flowstarter-media/boutique-8.png"');
+    expect(updated).toContain('imageAlt: "My bakery rebrand"');
+    // Untouched neighbours prove the edit is a line swap, not a re-serialize.
+    expect(updated).toContain('image: "/images/hero.png"');
+    expect(updated).toContain('authorImage: "/images/face.png"');
+    expect(updated.split('\n')).toHaveLength(CONTENT.split('\n').length);
+    // The bytes actually landed in the site.
+    expect(
+      await readFile(join(root, 'public/flowstarter-media/boutique-8.png')),
+    ).toEqual(png());
+  });
+
+  it('refuses uploads that are not real raster images', async () => {
+    const svg = Buffer.from('<svg onload="alert(1)"></svg>', 'utf8');
+    expect(() => assertSafeUploadedImage(svg)).toThrow(/not a PNG, JPEG/);
+    expect(() => assertSafeUploadedImage(Buffer.alloc(0))).toThrow(/empty/);
+    // A renamed script is rejected on its bytes, not its extension.
+    expect(() =>
+      assertSafeUploadedImage(Buffer.from('#!/bin/sh\nrm -rf /', 'utf8')),
+    ).toThrow(/not a PNG, JPEG/);
+    // Too small to render well.
+    expect(() => assertSafeUploadedImage(png(120, 90))).toThrow(/blurry/);
+  });
+
+  it('refuses to write when the slot moved since it was read', async () => {
+    const root = await fixture();
+    const slots = await listSiteImageSlots(root);
+    const stale = { ...slots[1]!, currentPath: '/images/something-else.png' };
+
+    await expect(
+      replaceSiteImage(root, { slot: stale, bytes: png() }),
+    ).rejects.toThrow(/changed since this image slot was read/);
+  });
+
+  it('keeps a client-supplied alt from breaking the content file', async () => {
+    const root = await fixture();
+    const slots = await listSiteImageSlots(root);
+
+    await replaceSiteImage(root, {
+      slot: slots[1]!,
+      bytes: png(),
+      alt: 'He said "hi"\nnext: injected',
+    });
+
+    const updated = await readFile(
+      join(root, 'src/content/site-labels.md'),
+      'utf8',
+    );
+    expect(updated).toContain('imageAlt: "He said  hi  next: injected"');
+    expect(updated.split('\n')).toHaveLength(CONTENT.split('\n').length);
+  });
+});

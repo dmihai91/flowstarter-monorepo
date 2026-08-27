@@ -30,7 +30,9 @@ export function UnlockCheckoutButton({
         error?: string;
       };
       if (!response.ok || !payload.url) {
-        setError(payload.error ?? 'Could not start checkout. Please try again.');
+        setError(
+          payload.error ?? 'Could not start checkout. Please try again.'
+        );
         setBusy(false);
         return;
       }

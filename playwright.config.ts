@@ -1,4 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+// Side effect: loads apps/flowstarter-main/.env.local so Clerk keys reach both
+// this config and the test workers.
+import { STORAGE_STATE } from './e2e/support/clerk-env';
 
 export default defineConfig({
   testDir: './e2e',
@@ -26,6 +29,24 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      // Authenticated specs run in `chromium-auth`; the setup project is not a
+      // test suite. Everything else stays unauthenticated, as it was.
+      testIgnore: [/\.auth\.spec\.ts$/, /global\.setup\.ts$/],
+    },
+    {
+      name: 'setup',
+      testMatch: /global\.setup\.ts$/,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'chromium-auth',
+      testMatch: /\.auth\.spec\.ts$/,
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        // Written by the setup project after a real Clerk sign-in.
+        storageState: STORAGE_STATE,
+      },
     },
   ],
 

@@ -624,3 +624,69 @@ describe('preview teaser injection', () => {
     expect(result.layoutsPatched).toBe(0);
   });
 });
+
+describe('rendered-audit repair loop', () => {
+  it('repairs and republishes once when the audit reports a defect', async () => {
+    const { PreviewGenerationPipeline } = await import('../src/flowstarter/workflows');
+    const { mkdir: mkdirP, writeFile: writeF } = await import('node:fs/promises');
+    const { join: joinP } = await import('node:path');
+
+    const calls: string[] = [];
+    let teardowns = 0;
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy', reason: 'r', matchedSignals: [], confidence: 0.9,
+      }),
+      buildPreview: async (input: { workspaceRoot: string; feedback?: string }) => {
+        calls.push(input.feedback ? `personalize:${input.feedback.slice(0, 30)}` : 'personalize:first');
+        const target = joinP(input.workspaceRoot, 'src/content/site.md');
+        await mkdirP(joinP(input.workspaceRoot, 'src/content'), { recursive: true });
+        await writeF(target, `# ${validIntake().business.name}`, 'utf8');
+        return { summary: 'ok', changedPaths: ['src/content/site.md'] };
+      },
+    } as never;
+    const library = {
+      search: async () => [],
+      getDetails: async () => ({}),
+      scaffold: async () => ({
+        template: { metadata: { slug: 'wellness-therapy', displayName: 'x', description: 'x', category: 'services', useCase: [], fileCount: 1, totalLOC: 1 }, config: {} },
+        files: [{ path: 'src/content/site.md', content: 'seed', type: 'file' }],
+      }),
+      close: async () => undefined,
+    } as never;
+    const validator = { validate: async () => undefined } as never;
+    const publisher = {
+      publish: async () => {
+        calls.push('publish');
+        return {
+          previewUrl: `http://preview/${calls.filter((c) => c === 'publish').length}`,
+          artifactUrl: 'local://x',
+          files: [],
+          teardown: async () => { teardowns++; },
+        };
+      },
+    } as never;
+
+    let audits = 0;
+    const pipeline = new PreviewGenerationPipeline(agents, library, validator, publisher, undefined, {
+      renderedAudit: async (url: string) => {
+        audits++;
+        calls.push(`audit:${url}`);
+        return audits === 1 ? 'hero heading renders dark-on-dark in the dark scheme' : undefined;
+      },
+    });
+
+    const result = await pipeline.run({ intake: validIntake(), corpus: validCorpus(validIntake().projectId), cachedAssets: [] });
+
+    expect(calls).toEqual([
+      'personalize:first',
+      'publish',
+      'audit:http://preview/1',
+      'personalize:A rendered review of the publi',
+      'publish',
+    ]);
+    expect(teardowns).toBe(1);
+    expect(result.previewUrl).toBe('http://preview/2');
+  });
+});

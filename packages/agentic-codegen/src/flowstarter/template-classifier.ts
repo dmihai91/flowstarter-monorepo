@@ -91,10 +91,17 @@ export function buildIntakeText(input: {
   targetAudience?: string;
   primaryGoal?: string;
 }): string {
-  return [input.niche, input.description, input.targetAudience, input.primaryGoal]
+  // Embed business facts, not instructions: long intake descriptions carry
+  // content-policy prose ("do not invent clients…") that dilutes the
+  // embedding and drags similarity toward generic templates. Keep the niche,
+  // audience and goal whole, and only the first sentence of the description.
+  const firstSentence = input.description
+    ?.slice(0, 240)
+    .split(/(?<=[.!?])\s/)[0];
+  return [input.niche, firstSentence, input.targetAudience, input.primaryGoal]
     .filter(Boolean)
     .join('. ')
-    .slice(0, 1_500);
+    .slice(0, 600);
 }
 
 function cosine(a: Float32Array, b: Float32Array): number {

@@ -41,7 +41,9 @@ const { heading, links, className = '' } = Astro.props;
 
   .ds-footer-column__link {
     font-size: var(--fs-small);
-    color: var(--text-nav);
+    /* Footer is a dark surface in both schemes; --text-nav is tuned for the
+       light header and a palette may legally make it dark. Use on-dark ink. */
+    color: var(--text-on-dark);
     transition: color var(--transition);
   }
 

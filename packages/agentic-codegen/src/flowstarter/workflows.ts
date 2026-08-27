@@ -55,6 +55,15 @@ export interface PreviewPipelineOptions {
   qualitySweep?: boolean;
   /** Blur lower sections of the published preview behind an unlock chip. */
   teaser?: PreviewTeaserOptions | false;
+  /**
+   * Post-publish rendered audit. Receives the live preview URL; returns a
+   * human-readable issue description (low-contrast text, viewport-scale
+   * empty gaps, broken scheme) or undefined when the render is acceptable.
+   * On an issue the pipeline runs one repair pass and republishes. The
+   * auditor lives outside this package — it typically drives a headless
+   * browser, which the worker runtime may not ship.
+   */
+  renderedAudit?: (previewUrl: string) => Promise<string | undefined>;
 }
 
 export interface PreviewPipelineResult {
@@ -161,12 +170,32 @@ export class PreviewGenerationPipeline {
         await injectPreviewTeaser(workspace.root, this.options.teaser);
       }
       input.onPhase?.('Publishing your live preview');
-      const published = await this.publisher.publish({
+      let published = await this.publisher.publish({
         projectId: input.intake.projectId,
         workspaceRoot: workspace.root,
         template,
         brandConfig,
       });
+      if (this.options.renderedAudit) {
+        input.onPhase?.('Reviewing the rendered preview');
+        const renderIssue = await this.options.renderedAudit(
+          published.previewUrl,
+        );
+        if (renderIssue) {
+          input.onPhase?.('Repairing rendered issues');
+          await personalize(
+            `A rendered review of the published preview found visual defects you must repair by editing content and style-token values only: ${renderIssue.slice(0, 2_000)}`,
+          );
+          await this.validator.validate(workspace.root, 'preview');
+          await published.teardown?.().catch(() => undefined);
+          published = await this.publisher.publish({
+            projectId: input.intake.projectId,
+            workspaceRoot: workspace.root,
+            template,
+            brandConfig,
+          });
+        }
+      }
       return { brandConfig, template, ...published };
     } finally {
       await rm(workspace.root, { recursive: true, force: true });
@@ -216,7 +245,10 @@ const QUALITY_SWEEP_FEEDBACK =
   'metrics, awards or logos; ground every claim in the intake and brand ' +
   'evidence, or repurpose the section to describe real process or skills. ' +
   '(3) No template stock copy or placeholder text may remain anywhere, ' +
-  'including subpages. Keep everything that already satisfies the rules.';
+  'including subpages. (4) Length discipline: hero heading at most 8 words; ' +
+  'hero supporting paragraph at most 45 words; CTA labels at most 4 words — ' +
+  'long hero copy stretches the template on phones. Keep everything that ' +
+  'already satisfies the rules.';
 
 async function findPersonalizationIssue(
   workspaceRoot: string,

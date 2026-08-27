@@ -224,6 +224,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/contact(.*)', // Public contact form API
   '/api/support-chat(.*)', // Public support bot LLM endpoint
   '/api/discovery(.*)', // Public discovery wizard: lead capture + booking deposit
+  '/unlock(.*)', // Preview unlock landing: reached from a generated site, viewer may be signed out
   '/gdpr(.*)',
   '/contact(.*)',
   '/help(.*)', // Public help page
@@ -253,6 +254,7 @@ const isPublicRoute = createRouteMatcher([
 // Everything else is a 404 — let Next.js render it instead of redirecting to login.
 const isKnownAppRoute = createRouteMatcher([
   '/',
+  '/unlock(.*)',
   '/about(.*)',
   '/login(.*)',
   '/assistant(.*)', // Client-facing "Flowstarter Assistant" sign-in (reached from workspace landings)

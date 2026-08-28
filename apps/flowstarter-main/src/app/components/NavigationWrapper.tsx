@@ -3,14 +3,15 @@
 import { LoadingScreen } from '@flowstarter/flow-design-system';
 import {
   getIsErrorPage,
-  resetErrorPageFlag,
+  getIsErrorPageServerSnapshot,
+  subscribeErrorPage,
 } from '@/contexts/ErrorPageContext';
 import { I18nProvider, useTranslations } from '@/lib/i18n';
 import en from '@/locales/en';
 import ro from '@/locales/ro';
 import { useAuth } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ExternalNavigation, ExternalNavigationWithAuth } from './Navbar';
 
 // List of public routes that don't require authentication
@@ -71,47 +72,15 @@ export function NavigationWrapper() {
     isTeamRoute ||
     isClientDashboard ||
     isLibraryRoute;
-  const [, setIsErrorPage] = useState(false);
-
-  // Check synchronously during render to catch error pages immediately
-  // This ensures the navbar is hidden even on the first render
-  const errorPageFlag = getIsErrorPage();
+  // Subscribed rather than polled: the flag is published by ErrorPageLayout in
+  // a layout effect, so this re-renders before paint and the two headers never
+  // appear together.
+  const errorPageFlag = useSyncExternalStore(
+    subscribeErrorPage,
+    getIsErrorPage,
+    getIsErrorPageServerSnapshot,
+  );
   const shouldHideNavbar = errorPageFlag || isNoNavbarRoute;
-
-  // Sync state with flag for useEffect dependencies
-  useEffect(() => {
-    if (isTeamRoute) return; // Skip for team routes
-    setIsErrorPage(errorPageFlag);
-  }, [errorPageFlag, isTeamRoute]);
-
-  // Poll periodically to catch error pages that set the flag after NavigationWrapper renders
-  useEffect(() => {
-    const checkErrorPage = () => {
-      const currentFlag = getIsErrorPage();
-      setIsErrorPage(currentFlag);
-    };
-
-    // Poll periodically to catch error pages that render after NavigationWrapper
-    const interval = setInterval(checkErrorPage, 100);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [pathname]);
-
-  // Reset error page flag when pathname changes (user navigates away)
-  useEffect(() => {
-    // Small delay to allow error pages to set the flag if needed
-    const timer = setTimeout(() => {
-      if (!errorPageFlag && getIsErrorPage()) {
-        // Reset the flag if we're not on an error page anymore
-        resetErrorPageFlag();
-        setIsErrorPage(false);
-      }
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [pathname, errorPageFlag]);
 
   // Prevent SSR flash by waiting for client-side mounting
   useEffect(() => {

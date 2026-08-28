@@ -48,7 +48,33 @@ export default async function UnlockPage({
     )
     .eq('id', workspaceId)
     .maybeSingle();
-  if (!workspace) notFound();
+  // A preview generated in the funnel carries its own id and has no workspace
+  // behind it yet. That link must still land somewhere real -- a 404 reads as
+  // a broken site to someone who just clicked "unlock" on their own preview.
+  if (!workspace) {
+    return (
+      <main className="mx-auto flex min-h-[70vh] w-full max-w-2xl flex-col justify-center px-5 py-16">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)]">
+          Unlock your site
+        </p>
+        <h1 className="mb-4 text-3xl font-bold leading-tight text-[var(--fs-ink)] sm:text-4xl">
+          Let&apos;s turn this preview into your site
+        </h1>
+        <p className="mb-7 text-base leading-relaxed text-[var(--fs-ink)]/75">
+          The blurred sections are the rest of the site we generated for you.
+          This preview is not attached to a project yet, so there is nothing to
+          pay for at this point: tell us it is the direction you want and we
+          will scope it, quote it, and build it.
+        </p>
+        <Link
+          href="/contact"
+          className="inline-flex w-fit items-center rounded-full bg-[var(--fs-ink)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
+        >
+          Talk to us about this preview
+        </Link>
+      </main>
+    );
+  }
 
   const { userId } = await auth();
   const currency = workspace.billing_currency ?? 'eur';

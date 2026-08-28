@@ -1,16 +1,26 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useLayoutEffect } from 'react';
 import { FlowBackground } from '@flowstarter/flow-design-system';
 import Footer from '@/components/Footer';
 import { SiteHeader } from '@/components/SiteHeader';
 import { BookingModalProvider } from '@/app/(dynamic-pages)/(main-pages)/components/BookingModalProvider';
+import { setIsErrorPageFlag } from '@/contexts/ErrorPageContext';
 
 interface ErrorPageLayoutProps {
   children: ReactNode;
 }
 
 export function ErrorPageLayout({ children }: ErrorPageLayoutProps) {
+  // Tell the global navigation to stand down while this page is mounted; a
+  // 404 can occur at any URL, so the navbar cannot work this out from the
+  // pathname alone. A layout effect lands before paint, so the header below is
+  // the only one the user ever sees.
+  useLayoutEffect(() => {
+    setIsErrorPageFlag(true);
+    return () => setIsErrorPageFlag(false);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen font-display text-[var(--fs-ink)]">
       <FlowBackground

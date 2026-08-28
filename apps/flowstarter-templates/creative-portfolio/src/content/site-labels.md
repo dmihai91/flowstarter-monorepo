@@ -22,6 +22,7 @@ header:
       href: "/contact"
 
 hero:
+  artMark: "V"
   label: "Independent design studio"
   title: "We make work worth looking at twice."
   image: "/images/hero.png"

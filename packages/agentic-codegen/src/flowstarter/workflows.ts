@@ -333,7 +333,8 @@ async function findHeroAssetIssue(
   build: AgentBuildResult,
 ): Promise<string | undefined> {
   const barred = cachedAssets.filter((asset) => !asset.heroEligible);
-  if (barred.length === 0) return undefined;
+  const allowed = cachedAssets.filter((asset) => asset.heroEligible);
+  if (barred.length === 0 && allowed.length === 0) return undefined;
 
   for (const path of build.changedPaths) {
     let content: string;
@@ -350,7 +351,6 @@ async function findHeroAssetIssue(
     if (!heroLine) continue;
     const used = barred.find((asset) => heroLine.includes(asset.publicPath));
     if (!used) continue;
-    const allowed = cachedAssets.filter((asset) => asset.heroEligible);
     return (
       `the hero image is ${used.publicPath}, which is not marked ` +
       '"heroEligible" and must not fill a hero slot. ' +
@@ -360,6 +360,31 @@ async function findHeroAssetIssue(
           'image empty so the template renders its designed art panel.') +
       ` Keep ${used.publicPath} only in a secondary about, project, or mood slot.`
     );
+  }
+
+  // The client vouched for a photo and the hero still renders the template's
+  // placeholder panel: their face is the strongest thing the page has.
+  if (allowed.length > 0) {
+    for (const path of build.changedPaths) {
+      let content: string;
+      try {
+        content = await readFile(join(workspaceRoot, path), 'utf8');
+      } catch {
+        continue;
+      }
+      const heroLine = content
+        .split('\n')
+        .find((line) => /^\s{0,4}image:\s*["']/.test(line));
+      if (!heroLine) continue;
+      const filled = /image:\s*["']\s*\S/.test(heroLine);
+      if (filled) return undefined;
+      return (
+        'the hero image is empty while the client supplied a hero-ready ' +
+        `photo. Set the hero image to ${allowed
+          .map((asset) => asset.publicPath)
+          .join(' or ')} rather than leaving the template's placeholder panel.`
+      );
+    }
   }
   return undefined;
 }

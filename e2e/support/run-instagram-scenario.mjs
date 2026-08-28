@@ -141,8 +141,10 @@ const pipeline = new PreviewGenerationPipeline(agents, library, validator, publi
   fullTemplateContext: true,
   qualitySweep: true,
   teaser: {
-    keepHomeSections: 3,
-    keepSubpageSections: 1,
+    // Five of nine home sections were veiled, which read as a duller site
+    // than the template demo: the gate should sell the work, not hide it.
+    keepHomeSections: 5,
+    keepSubpageSections: 2,
     label: 'Part of your full site',
     unlockUrl: `${process.env.SCENARIO_APP_ORIGIN || 'http://localhost:3000'}/unlock/${projectId}`,
     unlockLabel: 'Unlock the full site',

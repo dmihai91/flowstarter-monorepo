@@ -7,7 +7,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProjectState } from '@flowstarter/agentic-codegen/src/flowstarter/types';
 // Static import: `vi.mock` is hoisted above it, and the app's tsconfig does
 // not permit top-level await.
-import { savePreviewArtifacts, PreviewArtifactError } from '../preview-artifacts';
+import {
+  savePreviewArtifacts,
+  PreviewArtifactError,
+} from '../preview-artifacts';
 
 const rows: {
   workspaces: Array<Record<string, unknown>>;
@@ -68,8 +71,6 @@ function builderFor(table: string) {
 vi.mock('@/supabase-clients/server', () => ({
   createSupabaseServiceRoleClient: () => ({ from: builderFor }),
 }));
-
-
 
 const WORKSPACE_ID = '0f4e1088-8d8f-4f18-83b1-406cc292b23c';
 

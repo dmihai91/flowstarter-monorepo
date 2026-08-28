@@ -154,18 +154,37 @@ const {
       top: 64px;
       left: 0;
       right: 0;
-      bottom: 0;
+      /* dvh follows the browser chrome as it hides and shows; vh (and a plain
+         bottom:0) does not, which left the last item under the URL bar or the
+         gesture bar on a real phone. */
+      height: calc(100dvh - 64px);
+      max-height: calc(100dvh - 64px);
+      /* A long menu has to be reachable. Without this, space-between pushed
+         the call to action past the edge with no way to scroll to it. */
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
       background: var(--bg-dark);
       border-top: 1px solid var(--border-color);
-      padding: 40px 24px 48px;
+      /* Clears the home indicator on phones that overlay the bottom edge. */
+      padding: 40px 24px calc(48px + env(safe-area-inset-bottom, 0px));
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      /* flex-start + margin-top on the footer sits the CTA at the bottom when
+         there is room, and simply follows the links when there is not. */
+      justify-content: flex-start;
       opacity: 0;
       transform: translateY(-12px);
       pointer-events: none;
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
+
+    .mobile-nav__footer {
+      margin-top: auto;
+      padding-top: 32px;
+      flex-shrink: 0;
+    }
+
 
     .mobile-nav.is-open {
       opacity: 1;

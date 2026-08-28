@@ -9,6 +9,7 @@ import { BrandIntelligenceSection } from './components/BrandIntelligenceSection'
 import { TemplateLibrarySection } from './components/TemplateLibrarySection';
 import { EditorShowcase } from './components/EditorShowcase';
 import { DifferentiationSection } from './components/DifferentiationSection';
+import { TeamSection } from './components/TeamSection';
 import { ProcessSection } from './components/ProcessSection';
 import { ProofSection } from './components/ProofSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
@@ -52,6 +53,8 @@ export default function LandingPage() {
         <ProcessSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <DifferentiationSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <TeamSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <EditorShowcase />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />

@@ -3402,3 +3402,73 @@
   .npw-ai-link.npw-ai-link--busy:disabled {
   color: var(--purple) !important;
 }
+
+/* ── Team: the agents that build the site, and the two people who sign it off ── */
+.ls-team-label {
+  margin: 2.5rem 0 1rem;
+}
+.ls-team-label--humans {
+  margin-top: 3.25rem;
+}
+.ls-team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ls-team-grid--humans {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  max-width: 760px;
+}
+.ls-team-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Every other card on this page left-aligns; the centring here was
+     inherited from an ancestor and made multi-line body copy harder to read.
+     align-items matters as well as text-align: as flex items these children
+     size to their content, so without it they floated centred regardless. */
+  text-align: start;
+  align-items: flex-start;
+}
+.ls-team-card__index {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--ls-accent, #6366f1);
+  opacity: 0.8;
+}
+.ls-team-card__role {
+  font-size: 1.02rem;
+  font-weight: 650;
+  line-height: 1.25;
+  margin: 0;
+}
+.ls-team-card__title {
+  font-weight: 450;
+  opacity: 0.65;
+}
+.ls-team-card__does {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0;
+  opacity: 0.85;
+}
+/* The boundary reads as a caveat, not a feature: quieter, but never so faint
+   that it fails contrast in either scheme. */
+.ls-team-card__limit {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0.15rem 0 0;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--ls-glass-edge);
+  opacity: 0.72;
+}
+.ls-team-note {
+  margin-top: 1.15rem;
+  font-size: 0.92rem;
+  opacity: 0.8;
+  max-width: 62ch;
+}

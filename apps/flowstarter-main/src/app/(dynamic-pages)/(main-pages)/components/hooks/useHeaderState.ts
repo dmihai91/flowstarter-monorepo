@@ -15,7 +15,12 @@ export function useHeaderState() {
   useEffect(() => {
     // The nav sections, listed as the header lists them. 'templates' used to
     // sit in here and matched nothing: that section's id is 'template-library'.
-    const sectionIds = ['process', 'editor-showcase', 'pricing', 'faq'] as const;
+    const sectionIds = [
+      'process',
+      'editor-showcase',
+      'pricing',
+      'faq',
+    ] as const;
     // Sorted by where they actually are, because the loop below keeps the last
     // section above the marker and would otherwise depend on this array being
     // in page order. It was not: 'editor-showcase' sits after 'process' on the

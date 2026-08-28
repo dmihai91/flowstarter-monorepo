@@ -1974,6 +1974,14 @@ const en = {
   'landing.differentiation.eyebrow': 'Why us',
   'landing.differentiation.headlinePrefix': 'Your agent team works 24/7.',
   'landing.differentiation.headlineFlourish': 'Our human team signs off.',
+  'landing.team.headlinePrefix': 'A team of specialists,',
+  'landing.team.headlineFlourish': 'and two people who answer for it.',
+  'landing.team.sub':
+    'Each agent does one job and hands on. Nothing reaches you until both of us have looked at it.',
+  'landing.team.agentsLabel': 'Your agents',
+  'landing.team.humansLabel': 'Your people',
+  'landing.team.humansNote':
+    'A two-person studio in Europe, on CET hours. The agents do the work; we sign it off and answer the email.',
   'landing.differentiation.sub':
     'Specialized agents research, select, build, check and maintain. Our team owns the judgment, polish and final approval.',
 

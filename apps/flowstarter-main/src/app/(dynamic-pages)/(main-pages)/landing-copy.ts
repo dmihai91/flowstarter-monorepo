@@ -315,6 +315,57 @@ export const LANDING_COPY = {
       },
     ],
   },
+  /**
+   * The team, named. Every agent here maps to a real stage of the pipeline,
+   * and each card says what that agent may not do — the boundaries are the
+   * reassuring part, not the automation.
+   */
+  team: {
+    agents: [
+      {
+        role: 'Brand analyst',
+        does: 'Reads your answers, your public profiles and your photos, then settles the palette, the type pairing and the voice the site will speak in.',
+        limit: 'Every claim has to trace back to something you actually said.',
+      },
+      {
+        role: 'Design matcher',
+        does: 'Picks the starting design from our approved library by how your business is shaped — the pages you need, not the colours you like.',
+        limit: 'It can only choose a design we already build and maintain.',
+      },
+      {
+        role: 'Site builder',
+        does: 'Writes your site into that design: the words, the images, the colours, page by page.',
+        limit: 'It edits content and styling only. It cannot touch the code that makes the design work.',
+      },
+      {
+        role: 'Honesty editor',
+        does: 'Rereads the whole site in your voice and strips anything invented — clients you never had, numbers nobody measured, filler nobody would say out loud.',
+        limit: 'If a section has no true content, it says less rather than making something up.',
+      },
+      {
+        role: 'Build checker',
+        does: 'Builds the finished site and reads it back in a real browser, checking that it works on a phone and that the text is legible.',
+        limit: 'A site that fails here is repaired and rebuilt before anyone sees it.',
+      },
+      {
+        role: 'Care assistant',
+        does: 'Stays with you after launch. Ask for a change in plain words and it makes it.',
+        limit: 'Bigger design or structural work comes to us instead.',
+      },
+    ],
+    humans: [
+      {
+        name: 'Darius',
+        role: 'Build & reliability',
+        does: 'Owns the pipeline, the hosting and everything that has to keep working after launch.',
+      },
+      {
+        name: 'Dorin',
+        role: 'Design & craft',
+        does: 'Owns how the work looks and reads, and decides when a site is good enough to send.',
+      },
+    ],
+  },
   audience: {
     title: 'For small businesses across Europe, service or store.',
     items: [

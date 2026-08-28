@@ -110,12 +110,29 @@ export class PreviewGenerationPipeline {
   }): Promise<PreviewPipelineResult> {
     assertSafeBusinessIntake(input.intake);
     input.onPhase?.('Learning your voice and visual direction');
-    const brandConfig = await this.agents.analyzeBrand(
-      input.intake,
-      input.corpus,
-    );
+
+    // The sigma classifier reads the intake only, so template selection does
+    // not have to wait for the vision pass to finish. Racing them removes the
+    // classifier and the scaffold download from the critical path entirely;
+    // a murky intake still falls back to the model, which does need the brand
+    // config and so runs after it.
+    const deterministicSelection = this.templateClassifier
+      ? this.classifyTemplate(input.intake).catch(() => undefined)
+      : Promise.resolve(undefined);
+
+    const [brandConfig, classified] = await Promise.all([
+      this.agents.analyzeBrand(input.intake, input.corpus),
+      deterministicSelection,
+    ]);
+
     input.onPhase?.('Choosing the best starting design');
-    const template = await this.selectTemplate(input.intake, brandConfig);
+    const template =
+      classified ??
+      (await this.agents.selectTemplate({
+        intake: input.intake,
+        brandConfig,
+        library: this.library,
+      }));
     input.onPhase?.('Preparing your selected design');
     const scaffold = await this.library.scaffold(template.slug);
     const workspace = await createPreviewWorkspace(scaffold);
@@ -253,33 +270,29 @@ export class PreviewGenerationPipeline {
     }
   }
 
-  private async selectTemplate(
+  /**
+   * The deterministic half of template selection: intake text only, so it can
+   * run while the brand agent is still looking at images. Returns undefined
+   * when nothing clears the confidence gate, leaving the decision to the model.
+   */
+  private async classifyTemplate(
     intake: BusinessIntakePayload,
-    brandConfig: BrandConfig,
-  ): Promise<TemplateSelection> {
-    if (this.templateClassifier) {
-      const candidates = await this.library.search(
-        buildIntakeText(intake.business).slice(0, 280),
-      );
-      const classified = await this.templateClassifier.classify(
-        buildIntakeText(intake.business),
-        candidates,
-      );
-      if (classified.autoSelect) {
-        const { slug, score, margin } = classified.autoSelect;
-        return {
-          slug,
-          reason: `sigma classifier auto-selection (cosine ${score.toFixed(3)}, margin ${margin.toFixed(3)} over runner-up)`,
-          matchedSignals: ['sigma-embedding'],
-          confidence: Math.min(0.99, score),
-        };
-      }
-    }
-    return this.agents.selectTemplate({
-      intake,
-      brandConfig,
-      library: this.library,
-    });
+  ): Promise<TemplateSelection | undefined> {
+    if (!this.templateClassifier) return undefined;
+    const intakeText = buildIntakeText(intake.business);
+    const candidates = await this.library.search(intakeText.slice(0, 280));
+    const classified = await this.templateClassifier.classify(
+      intakeText,
+      candidates,
+    );
+    if (!classified.autoSelect) return undefined;
+    const { slug, score, margin } = classified.autoSelect;
+    return {
+      slug,
+      reason: `sigma classifier auto-selection (cosine ${score.toFixed(3)}, margin ${margin.toFixed(3)} over runner-up)`,
+      matchedSignals: ['sigma-embedding'],
+      confidence: Math.min(0.99, score),
+    };
   }
 }
 

@@ -46,8 +46,11 @@ const SpecSchema = z.object({
   // The wizard already collects these; without them the generated site ends
   // up with placeholder '#' social links and no sense of the person behind
   // the business.
-  instagramUrl: z.string().url().max(300).optional().default(''),
-  linkedinUrl: z.string().url().max(300).optional().default(''),
+  // Not .url(): an empty default would fail that check and reject the whole
+  // request. socialTargets() validates scheme and host and drops anything
+  // malformed, so a bad paste costs the profile link, not the preview.
+  instagramUrl: z.string().max(300).optional().default(''),
+  linkedinUrl: z.string().max(300).optional().default(''),
 });
 
 /**
@@ -59,10 +62,11 @@ const SpecSchema = z.object({
 function socialTargets(
   spec: z.infer<typeof SpecSchema>
 ): BusinessIntakePayload['socialMedia'] {
-  const candidates: Array<{ platform: 'instagram' | 'linkedin'; raw: string }> = [
-    { platform: 'instagram', raw: spec.instagramUrl },
-    { platform: 'linkedin', raw: spec.linkedinUrl },
-  ];
+  const candidates: Array<{ platform: 'instagram' | 'linkedin'; raw: string }> =
+    [
+      { platform: 'instagram', raw: spec.instagramUrl },
+      { platform: 'linkedin', raw: spec.linkedinUrl },
+    ];
   const targets: BusinessIntakePayload['socialMedia'] = [];
   for (const { platform, raw } of candidates) {
     if (!raw.trim()) continue;
@@ -74,7 +78,8 @@ function socialTargets(
     }
     const host = url.hostname.toLowerCase().replace(/^www\./, '');
     if (url.protocol !== 'https:') continue;
-    if (host !== `${platform}.com` && !host.endsWith(`.${platform}.com`)) continue;
+    if (host !== `${platform}.com` && !host.endsWith(`.${platform}.com`))
+      continue;
     targets.push({
       platform,
       handle: url.pathname.split('/').filter(Boolean).pop()?.slice(0, 100),
@@ -86,6 +91,79 @@ function socialTargets(
   }
   return targets;
 }
+
+/**
+ * The sigma classifier needs an ONNX runtime and a model directory that a
+ * serverless target may not have. It is an optimisation, not a requirement:
+ * when it cannot load, selection falls back to the model exactly as before.
+ */
+let classifierPromise: Promise<unknown> | undefined;
+function loadTemplateClassifier(): Promise<unknown> {
+  classifierPromise ??= (async () => {
+    const dir = process.env.SIGMA_MODEL_DIR?.trim();
+    if (!dir) return undefined;
+    try {
+      const { TemplateClassifier, MiniLmOnnxEmbedder } = await import(
+        '@flowstarter/agentic-codegen/src/flowstarter/template-classifier'
+      );
+      return new TemplateClassifier(new MiniLmOnnxEmbedder(dir));
+    } catch (error) {
+      console.warn(
+        `[Flowstarter] template classifier unavailable, using the model: ${
+          error instanceof Error ? error.message : 'unknown'
+        }`
+      );
+      return undefined;
+    }
+  })();
+  return classifierPromise;
+}
+
+/**
+ * The unlock link is injected into a site we hand to a client, so the teaser
+ * refuses anything that is not HTTPS (or loopback in development). A LAN
+ * address in NEXT_PUBLIC_SITE_URL is neither, and a misconfigured origin must
+ * not cost a generation that has already run for minutes: return undefined and
+ * the sections stay gated, just without a clickable CTA.
+ */
+function previewUnlockUrl(demoId: string): string | undefined {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000';
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    return undefined;
+  }
+  const loopback = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  if (url.protocol !== 'https:' && !(loopback && url.protocol === 'http:')) {
+    console.warn(
+      `[Flowstarter] NEXT_PUBLIC_SITE_URL (${url.origin}) cannot be used for the ` +
+        'preview unlock link; gating the sections without a CTA'
+    );
+    return undefined;
+  }
+  return `${url.origin}/unlock/${demoId}`;
+}
+
+/**
+ * The Pi model catalogue does not carry this one yet, so selecting it means
+ * supplying the descriptor alongside the id.
+ */
+const GLM_53_FLASH = {
+  id: 'z-ai/glm-5.3-flash',
+  name: 'Z.ai: GLM 5.3 Flash',
+  api: 'openai-completions',
+  baseUrl: 'https://openrouter.ai/api/v1',
+  provider: 'openrouter',
+  reasoning: true,
+  input: ['text', 'image'],
+  cost: { input: 0.07, output: 0.25, cacheRead: 0.014, cacheWrite: 0 },
+  contextWindow: 1_310_720,
+  maxTokens: 131_072,
+  compat: { supportsDeveloperRole: false, thinkingFormat: 'openrouter' },
+  thinkingLevelMap: { xhigh: 'xhigh' },
+} as const;
 
 function clientIp(req: NextRequest): string {
   return (
@@ -100,6 +178,7 @@ function buildPiEvidence(
   spec: z.infer<typeof SpecSchema>
 ): { intake: BusinessIntakePayload; corpus: ScrapeCorpus } {
   const submittedAt = new Date().toISOString();
+  const targets = socialTargets(spec);
   const intake: BusinessIntakePayload = {
     projectId: demoId,
     business: {
@@ -110,12 +189,17 @@ function buildPiEvidence(
       targetAudience: spec.targetAudience.trim() || undefined,
       primaryGoal: spec.goal.trim() || undefined,
     },
-    socialMedia: socialTargets(spec),
+    socialMedia: targets,
     locale: 'en',
     submittedAt,
+    // Consent is recorded only when the client volunteered a profile URL in
+    // their own intake form, and only then are any targets attached. Nothing
+    // is scraped from them here — the URL becomes a link on the client's own
+    // site — but the guard treats profiles as personal data either way, and
+    // claiming consent nobody gave would be the wrong way to satisfy it.
     consent: {
-      publicProfileAnalysis: false,
-      acceptedAt: '',
+      publicProfileAnalysis: targets.length > 0,
+      acceptedAt: targets.length > 0 ? submittedAt : '',
     },
   };
   const corpus: ScrapeCorpus = {
@@ -321,12 +405,30 @@ export async function POST(req: NextRequest) {
         return;
       }
 
+      // The preview pass carries the bulk of the tokens and all of the wall
+      // clock, so it gets its own tier: a fast, large-context model that can
+      // hold the whole template. The previous single-tier config ran at
+      // thinkingLevel 'low', where this family reliably returns without
+      // writing a file, and capped every call at 240s — shorter than the
+      // personalization actually takes, so the funnel timed out mid-pass.
+      const previewModel =
+        process.env.PI_PREVIEW_MODEL?.trim() || GLM_53_FLASH.id;
       const agents = new PiSdkFlowstarterAgents({
         provider: process.env.PI_PROVIDER?.trim() || 'openrouter',
         modelId: process.env.PI_MODEL?.trim() || 'z-ai/glm-5.2',
         apiKey: piApiKey,
-        thinkingLevel: 'low',
-        timeoutMs: 240_000,
+        thinkingLevel: 'medium',
+        timeoutMs: 420_000,
+        roles: {
+          preview: {
+            modelId: previewModel,
+            ...(previewModel === GLM_53_FLASH.id
+              ? { modelOverride: GLM_53_FLASH }
+              : {}),
+            maxOutputTokens: 30_000,
+            timeoutMs: 600_000,
+          },
+        },
       });
       const library = new FlowstarterMcpTemplateLibrary({
         endpoint: mcpUrl,
@@ -395,11 +497,31 @@ export async function POST(req: NextRequest) {
         },
       };
 
+      // The funnel gets the same pipeline the scenarios do. Without these the
+      // visitor's preview is a plainer site than the one this project has
+      // been reviewed on: no deterministic template pick, no honesty sweep,
+      // and no gated sections to convert against.
       const pipeline = new PreviewGenerationPipeline(
         agents,
         library,
         validator,
-        publisher
+        publisher,
+        (await loadTemplateClassifier()) as never,
+        {
+          fullTemplateContext: true,
+          qualitySweep: true,
+          teaser: {
+            keepHomeSections: 5,
+            keepSubpageSections: 2,
+            label: 'Part of your full site',
+            ...(previewUnlockUrl(demoId)
+              ? {
+                  unlockUrl: previewUnlockUrl(demoId),
+                  unlockLabel: 'Unlock the full site',
+                }
+              : {}),
+          },
+        }
       );
       const evidence = buildPiEvidence(demoId, spec);
       const result = await pipeline.run({

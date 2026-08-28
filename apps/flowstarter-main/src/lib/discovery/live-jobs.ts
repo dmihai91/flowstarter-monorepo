@@ -24,6 +24,12 @@ export interface LiveJob {
   error?: string;
   /** Latest streamed progress phase. */
   phase?: string;
+  /**
+   * Every phase this run has entered, with the second it started at. The SSE
+   * stream replays this on connect, so a client that subscribes late (or
+   * reconnects) still sees the whole story rather than only what happens next.
+   */
+  phases?: Array<{ phase: string; at: number }>;
   /** Base template live? then personalization hot-swapped in (progressive). */
   personalized?: boolean;
   /** 15-prompt edit loop state. */
@@ -54,7 +60,15 @@ export function getJob(demoId: string): LiveJob | undefined {
 
 export function updateJob(demoId: string, patch: Partial<LiveJob>): void {
   const j = jobs.get(demoId);
-  if (j) jobs.set(demoId, { ...j, ...patch });
+  if (!j) return;
+  const next = { ...j, ...patch };
+  if (patch.phase && patch.phase !== j.phase) {
+    next.phases = [
+      ...(j.phases ?? []),
+      { phase: patch.phase, at: Math.round((Date.now() - j.createdAt) / 1000) },
+    ];
+  }
+  jobs.set(demoId, next);
 }
 
 /** Best-effort GC: tear down + drop demos older than the TTL. */

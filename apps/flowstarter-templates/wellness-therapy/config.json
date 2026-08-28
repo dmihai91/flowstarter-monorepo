@@ -4,7 +4,97 @@
   "description": "Warm, reassuring service template for therapists, counsellors, psychologists, wellness practitioners, nutritionists, and coaches.",
   "category": "health-wellness",
   "framework": "astro",
-  "tags": ["therapist", "counsellor", "psychologist", "wellness", "nutrition", "coach", "appointments"],
-  "features": ["services overview", "practitioner story", "trust-building content", "booking CTA", "accessible calm layout"],
-  "bestFor": ["personal care practices", "appointment-led services", "clients who need reassurance before booking"]
+  "tags": [
+    "therapist",
+    "counsellor",
+    "psychologist",
+    "wellness",
+    "nutrition",
+    "coach",
+    "appointments"
+  ],
+  "features": [
+    "services overview",
+    "practitioner story",
+    "trust-building content",
+    "booking CTA",
+    "accessible calm layout"
+  ],
+  "bestFor": [
+    "personal care practices",
+    "appointment-led services",
+    "clients who need reassurance before booking"
+  ],
+  "assetLibrary": [
+    {
+      "path": "/images/about-therapist.jpg",
+      "kind": "photo-generic",
+      "description": "Forested mountains above low cloud. No face."
+    },
+    {
+      "path": "/images/freetime-1.jpg",
+      "kind": "photo-generic",
+      "description": "Green rolling hills. No face."
+    },
+    {
+      "path": "/images/freetime-2.jpg",
+      "kind": "photo-generic",
+      "description": "Three hands raising coffee cups together. No face."
+    },
+    {
+      "path": "/images/services-1.jpg",
+      "kind": "photo-people-scene",
+      "description": "Black-and-white meeting room, people at a distance."
+    },
+    {
+      "path": "/images/services-2.jpg",
+      "kind": "photo-generic",
+      "description": "An empty modern office corridor. No face."
+    },
+    {
+      "path": "/images/work-1.jpg",
+      "kind": "photo-people-scene",
+      "description": "A team workshop around a table with sticky notes on the wall."
+    },
+    {
+      "path": "/images/work-2.jpg",
+      "kind": "photo-people-scene",
+      "description": "Two colleagues talking across a desk, faces visible."
+    },
+    {
+      "path": "/images/work-3.jpg",
+      "kind": "photo-people-scene",
+      "description": "A workshop in a bright office, several people and a whiteboard."
+    },
+    {
+      "path": "/images/work-4.jpg",
+      "kind": "photo-people-scene",
+      "description": "A boardroom of people with laptops during a presentation."
+    },
+    {
+      "path": "/images/blog-1.jpg",
+      "kind": "photo-generic",
+      "description": "Hands writing in a notebook beside a coffee cup. No face."
+    },
+    {
+      "path": "/images/blog-3.jpg",
+      "kind": "photo-generic",
+      "description": "Silhouette of a person meditating against a sunset. Unidentifiable."
+    },
+    {
+      "path": "/images/blog-4.jpg",
+      "kind": "photo-people-scene",
+      "description": "An audience seated at a conference, seen from behind and side."
+    },
+    {
+      "path": "/images/blog-5.jpg",
+      "kind": "photo-generic",
+      "description": "Hands pointing at a laptop screen. No face."
+    },
+    {
+      "path": "/images/blog-6.jpg",
+      "kind": "photo-generic",
+      "description": "Wind turbines in a field at sunset. No face."
+    }
+  ]
 }

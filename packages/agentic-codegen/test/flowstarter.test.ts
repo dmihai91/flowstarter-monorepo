@@ -616,3 +616,116 @@ describe('client media on a delivered site', () => {
     expect(updated.split('\n')).toHaveLength(CONTENT.split('\n').length);
   });
 });
+
+describe('conversational intake', () => {
+  /** Drives the parsing and the caps; the model turn itself is stubbed. */
+  function agentReturning(...turns: string[]) {
+    const agents = new __Agents({ provider: 'openrouter', modelId: 'x' });
+    let call = 0;
+    (agents as unknown as { runTextSession: unknown }).runTextSession = async () =>
+      turns[Math.min(call++, turns.length - 1)];
+    return agents;
+  }
+
+  it('keeps only usable name candidates', async () => {
+    const agents = agentReturning(
+      JSON.stringify({
+        names: [
+          { name: 'Cuptorul Vechi', rationale: 'Plain Romanian for the old oven.' },
+          { name: '', rationale: 'empty name is dropped' },
+          { name: 'A'.repeat(40), rationale: 'too long for a wordmark' },
+          { name: 'Bad<script>', rationale: 'markup is a model slip' },
+          { name: 'Pâinea Bună', rationale: 'Reads naturally in the locale.' },
+        ],
+      }),
+    );
+
+    const names = await agents.proposeBusinessNames({
+      niche: 'artisan bakery',
+      location: 'Brasov',
+      locale: 'ro-RO',
+    });
+
+    expect(names.map((entry) => entry.name)).toEqual([
+      'Cuptorul Vechi',
+      'Pâinea Bună',
+    ]);
+  });
+
+  it('fails loudly rather than showing a client nothing', async () => {
+    const agents = agentReturning(JSON.stringify({ names: [] }));
+    await expect(
+      agents.proposeBusinessNames({ niche: 'plumbing', location: 'Leeds' }),
+    ).rejects.toThrow(/no usable candidates/);
+
+    const broken = agentReturning('sorry, I cannot do that');
+    await expect(
+      broken.proposeBusinessNames({ niche: 'plumbing', location: 'Leeds' }),
+    ).rejects.toThrow(/did not return JSON/);
+  });
+
+  it('asks one question at a time while the budget allows', async () => {
+    const agents = agentReturning(
+      JSON.stringify({ status: 'ask', question: 'What kind of job do you turn down?' }),
+    );
+
+    const turn = await agents.interviewIntake({
+      known: { name: 'Halston & Sons' },
+      transcript: [],
+      maxQuestions: 3,
+    });
+
+    expect(turn).toEqual({
+      status: 'ask',
+      question: 'What kind of job do you turn down?',
+    });
+  });
+
+  it('closes the interview when the agent overruns its question budget', async () => {
+    // The cap belongs to the operator, not the model: a run that keeps asking
+    // is closed out with whatever it already captured.
+    const agents = agentReturning(
+      JSON.stringify({
+        status: 'ask',
+        question: 'And another thing?',
+        documents: [{ topic: 'How We Work', text: 'We quote before we start.' }],
+      }),
+    );
+
+    const turn = await agents.interviewIntake({
+      known: {},
+      maxQuestions: 2,
+      transcript: [
+        { role: 'agent', text: 'q1' },
+        { role: 'client', text: 'a1' },
+        { role: 'agent', text: 'q2' },
+        { role: 'client', text: 'a2' },
+      ],
+    });
+
+    expect(turn.status).toBe('complete');
+    expect(turn).toMatchObject({
+      documents: [{ topic: 'how-we-work', text: 'We quote before we start.' }],
+    });
+  });
+
+  it('normalizes captured documents into citable corpus entries', async () => {
+    const agents = agentReturning(
+      JSON.stringify({
+        status: 'complete',
+        documents: [
+          { topic: 'Who we turn away', text: 'Not emergency-only callers.' },
+          { topic: '', text: 'no topic, dropped' },
+          { topic: 'empty', text: '   ' },
+        ],
+      }),
+    );
+
+    const turn = await agents.interviewIntake({ known: {}, transcript: [] });
+
+    expect(turn.status).toBe('complete');
+    expect(turn).toMatchObject({
+      documents: [{ topic: 'who-we-turn-away', text: 'Not emergency-only callers.' }],
+    });
+  });
+});

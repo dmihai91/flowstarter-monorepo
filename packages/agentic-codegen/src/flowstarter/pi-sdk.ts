@@ -26,6 +26,7 @@ import { Type } from 'typebox';
 import {
   InvalidBrandConfigError,
   parseBrandConfig,
+  stripJsonFence,
 } from './brand-config';
 import {
   resolveEditorPolicy,
@@ -34,6 +35,10 @@ import {
 import {
   BRAND_INTELLIGENCE_SYSTEM_PROMPT,
   BRAND_CONFIG_REPAIR_SYSTEM_PROMPT,
+  BUSINESS_NAMING_SYSTEM_PROMPT,
+  INTAKE_INTERVIEW_SYSTEM_PROMPT,
+  buildBusinessNamingPrompt,
+  buildIntakeInterviewPrompt,
   buildBrandIntelligencePrompt,
   buildBrandConfigRepairPrompt,
   buildFullSiteTask,
@@ -142,7 +147,9 @@ export type PiAgentRole =
   | 'templateSelection'
   | 'preview'
   | 'fullSite'
-  | 'inlineEdit';
+  | 'inlineEdit'
+  /** Short, cheap, conversational turns during intake. */
+  | 'intake';
 
 export interface PiRoleModelChoice {
   provider?: string;
@@ -311,6 +318,115 @@ export class PiSdkFlowstarterAgents {
         };
       }
     }
+  }
+
+  /**
+   * Candidate business names, offered only when the client asks. A client who
+   * already has a name does not want a website tool renaming their business,
+   * so nothing here runs unprompted.
+   */
+  async proposeBusinessNames(input: {
+    niche: string;
+    location: string;
+    audience?: string;
+    description?: string;
+    locale?: string;
+    avoid?: readonly string[];
+    count?: number;
+  }): Promise<Array<{ name: string; rationale: string }>> {
+    const raw = await this.runTextSession({
+      cwd: tmpdir(),
+      tools: [],
+      systemPrompt: BUSINESS_NAMING_SYSTEM_PROMPT,
+      prompt: buildBusinessNamingPrompt({
+        niche: input.niche.slice(0, 240),
+        location: input.location.slice(0, 240),
+        audience: input.audience?.slice(0, 500),
+        description: input.description?.slice(0, 2_000),
+        locale: input.locale ?? 'en',
+        avoid: (input.avoid ?? []).slice(0, 20),
+      }),
+      role: 'intake',
+    });
+    const parsed = parseJsonObject(raw, 'naming');
+    const names = Array.isArray(parsed.names) ? parsed.names : [];
+    const clean = names
+      .filter(isRecord)
+      .map((entry) => ({
+        name: String(entry.name ?? '').trim(),
+        rationale: String(entry.rationale ?? '').trim(),
+      }))
+      // A name that is empty, absurdly long, or carries markup is a model slip
+      // rather than a suggestion; drop it instead of showing it to a client.
+      .filter(
+        (entry) =>
+          entry.name.length > 0 &&
+          entry.name.length <= 32 &&
+          !/[<>{}\\|]/.test(entry.name) &&
+          entry.rationale.length > 0,
+      )
+      .slice(0, input.count ?? 5);
+    if (clean.length === 0) {
+      throw new Error('Naming agent returned no usable candidates');
+    }
+    return clean;
+  }
+
+  /**
+   * One turn of the intake conversation. The form already holds the hard
+   * fields; this asks about the things a form answers badly and returns the
+   * client's own words as corpus documents the brand agent can cite.
+   */
+  async interviewIntake(input: {
+    known: Record<string, unknown>;
+    transcript: ReadonlyArray<{ role: 'agent' | 'client'; text: string }>;
+    maxQuestions?: number;
+    locale?: string;
+  }): Promise<
+    | { status: 'ask'; question: string }
+    | { status: 'complete'; documents: Array<{ topic: string; text: string }> }
+  > {
+    const maxQuestions = Math.min(Math.max(input.maxQuestions ?? 6, 1), 12);
+    const asked = input.transcript.filter((turn) => turn.role === 'agent').length;
+    const raw = await this.runTextSession({
+      cwd: tmpdir(),
+      tools: [],
+      systemPrompt: INTAKE_INTERVIEW_SYSTEM_PROMPT,
+      prompt: buildIntakeInterviewPrompt({
+        known: input.known,
+        transcript: input.transcript
+          .slice(-24)
+          .map((turn) => ({ role: turn.role, text: turn.text.slice(0, 2_000) })),
+        maxQuestions,
+        locale: input.locale ?? 'en',
+      }),
+      role: 'intake',
+    });
+    const parsed = parseJsonObject(raw, 'intake interview');
+
+    if (parsed.status === 'ask' && asked < maxQuestions) {
+      const question = String(parsed.question ?? '').trim();
+      if (!question) throw new Error('Intake agent asked an empty question');
+      return { status: 'ask', question: question.slice(0, 400) };
+    }
+
+    // Either the agent is done, or it wants to keep going past the budget it
+    // was given. The cap is the operator's, not the model's, so a run that
+    // overshoots is closed out with whatever it has.
+    const documents = (Array.isArray(parsed.documents) ? parsed.documents : [])
+      .filter(isRecord)
+      .map((entry) => ({
+        topic: String(entry.topic ?? '')
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          .slice(0, 60),
+        text: String(entry.text ?? '').trim().slice(0, 1_200),
+      }))
+      .filter((entry) => entry.topic.length > 0 && entry.text.length > 0)
+      .slice(0, 8);
+    return { status: 'complete', documents };
   }
 
   async buildPreview(input: {
@@ -957,6 +1073,22 @@ function isMissingPathError(error: unknown): boolean {
     'code' in error &&
     (error as NodeJS.ErrnoException).code === 'ENOENT'
   );
+}
+
+
+/**
+ * Parses one JSON object from a model turn. Providers still wrap JSON in a
+ * fence now and then; anything else is a contract violation worth naming.
+ */
+function parseJsonObject(raw: string, label: string): Record<string, unknown> {
+  let value: unknown;
+  try {
+    value = JSON.parse(stripJsonFence(raw));
+  } catch {
+    throw new Error(`${label} agent did not return JSON`);
+  }
+  if (!isRecord(value)) throw new Error(`${label} agent did not return an object`);
+  return value;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -31,7 +31,7 @@ export function parseBrandConfig(raw: string, knownSourceIds: ReadonlySet<string
  * fence; anything else (prose around JSON, partial fences) still fails parsing
  * so malformed output cannot slip through.
  */
-function stripJsonFence(raw: string): string {
+export function stripJsonFence(raw: string): string {
   const match = /^\s*```(?:json)?\s*\n([\s\S]*?)\n\s*```\s*$/.exec(raw);
   return match?.[1] ?? raw;
 }

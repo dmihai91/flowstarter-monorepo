@@ -48,7 +48,10 @@ export function TeamSection() {
         </h3>
         <ul className="ls-team-grid ls-team-grid--humans">
           {humans.map((person) => (
-            <li key={person.name} className="ls-card ls-team-card ls-team-card--human">
+            <li
+              key={person.name}
+              className="ls-card ls-team-card ls-team-card--human"
+            >
               <h4 className="ls-team-card__role">
                 {person.name}
                 <span className="ls-team-card__title"> · {person.role}</span>

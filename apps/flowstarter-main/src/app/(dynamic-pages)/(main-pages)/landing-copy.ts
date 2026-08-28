@@ -335,17 +335,20 @@ export const LANDING_COPY = {
       {
         role: 'Site builder',
         does: 'Writes your site into that design: the words, the images, the colours, page by page.',
-        limit: 'It edits content and styling only. It cannot touch the code that makes the design work.',
+        limit:
+          'It edits content and styling only. It cannot touch the code that makes the design work.',
       },
       {
         role: 'Honesty editor',
         does: 'Rereads the whole site in your voice and strips anything invented — clients you never had, numbers nobody measured, filler nobody would say out loud.',
-        limit: 'If a section has no true content, it says less rather than making something up.',
+        limit:
+          'If a section has no true content, it says less rather than making something up.',
       },
       {
         role: 'Build checker',
         does: 'Builds the finished site and reads it back in a real browser, checking that it works on a phone and that the text is legible.',
-        limit: 'A site that fails here is repaired and rebuilt before anyone sees it.',
+        limit:
+          'A site that fails here is repaired and rebuilt before anyone sees it.',
       },
       {
         role: 'Care assistant',

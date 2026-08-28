@@ -229,6 +229,58 @@ describe('Flowstarter preview-to-build orchestration', () => {
     expect(mediaFeedbacks[1]).toContain('/flowstarter-assets/profile.jpg');
   });
 
+  it('accepts a repair pass that correctly changes nothing', async () => {
+    const intake = validIntake();
+    let passes = 0;
+
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: { workspaceRoot: string }) => {
+        passes += 1;
+        if (passes === 1) {
+          // Writes the client's content, but without their business name, so
+          // the trusted check asks for one repair pass.
+          await writeFile(
+            join(input.workspaceRoot, 'src/content/site.md'),
+            'a personalized preview',
+            'utf8',
+          );
+          return { summary: 'first', changedPaths: ['src/content/site.md'] };
+        }
+        // The repair pass fixes the file but reports no new paths — the shape
+        // a model returns when it decides the edit is already in place.
+        await writeFile(
+          join(input.workspaceRoot, 'src/content/site.md'),
+          'Calm Path Therapy preview',
+          'utf8',
+        );
+        return { summary: 'nothing further to change', changedPaths: [] };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      staticLibrary(),
+      { validate: async () => undefined },
+      staticPublisher(),
+    );
+
+    await expect(
+      pipeline.run({
+        intake,
+        corpus: validCorpus(intake.projectId),
+        cachedAssets: [],
+      }),
+    ).resolves.toMatchObject({ previewUrl: 'https://preview.flowstarter.net/static' });
+    expect(passes).toBe(2);
+  });
+
   it('bars a client photo that is not hero-eligible from the hero slot', async () => {
     const intake = validIntake();
     const big = Buffer.concat([

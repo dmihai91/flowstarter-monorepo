@@ -7,7 +7,7 @@
  *
  *   npx tsx e2e/support/record-run.mjs
  */
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { mkdir, rm, cp, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -30,43 +30,70 @@ const events = [];
 const passes = [];
 const rel = () => ((Date.now() - t0) / 1000).toFixed(1);
 
-const docs = JSON.parse(readFileSync('/tmp/ig-docs.json','utf8'));
-const images = readdirSync('/tmp/ig-media').map((f) => ({
-  sourceId: f.replace('.jpg',''), objectKey: `local/ig/${f}`, mediaType: 'image/jpeg',
-  base64: readFileSync(`/tmp/ig-media/${f}`).toString('base64'),
-  sourceUrl: 'https://www.instagram.com/darius.flowstarter/',
-}));
+const { BRIEFS } = await import('./briefs.mjs');
+const briefKey = process.argv[2] || 'portfolio-en';
+const brief = BRIEFS.find((b) => b.key === briefKey);
+if (!brief) {
+  console.error(`Unknown brief ${briefKey}. Available: ${BRIEFS.map(b=>b.key).join(', ')}`);
+  process.exit(1);
+}
 
+// Intake-only evidence keeps a recorded run reproducible: it does not depend
+// on scraped media sitting in a temp directory that a reboot clears.
 const intake = {
   projectId,
   business: {
-    name: 'Darius Popescu — Web Developer',
-    niche: 'Freelance web & app development — personal portfolio',
-    location: 'Bucharest, Romania',
-    description: 'Personal portfolio for a solo web developer. First-person singular voice everywhere (I, my — never we, our, studio). Only real work may appear: (1) Flowstarter — an AI-powered website concierge platform I am building; (2) an experiment building a working app from scratch purely with AI tools; (3) my AI-assisted development workflow. Do not invent clients, testimonials, case studies, metrics or awards. Warm, direct, technically credible.',
-    targetAudience: 'Founders and small businesses who need an app or website',
-    primaryGoal: 'portfolio',
+    name: brief.name, niche: brief.niche, location: brief.location,
+    description: brief.description, targetAudience: brief.audience,
+    primaryGoal: brief.goal,
   },
   socialMedia: [
-    { platform: 'instagram', handle: 'darius.flowstarter',
-      profileUrl: 'https://www.instagram.com/darius.flowstarter/',
-      scraper: { provider: 'session-fetch', status: 'complete' } },
-    { platform: 'linkedin', handle: 'darius-mihai-popescu-346ab680',
-      profileUrl: 'https://www.linkedin.com/in/darius-mihai-popescu-346ab680',
-      scraper: { provider: 'not-requested', status: 'pending' } },
+    ...(brief.instagramUrl ? [{ platform: 'instagram',
+      handle: brief.instagramUrl.split('/').filter(Boolean).pop(),
+      profileUrl: brief.instagramUrl,
+      scraper: { provider: 'not-requested', status: 'pending' } }] : []),
+    ...(brief.linkedinUrl ? [{ platform: 'linkedin',
+      handle: brief.linkedinUrl.split('/').filter(Boolean).pop(),
+      profileUrl: brief.linkedinUrl,
+      scraper: { provider: 'not-requested', status: 'pending' } }] : []),
   ],
-  locale: 'en-RO',
+  locale: brief.locale,
   submittedAt: now,
-  consent: { publicProfileAnalysis: true, acceptedAt: now },
+  consent: { publicProfileAnalysis: Boolean(brief.instagramUrl), acceptedAt: now },
 };
-docs.push({ sourceId: 'intake', platform: 'intake', kind: 'intake_answer', text: intake.business.description });
-const corpus = { projectId, documents: docs, images, completedAt: now };
+const corpus = {
+  projectId,
+  documents: [
+    { sourceId: 'intake', platform: 'intake', kind: 'intake_answer', text: brief.description },
+    ...brief.answers.map((text, i) => ({
+      sourceId: `answer-${i + 1}`, platform: 'intake', kind: 'intake_answer', text,
+    })),
+  ],
+  images: [],
+  completedAt: now,
+};
+
+// The Pi model catalogue does not know this one yet, so a run that selects it
+// has to supply the descriptor alongside the id.
+const GLM_53_FLASH = {
+  id: 'z-ai/glm-5.3-flash', name: 'Z.ai: GLM 5.3 Flash', api: 'openai-completions',
+  baseUrl: 'https://openrouter.ai/api/v1', provider: 'openrouter', reasoning: true,
+  input: ['text', 'image'],
+  cost: { input: 0.07, output: 0.25, cacheRead: 0.014, cacheWrite: 0 },
+  contextWindow: 1_310_720, maxTokens: 131_072,
+  compat: { supportsDeveloperRole: false, thinkingFormat: 'openrouter' },
+  thinkingLevelMap: { xhigh: 'xhigh' },
+};
+const previewModel = process.env.SCENARIO_PREVIEW_MODEL || 'z-ai/glm-5.2';
 
 const agents = new PiSdkFlowstarterAgents({
   provider: 'openrouter', modelId: 'z-ai/glm-5.2', apiKey: env.OPENROUTER_API_KEY,
   thinkingLevel: 'medium', timeoutMs: 420_000, maxOutputTokens: 24_000,
-  roles: { preview: { modelId: process.env.SCENARIO_PREVIEW_MODEL || 'z-ai/glm-5.2',
-    maxOutputTokens: 30_000, timeoutMs: 900_000 } },
+  roles: { preview: {
+    modelId: previewModel,
+    ...(previewModel === GLM_53_FLASH.id ? { modelOverride: GLM_53_FLASH } : {}),
+    maxOutputTokens: 30_000, timeoutMs: 900_000,
+  } },
 });
 
 // Wrap the coding agent so each pass records what triggered it. The feedback
@@ -133,16 +160,17 @@ const pipeline = new PreviewGenerationPipeline(agents, library, validator, publi
 console.log('recording run', projectId);
 const result = await pipeline.run({
   intake, corpus, cachedAssets: [],
-  cachedAssetFiles: readdirSync('/tmp/ig-media').map((f) => ({
-    sourceId: f.replace('.jpg',''), fileName: f,
-    contentBase64: readFileSync(`/tmp/ig-media/${f}`).toString('base64'),
-    heroEligible: f.replace('.jpg','') === 'post2',
-  })),
   onPhase: (phase) => { events.push({ at: rel(), phase }); console.log(`[${rel()}s] ${phase}`); },
 });
 
-// Decisions are read back from the site the agent actually wrote.
-const content = readFileSync(join(workspaceRoot, 'src/content/site-labels.md'), 'utf8');
+// Decisions are read back from the published copy: the pipeline deletes the
+// working directory once the preview is live, and templates differ in which
+// content file they keep their copy in.
+const publishedRoot = String(result.artifactUrl).replace(/^local:\/\//, '');
+const contentPath = ['src/content/site-labels.md', 'src/content/content.md']
+  .map((rel) => join(publishedRoot, rel))
+  .find((candidate) => existsSync(candidate));
+const content = contentPath ? readFileSync(contentPath, 'utf8') : '';
 const pick = (re) => (content.match(re) ?? [])[1] ?? '';
 const decisions = {
   heroImage: pick(/^\s{0,4}image:\s*"([^"]*)"/m),
@@ -156,7 +184,7 @@ writeFileSync('/tmp/run-record.json', JSON.stringify({
   projectId, startedAt: new Date(t0).toISOString(),
   totalSeconds: ((Date.now() - t0) / 1000).toFixed(0),
   template: result.template, brand: result.brandConfig, previewUrl: result.previewUrl,
-  events, passes, decisions, workspaceRoot,
+  events, passes, decisions, publishedRoot,
 }, null, 2));
 console.log('\nrecorded ->', '/tmp/run-record.json');
 console.log('preview:', result.previewUrl);

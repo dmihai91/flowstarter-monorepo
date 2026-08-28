@@ -8,6 +8,30 @@
  */
 export const BRIEFS = [
   {
+    key: 'portfolio-en',
+    name: 'Darius Popescu — Web Developer',
+    niche: 'Freelance web and app development — personal portfolio',
+    location: 'Bucharest, Romania',
+    audience: 'Founders and small businesses who need an app or website',
+    goal: 'Start a project conversation',
+    locale: 'en-RO',
+    instagramUrl: 'https://www.instagram.com/darius.flowstarter/',
+    linkedinUrl: 'https://www.linkedin.com/in/darius-mihai-popescu-346ab680',
+    description:
+      'Personal portfolio for a solo web developer. First-person singular ' +
+      'voice everywhere (I, my — never we, our, studio). Only real work may ' +
+      'appear: Flowstarter, an AI website concierge platform I am building; ' +
+      'an experiment building a working app from scratch purely with AI ' +
+      'tools; and my AI-assisted development workflow. Do not invent ' +
+      'clients, testimonials, case studies, metrics or awards. Warm, direct, ' +
+      'technically credible.',
+    answers: [
+      'I am building Flowstarter, where agents turn a client brief and their social identity into a personalized website.',
+      'I built a working app from scratch using only AI tools and documented every step publicly, including what did not work.',
+      'I work solo. You talk to the person writing the code, and I would rather show the process than sell a polish that is not there.',
+    ],
+  },
+  {
     key: 'therapy-en',
     name: 'Marsh & Fern Counselling',
     niche: 'Trauma-informed counselling for adults',

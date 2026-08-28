@@ -160,7 +160,17 @@ export class PreviewGenerationPipeline {
       );
       if (issue) {
         input.onPhase?.('Refining the personalization');
-        build = await personalize(issue);
+        const repair = await personalize(issue);
+        // Re-check against everything written so far, not just this pass. A
+        // repair that correctly concludes there is nothing left to change
+        // reports no changed files, and judging it alone would fail a preview
+        // that is actually fine.
+        build = {
+          ...repair,
+          changedPaths: Array.from(
+            new Set([...build.changedPaths, ...repair.changedPaths]),
+          ),
+        };
         issue = await findPersonalizationIssue(
           workspace.root,
           input.intake,

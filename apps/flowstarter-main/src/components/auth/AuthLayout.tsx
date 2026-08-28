@@ -44,9 +44,11 @@ export default function AuthLayout({
 
       <SiteHeader mode="auth" />
 
-      {/* Content — sits just below the header; the fixed FlowBackground fills
-          any space beneath it so a short card never floats in a tall void. */}
-      <main className="relative z-10 flex flex-col items-center justify-start px-4 pt-8 pb-10 sm:pt-12">
+      {/* Content — sits just below the header and absorbs the leftover height.
+          Without flex-1 nothing claims the free space in this min-h-screen
+          column, so the footer stopped directly under a short sign-in card and
+          the empty viewport was left below it. */}
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-start px-4 pt-8 pb-10 sm:pt-12">
         <div className="w-full max-w-lg">
           {title && (
             <div className="text-center mb-6">

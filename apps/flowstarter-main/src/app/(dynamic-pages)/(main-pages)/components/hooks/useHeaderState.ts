@@ -13,17 +13,18 @@ export function useHeaderState() {
   }, []);
 
   useEffect(() => {
-    const sectionIds = [
-      'editor-showcase',
-      'templates',
-      'process',
-      'pricing',
-      'faq',
-    ] as const;
+    // The nav sections, listed as the header lists them. 'templates' used to
+    // sit in here and matched nothing: that section's id is 'template-library'.
+    const sectionIds = ['process', 'editor-showcase', 'pricing', 'faq'] as const;
+    // Sorted by where they actually are, because the loop below keeps the last
+    // section above the marker and would otherwise depend on this array being
+    // in page order. It was not: 'editor-showcase' sits after 'process' on the
+    // page, so scrolling into the editor highlighted Process instead.
     const getSections = () =>
       sectionIds
         .map((id) => document.getElementById(id))
-        .filter((el): el is HTMLElement => el !== null);
+        .filter((el): el is HTMLElement => el !== null)
+        .sort((a, b) => a.offsetTop - b.offsetTop);
 
     const onScroll = () => {
       const sections = getSections();

@@ -85,18 +85,18 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
                 aria-label="Main navigation"
               >
                 <a
-                  href="#editor-showcase"
-                  onClick={scrollToSection('editor-showcase')}
-                  className={navLinkClass(activeSection === 'editor-showcase')}
-                >
-                  {tLanding('nav.smartEditor')}
-                </a>
-                <a
                   href="#process"
                   onClick={scrollToSection('process')}
                   className={navLinkClass(activeSection === 'process')}
                 >
                   {tLanding('nav.process')}
+                </a>
+                <a
+                  href="#editor-showcase"
+                  onClick={scrollToSection('editor-showcase')}
+                  className={navLinkClass(activeSection === 'editor-showcase')}
+                >
+                  {tLanding('nav.smartEditor')}
                 </a>
                 <a
                   href="#pricing"
@@ -188,6 +188,13 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
                   <ThemeToggle />
                 </div>
                 <a
+                  href="#process"
+                  onClick={scrollToSection('process', true)}
+                  className={mobileNavLinkClass(activeSection === 'process')}
+                >
+                  {tLanding('nav.process')}
+                </a>
+                <a
                   href="#editor-showcase"
                   onClick={scrollToSection('editor-showcase', true)}
                   className={mobileNavLinkClass(
@@ -195,13 +202,6 @@ export function SiteHeader({ mode, onOpenAppMenu }: SiteHeaderProps) {
                   )}
                 >
                   {tLanding('nav.smartEditor')}
-                </a>
-                <a
-                  href="#process"
-                  onClick={scrollToSection('process', true)}
-                  className={mobileNavLinkClass(activeSection === 'process')}
-                >
-                  {tLanding('nav.process')}
                 </a>
                 <a
                   href="#pricing"

@@ -26,6 +26,7 @@ hero:
   label: "Independent design studio"
   title: "We make work worth looking at twice."
   image: "/images/hero.png"
+  imagePosition: "center 30%"
   text: |
     Atelier Verso is a small studio for brands that would rather be specific than safe. We work in identity, art direction, and digital — close to the people making the decisions.
 

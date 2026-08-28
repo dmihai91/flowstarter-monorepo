@@ -43,7 +43,49 @@ const SpecSchema = z.object({
   targetAudience: z.string().max(500).optional().default(''),
   goal: z.string().max(400).optional().default(''),
   brandTone: z.string().max(400).optional().default(''),
+  // The wizard already collects these; without them the generated site ends
+  // up with placeholder '#' social links and no sense of the person behind
+  // the business.
+  instagramUrl: z.string().url().max(300).optional().default(''),
+  linkedinUrl: z.string().url().max(300).optional().default(''),
 });
+
+/**
+ * Only well-formed public profile URLs on the expected host are passed on;
+ * `assertSafeBusinessIntake` re-checks scheme and host before any agent sees
+ * them, so a malformed paste degrades to "no profile" rather than failing the
+ * whole preview.
+ */
+function socialTargets(
+  spec: z.infer<typeof SpecSchema>
+): BusinessIntakePayload['socialMedia'] {
+  const candidates: Array<{ platform: 'instagram' | 'linkedin'; raw: string }> = [
+    { platform: 'instagram', raw: spec.instagramUrl },
+    { platform: 'linkedin', raw: spec.linkedinUrl },
+  ];
+  const targets: BusinessIntakePayload['socialMedia'] = [];
+  for (const { platform, raw } of candidates) {
+    if (!raw.trim()) continue;
+    let url: URL;
+    try {
+      url = new URL(raw.trim());
+    } catch {
+      continue;
+    }
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
+    if (url.protocol !== 'https:') continue;
+    if (host !== `${platform}.com` && !host.endsWith(`.${platform}.com`)) continue;
+    targets.push({
+      platform,
+      handle: url.pathname.split('/').filter(Boolean).pop()?.slice(0, 100),
+      profileUrl: url.toString(),
+      // No scrape is run here: the URL is a real link and evidence that the
+      // profile exists, not a source we claim to have read.
+      scraper: { provider: 'not-requested', status: 'pending' },
+    });
+  }
+  return targets;
+}
 
 function clientIp(req: NextRequest): string {
   return (
@@ -68,7 +110,7 @@ function buildPiEvidence(
       targetAudience: spec.targetAudience.trim() || undefined,
       primaryGoal: spec.goal.trim() || undefined,
     },
-    socialMedia: [],
+    socialMedia: socialTargets(spec),
     locale: 'en',
     submittedAt,
     consent: {

@@ -154,6 +154,10 @@ export function PreviewStep({
       targetAudience: data.targetAudience,
       goal: data.goal,
       brandTone: data.brandTone,
+      // Collected two steps earlier and previously dropped here, which left
+      // every generated site with placeholder social links.
+      instagramUrl: data.instagramUrl,
+      linkedinUrl: data.linkedinUrl,
     };
 
     async function loadJsonFallback() {

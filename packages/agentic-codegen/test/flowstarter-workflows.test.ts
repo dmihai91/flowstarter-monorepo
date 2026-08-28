@@ -293,6 +293,67 @@ describe('Flowstarter preview-to-build orchestration', () => {
     expect(heroFeedback).toContain('/flowstarter-assets/portrait.png');
   });
 
+  it('repairs a hero left empty when the client vouched for a photo', async () => {
+    const intake = validIntake();
+    const big = Buffer.concat([
+      Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+      Buffer.from([0, 0, 0, 13]),
+      Buffer.from('IHDR', 'ascii'),
+      Buffer.from([0, 0, 0x04, 0x38, 0, 0, 0x05, 0x46, 8, 6, 0, 0, 0]),
+    ]).toString('base64');
+    const feedbacks: Array<string | undefined> = [];
+
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        feedbacks.push(input.feedback);
+        // First pass leaves the hero on the template's placeholder panel.
+        const hero = input.feedback?.includes('hero image is empty')
+          ? '/flowstarter-assets/portrait.png'
+          : '';
+        await writeFile(
+          join(input.workspaceRoot, 'src/content/site.md'),
+          `Calm Path Therapy preview /flowstarter-assets/portrait.png\n  image: "${hero}"\n`,
+          'utf8',
+        );
+        return { summary: 'done', changedPaths: ['src/content/site.md'] };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      staticLibrary(),
+      { validate: async () => undefined },
+      staticPublisher(),
+    );
+    await pipeline.run({
+      intake,
+      corpus: validCorpus(intake.projectId),
+      cachedAssets: [],
+      cachedAssetFiles: [
+        {
+          sourceId: 'portrait',
+          fileName: 'portrait.png',
+          contentBase64: big,
+          heroEligible: true,
+        },
+      ],
+    });
+
+    const heroFeedback = feedbacks.find((f) => f?.includes('hero image is empty'));
+    expect(heroFeedback).toBeDefined();
+    expect(heroFeedback).toContain('/flowstarter-assets/portrait.png');
+  });
+
   it('leaves an eligible hero photo alone', async () => {
     const intake = validIntake();
     const big = Buffer.concat([

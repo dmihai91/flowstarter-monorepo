@@ -78,7 +78,7 @@ export function NavigationWrapper() {
   const errorPageFlag = useSyncExternalStore(
     subscribeErrorPage,
     getIsErrorPage,
-    getIsErrorPageServerSnapshot,
+    getIsErrorPageServerSnapshot
   );
   const shouldHideNavbar = errorPageFlag || isNoNavbarRoute;
 

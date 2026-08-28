@@ -376,7 +376,9 @@ async function findHeroAssetIssue(
         .split('\n')
         .find((line) => /^\s{0,4}image:\s*["']/.test(line));
       if (!heroLine) continue;
-      const filled = /image:\s*["']\s*\S/.test(heroLine);
+      // The character after the opening quote must be real content, not the
+      // closing quote: `image: ""` is an empty hero, not a filled one.
+      const filled = /image:\s*(["'])\s*[^"'\s]/.test(heroLine);
       if (filled) return undefined;
       return (
         'the hero image is empty while the client supplied a hero-ready ' +

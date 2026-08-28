@@ -17,9 +17,16 @@ import { notFound } from 'next/navigation';
 import { depositAmountMinor } from '@flowstarter/agentic-codegen/src/flowstarter/state-machine';
 import { ProjectState } from '@flowstarter/agentic-codegen/src/flowstarter/types';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
+import {
+  BOOKING_DEPOSIT_PERCENT,
+  TIER_SETUP_FROM,
+} from '../../components/discovery/discovery.logic';
 import { UnlockCheckoutButton } from './UnlockCheckoutButton';
 
 export const dynamic = 'force-dynamic';
+
+/** Quoted, not invented: the same figure the pricing section advertises. */
+const STARTER_SETUP_FROM = TIER_SETUP_FROM.starter;
 
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -53,25 +60,60 @@ export default async function UnlockPage({
   // a broken site to someone who just clicked "unlock" on their own preview.
   if (!workspace) {
     return (
-      <main className="mx-auto flex min-h-[70vh] w-full max-w-2xl flex-col justify-center px-5 py-16">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)]">
-          Unlock your site
-        </p>
-        <h1 className="mb-4 text-3xl font-bold leading-tight text-[var(--fs-ink)] sm:text-4xl">
-          Let&apos;s turn this preview into your site
-        </h1>
-        <p className="mb-7 text-base leading-relaxed text-[var(--fs-ink)]/75">
-          The blurred sections are the rest of the site we generated for you.
-          This preview is not attached to a project yet, so there is nothing to
-          pay for at this point: tell us it is the direction you want and we
-          will scope it, quote it, and build it.
-        </p>
-        <Link
-          href="/contact"
-          className="inline-flex w-fit items-center rounded-full bg-[var(--fs-ink)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
-        >
-          Talk to us about this preview
-        </Link>
+      <main className="ls-scope ls-section ls-section--pad ls-unlock-main">
+        <div className="ls-mesh" aria-hidden />
+        <div className="ls-grain" aria-hidden />
+        <div className="ls-container ls-unlock">
+          <p className="ls-eyebrow">Unlock your site</p>
+          <h1 className="ls-display ls-unlock__title">
+            <span className="line">This preview is yours.</span>
+            <span className="line flourish mt-2">Let&apos;s finish it.</span>
+          </h1>
+          <p className="ls-body ls-body--lead ls-unlock__lead">
+            The blurred sections are the rest of the site we already generated
+            for you. Book the call and we agree the scope, the price and the
+            date — then the same agents finish the build.
+          </p>
+
+          <ol className="ls-unlock__steps">
+            <li className="ls-card ls-unlock__step">
+              <span className="ls-unlock__step-n">01</span>
+              <h2 className="ls-unlock__step-title">Book the call</h2>
+              <p className="ls-unlock__step-body">
+                A {BOOKING_DEPOSIT_PERCENT}% deposit holds the slot and comes
+                off your setup fee. Setup starts at {STARTER_SETUP_FROM}.
+              </p>
+            </li>
+            <li className="ls-card ls-unlock__step">
+              <span className="ls-unlock__step-n">02</span>
+              <h2 className="ls-unlock__step-title">Agree the scope</h2>
+              <p className="ls-unlock__step-body">
+                We price the real thing on the call. You see the final number
+                before anything else is due.
+              </p>
+            </li>
+            <li className="ls-card ls-unlock__step">
+              <span className="ls-unlock__step-n">03</span>
+              <h2 className="ls-unlock__step-title">We build it</h2>
+              <p className="ls-unlock__step-body">
+                20% starts the build, the balance is due when you approve the
+                finished site. Both of us review it before it ships.
+              </p>
+            </li>
+          </ol>
+
+          <div className="ls-unlock__actions">
+            <Link
+              href="/?book=1"
+              className="ls-cta-hero ls-unlock__cta"
+            >
+              Book the call
+            </Link>
+            <Link href="/contact" className="ls-unlock__cta-ghost">
+              Ask a question first
+            </Link>
+          </div>
+        </div>
       </main>
     );
   }

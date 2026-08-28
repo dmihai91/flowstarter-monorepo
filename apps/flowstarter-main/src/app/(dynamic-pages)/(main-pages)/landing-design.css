@@ -3472,3 +3472,90 @@
   opacity: 0.8;
   max-width: 62ch;
 }
+
+/* ── Unlock page: what the locked sections lead to ── */
+/* First section on its own page, so it has to clear the fixed header itself —
+   landing sections never sit at the top and so never needed the offset. The
+   min-height keeps a short page from leaving the footer stranded mid-screen. */
+.ls-unlock-main {
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - 4rem);
+  padding-top: 4rem;
+}
+.ls-unlock {
+  max-width: 62rem;
+}
+.ls-unlock__title {
+  margin: 0.75rem 0 0;
+}
+.ls-unlock__lead {
+  max-width: 54ch;
+  margin-top: 1rem;
+}
+.ls-unlock__steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  counter-reset: none;
+}
+.ls-unlock__step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  text-align: start;
+}
+.ls-unlock__step-n {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--ls-accent, #6366f1);
+  opacity: 0.8;
+}
+.ls-unlock__step-title {
+  font-size: 1.02rem;
+  font-weight: 650;
+  line-height: 1.25;
+  margin: 0;
+}
+.ls-unlock__step-body {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0;
+  opacity: 0.85;
+}
+.ls-unlock__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 2.25rem;
+}
+.ls-unlock__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.25rem;
+  padding: 0 2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #fff;
+}
+/* Secondary action: present but never competing with the booking CTA. */
+.ls-unlock__cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  height: 3.25rem;
+  padding: 0 1.4rem;
+  border-radius: 999px;
+  font-weight: 550;
+  border: 1px solid var(--ls-glass-edge);
+  opacity: 0.85;
+}
+.ls-unlock__cta-ghost:hover {
+  opacity: 1;
+}

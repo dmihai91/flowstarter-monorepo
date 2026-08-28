@@ -34,7 +34,9 @@ describe('quoteMinorFrom', () => {
   it('reports an unpriced project as zero rather than guessing', () => {
     expect(quoteMinorFrom({})).toBe(0);
     expect(quoteMinorFrom({ final_value_minor: 0, setup_fee: 0 })).toBe(0);
-    expect(quoteMinorFrom({ final_value_minor: null, setup_fee: null })).toBe(0);
+    expect(quoteMinorFrom({ final_value_minor: null, setup_fee: null })).toBe(
+      0
+    );
     // A negative or NaN column is corrupt, not a price.
     expect(quoteMinorFrom({ setup_fee: -50 })).toBe(0);
     expect(quoteMinorFrom({ setup_fee: 'abc' })).toBe(0);
@@ -55,7 +57,9 @@ describe('parseQuoteInputToMinor', () => {
   });
 
   it('refuses input the old Number(x) || 0 would have silently zeroed', () => {
-    expect(() => parseQuoteInputToMinor('not a price')).toThrow(InvalidQuoteError);
+    expect(() => parseQuoteInputToMinor('not a price')).toThrow(
+      InvalidQuoteError
+    );
     expect(() => parseQuoteInputToMinor(-1)).toThrow(/negative/);
     expect(() => parseQuoteInputToMinor(Infinity)).toThrow(InvalidQuoteError);
     expect(() => parseQuoteInputToMinor(9_999_999)).toThrow(/maximum/);

@@ -38,10 +38,15 @@ const MAX_QUOTE_MINOR = 100_000_00;
  */
 export function quoteMinorFrom(row: QuoteBearingRow): number {
   const authoritative = row.final_value_minor;
-  if (typeof authoritative === 'number' && Number.isFinite(authoritative) && authoritative > 0) {
+  if (
+    typeof authoritative === 'number' &&
+    Number.isFinite(authoritative) &&
+    authoritative > 0
+  ) {
     return Math.round(authoritative);
   }
-  const legacy = typeof row.setup_fee === 'string' ? Number(row.setup_fee) : row.setup_fee;
+  const legacy =
+    typeof row.setup_fee === 'string' ? Number(row.setup_fee) : row.setup_fee;
   if (typeof legacy === 'number' && Number.isFinite(legacy) && legacy > 0) {
     // Legacy rows stored euros as a float; round at the cent.
     return Math.round(legacy * 100);
@@ -60,7 +65,8 @@ export function quoteMajorFrom(row: QuoteBearingRow): number {
  * silently coercing it to 0 the way `Number(x) || 0` did.
  */
 export function parseQuoteInputToMinor(input: unknown): number {
-  const raw = typeof input === 'string' ? input.trim().replace(',', '.') : input;
+  const raw =
+    typeof input === 'string' ? input.trim().replace(',', '.') : input;
   const major = typeof raw === 'number' ? raw : Number(raw);
   if (!Number.isFinite(major)) {
     throw new InvalidQuoteError('Project value must be a number');

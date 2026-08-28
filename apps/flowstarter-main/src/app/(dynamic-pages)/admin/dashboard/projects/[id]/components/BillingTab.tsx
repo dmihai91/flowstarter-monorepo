@@ -1,10 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  quoteMajorFrom,
-  type QuoteBearingRow,
-} from '@/lib/flowstarter/quote';
+import { quoteMajorFrom, type QuoteBearingRow } from '@/lib/flowstarter/quote';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {

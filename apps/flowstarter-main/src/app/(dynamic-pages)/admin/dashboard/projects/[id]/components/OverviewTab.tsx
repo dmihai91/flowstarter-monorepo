@@ -1,10 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  quoteMajorFrom,
-  type QuoteBearingRow,
-} from '@/lib/flowstarter/quote';
+import { quoteMajorFrom, type QuoteBearingRow } from '@/lib/flowstarter/quote';
 import { toast } from 'sonner';
 import { Save } from 'lucide-react';
 import { ShellCard } from '../../../components/TeamDashboardShell';

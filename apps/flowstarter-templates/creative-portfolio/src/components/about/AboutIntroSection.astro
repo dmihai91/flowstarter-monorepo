@@ -1,5 +1,6 @@
 ---
 import ActionButton from '../design-system/ActionButton.astro';
+import SocialIcon from '../design-system/SocialIcon.astro';
 
 interface Props {
   intro: {
@@ -33,7 +34,7 @@ const { intro } = Astro.props;
       className="about-intro-section__button ds-action-button--outline-dark"
     >
       <span slot="prefix" class="about-intro-section__icon">
-        <img src="/linkedin.svg" alt="" />
+        <SocialIcon href={intro.buttonHref} />
       </span>
     </ActionButton>
   </div>
@@ -85,12 +86,12 @@ const { intro } = Astro.props;
     justify-content: center;
   }
 
-  .about-intro-section__icon img {
+  /* The mark is now an inline SVG so it inherits the button's colour in both
+     schemes, instead of a fixed-colour raster that only suited one. */
+  .about-intro-section__icon :global(svg) {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    filter: none;
-    transition: filter var(--transition);
+    display: block;
   }
 
   :global(.about-intro-section__button:hover) .about-intro-section__icon img,

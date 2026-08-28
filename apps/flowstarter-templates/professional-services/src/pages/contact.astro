@@ -11,9 +11,10 @@ import { getContactPageData } from '../lib/site-data';
 
 const contactPage = getContactPageData();
 const defaultCountry = contactCountryCodes[0];
+import { pageTitle } from '../lib/site-data';
 ---
 
-<Layout title="Contact | Halden & Roe">
+<Layout title={pageTitle('Contact')}>
   <Header activeIndex={5} />
   <main class="contact-page">
     <ContactHeroSection titleLines={contactPage.titleLines} introText={contactPage.introText} />

@@ -7,9 +7,10 @@ import AnimatedWordTitle from '../components/shared/AnimatedWordTitle.astro';
 import { frontmatter as siteLabels } from '../content/site-labels.md';
 
 const { articles } = (siteLabels as any).blogPage;
+import { pageTitle } from '../lib/site-data';
 ---
 
-<Layout title="Insights | Halden & Roe">
+<Layout title={pageTitle('Insights')}>
   <Header activeIndex={4} />
   <main class="blog-page">
 

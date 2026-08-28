@@ -12,9 +12,10 @@ import CTASection from '../components/CTASection.astro';
 import { getAboutPageData } from '../lib/site-data';
 
 const aboutPage = getAboutPageData();
+import { pageTitle } from '../lib/site-data';
 ---
 
-<Layout title="About Us — Hearthstone Joinery">
+<Layout title={pageTitle('About Us')}>
   <Header activeIndex={2} />
   <main class="about-page">
     <AboutHeroSection heroLines={aboutPage.heroLines} />

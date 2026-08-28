@@ -213,3 +213,28 @@ export const getCaseStudyProjects = () =>
   Array.isArray(siteLabels.caseStudies?.projects) ? siteLabels.caseStudies.projects : [];
 
 export { siteLabels };
+
+/**
+ * Brand name for a subpage's <title>.
+ *
+ * Subpages used to hardcode the demo studio's name, so every personalized
+ * site shipped the wrong brand in the browser tab, in search results and in
+ * every shared link. The preview agent cannot edit pages, so this has to read
+ * from the content layer.
+ */
+export function siteName(): string {
+  const meta = (rawSiteLabels as AnyRecord).siteMeta ?? {};
+  const header = (rawSiteLabels as AnyRecord).header ?? {};
+  const fromMeta =
+    typeof meta.title === 'string' ? meta.title.split(/\s+[—|]\s+/)[0]?.trim() : '';
+  if (fromMeta) return fromMeta;
+  return typeof header.logo === 'string' && header.logo.trim()
+    ? header.logo.trim()
+    : 'Portfolio';
+}
+
+/** `Work — Studio Name`, with the brand taken from the client's own content. */
+export function pageTitle(section: string): string {
+  const name = siteName();
+  return section.trim() ? `${section.trim()} — ${name}` : name;
+}

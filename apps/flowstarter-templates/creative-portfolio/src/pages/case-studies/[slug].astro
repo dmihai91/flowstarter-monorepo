@@ -36,9 +36,10 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props as { project: Project };
+import { pageTitle } from '../../lib/site-data';
 ---
 
-<Layout title={`${project.title} — Atelier Verso`}>
+<Layout title={pageTitle(project.title)}>
   <Header activeIndex={1} ctaLabel="Start a project" ctaHref="/contact" />
   <main class="case-study-page">
     <section class="case-study-page__hero">

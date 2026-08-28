@@ -2,6 +2,10 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import {
+  InvalidQuoteError,
+  parseQuoteInputToMinor,
+} from '@/lib/flowstarter/quote';
+import {
   COMMERCE_MODES,
   COMMERCE_PRODUCT_TYPES,
   COMMERCE_PROVIDERS,
@@ -216,7 +220,25 @@ export async function PATCH(
     }
 
     if (setup_fee !== undefined) {
-      updateData.setup_fee = Number(setup_fee) || 0;
+      // The operator types euros; the quote is stored in minor units, which is
+      // what the deposit Checkout and the 20% webhook check read. Both columns
+      // are written so an existing report reading setup_fee stays correct,
+      // but final_value_minor is the one money is computed from.
+      try {
+        const minor = parseQuoteInputToMinor(setup_fee);
+        updateData.final_value_minor = minor;
+        updateData.setup_fee = minor / 100;
+      } catch (error) {
+        return NextResponse.json(
+          {
+            error:
+              error instanceof InvalidQuoteError
+                ? error.message
+                : 'Invalid project value',
+          },
+          { status: 400 }
+        );
+      }
     }
 
     if (monthly_fee !== undefined) {

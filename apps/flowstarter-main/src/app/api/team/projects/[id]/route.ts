@@ -1,4 +1,8 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
+import {
+  InvalidQuoteError,
+  parseQuoteInputToMinor,
+} from '@/lib/flowstarter/quote';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import {
@@ -216,7 +220,23 @@ export async function PATCH(
     }
 
     if (setup_fee !== undefined) {
-      updateData.setup_fee = Number(setup_fee) || 0;
+      // Stored in minor units, which is what the deposit Checkout and the
+      // 20% webhook check read; setup_fee stays as the legacy mirror.
+      try {
+        const minor = parseQuoteInputToMinor(setup_fee);
+        updateData.final_value_minor = minor;
+        updateData.setup_fee = minor / 100;
+      } catch (error) {
+        return NextResponse.json(
+          {
+            error:
+              error instanceof InvalidQuoteError
+                ? error.message
+                : 'Invalid project value',
+          },
+          { status: 400 }
+        );
+      }
     }
 
     if (monthly_fee !== undefined) {

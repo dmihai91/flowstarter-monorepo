@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { quoteMajorFrom } from '@/lib/flowstarter/quote';
 import { requireTeamAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import {
@@ -82,14 +83,14 @@ export async function POST(
 
   const amountMinor = resolveAmountMinor(
     body.amount,
-    row.setup_fee ?? 0,
+    quoteMajorFrom(row),
     /* percentageOfSetup */ 20
   );
   if (amountMinor <= 0) {
     return NextResponse.json(
       {
         error:
-          'Cannot derive amount. Set workspaces.setup_fee, or pass an explicit amount in major units (e.g. 159.8 for €159.80).',
+          'Cannot derive amount. Set the project value, or pass an explicit amount in major units (e.g. 159.8 for €159.80).',
       },
       { status: 400 }
     );

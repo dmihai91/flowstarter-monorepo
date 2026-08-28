@@ -1,6 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  quoteMajorFrom,
+  type QuoteBearingRow,
+} from '@/lib/flowstarter/quote';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
@@ -82,7 +86,9 @@ export function BillingTab({ project }: { project: Project }) {
   const qc = useQueryClient();
   const [busy, setBusy] = useState<string | null>(null);
 
-  const setupFee = (project.setup_fee as number | null) ?? 0;
+  // Reads the same quote the deposit Checkout and the webhook use, so the
+  // split shown here cannot disagree with what the client is charged.
+  const setupFee = quoteMajorFrom(project as QuoteBearingRow);
   const monthlyFee = (project.monthly_fee as number | null) ?? 0;
   const depositStatus = (project.deposit_status as InvoiceState) ?? 'pending';
   const finalStatus = (project.final_status as InvoiceState) ?? 'pending';

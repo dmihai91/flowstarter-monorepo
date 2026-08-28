@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { quoteMajorFrom } from '@/lib/flowstarter/quote';
 import { requireTeamAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import {
@@ -86,7 +87,7 @@ export async function POST(
 
   const amountMinor = resolveAmountMinor(
     body.amount,
-    row.setup_fee ?? 0,
+    quoteMajorFrom(row),
     /* percentageOfSetup */ 80
   );
   if (amountMinor <= 0) {

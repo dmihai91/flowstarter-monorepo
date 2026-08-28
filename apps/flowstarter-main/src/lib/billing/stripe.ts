@@ -33,7 +33,9 @@ export type WorkspaceBillingRow = {
   client_email: string | null;
   client_name: string | null;
   client_business_name: string | null;
+  /** Legacy euro column; read through quoteMinorFrom, never directly. */
   setup_fee: number | null;
+  final_value_minor: number | null;
   monthly_fee: number | null;
   billing_interval: string | null;
   stripe_customer_id: string | null;
@@ -392,7 +394,7 @@ export async function ensureBillingCustomer(
     .from('workspaces')
     .select(
       `id, client_email, client_name, client_business_name,
-       setup_fee, monthly_fee, billing_interval, stripe_customer_id, stripe_subscription_id,
+       setup_fee, final_value_minor, monthly_fee, billing_interval, stripe_customer_id, stripe_subscription_id,
        subscription_status, subscription_trial_ends,
        deposit_status, deposit_invoice_id,
        final_status, final_invoice_id`

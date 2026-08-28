@@ -103,10 +103,7 @@ export default async function UnlockPage({
           </ol>
 
           <div className="ls-unlock__actions">
-            <Link
-              href="/?book=1"
-              className="ls-cta-hero ls-unlock__cta"
-            >
+            <Link href="/?book=1" className="ls-cta-hero ls-unlock__cta">
               Book the call
             </Link>
             <Link href="/contact" className="ls-unlock__cta-ghost">

@@ -15,6 +15,8 @@ function baseProject(
     client_name: 'Ana Pop',
     client_business_name: 'Acme Coaching',
     setup_fee: 799,
+    // The authoritative quote; setup_fee stays as the legacy mirror.
+    final_value_minor: 79_900,
     monthly_fee: 49,
     billing_interval: 'monthly',
     stripe_customer_id: null,

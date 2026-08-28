@@ -57,7 +57,7 @@ export const LANDING_COPY = {
     subheadlineBold: '',
     subheadline:
       'Tell us about the business and share the public profiles that already sound like you. We turn that voice and visual identity into a tailored site preview, then build and care for the real thing.',
-    primaryCta: 'Create my preview',
+    primaryCta: 'Build my site',
     secondaryCta: 'See the process',
     trustLine:
       'For coaches, consultants, therapists, freelancers and founders, whether you are launching for the first time or finally fixing the site you have.',

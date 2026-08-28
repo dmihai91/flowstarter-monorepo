@@ -1061,7 +1061,7 @@ const en = {
 
   // Landing Page - Pricing Features
 
-  'landing.header.cta': 'Create my preview',
+  'landing.header.cta': 'Build my site',
 
   // Landing Page - For/Not For
 
@@ -1883,7 +1883,7 @@ const en = {
   'landing.hero.proofLine': 'A tailored preview, before you pay.',
   'landing.hero.subhead':
     'Share your details and public profiles. Our agent picks the right starting design and creates a preview shaped around you.',
-  'landing.hero.primaryCta': 'Create my preview',
+  'landing.hero.primaryCta': 'Build my site',
   'landing.hero.secondaryCta': 'See the process',
   'landing.hero.eyebrowSerial': 'A specialized agent team working for you 24/7',
   'landing.hero.eyebrowLabel': '',
@@ -1928,7 +1928,7 @@ const en = {
   'landing.hero.brief.progressDesign': 'Choosing your design',
   'landing.hero.brief.progressReady': 'Preview ready',
   'landing.hero.brief.ctaPending': 'Get my site built',
-  'landing.hero.brief.ctaReady': 'Create my preview',
+  'landing.hero.brief.ctaReady': 'Build my site',
   'landing.hero.pills.label': 'Included from day one',
   'landing.hero.pills.booking': 'Cal.com booking',
   'landing.hero.pills.newsletter': 'Newsletter',
@@ -2345,7 +2345,7 @@ const en = {
   'landing.finalCta.headlineFlourish': 'starts with what you share',
   'landing.finalCta.subhead':
     'Share your business details and the public profiles you choose. We will turn them into a tailored first direction for you to review.',
-  'landing.finalCta.primaryCta': 'Create my preview',
+  'landing.finalCta.primaryCta': 'Build my site',
   'landing.finalCta.microNote':
     'No payment until your tailored preview is ready',
 

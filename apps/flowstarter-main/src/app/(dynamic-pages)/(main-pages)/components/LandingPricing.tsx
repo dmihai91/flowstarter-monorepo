@@ -86,7 +86,7 @@ export function LandingPricing() {
               onClick={() => handlePlanClick('starter')}
               className="h-12 w-full sm:w-auto px-7"
             >
-              Create my preview
+              Build my site
             </Button>
           </div>
 

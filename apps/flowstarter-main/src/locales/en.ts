@@ -1885,7 +1885,7 @@ const en = {
     'Share your details and public profiles. Our agent picks the right starting design and creates a preview shaped around you.',
   'landing.hero.primaryCta': 'Build my site',
   'landing.hero.secondaryCta': 'See the process',
-  'landing.hero.eyebrowSerial': 'A specialized agent team working for you 24/7',
+  'landing.hero.eyebrowSerial': 'Your dedicated team of agents, supervised by us',
   'landing.hero.eyebrowLabel': '',
   'landing.hero.eyebrowTagline': '',
   'landing.hero.guaranteeShort':

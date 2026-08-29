@@ -17,6 +17,7 @@ import {
   type GitWorktree,
   type TemplateScaffoldFile,
 } from '@flowstarter/agentic-codegen';
+import { withTenant } from './tenancy';
 
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -212,10 +213,15 @@ export class SupabaseFullSiteBuildJobStore implements FullSiteBuildJobStore {
       if (workspaceError) throw workspaceError;
       if (!workspace) throw new JobArtifactError('Build workspace does not exist');
 
-      const { data: artifacts, error: artifactError } = await this.client
+      // Obviously-equivalent to the manual `.eq('workspace_id', ...)` this
+      // replaced: `withTenant` applies the same filter structurally instead
+      // of by hand, and is exercised by the static guard test.
+      const { data: artifacts, error: artifactError } = await withTenant(
+        this.client,
+        row.workspace_id,
+      )
         .from('flowstarter_project_artifacts')
         .select('intake_payload, brand_config, preview_manifest')
-        .eq('workspace_id', row.workspace_id)
         .maybeSingle<ProjectArtifactRow>();
       if (artifactError) throw artifactError;
       if (!artifacts) {

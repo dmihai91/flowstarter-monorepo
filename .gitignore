@@ -111,3 +111,4 @@ apps/flowstarter-library/templates/*/package-lock.json
 # Generated demo artifacts (rebuildable from the pipeline)
 artifacts/darius-portfolio/
 workflow-showcase-static/
+artifacts/showcase/

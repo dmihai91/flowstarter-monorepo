@@ -32,11 +32,27 @@ if (briefs.length === 0) {
   process.exit(1);
 }
 
-const PREVIEW_MODEL = process.env.SCENARIO_PREVIEW_MODEL || 'z-ai/glm-5.2';
+// Not in Pi's catalogue yet, so selecting it means supplying the descriptor.
+const GLM_53_FLASH = {
+  id: 'z-ai/glm-5.3-flash', name: 'Z.ai: GLM 5.3 Flash', api: 'openai-completions',
+  baseUrl: 'https://openrouter.ai/api/v1', provider: 'openrouter', reasoning: true,
+  input: ['text', 'image'],
+  cost: { input: 0.07, output: 0.25, cacheRead: 0.014, cacheWrite: 0 },
+  contextWindow: 1_310_720, maxTokens: 131_072,
+  compat: { supportsDeveloperRole: false, thinkingFormat: 'openrouter' },
+  thinkingLevelMap: { xhigh: 'xhigh' },
+};
+// Flash is the default: glm-5.2 returns without writing any file often enough
+// that a batch of four will usually lose one to it.
+const PREVIEW_MODEL = process.env.SCENARIO_PREVIEW_MODEL || GLM_53_FLASH.id;
 const agents = new PiSdkFlowstarterAgents({
   provider: 'openrouter', modelId: 'z-ai/glm-5.2',
   apiKey: env.OPENROUTER_API_KEY, thinkingLevel: 'medium', timeoutMs: 420_000, maxOutputTokens: 24_000,
-  roles: { preview: { modelId: PREVIEW_MODEL, maxOutputTokens: 30_000, timeoutMs: 900_000 } },
+  roles: { preview: {
+    modelId: PREVIEW_MODEL,
+    ...(PREVIEW_MODEL === GLM_53_FLASH.id ? { modelOverride: GLM_53_FLASH } : {}),
+    maxOutputTokens: 30_000, timeoutMs: 900_000,
+  } },
 });
 const library = new FlowstarterMcpTemplateLibrary({
   endpoint: 'http://127.0.0.1:3001/mcp',

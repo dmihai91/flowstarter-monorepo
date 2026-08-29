@@ -7,7 +7,7 @@ const ROOT = resolve(process.argv[2]);
 const PORT = Number(process.argv[3]);
 const TYPES = { '.html':'text/html; charset=utf-8', '.css':'text/css', '.js':'text/javascript',
   '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.svg':'image/svg+xml',
-  '.webp':'image/webp', '.woff2':'font/woff2', '.ico':'image/x-icon', '.xml':'application/xml' };
+  '.webp':'image/webp', '.woff2':'font/woff2', '.ico':'image/x-icon', '.xml':'application/xml', '.webm':'video/webm', '.mp4':'video/mp4' };
 
 createServer((req, res) => {
   void (async () => {

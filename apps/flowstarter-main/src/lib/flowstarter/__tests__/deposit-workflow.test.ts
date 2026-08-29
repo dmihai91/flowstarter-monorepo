@@ -154,6 +154,30 @@ describe('deposit paid by operator invoice', () => {
     expect(captured.update).not.toHaveProperty('deposit_payment_intent_id');
   });
 
+  it('still reports success when the build worker cannot be dispatched', async () => {
+    // Production without a worker URL used to throw here, failing the webhook
+    // after the deposit was recorded and sending Stripe into days of retries.
+    script.workspace = workspaceRow();
+    const previousEnv = process.env.NODE_ENV;
+    vi.stubEnv('NODE_ENV', 'production');
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    try {
+      const result = await enqueueFullBuildFromDepositInvoice(
+        event(),
+        depositInvoice()
+      );
+
+      expect(result).toMatchObject({ jobId: 'job-1', duplicate: false });
+      // The operator has to be able to find the job that needs picking up.
+      expect(errors.mock.calls[0]?.[0]).toContain('job-1');
+      expect(errors.mock.calls[0]?.[0]).toContain('could not be dispatched');
+    } finally {
+      errors.mockRestore();
+      vi.stubEnv('NODE_ENV', previousEnv ?? 'test');
+    }
+  });
+
   it('ignores an invoice that is not a deposit', async () => {
     const result = await enqueueFullBuildFromDepositInvoice(
       event(),

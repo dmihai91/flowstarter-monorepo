@@ -228,7 +228,20 @@ async function enqueueBuildAndAdvance(input: {
     .single();
   if (stateUpdate.error) throw stateUpdate.error;
 
-  await dispatchBuildJob(jobId);
+  // The ledger row is the commitment; dispatch is only a nudge to start it
+  // sooner. Letting a failed nudge throw would fail the webhook *after* the
+  // deposit is recorded and the job is queued, and Stripe would then retry for
+  // days over something a retry cannot fix — an unreachable or unconfigured
+  // worker. Surface it loudly and report success for the work that did happen.
+  try {
+    await dispatchBuildJob(jobId);
+  } catch (error) {
+    console.error(
+      `[Flowstarter] build job ${jobId} is queued for workspace ${workspaceId} ` +
+        'but could not be dispatched; it needs picking up: ' +
+        (error instanceof Error ? error.message : 'unknown error')
+    );
+  }
   return { workspaceId, jobId, duplicate };
 }
 

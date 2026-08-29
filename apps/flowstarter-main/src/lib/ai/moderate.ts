@@ -1,6 +1,5 @@
 import 'server-only';
-import { models } from './client';
-import { generateText } from 'ai';
+import { callLlm } from './llm';
 
 export interface ModerationResult {
   isProhibited?: boolean;
@@ -65,8 +64,8 @@ export async function aiModerateContent(input: {
   }\nServices: ${input.services || ''}`;
 
   try {
-    const { text } = await generateText({
-      model: models.gpt4,
+    const { text } = await callLlm({
+      action: 'moderate',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userSummary },

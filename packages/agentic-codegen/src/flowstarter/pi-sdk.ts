@@ -106,6 +106,50 @@ export interface AgentBuildResult {
   changedPaths: string[];
 }
 
+/**
+ * What a Pi session was doing, in the same vocabulary the main app's LLM
+ * wrapper uses for `llm_usage.action`. Derived from the caller, not the role:
+ * naming and the intake interview share the cheap `intake` model tier but are
+ * separate actions in the ledger.
+ */
+export type PiUsageAction =
+  | 'preview_generate'
+  | 'preview_edit'
+  | 'intake_interview'
+  | 'business_naming';
+
+/** One assistant turn's token usage, normalized for the app's usage ledger. */
+export interface PiUsageEvent {
+  action: PiUsageAction;
+  model: string;
+  /** Fresh + cache-read + cache-write prompt tokens. */
+  tokensIn: number;
+  tokensOut: number;
+  /** Subset of `tokensIn` served from the provider's prompt cache. */
+  cachedTokens: number;
+}
+
+/** Default whole-run token ceiling for one preview build. */
+export const DEFAULT_PI_MAX_RUN_TOKENS = 300_000;
+
+/**
+ * Thrown when the accumulated token spend of one `PiSdkFlowstarterAgents`
+ * instance passes its run cap. The in-flight session is aborted first, so the
+ * pipeline stops rather than continuing to burn budget.
+ */
+export class PiRunBudgetExceededError extends Error {
+  readonly name = 'PiRunBudgetExceededError';
+  constructor(
+    readonly action: PiUsageAction,
+    readonly usedTokens: number,
+    readonly maxRunTokens: number,
+  ) {
+    super(
+      `Pi run budget exceeded during "${action}": used ${usedTokens} of ${maxRunTokens} tokens for this preview`,
+    );
+  }
+}
+
 export interface PiSdkOptions {
   provider?: string;
   modelId?: string;
@@ -140,6 +184,19 @@ export interface PiSdkOptions {
    * inherit the top-level options.
    */
   roles?: Partial<Record<PiAgentRole, PiRoleModelChoice>>;
+  /**
+   * Receives every assistant turn's token usage. The main app pipes this into
+   * its `llm_usage` ledger so Pi-driven work is accounted for alongside the
+   * Vercel-AI-SDK calls. Failures are swallowed: accounting must never break a
+   * build.
+   */
+  usageSink?: (usage: PiUsageEvent) => void | Promise<void>;
+  /**
+   * Whole-run token ceiling across every session this instance drives (one
+   * instance == one preview). Defaults to
+   * {@link DEFAULT_PI_MAX_RUN_TOKENS}; set to 0 to disable.
+   */
+  maxRunTokens?: number;
 }
 
 export type PiAgentRole =
@@ -163,6 +220,19 @@ export interface PiRoleModelChoice {
 export class PiSdkFlowstarterAgents {
   constructor(private readonly options: PiSdkOptions = {}) {}
 
+  /** Tokens burned so far by this instance, across every session. */
+  private runTokensUsed = 0;
+
+  /** Tokens burned so far by this instance (one preview run). */
+  get tokensUsed(): number {
+    return this.runTokensUsed;
+  }
+
+  private get maxRunTokens(): number {
+    const configured = this.options.maxRunTokens;
+    return configured === undefined ? DEFAULT_PI_MAX_RUN_TOKENS : configured;
+  }
+
   async analyzeBrand(
     intake: BusinessIntakePayload,
     corpus: ScrapeCorpus,
@@ -181,6 +251,7 @@ export class PiSdkFlowstarterAgents {
       images,
       tools: [],
       role: 'brand',
+      action: 'preview_generate',
     });
     const knownSourceIds = new Set([
       ...corpus.documents.map((document) => document.sourceId),
@@ -195,6 +266,7 @@ export class PiSdkFlowstarterAgents {
         cwd: tmpdir(),
         systemPrompt: BRAND_CONFIG_REPAIR_SYSTEM_PROMPT,
         role: 'brand',
+        action: 'preview_generate',
         prompt: buildBrandConfigRepairPrompt({
           candidate: output,
           issues: error.issues.slice(0, 40),
@@ -277,6 +349,7 @@ export class PiSdkFlowstarterAgents {
       cwd: tmpdir(),
       systemPrompt: TEMPLATE_SELECTION_SYSTEM_PROMPT,
       role: 'templateSelection',
+      action: 'preview_generate',
       prompt: buildTemplateSelectionPrompt(input),
       customTools: [searchTool, detailsTool],
       tools: [
@@ -294,6 +367,7 @@ export class PiSdkFlowstarterAgents {
         cwd: tmpdir(),
         systemPrompt: TEMPLATE_SELECTION_REPAIR_SYSTEM_PROMPT,
         role: 'templateSelection',
+        action: 'preview_generate',
         prompt: buildTemplateSelectionRepairPrompt({
           candidate: output,
           allowedSlugs: Array.from(discoveredSlugs),
@@ -347,6 +421,7 @@ export class PiSdkFlowstarterAgents {
         avoid: (input.avoid ?? []).slice(0, 20),
       }),
       role: 'intake',
+      action: 'business_naming',
     });
     const parsed = parseJsonObject(raw, 'naming');
     const names = Array.isArray(parsed.names) ? parsed.names : [];
@@ -401,6 +476,7 @@ export class PiSdkFlowstarterAgents {
         locale: input.locale ?? 'en',
       }),
       role: 'intake',
+      action: 'intake_interview',
     });
     const parsed = parseJsonObject(raw, 'intake interview');
 
@@ -506,6 +582,7 @@ export class PiSdkFlowstarterAgents {
       customTools: tools,
       tools: tools.map((tool) => tool.name),
       role: 'preview',
+      action: 'preview_generate',
     });
     return { summary, changedPaths: Array.from(changedPaths) };
   }
@@ -530,6 +607,7 @@ export class PiSdkFlowstarterAgents {
       customTools: tools,
       tools: tools.map((tool) => tool.name),
       role: 'fullSite',
+      action: 'preview_generate',
     });
     return { summary, changedPaths: Array.from(changedPaths) };
   }
@@ -579,6 +657,7 @@ export class PiSdkFlowstarterAgents {
       customTools: [modifyTool],
       tools: ['modify_element_content'],
       role: 'inlineEdit',
+      action: 'preview_edit',
     });
     if (toolCalls !== 1 || !result)
       throw new Error('Inline editor did not produce exactly one valid change');
@@ -611,6 +690,8 @@ export class PiSdkFlowstarterAgents {
     customTools?: ToolDefinition[];
     tools: string[];
     role?: PiAgentRole;
+    /** Ledger action for this session's usage. */
+    action: PiUsageAction;
   }): Promise<string> {
     const cfg = input.role ? this.resolveRole(input.role) : this.options;
     const agentDir =
@@ -685,6 +766,8 @@ export class PiSdkFlowstarterAgents {
 
     let output = '';
     let sessionError: string | undefined;
+    let budgetExceeded = false;
+    const maxRunTokens = this.maxRunTokens;
     const unsubscribe = session.subscribe((event) => {
       if (
         event.type === 'message_update' &&
@@ -701,9 +784,40 @@ export class PiSdkFlowstarterAgents {
           role?: string;
           stopReason?: string;
           errorMessage?: string;
+          model?: string;
+          usage?: PiRawUsage;
         };
-        if (message?.role === 'assistant' && message.stopReason === 'error') {
+        if (message?.role !== 'assistant') return;
+        if (message.stopReason === 'error') {
           sessionError = message.errorMessage ?? 'unknown provider error';
+        }
+        if (!message.usage) return;
+
+        // Accounting + the run cap. Every assistant turn counts, including the
+        // ones that only called tools, because every turn re-sends the context.
+        const usage = normalizePiUsage(message.usage);
+        this.runTokensUsed += usage.totalTokens;
+        const sink = this.options.usageSink;
+        if (sink) {
+          try {
+            void Promise.resolve(
+              sink({
+                action: input.action,
+                model: message.model ?? cfg.modelId ?? 'unknown',
+                tokensIn: usage.tokensIn,
+                tokensOut: usage.tokensOut,
+                cachedTokens: usage.cachedTokens,
+              }),
+            ).catch(() => {
+              /* accounting is best-effort */
+            });
+          } catch {
+            /* accounting is best-effort */
+          }
+        }
+        if (maxRunTokens > 0 && this.runTokensUsed > maxRunTokens) {
+          budgetExceeded = true;
+          void session.abort();
         }
       }
     });
@@ -723,6 +837,13 @@ export class PiSdkFlowstarterAgents {
           }, timeoutMs);
         }),
       ]);
+      if (budgetExceeded) {
+        throw new PiRunBudgetExceededError(
+          input.action,
+          this.runTokensUsed,
+          maxRunTokens,
+        );
+      }
       if (sessionError) {
         throw new Error(`Pi session failed: ${sessionError.slice(0, 500)}`);
       }
@@ -735,6 +856,44 @@ export class PiSdkFlowstarterAgents {
       session.dispose();
     }
   }
+}
+
+/** Pi's per-turn token accounting, as reported on an assistant message. */
+interface PiRawUsage {
+  input?: number;
+  output?: number;
+  cacheRead?: number;
+  cacheWrite?: number;
+  totalTokens?: number;
+}
+
+function positive(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0
+    ? Math.round(value)
+    : 0;
+}
+
+/**
+ * Pi splits prompt tokens into fresh / cache-read / cache-write. The ledger
+ * wants one `tokens_in` (everything the prompt cost) plus the cached subset,
+ * so cache reads and writes are folded back into the input total.
+ */
+export function normalizePiUsage(usage: PiRawUsage | undefined): {
+  tokensIn: number;
+  tokensOut: number;
+  cachedTokens: number;
+  totalTokens: number;
+} {
+  const cachedTokens = positive(usage?.cacheRead);
+  const tokensIn =
+    positive(usage?.input) + cachedTokens + positive(usage?.cacheWrite);
+  const tokensOut = positive(usage?.output);
+  return {
+    tokensIn,
+    tokensOut,
+    cachedTokens,
+    totalTokens: positive(usage?.totalTokens) || tokensIn + tokensOut,
+  };
 }
 
 type FileTool = ToolDefinition;

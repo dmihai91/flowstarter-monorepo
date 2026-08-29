@@ -121,7 +121,10 @@ describe('ensureClientMembership', () => {
   });
 
   it('surfaces a database error rather than reporting success', async () => {
-    script.result = { data: null, error: new Error('membership insert failed') };
+    script.result = {
+      data: null,
+      error: new Error('membership insert failed'),
+    };
 
     await expect(
       ensureClientMembership({

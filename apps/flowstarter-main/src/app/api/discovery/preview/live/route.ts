@@ -22,6 +22,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve, sep } from 'node:path';
 import { z } from 'zod';
 import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
+import { llmActionConfig, recordLlmUsage } from '@/lib/ai/llm';
 import { createJob, getJob, updateJob } from '@/lib/discovery/live-jobs';
 import type {
   BusinessIntakePayload,
@@ -419,6 +420,23 @@ export async function POST(req: NextRequest) {
         apiKey: piApiKey,
         thinkingLevel: 'medium',
         timeoutMs: 420_000,
+        // Whole-preview token ceiling, from the same budget config the AI-SDK
+        // wrapper uses. Breaching it aborts the pipeline; the catch below
+        // fails the job open to the deterministic demo.
+        maxRunTokens: llmActionConfig('preview_generate').maxTokens,
+        // Anonymous funnel traffic: no workspace or project yet, so the ledger
+        // row carries nulls. Never awaited — accounting must not slow a build.
+        usageSink: (usage) => {
+          void recordLlmUsage({
+            workspaceId: null,
+            projectId: null,
+            action: usage.action,
+            model: usage.model,
+            tokensIn: usage.tokensIn,
+            tokensOut: usage.tokensOut,
+            cachedTokens: usage.cachedTokens,
+          });
+        },
         roles: {
           preview: {
             modelId: previewModel,

@@ -15,9 +15,9 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { generateText } from 'ai';
 import { z } from 'zod';
-import { models, isOpenRouterConfigured } from '@/lib/ai/client';
+import { isOpenRouterConfigured } from '@/lib/ai/client';
+import { callLlm } from '@/lib/ai/llm';
 import {
   MAX_DEMO_EDITS,
   isDemoSite,
@@ -118,13 +118,22 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { text } = await generateText({
-      model: models.projectDetails,
+    // Anonymous funnel traffic: no workspace yet, so the ledger row carries a
+    // null workspace_id. `funnel` also books the spend against the monthly €
+    // kill-switch, which this route previously never reported.
+    const { text } = await callLlm({
+      action: 'preview_edit',
+      workspaceId: null,
       system: SYSTEM,
       prompt: `INSTRUCTION:\n${instruction}\n\nCURRENT SITE JSON:\n${JSON.stringify(
         site
       )}`,
       temperature: 0.3,
+      funnel: {
+        kind: 'edit',
+        demoId: demoId ?? null,
+        ip: ip === 'unknown' ? null : ip,
+      },
     });
     const json = text
       .trim()

@@ -8,6 +8,25 @@ export {
   isOpenRouterConfigured,
   default as openrouter,
 } from './client';
+export {
+  LLM_ACTIONS,
+  LLM_BUDGETS,
+  LLM_DEFAULT_BUDGET_TOKENS,
+  LlmBudgetExceededError,
+  callLlm,
+  callLlmObject,
+  estimateCostUsd,
+  llmActionConfig,
+  normalizeLlmUsage,
+  recordLlmUsage,
+  streamLlm,
+  type CallLlmOptions,
+  type LlmAction,
+  type LlmActionConfig,
+  type LlmResult,
+  type LlmUsage,
+  type LlmUsageRecord,
+} from './llm';
 export type { ParsedFile } from './codeblocks';
 export { parseCodeblocks } from './codeblocks';
 export {

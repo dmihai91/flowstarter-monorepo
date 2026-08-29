@@ -1,6 +1,5 @@
 import 'server-only';
-import { models } from './client';
-import { generateText } from 'ai';
+import { callLlm } from './llm';
 
 export interface EnrichedProjectData {
   siteName: string;
@@ -86,8 +85,8 @@ export async function enrichProject(
     throw new Error('OPENROUTER_API_KEY is not configured');
   }
 
-  const { text: content } = await generateText({
-    model: models.projectDetails,
+  const { text: content } = await callLlm({
+    action: 'extract_brief',
     messages: [
       {
         role: 'system',
@@ -100,7 +99,6 @@ export async function enrichProject(
       },
     ],
     temperature: 0.3,
-    maxOutputTokens: 700,
   });
 
   if (!content) {

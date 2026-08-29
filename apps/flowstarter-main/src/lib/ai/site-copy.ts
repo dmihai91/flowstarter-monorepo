@@ -1,6 +1,5 @@
 import 'server-only';
-import { models } from './client';
-import { generateText } from 'ai';
+import { callLlm, llmActionConfig } from './llm';
 
 /**
  * Generate first-pass site copy for a Flowstarter project.
@@ -88,8 +87,8 @@ OUTPUT — raw JSON only, no markdown fences, commentary, or extra keys, exactly
 }`;
 }
 
-/** Model id behind `models.projectDetails`, for cost attribution. */
-export const SITE_COPY_MODEL = 'anthropic/claude-sonnet-4';
+/** Model the `site_copy` action runs on, for cost attribution. */
+export const SITE_COPY_MODEL = llmActionConfig('site_copy').model;
 
 export interface SiteCopyUsage {
   inputTokens?: number;
@@ -100,8 +99,14 @@ export interface SiteCopyUsage {
 
 export async function generateSiteCopy(
   input: SiteCopyInput,
-  /** Optional, backward-compatible: receives token usage for cost tracking. */
-  onUsage?: (usage: SiteCopyUsage | undefined) => void
+  /**
+   * Optional, backward-compatible: receives token usage for the funnel's
+   * monthly € kill-switch. The universal `llm_usage` ledger row is written by
+   * the wrapper regardless of whether this callback is supplied.
+   */
+  onUsage?: (usage: SiteCopyUsage | undefined) => void,
+  /** Attributes the ledger row to a workspace/project when known. */
+  attribution?: { workspaceId?: string | null; projectId?: string | null }
 ): Promise<SiteCopy> {
   if (!input.businessName?.trim() || !input.description?.trim()) {
     throw new Error(
@@ -109,12 +114,14 @@ export async function generateSiteCopy(
     );
   }
 
-  const { text, usage } = await generateText({
-    model: models.projectDetails,
+  const { text, usage } = await callLlm({
+    action: 'site_copy',
+    workspaceId: attribution?.workspaceId ?? null,
+    projectId: attribution?.projectId ?? null,
     prompt: buildPrompt(input),
     temperature: 0.4,
   });
-  onUsage?.(usage as SiteCopyUsage | undefined);
+  onUsage?.({ inputTokens: usage.tokensIn, outputTokens: usage.tokensOut });
 
   const trimmed = text.trim();
   const jsonText = trimmed

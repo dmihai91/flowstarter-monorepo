@@ -63,8 +63,6 @@ vi.mock('@/supabase-clients/server', () => ({
   }),
 }));
 
-
-
 const MINE = '0f4e1088-8d8f-4f18-83b1-406cc292b23c';
 const THEIRS = '7c2a91b4-3d5e-4a17-9f88-1b2c3d4e5f60';
 

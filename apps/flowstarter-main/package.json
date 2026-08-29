@@ -24,6 +24,7 @@
     "db:push": "pnpm -w run db:push",
     "db:reset": "pnpm -w run db:reset",
     "db:rollback": "pnpm -w run db:rollback",
+    "verify:rls": "node scripts/verify-rls-local.mjs",
     "prepare": "husky"
   },
   "dependencies": {

@@ -8,7 +8,7 @@
 import 'server-only';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { requireAuth } from '@/lib/api-auth';
+import { requireWorkspaceAccess } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 
 const GetLeadsSchema = z.object({
@@ -26,8 +26,6 @@ const PatchLeadSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
-  await requireAuth();
-
   const params = Object.fromEntries(request.nextUrl.searchParams);
   const result = GetLeadsSchema.safeParse(params);
   if (!result.success) {
@@ -38,6 +36,12 @@ export async function GET(request: NextRequest) {
   }
 
   const { workspaceId, status, limit } = result.data;
+
+  // The workspace id comes from the query string and the query below runs as
+  // the service role, so authorization has to happen against that exact id.
+  const access = await requireWorkspaceAccess(workspaceId);
+  if (!access.authorized) return access.response;
+
   const supabase = createSupabaseServiceRoleClient();
 
   let query = supabase
@@ -62,8 +66,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  await requireAuth();
-
   let body: unknown;
   try {
     body = await request.json();
@@ -89,10 +91,28 @@ export async function PATCH(request: NextRequest) {
   }
 
   const supabase = createSupabaseServiceRoleClient();
+
+  // A lead id alone said nothing about who may edit it. Resolve the workspace
+  // it belongs to, authorize against that, and scope the write to it so the
+  // row cannot move workspace between the check and the update.
+  const { data: lead, error: leadError } = await supabase
+    .from('leads')
+    .select('workspace_id')
+    .eq('id', leadId)
+    .maybeSingle();
+  if (leadError) throw leadError;
+  if (!lead) {
+    return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+  }
+
+  const access = await requireWorkspaceAccess(lead.workspace_id);
+  if (!access.authorized) return access.response;
+
   const { error } = await supabase
     .from('leads')
     .update(update)
-    .eq('id', leadId);
+    .eq('id', leadId)
+    .eq('workspace_id', lead.workspace_id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

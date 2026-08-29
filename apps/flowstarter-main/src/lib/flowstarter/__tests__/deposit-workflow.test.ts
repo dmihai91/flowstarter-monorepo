@@ -160,7 +160,9 @@ describe('deposit paid by operator invoice', () => {
     script.workspace = workspaceRow();
     const previousEnv = process.env.NODE_ENV;
     vi.stubEnv('NODE_ENV', 'production');
-    const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const errors = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
 
     try {
       const result = await enqueueFullBuildFromDepositInvoice(

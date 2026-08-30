@@ -18,8 +18,30 @@ createServer((req, res) => {
     catch { file = extname(file) ? file : `${file}/index.html`; }
     try {
       const body = await readFile(file);
-      res.writeHead(200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream',
-        'cache-control': 'no-store' });
+      const type = TYPES[extname(file)] ?? 'application/octet-stream';
+      // Range support, so a page of videos is seekable rather than
+      // download-then-play. Without it Chrome will not scrub a webm served
+      // over a tunnel, and every clip has to be watched from the top.
+      const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? '');
+      if (range && body.length) {
+        const start = range[1] ? Number(range[1]) : 0;
+        const end = range[2] ? Math.min(Number(range[2]), body.length - 1) : body.length - 1;
+        if (start > end || start >= body.length) {
+          res.writeHead(416, { 'content-range': `bytes */${body.length}` }).end();
+          return;
+        }
+        res.writeHead(206, {
+          'content-type': type,
+          'content-range': `bytes ${start}-${end}/${body.length}`,
+          'accept-ranges': 'bytes',
+          'content-length': end - start + 1,
+          'cache-control': 'no-store',
+        });
+        res.end(body.subarray(start, end + 1));
+        return;
+      }
+      res.writeHead(200, { 'content-type': type, 'accept-ranges': 'bytes',
+        'content-length': body.length, 'cache-control': 'no-store' });
       res.end(body);
     } catch {
       try { res.writeHead(404, {'content-type':'text/html; charset=utf-8'});

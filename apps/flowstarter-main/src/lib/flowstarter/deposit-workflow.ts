@@ -1,4 +1,5 @@
 import type Stripe from 'stripe';
+import { dispatchAgentJob } from './pipeline/dispatch';
 import { depositAmountMinor } from '@flowstarter/agentic-codegen/src/flowstarter/state-machine';
 import { ProjectState } from '@flowstarter/agentic-codegen/src/flowstarter/types';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
@@ -245,45 +246,27 @@ async function enqueueBuildAndAdvance(input: {
   return { workspaceId, jobId, duplicate };
 }
 
+/**
+ * Nudges the build worker for a job the ledger already holds.
+ *
+ * The transport lives in `pipeline/dispatch.ts` so the operator's manual
+ * re-dispatch and this automatic one cannot disagree about what dispatch
+ * means. The policy differs and stays here: an unconfigured worker outside
+ * production is a normal local setup, so it warns and returns, whereas the
+ * operator path throws because someone is watching and needs to know the
+ * nudge did not happen.
+ */
 async function dispatchBuildJob(jobId: string): Promise<void> {
-  const endpoint = process.env.FLOWSTARTER_BUILD_WORKER_URL;
-  const secret = process.env.FLOWSTARTER_BUILD_WORKER_SECRET;
-  if (!endpoint || !secret) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('Flowstarter build worker is not configured');
-    }
+  const configured =
+    process.env.FLOWSTARTER_BUILD_WORKER_URL &&
+    process.env.FLOWSTARTER_BUILD_WORKER_SECRET;
+  if (!configured && process.env.NODE_ENV !== 'production') {
     console.warn(
       `[Flowstarter] build job ${jobId} queued; local worker dispatch is not configured`
     );
     return;
   }
-  if (secret.length < 32)
-    throw new Error(
-      'FLOWSTARTER_BUILD_WORKER_SECRET must be at least 32 characters'
-    );
-  const url = new URL('/jobs/full-site', endpoint);
-  if (
-    url.protocol !== 'https:' &&
-    url.hostname !== '127.0.0.1' &&
-    url.hostname !== 'localhost'
-  ) {
-    throw new Error('Flowstarter build worker must use HTTPS');
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${secret}`,
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({ jobId }),
-    signal: AbortSignal.timeout(8_000),
-    cache: 'no-store',
-  });
-  if (!response.ok)
-    throw new Error(
-      `Flowstarter build worker rejected job with ${response.status}`
-    );
+  await dispatchAgentJob(jobId);
 }
 
 export function productionActivationAllowed(input: {

@@ -24,6 +24,7 @@ import { z } from 'zod';
 import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
 import { llmActionConfig, recordLlmUsage } from '@/lib/ai/llm';
 import { createJob, getJob, updateJob } from '@/lib/discovery/live-jobs';
+import { rememberClaimablePreview } from '@/lib/flowstarter/claim';
 import type {
   BusinessIntakePayload,
   PreviewPublisher,
@@ -546,6 +547,23 @@ export async function POST(req: NextRequest) {
         ...evidence,
         cachedAssets: [],
         onPhase: (phase) => updateJob(demoId, { phase }),
+      });
+
+      // The manifest, brand config and template exist only in this process:
+      // the browser is handed a URL, never the files. Stash them against the
+      // demo id so that if the visitor signs in and claims this preview
+      // (/api/flowstarter/projects/claim) the workspace is built from the
+      // exact site they were looking at, rather than a regenerated guess.
+      rememberClaimablePreview({
+        previewId: demoId,
+        intake: evidence.intake,
+        brandConfig: result.brandConfig,
+        template: result.template,
+        files: result.files,
+        ...(result.artifactUrl
+          ? { previewArtifactUrl: result.artifactUrl }
+          : {}),
+        ...(result.previewUrl ? { previewUrl: result.previewUrl } : {}),
       });
 
       updateJob(demoId, {

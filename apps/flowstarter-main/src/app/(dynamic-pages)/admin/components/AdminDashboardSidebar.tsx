@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Sparkles as SparklesIcon,
   FolderOpen,
+  GitBranch,
   Inbox,
   MessageSquare,
   Server,
@@ -54,6 +55,11 @@ export function AdminDashboardSidebar() {
       labelKey: 'admin.nav.projects',
       href: '/admin/dashboard/projects',
       icon: FolderOpen,
+    },
+    {
+      labelKey: 'admin.nav.pipeline',
+      href: '/admin/dashboard/pipeline',
+      icon: GitBranch,
     },
     {
       labelKey: 'admin.nav.accounts',

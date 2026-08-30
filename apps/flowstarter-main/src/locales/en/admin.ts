@@ -6,6 +6,7 @@ export const adminKeys = {
   'admin.sidebar.section.workspace': 'Team & settings',
   'admin.nav.dashboard': 'Dashboard',
   'admin.nav.projects': 'Projects',
+  'admin.nav.pipeline': 'Pipeline',
   'admin.nav.accounts': 'Accounts',
   'admin.nav.leads': 'Leads',
   'admin.nav.inquiries': 'Custom inquiries',

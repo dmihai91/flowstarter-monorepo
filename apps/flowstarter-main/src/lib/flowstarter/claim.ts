@@ -27,6 +27,7 @@ import type {
   TemplateScaffoldFile,
   TemplateSelection,
 } from '@flowstarter/agentic-codegen';
+import type { ScrapedTextDocument } from '@flowstarter/agentic-codegen/src/flowstarter/types';
 import { ProjectState } from '@flowstarter/agentic-codegen/src/flowstarter/types';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import {
@@ -36,6 +37,7 @@ import {
 import type { Json } from '@/lib/database.types';
 import { recordIntakeSubmission } from './intake-submission';
 import { ensureClientMembership } from './membership';
+import { appendClientReplyToCorpus } from './messaging';
 import { savePreviewArtifacts } from './preview-artifacts';
 import { parseQuoteInputToMinor } from './quote';
 import type { RoutingResult } from './routing-rules';
@@ -130,6 +132,131 @@ export function quoteMinorForTier(tier: Tier | '' | undefined): number | null {
   }
 }
 
+// ─── The intake conversation as evidence ───────────────────────────────────
+
+/**
+ * `sourceId` prefix, so the generator can tell a funnel conversation from a
+ * scrape or a post-claim clarification. Mirrors `CLIENT_REPLY_SOURCE_PREFIX`
+ * in `messaging.ts`, which is where this pattern comes from.
+ */
+export const INTAKE_CHAT_SOURCE_PREFIX = 'intake_chat';
+
+/** Matches `messaging.ts`: enough for a real answer, not for a pasted inbox. */
+const MAX_CHAT_DOCUMENT_CHARS = 1_200;
+
+function slugTopic(topic: string): string {
+  return topic
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+}
+
+/**
+ * Projects one info-agent conversation into the corpus shape the generator
+ * already consumes.
+ *
+ * `platform: 'intake'` / `kind: 'intake_answer'` are the same pair
+ * `clientReplyToCorpusDocument` uses, deliberately: to the honesty pass an
+ * answer typed into the funnel chat is exactly the same kind of evidence as
+ * an answer emailed back after the claim — something the business told us
+ * directly — and reusing the existing union means no downstream code has to
+ * learn a new case.
+ *
+ * `sourceId` is `intake_chat:<previewId>:<topic-or-index>`, stable across
+ * retries so `appendClientReplyToCorpus` de-duplicates a re-claim instead of
+ * citing the same sentence twice.
+ *
+ * The interviewer's own questions are NOT filed. Only the client's words are
+ * evidence; a question we asked is not something the business said.
+ */
+export function intakeChatCorpusDocuments(input: {
+  previewId: string;
+  chat: ClaimIntakeChat;
+  capturedAt?: string;
+}): ScrapedTextDocument[] {
+  const { previewId, chat } = input;
+  const publishedAt = input.capturedAt;
+  const documents: ScrapedTextDocument[] = [];
+  const seen = new Set<string>();
+
+  const push = (suffix: string, text: string) => {
+    const body = text
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, MAX_CHAT_DOCUMENT_CHARS);
+    if (!body) return;
+    let sourceId = `${INTAKE_CHAT_SOURCE_PREFIX}:${previewId}:${suffix}`;
+    // A model that files two documents under one topic must not silently lose
+    // one to de-duplication.
+    for (let n = 2; seen.has(sourceId); n++) {
+      sourceId = `${INTAKE_CHAT_SOURCE_PREFIX}:${previewId}:${suffix}-${n}`;
+    }
+    seen.add(sourceId);
+    documents.push({
+      sourceId,
+      platform: 'intake',
+      kind: 'intake_answer',
+      text: body,
+      ...(publishedAt ? { publishedAt } : {}),
+    });
+  };
+
+  // Preferred: the interviewer's topically grouped documents.
+  for (const document of chat.documents ?? []) {
+    const topic = slugTopic(document.topic ?? '');
+    if (!topic) continue;
+    push(topic, document.text ?? '');
+  }
+
+  // Fallback: the raw client turns, for a conversation that never reached
+  // `complete`. Skipped when documents already carry the same answers.
+  if (documents.length === 0) {
+    (chat.answers ?? []).forEach((answer, index) =>
+      push(`answer-${index + 1}`, answer)
+    );
+  }
+
+  const services = (chat.services ?? [])
+    .map((service) => service.trim())
+    .filter((service) => service.length > 0);
+  if (services.length > 0) {
+    push(
+      'services',
+      `Services, named the way the client names them: ${services.join(', ')}`
+    );
+  }
+
+  return documents;
+}
+
+/**
+ * Files the conversation against the workspace. Best effort by design: the
+ * client owns the project either way, and losing an answer must never lose
+ * them the workspace they just claimed. Returns how many were filed.
+ */
+async function fileIntakeChat(
+  workspaceId: string,
+  previewId: string,
+  chat: ClaimIntakeChat | undefined
+): Promise<number> {
+  if (!chat) return 0;
+  const documents = intakeChatCorpusDocuments({ previewId, chat });
+  let filed = 0;
+  for (const document of documents) {
+    try {
+      if (await appendClientReplyToCorpus(workspaceId, document)) filed++;
+    } catch (error) {
+      console.error(
+        `[Flowstarter] claim ${previewId} could not file intake chat answer ` +
+          `${document.sourceId}: ` +
+          (error instanceof Error ? error.message : 'unknown error')
+      );
+    }
+  }
+  return filed;
+}
+
 // ─── Claiming ──────────────────────────────────────────────────────────────
 
 export class PreviewClaimConflictError extends Error {
@@ -151,12 +278,31 @@ export interface ClaimPreviewInput {
   /** Wizard answers, kept on the claim event for provenance. */
   intakeSummary?: Record<string, unknown>;
   /**
+   * The info-agent conversation from step 7, if the visitor had one. These are
+   * the client's own words about their own business — the best evidence the
+   * generator will ever get — so they are filed as corpus documents rather
+   * than left in an event payload nobody reads. See
+   * {@link intakeChatCorpusDocuments}.
+   */
+  intakeChat?: ClaimIntakeChat;
+  /**
    * The deterministic standard-vs-custom verdict, recomputed by the caller
    * from the answers rather than taken from the browser. `intake_submissions`
    * is NOT NULL on workspace_id, so a claim is the first moment it can be
    * persisted at all.
    */
   routing?: RoutingResult;
+}
+
+/** The info-agent conversation, as the wizard holds it. */
+export interface ClaimIntakeChat {
+  transcript?: ReadonlyArray<{ role: 'agent' | 'client'; text: string }>;
+  /** Topically grouped answers, as the interviewer filed them. */
+  documents?: ReadonlyArray<{ topic: string; text: string }>;
+  /** Raw client turns, used when the interview never reached `complete`. */
+  answers?: readonly string[];
+  services?: readonly string[];
+  phone?: string;
 }
 
 export interface ClaimPreviewResult {
@@ -173,6 +319,8 @@ export interface ClaimPreviewResult {
    * is returned; the caller can retry. Never silently swallowed.
    */
   membershipError?: string;
+  /** How many intake-chat answers were filed as citable evidence. */
+  intakeChatDocuments?: number;
 }
 
 export async function claimPreview(
@@ -191,6 +339,14 @@ export async function claimPreview(
   if (existing) {
     await assertClaimableBy(existing, input.clerkUserId);
     const membershipError = await attachClient(existing, input.clerkUserId);
+    // Idempotent: `appendClientReplyToCorpus` de-duplicates on `sourceId`, so
+    // a re-claim re-files nothing but does pick up answers the first claim
+    // raced past.
+    const intakeChatDocuments = await fileIntakeChat(
+      existing,
+      input.previewId,
+      input.intakeChat
+    );
     return {
       workspaceId: existing,
       unlockUrl: unlockUrlFor(existing),
@@ -198,6 +354,7 @@ export async function claimPreview(
       previewReady: await isPreviewReady(existing),
       quoteMinor: quoteMinorForTier(input.tier ?? ''),
       ...(membershipError ? { membershipError } : {}),
+      intakeChatDocuments,
     };
   }
 
@@ -234,6 +391,11 @@ export async function claimPreview(
     if (!raced) throw insert.error;
     await assertClaimableBy(raced, input.clerkUserId);
     const membershipError = await attachClient(raced, input.clerkUserId);
+    const intakeChatDocuments = await fileIntakeChat(
+      raced,
+      input.previewId,
+      input.intakeChat
+    );
     return {
       workspaceId: raced,
       unlockUrl: unlockUrlFor(raced),
@@ -241,6 +403,7 @@ export async function claimPreview(
       previewReady: await isPreviewReady(raced),
       quoteMinor,
       ...(membershipError ? { membershipError } : {}),
+      intakeChatDocuments,
     };
   }
   if (insert.error || !insert.data) {
@@ -287,6 +450,14 @@ export async function claimPreview(
     );
   }
 
+  // Evidence goes in after the artifacts row exists, because that row is what
+  // holds `client_reply_corpus`; before it there is nothing to append to.
+  const intakeChatDocuments = await fileIntakeChat(
+    workspaceId,
+    input.previewId,
+    input.intakeChat
+  );
+
   const membershipError = await attachClient(workspaceId, input.clerkUserId);
 
   // The routing verdict is calibration data, not a gate: losing it must not
@@ -317,6 +488,8 @@ export async function claimPreview(
     templateSlug: preview?.template.slug ?? null,
     fileCount: preview?.files.length ?? 0,
     intake: input.intakeSummary ?? {},
+    intakeChatDocuments,
+    intakeChatTurns: input.intakeChat?.transcript?.length ?? 0,
     ...(membershipError ? { membershipError } : {}),
   });
 
@@ -327,6 +500,7 @@ export async function claimPreview(
     previewReady,
     quoteMinor,
     ...(membershipError ? { membershipError } : {}),
+    intakeChatDocuments,
   };
 }
 

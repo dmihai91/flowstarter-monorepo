@@ -19,7 +19,17 @@ import { GoalsStep } from './steps/GoalsStep';
 import { CommerceStep } from './steps/CommerceStep';
 import { RecommendationStep } from './steps/RecommendationStep';
 import { SubscriptionStep } from './steps/SubscriptionStep';
+import { InfoAgentStep } from './steps/InfoAgentStep';
 import { PreviewStep } from './steps/PreviewStep';
+
+/**
+ * The info-agent step is new and its copy is not in the locale catalogue yet
+ * (that file is owned elsewhere). A heading rendered as a raw key would be
+ * worse than an untranslated sentence, so this one step supplies its own.
+ */
+const STEP_TITLE_FALLBACKS: Record<string, string> = {
+  info: 'A couple of things before we build',
+};
 
 /**
  * Draft autosave. sessionStorage (not localStorage) on purpose: the draft
@@ -162,7 +172,8 @@ export function DiscoveryWizard({
           {t('landing.discovery.eyebrow')}
         </p>
         <h2 className="text-xl sm:text-2xl font-bold text-[var(--fs-ink)] leading-tight">
-          {t(`landing.discovery.steps.${STEPS[step - 1].key}.title`)}
+          {STEP_TITLE_FALLBACKS[STEPS[step - 1].key] ??
+            t(`landing.discovery.steps.${STEPS[step - 1].key}.title`)}
         </h2>
       </div>
 
@@ -235,7 +246,16 @@ export function DiscoveryWizard({
         {step === 4 && <CommerceStep data={data} update={update} t={t} />}
         {step === 5 && <RecommendationStep data={data} update={update} t={t} />}
         {step === 6 && <SubscriptionStep data={data} update={update} t={t} />}
-        {step === 7 && <PreviewStep data={data} t={t} />}
+        {step === 7 && (
+          <InfoAgentStep
+            data={data}
+            setData={setData}
+            // Skipping is a jump to the preview, not a refusal: the wizard
+            // treats this step as passed either way (see `canProceed`).
+            onSkip={() => setStep(LAST_STEP)}
+          />
+        )}
+        {step === LAST_STEP && <PreviewStep data={data} t={t} />}
       </section>
 
       {submitError && (

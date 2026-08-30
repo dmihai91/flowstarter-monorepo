@@ -70,6 +70,38 @@ const ClaimSchema = z.object({
     .optional()
     .default('na'),
   customIntegrations: z.string().max(2000).optional().default(''),
+  /**
+   * The info-agent conversation from the wizard's step 7. Bounded like every
+   * other free-text field here: it becomes corpus evidence the generator may
+   * cite, never authorization and never price.
+   */
+  intakeChat: z
+    .object({
+      transcript: z
+        .array(
+          z.object({
+            role: z.enum(['agent', 'client']),
+            text: z.string().max(1000),
+          })
+        )
+        .max(24)
+        .optional()
+        .default([]),
+      documents: z
+        .array(
+          z.object({
+            topic: z.string().max(60),
+            text: z.string().max(1200),
+          })
+        )
+        .max(8)
+        .optional()
+        .default([]),
+      answers: z.array(z.string().max(1000)).max(24).optional().default([]),
+      services: z.array(z.string().max(120)).max(20).optional().default([]),
+      phone: z.string().max(40).optional().default(''),
+    })
+    .optional(),
 });
 
 /**
@@ -99,6 +131,14 @@ function discoveryDataFrom(spec: z.infer<typeof ClaimSchema>): DiscoveryData {
     selectedTier: spec.tier ?? '',
     subscription: '',
     billingCadence: 'monthly',
+    // Routing is classified from the form answers alone; the chat's answers
+    // are evidence for the generator, not an input to standard-vs-custom.
+    phone: spec.intakeChat?.phone ?? '',
+    services: spec.intakeChat?.services ?? [],
+    intakeAnswers: spec.intakeChat?.answers ?? [],
+    intakeChat: spec.intakeChat?.transcript ?? [],
+    intakeChatDocuments: spec.intakeChat?.documents ?? [],
+    intakeChatStatus: '',
   };
 }
 
@@ -142,6 +182,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         catalogSize: spec.catalogSize,
         customIntegrations: spec.customIntegrations,
       },
+      ...(spec.intakeChat ? { intakeChat: spec.intakeChat } : {}),
       routing: classifyRouting(discoveryDataFrom(spec)),
     });
 
@@ -152,6 +193,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         alreadyClaimed: result.alreadyClaimed,
         previewReady: result.previewReady,
         quoteMinor: result.quoteMinor,
+        // How many of the visitor's own answers are now citable evidence.
+        intakeChatDocuments: result.intakeChatDocuments ?? 0,
         // Surfaced, not hidden: the client owns a workspace they cannot open
         // until this is retried, and the UI needs to be able to say so.
         ...(result.membershipError

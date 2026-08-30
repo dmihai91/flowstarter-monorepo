@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useAuth, useClerk } from '@clerk/nextjs';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   type DiscoveryData,
   type DemoSite,
@@ -9,6 +10,10 @@ import {
   buildDemoSite,
   previewCtaLabel,
 } from '../discovery.logic';
+import {
+  claimIntakeChatPayload,
+  describeWithIntakeAnswers,
+} from '../intake-chat.shared';
 import { DemoSiteFrame } from './DemoSiteFrame';
 
 /**
@@ -149,7 +154,12 @@ export function PreviewStep({
     const payload = {
       businessName: data.businessName,
       fullName: data.fullName,
-      description: data.description,
+      // The info-agent step's answers ride in on the description, which is
+      // the only free-prose field the generator takes. Without this the
+      // conversation would only reach the generator after a claim, and the
+      // preview the visitor is shown right now would ignore what they just
+      // told us.
+      description: describeWithIntakeAnswers(data),
       industry: data.industry,
       targetAudience: data.targetAudience,
       goal: data.goal,
@@ -317,6 +327,99 @@ export function PreviewStep({
     }
   }, [demo]);
 
+  // ---- Claim: the preview becomes a workspace this visitor owns ----
+  //
+  // Until this runs the preview is entirely ephemeral (a demo id, a sandbox,
+  // nothing persisted), and the deposit flow can never see it. Claiming
+  // creates the workspace, saves the generated manifest as its build
+  // artifacts, and makes the signed-in visitor a member of it, which is
+  // exactly what /unlock/[workspaceId] and the deposit Checkout check for.
+  const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const { openSignIn } = useClerk();
+  const [claimBusy, setClaimBusy] = useState(false);
+  const [claimError, setClaimError] = useState<string | null>(null);
+  // Set when a signed-out visitor asks to claim; the effect below finishes the
+  // job once Clerk's modal reports them signed in, so the preview they were
+  // looking at is still on screen and still theirs.
+  const [claimPending, setClaimPending] = useState(false);
+
+  const previewId = liveDemoId ?? demo?.demoId ?? null;
+
+  const submitClaim = useCallback(async () => {
+    if (!previewId) return;
+    setClaimBusy(true);
+    setClaimError(null);
+    try {
+      const res = await fetch('/api/flowstarter/projects/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          previewId,
+          // The tier is a name, not a price: the server maps it to the
+          // published setup fee so the browser cannot quote itself.
+          ...(data.selectedTier ? { tier: data.selectedTier } : {}),
+          businessName: data.businessName,
+          fullName: data.fullName,
+          email: data.email,
+          description: data.description,
+          industry: data.industry,
+          targetAudience: data.targetAudience,
+          goal: data.goal,
+          brandTone: data.brandTone,
+          // Scope answers, so the server can re-run the standard-vs-custom
+          // routing classifier on the answers themselves. The wizard's own
+          // copy of the verdict is deliberately not sent.
+          ...(data.pageCount ? { pageCount: data.pageCount } : {}),
+          ...(data.timeline ? { timeline: data.timeline } : {}),
+          ...(data.commerceMode ? { commerceMode: data.commerceMode } : {}),
+          catalogSize: data.catalogSize,
+          customIntegrations: data.customIntegrations,
+          // The intake conversation: the highest-value evidence we hold. The
+          // server files it as corpus documents against the new workspace so
+          // the generator may cite the client's own words.
+          ...(claimIntakeChatPayload(data)
+            ? { intakeChat: claimIntakeChatPayload(data) }
+            : {}),
+        }),
+      });
+      const json = (await res.json().catch(() => ({}))) as {
+        unlockUrl?: string;
+        error?: string;
+      };
+      if (!res.ok || !json.unlockUrl) {
+        setClaimError(json.error ?? 'We could not save your site. Try again.');
+        return;
+      }
+      window.location.assign(json.unlockUrl);
+    } catch {
+      setClaimError('We could not save your site. Try again.');
+    } finally {
+      setClaimBusy(false);
+    }
+  }, [previewId, data]);
+
+  function claimSite() {
+    // Clerk not settled yet: acting now would POST without a session and take
+    // a 401 for it. The button is disabled in that window anyway.
+    if (claimBusy || !previewId || !authLoaded) return;
+    if (!isSignedIn) {
+      setClaimPending(true);
+      // Modal rather than a page redirect: a full navigation would tear down
+      // the wizard and lose the preview this visitor just spent minutes
+      // editing. The fallback is pinned to this page for the same reason —
+      // the provider's default sends people to /admin/dashboard.
+      openSignIn({ fallbackRedirectUrl: window.location.href });
+      return;
+    }
+    void submitClaim();
+  }
+
+  useEffect(() => {
+    if (!claimPending || !authLoaded || !isSignedIn) return;
+    setClaimPending(false);
+    void submitClaim();
+  }, [claimPending, authLoaded, isSignedIn, submitClaim]);
+
   // ---- Live conversational editor ----
   async function sendEdit() {
     const instruction = editPrompt.trim();
@@ -462,6 +565,37 @@ export function PreviewStep({
       setEditing(false);
     }
   }
+
+  // One CTA, shared by the live preview and the JSON fallback: whichever demo
+  // the visitor ended up with, this is the step that makes it theirs.
+  const claimCta = previewId ? (
+    <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--purple-primary)]/30 bg-[var(--purple-primary)]/[0.06] p-4 text-center">
+      <p className="text-sm font-semibold text-[var(--fs-ink)]">
+        Love it? Let&rsquo;s make it real &mdash; yours, on your domain.
+      </p>
+      <p className="text-[12px] text-[var(--fs-ink-faint)]">
+        Claiming saves this exact preview to your own project, then takes you to
+        reserve your build.
+      </p>
+      <button
+        type="button"
+        onClick={claimSite}
+        disabled={claimBusy || !authLoaded}
+        className="mt-1 rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
+      >
+        {claimBusy
+          ? 'Saving your site…'
+          : authLoaded && !isSignedIn
+          ? 'Sign in and claim my site'
+          : 'Claim my site'}
+      </button>
+      {claimError && (
+        <p className="text-[12px] font-medium text-amber-600 dark:text-amber-400">
+          {claimError}
+        </p>
+      )}
+    </div>
+  ) : null;
 
   return (
     <div className="space-y-4">
@@ -650,17 +784,7 @@ export function PreviewStep({
           </div>
 
           {/* Pay CTA */}
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--purple-primary)]/30 bg-[var(--purple-primary)]/[0.06] p-4 text-center">
-            <p className="text-sm font-semibold text-[var(--fs-ink)]">
-              Love it? Let’s make it real — yours, on your domain.
-            </p>
-            <p className="text-[12px] text-[var(--fs-ink-faint)]">
-              Continue to reserve your build.{' '}
-              {editsLeft < LIVE_EDIT_CAP
-                ? 'Your changes are saved to this preview.'
-                : ''}
-            </p>
-          </div>
+          {claimCta}
         </div>
       )}
 
@@ -713,6 +837,8 @@ export function PreviewStep({
           )}
         </div>
       )}
+
+      {mode === 'json' && claimCta}
 
       <p className="text-[12px] leading-snug text-[var(--fs-ink-faint)]">
         {t('landing.discovery.preview.disclaimer')}

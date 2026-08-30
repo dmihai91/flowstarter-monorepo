@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   type DiscoveryData,
   EMPTY_DISCOVERY,
+  INFO_STEP,
   LAST_STEP,
   STEPS,
   bookingDepositAmount,
@@ -29,10 +30,24 @@ describe('booking deposit amounts', () => {
 });
 
 describe('wizard structure', () => {
-  it('has 7 steps ending on preview', () => {
-    expect(STEPS).toHaveLength(7);
+  it('has 8 steps: the info agent between the form and the preview', () => {
+    expect(STEPS).toHaveLength(8);
+    // Order is the product: form → info agent → preview. The preview must
+    // stay last, because that is the step the modal widens for and the step
+    // the wizard submits from.
+    expect(STEPS.map((step) => step.key)).toEqual([
+      'about',
+      'business',
+      'goals',
+      'commerce',
+      'recommendation',
+      'subscription',
+      'info',
+      'preview',
+    ]);
     expect(STEPS[STEPS.length - 1].key).toBe('preview');
-    expect(LAST_STEP).toBe(7);
+    expect(LAST_STEP).toBe(8);
+    expect(INFO_STEP).toBe(LAST_STEP - 1);
   });
 
   it('commerce uses the dedicated store subscription', () => {
@@ -71,7 +86,17 @@ describe('canProceed gating', () => {
   });
 
   it('always allows the final preview step', () => {
-    expect(canProceed(7, base)).toBe(true);
+    expect(canProceed(8, base)).toBe(true);
+  });
+
+  it('never blocks on the info-agent step, however empty the answers', () => {
+    // The chat is skippable by design: a visitor who wants the preview now
+    // gets the preview now. Conversion beats completeness at this stage.
+    expect(canProceed(INFO_STEP, base)).toBe(true);
+    expect(canProceed(INFO_STEP, EMPTY_DISCOVERY)).toBe(true);
+    expect(
+      canProceed(INFO_STEP, { ...base, intakeChatStatus: 'skipped' })
+    ).toBe(true);
   });
 });
 

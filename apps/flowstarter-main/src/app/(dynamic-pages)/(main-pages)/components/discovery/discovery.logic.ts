@@ -5,7 +5,7 @@
  * Setup fees in EUR (founding price not exposed publicly here).
  */
 
-export type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export type Tier = 'starter' | 'pro' | 'commerce' | 'custom';
 
@@ -123,6 +123,38 @@ export interface DiscoveryData {
   // uses the dedicated store subscription)
   subscription: SubscriptionTier | '';
   billingCadence: BillingCadence;
+
+  // Step 7 — the info agent. Everything below is filled by the conversation,
+  // never typed into a form field, and every one of them is optional: the
+  // step is skippable by design (see `canProceed`).
+  //
+  // All optional: the step is skippable, a draft saved before it existed has
+  // none of them, and every caller that builds a `DiscoveryData` by hand
+  // (routes, tests) predates them. Read them with `?? ''` / `?? []`.
+  /** A phone number the visitor mentioned, if they mentioned one. */
+  phone?: string;
+  /** What they sell, named the way they name it to customers. */
+  services?: string[];
+  /** The visitor's own words — the evidence the generator may cite. */
+  intakeAnswers?: string[];
+  /** The conversation itself, carried to the claim for provenance. */
+  intakeChat?: IntakeChatTurn[];
+  /** Documents the info agent filed at the end of the interview. */
+  intakeChatDocuments?: IntakeChatDocument[];
+  /** '' — not started; 'complete' — agent ran out of asks; 'skipped' — visitor moved on. */
+  intakeChatStatus?: '' | 'complete' | 'skipped';
+}
+
+/** One turn of the info-agent conversation. `client` is the visitor. */
+export interface IntakeChatTurn {
+  role: 'agent' | 'client';
+  text: string;
+}
+
+/** One answer, topically grouped, in the client's own words. */
+export interface IntakeChatDocument {
+  topic: string;
+  text: string;
 }
 
 export const EMPTY_DISCOVERY: DiscoveryData = {
@@ -145,6 +177,12 @@ export const EMPTY_DISCOVERY: DiscoveryData = {
   selectedTier: '',
   subscription: '',
   billingCadence: 'monthly',
+  phone: '',
+  services: [],
+  intakeAnswers: [],
+  intakeChat: [],
+  intakeChatDocuments: [],
+  intakeChatStatus: '',
 };
 
 export const STEPS: Array<{ n: Step; key: string }> = [
@@ -154,10 +192,17 @@ export const STEPS: Array<{ n: Step; key: string }> = [
   { n: 4, key: 'commerce' },
   { n: 5, key: 'recommendation' },
   { n: 6, key: 'subscription' },
-  { n: 7, key: 'preview' },
+  // The info agent: the gap-filler between the form and the preview. It has
+  // no locale key of its own — its copy lives in `InfoAgentStep` — so the
+  // wizard supplies the heading for this one step.
+  { n: 7, key: 'info' },
+  { n: 8, key: 'preview' },
 ];
 
-export const LAST_STEP: Step = 7;
+export const LAST_STEP: Step = 8;
+
+/** The conversational step. Always passable: conversion beats completeness. */
+export const INFO_STEP: Step = 7;
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
@@ -177,6 +222,11 @@ export function canProceed(step: Step, d: DiscoveryData): boolean {
       // Commerce uses the dedicated store subscription — nothing to pick.
       return usesDedicatedSubscription(d.selectedTier) || d.subscription !== '';
     case 7:
+      // The info agent never gates the funnel. A visitor who wants the
+      // preview now gets the preview now, with placeholders where the answers
+      // would have gone.
+      return true;
+    case 8:
       return true;
   }
 }
@@ -421,7 +471,9 @@ export function integrationRequestList(customIntegrations: string): string[] {
 }
 
 /** True when at least one requested integration is outside the standard allow-list. */
-export function hasCustomIntegrationRequest(customIntegrations: string): boolean {
+export function hasCustomIntegrationRequest(
+  customIntegrations: string
+): boolean {
   return integrationRequestList(customIntegrations).some(
     (request) => !STANDARD_INTEGRATION_RE.test(request)
   );

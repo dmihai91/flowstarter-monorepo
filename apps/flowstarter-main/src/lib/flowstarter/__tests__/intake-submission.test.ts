@@ -42,15 +42,27 @@ function builderFor(table: string) {
       return builder;
     },
     eq(column: string, value: unknown) {
-      calls.push({ table, op: calls[calls.length - 1]?.op ?? 'select', args: ['eq', column, value] });
+      calls.push({
+        table,
+        op: calls[calls.length - 1]?.op ?? 'select',
+        args: ['eq', column, value],
+      });
       return builder;
     },
     order(column: string, opts: unknown) {
-      calls.push({ table, op: calls[calls.length - 1]?.op ?? 'select', args: ['order', column, opts] });
+      calls.push({
+        table,
+        op: calls[calls.length - 1]?.op ?? 'select',
+        args: ['order', column, opts],
+      });
       return builder;
     },
     limit(n: number) {
-      calls.push({ table, op: calls[calls.length - 1]?.op ?? 'select', args: ['limit', n] });
+      calls.push({
+        table,
+        op: calls[calls.length - 1]?.op ?? 'select',
+        args: ['limit', n],
+      });
       return builder;
     },
     single() {
@@ -63,10 +75,7 @@ function builderFor(table: string) {
         script.selectResult ?? { data: { id: 'row-1' }, error: null }
       );
     },
-    then(
-      resolve: (v: unknown) => unknown,
-      reject?: (e: unknown) => unknown
-    ) {
+    then(resolve: (v: unknown) => unknown, reject?: (e: unknown) => unknown) {
       return Promise.resolve(
         script.updateResult ?? { data: null, error: null }
       ).then(resolve, reject);
@@ -133,7 +142,11 @@ describe('recordIntakeSubmission', () => {
   it('surfaces a database error rather than reporting success', async () => {
     script.insertResult = { data: null, error: new Error('insert failed') };
     await expect(
-      recordIntakeSubmission({ workspaceId: WORKSPACE_ID, payload: {}, routing })
+      recordIntakeSubmission({
+        workspaceId: WORKSPACE_ID,
+        payload: {},
+        routing,
+      })
     ).rejects.toThrow('insert failed');
   });
 });

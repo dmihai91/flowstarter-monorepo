@@ -350,6 +350,9 @@ export class PreviewClaimConflictError extends Error {
   }
 }
 
+/** €/month by plan name — mirror of the wizard's published SUBSCRIPTION_PLANS. */
+const SUBSCRIPTION_MONTHLY_EUR = { starter: 49, pro: 99, max: 249 } as const;
+
 export interface ClaimPreviewInput {
   /** The wizard's demo id — the preview the visitor is looking at. */
   previewId: string;
@@ -359,6 +362,9 @@ export interface ClaimPreviewInput {
   businessName?: string | null;
   /** Tier the visitor confirmed in the wizard; priced server-side. */
   tier?: Tier | '' | null;
+  /** The monthly care plan the visitor confirmed at step 6, by name. */
+  subscriptionPlan?: 'starter' | 'pro' | 'max';
+  billingCadence?: 'monthly' | 'yearly';
   /** Wizard answers, kept on the claim event for provenance. */
   intakeSummary?: Record<string, unknown>;
   /**
@@ -467,6 +473,16 @@ export async function claimPreview(
       project_state: ProjectState.INTAKE,
       ...(quoteMinor ? { final_value_minor: quoteMinor } : {}),
       ...(input.tier ? { tier_name: input.tier } : {}),
+      // The care plan is a name, not a price, for the same reason as the
+      // tier: the server maps it, so the browser cannot quote itself. The
+      // monthly fee is what later lets an operator activate the
+      // subscription -- with it at zero the editor stays gated forever.
+      ...(input.subscriptionPlan
+        ? {
+            monthly_fee: SUBSCRIPTION_MONTHLY_EUR[input.subscriptionPlan],
+            billing_interval: input.billingCadence ?? 'monthly',
+          }
+        : {}),
     })
     .select('id')
     .maybeSingle();

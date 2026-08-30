@@ -149,6 +149,8 @@ const en = {
 
   // Clerk error messages
   'auth.errors.somethingWentWrong': 'Something went wrong',
+  'auth.errors.deviceNotTrusted':
+    'This browser has not been approved for the development sign-in yet. Your email and password are fine — try again from the app\'s own sign-in page, or contact us if it persists.',
   'auth.errors.signInInvalid':
     'Incorrect email or password. Try again, or reset your password',
   'auth.errors.formIdentifierNotFound':
@@ -2112,7 +2114,8 @@ const en = {
   'landing.discovery.nav.back': 'Back',
   'landing.discovery.nav.continue': 'Continue',
   'landing.discovery.nav.bookCall': 'book my call',
-  'landing.discovery.nav.saveAndBook': 'Prefer to talk first? Save & book a call',
+  'landing.discovery.nav.saveAndBook':
+    'Prefer to talk first? Save & book a call',
   'landing.discovery.nav.submitting': 'Saving…',
   'landing.discovery.nav.payPrefix': 'Pay',
   'landing.discovery.nav.redirecting': 'Redirecting to secure checkout…',

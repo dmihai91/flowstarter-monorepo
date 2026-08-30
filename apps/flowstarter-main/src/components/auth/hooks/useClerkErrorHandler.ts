@@ -40,6 +40,18 @@ export function useClerkErrorHandler() {
 
       const clerkError = err as ClerkError;
 
+      // Clerk dev instances refuse browsers they have not seen complete a
+      // sign-in before ("needs_client_trust"). The credentials are fine, so
+      // telling the user their password is wrong sends them to a reset flow
+      // that cannot help.
+      if (
+        clerkError.code === 'needs_client_trust' ||
+        (Array.isArray(clerkError.errors) &&
+          clerkError.errors.some((e) => e?.code === 'needs_client_trust'))
+      ) {
+        return t('auth.errors.deviceNotTrusted');
+      }
+
       // Check for session_exists error (should redirect to dashboard)
       if (
         clerkError.code === 'session_exists' ||

@@ -1,4 +1,5 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { requireTeamAuth } from '@/lib/api-auth';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import {
@@ -70,44 +71,6 @@ function assignNonNegativeIntegerField(
   return { ok: true };
 }
 
-async function requireTeamAuth() {
-  try {
-    const { userId, sessionClaims } = await auth();
-    if (!userId) {
-      return {
-        authorized: false,
-        response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
-      };
-    }
-
-    let role = (
-      sessionClaims?.metadata as { role?: string }
-    )?.role?.toLowerCase();
-
-    if (!role) {
-      const user = await currentUser();
-      role = (user?.publicMetadata as { role?: string })?.role?.toLowerCase();
-    }
-
-    if (role !== 'team' && role !== 'admin') {
-      return {
-        authorized: false,
-        response: NextResponse.json(
-          { error: 'Not a team member' },
-          { status: 403 }
-        ),
-      };
-    }
-
-    return { authorized: true, userId, role };
-  } catch (error) {
-    console.error('[Team Auth] Error:', error);
-    return {
-      authorized: false,
-      response: NextResponse.json({ error: 'Auth failed' }, { status: 500 }),
-    };
-  }
-}
 
 /**
  * DELETE /api/admin/projects/[id]

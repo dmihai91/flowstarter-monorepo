@@ -40,6 +40,9 @@ const ClaimSchema = z.object({
   previewId: z.string().uuid(),
   /** Wizard step 5. The euro figure it maps to is server-owned. */
   tier: z.enum(['starter', 'pro', 'commerce', 'custom']).optional(),
+  /** Wizard step 6 — the monthly care plan, by name; the fee is server-owned. */
+  subscription: z.enum(['starter', 'pro', 'max']).optional(),
+  billingCadence: z.enum(['monthly', 'yearly']).optional(),
   // The step-1/2/3 answers, exactly as the wizard already posts them to the
   // preview endpoint. Optional and bounded: they are provenance and display
   // text, never authorization or price.
@@ -170,6 +173,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       clientName: spec.fullName,
       businessName: spec.businessName,
       ...(spec.tier ? { tier: spec.tier } : {}),
+      ...(spec.subscription ? { subscriptionPlan: spec.subscription } : {}),
+      ...(spec.billingCadence ? { billingCadence: spec.billingCadence } : {}),
       intakeSummary: {
         description: spec.description,
         industry: spec.industry,

@@ -44,9 +44,19 @@ createServer((req, res) => {
         'content-length': body.length, 'cache-control': 'no-store' });
       res.end(body);
     } catch {
+      // A client that aborts mid-stream makes res.end throw AFTER headers
+      // went out; writing a 404 head on top of that throws
+      // ERR_HTTP_HEADERS_SENT inside the catch, escapes the async IIFE, and
+      // Node kills the whole process -- one impatient viewer took the
+      // showcase down for everyone (the tunnel then answers 502).
+      if (res.headersSent) { res.destroy(); return; }
       try { res.writeHead(404, {'content-type':'text/html; charset=utf-8'});
             res.end(await readFile(join(ROOT, '404.html'))); }
-      catch { res.writeHead(404).end('not found'); }
+      catch { if (!res.headersSent) res.writeHead(404); res.end('not found'); }
     }
   })();
 }).listen(PORT, '127.0.0.1', () => console.log(`${ROOT} on :${PORT}`));
+
+// A single bad socket must never take the server down with it.
+process.on('uncaughtException', (e) => console.error('[serve-static]', e?.message ?? e));
+process.on('unhandledRejection', (e) => console.error('[serve-static]', e?.message ?? e));

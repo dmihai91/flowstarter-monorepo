@@ -13,10 +13,8 @@ import { requireWorkspaceAccess } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { OpenAsks } from '@/components/flowstarter/OpenAsks';
 import { ProjectStateStepper } from '@/components/flowstarter/ProjectStateStepper';
-import {
-  ProjectThread,
-  messagesFromPayload,
-} from '@/components/flowstarter/ProjectThread';
+import { ProjectThread } from '@/components/flowstarter/ProjectThread';
+import { messagesFromPayload } from '@/components/flowstarter/project-messages';
 import { projectStateFrom } from '@/components/flowstarter/project-progress';
 import {
   formatMinor,

@@ -57,7 +57,10 @@ const clip = (name, title, caption) => {
   const dur = secs ? `<span class="dur">${esc(secs)}s</span>` : '';
   return `
   <figure class="clip">
-    <video src="video/${name}.webm" controls muted loop playsinline preload="metadata"></video>
+    <video controls muted loop playsinline preload="metadata"><!--
+      no src attribute: a src on <video> makes browsers ignore the <source>
+      children, and Safari cannot decode the VP8 webm -- it needs the mp4
+      --><source src="video/${name}.mp4" type="video/mp4"><source src="video/${name}.webm" type="video/webm"></video>
     <figcaption><strong>${esc(title)}</strong> ${dur}<br>${caption}</figcaption>
   </figure>`;
 };

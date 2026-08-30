@@ -102,6 +102,14 @@ export default async function ClientProjectPage({
             {site.label} · {site.hostname}
           </a>
         ) : null}
+        {/* The editor authorizes itself; this link is a shortcut, not a gate. */}
+        <Link
+          href={`/dashboard/projects/${workspaceId}/editor`}
+          data-testid="site-editor-link"
+          className="w-fit text-sm font-semibold text-[var(--purple-primary)] underline underline-offset-4"
+        >
+          Edit your site
+        </Link>
       </header>
 
       <section className="rounded-2xl border border-[var(--fs-ink)]/10 bg-white/60 px-6 py-6">

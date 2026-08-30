@@ -752,7 +752,7 @@ export type Database = {
           stripe_event_id: string | null
           stripe_payment_intent_id: string | null
           updated_at: string
-          workspace_id: string
+          workspace_id: string | null
           worktree_branch: string | null
           worktree_path: string | null
         }
@@ -774,7 +774,7 @@ export type Database = {
           stripe_event_id?: string | null
           stripe_payment_intent_id?: string | null
           updated_at?: string
-          workspace_id: string
+          workspace_id?: string | null
           worktree_branch?: string | null
           worktree_path?: string | null
         }
@@ -796,7 +796,7 @@ export type Database = {
           stripe_event_id?: string | null
           stripe_payment_intent_id?: string | null
           updated_at?: string
-          workspace_id?: string
+          workspace_id?: string | null
           worktree_branch?: string | null
           worktree_path?: string | null
         }
@@ -858,6 +858,62 @@ export type Database = {
             foreignKeyName: "flowstarter_project_artifacts_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funnel_previews: {
+        Row: {
+          artifact_path: string | null
+          brand_config: Json
+          claimed_workspace_id: string | null
+          created_at: string
+          deploy_status: string
+          deployment_error: string | null
+          expires_at: string
+          hostname: string | null
+          manifest: Json
+          preview_id: string
+          template_slug: string | null
+          template_version: string | null
+          updated_at: string
+        }
+        Insert: {
+          artifact_path?: string | null
+          brand_config?: Json
+          claimed_workspace_id?: string | null
+          created_at?: string
+          deploy_status?: string
+          deployment_error?: string | null
+          expires_at: string
+          hostname?: string | null
+          manifest?: Json
+          preview_id: string
+          template_slug?: string | null
+          template_version?: string | null
+          updated_at?: string
+        }
+        Update: {
+          artifact_path?: string | null
+          brand_config?: Json
+          claimed_workspace_id?: string | null
+          created_at?: string
+          deploy_status?: string
+          deployment_error?: string | null
+          expires_at?: string
+          hostname?: string | null
+          manifest?: Json
+          preview_id?: string
+          template_slug?: string | null
+          template_version?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funnel_previews_claimed_workspace_id_fkey"
+            columns: ["claimed_workspace_id"]
+            isOneToOne: false
             referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
@@ -1265,6 +1321,47 @@ export type Database = {
           },
         ]
       }
+      site_versions: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          manifest: Json
+          published_at: string | null
+          summary: string | null
+          version: number
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          manifest: Json
+          published_at?: string | null
+          summary?: string | null
+          version: number
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          manifest?: Json
+          published_at?: string | null
+          summary?: string | null
+          version?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_versions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vault_encrypted_secrets: {
         Row: {
           created_at: string
@@ -1642,6 +1739,10 @@ export type Database = {
         Returns: undefined
       }
       is_workspace_member: { Args: { ws: string }; Returns: boolean }
+      tenant_path_workspace_id: {
+        Args: { object_name: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

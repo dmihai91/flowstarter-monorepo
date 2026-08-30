@@ -334,7 +334,9 @@ export function DiscoveryWizard({
           </Button>
         ) : (
           <Button
-            variant="primary"
+            // The deposit CTA lives in the conversation; this is the quieter
+            // route for a visitor who would rather talk first.
+            variant="secondary"
             size="sm"
             onClick={handleSubmit}
             disabled={!proceed || submitting}

@@ -2112,7 +2112,7 @@ const en = {
   'landing.discovery.nav.back': 'Back',
   'landing.discovery.nav.continue': 'Continue',
   'landing.discovery.nav.bookCall': 'book my call',
-  'landing.discovery.nav.saveAndBook': 'Save preview · book discovery call',
+  'landing.discovery.nav.saveAndBook': 'Prefer to talk first? Save & book a call',
   'landing.discovery.nav.submitting': 'Saving…',
   'landing.discovery.nav.payPrefix': 'Pay',
   'landing.discovery.nav.redirecting': 'Redirecting to secure checkout…',
@@ -2153,7 +2153,7 @@ const en = {
     'storefront support, order + catalog help',
   'landing.discovery.subscription.storeNote':
     'A dedicated store plan with product and collection editing, plus provider sync and order flows handled. Built for running a storefront, not just a content site.',
-  'landing.discovery.steps.preview.title': 'A rough taste of your site',
+  'landing.discovery.steps.preview.title': 'Your site, being built',
   'landing.discovery.steps.preview.subtitle':
     'Generated from your answers, in seconds. The real one is designed properly on the call',
   'landing.discovery.preview.fallbackName': 'Your business',
@@ -2180,7 +2180,7 @@ const en = {
   'landing.discovery.preview.editorUnavailable':
     'Live editing is off in this environment — this is a static preview.',
   'landing.discovery.preview.disclaimer':
-    'A working draft built from your answers. The real site is hand-finished with your brand and content after the discovery call — and the editor that ships with it has no edit limit.',
+    'A working preview built from your answers. The complete site is built by your agent team once the 20% deposit is paid, checked by us before it goes live, and ships with an editor that has no edit limit.',
 
   // The concierge stage: two panes, one conversation.
   'landing.discovery.preview.paneTitle': 'Your site, taking shape',

@@ -813,6 +813,7 @@ export type Database = {
       flowstarter_project_artifacts: {
         Row: {
           brand_config: Json | null
+          client_reply_corpus: Json
           created_at: string
           intake_payload: Json
           preview_artifact_url: string | null
@@ -826,6 +827,7 @@ export type Database = {
         }
         Insert: {
           brand_config?: Json | null
+          client_reply_corpus?: Json
           created_at?: string
           intake_payload?: Json
           preview_artifact_url?: string | null
@@ -839,6 +841,7 @@ export type Database = {
         }
         Update: {
           brand_config?: Json | null
+          client_reply_corpus?: Json
           created_at?: string
           intake_payload?: Json
           preview_artifact_url?: string | null
@@ -1048,7 +1051,7 @@ export type Database = {
         Row: {
           action: string
           cached_tokens: number
-          cost_estimate: number
+          cost_estimate: number | null
           created_at: string
           id: string
           model: string | null
@@ -1060,7 +1063,7 @@ export type Database = {
         Insert: {
           action: string
           cached_tokens?: number
-          cost_estimate?: number
+          cost_estimate?: number | null
           created_at?: string
           id?: string
           model?: string | null
@@ -1072,7 +1075,7 @@ export type Database = {
         Update: {
           action?: string
           cached_tokens?: number
-          cost_estimate?: number
+          cost_estimate?: number | null
           created_at?: string
           id?: string
           model?: string | null
@@ -1405,6 +1408,7 @@ export type Database = {
           balance_percent: number
           billing_currency: string
           billing_interval: string
+          claimed_preview_id: string | null
           client_business_name: string | null
           client_email: string | null
           client_name: string | null
@@ -1473,6 +1477,7 @@ export type Database = {
           balance_percent?: number
           billing_currency?: string
           billing_interval?: string
+          claimed_preview_id?: string | null
           client_business_name?: string | null
           client_email?: string | null
           client_name?: string | null
@@ -1541,6 +1546,7 @@ export type Database = {
           balance_percent?: number
           billing_currency?: string
           billing_interval?: string
+          claimed_preview_id?: string | null
           client_business_name?: string | null
           client_email?: string | null
           client_name?: string | null

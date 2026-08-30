@@ -218,8 +218,15 @@ describe('binary manifest entries', () => {
     const raw = Uint8Array.from([0xff, 0xd8, 0x00, 0x00, 0x10, 0xff]); // JPEG-ish with NULs
     const tar = packSiteTarball(
       [
-        { path: 'index.html', content: '<html><head></head><body>x</body></html>' },
-        { path: 'public/images/a.jpg', content: Buffer.from(raw).toString('base64'), encoding: 'base64' },
+        {
+          path: 'index.html',
+          content: '<html><head></head><body>x</body></html>',
+        },
+        {
+          path: 'public/images/a.jpg',
+          content: Buffer.from(raw).toString('base64'),
+          encoding: 'base64',
+        },
       ],
       {}
     ) as Uint8Array;

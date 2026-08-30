@@ -33,10 +33,9 @@ export const NOINDEX_HEADER_VALUE = 'noindex, nofollow, noarchive';
 
 export interface ArchiveFile {
   path: string;
-  content: string;  /** Present for binary entries; content is then base64. */
+  content: string /** Present for binary entries; content is then base64. */;
   encoding?: 'base64';
 }
-
 
 /** True for the documents a crawler would index. */
 export function isHtmlPath(path: string): boolean {

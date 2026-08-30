@@ -12,10 +12,18 @@ describe('manifestSafeForJson', () => {
       note: 'plain',
     });
     expect(reencoded).toEqual(['public/images/x.jpg']);
-    const files = (value as { files: Array<{ path: string; content: string; encoding?: string }> }).files;
+    const files = (
+      value as {
+        files: Array<{ path: string; content: string; encoding?: string }>;
+      }
+    ).files;
     expect(files[0].encoding).toBe('base64');
     expect(Buffer.from(files[0].content, 'base64').toString('utf8')).toBe(nul);
-    expect(files[1]).toEqual({ path: 'src/content/site.md', content: 'hello', type: 'file' });
+    expect(files[1]).toEqual({
+      path: 'src/content/site.md',
+      content: 'hello',
+      type: 'file',
+    });
     expect(JSON.stringify(value).includes('\\u0000')).toBe(false);
   });
 });

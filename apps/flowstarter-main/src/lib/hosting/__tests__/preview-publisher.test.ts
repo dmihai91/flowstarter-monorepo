@@ -424,13 +424,17 @@ describe('re-publishing preserves the stashed manifest', () => {
       from: () => ({
         upsert: (row: Record<string, unknown>) => {
           saved.push(row);
-          rows.set(String(row.preview_id), { ...rows.get(String(row.preview_id)), ...row });
+          rows.set(String(row.preview_id), {
+            ...rows.get(String(row.preview_id)),
+            ...row,
+          });
           return Promise.resolve({ error: null });
         },
         update: () => ({ eq: () => Promise.resolve({ error: null }) }),
         select: () => ({
           eq: () => ({
-            maybeSingle: () => Promise.resolve({ data: rows.get(previewId), error: null }),
+            maybeSingle: () =>
+              Promise.resolve({ data: rows.get(previewId), error: null }),
           }),
         }),
       }),
@@ -442,14 +446,25 @@ describe('re-publishing preserves the stashed manifest', () => {
     };
     await mod.publishFunnelPreview({
       previewId,
-      files: [{ path: 'index.html', content: '<html><head></head><body>n</body></html>' }],
+      files: [
+        {
+          path: 'index.html',
+          content: '<html><head></head><body>n</body></html>',
+        },
+      ],
       supabase: fakeSupabase as never,
     });
-    const written = saved.find((r) => 'manifest' in r) as { manifest: Record<string, unknown> };
+    const written = saved.find((r) => 'manifest' in r) as {
+      manifest: Record<string, unknown>;
+    };
     expect(written).toBeTruthy();
-    expect((written.manifest.intake as { businessName?: string })?.businessName).toBe('Rowan & Vale');
+    expect(
+      (written.manifest.intake as { businessName?: string })?.businessName
+    ).toBe('Rowan & Vale');
     expect(Array.isArray(written.manifest.files)).toBe(true);
-    expect((written.manifest.files as Array<{ path: string }>)[0].path).toBe('index.html');
+    expect((written.manifest.files as Array<{ path: string }>)[0].path).toBe(
+      'index.html'
+    );
     // Loud regression pin: the bug was manifest === { files } exactly.
     expect(Object.keys(written.manifest)).toEqual(
       expect.arrayContaining(['files', 'intake', 'previewUrl'])

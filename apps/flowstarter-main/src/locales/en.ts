@@ -150,7 +150,7 @@ const en = {
   // Clerk error messages
   'auth.errors.somethingWentWrong': 'Something went wrong',
   'auth.errors.deviceNotTrusted':
-    'This browser has not been approved for the development sign-in yet. Your email and password are fine — try again from the app\'s own sign-in page, or contact us if it persists.',
+    "This browser has not been approved for the development sign-in yet. Your email and password are fine — try again from the app's own sign-in page, or contact us if it persists.",
   'auth.errors.signInInvalid':
     'Incorrect email or password. Try again, or reset your password',
   'auth.errors.formIdentifierNotFound':

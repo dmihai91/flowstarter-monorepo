@@ -71,7 +71,6 @@ function assignNonNegativeIntegerField(
   return { ok: true };
 }
 
-
 /**
  * DELETE /api/admin/projects/[id]
  * Delete any workspace (team members bypass RLS).

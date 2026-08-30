@@ -162,21 +162,33 @@ export interface SaveFunnelPreviewInput {
  * still slips through: a file whose content carries NUL is re-encoded as
  * base64 with the encoding marker, and everything else is left untouched.
  */
-export function manifestSafeForJson<T>(manifest: T): { value: T; reencoded: string[] } {
+export function manifestSafeForJson<T>(manifest: T): {
+  value: T;
+  reencoded: string[];
+} {
   const reencoded: string[] = [];
   const walk = (node: unknown): unknown => {
     if (Array.isArray(node)) return node.map(walk);
     if (node && typeof node === 'object') {
       const rec = node as Record<string, unknown>;
-      if (typeof rec.path === 'string' && typeof rec.content === 'string' && rec.content.includes('\u0000')) {
+      if (
+        typeof rec.path === 'string' &&
+        typeof rec.content === 'string' &&
+        rec.content.includes('\u0000')
+      ) {
         reencoded.push(rec.path);
-        return { ...rec, content: Buffer.from(rec.content, 'utf8').toString('base64'), encoding: 'base64' };
+        return {
+          ...rec,
+          content: Buffer.from(rec.content, 'utf8').toString('base64'),
+          encoding: 'base64',
+        };
       }
       const out: Record<string, unknown> = {};
       for (const key of Object.keys(rec)) out[key] = walk(rec[key]);
       return out;
     }
-    if (typeof node === 'string' && node.includes('\u0000')) return node.split('\u0000').join('');
+    if (typeof node === 'string' && node.includes('\u0000'))
+      return node.split('\u0000').join('');
     return node;
   };
   return { value: walk(manifest) as T, reencoded };
@@ -187,7 +199,9 @@ export async function saveFunnelPreview(
 ): Promise<boolean> {
   if (!isValidPreviewId(input.previewId)) return false;
   const expiresAt = input.expiresAt ?? new Date(Date.now() + PREVIEW_TTL_MS);
-  const { value: safeManifest, reencoded } = manifestSafeForJson(input.manifest ?? {});
+  const { value: safeManifest, reencoded } = manifestSafeForJson(
+    input.manifest ?? {}
+  );
   if (reencoded.length > 0) {
     warn(
       `re-encoded ${reencoded.length} manifest file(s) with NUL bytes as base64 for ${input.previewId}`,

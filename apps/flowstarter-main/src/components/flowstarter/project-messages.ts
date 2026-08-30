@@ -152,4 +152,3 @@ export function senderLabel(
   }
   return direction === 'outbound' ? 'You' : 'Client';
 }
-

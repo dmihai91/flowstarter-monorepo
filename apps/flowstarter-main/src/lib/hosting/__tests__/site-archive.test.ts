@@ -211,3 +211,25 @@ describe('packPreviewTarball', () => {
     expect(unpacked['assets/app.js']).toBe('console.log(1)');
   });
 });
+
+describe('binary manifest entries', () => {
+  it('packs base64 entries as their raw bytes, not as UTF-8 text', async () => {
+    const { packSiteTarball } = await import('../site-archive');
+    const raw = Uint8Array.from([0xff, 0xd8, 0x00, 0x00, 0x10, 0xff]); // JPEG-ish with NULs
+    const tar = packSiteTarball(
+      [
+        { path: 'index.html', content: '<html><head></head><body>x</body></html>' },
+        { path: 'public/images/a.jpg', content: Buffer.from(raw).toString('base64'), encoding: 'base64' },
+      ],
+      {}
+    ) as Uint8Array;
+    // The packer may gzip; compare against the inflated stream when it does.
+    const { gunzipSync } = await import('node:zlib');
+    const out = Buffer.from(tar);
+    const hay = out[0] === 0x1f && out[1] === 0x8b ? gunzipSync(out) : out;
+    // The raw bytes must appear verbatim inside the archive…
+    expect(hay.indexOf(Buffer.from(raw))).toBeGreaterThan(0);
+    // …and the UTF-8 mangling of them (EF BF BD replacement chars) must not.
+    expect(hay.indexOf(Buffer.from([0xef, 0xbf, 0xbd]))).toBe(-1);
+  });
+});

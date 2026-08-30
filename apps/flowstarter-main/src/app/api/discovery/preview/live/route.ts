@@ -228,6 +228,23 @@ function buildPiEvidence(
   return { intake, corpus };
 }
 
+/**
+ * Files that must never be read as text. Reading a JPEG as UTF-8 yields NUL
+ * bytes, which Postgres jsonb refuses ("unsupported Unicode escape
+ * sequence") — one image in the manifest lost the whole funnel_previews row,
+ * and the tarball packed the same mangled bytes as the site's images.
+ */
+const BINARY_PREVIEW_EXTENSIONS = new Set([
+  '.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.ico', '.bmp',
+  '.woff', '.woff2', '.ttf', '.otf', '.eot',
+  '.pdf', '.mp4', '.webm', '.mp3', '.zip', '.gz',
+]);
+
+function isBinaryPreviewPath(path: string): boolean {
+  const dot = path.lastIndexOf('.');
+  return dot >= 0 && BINARY_PREVIEW_EXTENSIONS.has(path.slice(dot).toLowerCase());
+}
+
 async function readPreviewFiles(root: string): Promise<TemplateScaffoldFile[]> {
   const files: TemplateScaffoldFile[] = [];
   async function walk(directory: string): Promise<void> {
@@ -238,11 +255,17 @@ async function readPreviewFiles(root: string): Promise<TemplateScaffoldFile[]> {
       if (entry.isDirectory()) {
         await walk(absolute);
       } else if (entry.isFile()) {
-        files.push({
-          path: relative(root, absolute).split(sep).join('/'),
-          content: await readFile(absolute, 'utf8'),
-          type: 'file',
-        });
+        const path = relative(root, absolute).split(sep).join('/');
+        if (isBinaryPreviewPath(path)) {
+          files.push({
+            path,
+            content: (await readFile(absolute)).toString('base64'),
+            encoding: 'base64',
+            type: 'file',
+          });
+        } else {
+          files.push({ path, content: await readFile(absolute, 'utf8'), type: 'file' });
+        }
       }
     }
   }

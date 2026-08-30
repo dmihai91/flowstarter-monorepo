@@ -153,11 +153,47 @@ export interface SaveFunnelPreviewInput {
  * `claimed_workspace_id` is deliberately absent from the payload: a re-run of
  * the generator must never un-claim a preview somebody already owns.
  */
+
+/**
+ * Postgres jsonb rejects strings containing U+0000 ("unsupported Unicode
+ * escape sequence"), and one such string anywhere in a manifest lost the whole
+ * row — the preview was generated, hosted, and unclaimable. The collector now
+ * base64-encodes binaries at the source; this is the guard for anything that
+ * still slips through: a file whose content carries NUL is re-encoded as
+ * base64 with the encoding marker, and everything else is left untouched.
+ */
+export function manifestSafeForJson<T>(manifest: T): { value: T; reencoded: string[] } {
+  const reencoded: string[] = [];
+  const walk = (node: unknown): unknown => {
+    if (Array.isArray(node)) return node.map(walk);
+    if (node && typeof node === 'object') {
+      const rec = node as Record<string, unknown>;
+      if (typeof rec.path === 'string' && typeof rec.content === 'string' && rec.content.includes('\u0000')) {
+        reencoded.push(rec.path);
+        return { ...rec, content: Buffer.from(rec.content, 'utf8').toString('base64'), encoding: 'base64' };
+      }
+      const out: Record<string, unknown> = {};
+      for (const key of Object.keys(rec)) out[key] = walk(rec[key]);
+      return out;
+    }
+    if (typeof node === 'string' && node.includes('\u0000')) return node.split('\u0000').join('');
+    return node;
+  };
+  return { value: walk(manifest) as T, reencoded };
+}
+
 export async function saveFunnelPreview(
   input: SaveFunnelPreviewInput
 ): Promise<boolean> {
   if (!isValidPreviewId(input.previewId)) return false;
   const expiresAt = input.expiresAt ?? new Date(Date.now() + PREVIEW_TTL_MS);
+  const { value: safeManifest, reencoded } = manifestSafeForJson(input.manifest ?? {});
+  if (reencoded.length > 0) {
+    warn(
+      `re-encoded ${reencoded.length} manifest file(s) with NUL bytes as base64 for ${input.previewId}`,
+      reencoded.slice(0, 5).join(', ')
+    );
+  }
   try {
     const { error } = await client(input.supabase)
       .from('funnel_previews')
@@ -167,7 +203,7 @@ export async function saveFunnelPreview(
           template_slug: input.templateSlug ?? null,
           template_version: input.templateVersion ?? null,
           brand_config: (input.brandConfig ?? {}) as Json,
-          manifest: (input.manifest ?? {}) as Json,
+          manifest: safeManifest as Json,
           artifact_path: input.artifactPath ?? null,
           expires_at: expiresAt.toISOString(),
         },

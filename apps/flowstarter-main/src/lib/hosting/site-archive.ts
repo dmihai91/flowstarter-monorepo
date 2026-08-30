@@ -33,8 +33,10 @@ export const NOINDEX_HEADER_VALUE = 'noindex, nofollow, noarchive';
 
 export interface ArchiveFile {
   path: string;
-  content: string;
+  content: string;  /** Present for binary entries; content is then base64. */
+  encoding?: 'base64';
 }
+
 
 /** True for the documents a crawler would index. */
 export function isHtmlPath(path: string): boolean {
@@ -195,7 +197,12 @@ export function packSiteTarball(
   for (const file of files) {
     const path = file.path.trim();
     assertSafeEntryPath(path);
-    const body = Buffer.from(file.content ?? '', 'utf8');
+    // Binary manifest entries (images, fonts) carry base64 with an encoding
+    // marker; packing them as UTF-8 would corrupt every image in the site.
+    const body =
+      file.encoding === 'base64'
+        ? Buffer.from(file.content ?? '', 'base64')
+        : Buffer.from(file.content ?? '', 'utf8');
     total += body.length;
     if (total > maxBytes) {
       throw new SiteArchiveError('manifest exceeds the archive size limit');

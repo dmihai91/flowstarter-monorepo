@@ -102,7 +102,9 @@ export const LLM_BUDGETS: Record<LlmAction, LlmActionConfig> = {
   support_chat: { maxTokens: 6_000, maxOutputTokens: 220, model: SONNET },
   // The Pi coding agent runs many turns inside one preview; the cap is a
   // whole-run total enforced inside `@flowstarter/agentic-codegen`.
-  preview_generate: { maxTokens: 300_000, model: 'z-ai/glm-5.2' },
+  // Uncached tokens for the whole Pi run (cache reads excluded); a real
+  // preview needs ~300-400k uncached, so 1M leaves headroom for repairs.
+  preview_generate: { maxTokens: 1_000_000, model: 'z-ai/glm-5.2' },
   intake_interview: { maxTokens: 8_000, maxOutputTokens: 800, model: SONNET },
   business_naming: { maxTokens: 6_000, maxOutputTokens: 600, model: SONNET },
 };

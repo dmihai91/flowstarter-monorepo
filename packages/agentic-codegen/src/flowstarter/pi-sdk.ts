@@ -130,7 +130,7 @@ export interface PiUsageEvent {
 }
 
 /** Default whole-run token ceiling for one preview build. */
-export const DEFAULT_PI_MAX_RUN_TOKENS = 300_000;
+export const DEFAULT_PI_MAX_RUN_TOKENS = 1_000_000;
 
 /**
  * Thrown when the accumulated token spend of one `PiSdkFlowstarterAgents`
@@ -796,7 +796,12 @@ export class PiSdkFlowstarterAgents {
         // Accounting + the run cap. Every assistant turn counts, including the
         // ones that only called tools, because every turn re-sends the context.
         const usage = normalizePiUsage(message.usage);
-        this.runTokensUsed += usage.totalTokens;
+        // Count what is actually paid for. Every turn re-sends the inlined
+        // template context, so most prompt tokens are cache reads; a real
+        // preview shows ~2.5M tokens_in of which ~1.4M are cached. Counting
+        // those against the cap aborted every run mid-personalization.
+        this.runTokensUsed +=
+          usage.tokensIn - usage.cachedTokens + usage.tokensOut;
         const sink = this.options.usageSink;
         if (sink) {
           try {

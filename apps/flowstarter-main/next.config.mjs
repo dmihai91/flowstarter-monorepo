@@ -206,5 +206,16 @@ export default {
       }),
   // Keep heavy native deps as external `require()` calls so they aren't
   // re-bundled per route — keeps Lambda cold starts smaller.
-  serverExternalPackages: ['@daytonaio/sdk'],
+  // Pi loads providers through a computed import() (pi-ai/dist/env-api-keys.js:
+  // `import(__rewriteRelativeImportExtension(specifier))`). Turbopack cannot
+  // bundle that and fails at runtime with "Cannot find module as expression is
+  // too dynamic", which silently killed every live preview under `next dev`.
+  // Keeping the Pi packages external lets Node resolve them natively.
+  serverExternalPackages: [
+    '@daytonaio/sdk',
+    '@earendil-works/pi-ai',
+    '@earendil-works/pi-coding-agent',
+    '@earendil-works/pi-agent-core',
+    '@earendil-works/pi-tui',
+  ],
 };

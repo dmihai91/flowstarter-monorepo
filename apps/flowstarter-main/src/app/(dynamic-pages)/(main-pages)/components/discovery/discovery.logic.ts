@@ -402,21 +402,40 @@ export interface Recommendation {
 }
 
 /**
+ * Standard, pre-approved integrations the packaged flow already supports.
+ * Anything a client asks for that falls outside this list is a bespoke
+ * integration request. Shared by `recommendTier` and the routing rules
+ * (`lib/flowstarter/routing-rules.ts`) so both read the same definition of
+ * "custom integration".
+ */
+const STANDARD_INTEGRATION_RE =
+  /\b(cal\.com|calendly|stripe|payment links?|newsletter|mailchimp|convertkit|brevo|contact forms?|booking)\b/i;
+
+/** Splits the free-text integrations field into individual requests. */
+export function integrationRequestList(customIntegrations: string): string[] {
+  return customIntegrations
+    .trim()
+    .split(/[,;\n]|\band\b/gi)
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+/** True when at least one requested integration is outside the standard allow-list. */
+export function hasCustomIntegrationRequest(customIntegrations: string): boolean {
+  return integrationRequestList(customIntegrations).some(
+    (request) => !STANDARD_INTEGRATION_RE.test(request)
+  );
+}
+
+/**
  * Deterministic tier recommendation. Order matters — first match wins for the
  * primary tier, but reasonKeys aggregate every signal for transparency.
  */
 export function recommendTier(d: DiscoveryData): Recommendation {
   const reasons: string[] = [];
 
-  const integrations = d.customIntegrations.trim();
-  const integrationRequests = integrations
-    .split(/[,;\n]|\band\b/gi)
-    .map((value) => value.trim())
-    .filter(Boolean);
-  const standardIntegration =
-    /\b(cal\.com|calendly|stripe|payment links?|newsletter|mailchimp|convertkit|brevo|contact forms?|booking)\b/i;
-  const hasCustomIntegrations = integrationRequests.some(
-    (request) => !standardIntegration.test(request)
+  const hasCustomIntegrations = hasCustomIntegrationRequest(
+    d.customIntegrations
   );
 
   const physicalOrMixed =

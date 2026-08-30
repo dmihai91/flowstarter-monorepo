@@ -1,25 +1,29 @@
 /**
  * POST /api/discovery/recommend
  *
- * LLM-driven build-tier recommendation. Feeds the full discovery answers
- * (including the free-text description) to a small model via OpenRouter and
- * returns a tier + reason keys.
+ * Deterministic RULES decide both the build-tier recommendation
+ * (`recommendTier`, a price bracket for pricing/UI — unchanged) and the
+ * routing decision (`classifyRouting`, standard vs custom — a separate,
+ * new output). No LLM is consulted: this used to call `recommendTierLLM`
+ * and return its answer whenever it succeeded, with the deterministic
+ * result only as a fallback. That call has been removed entirely — see
+ * lib/flowstarter/routing-rules.ts for the rule set and threshold, which is
+ * the only thing ops need to tune. `recommendTierLLM` (lib/ai/recommend-tier)
+ * is left in place and importable but is no longer called from here.
  *
- * Public (under the /api/discovery allowlist), rate-limited, fails open:
- * if OpenRouter is unconfigured or the model errors / returns junk, this
- * falls back to the deterministic `recommendTier` so the wizard always gets
- * a usable answer and never dead-ends.
+ * Public (under the /api/discovery allowlist), rate-limited. Pure and
+ * synchronous once parsed, so the same input always returns the same
+ * answer.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { recommendTierLLM, RECOMMEND_MODEL } from '@/lib/ai/recommend-tier';
-import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
 import {
   type DiscoveryData,
   EMPTY_DISCOVERY,
   recommendTier,
 } from '@/app/(dynamic-pages)/(main-pages)/components/discovery/discovery.logic';
+import { classifyRouting } from '@/lib/flowstarter/routing-rules';
 
 const Schema = z.object({
   businessName: z.string().max(200).optional().default(''),
@@ -90,28 +94,9 @@ export async function POST(request: NextRequest) {
 
   const data: DiscoveryData = { ...EMPTY_DISCOVERY, ...parsed.data };
 
-  // Deterministic result is always computed — it is the fail-open answer and
-  // the floor we never go below.
+  // The deterministic result IS the answer — not a fallback.
   const deterministic = recommendTier(data);
+  const routing = classifyRouting(data);
 
-  // Funnel budget kill-switch: over the monthly cap → skip the LLM entirely.
-  const budget = await funnelBudgetState();
-  if (budget.state !== 'blocked') {
-    try {
-      const llm = await recommendTierLLM(data);
-      if (llm) {
-        await recordGenerationCost({
-          kind: 'recommend',
-          model: RECOMMEND_MODEL,
-          usage: llm.usage,
-          ip: ip === 'unknown' ? null : ip,
-        });
-        return NextResponse.json({ ...llm.rec, source: 'llm' });
-      }
-    } catch {
-      // fall through to deterministic
-    }
-  }
-
-  return NextResponse.json({ ...deterministic, source: 'fallback' });
+  return NextResponse.json({ ...deterministic, routing, source: 'rules' });
 }

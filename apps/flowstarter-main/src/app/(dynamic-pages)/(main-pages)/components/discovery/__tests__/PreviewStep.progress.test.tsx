@@ -5,7 +5,7 @@
  * "live" if the stream drops and polling takes over, and only one transport
  * is ever active at a time — not the exact markup.
  */
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EMPTY_DISCOVERY, type DiscoveryData } from '../discovery.logic';
 import { PreviewStep } from '../steps/PreviewStep';
@@ -115,13 +115,22 @@ describe('SSE progress', () => {
     const source = FakeEventSource.instances[0]!;
     expect(source.url).toBe('/api/discovery/preview/live/stream?demoId=demo-1');
 
+    // Scoped to the log on purpose: the current phase is deliberately written
+    // twice — once as a message here, once in the always-visible "Now:" line —
+    // so an unscoped query would match both.
+    const conversation = () => screen.getByRole('log');
+
     act(() => source.emit('phase', { phase: 'Reading your brand', at: 2 }));
-    expect(await screen.findByText(/Reading your brand/)).toBeInTheDocument();
+    expect(
+      await within(conversation()).findByText(/Reading your brand/)
+    ).toBeInTheDocument();
 
     act(() => source.emit('phase', { phase: 'Choosing a template', at: 8 }));
-    expect(await screen.findByText(/Choosing a template/)).toBeInTheDocument();
+    expect(
+      await within(conversation()).findByText(/Choosing a template/)
+    ).toBeInTheDocument();
     // Both stay visible, in the order they arrived.
-    const log = screen.getByRole('log');
+    const log = conversation();
     const lines = Array.from(log.querySelectorAll('span')).map(
       (el) => el.textContent
     );

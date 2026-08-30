@@ -12,7 +12,7 @@
  * `fetch` is stubbed throughout: no model is called, here or anywhere else in
  * this suite.
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EMPTY_DISCOVERY, type DiscoveryData } from '../discovery.logic';
@@ -262,5 +262,41 @@ describe('business names', () => {
       )
     );
     expect(body.requested).toBe(true);
+  });
+});
+
+describe('the shell it shares with the preview', () => {
+  it('already shows the two panes, so generation does not change the screen', async () => {
+    const { state, setData, onSkip } = harness();
+    render(
+      <InfoAgentStep data={state.data} setData={setData} onSkip={onSkip} />
+    );
+    await screen.findByLabelText(/intake conversation/i);
+
+    const panes = screen.getByTestId('concierge-panes');
+    const order = Array.from(panes.children);
+    // Status, then the site-to-be, then the conversation: the mobile stack,
+    // and the same order the preview step keeps once the agents take over.
+    expect(order).toHaveLength(3);
+    expect(order[0]).toContainElement(screen.getByTestId('concierge-now'));
+    expect(order[1]).toBe(screen.getByTestId('concierge-site-pane'));
+    expect(order[2]).toBe(screen.getByTestId('concierge-conversation-pane'));
+  });
+
+  it('holds a plainly-fake page skeleton where the site will be', async () => {
+    const { state, setData, onSkip } = harness();
+    render(
+      <InfoAgentStep data={state.data} setData={setData} onSkip={onSkip} />
+    );
+
+    expect(
+      within(screen.getByTestId('concierge-site-pane')).getByTestId(
+        'concierge-skeleton'
+      )
+    ).toBeInTheDocument();
+    // Said out loud, so nobody reads the placeholder as a first draft.
+    expect(
+      await screen.findByText(/nothing on this panel is real yet/i)
+    ).toBeInTheDocument();
   });
 });

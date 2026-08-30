@@ -2182,6 +2182,12 @@ const en = {
   'landing.discovery.preview.disclaimer':
     'A working draft built from your answers. The real site is hand-finished with your brand and content after the discovery call — and the editor that ships with it has no edit limit.',
 
+  // The concierge stage: two panes, one conversation.
+  'landing.discovery.preview.paneTitle': 'Your site, taking shape',
+  'landing.discovery.preview.paneSkeleton':
+    'Your site appears here as the agents build it. Nothing on this panel is real yet.',
+  'landing.discovery.preview.askForChange': 'Ask for a change',
+
   // Field labels
   'landing.discovery.fields.fullName': 'Your name',
   'landing.discovery.fields.email': 'Email',

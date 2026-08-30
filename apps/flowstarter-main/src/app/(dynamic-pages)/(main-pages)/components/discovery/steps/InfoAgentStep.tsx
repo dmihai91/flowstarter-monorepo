@@ -1,8 +1,13 @@
 'use client';
 
 /**
- * Step 7 — the info agent: the conversational step between the form and the
- * preview.
+ * Step 7 — the info agent: the opening half of the concierge conversation.
+ *
+ * It shares its shell with the preview step (`ConciergePanes`): the questions
+ * on the left, the site-to-be on the right as a page-shaped skeleton, and one
+ * "Now:" line above both. Nothing changes shape when generation starts — the
+ * same panes stay up and the build agents simply take over the talking — so
+ * the visitor experiences one continuous conversation rather than two screens.
  *
  * What it is for: the form gets one-line answers to the questions that matter
  * most ("what makes you different", "what do you actually sell"), and a site
@@ -43,6 +48,7 @@ import {
   type BusinessNamesResponse,
   type IntakeChatResponse,
 } from '../intake-chat.shared';
+import { ConciergePanes, NowLine, SiteSkeleton } from './ConciergePanes';
 
 const OPENING_LINE =
   'Before I build your preview — a couple of quick questions. Two minutes, ' +
@@ -202,197 +208,227 @@ export function InfoAgentStep({
     (data.intakeChatStatus ?? '') !== '' || conversational.length === 0;
 
   return (
-    <div className="space-y-4">
-      <header className="space-y-1">
-        <h3 className="text-lg font-bold text-[var(--fs-ink)]">
-          A couple of things before we build
-        </h3>
-        <p className="text-sm text-[var(--fs-ink-faint)]">{OPENING_LINE}</p>
-      </header>
+    <ConciergePanes
+      now={
+        <NowLine
+          label={
+            pending
+              ? 'Your info agent is thinking'
+              : done
+              ? 'Ready to build your preview'
+              : 'Answering a couple of questions'
+          }
+          state={pending ? 'working' : done ? 'done' : 'waiting'}
+        />
+      }
+      site={
+        <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
+          <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] px-3 py-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+            <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
+            <span className="ml-auto shrink-0 text-[11px] font-semibold text-[var(--fs-ink-faint)]">
+              Your site, once we start
+            </span>
+          </div>
+          <SiteSkeleton caption="Your site builds here, section by section, the moment the questions are done. Nothing on this panel is real yet." />
+        </div>
+      }
+      conversation={
+        <div className="space-y-4">
+          {/* The wizard already prints this step's title above the panes, so
+            the pane opens with the promise rather than repeating it. */}
+          <p className="text-sm text-[var(--fs-ink-faint)]">{OPENING_LINE}</p>
+          {/* What the gate says is still missing — in its words, not its codes. */}
+          {missing.length > 0 && (
+            <section
+              aria-label="What is still missing"
+              className="rounded-lg border border-[var(--fs-rule)] bg-white/[0.02] p-3.5"
+            >
+              <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--fs-ink-faint)]">
+                Still missing
+              </p>
+              <ul className="space-y-2">
+                {[...conversational, ...assets].map((item) => (
+                  <li key={item.code} className="flex gap-2 text-sm">
+                    <span
+                      aria-hidden
+                      className={[
+                        'mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full',
+                        item.severity === 'blocking'
+                          ? 'bg-[var(--purple-primary)]'
+                          : 'bg-[var(--fs-rule)]',
+                      ].join(' ')}
+                    />
+                    <span>
+                      <span className="font-semibold text-[var(--fs-ink)]">
+                        {GAP_LABELS[item.code]}
+                      </span>
+                      <span className="block text-[13px] leading-snug text-[var(--fs-ink-faint)]">
+                        {item.message}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {assets.length > 0 && (
+                <p className="mt-2.5 text-[12px] leading-snug text-[var(--fs-ink-faint)]">
+                  Photos and logos are not something you can type — you will be
+                  able to upload those once the preview is yours. Until then the
+                  site uses template artwork.
+                </p>
+              )}
+            </section>
+          )}
 
-      {/* What the gate says is still missing — in its words, not its codes. */}
-      {missing.length > 0 && (
-        <section
-          aria-label="What is still missing"
-          className="rounded-lg border border-[var(--fs-rule)] bg-white/[0.02] p-3.5"
-        >
-          <p className="mb-2 text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--fs-ink-faint)]">
-            Still missing
-          </p>
-          <ul className="space-y-2">
-            {[...conversational, ...assets].map((item) => (
-              <li key={item.code} className="flex gap-2 text-sm">
+          {/* The conversation */}
+          <section
+            aria-label="Intake conversation"
+            aria-busy={pending}
+            className="max-h-72 space-y-2.5 overflow-y-auto rounded-lg border border-[var(--fs-rule)] p-3.5"
+          >
+            {transcript.length === 0 && !pending && (
+              <p className="text-sm text-[var(--fs-ink-faint)]">
+                Nothing to ask — your answers already cover what we need.
+              </p>
+            )}
+            {transcript.map((entry, index) => (
+              <div
+                key={`${entry.role}-${index}`}
+                className={
+                  entry.role === 'client'
+                    ? 'ml-8 rounded-lg bg-[var(--purple-primary)]/10 px-3 py-2 text-sm text-[var(--fs-ink)]'
+                    : 'mr-8 rounded-lg border border-[var(--fs-rule)] px-3 py-2 text-sm text-[var(--fs-ink)]'
+                }
+              >
+                {entry.text}
+              </div>
+            ))}
+            {pending && (
+              <p
+                role="status"
+                className="mr-8 flex items-center gap-2 rounded-lg border border-[var(--fs-rule)] px-3 py-2 text-sm text-[var(--fs-ink-faint)]"
+              >
                 <span
                   aria-hidden
-                  className={[
-                    'mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full',
-                    item.severity === 'blocking'
-                      ? 'bg-[var(--purple-primary)]'
-                      : 'bg-[var(--fs-rule)]',
-                  ].join(' ')}
+                  className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent"
                 />
-                <span>
-                  <span className="font-semibold text-[var(--fs-ink)]">
-                    {GAP_LABELS[item.code]}
-                  </span>
-                  <span className="block text-[13px] leading-snug text-[var(--fs-ink-faint)]">
-                    {item.message}
-                  </span>
-                </span>
-              </li>
-            ))}
-          </ul>
-          {assets.length > 0 && (
-            <p className="mt-2.5 text-[12px] leading-snug text-[var(--fs-ink-faint)]">
-              Photos and logos are not something you can type — you will be able
-              to upload those once the preview is yours. Until then the site
-              uses template artwork.
+                Thinking — this takes a few seconds
+              </p>
+            )}
+            <div ref={endRef} />
+          </section>
+
+          {error && (
+            <p role="alert" className="text-sm text-[var(--fs-ink-faint)]">
+              {error}
             </p>
           )}
-        </section>
-      )}
 
-      {/* The conversation */}
-      <section
-        aria-label="Intake conversation"
-        aria-busy={pending}
-        className="max-h-72 space-y-2.5 overflow-y-auto rounded-lg border border-[var(--fs-rule)] p-3.5"
-      >
-        {transcript.length === 0 && !pending && (
-          <p className="text-sm text-[var(--fs-ink-faint)]">
-            Nothing to ask — your answers already cover what we need.
-          </p>
-        )}
-        {transcript.map((entry, index) => (
-          <div
-            key={`${entry.role}-${index}`}
-            className={
-              entry.role === 'client'
-                ? 'ml-8 rounded-lg bg-[var(--purple-primary)]/10 px-3 py-2 text-sm text-[var(--fs-ink)]'
-                : 'mr-8 rounded-lg border border-[var(--fs-rule)] px-3 py-2 text-sm text-[var(--fs-ink)]'
-            }
-          >
-            {entry.text}
-          </div>
-        ))}
-        {pending && (
-          <p
-            role="status"
-            className="mr-8 flex items-center gap-2 rounded-lg border border-[var(--fs-rule)] px-3 py-2 text-sm text-[var(--fs-ink-faint)]"
-          >
-            <span
-              aria-hidden
-              className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent"
-            />
-            Thinking — this takes a few seconds
-          </p>
-        )}
-        <div ref={endRef} />
-      </section>
-
-      {error && (
-        <p role="alert" className="text-sm text-[var(--fs-ink-faint)]">
-          {error}
-        </p>
-      )}
-
-      {/* Answering */}
-      {!done && (
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <textarea
-            value={reply}
-            onChange={(event) => setReply(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                send();
-              }
-            }}
-            rows={2}
-            maxLength={MAX_TURN_CHARS}
-            aria-label="Your answer"
-            placeholder="Answer in your own words…"
-            className="w-full flex-1 rounded-lg border border-[var(--fs-rule)] bg-white px-3.5 py-2.5 text-sm text-[var(--fs-ink)] outline-none transition-[box-shadow,border-color] duration-150 placeholder:text-[var(--fs-ink-faint)] hover:border-[var(--purple-primary)]/30 focus:border-[var(--purple-primary)]/40 focus:shadow-[0_0_0_4px_var(--purple-primary-lightest)] dark:bg-white/[0.03]"
-          />
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={send}
-            disabled={pending || reply.trim().length === 0}
-            loading={pending}
-          >
-            Send
-          </Button>
-        </div>
-      )}
-
-      {/* Names: offered, never applied. */}
-      <div className="rounded-lg border border-dashed border-[var(--fs-rule)] p-3.5">
-        <p className="text-sm text-[var(--fs-ink)]">
-          Still deciding on a name?
-          <span className="block text-[13px] text-[var(--fs-ink-faint)]">
-            We will only suggest names if you ask. Nothing is filled in for you.
-          </span>
-        </p>
-        {!namesAsked ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="mt-2"
-            onClick={() => void askForNames()}
-          >
-            Suggest a few names
-          </Button>
-        ) : namesPending ? (
-          <p role="status" className="mt-2 text-sm text-[var(--fs-ink-faint)]">
-            Thinking of names…
-          </p>
-        ) : names && names.length > 0 ? (
-          <ul className="mt-2 space-y-1.5">
-            {names.map((suggestion) => (
-              <li key={suggestion.name}>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setData((previous) => ({
-                      ...previous,
-                      businessName: suggestion.name,
-                    }))
+          {/* Answering */}
+          {!done && (
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <textarea
+                value={reply}
+                onChange={(event) => setReply(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    send();
                   }
-                  className="w-full rounded-lg border border-[var(--fs-rule)] px-3 py-2 text-left text-sm transition-colors hover:border-[var(--purple-primary)]/40"
-                >
-                  <span className="font-semibold text-[var(--fs-ink)]">
-                    {suggestion.name}
-                  </span>
-                  <span className="block text-[12px] leading-snug text-[var(--fs-ink-faint)]">
-                    {suggestion.rationale}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-2 text-sm text-[var(--fs-ink-faint)]">
-            No suggestions this time — your own name is the safer bet anyway.
-          </p>
-        )}
-      </div>
+                }}
+                rows={2}
+                maxLength={MAX_TURN_CHARS}
+                aria-label="Your answer"
+                placeholder="Answer in your own words…"
+                className="w-full flex-1 rounded-lg border border-[var(--fs-rule)] bg-white px-3.5 py-2.5 text-sm text-[var(--fs-ink)] outline-none transition-[box-shadow,border-color] duration-150 placeholder:text-[var(--fs-ink-faint)] hover:border-[var(--purple-primary)]/30 focus:border-[var(--purple-primary)]/40 focus:shadow-[0_0_0_4px_var(--purple-primary-lightest)] dark:bg-white/[0.03]"
+              />
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={send}
+                disabled={pending || reply.trim().length === 0}
+                loading={pending}
+              >
+                Send
+              </Button>
+            </div>
+          )}
 
-      {/* The escape hatch, always live. */}
-      <div className="flex flex-wrap items-center gap-3 border-t border-[var(--fs-rule)] pt-3">
-        <Button variant="ghost" size="sm" onClick={skip}>
-          Skip and show me the preview
-        </Button>
-        {placeholdered.length > 0 && (
-          <p className="text-[12px] leading-snug text-[var(--fs-ink-faint)]">
-            If you skip, we will build the preview with placeholder{' '}
-            {placeholdered
-              .map((item) => GAP_LABELS[item.code].toLowerCase())
-              .join(', ')}{' '}
-            — you can replace all of it later, nothing is locked in.
-          </p>
-        )}
-      </div>
-    </div>
+          {/* Names: offered, never applied. */}
+          <div className="rounded-lg border border-dashed border-[var(--fs-rule)] p-3.5">
+            <p className="text-sm text-[var(--fs-ink)]">
+              Still deciding on a name?
+              <span className="block text-[13px] text-[var(--fs-ink-faint)]">
+                We will only suggest names if you ask. Nothing is filled in for
+                you.
+              </span>
+            </p>
+            {!namesAsked ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-2"
+                onClick={() => void askForNames()}
+              >
+                Suggest a few names
+              </Button>
+            ) : namesPending ? (
+              <p
+                role="status"
+                className="mt-2 text-sm text-[var(--fs-ink-faint)]"
+              >
+                Thinking of names…
+              </p>
+            ) : names && names.length > 0 ? (
+              <ul className="mt-2 space-y-1.5">
+                {names.map((suggestion) => (
+                  <li key={suggestion.name}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setData((previous) => ({
+                          ...previous,
+                          businessName: suggestion.name,
+                        }))
+                      }
+                      className="w-full rounded-lg border border-[var(--fs-rule)] px-3 py-2 text-left text-sm transition-colors hover:border-[var(--purple-primary)]/40"
+                    >
+                      <span className="font-semibold text-[var(--fs-ink)]">
+                        {suggestion.name}
+                      </span>
+                      <span className="block text-[12px] leading-snug text-[var(--fs-ink-faint)]">
+                        {suggestion.rationale}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-sm text-[var(--fs-ink-faint)]">
+                No suggestions this time — your own name is the safer bet
+                anyway.
+              </p>
+            )}
+          </div>
+
+          {/* The escape hatch, always live. */}
+          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--fs-rule)] pt-3">
+            <Button variant="ghost" size="sm" onClick={skip}>
+              Skip and show me the preview
+            </Button>
+            {placeholdered.length > 0 && (
+              <p className="text-[12px] leading-snug text-[var(--fs-ink-faint)]">
+                If you skip, we will build the preview with placeholder{' '}
+                {placeholdered
+                  .map((item) => GAP_LABELS[item.code].toLowerCase())
+                  .join(', ')}{' '}
+                — you can replace all of it later, nothing is locked in.
+              </p>
+            )}
+          </div>
+        </div>
+      }
+    />
   );
 }

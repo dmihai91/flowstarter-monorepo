@@ -8,6 +8,7 @@ import {
   type Tier,
   DEMO_STATE_KEY,
   EMPTY_DISCOVERY,
+  INFO_STEP,
   LAST_STEP,
   STEPS,
   canProceed,
@@ -115,9 +116,21 @@ export function DiscoveryWizard({
     }
   }, [data, step]);
 
-  // The preview/editor step needs more room — ask the modal to widen.
+  // The concierge stage — the info agent and the preview it flows into — is
+  // two panes wide, so the modal widens one step earlier than it used to and
+  // stays wide. Widening at the preview alone would have resized the modal
+  // underneath a conversation that never stopped.
+  //
+  // Re-asserted on the next macrotask as well as immediately: the host modal
+  // clears its own `wide` flag when it opens, and React runs this child's
+  // effects *before* the parent's, so a wizard that mounts straight onto the
+  // concierge stage (a restored draft) would otherwise be reset back to narrow
+  // a moment after asking for the room it needs.
   useEffect(() => {
-    onWideChange?.(step === LAST_STEP);
+    const wide = step >= INFO_STEP;
+    onWideChange?.(wide);
+    const reassert = setTimeout(() => onWideChange?.(wide), 0);
+    return () => clearTimeout(reassert);
   }, [step, onWideChange]);
 
   const update = useCallback(

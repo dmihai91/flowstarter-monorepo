@@ -1,30 +1,63 @@
+'use client';
+
 import { useAuth, useClerk } from '@clerk/nextjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   type DiscoveryData,
   type DemoSite,
   type GeneratedSiteCopy,
+  type Tier,
   type ToneId,
   DEMO_STATE_KEY,
   MAX_DEMO_EDITS,
   buildDemoSite,
   previewCtaLabel,
+  recommendTier,
 } from '../discovery.logic';
+import {
+  KEEP_EXPLORING_LABEL,
+  agentForPhase,
+  depositCtaLabel,
+  depositQuote,
+  previewMeaningMessage,
+  previewReadyMessage,
+} from '../concierge.shared';
 import {
   claimIntakeChatPayload,
   describeWithIntakeAnswers,
 } from '../intake-chat.shared';
 import { usePreviewProgress } from '../usePreviewProgress';
 import { DemoSiteFrame } from './DemoSiteFrame';
+import {
+  ChatBubble,
+  ConciergePanes,
+  ConversationLog,
+  NowLine,
+  SiteSkeleton,
+  useElapsedSeconds,
+  type NowState,
+} from './ConciergePanes';
 
 /**
- * Step 7. Primary path: the in-sandbox autonomous Agent-SDK pipeline
+ * Step 8 — the generation stage of the concierge conversation.
+ *
+ * The visitor does not change screens between the info agent and this: the
+ * same two panes stay up, the same conversation keeps running. What changes is
+ * who is talking. The info agent stops asking, and the build agents start
+ * reporting — each pipeline phase arrives as a message signed by the
+ * specialist that owns it, while the site itself assembles on the right, from
+ * a page-shaped skeleton to the base template to the personalized site.
+ *
+ * The offer is stated twice, in plain words, because a preview that is mistaken
+ * for a finished site is a refund conversation later: this is a preview of the
+ * full site, a 20% deposit has it built, the balance falls due on completion.
+ *
+ * Primary path: the in-sandbox autonomous Agent-SDK pipeline
  * (/api/discovery/preview/live) builds a real personalized site in a Daytona
- * sandbox; we embed its live URL and give the visitor a T3-Code-style
- * conversational editor — up to 15 plain-English prompts, applied by the
- * agent in the same sandbox (HMR updates the preview). Fail-open: if the
- * live pipeline is unavailable / budget-blocked / errors, fall back to the
- * deterministic JSON demo so the funnel never dead-ends.
+ * sandbox; we embed its live URL and give the visitor up to 15 plain-English
+ * prompts, applied by the agent in the same sandbox (HMR updates the preview).
+ * If the live pipeline is unavailable or fails, the funnel says so out loud and
+ * offers the choice — try again, or take the deterministic JSON preview.
  */
 
 const LIVE_EDIT_CAP = 15;
@@ -47,13 +80,6 @@ interface DemoState {
   site: DemoSite;
   editsUsed: number;
 }
-
-const BUILD_STEPS = [
-  'landing.discovery.preview.build.s1',
-  'landing.discovery.preview.build.s2',
-  'landing.discovery.preview.build.s3',
-  'landing.discovery.preview.build.s4',
-] as const;
 
 function fallbackSite(data: DiscoveryData): DemoSite {
   const firstSentence =
@@ -143,11 +169,11 @@ export function PreviewStep({
   const [liveDemoId, setLiveDemoId] = useState<string | null>(null);
   const [iframeNonce, setIframeNonce] = useState(0);
   const [personalizing, setPersonalizing] = useState(false);
+  const [frameLoaded, setFrameLoaded] = useState(false);
 
   // Real-time build progress over SSE (falls back to polling only if the
   // stream errors or is unavailable — see usePreviewProgress).
   const progress = usePreviewProgress(liveDemoId);
-  const livePhase = progress.phase;
 
   // Conversational editor (live mode).
   const [chat, setChat] = useState<ChatTurn[]>([]);
@@ -160,27 +186,28 @@ export function PreviewStep({
   const [prompt, setPrompt] = useState('');
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const [buildStep, setBuildStep] = useState(0);
-  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chat]);
+  // Honesty about the build: a failed pipeline is said out loud and the
+  // visitor picks what happens next. Nothing falls back behind their back.
+  const [buildFailure, setBuildFailure] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  // Set when the live pipeline was never available (budget, config, skip) and
+  // the deterministic preview stood in for it.
+  const [steppedDown, setSteppedDown] = useState(false);
 
+  // The offer, and the quiet way past it.
+  const [offerSnoozed, setOfferSnoozed] = useState(false);
+
+  // A fresh frame starts invisible and fades in once it has painted.
   useEffect(() => {
-    if (mode !== 'loading' || livePhase) return;
-    const id = setInterval(
-      () => setBuildStep((s) => Math.min(s + 1, BUILD_STEPS.length - 1)),
-      2600
-    );
-    return () => clearInterval(id);
-  }, [mode, livePhase]);
+    setFrameLoaded(false);
+  }, [iframeNonce, liveUrl]);
 
   // Shared by the mount effect below (on a failed/skip POST) and by the
-  // progress-driven effect further down (on a failed build): whichever path
-  // a preview takes, this is the one place that decides what "no live
-  // preview" falls back to.
+  // visitor's own choice after a failure: whichever path a preview takes,
+  // this is the one place that decides what "no live preview" falls back to.
   const loadJsonFallback = useCallback(async () => {
+    setBuildFailure(null);
     if (typeof window !== 'undefined') {
       try {
         const raw = window.sessionStorage.getItem(DEMO_STATE_KEY);
@@ -225,10 +252,11 @@ export function PreviewStep({
     }
   }, [data, t]);
 
-  useEffect(() => {
-    let cancelled = false;
+  const shownBaseRef = useRef(false);
+  const resolvedRef = useRef(false);
 
-    async function runLive() {
+  const startLive = useCallback(
+    async (isCancelled: () => boolean) => {
       try {
         const res = await fetch('/api/discovery/preview/live', {
           method: 'POST',
@@ -239,16 +267,28 @@ export function PreviewStep({
           demoId?: string;
           skip?: boolean;
         };
-        if (cancelled) return;
+        if (isCancelled()) return;
         if (json.skip || !json.demoId) {
+          // The pipeline was never started (budget, configuration, or an
+          // explicit skip). That is not a build that failed, but the visitor
+          // is still told the preview they get is the simpler one.
+          setSteppedDown(true);
           void loadJsonFallback();
           return;
         }
         setLiveDemoId(json.demoId);
       } catch {
-        if (!cancelled) void loadJsonFallback();
+        if (!isCancelled()) {
+          setSteppedDown(true);
+          void loadJsonFallback();
+        }
       }
-    }
+    },
+    [data, loadJsonFallback]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
 
     // Defer the kickoff one macrotask so React Strict Mode's
     // mount → unmount → remount cancels the throwaway first run *before*
@@ -256,7 +296,7 @@ export function PreviewStep({
     // the surviving mount is the one whose demoId feeds usePreviewProgress,
     // which takes it from there over SSE.
     const startTimer = setTimeout(() => {
-      if (!cancelled) runLive();
+      if (!cancelled) void startLive(() => cancelled);
     }, 30);
     return () => {
       cancelled = true;
@@ -265,13 +305,29 @@ export function PreviewStep({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /** Offered after a failure: same brief, a second attempt at the real build. */
+  const retryLive = useCallback(async () => {
+    if (retrying) return;
+    setRetrying(true);
+    setBuildFailure(null);
+    shownBaseRef.current = false;
+    resolvedRef.current = false;
+    setLiveUrl(null);
+    setPersonalizing(false);
+    setChat([]);
+    setLiveDemoId(null);
+    try {
+      await startLive(() => false);
+    } finally {
+      setRetrying(false);
+    }
+  }, [retrying, startLive]);
+
   // Drives the live-preview state machine off the SSE-backed progress hook
   // instead of a manual poll loop: show the base template the moment the
-  // build reports ready, hand over once personalization lands, or fall back
-  // to the JSON demo if the build fails. shownBaseRef/resolvedRef make each
-  // transition fire exactly once, same as the old loop's early `return`s.
-  const shownBaseRef = useRef(false);
-  const resolvedRef = useRef(false);
+  // build reports ready, hand over once personalization lands, or say so if
+  // the build fails. shownBaseRef/resolvedRef make each transition fire
+  // exactly once, same as the old loop's early `return`s.
   useEffect(() => {
     if (!liveDemoId) return;
 
@@ -311,7 +367,7 @@ export function PreviewStep({
 
     if (progress.status === 'failed' && !resolvedRef.current) {
       resolvedRef.current = true;
-      void loadJsonFallback();
+      setBuildFailure(progress.error ?? 'Generation failed');
       return;
     }
 
@@ -325,7 +381,7 @@ export function PreviewStep({
       resolvedRef.current = true;
       setPersonalizing(false);
     }
-  }, [progress, liveDemoId, loadJsonFallback]);
+  }, [progress, liveDemoId]);
 
   useEffect(() => {
     if (!demo || typeof window === 'undefined') return;
@@ -575,185 +631,237 @@ export function PreviewStep({
     }
   }
 
-  // One CTA, shared by the live preview and the JSON fallback: whichever demo
-  // the visitor ended up with, this is the step that makes it theirs.
-  const claimCta = previewId ? (
-    <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--purple-primary)]/30 bg-[var(--purple-primary)]/[0.06] p-4 text-center">
-      <p className="text-sm font-semibold text-[var(--fs-ink)]">
-        Love it? Let&rsquo;s make it real &mdash; yours, on your domain.
-      </p>
-      <p className="text-[12px] text-[var(--fs-ink-faint)]">
-        Claiming saves this exact preview to your own project, then takes you to
-        reserve your build.
-      </p>
-      <button
-        type="button"
-        onClick={claimSite}
-        disabled={claimBusy || !authLoaded}
-        className="mt-1 rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
-      >
-        {claimBusy
-          ? 'Saving your site…'
-          : authLoaded && !isSignedIn
-          ? 'Sign in and claim my site'
-          : 'Claim my site'}
-      </button>
-      {claimError && (
-        <p className="text-[12px] font-medium text-amber-600 dark:text-amber-400">
-          {claimError}
+  /* ─────────────────────── The stage, as one status ────────────────────── */
+
+  const previewShown = (mode === 'live' && !!liveUrl) || mode === 'json';
+  const finished = previewShown && !personalizing;
+  const elapsed = useElapsedSeconds(!finished && !buildFailure);
+
+  const nowState: NowState = buildFailure
+    ? 'failed'
+    : finished
+    ? 'done'
+    : 'working';
+  const nowLabel = buildFailure
+    ? 'The build stopped'
+    : finished
+    ? 'Your preview is ready'
+    : progress.phase ??
+      (mode === 'json'
+        ? 'Putting your preview together'
+        : 'Getting your build started');
+
+  // The offer, in the numbers of the tier this visitor confirmed. Falls back
+  // to the deterministic recommendation if they somehow reached here without
+  // confirming one, so the sentence is never quoted without a figure.
+  const quotedTier: Tier | '' =
+    (data.selectedTier as Tier | '') || recommendTier(data).tier;
+  const quote = depositQuote(quotedTier);
+
+  const earlier = data.intakeChat ?? [];
+
+  /* ───────────────────────────── The panes ─────────────────────────────── */
+
+  const conversation = (
+    <ConversationLog
+      label="Your build, as it happens"
+      scrollSignal={earlier.length + progress.phases.length + chat.length}
+    >
+      {earlier.length > 0 && (
+        <p className="pb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--fs-ink-faint)]">
+          Earlier, with your info agent
         </p>
       )}
-    </div>
-  ) : null;
+      {earlier.map((entry, index) =>
+        entry.role === 'client' ? (
+          <ChatBubble key={`earlier-${index}`} tone="you">
+            {entry.text}
+          </ChatBubble>
+        ) : (
+          <ChatBubble
+            key={`earlier-${index}`}
+            tone="earlier"
+            author="Info agent"
+          >
+            {entry.text}
+          </ChatBubble>
+        )
+      )}
 
-  return (
-    <div className="space-y-4">
-      <header className="space-y-1">
-        <h3 className="text-lg font-bold text-[var(--fs-ink)]">
-          {t('landing.discovery.steps.preview.title')}
-        </h3>
-        <p className="text-sm text-[var(--fs-ink-faint)]">
-          {mode === 'loading'
-            ? t('landing.discovery.preview.generating')
-            : t('landing.discovery.steps.preview.subtitle')}
-        </p>
-      </header>
+      {/* Said before a single phase runs: what this is, and what it costs. */}
+      <ChatBubble tone="offer" author="Your team of agents">
+        {previewMeaningMessage(quote)}
+      </ChatBubble>
 
-      {mode === 'loading' && (
-        <div className="flex h-64 flex-col justify-center gap-3 rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-6">
-          {progress.phases.length > 0 ? (
-            // Real progress, appended live as each phase starts (streamed
-            // over SSE, falling back to a poll only if the stream drops) —
-            // a running log rather than a lone spinner, since the build
-            // takes minutes and the visitor should see it actually moving.
-            <div className="max-h-56 space-y-2 overflow-y-auto" role="log">
-              {progress.phases.map((entry, i) => {
-                const isCurrent = i === progress.phases.length - 1;
-                return (
-                  <div
-                    key={entry.index}
-                    className={[
-                      'flex items-center gap-3 text-sm',
-                      isCurrent
-                        ? 'text-[var(--fs-ink)]'
-                        : 'text-[var(--fs-ink-faint)]',
-                    ].join(' ')}
-                  >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center">
-                      {isCurrent ? (
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
-                      ) : (
-                        <svg
-                          className="h-4 w-4 text-[var(--purple-primary)]"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2.5}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </span>
-                    <span className="flex-1">
-                      {entry.phase}
-                      {isCurrent && '…'}
-                    </span>
-                    <span className="shrink-0 text-[11px] tabular-nums text-[var(--fs-ink-faint)]">
-                      {entry.at}s
-                    </span>
-                  </div>
-                );
-              })}
+      {steppedDown && (
+        <ChatBubble tone="alert" author="Your team of agents">
+          The live build was not available just now, so this is the simpler
+          preview, written from your answers. It is a real draft, but it is not
+          the generated site.
+        </ChatBubble>
+      )}
+
+      {/* The pipeline's own phases, verbatim, signed by the agent that owns
+          each one. The last one is the one in progress. */}
+      {progress.phases.map((entry, index) => {
+        const isCurrent =
+          index === progress.phases.length - 1 && !finished && !buildFailure;
+        return (
+          <ChatBubble
+            key={entry.index}
+            tone="agent"
+            author={agentForPhase(entry.phase)}
+            meta={`${entry.at}s`}
+            state={isCurrent ? 'working' : 'done'}
+          >
+            <span
+              className={
+                isCurrent
+                  ? 'font-semibold text-[var(--fs-ink)]'
+                  : 'text-[var(--fs-ink-faint)]'
+              }
+            >
+              {entry.phase}
+              {isCurrent ? '…' : ''}
+            </span>
+          </ChatBubble>
+        );
+      })}
+
+      {buildFailure && (
+        <ChatBubble tone="alert" author="Your team of agents">
+          <span className="block">
+            That build did not finish — {buildFailure}. Nothing is lost, and you
+            have not paid anything.
+          </span>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => void retryLive()}
+              disabled={retrying}
+              className="rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50"
+            >
+              {retrying ? 'Starting again…' : 'Try the build again'}
+            </button>
+            <button
+              type="button"
+              onClick={() => void loadJsonFallback()}
+              className="rounded-lg border border-[var(--fs-rule)] px-3 py-1.5 text-[12px] font-semibold text-[var(--fs-ink)] hover:border-[var(--purple-primary)]/40"
+            >
+              Show me the simpler preview instead
+            </button>
+          </div>
+        </ChatBubble>
+      )}
+
+      {/* The editor's own progress reads as conversation, though the box it
+          is typed into lives under the site on the right. */}
+      {chat.map((m, i) =>
+        m.role === 'you' ? (
+          <ChatBubble key={`chat-${i}`} tone="you">
+            {m.text}
+          </ChatBubble>
+        ) : (
+          <ChatBubble key={`chat-${i}`} tone="agent" author="Site builder">
+            {m.text}
+          </ChatBubble>
+        )
+      )}
+
+      {/* The last message in the conversation: the offer, with a button. */}
+      {finished && previewId && (
+        <ChatBubble tone="offer" author="Your team of agents">
+          <span className="block">{previewReadyMessage(quote)}</span>
+          {offerSnoozed ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="text-[12px] text-[var(--fs-ink-faint)]">
+                No rush — the preview stays here while you look around.
+              </span>
+              <button
+                type="button"
+                onClick={() => setOfferSnoozed(false)}
+                className="text-[12px] font-semibold text-[var(--purple-primary)] underline underline-offset-2"
+              >
+                Show me the deposit again
+              </button>
             </div>
           ) : (
-            BUILD_STEPS.map((key, i) => {
-              const done = i < buildStep;
-              const active = i === buildStep;
-              return (
-                <div
-                  key={key}
-                  className={[
-                    'flex items-center gap-3 text-sm transition-opacity',
-                    done || active
-                      ? 'text-[var(--fs-ink)]'
-                      : 'text-[var(--fs-ink-faint)] opacity-50',
-                  ].join(' ')}
-                >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center">
-                    {done ? (
-                      <svg
-                        className="h-4 w-4 text-[var(--purple-primary)]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    ) : active ? (
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
-                    ) : (
-                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--fs-ink-faint)]" />
-                    )}
-                  </span>
-                  <span>
-                    {t(key)}
-                    {active && '…'}
-                  </span>
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
-
-      {mode === 'live' && liveUrl && (
-        <div className="space-y-3">
-          <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
-            <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] px-3 py-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
-              <span className="ml-3 truncate rounded bg-black/5 px-2 py-0.5 text-[11px] text-[var(--fs-ink-faint)] dark:bg-white/10">
-                {previewHostLabel(data.businessName)}
-              </span>
-              {personalizing ? (
-                <span className="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-[var(--purple-primary)]">
-                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
-                  Personalizing for {data.businessName || 'your business'}…
-                </span>
-              ) : (
-                <a
-                  href={liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-auto flex shrink-0 items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold text-[var(--purple-primary)] hover:bg-[var(--purple-primary)]/10 transition-colors"
-                >
-                  Open in new tab
-                  <svg
-                    className="h-3 w-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
-                </a>
+            <div className="mt-2 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={claimSite}
+                disabled={claimBusy || !authLoaded}
+                className="rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-50"
+              >
+                {claimBusy ? 'Saving your site…' : depositCtaLabel(quote)}
+              </button>
+              <button
+                type="button"
+                onClick={() => setOfferSnoozed(true)}
+                className="self-start text-[12px] font-medium text-[var(--fs-ink-faint)] underline underline-offset-2 hover:text-[var(--fs-ink)]"
+              >
+                {KEEP_EXPLORING_LABEL}
+              </button>
+              {claimError && (
+                <p className="text-[12px] font-medium text-amber-600 dark:text-amber-400">
+                  {claimError}
+                </p>
               )}
             </div>
+          )}
+        </ChatBubble>
+      )}
+    </ConversationLog>
+  );
+
+  const sitePane = (
+    <div className="space-y-2.5">
+      <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
+        <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] px-3 py-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
+          <span className="ml-3 truncate rounded bg-black/5 px-2 py-0.5 text-[11px] text-[var(--fs-ink-faint)] dark:bg-white/10">
+            {previewHostLabel(data.businessName)}
+          </span>
+          {personalizing ? (
+            <span className="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-[var(--purple-primary)]">
+              <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
+              Personalizing for {data.businessName || 'your business'}…
+            </span>
+          ) : liveUrl ? (
+            <a
+              href={liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto flex shrink-0 items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold text-[var(--purple-primary)] hover:bg-[var(--purple-primary)]/10 transition-colors"
+            >
+              Open in new tab
+              <svg
+                className="h-3 w-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
+          ) : (
+            <span className="ml-auto shrink-0 text-[11px] font-semibold text-[var(--fs-ink-faint)]">
+              {t('landing.discovery.preview.paneTitle')}
+            </span>
+          )}
+        </div>
+
+        {mode === 'json' && demo ? (
+          <DemoSiteFrame site={demo.site} />
+        ) : liveUrl ? (
+          <div className="relative bg-white">
             <iframe
               key={iframeNonce}
               src={
@@ -764,83 +872,70 @@ export function PreviewStep({
                   : liveUrl
               }
               title="Live site preview"
-              className="h-[52vh] w-full bg-white"
+              onLoad={() => setFrameLoaded(true)}
+              className={[
+                'h-[52vh] min-h-[320px] w-full bg-white transition-opacity duration-700',
+                frameLoaded ? 'opacity-100' : 'opacity-0',
+              ].join(' ')}
               sandbox="allow-scripts allow-same-origin"
               loading="lazy"
             />
+            {!frameLoaded && (
+              <div className="pointer-events-none absolute inset-0" aria-hidden>
+                <SiteSkeleton caption="" />
+              </div>
+            )}
           </div>
+        ) : (
+          <SiteSkeleton caption={t('landing.discovery.preview.paneSkeleton')} />
+        )}
+      </div>
 
-          {/* T3-Code-style conversational editor */}
-          <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
-            <div className="flex items-center justify-between border-b border-[var(--fs-rule)] px-3 py-2">
-              <p className="text-[12px] font-semibold text-[var(--fs-ink)]">
-                Smart editor — ask for any change
-              </p>
-              <span
-                className={[
-                  'rounded-full px-2 py-0.5 text-[11px] font-semibold',
-                  editsLeft <= 3
-                    ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
-                    : 'bg-[var(--purple-primary)]/12 text-[var(--purple-primary)]',
-                ].join(' ')}
-              >
-                {editsLeft}/{LIVE_EDIT_CAP} prompts left
-              </span>
-            </div>
-            <div className="max-h-56 space-y-2 overflow-y-auto px-3 py-3">
-              {chat.map((m, i) => (
-                <div
-                  key={i}
-                  className={
-                    m.role === 'you' ? 'flex justify-end' : 'flex justify-start'
-                  }
-                >
-                  <span
-                    className={[
-                      'max-w-[85%] rounded-2xl px-3 py-1.5 text-[13px] leading-snug',
-                      m.role === 'you'
-                        ? 'bg-[var(--purple-primary)] text-white'
-                        : 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink)] border border-[var(--fs-rule)]',
-                    ].join(' ')}
-                  >
-                    {m.text}
-                  </span>
-                </div>
-              ))}
-              <div ref={chatEndRef} />
-            </div>
-            <div className="flex gap-2 border-t border-[var(--fs-rule)] p-3">
-              <input
-                value={editPrompt}
-                onChange={(e) => setEditPrompt(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') sendEdit();
-                }}
-                disabled={editBusy || editsLeft <= 0}
-                placeholder={
-                  editsLeft <= 0
-                    ? 'No prompts left — ready to make it real?'
-                    : 'e.g. make the hero warmer and add a pricing section'
-                }
-                className="w-full rounded-lg border border-[var(--fs-rule)] bg-white px-3 py-2 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/30 disabled:opacity-50 dark:bg-white/[0.03]"
-              />
-              <button
-                type="button"
-                onClick={sendEdit}
-                disabled={editBusy || editsLeft <= 0 || !editPrompt.trim()}
-                className="shrink-0 rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-              >
-                {editBusy ? 'Editing…' : 'Send'}
-              </button>
-            </div>
+      {/* Ask for a change — under the site, answered on the left. */}
+      {mode === 'live' && liveUrl && (
+        <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
+          <div className="flex items-center justify-between border-b border-[var(--fs-rule)] px-3 py-2">
+            <p className="text-[12px] font-semibold text-[var(--fs-ink)]">
+              {t('landing.discovery.preview.askForChange')}
+            </p>
+            <span
+              className={[
+                'rounded-full px-2 py-0.5 text-[11px] font-semibold',
+                editsLeft <= 3
+                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                  : 'bg-[var(--purple-primary)]/12 text-[var(--purple-primary)]',
+              ].join(' ')}
+            >
+              {editsLeft}/{LIVE_EDIT_CAP} prompts left
+            </span>
           </div>
-
-          {/* Pay CTA */}
-          {claimCta}
+          <div className="flex gap-2 p-3">
+            <input
+              value={editPrompt}
+              onChange={(e) => setEditPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') sendEdit();
+              }}
+              disabled={editBusy || editsLeft <= 0}
+              aria-label="Ask for a change"
+              placeholder={
+                editsLeft <= 0
+                  ? 'No prompts left — ready to make it real?'
+                  : 'e.g. make the hero warmer and add a pricing section'
+              }
+              className="w-full rounded-lg border border-[var(--fs-rule)] bg-white px-3 py-2 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/30 disabled:opacity-50 dark:bg-white/[0.03]"
+            />
+            <button
+              type="button"
+              onClick={sendEdit}
+              disabled={editBusy || editsLeft <= 0 || !editPrompt.trim()}
+              className="shrink-0 rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {editBusy ? 'Editing…' : 'Send'}
+            </button>
+          </div>
         </div>
       )}
-
-      {mode === 'json' && demo && <DemoSiteFrame site={demo.site} />}
 
       {mode === 'json' && demo?.demoId && (
         <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 p-3">
@@ -889,8 +984,18 @@ export function PreviewStep({
           )}
         </div>
       )}
+    </div>
+  );
 
-      {mode === 'json' && claimCta}
+  return (
+    <div className="space-y-3">
+      <ConciergePanes
+        now={
+          <NowLine label={nowLabel} state={nowState} elapsedSeconds={elapsed} />
+        }
+        site={sitePane}
+        conversation={conversation}
+      />
 
       <p className="text-[12px] leading-snug text-[var(--fs-ink-faint)]">
         {t('landing.discovery.preview.disclaimer')}

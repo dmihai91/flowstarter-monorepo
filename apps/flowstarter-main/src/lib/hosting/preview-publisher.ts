@@ -219,12 +219,21 @@ export async function publishFunnelPreview(
     supabase: input.supabase,
   });
 
+  // rememberClaimablePreview writes the full manifest — files AND the intake
+  // the claim later needs. Overwriting it with { files } minted workspaces
+  // with no intake: the claim found nothing, the workspace stayed in INTAKE,
+  // and the deposit was refused. Preserve whatever the row already carries
+  // and only refresh the keys this publisher actually owns.
+  const existingManifest =
+    existing?.manifest && typeof existing.manifest === 'object'
+      ? (existing.manifest as Record<string, unknown>)
+      : {};
   await saveFunnelPreview({
     previewId: input.previewId,
-    templateSlug: input.templateSlug ?? null,
-    templateVersion: input.templateVersion ?? null,
-    brandConfig: input.brandConfig ?? {},
-    manifest: { files: input.files },
+    templateSlug: input.templateSlug ?? existing?.templateSlug ?? null,
+    templateVersion: input.templateVersion ?? existing?.templateVersion ?? null,
+    brandConfig: input.brandConfig ?? existing?.brandConfig ?? {},
+    manifest: { ...existingManifest, files: input.files },
     artifactPath,
     ...(input.supabase ? { supabase: input.supabase } : {}),
   });

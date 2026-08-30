@@ -395,3 +395,64 @@ describe('unpublishFunnelPreview', () => {
     expect(db.rows('funnel_previews')[0].deploy_status).toBe('live');
   });
 });
+
+describe('re-publishing preserves the stashed manifest', () => {
+  it('keeps manifest.intake when the publisher refreshes files', async () => {
+    const mod = await import('../preview-publisher');
+    const fp = await import('../funnel-previews');
+    const previewId = '11111111-2222-4333-8444-555555555555';
+    const rows = new Map<string, Record<string, unknown>>();
+    rows.set(previewId, {
+      preview_id: previewId,
+      template_slug: 'wellness-therapy',
+      template_version: '1',
+      brand_config: { tone: 'calm' },
+      manifest: {
+        files: [{ path: 'old.txt', content: 'old', type: 'file' }],
+        intake: { projectId: previewId, businessName: 'Rowan & Vale' },
+        previewUrl: 'http://127.0.0.1:1',
+      },
+      artifact_path: null,
+      hostname: null,
+      deploy_status: 'pending',
+      deployment_error: null,
+      expires_at: new Date(Date.now() + 3600_000).toISOString(),
+      claimed_workspace_id: null,
+    });
+    const saved: Record<string, unknown>[] = [];
+    const fakeSupabase = {
+      from: () => ({
+        upsert: (row: Record<string, unknown>) => {
+          saved.push(row);
+          rows.set(String(row.preview_id), { ...rows.get(String(row.preview_id)), ...row });
+          return Promise.resolve({ error: null });
+        },
+        update: () => ({ eq: () => Promise.resolve({ error: null }) }),
+        select: () => ({
+          eq: () => ({
+            maybeSingle: () => Promise.resolve({ data: rows.get(previewId), error: null }),
+          }),
+        }),
+      }),
+      storage: {
+        from: () => ({
+          upload: () => Promise.resolve({ error: null }),
+        }),
+      },
+    };
+    await mod.publishFunnelPreview({
+      previewId,
+      files: [{ path: 'index.html', content: '<html><head></head><body>n</body></html>' }],
+      supabase: fakeSupabase as never,
+    });
+    const written = saved.find((r) => 'manifest' in r) as { manifest: Record<string, unknown> };
+    expect(written).toBeTruthy();
+    expect((written.manifest.intake as { businessName?: string })?.businessName).toBe('Rowan & Vale');
+    expect(Array.isArray(written.manifest.files)).toBe(true);
+    expect((written.manifest.files as Array<{ path: string }>)[0].path).toBe('index.html');
+    // Loud regression pin: the bug was manifest === { files } exactly.
+    expect(Object.keys(written.manifest)).toEqual(
+      expect.arrayContaining(['files', 'intake', 'previewUrl'])
+    );
+  });
+});

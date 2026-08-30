@@ -343,7 +343,12 @@ export default clerkMiddleware(async (auth, req) => {
   // Static template previews must be embeddable by the same-origin library
   // detail page (DeferredPreviewFrame), so relax frame-ancestors/X-Frame-Options
   // to 'self'/SAMEORIGIN for /preview/* only — everything else stays locked.
-  const frameable = pathname.startsWith('/preview');
+  // The client editor renders the tenant's site in a same-origin iframe from
+  // /api/client/site/<id>/preview; without this exception the response is
+  // stamped frame-ancestors 'none' and every client sees a blank pane.
+  const frameable =
+    pathname.startsWith('/preview') ||
+    /^\/api\/client\/site\/[0-9a-f-]{36}\/preview(?:\/|$)/i.test(pathname);
 
   // Check for path traversal patterns (including URL-encoded variants)
   const pathTraversalPatterns = [

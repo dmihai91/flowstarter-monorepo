@@ -109,9 +109,7 @@ describe('listEditableTargets', () => {
   it('reads a YAML block scalar as one block, paragraphs and all', () => {
     const block = findTarget(site(), 'src/content/site-labels.md#9');
     expect(block?.syntax).toBe('block');
-    expect(block?.content).toBe(
-      'We are Halden and Roe.\n\nNo deck-and-leave.'
-    );
+    expect(block?.content).toBe('We are Halden and Roe.\n\nNo deck-and-leave.');
     expect(block?.lineCount).toBe(4);
   });
 
@@ -141,9 +139,9 @@ describe('classifyTargetCapability', () => {
     expect(
       classifyTargetCapability(site(), 'src/content/site-labels.md#17')
     ).toBe('layout');
-    expect(classifyTargetCapability(site(), 'src/components/Hero.astro#1')).toBe(
-      'layout'
-    );
+    expect(
+      classifyTargetCapability(site(), 'src/components/Hero.astro#1')
+    ).toBe('layout');
     expect(classifyTargetCapability(site(), 'src/styles/tokens.css#1')).toBe(
       'color'
     );
@@ -218,9 +216,9 @@ describe('applyTargetEdit', () => {
     const content = applied.files[0]?.content ?? '';
     expect(content).toContain('label: "The \\"quiet\\" consultancy"');
     // And it round-trips: the target reads back as what was written.
-    expect(findTarget(applied.files, 'src/content/site-labels.md#7')?.content).toBe(
-      'The "quiet" consultancy'
-    );
+    expect(
+      findTarget(applied.files, 'src/content/site-labels.md#7')?.content
+    ).toBe('The "quiet" consultancy');
   });
 
   it('rewrites a block scalar across its lines', () => {
@@ -230,9 +228,9 @@ describe('applyTargetEdit', () => {
       originalContent: 'We are Halden and Roe.\n\nNo deck-and-leave.',
       replacementContent: 'We are Halden and Roe.\n\nWe stay until it works.',
     });
-    expect(findTarget(applied.files, 'src/content/site-labels.md#9')?.content).toBe(
-      'We are Halden and Roe.\n\nWe stay until it works.'
-    );
+    expect(
+      findTarget(applied.files, 'src/content/site-labels.md#9')?.content
+    ).toBe('We are Halden and Roe.\n\nWe stay until it works.');
     // The key after the block is still where it was.
     expect(applied.files[0]?.content).toContain('  image: "/images/hero.jpg"');
   });
@@ -287,7 +285,9 @@ describe('serving a site out of its manifest', () => {
     expect(isUnsafePreviewPath(['a\\b'])).toBe(true);
     expect(isUnsafePreviewPath(['images', 'hero.jpg'])).toBe(false);
 
-    expect(resolveManifestFile(site(), ['..', 'src', 'styles', 'tokens.css'])).toBeNull();
+    expect(
+      resolveManifestFile(site(), ['..', 'src', 'styles', 'tokens.css'])
+    ).toBeNull();
     expect(resolveManifestFile(site(), ['nope.png'])).toBeNull();
   });
 
@@ -298,11 +298,17 @@ describe('serving a site out of its manifest', () => {
   });
 
   it('labels each kind of file it will hand back', () => {
-    expect(contentTypeForPath('dist/index.html')).toBe('text/html; charset=utf-8');
+    expect(contentTypeForPath('dist/index.html')).toBe(
+      'text/html; charset=utf-8'
+    );
     expect(contentTypeForPath('a/site.css')).toBe('text/css; charset=utf-8');
-    expect(contentTypeForPath('a/app.js')).toBe('text/javascript; charset=utf-8');
+    expect(contentTypeForPath('a/app.js')).toBe(
+      'text/javascript; charset=utf-8'
+    );
     expect(contentTypeForPath('a/logo.svg')).toBe('image/svg+xml');
-    expect(contentTypeForPath('a/thing.unknown')).toBe('application/octet-stream');
+    expect(contentTypeForPath('a/thing.unknown')).toBe(
+      'application/octet-stream'
+    );
   });
 });
 
@@ -316,7 +322,9 @@ describe('renderContentPreview', () => {
       templateSlug: 'professional-services',
       version: 3,
     });
-    expect(html).toContain('data-flowstarter-id="src/content/site-labels.md#7"');
+    expect(html).toContain(
+      'data-flowstarter-id="src/content/site-labels.md#7"'
+    );
     expect(html).toContain('Operations consultancy');
     // Its own name is escaped like everything else.
     expect(html).toContain('Halden &amp; Roe');

@@ -88,7 +88,11 @@ export function SiteEditor({
   useEffect(() => {
     function onMessage(event: MessageEvent) {
       if (event.source !== frame.current?.contentWindow) return;
-      const data = event.data as { source?: string; type?: string; targetId?: string };
+      const data = event.data as {
+        source?: string;
+        type?: string;
+        targetId?: string;
+      };
       if (data?.source !== PREVIEW_MESSAGE_SOURCE) return;
       if (data.type === 'select' && typeof data.targetId === 'string') {
         setSelectedId(data.targetId);
@@ -125,16 +129,15 @@ export function SiteEditor({
     setError(null);
     setNotice(null);
     try {
-      const result = await requestEditor<Proposal & { allowance: { used: number } }>(
-        `${base}/edit`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            targetId: selected.id,
-            instruction: instruction.trim(),
-          }),
-        }
-      );
+      const result = await requestEditor<
+        Proposal & { allowance: { used: number } }
+      >(`${base}/edit`, {
+        method: 'POST',
+        body: JSON.stringify({
+          targetId: selected.id,
+          instruction: instruction.trim(),
+        }),
+      });
       setProposal({
         targetId: result.targetId,
         originalContent: result.originalContent,
@@ -338,7 +341,9 @@ export function SiteEditor({
               type="button"
               data-testid="editor-propose"
               onClick={propose}
-              disabled={!canEdit || !selected || !instruction.trim() || busy !== null}
+              disabled={
+                !canEdit || !selected || !instruction.trim() || busy !== null
+              }
               className="rounded-full bg-[var(--fs-ink)] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-40"
             >
               {busy === 'edit' ? 'Writing…' : 'Suggest a change'}
@@ -363,8 +368,8 @@ export function SiteEditor({
                         part.kind === 'removed'
                           ? 'bg-red-100 text-red-900 line-through'
                           : part.kind === 'added'
-                            ? 'bg-emerald-100 text-emerald-900'
-                            : 'text-[var(--fs-ink)]/80'
+                          ? 'bg-emerald-100 text-emerald-900'
+                          : 'text-[var(--fs-ink)]/80'
                       }
                     >
                       {part.text}

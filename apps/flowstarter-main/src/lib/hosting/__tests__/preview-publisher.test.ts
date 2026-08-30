@@ -1,0 +1,397 @@
+/**
+ * Publishing a funnel preview to the previews host.
+ *
+ * The cases below are the ones that would cost real money or real trust:
+ *
+ *  - the previews agent's URL and secret are the ONLY ones it will use. A
+ *    preview pushed to the customer host with the customer secret is the exact
+ *    failure this whole separation exists to prevent, so it is asserted rather
+ *    than assumed;
+ *  - the hostname carries no trace of the business. A preview holds a real
+ *    company's name and copy nobody approved; a guessable URL hands it to
+ *    whoever wants it;
+ *  - unconfigured means PENDING, never live. Reporting a site as live when no
+ *    host exists sends a client a URL that 404s.
+ *
+ * Static imports throughout: vi.mock is hoisted above them, and the app's
+ * tsconfig does not allow top-level await in tests.
+ */
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { gunzipSync } from 'node:zlib';
+import { createFakeHostingSupabase } from './fake-hosting-supabase';
+import { DryRunDeployAgentClient, type DeployAgentClient } from '../deploy';
+
+vi.mock('server-only', () => ({}));
+
+const db = createFakeHostingSupabase();
+vi.mock('@/supabase-clients/server', () => ({
+  createSupabaseServiceRoleClient: () => db.client,
+}));
+
+import {
+  PREVIEW_DOMAIN_SUFFIX,
+  PreviewPublishError,
+  funnelPreviewHostname,
+  funnelPreviewSlug,
+  isFunnelPreviewSlug,
+  previewsDeployAgentFromEnv,
+  publishFunnelPreview,
+  slugFromPreviewHostname,
+  unpublishFunnelPreview,
+} from '../preview-publisher';
+
+const PREVIEW_ID = 'a1b2c3d4-1111-4111-8111-111111111111';
+
+const FILES = [
+  { path: 'index.html', content: '<head></head><h1>Calm Path Therapy</h1>' },
+  { path: 'about/index.html', content: '<head></head><p>About</p>' },
+  { path: 'assets/app.css', content: 'body{margin:0}' },
+];
+
+/** A recording agent, so the suite can assert on exactly what was sent. */
+function recordingAgent(behaviour: 'ok' | 'throw' = 'ok') {
+  const calls: Array<{ method: string; args: Record<string, unknown> }> = [];
+  const client: DeployAgentClient = {
+    async push(args) {
+      calls.push({ method: 'push', args: args as never });
+      if (behaviour === 'throw') throw new Error('agent exploded');
+      return { ok: true as const, sha256: 'abc', sizeBytes: 10 };
+    },
+    async remove(args) {
+      calls.push({ method: 'remove', args: args as never });
+      if (behaviour === 'throw') throw new Error('agent exploded');
+      return { ok: true as const };
+    },
+  };
+  return { calls, client };
+}
+
+function configured(client: DeployAgentClient) {
+  return {
+    deployAgentUrl: 'https://previews.host:8444',
+    sharedSecret: 'previews-secret-token',
+    client,
+    configured: true,
+  };
+}
+
+beforeEach(() => {
+  db.reset();
+});
+
+describe('preview slugs and hostnames', () => {
+  it('mints an unguessable slug with no business in it', () => {
+    const minted = Array.from({ length: 200 }, () => funnelPreviewSlug());
+    // No collisions across 200 draws: 64 bits of entropy, not a counter.
+    expect(new Set(minted).size).toBe(200);
+    for (const slug of minted) {
+      expect(slug).toMatch(/^p-[0-9a-f]{16}$/);
+      expect(isFunnelPreviewSlug(slug)).toBe(true);
+    }
+  });
+
+  it('builds the hostname under the pinned preview zone', () => {
+    const slug = funnelPreviewSlug();
+    expect(funnelPreviewHostname(slug)).toBe(
+      `${slug}.${PREVIEW_DOMAIN_SUFFIX}`
+    );
+    expect(PREVIEW_DOMAIN_SUFFIX).toBe('preview.flowstarter.net');
+  });
+
+  it('refuses to build a hostname from anything but a minted slug', () => {
+    expect(() => funnelPreviewHostname('calm-path-therapy')).toThrow(
+      PreviewPublishError
+    );
+  });
+
+  it('round-trips a hostname back to its slug, and rejects foreign ones', () => {
+    const slug = funnelPreviewSlug();
+    expect(slugFromPreviewHostname(`${slug}.${PREVIEW_DOMAIN_SUFFIX}`)).toBe(
+      slug
+    );
+    expect(
+      slugFromPreviewHostname('calm-path.preview.flowstarter.net')
+    ).toBeNull();
+    expect(slugFromPreviewHostname(`${slug}.evil.example.com`)).toBeNull();
+  });
+});
+
+describe('previewsDeployAgentFromEnv', () => {
+  it('uses the PREVIEWS variables and never the paid-site ones', () => {
+    const agent = previewsDeployAgentFromEnv({
+      FLOWSTARTER_PREVIEW_DEPLOY_AGENT_URL: 'https://previews:8444',
+      FLOWSTARTER_PREVIEW_DEPLOY_AGENT_SECRET: 'previews-secret',
+      // The paid-site pair, present and deliberately ignored.
+      FLOWSTARTER_DEPLOY_AGENT_SECRET: 'paid-secret',
+      DEPLOY_AGENT_SHARED_SECRET: 'paid-secret',
+    } as unknown as NodeJS.ProcessEnv);
+    expect(agent.configured).toBe(true);
+    expect(agent.deployAgentUrl).toBe('https://previews:8444');
+    expect(agent.sharedSecret).toBe('previews-secret');
+  });
+
+  it('does NOT fall back to the paid-site secret when previews is unset', () => {
+    const agent = previewsDeployAgentFromEnv({
+      FLOWSTARTER_DEPLOY_AGENT_SECRET: 'paid-secret',
+      DEPLOY_AGENT_SHARED_SECRET: 'paid-secret',
+    } as unknown as NodeJS.ProcessEnv);
+    expect(agent.configured).toBe(false);
+    expect(agent.sharedSecret).toBe('');
+    expect(agent.client).toBeInstanceOf(DryRunDeployAgentClient);
+  });
+
+  it('is unconfigured when only one half is set', () => {
+    expect(
+      previewsDeployAgentFromEnv({
+        FLOWSTARTER_PREVIEW_DEPLOY_AGENT_URL: 'https://previews:8444',
+      } as unknown as NodeJS.ProcessEnv).configured
+    ).toBe(false);
+    expect(
+      previewsDeployAgentFromEnv({
+        FLOWSTARTER_PREVIEW_DEPLOY_AGENT_SECRET: 'x',
+      } as unknown as NodeJS.ProcessEnv).configured
+    ).toBe(false);
+  });
+});
+
+describe('publishFunnelPreview', () => {
+  it('pushes to the previews endpoint with the previews secret', async () => {
+    const agent = recordingAgent();
+    const result = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      templateSlug: 'wellness-therapy',
+      agent: configured(agent.client),
+    });
+
+    expect(result.status).toBe('live');
+    expect(result.published).toBe(true);
+    expect(agent.calls).toHaveLength(1);
+    const push = agent.calls[0].args;
+    expect(push.deployAgentUrl).toBe('https://previews.host:8444');
+    expect(push.sharedSecret).toBe('previews-secret-token');
+    expect(push.siteSlug).toBe(result.slug);
+    expect(push.primaryDomain).toBe(result.hostname);
+    // A preview has no custom domains; passing any would be inventing one.
+    expect(push.additionalDomains).toEqual([]);
+  });
+
+  it('never derives the hostname from the business name', async () => {
+    const agent = recordingAgent();
+    const result = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      templateSlug: 'wellness-therapy',
+      brandConfig: { business: { name: 'Calm Path Therapy' } },
+      agent: configured(agent.client),
+    });
+    expect(result.hostname).toMatch(
+      /^p-[0-9a-f]{16}\.preview\.flowstarter\.net$/
+    );
+    expect(result.hostname).not.toContain('calm');
+    expect(result.hostname).not.toContain('therapy');
+    expect(result.hostname).not.toContain(PREVIEW_ID);
+  });
+
+  it('stores the artifact under funnel/, outside every tenant prefix', async () => {
+    const agent = recordingAgent();
+    const result = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(agent.client),
+    });
+    expect(result.artifactPath).toBe(`funnel/${PREVIEW_ID}/site.tar.gz`);
+    expect(result.artifactPath?.startsWith('tenant/')).toBe(false);
+    expect(db.objects.has(result.artifactPath as string)).toBe(true);
+  });
+
+  it('noindexes every HTML file in the bytes the agent receives', async () => {
+    const agent = recordingAgent();
+    await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(agent.client),
+    });
+    const stored = db.objects.get(`funnel/${PREVIEW_ID}/site.tar.gz`);
+    const tar = gunzipSync(Buffer.from(stored?.bytes as Uint8Array)).toString(
+      'utf8'
+    );
+    // Both documents, not just the entry point.
+    expect(tar.match(/name="robots"/g) ?? []).toHaveLength(2);
+    expect(tar).toContain('noindex, nofollow, noarchive');
+  });
+
+  it('hands the agent a signed URL rather than the whole tarball', async () => {
+    const agent = recordingAgent();
+    await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(agent.client),
+    });
+    const artifact = agent.calls[0].args.artifact as { kind: string };
+    expect(artifact.kind).toBe('url');
+  });
+
+  it('fails loudly rather than pushing bytes the agent would reject', async () => {
+    // The agent's deploy endpoint only accepts `artifact_url`. With no signed
+    // URL there is nothing to deploy, and a push that 400s would look like a
+    // deploy attempt while telling nobody the real problem is Storage.
+    db.storageAvailable = false;
+    const agent = recordingAgent();
+    const result = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(agent.client),
+    });
+    expect(agent.calls).toHaveLength(0);
+    expect(result.status).toBe('failed');
+    expect(result.detail).toContain('nothing to fetch');
+    // The manifest is still in the row, so the claim still works.
+    expect(db.rows('funnel_previews')[0].manifest).toBeTruthy();
+  });
+
+  it('records the row and the hostname before reporting live', async () => {
+    const agent = recordingAgent();
+    const result = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      templateSlug: 'wellness-therapy',
+      agent: configured(agent.client),
+    });
+    const row = db.rows('funnel_previews')[0];
+    expect(row.preview_id).toBe(PREVIEW_ID);
+    expect(row.template_slug).toBe('wellness-therapy');
+    expect(row.hostname).toBe(result.hostname);
+    expect(row.deploy_status).toBe('live');
+    expect(row.expires_at).toBeTypeOf('string');
+  });
+
+  it('gives the preview a TTL roughly a week out', async () => {
+    const agent = recordingAgent();
+    await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(agent.client),
+    });
+    const expiresAt = Date.parse(
+      String(db.rows('funnel_previews')[0].expires_at)
+    );
+    const days = (expiresAt - Date.now()) / 86_400_000;
+    expect(days).toBeGreaterThan(6.9);
+    expect(days).toBeLessThan(7.1);
+  });
+
+  it('records PENDING, not live, when the previews agent is unconfigured', async () => {
+    const result = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: previewsDeployAgentFromEnv({} as unknown as NodeJS.ProcessEnv),
+    });
+    expect(result.status).toBe('pending');
+    expect(result.published).toBe(false);
+    expect(result.detail).toContain('not configured');
+    expect(db.rows('funnel_previews')[0].deploy_status).toBe('pending');
+    // The manifest is still durable — an unconfigured host must not cost the
+    // visitor the claim.
+    expect(db.rows('funnel_previews')[0].artifact_path).toBe(
+      `funnel/${PREVIEW_ID}/site.tar.gz`
+    );
+  });
+
+  it('records FAILED and keeps the manifest when the agent errors', async () => {
+    const agent = recordingAgent('throw');
+    const result = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(agent.client),
+    });
+    expect(result.status).toBe('failed');
+    expect(result.detail).toContain('agent exploded');
+    const row = db.rows('funnel_previews')[0];
+    expect(row.deploy_status).toBe('failed');
+    expect(row.manifest).toBeTruthy();
+  });
+
+  it('keeps the same hostname when the same preview is republished', async () => {
+    const first = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(recordingAgent().client),
+    });
+    const second = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(recordingAgent().client),
+    });
+    expect(second.hostname).toBe(first.hostname);
+    expect(db.rows('funnel_previews')).toHaveLength(1);
+  });
+
+  it('refuses to publish nothing', async () => {
+    await expect(
+      publishFunnelPreview({ previewId: PREVIEW_ID, files: [] })
+    ).rejects.toBeInstanceOf(PreviewPublishError);
+  });
+});
+
+describe('unpublishFunnelPreview', () => {
+  it('removes by slug through the previews agent', async () => {
+    const publishAgent = recordingAgent();
+    const published = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(publishAgent.client),
+    });
+
+    const removeAgent = recordingAgent();
+    const result = await unpublishFunnelPreview({
+      previewId: PREVIEW_ID,
+      agent: configured(removeAgent.client),
+    });
+
+    expect(result.removed).toBe(true);
+    expect(removeAgent.calls[0].method).toBe('remove');
+    expect(removeAgent.calls[0].args.siteSlug).toBe(published.slug);
+    expect(removeAgent.calls[0].args.sharedSecret).toBe(
+      'previews-secret-token'
+    );
+    expect(db.rows('funnel_previews')[0].deploy_status).toBe('removed');
+  });
+
+  it('is a no-op that still marks removed when nothing was hosted', async () => {
+    db.seed('funnel_previews', [
+      {
+        preview_id: PREVIEW_ID,
+        hostname: null,
+        deploy_status: 'pending',
+        expires_at: new Date(Date.now() + 1000).toISOString(),
+        claimed_workspace_id: null,
+      },
+    ]);
+    const agent = recordingAgent();
+    const result = await unpublishFunnelPreview({
+      previewId: PREVIEW_ID,
+      agent: configured(agent.client),
+    });
+    expect(result.removed).toBe(true);
+    expect(agent.calls).toHaveLength(0);
+    expect(db.rows('funnel_previews')[0].deploy_status).toBe('removed');
+  });
+
+  it('reports failure rather than claiming a site is gone', async () => {
+    const published = await publishFunnelPreview({
+      previewId: PREVIEW_ID,
+      files: FILES,
+      agent: configured(recordingAgent().client),
+    });
+    expect(published.status).toBe('live');
+
+    const result = await unpublishFunnelPreview({
+      previewId: PREVIEW_ID,
+      agent: configured(recordingAgent('throw').client),
+    });
+    expect(result.removed).toBe(false);
+    expect(result.detail).toContain('agent exploded');
+    expect(db.rows('funnel_previews')[0].deploy_status).toBe('live');
+  });
+});

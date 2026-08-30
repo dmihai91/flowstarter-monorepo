@@ -35,6 +35,12 @@ import {
   type Tier,
 } from '@/app/(dynamic-pages)/(main-pages)/components/discovery/discovery.logic';
 import type { Json } from '@/lib/database.types';
+import {
+  claimFunnelPreview,
+  copyFunnelArtifactToTenant,
+  loadFunnelPreview,
+  saveFunnelPreview,
+} from '@/lib/hosting/funnel-previews';
 import { recordIntakeSubmission } from './intake-submission';
 import { ensureClientMembership } from './membership';
 import { appendClientReplyToCorpus } from './messaging';
@@ -50,10 +56,19 @@ const UNIQUE_VIOLATION = '23505';
 
 // ─── The claimable-preview stash ───────────────────────────────────────────
 //
-// Process-local and ephemeral, exactly like `lib/discovery/live-jobs.ts`: the
-// preview it belongs to is held in the same process for the same session. A
-// multi-instance deployment must back both with the same durable store; the
-// shape here is written so that swap is mechanical.
+// The Map below is a CACHE, not the record. `funnel_previews` is the record.
+//
+// This used to be the only place a generated preview existed, which made the
+// claim a coin flip in any deployment with more than one worker: a visitor who
+// generated on instance A and signed in against instance B got a workspace
+// with no artifacts behind it — an owned project that can take a deposit and
+// has nothing to build from — and a restart between "look at this" and "make
+// it mine" did the same. `rememberClaimablePreview` now writes a row (and
+// stores the packaged site); `getClaimablePreview` falls back to that row
+// whenever this process does not happen to be the one that generated it.
+//
+// The Map is kept because the same-process case is the common one and a
+// round-trip per claim buys nothing there.
 
 /** Everything `savePreviewArtifacts` needs, as the pipeline produced it. */
 export interface ClaimablePreview {
@@ -78,10 +93,18 @@ const stash = new Map<string, ClaimablePreview>();
  * Called by the preview pipeline the moment a preview is publishable, so a
  * visitor who signs in minutes later claims the site they actually saw rather
  * than a regenerated approximation of it.
+ *
+ * The cache is populated synchronously — before the first `await` — so a
+ * caller that does not await this still gets the same-process behaviour it
+ * always had. The returned promise is the durable half: the row in
+ * `funnel_previews` that makes the claim work on any other instance.
+ *
+ * The durable write cannot throw. A preview we failed to persist is a degraded
+ * claim, not a reason to fail a generation that has already run for minutes.
  */
-export function rememberClaimablePreview(
+export async function rememberClaimablePreview(
   preview: Omit<ClaimablePreview, 'capturedAt'>
-): void {
+): Promise<void> {
   if (!UUID.test(preview.previewId)) return;
   reapStashedPreviews();
   stash.set(preview.previewId, { ...preview, capturedAt: Date.now() });
@@ -90,13 +113,74 @@ export function rememberClaimablePreview(
     if (oldest.done) break;
     stash.delete(oldest.value);
   }
+
+  try {
+    await saveFunnelPreview({
+      previewId: preview.previewId,
+      templateSlug: preview.template?.slug ?? null,
+      templateVersion:
+        (preview.template as { version?: string } | undefined)?.version ?? null,
+      brandConfig: preview.brandConfig,
+      manifest: {
+        files: preview.files,
+        intake: preview.intake,
+        ...(preview.previewArtifactUrl
+          ? { previewArtifactUrl: preview.previewArtifactUrl }
+          : {}),
+        ...(preview.previewUrl ? { previewUrl: preview.previewUrl } : {}),
+      },
+    });
+  } catch (error) {
+    console.warn(
+      `[Flowstarter] preview ${preview.previewId} could not be persisted; ` +
+        'a claim served by another instance will find nothing: ' +
+        (error instanceof Error ? error.message : 'unknown error')
+    );
+  }
 }
 
-export function getClaimablePreview(
+/**
+ * The preview, from this process's cache when it has it and from
+ * `funnel_previews` when it does not.
+ *
+ * An EXPIRED row is deliberately not returned: `loadFunnelPreview` filters
+ * them out, and a preview past its TTL is one whose hosted site has been (or
+ * is about to be) torn down. Handing its manifest to a claim would mint a
+ * workspace pointing at a site that no longer exists.
+ */
+export async function getClaimablePreview(
   previewId: string
-): ClaimablePreview | undefined {
+): Promise<ClaimablePreview | undefined> {
   reapStashedPreviews();
-  return stash.get(previewId);
+  const cached = stash.get(previewId);
+  if (cached) return cached;
+
+  const row = await loadFunnelPreview(previewId);
+  if (!row) return undefined;
+
+  const manifest = (row.manifest ?? {}) as {
+    files?: readonly TemplateScaffoldFile[];
+    intake?: BusinessIntakePayload;
+    previewArtifactUrl?: string;
+    previewUrl?: string;
+  };
+  if (!manifest.files?.length || !manifest.intake) return undefined;
+
+  return {
+    previewId: row.previewId,
+    intake: manifest.intake,
+    brandConfig: (row.brandConfig ?? {}) as BrandConfig,
+    template: {
+      slug: row.templateSlug ?? '',
+      ...(row.templateVersion ? { version: row.templateVersion } : {}),
+    } as TemplateSelection,
+    files: manifest.files,
+    ...(manifest.previewArtifactUrl
+      ? { previewArtifactUrl: manifest.previewArtifactUrl }
+      : {}),
+    ...(manifest.previewUrl ? { previewUrl: manifest.previewUrl } : {}),
+    capturedAt: Date.parse(row.createdAt) || Date.now(),
+  };
 }
 
 /** Test seam: the stash is module state, so suites must be able to reset it. */
@@ -347,6 +431,9 @@ export async function claimPreview(
       input.previewId,
       input.intakeChat
     );
+    // Idempotent, and needed on this path too: the first claim may have died
+    // between creating the workspace and extending the preview's TTL.
+    await adoptFunnelPreview(input.previewId, existing);
     return {
       workspaceId: existing,
       unlockUrl: unlockUrlFor(existing),
@@ -396,6 +483,7 @@ export async function claimPreview(
       input.previewId,
       input.intakeChat
     );
+    await adoptFunnelPreview(input.previewId, raced);
     return {
       workspaceId: raced,
       unlockUrl: unlockUrlFor(raced),
@@ -415,7 +503,7 @@ export async function claimPreview(
   // (the same preview id re-claims it); a paid build with nothing to build
   // from is not.
   let previewReady = false;
-  const preview = getClaimablePreview(input.previewId);
+  const preview = await getClaimablePreview(input.previewId);
   if (preview) {
     try {
       const saved = await savePreviewArtifacts({
@@ -449,6 +537,16 @@ export async function claimPreview(
         `workspace ${workspaceId} stays in ${ProjectState.INTAKE}`
     );
   }
+
+  // The funnel preview now belongs to somebody: extend its TTL so the reaper
+  // leaves the hosted site alone, and copy the packaged site out of the
+  // anonymous `funnel/` prefix and under the workspace's own tenant path,
+  // where the bucket's read policy applies to it.
+  //
+  // Best effort, and after the artifacts row: a preview record we could not
+  // update is a preview that gets torn down early, which is recoverable. A
+  // workspace lost to a storage hiccup is not.
+  await adoptFunnelPreview(input.previewId, workspaceId);
 
   // Evidence goes in after the artifacts row exists, because that row is what
   // holds `client_reply_corpus`; before it there is nothing to append to.
@@ -502,6 +600,46 @@ export async function claimPreview(
     ...(membershipError ? { membershipError } : {}),
     intakeChatDocuments,
   };
+}
+
+/**
+ * Hands the funnel preview over to the workspace that just claimed it.
+ *
+ * Two effects, both idempotent so a retried claim converges rather than
+ * duplicating:
+ *   - `expires_at` moves out to the claimed TTL, which takes the row out of
+ *     the reaper's candidate set for good;
+ *   - the packaged site is copied from `funnel/{previewId}/site.tar.gz` to
+ *     `tenant/{workspaceId}/previews/{previewId}/site.tar.gz`, which is where
+ *     a tenant-owned artifact belongs and the only prefix the bucket's read
+ *     policy ever grants.
+ *
+ * A copy, not a move: the hosted preview is still being served until the site
+ * is torn down, and pulling the artifact out from under it mid-claim would
+ * blank the page the client is looking at while they sign in.
+ *
+ * Never throws. The workspace already exists at this point and is the thing
+ * worth protecting.
+ */
+async function adoptFunnelPreview(
+  previewId: string,
+  workspaceId: string
+): Promise<void> {
+  try {
+    const row = await claimFunnelPreview({ previewId, workspaceId });
+    if (!row?.artifactPath) return;
+    await copyFunnelArtifactToTenant({
+      previewId,
+      workspaceId,
+      sourcePath: row.artifactPath,
+    });
+  } catch (error) {
+    console.warn(
+      `[Flowstarter] claim ${previewId} could not adopt the funnel preview ` +
+        `for workspace ${workspaceId}: ` +
+        (error instanceof Error ? error.message : 'unknown error')
+    );
+  }
 }
 
 async function findClaimedWorkspace(

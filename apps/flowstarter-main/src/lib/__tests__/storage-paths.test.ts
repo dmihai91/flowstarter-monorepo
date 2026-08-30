@@ -9,6 +9,7 @@ import {
   StoragePathError,
   assertTenantPath,
   assetObjectPath,
+  funnelPreviewArtifactPath,
   generatedAssetPath,
   previewArtifactPath,
 } from '../storage-paths';
@@ -148,6 +149,33 @@ describe('previewArtifactPath', () => {
     expect(() =>
       previewArtifactPath({ workspaceId: 'not-a-uuid', projectId: PROJECT_ID })
     ).toThrow(StoragePathError);
+  });
+});
+
+describe('funnelPreviewArtifactPath', () => {
+  const PREVIEW_ID = 'a1b2c3d4-1111-4111-8111-111111111111';
+
+  it('builds funnel/{previewId}/site.tar.gz', () => {
+    expect(funnelPreviewArtifactPath(PREVIEW_ID)).toBe(
+      `funnel/${PREVIEW_ID}/site.tar.gz`
+    );
+  });
+
+  it('stays OUTSIDE the tenant prefix', () => {
+    // The bucket's read policy only ever grants `tenant/{workspaceId}/...`,
+    // so this prefix is unreadable by any browser session by construction.
+    // An anonymous preview has no workspace to be scoped to; putting it under
+    // somebody's tenant id would be inventing an owner.
+    const path = funnelPreviewArtifactPath(PREVIEW_ID);
+    expect(path.startsWith('tenant/')).toBe(false);
+    expect(path.startsWith('funnel/')).toBe(true);
+    expect(() => assertTenantPath(path, WORKSPACE_A)).toThrow(StoragePathError);
+  });
+
+  it('refuses a preview id that could escape the prefix', () => {
+    for (const bad of ['../etc', 'a/b', 'a\\b', '', 'x\0y']) {
+      expect(() => funnelPreviewArtifactPath(bad)).toThrow(StoragePathError);
+    }
   });
 });
 

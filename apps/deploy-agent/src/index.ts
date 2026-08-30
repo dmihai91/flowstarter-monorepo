@@ -31,7 +31,42 @@ const CADDY_SITES_DIR =
 const CADDY_RELOAD_CMD =
   process.env.DEPLOY_AGENT_CADDY_RELOAD_CMD ?? 'systemctl reload caddy';
 const TEMP_ROOT = process.env.DEPLOY_AGENT_TEMP_ROOT ?? '/tmp/flowstarter-deploys';
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
+
+/**
+ * Which fleet this instance serves.
+ *
+ * `sites` (the default, and what every existing host runs) is the paid-site
+ * agent: /var/www/sites, /etc/caddy/sites, port 8443, the editor reverse-proxy
+ * in every snippet, `systemctl reload caddy`. Its behaviour is unchanged.
+ *
+ * `previews` is a SECOND instance of this same binary, started by a second
+ * systemd unit from a second env file, serving anonymous funnel previews. It
+ * writes to a different sites root and a different Caddy config directory,
+ * loaded by a different Caddy process — so a snippet generated from an
+ * LLM-authored preview that fails to parse takes down previews and leaves
+ * every paying customer on the same box serving. Its snippets also carry
+ * `X-Robots-Tag: noindex` and no editor proxy: a preview is a temporary
+ * marketing artefact, not a workspace somebody edits.
+ *
+ * Everything that differs between the two comes from env. There is no code
+ * path in which a previews-configured agent writes into /var/www/sites.
+ */
+const MODE = process.env.DEPLOY_AGENT_MODE === 'previews' ? 'previews' : 'sites';
+
+/**
+ * Port the previews Caddy listens on. TLS for the preview zone is terminated
+ * by the front Caddy, which proxies here over loopback, so preview snippets
+ * are plain `http://host:port` blocks.
+ */
+const SITE_PORT = Number(process.env.DEPLOY_AGENT_SITE_PORT ?? 9080);
+
+/** The zone preview hostnames must end in. Guards the TLS ask endpoint. */
+const PREVIEW_HOST_SUFFIX =
+  process.env.DEPLOY_AGENT_PREVIEW_HOST_SUFFIX ?? 'preview.flowstarter.net';
+
+/** Kept in step with NOINDEX_HEADER_VALUE in lib/hosting/site-archive.ts. */
+const ROBOTS_HEADER = 'noindex, nofollow, noarchive';
 
 if (!SHARED_SECRET) {
   console.error(
@@ -144,6 +179,67 @@ function buildCaddySnippet(
     `}`,
     ``,
   ].join('\n');
+}
+
+/**
+ * The previews snippet. Deliberately not a variant of `buildCaddySnippet`:
+ * it has no editor route, no custom domains, and one job — serve static files
+ * for exactly one unguessable hostname, telling every crawler not to index it.
+ *
+ * `http://` and an explicit port because the front Caddy already terminated
+ * TLS and forwarded here on loopback; `auto_https off` in the previews
+ * Caddyfile means this block is matched on the Host header alone.
+ */
+function buildPreviewCaddySnippet(
+  slug: string,
+  rootDir: string,
+  hostname: string | null
+): string {
+  const host = hostname && hostname.length > 0 ? hostname : null;
+  if (!host) return '';
+  return [
+    `# Managed by flowstarter deploy-agent (previews) — ${slug}`,
+    `http://${host}:${SITE_PORT} {`,
+    `  encode gzip zstd`,
+    ``,
+    `  # A preview carries a real business's name and copy nobody approved.`,
+    `  # The manifest's HTML also carries <meta name="robots">; this is the`,
+    `  # half that survives a crawler which only reads headers.`,
+    `  header X-Robots-Tag "${ROBOTS_HEADER}"`,
+    ``,
+    `  root * ${rootDir}`,
+    `  try_files {path} {path}/ /index.html`,
+    `  file_server`,
+    `}`,
+    ``,
+  ].join('\n');
+}
+
+/**
+ * Does this agent currently serve `domain`?
+ *
+ * The front Caddy calls this before issuing an on-demand certificate. Without
+ * it, anybody who points a DNS record at this box makes us ask Let's Encrypt
+ * for a certificate on their behalf, which is both a rate-limit hazard and an
+ * open cert-minting service. Answers 200 only for a hostname in our own
+ * preview zone that has a snippet on disk.
+ */
+async function handleTlsAsk(domain: string | null): Promise<Response> {
+  if (MODE !== 'previews') return jsonResponse({ error: 'not found' }, 404);
+  const host = (domain ?? '').trim().toLowerCase();
+  const suffix = `.${PREVIEW_HOST_SUFFIX}`;
+  if (!host.endsWith(suffix)) {
+    return jsonResponse({ error: 'not a preview host' }, 404);
+  }
+  const slug = host.slice(0, -suffix.length);
+  if (!SLUG_RE.test(slug)) {
+    return jsonResponse({ error: 'not a preview host' }, 404);
+  }
+  const snippet = join(CADDY_SITES_DIR, `${slug}.caddy`);
+  if (!(await exists(snippet))) {
+    return jsonResponse({ error: 'no such preview' }, 404);
+  }
+  return new Response('', { status: 200 });
 }
 
 async function ensureDirs(): Promise<void> {
@@ -260,13 +356,23 @@ async function handleDeploy(slug: string, body: DeployBody): Promise<Response> {
   const previewHost = process.env.DEPLOY_AGENT_PREVIEW_DOMAIN_TEMPLATE
     ? process.env.DEPLOY_AGENT_PREVIEW_DOMAIN_TEMPLATE.replace('{slug}', slug)
     : null;
-  const snippet = buildCaddySnippet(
-    slug,
-    siteDir,
-    body.primary_domain ?? null,
-    body.additional_domains ?? [],
-    previewHost
-  );
+  const snippet =
+    MODE === 'previews'
+      ? buildPreviewCaddySnippet(
+          slug,
+          siteDir,
+          // The publisher sends the unguessable hostname as primary_domain.
+          // Custom domains are meaningless for a preview and are ignored
+          // rather than trusted.
+          body.primary_domain ?? `${slug}.${PREVIEW_HOST_SUFFIX}`
+        )
+      : buildCaddySnippet(
+          slug,
+          siteDir,
+          body.primary_domain ?? null,
+          body.additional_domains ?? [],
+          previewHost
+        );
   try {
     await writeCaddySnippet(slug, snippet);
   } catch (e) {
@@ -324,7 +430,14 @@ const server = Bun.serve({
     const url = new URL(req.url);
 
     if (url.pathname === '/health' && req.method === 'GET') {
-      return jsonResponse({ ok: true, version: VERSION });
+      return jsonResponse({ ok: true, version: VERSION, mode: MODE });
+    }
+
+    // Unauthenticated on purpose: Caddy's on-demand TLS ask has no way to
+    // send a bearer token. It is bound to loopback by the firewall and it
+    // only ever reveals whether a given preview hostname is being served.
+    if (url.pathname === '/tls-ask' && req.method === 'GET') {
+      return handleTlsAsk(url.searchParams.get('domain'));
     }
 
     if (!authorized(req)) {
@@ -350,5 +463,6 @@ const server = Bun.serve({
 });
 
 console.info(
-  `[deploy-agent] v${VERSION} listening on :${server.port} (sites root ${SITES_ROOT}, caddy snippets ${CADDY_SITES_DIR})`
+  `[deploy-agent] v${VERSION} mode=${MODE} listening on :${server.port} ` +
+    `(sites root ${SITES_ROOT}, caddy snippets ${CADDY_SITES_DIR})`
 );

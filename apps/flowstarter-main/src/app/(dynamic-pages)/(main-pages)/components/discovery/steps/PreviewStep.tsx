@@ -296,11 +296,7 @@ export function PreviewStep({
     }
 
     // Personalization hot-swapped in: refresh the iframe, hand over.
-    if (
-      shownBaseRef.current &&
-      progress.personalized &&
-      !resolvedRef.current
-    ) {
+    if (shownBaseRef.current && progress.personalized && !resolvedRef.current) {
       resolvedRef.current = true;
       setPersonalizing(false);
       setIframeNonce((n) => n + 1);

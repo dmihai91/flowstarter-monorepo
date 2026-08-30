@@ -100,7 +100,10 @@ export async function POST(
     const parsed = SwapSchema.safeParse(await readJsonBody(request));
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Send a slotId and the id of one of your files.', code: 'INVALID' },
+        {
+          error: 'Send a slotId and the id of one of your files.',
+          code: 'INVALID',
+        },
         { status: 400 }
       );
     }

@@ -86,7 +86,11 @@ export default async function ClientSiteEditorPage({
       line: target.line,
     })),
     versions,
-    allowance: { used, cap: DAILY_EDIT_CAP, maxInstructionChars: MAX_INSTRUCTION_CHARS },
+    allowance: {
+      used,
+      cap: DAILY_EDIT_CAP,
+      maxInstructionChars: MAX_INSTRUCTION_CHARS,
+    },
     policy: {
       content: decideEditorAction(editorAccess, 'content'),
       image: decideEditorAction(editorAccess, 'image'),

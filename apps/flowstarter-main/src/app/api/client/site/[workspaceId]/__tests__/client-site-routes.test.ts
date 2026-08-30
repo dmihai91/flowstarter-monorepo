@@ -136,7 +136,10 @@ function manifest() {
         path: 'src/components/Hero.astro',
         content: '<section class="hero"><slot /></section>\n',
       },
-      { path: 'public/styles/site.css', content: ':root { --ink: #101014; }\n' },
+      {
+        path: 'public/styles/site.css',
+        content: ':root { --ink: #101014; }\n',
+      },
     ],
   };
 }
@@ -248,7 +251,9 @@ function get(url: string): NextRequest {
 }
 
 function params(workspaceId: string, path?: string[]) {
-  return { params: Promise.resolve({ workspaceId, ...(path ? { path } : {}) }) };
+  return {
+    params: Promise.resolve({ workspaceId, ...(path ? { path } : {}) }),
+  };
 }
 
 /** Everything the handlers read that is not the membership check itself. */
@@ -326,7 +331,10 @@ describe('a workspace that is not yours', () => {
       ],
       ['revert', () => REVERT(post('/x', { version: 1 }), params(WORKSPACE_B))],
       ['publish', () => PUBLISH(post('/x'), params(WORKSPACE_B))],
-      ['preview', () => PREVIEW(get('/x'), params(WORKSPACE_B, ['index.html']))],
+      [
+        'preview',
+        () => PREVIEW(get('/x'), params(WORKSPACE_B, ['index.html'])),
+      ],
     ];
 
     for (const [name, call] of cases) {
@@ -422,7 +430,10 @@ describe('policy, decided on the server', () => {
 describe('proposing a change', () => {
   it('returns the replacement without touching the site', async () => {
     const response = await EDIT(
-      post('/x', { targetId: LABEL_TARGET, instruction: 'name the strategy work too' }),
+      post('/x', {
+        targetId: LABEL_TARGET,
+        instruction: 'name the strategy work too',
+      }),
       params(WORKSPACE_A)
     );
     expect(response.status).toBe(200);
@@ -467,7 +478,9 @@ describe('proposing a change', () => {
     expect(inlineEdit.calls).toHaveLength(0);
     // And no 26th proposal row was written.
     expect(
-      db.rows('project_events').filter((row) => row.kind === 'site_edit_proposed')
+      db
+        .rows('project_events')
+        .filter((row) => row.kind === 'site_edit_proposed')
     ).toHaveLength(25);
   });
 
@@ -575,16 +588,19 @@ describe('reverting', () => {
       'label: "Operations and strategy consultancy"'
     );
 
-    const response = await REVERT(post('/x', { version: 1 }), params(WORKSPACE_A));
+    const response = await REVERT(
+      post('/x', { version: 1 }),
+      params(WORKSPACE_A)
+    );
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ version: 3, revertedTo: 1 });
 
     // Back to exactly what was delivered — and the change is still in the
     // record rather than deleted from it.
     expect(contentOf(WORKSPACE_A)).toBe(CONTENT);
-    expect(
-      db.rows('site_versions').map((row) => row.version)
-    ).toEqual([1, 2, 3]);
+    expect(db.rows('site_versions').map((row) => row.version)).toEqual([
+      1, 2, 3,
+    ]);
   });
 
   it('refuses a version that is not this workspace’s', async () => {
@@ -600,7 +616,10 @@ describe('reverting', () => {
         summary: null,
       },
     ]);
-    const response = await REVERT(post('/x', { version: 9 }), params(WORKSPACE_A));
+    const response = await REVERT(
+      post('/x', { version: 9 }),
+      params(WORKSPACE_A)
+    );
     expect(response.status).toBe(404);
   });
 });
@@ -685,7 +704,9 @@ describe('swapping a picture', () => {
     );
     expect(media?.encoding).toBe('base64');
     expect(
-      db.rows('project_events').some((row) => row.kind === 'site_image_replaced')
+      db
+        .rows('project_events')
+        .some((row) => row.kind === 'site_image_replaced')
     ).toBe(true);
   });
 });
@@ -710,7 +731,9 @@ describe('serving the site into the frame', () => {
       params(WORKSPACE_A, ['styles', 'site.css'])
     );
     expect(response.status).toBe(200);
-    expect(response.headers.get('content-type')).toBe('text/css; charset=utf-8');
+    expect(response.headers.get('content-type')).toBe(
+      'text/css; charset=utf-8'
+    );
     expect(response.headers.get('x-content-type-options')).toBe('nosniff');
     expect(await response.text()).toContain('--ink');
   });
@@ -718,7 +741,9 @@ describe('serving the site into the frame', () => {
   it('renders the content view with a clickable id on every block', async () => {
     const response = await PREVIEW(get('/x'), params(WORKSPACE_A, []));
     expect(response.status).toBe(200);
-    expect(response.headers.get('content-type')).toBe('text/html; charset=utf-8');
+    expect(response.headers.get('content-type')).toBe(
+      'text/html; charset=utf-8'
+    );
     // Sandboxed into an opaque origin: the frame cannot touch the dashboard.
     expect(response.headers.get('content-security-policy')).toContain(
       'sandbox allow-scripts'
@@ -749,12 +774,12 @@ describe('publishing', () => {
     expect(body.deploy.mode).toBe('no_host');
     expect(body.deploy.detail).toMatch(/marked to publish/);
 
-    const published = db
-      .rows('site_versions')
-      .find((row) => row.version === 1);
+    const published = db.rows('site_versions').find((row) => row.version === 1);
     expect(published?.published_at).toBeTruthy();
     expect(
-      db.rows('project_events').some((row) => row.kind === 'site_publish_requested')
+      db
+        .rows('project_events')
+        .some((row) => row.kind === 'site_publish_requested')
     ).toBe(true);
   });
 });

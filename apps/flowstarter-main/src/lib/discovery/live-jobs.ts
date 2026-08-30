@@ -14,7 +14,23 @@ export const LIVE_EDIT_CAP = 15;
 export interface LiveJob {
   demoId: string;
   status: 'building' | 'ready' | 'failed';
+  /**
+   * What the wizard's iframe points at: the sandbox (Daytona) or local dev
+   * server. Stays the iframe source even after the hosted copy goes live —
+   * it is the one we know is serving, and swapping the frame under a visitor
+   * mid-look to prove a point about our infrastructure is not an improvement.
+   */
   previewUrl?: string;
+  /**
+   * The durable copy on the previews host, e.g.
+   * `https://p-<16 hex>.preview.flowstarter.net`. Present only once the
+   * previews deploy-agent reports the site live; both URLs are exposed so the
+   * funnel can offer a shareable link without pretending the sandbox one is
+   * one.
+   */
+  hostedPreviewUrl?: string;
+  /** 'pending' | 'live' | 'failed' | 'removed', straight off funnel_previews. */
+  hostedPreviewStatus?: string;
   sandboxId?: string;
   /** Absolute path to the site's single content file (for edits). */
   contentFile?: string;

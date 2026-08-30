@@ -92,7 +92,9 @@ export function ImageSlotsPanel({
     <div className="flex flex-col gap-4 rounded-2xl border border-[var(--fs-ink)]/10 bg-white/70 px-4 py-4">
       <PolicyNotice decision={policy} />
       {!allowed ? null : loading ? (
-        <p className="text-sm text-[var(--fs-ink)]/60">Loading your pictures…</p>
+        <p className="text-sm text-[var(--fs-ink)]/60">
+          Loading your pictures…
+        </p>
       ) : (
         <>
           {slots.length === 0 ? (
@@ -137,7 +139,9 @@ export function ImageSlotsPanel({
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <span className="text-[10px]">{asset.kind ?? 'file'}</span>
+                        <span className="text-[10px]">
+                          {asset.kind ?? 'file'}
+                        </span>
                       )}
                     </button>
                   ))}

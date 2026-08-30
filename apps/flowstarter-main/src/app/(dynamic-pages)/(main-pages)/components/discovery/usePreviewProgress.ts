@@ -62,9 +62,8 @@ function statusUrl(demoId: string): string {
 export function usePreviewProgress(
   demoId: string | null
 ): PreviewProgressSnapshot {
-  const [snapshot, setSnapshot] = useState<PreviewProgressSnapshot>(
-    IDLE_SNAPSHOT
-  );
+  const [snapshot, setSnapshot] =
+    useState<PreviewProgressSnapshot>(IDLE_SNAPSHOT);
 
   useEffect(() => {
     if (!demoId) {
@@ -176,9 +175,10 @@ export function usePreviewProgress(
         source.addEventListener('phase', (event) => {
           if (cancelled) return;
           try {
-            const data = JSON.parse(
-              (event as MessageEvent).data
-            ) as { phase?: string; at?: number };
+            const data = JSON.parse((event as MessageEvent).data) as {
+              phase?: string;
+              at?: number;
+            };
             if (data.phase) appendPhase(data.phase, data.at ?? 0);
           } catch {
             /* malformed frame — skip it, the connection is still good */

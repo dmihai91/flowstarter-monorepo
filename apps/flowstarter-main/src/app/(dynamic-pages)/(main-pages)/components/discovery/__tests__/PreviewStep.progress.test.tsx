@@ -75,10 +75,16 @@ function routedFetch(handlers: {
     }
     if (url.startsWith('/api/discovery/preview/live') && method === 'GET') {
       getLiveCalls += 1;
-      return { ok: true, json: async () => handlers.getLive?.(getLiveCalls) ?? {} };
+      return {
+        ok: true,
+        json: async () => handlers.getLive?.(getLiveCalls) ?? {},
+      };
     }
     if (url.startsWith('/api/discovery/preview') && method === 'POST') {
-      return { ok: true, json: async () => handlers.postJson?.() ?? { skip: true } };
+      return {
+        ok: true,
+        json: async () => handlers.postJson?.() ?? { skip: true },
+      };
     }
     return { ok: true, json: async () => ({}) };
   }) as unknown as typeof fetch;
@@ -94,8 +100,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  (globalThis as { EventSource?: unknown }).EventSource =
-    originalEventSource;
+  (globalThis as { EventSource?: unknown }).EventSource = originalEventSource;
   global.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.useRealTimers();
@@ -108,25 +113,21 @@ describe('SSE progress', () => {
 
     await waitFor(() => expect(FakeEventSource.instances).toHaveLength(1));
     const source = FakeEventSource.instances[0]!;
-    expect(source.url).toBe(
-      '/api/discovery/preview/live/stream?demoId=demo-1'
-    );
+    expect(source.url).toBe('/api/discovery/preview/live/stream?demoId=demo-1');
 
     act(() => source.emit('phase', { phase: 'Reading your brand', at: 2 }));
-    expect(
-      await screen.findByText(/Reading your brand/)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/Reading your brand/)).toBeInTheDocument();
 
     act(() => source.emit('phase', { phase: 'Choosing a template', at: 8 }));
-    expect(
-      await screen.findByText(/Choosing a template/)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/Choosing a template/)).toBeInTheDocument();
     // Both stay visible, in the order they arrived.
     const log = screen.getByRole('log');
     const lines = Array.from(log.querySelectorAll('span')).map(
       (el) => el.textContent
     );
-    const brandIndex = lines.findIndex((l) => l?.includes('Reading your brand'));
+    const brandIndex = lines.findIndex((l) =>
+      l?.includes('Reading your brand')
+    );
     const templateIndex = lines.findIndex((l) =>
       l?.includes('Choosing a template')
     );
@@ -148,9 +149,7 @@ describe('SSE progress', () => {
       })
     );
 
-    expect(
-      await screen.findByTitle('Live site preview')
-    ).toBeInTheDocument();
+    expect(await screen.findByTitle('Live site preview')).toBeInTheDocument();
     expect(source.closed).toBe(true);
   });
 
@@ -183,9 +182,7 @@ describe('polling fallback', () => {
             },
     });
     render(<PreviewStep data={DATA} t={t} />);
-    await vi.waitFor(() =>
-      expect(FakeEventSource.instances).toHaveLength(1)
-    );
+    await vi.waitFor(() => expect(FakeEventSource.instances).toHaveLength(1));
     const source = FakeEventSource.instances[0]!;
 
     // Installed only now and measured relative to this point — vi.waitFor

@@ -99,13 +99,14 @@ export async function POST(
     const mode = !hasHost
       ? 'no_host'
       : !hasBuild
-        ? 'awaiting_build'
-        : agentConfigured
-          ? 'agent'
-          : 'dry_run';
+      ? 'awaiting_build'
+      : agentConfigured
+      ? 'agent'
+      : 'dry_run';
 
     const detail: Record<typeof mode, string> = {
-      no_host: 'This project does not have a server allocated yet, so your change is saved and marked to publish. We will put it live when the site is hosted.',
+      no_host:
+        'This project does not have a server allocated yet, so your change is saved and marked to publish. We will put it live when the site is hosted.',
       awaiting_build:
         'Your change is saved and marked to publish. The site is rebuilt from these files before it goes live, and we run that build for you — nothing else is needed from you.',
       dry_run:

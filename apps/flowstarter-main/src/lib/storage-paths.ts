@@ -151,6 +151,29 @@ export function previewArtifactPath({
 }
 
 /**
+ * `funnel/{previewId}/site.tar.gz` — the packaged build for an ANONYMOUS
+ * funnel preview.
+ *
+ * Deliberately outside the `tenant/` prefix, because at the moment a funnel
+ * preview is generated there is no workspace and no membership: there is no
+ * tenant to scope it to, and inventing one would put a stranger's bytes under
+ * somebody's else's id. The bucket's read policy only ever grants
+ * `tenant/{workspaceId}/...` (`tenant_path_workspace_id` returns null for any
+ * other shape, and `is_workspace_member(null)` is false), so an object under
+ * `funnel/` is unreadable by every browser session by construction — writes
+ * and reads are the service role's alone, and the app hands out short-lived
+ * signed URLs when the deploy-agent needs to fetch one.
+ *
+ * On claim the object is copied to `previewArtifactPath({workspaceId, projectId})`,
+ * which is where a tenant-owned artifact belongs and where the tenant read
+ * policy applies to it.
+ */
+export function funnelPreviewArtifactPath(previewId: string): string {
+  assertSafeSegment(previewId, 'previewId');
+  return `funnel/${previewId}/site.tar.gz`;
+}
+
+/**
  * Throws unless `path` is scoped to exactly `tenant/{workspaceId}/...` and
  * carries no traversal or injection tricks. Meant to run immediately before
  * any storage call that takes a path built elsewhere (or supplied by a

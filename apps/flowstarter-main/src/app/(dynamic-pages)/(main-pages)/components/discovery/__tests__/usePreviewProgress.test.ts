@@ -52,8 +52,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  (globalThis as { EventSource?: unknown }).EventSource =
-    originalEventSource;
+  (globalThis as { EventSource?: unknown }).EventSource = originalEventSource;
   global.fetch = originalFetch;
   vi.restoreAllMocks();
   vi.useRealTimers();
@@ -65,9 +64,7 @@ describe('the SSE path', () => {
 
     await waitFor(() => expect(FakeEventSource.instances).toHaveLength(1));
     const source = FakeEventSource.instances[0]!;
-    expect(source.url).toBe(
-      '/api/discovery/preview/live/stream?demoId=demo-1'
-    );
+    expect(source.url).toBe('/api/discovery/preview/live/stream?demoId=demo-1');
 
     act(() => source.emit('phase', { phase: 'Reading your brand', at: 3 }));
     expect(result.current.phases).toEqual([
@@ -193,8 +190,8 @@ describe('the polling fallback', () => {
     expect(result.current.status).toBe('ready');
     expect(result.current.previewUrl).toBe('https://example.preview');
 
-    const callsAtReady = (global.fetch as ReturnType<typeof vi.fn>).mock
-      .calls.length;
+    const callsAtReady = (global.fetch as ReturnType<typeof vi.fn>).mock.calls
+      .length;
     await act(async () => {
       await vi.advanceTimersByTimeAsync(10_000);
     });

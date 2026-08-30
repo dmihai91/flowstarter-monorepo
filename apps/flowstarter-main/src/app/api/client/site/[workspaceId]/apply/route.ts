@@ -52,7 +52,10 @@ export async function POST(
     const parsed = ApplySchema.safeParse(await readJsonBody(request));
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Send a targetId, the original text and the replacement.', code: 'INVALID' },
+        {
+          error: 'Send a targetId, the original text and the replacement.',
+          code: 'INVALID',
+        },
         { status: 400 }
       );
     }

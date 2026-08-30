@@ -25,6 +25,7 @@ import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
 import { llmActionConfig, recordLlmUsage } from '@/lib/ai/llm';
 import { createJob, getJob, updateJob } from '@/lib/discovery/live-jobs';
 import { rememberClaimablePreview } from '@/lib/flowstarter/claim';
+import { publishFunnelPreview } from '@/lib/hosting/preview-publisher';
 import type {
   BusinessIntakePayload,
   PreviewPublisher,
@@ -554,7 +555,7 @@ export async function POST(req: NextRequest) {
       // demo id so that if the visitor signs in and claims this preview
       // (/api/flowstarter/projects/claim) the workspace is built from the
       // exact site they were looking at, rather than a regenerated guess.
-      rememberClaimablePreview({
+      await rememberClaimablePreview({
         previewId: demoId,
         intake: evidence.intake,
         brandConfig: result.brandConfig,
@@ -565,6 +566,43 @@ export async function POST(req: NextRequest) {
           : {}),
         ...(result.previewUrl ? { previewUrl: result.previewUrl } : {}),
       });
+
+      // The same moment, the durable half: package the site (noindex injected
+      // into every HTML file) and push it to the PREVIEWS deploy-agent, which
+      // is a different agent on a different port with a different secret and
+      // its own Caddy — a malformed generated preview can break previews and
+      // nothing a customer paid for. Never blocks the wizard: the sandbox URL
+      // above is what the iframe shows, and the hosted one is reported
+      // alongside it once (if) it comes up.
+      void publishFunnelPreview({
+        previewId: demoId,
+        files: result.files as Array<{ path: string; content: string }>,
+        templateSlug: result.template?.slug ?? null,
+        brandConfig: result.brandConfig,
+      })
+        .then((published) => {
+          updateJob(demoId, {
+            hostedPreviewStatus: published.status,
+            ...(published.status === 'live'
+              ? { hostedPreviewUrl: published.url }
+              : {}),
+          });
+          if (published.status !== 'live') {
+            console.warn(
+              `[Flowstarter] preview ${demoId} was not hosted: ${
+                published.detail ?? 'unknown reason'
+              }`
+            );
+          }
+        })
+        .catch((error) => {
+          updateJob(demoId, { hostedPreviewStatus: 'failed' });
+          console.warn(
+            `[Flowstarter] preview ${demoId} could not be published to the ` +
+              'previews host: ' +
+              (error instanceof Error ? error.message : 'unknown error')
+          );
+        });
 
       updateJob(demoId, {
         status: 'ready',
@@ -626,6 +664,11 @@ export async function GET(req: NextRequest) {
       phase: job.phase,
       personalized: job.personalized ?? false,
       previewUrl: job.status === 'ready' ? job.previewUrl : undefined,
+      // Both, deliberately: the sandbox URL is what the iframe renders, the
+      // hosted one is the durable, shareable copy on the previews host — and
+      // it is only ever present once that host reported the site live.
+      hostedPreviewUrl: job.hostedPreviewUrl,
+      hostedPreviewStatus: job.hostedPreviewStatus,
       editsUsed: job.editsUsed,
       error: job.status === 'failed' ? job.error : undefined,
     },

@@ -129,7 +129,11 @@ export function diffWords(before: string, after: string): DiffPart[] {
   const left = before.split(/(\s+)/);
   const right = after.split(/(\s+)/);
   let head = 0;
-  while (head < left.length && head < right.length && left[head] === right[head])
+  while (
+    head < left.length &&
+    head < right.length &&
+    left[head] === right[head]
+  )
     head += 1;
   let tail = 0;
   while (

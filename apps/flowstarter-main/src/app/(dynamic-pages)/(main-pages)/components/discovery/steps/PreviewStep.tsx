@@ -14,6 +14,7 @@ import {
   claimIntakeChatPayload,
   describeWithIntakeAnswers,
 } from '../intake-chat.shared';
+import { usePreviewProgress } from '../usePreviewProgress';
 import { DemoSiteFrame } from './DemoSiteFrame';
 
 /**
@@ -107,6 +108,29 @@ interface ChatTurn {
   text: string;
 }
 
+/**
+ * Shared by both the JSON-fallback and the live-preview POST: the info-agent
+ * step's answers ride in on `description`, the only free-prose field the
+ * generator takes. Without this the conversation would only reach the
+ * generator after a claim, and the preview shown right now would ignore
+ * what the visitor just told us.
+ */
+function previewPayload(data: DiscoveryData) {
+  return {
+    businessName: data.businessName,
+    fullName: data.fullName,
+    description: describeWithIntakeAnswers(data),
+    industry: data.industry,
+    targetAudience: data.targetAudience,
+    goal: data.goal,
+    brandTone: data.brandTone,
+    // Collected two steps earlier and previously dropped here, which left
+    // every generated site with placeholder social links.
+    instagramUrl: data.instagramUrl,
+    linkedinUrl: data.linkedinUrl,
+  };
+}
+
 export function PreviewStep({
   data,
   t,
@@ -117,9 +141,13 @@ export function PreviewStep({
   const [mode, setMode] = useState<Mode>('loading');
   const [liveUrl, setLiveUrl] = useState<string | null>(null);
   const [liveDemoId, setLiveDemoId] = useState<string | null>(null);
-  const [livePhase, setLivePhase] = useState<string | null>(null);
   const [iframeNonce, setIframeNonce] = useState(0);
   const [personalizing, setPersonalizing] = useState(false);
+
+  // Real-time build progress over SSE (falls back to polling only if the
+  // stream errors or is unavailable — see usePreviewProgress).
+  const progress = usePreviewProgress(liveDemoId);
+  const livePhase = progress.phase;
 
   // Conversational editor (live mode).
   const [chat, setChat] = useState<ChatTurn[]>([]);
@@ -148,166 +176,85 @@ export function PreviewStep({
     return () => clearInterval(id);
   }, [mode, livePhase]);
 
+  // Shared by the mount effect below (on a failed/skip POST) and by the
+  // progress-driven effect further down (on a failed build): whichever path
+  // a preview takes, this is the one place that decides what "no live
+  // preview" falls back to.
+  const loadJsonFallback = useCallback(async () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = window.sessionStorage.getItem(DEMO_STATE_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw) as DemoState;
+          if (saved?.site) {
+            setDemo(saved);
+            setMode('json');
+            return;
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+    try {
+      const res = await fetch('/api/discovery/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(previewPayload(data)),
+      });
+      const json = (await res.json().catch(() => ({}))) as {
+        site?: DemoSite;
+        demoId?: string | null;
+        skip?: boolean;
+      };
+      if (res.ok && json.site) {
+        setDemo({
+          demoId: json.demoId ?? null,
+          site: json.site,
+          editsUsed: 0,
+        });
+      } else {
+        setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
+        setNotice(t('landing.discovery.preview.editorUnavailable'));
+      }
+    } catch {
+      setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
+      setNotice(t('landing.discovery.preview.editorUnavailable'));
+    } finally {
+      setMode('json');
+    }
+  }, [data, t]);
+
   useEffect(() => {
     let cancelled = false;
 
-    const payload = {
-      businessName: data.businessName,
-      fullName: data.fullName,
-      // The info-agent step's answers ride in on the description, which is
-      // the only free-prose field the generator takes. Without this the
-      // conversation would only reach the generator after a claim, and the
-      // preview the visitor is shown right now would ignore what they just
-      // told us.
-      description: describeWithIntakeAnswers(data),
-      industry: data.industry,
-      targetAudience: data.targetAudience,
-      goal: data.goal,
-      brandTone: data.brandTone,
-      // Collected two steps earlier and previously dropped here, which left
-      // every generated site with placeholder social links.
-      instagramUrl: data.instagramUrl,
-      linkedinUrl: data.linkedinUrl,
-    };
-
-    async function loadJsonFallback() {
-      if (typeof window !== 'undefined') {
-        try {
-          const raw = window.sessionStorage.getItem(DEMO_STATE_KEY);
-          if (raw) {
-            const saved = JSON.parse(raw) as DemoState;
-            if (saved?.site) {
-              if (cancelled) return;
-              setDemo(saved);
-              setMode('json');
-              return;
-            }
-          }
-        } catch {
-          /* ignore */
-        }
-      }
-      try {
-        const res = await fetch('/api/discovery/preview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        const json = (await res.json().catch(() => ({}))) as {
-          site?: DemoSite;
-          demoId?: string | null;
-          skip?: boolean;
-        };
-        if (cancelled) return;
-        if (res.ok && json.site) {
-          setDemo({
-            demoId: json.demoId ?? null,
-            site: json.site,
-            editsUsed: 0,
-          });
-        } else {
-          setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
-          setNotice(t('landing.discovery.preview.editorUnavailable'));
-        }
-      } catch {
-        if (!cancelled) {
-          setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
-          setNotice(t('landing.discovery.preview.editorUnavailable'));
-        }
-      } finally {
-        if (!cancelled) setMode('json');
-      }
-    }
-
     async function runLive() {
-      let demoId: string | null = null;
       try {
         const res = await fetch('/api/discovery/preview/live', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(previewPayload(data)),
         });
         const json = (await res.json().catch(() => ({}))) as {
           demoId?: string;
           skip?: boolean;
         };
         if (cancelled) return;
-        if (json.skip || !json.demoId) return loadJsonFallback();
-        demoId = json.demoId;
-        setLiveDemoId(demoId);
+        if (json.skip || !json.demoId) {
+          void loadJsonFallback();
+          return;
+        }
+        setLiveDemoId(json.demoId);
       } catch {
-        return loadJsonFallback();
+        if (!cancelled) void loadJsonFallback();
       }
-
-      const started = Date.now();
-      let shownBase = false;
-      while (!cancelled && Date.now() - started < 18 * 60_000) {
-        await new Promise((r) => setTimeout(r, 3500));
-        if (cancelled) return;
-        let s: {
-          status?: string;
-          phase?: string;
-          previewUrl?: string;
-          personalized?: boolean;
-          error?: string;
-        } = {};
-        try {
-          const r = await fetch(
-            `/api/discovery/preview/live?demoId=${encodeURIComponent(demoId)}`
-          );
-          s = (await r.json().catch(() => ({}))) as typeof s;
-        } catch {
-          continue;
-        }
-        if (s.phase) setLivePhase(s.phase);
-
-        // First time it's ready: show the base template live immediately.
-        if (s.status === 'ready' && s.previewUrl && !shownBase) {
-          if (cancelled) return;
-          shownBase = true;
-          setLiveUrl(s.previewUrl);
-          setMode('live');
-          setPersonalizing(!s.personalized);
-          setChat([
-            {
-              role: 'agent',
-              text: s.personalized
-                ? `Your site is live. Tell me what to change — ${LIVE_EDIT_CAP} prompts to make it yours.`
-                : 'Here’s your starting point — personalizing it for your business now…',
-            },
-          ]);
-        }
-        // Personalization hot-swapped in: refresh the iframe, hand over.
-        if (shownBase && s.personalized) {
-          if (cancelled) return;
-          setPersonalizing(false);
-          setIframeNonce((n) => n + 1);
-          setChat([
-            {
-              role: 'agent',
-              text: `Your personalized site is live. Tell me what to change — you have ${LIVE_EDIT_CAP} prompts to make it yours.`,
-            },
-          ]);
-          return;
-        }
-        if (s.status === 'failed') return loadJsonFallback();
-        if (
-          shownBase &&
-          s.phase &&
-          /personalization unavailable/i.test(s.phase)
-        ) {
-          // Fail-soft: base template stays as a real, relevant demo.
-          setPersonalizing(false);
-          return;
-        }
-      }
-      if (!cancelled && !shownBase) return loadJsonFallback();
     }
 
     // Defer the kickoff one macrotask so React Strict Mode's
     // mount → unmount → remount cancels the throwaway first run *before*
     // it POSTs. Exactly one live job is ever created (dev and prod alike);
-    // the surviving mount is the one that polls to completion.
+    // the surviving mount is the one whose demoId feeds usePreviewProgress,
+    // which takes it from there over SSE.
     const startTimer = setTimeout(() => {
       if (!cancelled) runLive();
     }, 30);
@@ -317,6 +264,72 @@ export function PreviewStep({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Drives the live-preview state machine off the SSE-backed progress hook
+  // instead of a manual poll loop: show the base template the moment the
+  // build reports ready, hand over once personalization lands, or fall back
+  // to the JSON demo if the build fails. shownBaseRef/resolvedRef make each
+  // transition fire exactly once, same as the old loop's early `return`s.
+  const shownBaseRef = useRef(false);
+  const resolvedRef = useRef(false);
+  useEffect(() => {
+    if (!liveDemoId) return;
+
+    // First time it's ready: show the base template live immediately.
+    if (
+      progress.status === 'ready' &&
+      progress.previewUrl &&
+      !shownBaseRef.current
+    ) {
+      shownBaseRef.current = true;
+      setLiveUrl(progress.previewUrl);
+      setMode('live');
+      setPersonalizing(!progress.personalized);
+      setChat([
+        {
+          role: 'agent',
+          text: progress.personalized
+            ? `Your site is live. Tell me what to change — ${LIVE_EDIT_CAP} prompts to make it yours.`
+            : 'Here’s your starting point — personalizing it for your business now…',
+        },
+      ]);
+    }
+
+    // Personalization hot-swapped in: refresh the iframe, hand over.
+    if (
+      shownBaseRef.current &&
+      progress.personalized &&
+      !resolvedRef.current
+    ) {
+      resolvedRef.current = true;
+      setPersonalizing(false);
+      setIframeNonce((n) => n + 1);
+      setChat([
+        {
+          role: 'agent',
+          text: `Your personalized site is live. Tell me what to change — you have ${LIVE_EDIT_CAP} prompts to make it yours.`,
+        },
+      ]);
+      return;
+    }
+
+    if (progress.status === 'failed' && !resolvedRef.current) {
+      resolvedRef.current = true;
+      void loadJsonFallback();
+      return;
+    }
+
+    if (
+      shownBaseRef.current &&
+      progress.phase &&
+      /personalization unavailable/i.test(progress.phase) &&
+      !resolvedRef.current
+    ) {
+      // Fail-soft: base template stays as a real, relevant demo.
+      resolvedRef.current = true;
+      setPersonalizing(false);
+    }
+  }, [progress, liveDemoId, loadJsonFallback]);
 
   useEffect(() => {
     if (!demo || typeof window === 'undefined') return;
@@ -612,10 +625,53 @@ export function PreviewStep({
 
       {mode === 'loading' && (
         <div className="flex h-64 flex-col justify-center gap-3 rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-6">
-          {livePhase ? (
-            <div className="flex items-center gap-3 text-sm text-[var(--fs-ink)]">
-              <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
-              <span>{livePhase}</span>
+          {progress.phases.length > 0 ? (
+            // Real progress, appended live as each phase starts (streamed
+            // over SSE, falling back to a poll only if the stream drops) —
+            // a running log rather than a lone spinner, since the build
+            // takes minutes and the visitor should see it actually moving.
+            <div className="max-h-56 space-y-2 overflow-y-auto" role="log">
+              {progress.phases.map((entry, i) => {
+                const isCurrent = i === progress.phases.length - 1;
+                return (
+                  <div
+                    key={entry.index}
+                    className={[
+                      'flex items-center gap-3 text-sm',
+                      isCurrent
+                        ? 'text-[var(--fs-ink)]'
+                        : 'text-[var(--fs-ink-faint)]',
+                    ].join(' ')}
+                  >
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center">
+                      {isCurrent ? (
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
+                      ) : (
+                        <svg
+                          className="h-4 w-4 text-[var(--purple-primary)]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="flex-1">
+                      {entry.phase}
+                      {isCurrent && '…'}
+                    </span>
+                    <span className="shrink-0 text-[11px] tabular-nums text-[var(--fs-ink-faint)]">
+                      {entry.at}s
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             BUILD_STEPS.map((key, i) => {

@@ -48,7 +48,13 @@ import {
   type BusinessNamesResponse,
   type IntakeChatResponse,
 } from '../intake-chat.shared';
-import { ConciergePanes, NowLine, SiteSkeleton } from './ConciergePanes';
+import {
+  ChatBubble,
+  ConciergePanes,
+  ConversationLog,
+  NowLine,
+  SiteSkeleton,
+} from './ConciergePanes';
 
 const OPENING_LINE =
   'Before I build your preview — a couple of quick questions. Two minutes, ' +
@@ -84,14 +90,6 @@ export function InfoAgentStep({
   const [namesPending, setNamesPending] = useState(false);
   const [namesAsked, setNamesAsked] = useState(false);
   const started = useRef(false);
-  const endRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Optional-called: not every environment the wizard renders in (jsdom,
-    // older Safari in a modal) implements it, and a missing scroll is not
-    // worth an exception in the middle of a conversation.
-    endRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
-  }, [transcript.length, pending]);
 
   const turn = useCallback(
     async (next: IntakeChatTurn[]) => {
@@ -236,9 +234,6 @@ export function InfoAgentStep({
       }
       conversation={
         <div className="space-y-4">
-          {/* The wizard already prints this step's title above the panes, so
-            the pane opens with the promise rather than repeating it. */}
-          <p className="text-sm text-[var(--fs-ink-faint)]">{OPENING_LINE}</p>
           {/* What the gate says is still missing — in its words, not its codes. */}
           {missing.length > 0 && (
             <section
@@ -281,43 +276,38 @@ export function InfoAgentStep({
             </section>
           )}
 
-          {/* The conversation */}
-          <section
-            aria-label="Intake conversation"
-            aria-busy={pending}
-            className="max-h-72 space-y-2.5 overflow-y-auto rounded-lg border border-[var(--fs-rule)] p-3.5"
+          {/* The conversation. Same log, same bubbles as the scripted intake
+              the visitor has just come through — from their side this is one
+              conversation that happens to have changed subject, not a second
+              chat window. */}
+          <ConversationLog
+            label="Intake conversation"
+            scrollSignal={transcript.length + (pending ? 1 : 0)}
           >
+            <ChatBubble tone="agent" author="Flowstarter agent">
+              {OPENING_LINE}
+            </ChatBubble>
             {transcript.length === 0 && !pending && (
-              <p className="text-sm text-[var(--fs-ink-faint)]">
+              <ChatBubble tone="earlier">
                 Nothing to ask — your answers already cover what we need.
-              </p>
+              </ChatBubble>
             )}
             {transcript.map((entry, index) => (
-              <div
+              <ChatBubble
                 key={`${entry.role}-${index}`}
-                className={
-                  entry.role === 'client'
-                    ? 'ml-8 rounded-lg bg-[var(--purple-primary)]/10 px-3 py-2 text-sm text-[var(--fs-ink)]'
-                    : 'mr-8 rounded-lg border border-[var(--fs-rule)] px-3 py-2 text-sm text-[var(--fs-ink)]'
-                }
+                tone={entry.role === 'client' ? 'you' : 'agent'}
               >
                 {entry.text}
-              </div>
+              </ChatBubble>
             ))}
             {pending && (
-              <p
-                role="status"
-                className="mr-8 flex items-center gap-2 rounded-lg border border-[var(--fs-rule)] px-3 py-2 text-sm text-[var(--fs-ink-faint)]"
-              >
-                <span
-                  aria-hidden
-                  className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent"
-                />
-                Thinking — this takes a few seconds
-              </p>
+              <div role="status">
+                <ChatBubble tone="agent" state="working" author="Thinking">
+                  This takes a few seconds
+                </ChatBubble>
+              </div>
             )}
-            <div ref={endRef} />
-          </section>
+          </ConversationLog>
 
           {error && (
             <p role="alert" className="text-sm text-[var(--fs-ink-faint)]">

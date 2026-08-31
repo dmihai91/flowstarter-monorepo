@@ -20,8 +20,8 @@ export function AuthFormCard({
     <div
       className={
         landingSurface
-          ? 'auth-form-card--landing relative overflow-hidden w-full max-w-[540px] mx-auto rounded-[var(--fs-radius-2xl)] backdrop-blur-2xl py-7 px-6 md:px-8 border'
-          : 'w-full max-w-[540px] mx-auto rounded-[var(--fs-radius-2xl)] backdrop-blur-2xl py-7 px-6 md:px-8 border'
+          ? 'auth-form-card auth-form-card--landing relative overflow-hidden w-full max-w-[540px] mx-auto rounded-[var(--fs-radius-2xl)] backdrop-blur-2xl py-7 px-6 md:px-8 border'
+          : 'auth-form-card w-full max-w-[540px] mx-auto rounded-[var(--fs-radius-2xl)] backdrop-blur-2xl py-7 px-6 md:px-8 border'
       }
       style={{
         background: 'var(--fs-glass-bg)',

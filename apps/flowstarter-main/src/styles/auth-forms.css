@@ -69,6 +69,85 @@
   -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
 }
 
+/* ── Card box inside a modal — opaque, not glass ──
+   `--fs-glass-bg` is translucent, so over the dimmed modal backdrop the
+   sign-in dialog rendered as a muddy grey slab. The discovery wizard's own
+   dialog is an opaque surface with a hairline edge and a soft lift over a
+   `bg-black/60` scrim; match it here so both dialogs read the same. */
+.cl-modalContent .cl-cardBox {
+  background: var(--fs-bg-elevated) !important;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.22),
+    0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+.cl-modalContent .cl-card {
+  background: transparent !important;
+}
+
+/* ── Shared auth card (client + operator sign-in) ──
+   The form markup inside comes from `@flowstarter/flow-design-system`, so the
+   app brings its controls onto the landing recipe from the outside rather than
+   forking the shared component. */
+
+/* Primary submit — the landing CTA gradient, matching `CTAButton` and the
+   Clerk `formButtonPrimary`, instead of a flat `--purple` fill. */
+.auth-form-card button[type='submit'] {
+  background: linear-gradient(
+    135deg,
+    var(--landing-btn-from),
+    var(--landing-btn-via)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 10px 28px rgba(78, 94, 218, 0.22);
+  transition:
+    transform 200ms cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 200ms ease,
+    background 200ms ease;
+}
+
+.auth-form-card button[type='submit']:hover:not(:disabled) {
+  background: linear-gradient(
+    135deg,
+    var(--landing-btn-hover-from),
+    var(--landing-btn-hover-via)
+  );
+  filter: none;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 14px 34px rgba(78, 94, 218, 0.3);
+}
+
+.auth-form-card button[type='submit']:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Inputs — a `--fs-rule` hairline and the purple focus ring the discovery
+   wizard's `Field` uses; the shared component ships a white border that
+   disappears against the card. */
+.auth-form-card input[type='email'],
+.auth-form-card input[type='password'],
+.auth-form-card input[type='text'] {
+  border-color: var(--fs-rule);
+  background: var(--fs-bg-elevated);
+}
+
+.auth-form-card input[type='email']:hover,
+.auth-form-card input[type='password']:hover,
+.auth-form-card input[type='text']:hover {
+  border-color: var(--fs-accent-ring);
+}
+
+.auth-form-card input[type='email']:focus,
+.auth-form-card input[type='password']:focus,
+.auth-form-card input[type='text']:focus {
+  border-color: var(--purple-primary);
+  box-shadow: 0 0 0 4px var(--purple-primary-lightest);
+  outline: none;
+}
+
 /* ── Password visibility icon ── */
 .dark .cl-formFieldActionIcon,
 .dark .cl-formFieldActionButton,

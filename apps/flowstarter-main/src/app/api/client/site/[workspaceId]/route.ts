@@ -65,6 +65,7 @@ export async function GET(
       policy: {
         content: decideEditorAction(context.access, 'content'),
         image: decideEditorAction(context.access, 'image'),
+        structural: decideEditorAction(context.access, 'layout'),
       },
     });
   } catch (error) {

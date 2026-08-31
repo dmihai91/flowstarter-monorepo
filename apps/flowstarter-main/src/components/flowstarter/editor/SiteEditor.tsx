@@ -23,6 +23,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { PolicyNotice } from './PolicyNotice';
+import { EscalationPanel } from './EscalationPanel';
 import { ImageSlotsPanel } from './ImageSlotsPanel';
 import { VersionHistoryPanel } from './VersionHistoryPanel';
 import {
@@ -42,7 +43,7 @@ import {
 const PREVIEW_MESSAGE_SOURCE = 'flowstarter-site-preview';
 const EDITOR_MESSAGE_SOURCE = 'flowstarter-site-editor';
 
-type Tab = 'text' | 'images' | 'history';
+type Tab = 'text' | 'images' | 'request' | 'history';
 
 interface Proposal {
   targetId: string;
@@ -247,6 +248,7 @@ export function SiteEditor({
             [
               ['text', 'Words'],
               ['images', 'Pictures'],
+              ['request', 'Bigger changes'],
               ['history', 'History'],
             ] as Array<[Tab, string]>
           ).map(([value, label]) => (
@@ -419,6 +421,14 @@ export function SiteEditor({
               setFrameKey((key) => key + 1);
               await refreshState().catch(() => {});
             }}
+          />
+        ) : null}
+
+        {tab === 'request' ? (
+          <EscalationPanel
+            workspaceId={workspaceId}
+            policy={initial.policy.structural}
+            onGoToTab={(next) => setTab(next)}
           />
         ) : null}
 

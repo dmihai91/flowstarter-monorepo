@@ -502,6 +502,47 @@ export function clientReplyToCorpusDocument(input: {
   };
 }
 
+export interface RecordChangeRequestInput {
+  workspaceId: string;
+  body: string;
+  clerkUserId: string;
+}
+
+/**
+ * Files a client's escalated change request into the thread. Inbound like a
+ * reply, but it deliberately does NOT close any open ask — the client asking
+ * for a new page has answered nothing — and it lands `status: 'sent'` because
+ * a change request waits on the operator, not on the client.
+ */
+export async function recordChangeRequest(
+  input: RecordChangeRequestInput
+): Promise<{ messageId: string }> {
+  assertWorkspaceId(input.workspaceId);
+  const body = normalizeBody(input.body);
+  if (!input.clerkUserId) {
+    throw new MessagingError('A change request must name its author');
+  }
+
+  const supabase = createSupabaseServiceRoleClient();
+  const tenant = withTenant(supabase, input.workspaceId);
+  const { data: inserted, error: insertError } = await tenant
+    .from('project_messages')
+    .insert({
+      direction: 'inbound',
+      kind: 'change_request',
+      body,
+      asks: [] as unknown as Json,
+      status: 'sent',
+      sent_at: new Date().toISOString(),
+      created_by: input.clerkUserId,
+    })
+    .select('id')
+    .maybeSingle<{ id: string }>();
+  if (insertError) throw insertError;
+  if (!inserted) throw new MessagingError('Change request row was not created');
+  return { messageId: inserted.id };
+}
+
 export interface RecordClientReplyInput {
   workspaceId: string;
   body: string;

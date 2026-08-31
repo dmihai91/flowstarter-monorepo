@@ -31,6 +31,7 @@ import { POST as APPLY } from '../apply/route';
 import { GET as LIST_IMAGES, POST as SWAP_IMAGE } from '../images/route';
 import { POST as REVERT } from '../revert/route';
 import { POST as PUBLISH } from '../publish/route';
+import { POST as ESCALATE } from '../escalate/route';
 import { GET as PREVIEW } from '../preview/[[...path]]/route';
 import { createFakeSiteSupabase, type Row } from './fake-site-supabase';
 
@@ -781,5 +782,81 @@ describe('publishing', () => {
         .rows('project_events')
         .some((row) => row.kind === 'site_publish_requested')
     ).toBe(true);
+  });
+});
+
+// ── 8. Bigger changes: escalation with rule-based classification ───────────
+
+describe('escalating a bigger change', () => {
+  it('files a structural request into the thread as a change_request', async () => {
+    const response = await ESCALATE(
+      post('/x', {
+        request: 'Add a page for group workshops with a booking calendar',
+      }),
+      params(WORKSPACE_A)
+    );
+    expect(response.status).toBe(201);
+    const body = await response.json();
+    expect(body.classification).toBe('structural');
+    expect(body.escalated).toBe(true);
+
+    const message = db
+      .rows('project_messages')
+      .find((row) => row.kind === 'change_request');
+    expect(message).toBeTruthy();
+    expect(message?.direction).toBe('inbound');
+    expect(message?.status).toBe('sent');
+    expect(String(message?.body)).toContain('group workshops');
+  });
+
+  it('points a wording request back at the editor without filing anything', async () => {
+    const response = await ESCALATE(
+      post('/x', { request: 'Fix the typo in the about paragraph please' }),
+      params(WORKSPACE_A)
+    );
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.classification).toBe('content');
+    expect(body.escalated).toBe(false);
+    expect(
+      db.rows('project_messages').some((row) => row.kind === 'change_request')
+    ).toBe(false);
+  });
+
+  it('files anyway when the client insists', async () => {
+    const response = await ESCALATE(
+      post('/x', {
+        request: 'Fix the typo in the about paragraph please',
+        force: true,
+      }),
+      params(WORKSPACE_A)
+    );
+    expect(response.status).toBe(201);
+    expect((await response.json()).escalated).toBe(true);
+    expect(
+      db.rows('project_messages').some((row) => row.kind === 'change_request')
+    ).toBe(true);
+  });
+
+  it('is 404 on a workspace that is not yours, and files nothing', async () => {
+    const response = await ESCALATE(
+      post('/x', { request: 'Add a booking page to this site' }),
+      params(WORKSPACE_B)
+    );
+    expect(response.status).toBe(404);
+    expect(db.rows('project_messages')).toHaveLength(0);
+  });
+
+  it('refuses when the subscription has lapsed, in the policy’s own words', async () => {
+    db.reset();
+    seedWorkspace('past_due');
+    const response = await ESCALATE(
+      post('/x', { request: 'Add a booking page to this site' }),
+      params(WORKSPACE_A)
+    );
+    expect(response.status).toBe(402);
+    const body = await response.json();
+    expect(body.policy?.action).toBe('deny');
+    expect(db.rows('project_messages')).toHaveLength(0);
   });
 });

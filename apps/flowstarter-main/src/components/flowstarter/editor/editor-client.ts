@@ -45,7 +45,12 @@ export interface EditorState {
   targets: EditorTarget[];
   versions: EditorVersion[];
   allowance: { used: number; cap: number; maxInstructionChars: number };
-  policy: { content: PolicyDecision; image: PolicyDecision };
+  policy: {
+    content: PolicyDecision;
+    image: PolicyDecision;
+    /** The 'layout' capability's verdict — what "Bigger changes" renders. */
+    structural: PolicyDecision;
+  };
 }
 
 export interface ImageSlot {

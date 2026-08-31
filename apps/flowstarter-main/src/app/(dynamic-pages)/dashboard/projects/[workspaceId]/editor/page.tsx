@@ -94,6 +94,7 @@ export default async function ClientSiteEditorPage({
     policy: {
       content: decideEditorAction(editorAccess, 'content'),
       image: decideEditorAction(editorAccess, 'image'),
+      structural: decideEditorAction(editorAccess, 'layout'),
     },
   };
 

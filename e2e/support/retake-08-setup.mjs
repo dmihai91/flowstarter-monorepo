@@ -29,7 +29,7 @@ const PREVIEW = 'e5fe0568-7b28-4a3b-b9b6-fd7355d1eb2c';
 const STATE = '/tmp/retake-client-state.json';
 const WS_FILE = '/tmp/retake-workspace.txt';
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const ctx = await browser.newContext({
   viewport: { width: 1280, height: 800 },
   storageState: STATE,

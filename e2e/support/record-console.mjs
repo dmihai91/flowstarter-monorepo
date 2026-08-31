@@ -38,7 +38,7 @@ const PHOTOS = [
   'artifacts/darius-portfolio/images/budget-dark.png',
 ];
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const results = [];
 const notes = {};
 

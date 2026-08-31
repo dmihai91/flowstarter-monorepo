@@ -11,7 +11,7 @@ const exec = promisify(execFile);
 const WS = '0f4e1088-8d8f-4f18-83b1-406cc292b23c';
 const BASE = 'http://127.0.0.1:3000';
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const ctx = await browser.newContext({
   storageState: 'e2e/.auth/operator.json',
   viewport: { width: 1440, height: 900 },

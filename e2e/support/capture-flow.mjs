@@ -25,7 +25,7 @@ const SHOTS = [
   },
 ];
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const page = await browser.newPage({
   viewport: { width: 1440, height: 900 },
   reducedMotion: 'reduce',

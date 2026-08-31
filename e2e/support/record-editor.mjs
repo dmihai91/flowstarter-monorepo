@@ -25,7 +25,7 @@ const WS = readFileSync('/tmp/showcase-workspace.txt', 'utf8').trim();
 const CLIENT_STATE = '/tmp/showcase-client-state.json';
 const notes = {};
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const res = await clip(browser, '08-editor', { storageState: CLIENT_STATE }, async (page) => {
   await page.goto(`${APP}/dashboard/projects/${WS}/editor`, { waitUntil: 'domcontentloaded' });
   await pause(page, 6000);

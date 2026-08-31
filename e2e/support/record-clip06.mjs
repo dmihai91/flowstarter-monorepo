@@ -1,7 +1,7 @@
 /** Clip 06: the Instagram-derived portfolio, scrolled through for real. */
 import { chromium } from '@playwright/test';
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const ctx = await browser.newContext({
   viewport: { width: 1440, height: 900 },
   recordVideo: { dir: '/tmp/clip06', size: { width: 1440, height: 900 } },

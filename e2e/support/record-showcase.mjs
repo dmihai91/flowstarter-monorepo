@@ -22,7 +22,7 @@ if (SITES.length < 2) {
   process.exit(1);
 }
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const clip = async (name, size, fn) => {
   const ctx = await browser.newContext({
     viewport: size,

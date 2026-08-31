@@ -20,7 +20,7 @@ const CLAIMED = readFileSync('/tmp/retake-workspace.txt', 'utf8').trim();
 const BUILT = '4d543e0b-882b-4a53-9f51-444df9793db7';
 const OP_STATE = '/tmp/retake-operator-state.json';
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
 const page = await ctx.newPage();
 

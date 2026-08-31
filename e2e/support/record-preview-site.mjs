@@ -21,7 +21,7 @@ ensureDirs();
 const URL_ = process.argv[2];
 if (!URL_) { console.error('usage: record-preview-site.mjs <previewUrl>'); process.exit(1); }
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const desktop = await clip(browser, '03d-site-desktop', { size: DESKTOP }, async (page) => {
   await page.goto(URL_, { waitUntil: 'domcontentloaded' });
   await pause(page, 3500);

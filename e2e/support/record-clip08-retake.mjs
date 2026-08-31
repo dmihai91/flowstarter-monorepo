@@ -52,7 +52,7 @@ const CLIENT_STATE = '/tmp/retake-client-state.json';
 const PRO_MONTHLY = '99';
 
 const notes = {};
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const parts = [];
 
 // ── 08a — the operator ──────────────────────────────────────────────────────
@@ -207,7 +207,7 @@ await browser.close();
  * session. Whatever it answers is what the caption says.
  */
 {
-  const b = await chromium.launch();
+  const b = await chromium.launch({ args: ['--disable-features=site-per-process'] });
   const ctx = await b.newContext({ storageState: CLIENT_STATE });
   const page = await ctx.newPage();
   await page.goto(`${APP}/dashboard/projects/${BUILT}/editor`, { waitUntil: 'domcontentloaded' });

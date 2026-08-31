@@ -27,7 +27,7 @@ const CONTRAST_FLOOR = 1.6;
 const GAP_VIEWPORT_RATIO = 0.7;
 
 export async function auditRenderedPreview(previewUrl) {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
   const issues = [];
   try {
     const matrix = [

@@ -15,7 +15,7 @@ const BASE = process.argv[2] ?? 'http://127.0.0.1:3000';
 const OUT = 'e2e/screenshots/flow';
 const STATE = 'e2e/.auth/operator.json';
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const context = await browser.newContext({
   storageState: STATE,
   viewport: { width: 1440, height: 900 },

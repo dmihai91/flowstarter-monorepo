@@ -50,7 +50,10 @@ const BRIEF = {
 const DRAFT_KEY = 'fs-discovery-draft-v1';
 const DEMO_KEY = 'fs-discovery-demo-v1';
 
-const browser = await chromium.launch();
+// Without site-per-process disabled, Chromium hosts the cross-origin preview
+// iframe (the local astro dev server on its own port) in a separate renderer
+// process, and Playwright's screencast records that frame as blank white.
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const results = [];
 const marks = {};
 const mark = (t0, label) => { marks[label] = Math.round((Date.now() - t0) / 1000); };

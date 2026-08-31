@@ -40,7 +40,7 @@ const STATE = '/tmp/retake-client-state.json';
 const PHOTO = 'apps/flowstarter-library/shared-images/services-2.jpg';
 
 const notes = {};
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 
 // ── Off camera: this account's session ──────────────────────────────────────
 {

@@ -2156,6 +2156,7 @@ const en = {
     'storefront support, order + catalog help',
   'landing.discovery.subscription.storeNote':
     'A dedicated store plan with product and collection editing, plus provider sync and order flows handled. Built for running a storefront, not just a content site.',
+  'landing.discovery.steps.info.title': 'A couple of things before we build',
   'landing.discovery.steps.preview.title': 'Your site, being built',
   'landing.discovery.steps.preview.subtitle':
     'Generated from your answers, in seconds. The real one is designed properly on the call',
@@ -2190,6 +2191,86 @@ const en = {
   'landing.discovery.preview.paneSkeleton':
     'Your site appears here as the agents build it. Nothing on this panel is real yet.',
   'landing.discovery.preview.askForChange': 'Ask for a change',
+
+  // The intake conversation (steps 1–6). The question order, the validation
+  // and the decision that the intake is finished all live in
+  // `intake-script.ts` — this is only the phrasing. {name} and {business} are
+  // filled from the visitor's own earlier answers.
+  'landing.discovery.chat.title': "Let's talk about your site",
+  'landing.discovery.chat.intro':
+    "Hi — I'm your Flowstarter agent. A few short questions, and at the end of them you get a working preview of your site. Skip anything you'd rather not answer.",
+  'landing.discovery.chat.agentName': 'Flowstarter agent',
+  'landing.discovery.chat.logLabel': 'Your conversation',
+  'landing.discovery.chat.progressLabel': 'Questions answered',
+  'landing.discovery.chat.progressCount': '{done}/{total}',
+  'landing.discovery.chat.composerLabel': 'Your answer',
+  'landing.discovery.chat.composerPlaceholder': 'Type your answer…',
+  'landing.discovery.chat.send': 'Send',
+  'landing.discovery.chat.done': "That's it",
+  'landing.discovery.chat.confirm': 'Looks good — carry on',
+  'landing.discovery.chat.edit': 'Edit',
+  'landing.discovery.chat.reask': "Sure, let's redo that one.",
+  'landing.discovery.chat.skip': 'Skip this one',
+  'landing.discovery.chat.skipped': 'Skipped for now',
+  'landing.discovery.chat.skipRest': 'Skip ahead to the preview',
+  'landing.discovery.chat.skipRestHint':
+    'You can fill the rest in later — nothing here is locked in.',
+  'landing.discovery.chat.skipRestActive':
+    'Skipping ahead — only the answers we cannot build without are left.',
+  'landing.discovery.chat.stillNeeded':
+    'Happy to jump ahead — I just need {count} more from you first, then the preview is yours.',
+  'landing.discovery.chat.tokens.you': 'there',
+  'landing.discovery.chat.tokens.business': 'your business',
+
+  'landing.discovery.chat.errors.required':
+    "I do need this one, sorry — it's one of the few I can't build anything without.",
+  'landing.discovery.chat.errors.fullName':
+    'A first name is plenty — I just need something to call you.',
+  'landing.discovery.chat.errors.email':
+    "That doesn't look like an email address. Mind checking it?",
+  'landing.discovery.chat.errors.description':
+    'A little more than that, if you can — a sentence or two is all I need.',
+  'landing.discovery.chat.errors.goal':
+    'Pick at least one, or tell me in your own words.',
+  'landing.discovery.chat.errors.choice':
+    "I didn't catch that one — tapping one of the options above is easiest.",
+
+  'landing.discovery.chat.q.fullName.prompt':
+    'First things first: what should I call you?',
+  'landing.discovery.chat.q.email.prompt':
+    'Good to meet you, {name}. Where should I send your preview?',
+  'landing.discovery.chat.q.businessName.prompt':
+    "And what's the business called? If you haven't settled on a name, skip it — we can come back to it.",
+  'landing.discovery.chat.q.description.prompt':
+    'Now the one that matters most: what does {business} actually do? Your own words, a sentence or two.',
+  'landing.discovery.chat.q.industry.prompt':
+    "Which of these is closest to your line of work? Tap one, or type it if it's none of them.",
+  'landing.discovery.chat.q.targetAudience.prompt':
+    "Who are you trying to reach? Describe them the way you'd describe them to a friend.",
+  'landing.discovery.chat.q.links.prompt':
+    'Anything of yours I can look at — Instagram, LinkedIn? Paste a link and I will match your voice to it.',
+  'landing.discovery.chat.q.links.placeholder':
+    'instagram.com/yourbusiness, linkedin.com/company/…',
+  'landing.discovery.chat.q.goal.prompt':
+    'What should the site actually do for you? Pick as many as fit, or add your own.',
+  'landing.discovery.chat.q.goal.placeholder':
+    'Something else you want it to do…',
+  'landing.discovery.chat.q.brandTone.prompt':
+    'How should {business} come across? Pick a few words.',
+  'landing.discovery.chat.q.brandTone.placeholder': 'Add a word of your own…',
+  'landing.discovery.chat.q.pageCount.prompt':
+    'Roughly how big a site are we talking?',
+  'landing.discovery.chat.q.timeline.prompt': 'When would you like it live?',
+  'landing.discovery.chat.q.commerceMode.prompt':
+    'Will you be selling anything through the site?',
+  'landing.discovery.chat.q.catalogSize.prompt':
+    'Roughly how many products or services?',
+  'landing.discovery.chat.q.customIntegrations.prompt':
+    'Last one about the business: anything unusual it has to plug into? Bookings, payments, a mailing list, a member area.',
+  'landing.discovery.chat.q.selectedTier.prompt':
+    "That's everything I need. Here's the build package your answers point to — change it if you would rather.",
+  'landing.discovery.chat.q.subscription.prompt':
+    "One last decision: the monthly plan. It's separate from the build, and it's what decides how much you can change yourself afterwards.",
 
   // Field labels
   'landing.discovery.fields.fullName': 'Your name',

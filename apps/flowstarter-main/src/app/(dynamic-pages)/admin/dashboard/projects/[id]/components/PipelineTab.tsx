@@ -54,12 +54,18 @@ const STATE_LABEL: Record<ProjectState, string> = {
   [ProjectState.LIVE_SUBSCRIPTION]: 'Live subscription',
 };
 
+/** Same chip recipe as the pipeline board, the billing and hosting tabs. */
+const NEUTRAL_TONE =
+  'border-[var(--fs-rule)] bg-transparent text-[var(--fs-ink-dim)]';
+
 const JOB_TONE: Record<string, string> = {
-  queued: 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
-  running: 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400',
-  succeeded: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  failed: 'bg-red-500/15 text-red-600 dark:text-red-400',
-  canceled: 'bg-[var(--fs-glass-bg)] text-[var(--fs-ink-faint)]',
+  queued: 'border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300',
+  running:
+    'border-indigo-500/25 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300',
+  succeeded:
+    'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  failed: 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-300',
+  canceled: NEUTRAL_TONE,
 };
 
 function humanDuration(ms: number): string {
@@ -123,9 +129,8 @@ function JobRow({
             {job.kind}
           </span>
           <span
-            className={`ml-2 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-              JOB_TONE[job.status] ??
-              'bg-[var(--fs-glass-bg)] text-[var(--fs-ink-faint)]'
+            className={`ml-2 inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium leading-5 ${
+              JOB_TONE[job.status] ?? NEUTRAL_TONE
             }`}
           >
             {job.status}

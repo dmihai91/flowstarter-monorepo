@@ -30,23 +30,28 @@ type SubscriptionState =
   | string
   | null;
 
+/**
+ * One chip recipe across the console: a hairline border, a 10% tint and a
+ * readable text tone in both themes. Matches the pipeline board's chips.
+ */
+const NEUTRAL_TONE =
+  'border-[var(--fs-rule)] bg-transparent text-[var(--fs-ink-dim)]';
+
 const INVOICE_TONE: Record<string, string> = {
-  paid: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
-  sent: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-  pending:
-    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
-  overdue: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400',
+  paid: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  sent: 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+  pending: NEUTRAL_TONE,
+  overdue: 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-300',
 };
 
 const SUBSCRIPTION_TONE: Record<string, string> = {
-  trial: 'bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-400',
+  trial: 'border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300',
   active:
-    'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
-  past_due: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400',
-  cancelled:
-    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-400',
+    'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  past_due: 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-300',
+  cancelled: NEUTRAL_TONE,
   incomplete:
-    'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+    'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
 };
 
 function StatusPill({
@@ -56,10 +61,12 @@ function StatusPill({
   status: string;
   tone: Record<string, string>;
 }) {
-  const cls = tone[status] ?? 'bg-slate-100 text-slate-700';
+  // The old fallback had no dark variant, so an unmapped status rendered as
+  // dark slate text on a light slate chip in dark mode.
+  const cls = tone[status] ?? NEUTRAL_TONE;
   return (
     <span
-      className={`inline-flex rounded-full px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide ${cls}`}
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium uppercase leading-5 tracking-wide ${cls}`}
     >
       {status.replace(/_/g, ' ')}
     </span>

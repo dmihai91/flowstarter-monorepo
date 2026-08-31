@@ -31,18 +31,28 @@ const STATE_LABEL: Record<ProjectState, string> = {
   [ProjectState.LIVE_SUBSCRIPTION]: 'Live',
 };
 
+/** One chip shape for the whole board; a tone only supplies colour. */
+const NEUTRAL_TONE =
+  'border-[var(--ls-rule)] bg-transparent text-[var(--ls-ink-dim)]';
+
 const JOB_TONE: Record<string, string> = {
-  queued: 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
-  running: 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400',
-  succeeded: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  failed: 'bg-red-500/15 text-red-600 dark:text-red-400',
-  canceled: 'bg-[var(--ls-glass-bg)] text-[var(--ls-ink-faint)]',
+  queued: 'border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300',
+  running:
+    'border-indigo-500/25 bg-indigo-500/10 text-indigo-700 dark:text-indigo-300',
+  succeeded:
+    'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  failed: 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-300',
+  canceled: NEUTRAL_TONE,
 };
 
 const DEPOSIT_TONE: Record<string, string> = {
-  paid: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  refunded: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
+  paid: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  refunded:
+    'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
 };
+
+const STALLED_TONE =
+  'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300';
 
 /** Mirrors `formatDuration` in the board lib, for values computed client-side. */
 function humanDuration(ms: number): string {
@@ -67,24 +77,37 @@ function money(minor: number, currency: string): string {
   }
 }
 
-function Pill({ tone, children }: { tone: string; children: React.ReactNode }) {
+function Pill({
+  tone,
+  mono = false,
+  children,
+}: {
+  tone: string;
+  /** Job chips carry a raw enum; mono makes it read as an identifier. */
+  mono?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <span
-      className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${tone}`}
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium leading-5 ${
+        mono ? 'font-mono tracking-[0.04em]' : ''
+      } ${tone}`}
     >
       {children}
     </span>
   );
 }
 
+/**
+ * One card recipe. A stalled card keeps it and adds a left accent rule, so a
+ * full column of stalls no longer reads as a wall of amber.
+ */
 function PipelineCard({ card }: { card: PipelineCardData }) {
   return (
     <Link
       href={`/admin/dashboard/projects/${card.workspaceId}`}
-      className={`block rounded-xl border p-3 transition-colors hover:border-[var(--ls-accent)] ${
-        card.stalled
-          ? 'border-amber-500/50 bg-amber-500/[0.06]'
-          : 'border-[var(--ls-rule)] bg-[var(--ls-glass-bg)]'
+      className={`block rounded-xl border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)] p-3 transition-colors hover:border-[var(--ls-accent)] ${
+        card.stalled ? 'border-l-2 border-l-amber-500' : ''
       }`}
     >
       <div className="flex items-start justify-between gap-2">
@@ -100,40 +123,28 @@ function PipelineCard({ card }: { card: PipelineCardData }) {
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
-        <Pill tone="bg-[var(--ls-glass-bg)] text-[var(--ls-ink-dim)]">
-          {money(card.quoteMinor, card.currency)}
-        </Pill>
-        <Pill
-          tone={
-            DEPOSIT_TONE[card.depositStatus] ??
-            'bg-[var(--ls-glass-bg)] text-[var(--ls-ink-faint)]'
-          }
-        >
+        <Pill tone={NEUTRAL_TONE}>{money(card.quoteMinor, card.currency)}</Pill>
+        <Pill tone={DEPOSIT_TONE[card.depositStatus] ?? NEUTRAL_TONE}>
           {card.depositStatus === 'paid' ? 'Deposit paid' : 'No deposit'}
         </Pill>
         {card.latestJob && (
-          <Pill
-            tone={
-              JOB_TONE[card.latestJob.status] ??
-              'bg-[var(--ls-glass-bg)] text-[var(--ls-ink-faint)]'
-            }
-          >
+          <Pill mono tone={JOB_TONE[card.latestJob.status] ?? NEUTRAL_TONE}>
             {card.latestJob.kind} · {card.latestJob.status}
           </Pill>
         )}
       </div>
 
-      <p className="mt-2 text-[11px] text-[var(--ls-ink-faint)]">
+      <p className="mt-2 text-[11px] text-[var(--ls-ink-dim)]">
         In state {humanDuration(card.timeInStateMs)} · created{' '}
         {compactRelative(card.createdAt)}
       </p>
 
       {card.stallReasons.length > 0 && (
-        <ul className="mt-2 space-y-0.5 border-t border-amber-500/20 pt-2">
+        <ul className="mt-2.5 space-y-1 rounded-lg border border-amber-500/25 bg-amber-500/10 px-2.5 py-2">
           {card.stallReasons.map((reason) => (
             <li
               key={reason}
-              className="text-[11px] leading-snug text-amber-600 dark:text-amber-400"
+              className="text-[11px] leading-snug text-amber-800 dark:text-amber-300"
             >
               {reason}
             </li>
@@ -216,26 +227,26 @@ export default function PipelineBoardPage() {
           {columns.map((column) => (
             <section
               key={column.state}
-              className="rounded-xl border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)]/40 p-3"
+              className="flex min-h-[13rem] flex-col rounded-xl border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)]/40 p-3"
             >
-              <header className="mb-3 flex items-center justify-between gap-2">
+              <header className="mb-3 flex items-center justify-between gap-2 border-b border-[var(--ls-rule)] pb-2.5">
                 <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--ls-ink-dim)]">
                   {STATE_LABEL[column.state]}
                 </h2>
                 <span className="flex items-center gap-1.5">
                   {column.stalledCount > 0 && (
-                    <Pill tone="bg-amber-500/15 text-amber-600 dark:text-amber-400">
+                    <Pill tone={STALLED_TONE}>
                       {column.stalledCount} stalled
                     </Pill>
                   )}
-                  <Pill tone="bg-[var(--ls-glass-bg)] text-[var(--ls-ink-faint)]">
+                  <Pill mono tone={NEUTRAL_TONE}>
                     {column.cards.length}
                   </Pill>
                 </span>
               </header>
 
               {column.cards.length === 0 ? (
-                <p className="py-6 text-center text-xs text-[var(--ls-ink-faint)]">
+                <p className="flex flex-1 items-center justify-center text-xs text-[var(--ls-ink-faint)]">
                   {stalledOnly ? 'Nothing stalled here' : 'Empty'}
                 </p>
               ) : (

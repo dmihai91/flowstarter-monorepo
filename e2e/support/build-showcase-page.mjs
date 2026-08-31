@@ -136,12 +136,18 @@ broke and why, because a reel with the failures cut out would not tell you anyth
 </table>
 
 <h2><span class="n">01</span>Intake</h2>
-${clip('01-intake', 'Landing to brief', `A visitor opens the landing page and works through the wizard with a
-real brief — a Bristol counsellor, from <code>e2e/support/briefs.mjs</code>. The step worth watching is
-the recommendation. It is computed first by <strong>deterministic rules</strong>
-(<code>recommendTier</code> in <code>discovery.logic.ts</code>), which is what puts the tier and its
-reasons on screen; a model call may then refine it, and if that call fails the rules stand. The reasons
-listed are the rules that actually fired, not a generated explanation.`)}
+${clip('01-intake', 'Landing to brief', `A visitor opens the landing page and <strong>talks</strong> the brief
+through — a Bristol counsellor, from <code>e2e/support/briefs.mjs</code>. There is no form: one question
+at a time, answered by typing or by tapping a quick reply, with every earlier answer still on screen and
+editable. What is worth knowing is who decides. The order of the questions, what counts as a valid
+answer, which ones cannot be skipped and when the intake is <em>finished</em> are all data in
+<code>intake-script.ts</code> — <strong>no model is consulted</strong> for any of it. Notice the optional
+question being skipped outright, and <strong>Skip ahead to the preview</strong> sitting under the
+composer the whole way: the conversation is never a trap. The two commercial decisions keep their cards,
+and the recommendation is computed first by <strong>deterministic rules</strong>
+(<code>recommendTier</code> in <code>discovery.logic.ts</code>); a model call may then refine it, and if
+that call fails the rules stand. The reasons listed are the rules that actually fired, not a generated
+explanation.`)}
 
 <h2><span class="n">02</span>The info agent</h2>
 ${clip('02-info-agent', 'What is still missing', `The gate lists what it does not yet know in plain language.

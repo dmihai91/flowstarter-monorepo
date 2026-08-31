@@ -12,6 +12,14 @@
  * sessionStorage and restores it on mount, so resuming mid-wizard is the app's
  * own behaviour, not a harness trick.
  *
+ * Steps 1–6 are no longer six form screens: they are one scripted conversation
+ * (`intake-script.ts` + `IntakeConversation.tsx`). So clip 01 is driven the way
+ * a visitor drives it — typing into the composer and pressing Enter, tapping a
+ * quick reply, tapping "Skip this one" — and each turn is synchronised against
+ * the wizard's own cursor (the `answered` array in its autosaved draft) rather
+ * than against a guess at how long React needs. Nothing here decides the order
+ * of the questions; the script does, and this only answers them.
+ *
  *   node e2e/support/record-funnel.mjs
  */
 import { chromium } from '@playwright/test';
@@ -39,8 +47,14 @@ const BRIEF = {
   short: 'I am a counsellor in Bristol. I see adults one to one, in person and online.',
   industry: 'Therapy & wellness',
   audience: 'Adults working through anxiety, burnout and life transitions',
-  goal: 'Take bookings or appointments',
-  tone: 'Calm',
+  // Multi-select turns: the visitor taps chips, then sends with "That's it".
+  goals: ['Take bookings or appointments', 'Build trust and credibility'],
+  tones: ['Calm', 'Warm'],
+  pageCount: '5 – 7',
+  timeline: 'Within 4 weeks',
+  commerce: 'No products',
+  // The monthly plan is picked by its own card inside the conversation.
+  plan: 'Guided editor access',
   answers: [
     'I work with adults one to one, in person in Bristol and online. Most people come to me after months of holding it together. Sessions are 50 minutes, weekly to start, and my approach is trauma-informed and paced by the client.',
     'I offer individual therapy, a free 20-minute intro call, and online sessions. You can reach me on hello@marshandfern.example or book the intro call from the site.',
@@ -53,70 +67,158 @@ const DEMO_KEY = 'fs-discovery-demo-v1';
 // Without site-per-process disabled, Chromium hosts the cross-origin preview
 // iframe (the local astro dev server on its own port) in a separate renderer
 // process, and Playwright's screencast records that frame as blank white.
+//
+// Kept, but it is NOT sufficient on its own: the 2026-08-31 run recorded the
+// site pane as blank white with this flag in place, on a preview the server
+// was serving fine (200) and which the page had finished loading — the
+// skeleton overlay was gone. Whatever composites that frame, this flag does
+// not reach it, so a clip that has to *show* the generated site still needs a
+// full-frame pass over the preview URL (`03b-mobile` below does exactly that).
 const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const results = [];
 const marks = {};
 const mark = (t0, label) => { marks[label] = Math.round((Date.now() - t0) / 1000); };
 
 /**
- * ChoiceGrid tiles expose no accessible name that `getByRole` can resolve
- * (verified against the running page: name-based lookups return zero matches),
- * so they are addressed by the sub-label text they actually render.
+ * Cards inside the conversation's two commercial panels expose no accessible
+ * name that `getByRole` can resolve, so they are addressed by the sub-label
+ * text they actually render.
  */
 const choice = (d, text) => d.locator('button').filter({ hasText: text }).first();
 
-/** Fills wizard steps 1 to 6 and leaves the dialog on the info step. */
-async function fillWizard(page, d) {
-  // 1 — about
-  await d.getByPlaceholder('Maria Ionescu').fill(BRIEF.fullName);
-  await pause(page, 500);
-  await d.getByPlaceholder('maria@example.com').fill(BRIEF.email);
-  await pause(page, 400);
-  await d.getByPlaceholder('Smile Dental Clinic').fill(BRIEF.businessName);
+// The conversation's controls, by the accessible names it actually renders.
+// `exact` is not optional on Send: every answered turn carries an Edit button
+// whose aria-label repeats the agent's question, and one of those questions is
+// "Where should I send your preview?" — a substring match resolves to two.
+const composer = (d) => d.getByLabel('Your answer');
+const sendBtn = (d) => d.getByRole('button', { name: 'Send', exact: true });
+const doneBtn = (d) => d.getByRole('button', { name: "That's it", exact: true });
+const skipBtn = (d) => d.getByRole('button', { name: 'Skip this one', exact: true }).first();
+const confirmBtn = (d) => d.getByRole('button', { name: 'Looks good — carry on', exact: true });
+
+/**
+ * Waits for the wizard to have filed a question away.
+ *
+ * The draft the wizard autosaves carries its own cursor — the ids the visitor
+ * has dealt with, in order — so a turn is "done" when the app says it is,
+ * not when a sleep expires. That keeps the pacing below purely cosmetic: the
+ * pauses are there to be watchable, never to be load-bearing.
+ */
+async function answeredIds(page) {
+  return page.evaluate((k) => {
+    try {
+      const raw = sessionStorage.getItem(k);
+      return raw ? JSON.parse(raw).answered ?? [] : [];
+    } catch { return []; }
+  }, DRAFT_KEY);
+}
+
+async function settled(page, id, timeout = 30000) {
+  const deadline = Date.now() + timeout;
+  for (;;) {
+    if ((await answeredIds(page)).includes(id)) return;
+    if (Date.now() > deadline) throw new Error(`the conversation never accepted "${id}"`);
+    await pause(page, 250);
+  }
+}
+
+/** A typed turn: the visitor writes in the composer and presses Send. */
+async function say(page, d, id, text) {
+  const box = composer(d);
+  await box.waitFor({ state: 'visible', timeout: 30000 });
+  await box.click();
+  await box.type(text, { delay: 18 });   // typing is part of the picture
+  await pause(page, 800);
+  await sendBtn(d).click();
+  await settled(page, id);
+  await pause(page, 700);
+}
+
+/** A quick reply: one tap sends it as a message. */
+async function tap(page, d, id, label) {
+  const chip = d.getByRole('button', { name: label, exact: true }).first();
+  await chip.waitFor({ state: 'visible', timeout: 30000 });
+  await pause(page, 600);              // a beat to read the options
+  await chip.click();
+  await settled(page, id);
+  await pause(page, 700);
+}
+
+/** The optional questions really are optional, and the clip should show it. */
+async function skip(page, d, id) {
+  await skipBtn(d).waitFor({ state: 'visible', timeout: 30000 });
   await pause(page, 900);
-  await d.getByRole('button', { name: 'Continue' }).click();
-
-  // 2 — what the business does
+  await skipBtn(d).click();
+  await settled(page, id);
   await pause(page, 700);
-  await d.getByPlaceholder(/^e\.g\. Boutique dental clinic/).fill(BRIEF.short);
-  await pause(page, 600);
-  await d.getByLabel('Industry').selectOption(BRIEF.industry).catch(() => {});
+}
+
+/** Several chips at once, then "That's it" to send the lot. */
+async function pick(page, d, id, labels) {
+  for (const label of labels) {
+    const chip = d.getByRole('button', { name: label, exact: true }).first();
+    await chip.waitFor({ state: 'visible', timeout: 30000 });
+    await chip.click();
+    await pause(page, 550);
+  }
   await pause(page, 500);
-  await d.getByPlaceholder('Who your ideal customers are, in plain words')
-    .fill(BRIEF.audience).catch(() => {});
-  await pause(page, 900);
-  await d.getByRole('button', { name: 'Continue' }).click();
-
-  // 3 — goals and tone
+  await doneBtn(d).click();
+  await settled(page, id);
   await pause(page, 700);
-  await d.getByRole('button', { name: BRIEF.goal, exact: true }).click().catch(() => {});
-  await pause(page, 500);
-  await d.getByRole('button', { name: BRIEF.tone, exact: true }).click().catch(() => {});
-  await pause(page, 500);
-  await choice(d, 'Standard service site').click().catch(() => {});
-  await pause(page, 400);
-  await choice(d, 'Within 4 weeks').click().catch(() => {});
-  await pause(page, 900);
-  await d.getByRole('button', { name: 'Continue' }).click();
+}
 
-  // 4 — commerce
-  await pause(page, 700);
-  await choice(d, 'Brand presence + lead capture only').click();
-  await pause(page, 1100);
-  await d.getByRole('button', { name: 'Continue' }).click();
+/**
+ * Talks through steps 1–6 and leaves the dialog on the info step.
+ *
+ * The order is the script's, not this file's: if a question is added,
+ * reordered or made conditional in `intake-script.ts`, the turn for it belongs
+ * here in the same place the script puts it.
+ */
+async function talkThroughIntake(page, d) {
+  await pause(page, 2200);             // the agent's opening line, read
 
-  // 5 — the recommendation. Rules first, then the server refines it.
-  await pause(page, 700);
-  await d.getByRole('heading', { level: 3, name: 'Your recommended plan' })
+  // 1 — who they are
+  await say(page, d, 'fullName', BRIEF.fullName);
+  await say(page, d, 'email', BRIEF.email);
+  await say(page, d, 'businessName', BRIEF.businessName);
+
+  // 2 — what the business does. Deliberately the short answer.
+  await say(page, d, 'description', BRIEF.short);
+  await tap(page, d, 'industry', BRIEF.industry);
+  await say(page, d, 'targetAudience', BRIEF.audience);
+  // Nothing to paste, and the way out of a question is on camera.
+  await skip(page, d, 'links');
+
+  // 3 — goals, tone, size, timing
+  await pick(page, d, 'goal', BRIEF.goals);
+  await pick(page, d, 'brandTone', BRIEF.tones);
+  await tap(page, d, 'pageCount', BRIEF.pageCount);
+  await tap(page, d, 'timeline', BRIEF.timeline);
+
+  // 4 — commerce. "No products" means no catalog question is ever asked.
+  await tap(page, d, 'commerceMode', BRIEF.commerce);
+  // Skipped, and not for pacing: the brief has no unusual system to plug into,
+  // and `recommendTier` treats *any* answer here as a custom-integration
+  // request — one sentence in this box moves the brief off the €799 build and
+  // onto "from €2,499". Ellen's booking need is already in her goals, so
+  // answering it would be inventing scope the brief never had.
+  await skip(page, d, 'customIntegrations');
+
+  // 5 — the build package, as a panel inside the conversation. Rules pick it
+  // first (RecommendationStep auto-selects); the visitor confirms or overrides.
+  await d.getByRole('heading', { level: 3 }).first()
     .waitFor({ state: 'visible', timeout: 30000 });
-  await pause(page, 5200);          // long enough to read the reasons
-  await d.getByRole('button', { name: 'Continue' }).click();
+  await pause(page, 5200);             // long enough to read the reasons
+  await confirmBtn(d).waitFor({ state: 'visible', timeout: 30000 });
+  await confirmBtn(d).click();
+  await settled(page, 'selectedTier');
+  await pause(page, 1000);
 
-  // 6 — care plan
-  await pause(page, 900);
-  await choice(d, 'Guided editor access').click().catch(() => {});
-  await pause(page, 1400);
-  await d.getByRole('button', { name: 'Continue' }).click();
+  // 6 — the monthly plan, the same way.
+  await choice(d, BRIEF.plan).click();
+  await pause(page, 1600);
+  await confirmBtn(d).click();
+  await settled(page, 'subscription');
   await pause(page, 1200);
 }
 
@@ -135,7 +237,7 @@ results.push(await clip(browser, '01-intake', {}, async (page) => {
   await d.waitFor({ state: 'visible', timeout: 20000 });
   await pause(page, 1600);
 
-  await fillWizard(page, d);
+  await talkThroughIntake(page, d);
   // Sitting on the info step is where clip 02 picks up.
   await pause(page, 1500);
   draft = await page.evaluate((k) => sessionStorage.getItem(k), DRAFT_KEY);
@@ -147,12 +249,19 @@ if (!draft) {
 }
 writeFileSync('/tmp/showcase-draft.json', draft);
 
-/** Reopens the wizard at the saved step, using the app's own resume path. */
+/**
+ * Reopens the wizard at the saved step, using the app's own resume path.
+ *
+ * The whole draft is written back, cursor included — the conversation's
+ * `answered` list is what the transcript is drawn from, and dropping it would
+ * restore a visitor who had apparently answered nothing. Only the step is
+ * overridden, which is the one thing this is for.
+ */
 const resume = async (page, step) => {
   await page.goto(APP, { waitUntil: 'domcontentloaded' });
   await page.evaluate(([k, v, s]) => {
     const parsed = JSON.parse(v);
-    sessionStorage.setItem(k, JSON.stringify({ data: parsed.data, step: s }));
+    sessionStorage.setItem(k, JSON.stringify({ ...parsed, step: s }));
   }, [DRAFT_KEY, draft, step]);
   await page.goto(`${APP}/?book=1`, { waitUntil: 'domcontentloaded' });
   const d = page.getByRole('dialog');
@@ -185,7 +294,7 @@ results.push(await clip(browser, '02-info-agent', {}, async (page) => {
     await box.click();
     await box.type(answer, { delay: 12 });
     await pause(page, 900);
-    await d.getByRole('button', { name: 'Send' }).first().click();
+    await d.getByRole('button', { name: 'Send', exact: true }).first().click();
     // The follow-up question is a live model call; give it room to land.
     await pause(page, 20000);
   }
@@ -200,12 +309,19 @@ results.push(await clip(browser, '02-info-agent', {}, async (page) => {
 // been running. The site pane moves through three real states — an empty
 // skeleton, the base template, then the personalised site hot-swapped in — and
 // clip 03 is cut to show all three without the minutes in between.
-const MAX_ATTEMPTS = 2;
+// Generation is a real pipeline against a real model and succeeds well under
+// half the time; four tries is roughly an hour of wall clock, which is the
+// budget a filming session actually has.
+const MAX_ATTEMPTS = 4;
 let workspaceId = null;
 let previewUrl = null;
 let claimOk = false;
 let personalised = false;
+let editApplied = false;
 let previewId = null;
+// The last body the edit endpoint's poll returned. The UI shows the phase, not
+// the reason, so this is what a failed edit gets reported with.
+let lastEditPoll = null;
 let claimPayload = null;
 let marksFinal = null;
 let attemptUsed = 0;
@@ -218,6 +334,8 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
   let fellBack = false;
   workspaceId = null;
   previewUrl = null;
+  personalised = false;
+  editApplied = false;
 
   journey = await clip(browser, `journey-${attempt}`,
     { size: DESKTOP, saveState: '/tmp/showcase-client-state.json' },
@@ -230,9 +348,16 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       });
       // The id the claim needs, taken from the server's own response.
       page.on('response', async (res) => {
-        if (new URL(res.url()).pathname === '/api/discovery/preview/live') {
+        const path = new URL(res.url()).pathname;
+        if (path === '/api/discovery/preview/live') {
           const j = await res.json().catch(() => null);
           if (j?.demoId) previewId = j.demoId;
+        }
+        // The edit's own status, kept for the report: the conversation shows a
+        // phase, and the reason a phase stopped is only ever in this body.
+        if (path === '/api/discovery/preview/live/edit') {
+          const j = await res.json().catch(() => null);
+          if (j) lastEditPoll = { status: res.status(), body: j };
         }
       });
 
@@ -294,8 +419,12 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       mark(t0, 'genEnd');
 
       // ---- 04: one plain-English prompt, and the change landing ------------
+      // The edit runs against the generated source and reports its phases into
+      // the same conversation. So the clip waits for the app's own "done" line
+      // rather than for a fixed number of seconds — a flat sleep either cut the
+      // reveal off or sat on a finished screen for a minute.
       mark(t0, 'editStart');
-      const promptBox = d.getByPlaceholder('e.g. make the hero warmer and add a pricing section');
+      const promptBox = d.getByLabel('Ask for a change');
       await promptBox.scrollIntoViewIfNeeded().catch(() => {});
       await promptBox.waitFor({ state: 'visible', timeout: 30000 });
       await pause(page, 2000);
@@ -305,9 +434,31 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
         { delay: 16 }
       );
       await pause(page, 1400);
-      await d.getByRole('button', { name: 'Send' }).first().click();
+      await d.getByRole('button', { name: 'Send', exact: true }).first().click();
       console.log('    edit prompt sent');
-      await pause(page, 95000);        // a real model call against the source
+
+      // "Done — updating your live preview." is the line the step writes when
+      // the edit has landed and it has bumped the iframe. Anything else in
+      // that bubble is the edit having failed, and a failed edit is not a clip.
+      const editDone = d.getByText('Done — updating your live preview.');
+      const editDeadline = Date.now() + 6 * 60 * 1000;
+      for (;;) {
+        if (await editDone.isVisible().catch(() => false)) break;
+        const log = await d.locator('[data-testid="concierge-conversation-pane"]')
+          .innerText().catch(() => '');
+        // Report the sentence that actually matched, not the tail of the pane:
+        // the offer bubble sits at the bottom, so a tail slice named the wrong
+        // thing and made a real failure look like a false positive.
+        const bad = /[^.\n]*(?:didn't work|Something went wrong|couldn't start that edit|demo not ready)[^.\n]*/i.exec(log);
+        if (bad) {
+          throw new Error(`the prompt edit failed: ${bad[0].trim()}`);
+        }
+        if (Date.now() > editDeadline) throw new Error('the prompt edit did not finish in 6 minutes');
+        await pause(page, 2500);
+      }
+      console.log('    edit applied; iframe refreshed');
+      editApplied = true;
+      await pause(page, 9000);         // the refreshed site, on screen
       await slowScroll(page, 2, 260, 800);
       await pause(page, 6000);
       mark(t0, 'editEnd');
@@ -360,12 +511,13 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     });
 
   attemptUsed = attempt;
-  if (personalised && previewId && marks.end) {
+  if (personalised && editApplied && previewId && marks.end) {
     marksFinal = { ...marks };
     console.log(`  attempt ${attempt} succeeded`);
     break;
   }
   console.log(`  attempt ${attempt} failed (${journey.error ?? 'incomplete'})`);
+  if (lastEditPoll) console.log('  last edit poll:', JSON.stringify(lastEditPoll).slice(0, 400));
   if (attempt === MAX_ATTEMPTS) console.log('  keeping the last (failed) take');
 }
 
@@ -478,6 +630,7 @@ writeManifest({
   previewUrl,
   claimOk,
   personalised,
+  editApplied,
   marks: M,
   generation: claimOk
     ? `succeeded on attempt ${attemptUsed} of ${MAX_ATTEMPTS}`

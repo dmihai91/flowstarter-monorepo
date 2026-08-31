@@ -62,7 +62,15 @@ export interface LiveJob {
   teardown?: () => Promise<void>;
 }
 
-const jobs = new Map<string, LiveJob>();
+// Anchored on globalThis, not module scope: in `next dev` every route handler
+// is bundled as its own entry with its own instance of this module, so a plain
+// module-level Map gives POST /live and POST /live/edit two different stores —
+// the edit route 404'd "unknown demo" for jobs the live route reported ready.
+// One process, one store, whichever bundle asks.
+const globalStore = globalThis as typeof globalThis & {
+  __flowstarterLiveJobs?: Map<string, LiveJob>;
+};
+const jobs = (globalStore.__flowstarterLiveJobs ??= new Map<string, LiveJob>());
 
 export function createJob(demoId: string): LiveJob {
   const job: LiveJob = {

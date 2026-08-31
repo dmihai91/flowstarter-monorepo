@@ -269,6 +269,18 @@ export class PreviewGenerationPipeline {
         build = await personalize(heroIssue);
       }
 
+      // Artwork was generated for this brief; a preview that still shows the
+      // template's stock art anyway is the defect the whole stage exists to
+      // remove. Same contract as the two checks above: one repair pass, soft.
+      const generatedIssue = await findGeneratedAssetIssue(
+        workspace.root,
+        generated.entries,
+      );
+      if (generatedIssue) {
+        input.onPhase?.('Placing your brand imagery');
+        build = await personalize(generatedIssue);
+      }
+
       input.onPhase?.('Checking the preview');
       try {
         await this.validator.validate(workspace.root, 'preview');
@@ -425,6 +437,50 @@ async function findPersonalizationIssue(
  * in a hero slot, and everything else falls back to the template's own
  * art-directed asset.
  */
+/** Content files a template renders its image slots from. */
+const GENERATED_ASSET_CONTENT_FILES = [
+  'src/content/site-labels.md',
+  'src/content/content.md',
+] as const;
+
+/**
+ * The check that makes generated imagery real rather than aspirational: every
+ * generated asset must be referenced by the site's content files, or the
+ * agent is sent back once with the exact list of what it left unplaced.
+ * Exported for tests.
+ */
+export async function findGeneratedAssetIssue(
+  workspaceRoot: string,
+  generatedAssets: GeneratedAssetEntry[],
+): Promise<string | undefined> {
+  if (generatedAssets.length === 0) return undefined;
+
+  let content = '';
+  for (const file of GENERATED_ASSET_CONTENT_FILES) {
+    try {
+      content += await readFile(join(workspaceRoot, file), 'utf8');
+    } catch {
+      /* a template may keep only one of the two files */
+    }
+  }
+  if (!content) return undefined;
+
+  const unused = generatedAssets.filter(
+    (asset) => !content.includes(asset.publicPath),
+  );
+  if (unused.length === 0) return undefined;
+
+  const listed = unused
+    .map((asset) => `${asset.publicPath} (${asset.role}, made for ${asset.slotId})`)
+    .join(', ');
+  return (
+    `brand-matched artwork was generated for this business and is not used: ${listed}. ` +
+    'Set each slot\'s image path to the artwork generated for it, unless that ' +
+    "slot already shows the client's own photograph from /flowstarter-assets/. " +
+    'Do not invent new slots and do not move any other image.'
+  );
+}
+
 async function findHeroAssetIssue(
   workspaceRoot: string,
   cachedAssets: CachedAssetEntry[],

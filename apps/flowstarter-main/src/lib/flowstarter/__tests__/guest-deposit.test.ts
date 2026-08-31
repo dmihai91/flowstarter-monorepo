@@ -223,6 +223,9 @@ vi.mock('@/lib/hosting/funnel-previews', () => ({
   loadFunnelPreview: vi.fn(async () => null),
   claimFunnelPreview: vi.fn(async () => null),
   copyFunnelArtifactToTenant: vi.fn(async () => undefined),
+  // The checkout stashed the info-agent conversation here; individual cases
+  // override the resolved value to hand one back.
+  readGuestIntakeChat: vi.fn(async () => undefined),
 }));
 
 vi.mock('@/lib/flowstarter/membership', () => ({
@@ -242,6 +245,13 @@ vi.mock('@/lib/flowstarter/membership', () => ({
       return { workspaceId, clerkUserId, created: true };
     }
   ),
+}));
+
+// Only the corpus writer is stubbed: the fake db has no artifacts corpus
+// table, and what this file asserts is that the claim HANDED the chat over.
+vi.mock('@/lib/flowstarter/messaging', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/lib/flowstarter/messaging')>()),
+  appendClientReplyToCorpus: vi.fn(async () => true),
 }));
 
 vi.mock('@/lib/flowstarter/preview-artifacts', () => ({
@@ -395,6 +405,40 @@ describe('guest deposit provisioning', () => {
       stripe_event_id: 'evt_guest_1',
       stripe_payment_intent_id: 'pi_guest_1',
     });
+  });
+
+  it('files the stashed intake conversation with the claim', async () => {
+    stashPreview();
+    const { readGuestIntakeChat } = await import('@/lib/hosting/funnel-previews');
+    vi.mocked(readGuestIntakeChat).mockResolvedValueOnce({
+      transcript: [
+        { role: 'agent', text: 'What makes people pick you?' },
+        { role: 'client', text: 'We are the only practice open late.' },
+      ],
+      answers: ['We are the only practice open late.'],
+    });
+
+    const result = await provisionGuestDeposit(event(), guestIntent());
+    expect(result?.workspaceId).toBeTruthy();
+    expect(readGuestIntakeChat).toHaveBeenCalledWith(PREVIEW_ID);
+    // The claim filed the client's words as citable evidence, exactly as a
+    // signed-in claim would.
+    const { appendClientReplyToCorpus } = await import(
+      '@/lib/flowstarter/messaging'
+    );
+    const filed = vi
+      .mocked(appendClientReplyToCorpus)
+      .mock.calls.map(([, document]) => JSON.stringify(document))
+      .join('\n');
+    expect(filed).toContain('only practice open late');
+  });
+
+  it('survives a stash that does not parse', async () => {
+    stashPreview();
+    const { readGuestIntakeChat } = await import('@/lib/hosting/funnel-previews');
+    vi.mocked(readGuestIntakeChat).mockResolvedValueOnce({ transcript: 'garbage' });
+    const result = await provisionGuestDeposit(event(), guestIntent());
+    expect(result?.workspaceId).toBeTruthy();
   });
 
   it('emails the temporary password to the address that paid', async () => {

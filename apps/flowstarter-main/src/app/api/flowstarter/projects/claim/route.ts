@@ -15,6 +15,7 @@
  * answers the visitor typed, and the tier they confirmed. The preview manifest
  * and the price are resolved server-side; neither is accepted from a browser.
  */
+import { IntakeChatSchema } from '@/lib/flowstarter/intake-chat-schema';
 import { currentUser } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -78,33 +79,7 @@ const ClaimSchema = z.object({
    * other free-text field here: it becomes corpus evidence the generator may
    * cite, never authorization and never price.
    */
-  intakeChat: z
-    .object({
-      transcript: z
-        .array(
-          z.object({
-            role: z.enum(['agent', 'client']),
-            text: z.string().max(1000),
-          })
-        )
-        .max(24)
-        .optional()
-        .default([]),
-      documents: z
-        .array(
-          z.object({
-            topic: z.string().max(60),
-            text: z.string().max(1200),
-          })
-        )
-        .max(8)
-        .optional()
-        .default([]),
-      answers: z.array(z.string().max(1000)).max(24).optional().default([]),
-      services: z.array(z.string().max(120)).max(20).optional().default([]),
-      phone: z.string().max(40).optional().default(''),
-    })
-    .optional(),
+  intakeChat: IntakeChatSchema.optional(),
 });
 
 /**

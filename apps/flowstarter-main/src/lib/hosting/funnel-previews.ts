@@ -520,3 +520,71 @@ export async function deleteFunnelPreviewArtifact(input: {
     return false;
   }
 }
+
+/**
+ * The guest deposit's side channel: Stripe metadata caps values at 500 chars,
+ * so the info-agent conversation cannot ride the checkout session. It is
+ * stashed onto the durable preview's manifest at checkout time instead, and
+ * the webhook reads it back when it claims the preview for the freshly minted
+ * account. A targeted read-merge-update on the one key, not the general save,
+ * so a concurrent publisher write cannot be clobbered.
+ */
+export async function stashGuestIntakeChat(
+  previewId: string,
+  chat: unknown,
+  supabase?: Client
+): Promise<boolean> {
+  if (!isValidPreviewId(previewId)) return false;
+  const sb = client(supabase);
+  try {
+    const { data, error } = await sb
+      .from('funnel_previews')
+      .select('manifest')
+      .eq('preview_id', previewId)
+      .maybeSingle<{ manifest: Json }>();
+    if (error) throw error;
+    if (!data) return false;
+    const manifest =
+      data.manifest &&
+      typeof data.manifest === 'object' &&
+      !Array.isArray(data.manifest)
+        ? (data.manifest as Record<string, unknown>)
+        : {};
+    const { error: updateError } = await sb
+      .from('funnel_previews')
+      .update({
+        manifest: { ...manifest, guestIntakeChat: chat } as Json,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('preview_id', previewId);
+    if (updateError) throw updateError;
+    return true;
+  } catch (error) {
+    warn(`could not stash the intake chat for ${previewId}`, error);
+    return false;
+  }
+}
+
+/** The reader half; the consumer validates the shape before trusting it. */
+export async function readGuestIntakeChat(
+  previewId: string,
+  supabase?: Client
+): Promise<unknown> {
+  if (!isValidPreviewId(previewId)) return undefined;
+  const sb = client(supabase);
+  try {
+    const { data, error } = await sb
+      .from('funnel_previews')
+      .select('manifest')
+      .eq('preview_id', previewId)
+      .maybeSingle<{ manifest: Json }>();
+    if (error) throw error;
+    const manifest = data?.manifest;
+    if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest))
+      return undefined;
+    return (manifest as Record<string, unknown>)['guestIntakeChat'];
+  } catch (error) {
+    warn(`could not read the intake chat for ${previewId}`, error);
+    return undefined;
+  }
+}

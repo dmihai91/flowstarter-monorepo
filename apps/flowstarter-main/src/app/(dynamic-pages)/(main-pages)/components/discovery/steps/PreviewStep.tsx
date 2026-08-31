@@ -495,6 +495,11 @@ export function PreviewStep({
             email: data.email,
             fullName: data.fullName,
             businessName: data.businessName,
+            // Stashed server-side onto the durable preview so the webhook's
+            // claim files the same citable conversation a signed-in claim does.
+            ...(claimIntakeChatPayload(data)
+              ? { intakeChat: claimIntakeChatPayload(data) }
+              : {}),
           }),
         }
       );

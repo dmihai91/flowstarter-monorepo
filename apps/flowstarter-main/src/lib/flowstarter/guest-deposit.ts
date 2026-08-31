@@ -33,6 +33,8 @@
  * build that never started because Resend was down is a broken product, so mail
  * failure is recorded and swallowed, never propagated.
  */
+import { IntakeChatSchema } from '@/lib/flowstarter/intake-chat-schema';
+import { readGuestIntakeChat } from '@/lib/hosting/funnel-previews';
 import type Stripe from 'stripe';
 import type { Json } from '@/lib/database.types';
 import { sendEmail } from '@/lib/email';
@@ -129,6 +131,12 @@ export async function provisionGuestDeposit(
   const account = await findOrCreateGuestUser(email);
 
   // ── 3. The workspace ─────────────────────────────────────────────────────
+  // The conversation the info agent had rides in from the durable preview
+  // (stashed at checkout; Stripe metadata is too small to carry it), so a
+  // guest claim files the same citable evidence a signed-in claim does.
+  const stashedChat = IntakeChatSchema.safeParse(
+    await readGuestIntakeChat(previewId)
+  );
   let claim;
   try {
     claim = await claimPreview({
@@ -137,6 +145,7 @@ export async function provisionGuestDeposit(
       clientEmail: email,
       clientName: fullName,
       businessName,
+      ...(stashedChat.success ? { intakeChat: stashedChat.data } : {}),
       ...(tier ? { tier } : {}),
       ...(subscription ? { subscriptionPlan: subscription } : {}),
       ...(billingCadence ? { billingCadence } : {}),

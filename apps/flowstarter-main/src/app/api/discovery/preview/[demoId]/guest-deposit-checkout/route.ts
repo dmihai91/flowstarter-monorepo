@@ -27,6 +27,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { z } from 'zod';
+import { IntakeChatSchema } from '@/lib/flowstarter/intake-chat-schema';
+import { stashGuestIntakeChat } from '@/lib/hosting/funnel-previews';
 import { depositAmountMinor } from '@flowstarter/agentic-codegen/src/flowstarter/state-machine';
 import { STRIPE_API_VERSION } from '@/lib/billing/stripe';
 import {
@@ -51,6 +53,12 @@ const GuestDepositSchema = z.object({
   email: z.string().email().max(320),
   fullName: z.string().max(200).optional().default(''),
   businessName: z.string().max(200).optional().default(''),
+  /**
+   * The info-agent conversation. Too big for Stripe metadata, so it is
+   * stashed onto the durable preview at checkout time and the webhook reads
+   * it back when it claims (see stashGuestIntakeChat).
+   */
+  intakeChat: IntakeChatSchema.optional(),
 });
 
 // Same shape as /api/discovery/deposit: this is an unauthenticated endpoint
@@ -126,6 +134,12 @@ export async function POST(
       { error: 'This preview is no longer available' },
       { status: 404 }
     );
+  }
+
+  // Best-effort: a failed stash costs the build its citable conversation,
+  // not the visitor their checkout.
+  if (spec.intakeChat) {
+    await stashGuestIntakeChat(demoId, spec.intakeChat);
   }
 
   const quoteMinor = quoteMinorForTier(spec.tier);

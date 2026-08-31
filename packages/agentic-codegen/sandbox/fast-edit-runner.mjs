@@ -15,6 +15,7 @@
  * Stdout: one JSON line ({type:'done',costUsd,tokensIn,tokensOut} | {type:'error'}).
  */
 import { readFileSync, writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 const out = (o) => process.stdout.write(JSON.stringify(o) + '\n');
 const labelsPath = process.env.FS_SITE_LABELS;
@@ -53,8 +54,57 @@ async function chat(useModel, system, user, { temperature = 0.4, maxTokens = 800
   return (j.choices?.[0]?.message?.content ?? '').trim();
 }
 
+/**
+ * Ordered top-level blocks of a YAML frontmatter body. A block starts at an
+ * unindented `key:` line and runs until the next one; anything before the
+ * first key (comments) is a keyless block that stays in place.
+ */
+export function splitTopLevelBlocks(yaml) {
+  const blocks = [];
+  let current = null;
+  for (const line of yaml.split('\n')) {
+    const m = /^([A-Za-z_][\w-]*):/.exec(line);
+    if (m) {
+      current = { key: m[1], lines: [line] };
+      blocks.push(current);
+    } else if (current) {
+      current.lines.push(line);
+    } else {
+      current = { key: null, lines: [line] };
+      blocks.push(current);
+    }
+  }
+  return blocks;
+}
+
+/**
+ * The repair that makes partial replies fine: the model's blocks replace the
+ * original's same-keyed blocks, everything it did not mention survives
+ * untouched, and top-level keys it invented are dropped (typed accessors
+ * would never read them, and a hallucinated section must not ship). This is
+ * what turned a ~25% per-edit success rate into the normal case — kimi
+ * habitually returns only the sections it changed, and both old guards
+ * (`too short`, `lost N/M keys`) were punishing exactly that.
+ */
+export function mergeFrontmatter(origYaml, modelYaml) {
+  const original = splitTopLevelBlocks(origYaml);
+  const replacements = new Map();
+  for (const block of splitTopLevelBlocks(modelYaml)) {
+    if (block.key) replacements.set(block.key, block.lines.join('\n'));
+  }
+  let replaced = 0;
+  const parts = original.map((block) => {
+    if (block.key && replacements.has(block.key)) {
+      replaced += 1;
+      return replacements.get(block.key).replace(/\n+$/, '');
+    }
+    return block.lines.join('\n').replace(/\n+$/, '');
+  });
+  return { yaml: parts.join('\n'), replaced };
+}
+
 /** Strip fences / stray --- and re-wrap in the original frontmatter envelope. */
-function assemble(original, modelText) {
+export function assemble(original, modelText) {
   const fm = original.match(/^﻿?---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
   const origYaml = fm ? fm[1] : original;
   const body = fm ? fm[2] : '';
@@ -63,26 +113,40 @@ function assemble(original, modelText) {
   if (fence) yaml = fence[1].trim();
   yaml = yaml.replace(/^---\s*\n/, '').replace(/\n---\s*$/, '').trim();
 
-  if (yaml.length < origYaml.length * 0.4) return { ok: false, reason: 'too short' };
   const topKeys = (s) => new Set((s.match(/^[A-Za-z_][\w-]*:/gm) ?? []).map((k) => k.trim()));
   const want = topKeys(origYaml);
   const got = topKeys(yaml);
-  const missing = [...want].filter((k) => !got.has(k));
-  if (want.size > 0 && missing.length > want.size * 0.25) {
-    return { ok: false, reason: `lost ${missing.length}/${want.size} keys` };
+  const missing = Array.from(want).filter((k) => !got.has(k));
+  if (missing.length > 0) {
+    const merged = mergeFrontmatter(origYaml, yaml);
+    if (merged.replaced === 0) {
+      return { ok: false, reason: 'no known sections in the reply' };
+    }
+    yaml = merged.yaml;
   }
+
+  // Backstops only — after a merge both hold by construction.
+  if (yaml.length < origYaml.length * 0.4) return { ok: false, reason: 'too short' };
   return { ok: true, content: fm ? `---\n${yaml}\n---\n${body}` : `${yaml}\n` };
 }
 
 const SYSTEM =
   'You apply ONE change to a website YAML content file (markdown frontmatter); ' +
-  'every component reads it via typed accessors. Output ONLY the complete ' +
-  'updated file content — no code fences, no --- lines, no commentary. Apply ' +
-  'only the requested change; preserve every other value, all keys, nesting, ' +
-  'array item shapes/counts, href routes and image src paths. Keep YAML valid ' +
-  '(indentation; quote strings with colons; preserve block scalars |). Human, ' +
-  'specific copy; never fabricate real contact details, prices or quotes.';
+  'every component reads it via typed accessors. Output ONLY updated YAML ' +
+  'content — no code fences, no --- lines, no commentary. You may output just ' +
+  'the top-level sections you changed, each complete from its unindented ' +
+  '`key:` line down; unchanged sections may be omitted and will be kept as ' +
+  'they are. Apply only the requested change; within a section you output, ' +
+  'preserve every other value, all keys, nesting, array item shapes/counts, ' +
+  'href routes and image src paths. Keep YAML valid (indentation; quote ' +
+  'strings with colons; preserve block scalars |). Human, specific copy; ' +
+  'never fabricate real contact details, prices or quotes.';
 
+// Importable for tests: the run only starts when executed as a script.
+const isMain =
+  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isMain) {
 try {
   if (!labelsPath || !key) {
     out({ type: 'error', message: 'missing FS_SITE_LABELS or FS_OPENROUTER_KEY' });
@@ -97,7 +161,7 @@ try {
     const task =
       `Change requested by the site owner:\n"${instruction}"\n` +
       (notes ? `\nA previous attempt fell short: ${notes}\n` : '') +
-      `\nCurrent file:\n${original}\n\nOutput the complete updated file now — only the file.`;
+      `\nCurrent file:\n${original}\n\nOutput the updated YAML now — the changed top-level sections in full, or the whole file. Nothing else.`;
 
     let asm;
     try {
@@ -144,4 +208,5 @@ try {
 } catch (e) {
   out({ type: 'error', message: String(e?.message || e).slice(0, 300) });
   process.exit(1);
+}
 }

@@ -14,16 +14,47 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ExternalNavigation, ExternalNavigationWithAuth } from './Navbar';
 
-// List of public routes that don't require authentication
-const publicRoutes = [
-  '/',
+// Public page routes, mirroring middleware.ts's isPublicRoute matcher (the
+// middleware is what actually decides auth; this list only decides whether
+// the shell may render before Clerk finishes loading). Prefix-matched like
+// the middleware's `(.*)` entries. The lists drifting apart is exactly how
+// /unlock spent a day behind an infinite "Loading your experience" loader.
+const publicRoutePrefixes = [
   '/workflow-showcase',
   '/about',
   '/login',
   '/sign-up',
+  '/forgot-password',
+  '/reset-password',
+  '/verify',
+  '/assistant',
+  '/unlock',
+  '/gdpr',
+  '/contact',
+  '/help',
+  '/privacy',
+  '/terms',
+  '/pricing',
+  '/cookies',
+  '/guides',
+  '/blogs',
+  '/cookie-policy',
+  '/term-of-service',
+  '/privacy-policy',
+  '/sitemap',
+  '/accessibility',
+  '/relaunch',
+  '/faq',
+  '/library',
   '/admin',
-  '/admin/login',
 ];
+
+function isPublicPath(pathname: string): boolean {
+  if (pathname === '/') return true;
+  return publicRoutePrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+}
 
 // Routes where we hide the default navbar (they have their own header)
 const noNavbarRoutes = [
@@ -61,7 +92,21 @@ export function NavigationWrapper() {
   const [isMounted, setIsMounted] = useState(false);
   const [isDraftLoading, setIsDraftLoading] = useState(false);
   const loaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isPublicRoute = publicRoutes.includes(pathname) || isTeamRoute;
+  const isPublicRoute = isPublicPath(pathname) || isTeamRoute;
+
+  // Clerk failing to load must degrade to a rendered page, never to a loader
+  // that outlives the visitor's patience: a broken auth handshake once held a
+  // fully server-rendered page behind the spinner indefinitely. After the
+  // grace period the shell renders and auth-dependent chrome hydrates
+  // whenever Clerk recovers.
+  const CLERK_LOAD_GRACE_MS = 5_000;
+  const [authWaitExpired, setAuthWaitExpired] = useState(false);
+  useEffect(() => {
+    if (isLoaded) return;
+    const timer = setTimeout(() => setAuthWaitExpired(true), CLERK_LOAD_GRACE_MS);
+    return () => clearTimeout(timer);
+  }, [isLoaded]);
+  const authSettled = isLoaded || authWaitExpired;
   const { t } = useTranslations();
   const [hasSeenInitial, setHasSeenInitial] = useState(false);
   const isDashboardRoute = pathname === '/dashboard';
@@ -129,7 +174,7 @@ export function NavigationWrapper() {
 
   // Persist that we've already shown the initial loader once per tab session
   useEffect(() => {
-    if (!hasSeenInitial && isMounted && (isPublicRoute || isLoaded)) {
+    if (!hasSeenInitial && isMounted && (isPublicRoute || authSettled)) {
       try {
         window.sessionStorage.setItem('fs_seen_initial_v1', '1');
       } catch {
@@ -137,12 +182,12 @@ export function NavigationWrapper() {
       }
       setHasSeenInitial(true);
     }
-  }, [hasSeenInitial, isMounted, isLoaded, isPublicRoute]);
+  }, [hasSeenInitial, isMounted, authSettled, isPublicRoute]);
 
   // Show the general app loader once on the very first load of the app (public or protected)
   // Never show for team routes - they handle their own loading
   const shouldShowInitial =
-    !isTeamRoute && !hasSeenInitial && (!isMounted || !isLoaded);
+    !isTeamRoute && !hasSeenInitial && (!isMounted || !authSettled);
 
   // Consolidate all loading conditions to prevent duplicate loading screens
   // Never show for team routes
@@ -151,7 +196,7 @@ export function NavigationWrapper() {
     (shouldShowInitial ||
       isDraftLoading ||
       !isMounted ||
-      (!isPublicRoute && !isLoaded));
+      (!isPublicRoute && !authSettled));
 
   // Don't render navigation for template previews, error pages, or team routes
   // Check this FIRST before any loading logic to prevent flicker

@@ -153,7 +153,7 @@ export function ProjectThread({
     >
       <ol className="flex flex-col gap-3" aria-label="Project messages">
         {ordered.length === 0 ? (
-          <li className="rounded-xl border border-[var(--fs-ink)]/10 bg-white/50 px-4 py-6 text-sm text-[var(--fs-ink)]/60">
+          <li className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-4 py-6 text-sm text-[var(--fs-ink-faint)]">
             {loaded ? emptyLabel : 'Loading messages…'}
           </li>
         ) : (
@@ -173,7 +173,7 @@ export function ProjectThread({
                   own ? 'items-end text-right' : 'items-start text-left'
                 )}
               >
-                <span className="text-xs font-medium uppercase tracking-wide text-[var(--fs-ink)]/50">
+                <span className="text-xs font-medium uppercase tracking-wide text-[var(--fs-ink-faint)]">
                   {senderLabel(message.direction, viewerSide)}
                   {formatWhen(message) ? ` · ${formatWhen(message)}` : ''}
                 </span>
@@ -181,8 +181,8 @@ export function ProjectThread({
                   className={cn(
                     'max-w-[42rem] rounded-2xl px-4 py-3 text-sm leading-relaxed',
                     own
-                      ? 'bg-[var(--fs-ink)] text-white'
-                      : 'border border-[var(--fs-ink)]/10 bg-white/70 text-[var(--fs-ink)]'
+                      ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-md shadow-[var(--purple-primary-lightest)]'
+                      : 'border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/70 text-[var(--fs-ink)] backdrop-blur-sm'
                   )}
                 >
                   {message.body ? (
@@ -218,14 +218,14 @@ export function ProjectThread({
             onChange={(event) => setDraft(event.target.value)}
             placeholder={replyPlaceholder}
             rows={3}
-            className="w-full rounded-xl border border-[var(--fs-ink)]/15 bg-white/70 px-4 py-3 text-sm text-[var(--fs-ink)] outline-none focus:border-[var(--fs-ink)]/40"
+            className="w-full rounded-lg border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-4 py-3 text-sm text-[var(--fs-ink)] outline-none transition-[box-shadow,border-color] duration-150 placeholder:text-[var(--fs-ink-faint)] hover:border-[var(--purple-primary)]/30 focus:border-[var(--purple-primary)]/40 focus:shadow-[0_0_0_4px_var(--purple-primary-lightest)]"
           />
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => void send()}
               disabled={sending || !draft.trim()}
-              className="inline-flex w-fit items-center rounded-full bg-[var(--fs-ink)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="inline-flex w-fit items-center rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] active:translate-y-0 disabled:pointer-events-none disabled:opacity-50"
             >
               {sending ? 'Sending…' : 'Send reply'}
             </button>

@@ -35,18 +35,18 @@ export function PolicyNotice({
     <div
       data-testid="editor-policy-notice"
       data-policy-action={decision.action}
-      className={`rounded-xl border border-[var(--fs-ink)]/15 bg-[var(--fs-ink)]/[0.04] px-4 py-3 ${
+      className={`rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-4 py-3 ${
         className ?? ''
       }`}
     >
       <p className="text-sm font-semibold text-[var(--fs-ink)]">
         {HEADLINE[decision.action]}
       </p>
-      <p className="mt-1 text-sm leading-relaxed text-[var(--fs-ink)]/70">
+      <p className="mt-1 text-sm leading-relaxed text-[var(--fs-ink-dim)]">
         {decision.reason}
       </p>
       {decision.action === 'maintenance_request' ? (
-        <p className="mt-2 text-sm text-[var(--fs-ink)]/70">
+        <p className="mt-2 text-sm text-[var(--fs-ink-dim)]">
           Send us a message on your project page and we will make the change.
         </p>
       ) : null}

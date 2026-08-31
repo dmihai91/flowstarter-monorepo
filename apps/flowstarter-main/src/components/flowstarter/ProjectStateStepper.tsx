@@ -26,7 +26,7 @@ export function ProjectStateStepper({
         >
           {here.title}
         </h2>
-        <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-[var(--fs-ink)]/70">
+        <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-[var(--fs-ink-dim)]">
           {here.detail}
         </p>
       </div>
@@ -45,13 +45,15 @@ export function ProjectStateStepper({
               data-status={status}
               aria-current={status === 'current' ? 'step' : undefined}
               className={cn(
-                'flex-1 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-colors',
+                'flex-1 rounded-xl border px-3 py-2.5 text-center text-xs font-semibold transition-colors',
+                // The live step carries the product's primary gradient, so the
+                // stepper points at the same colour the primary buttons use.
                 status === 'current' &&
-                  'border-[var(--fs-ink)] bg-[var(--fs-ink)] text-white',
+                  'border-transparent bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-md shadow-[var(--purple-primary-lightest)]',
                 status === 'done' &&
-                  'border-[var(--fs-ink)]/20 bg-[var(--fs-ink)]/10 text-[var(--fs-ink)]/80',
+                  'border-[var(--purple-primary)]/25 bg-[var(--purple-primary)]/10 text-[var(--fs-ink-dim)]',
                 status === 'upcoming' &&
-                  'border-[var(--fs-ink)]/10 bg-white/40 text-[var(--fs-ink)]/45'
+                  'border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 text-[var(--fs-ink-faint)]'
               )}
             >
               {stage.label}

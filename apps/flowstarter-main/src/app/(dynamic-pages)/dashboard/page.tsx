@@ -45,7 +45,7 @@ function NoProjectYet() {
       <h1 className="mb-4 text-3xl font-bold leading-tight text-[var(--fs-ink)]">
         Nothing here yet
       </h1>
-      <p className="mb-7 max-w-xl text-base leading-relaxed text-[var(--fs-ink)]/75">
+      <p className="mb-7 max-w-xl text-base leading-relaxed text-[var(--fs-ink-dim)]">
         You&apos;re signed in, but no project is linked to this account yet.
         Your project appears here as soon as it&apos;s been claimed, that
         normally happens right after you open the preview link we sent you.
@@ -53,13 +53,13 @@ function NoProjectYet() {
       <div className="flex flex-wrap gap-3">
         <Link
           href="/contact"
-          className="inline-flex w-fit items-center rounded-full bg-[var(--fs-ink)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+          className="inline-flex w-fit items-center rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] active:translate-y-0"
         >
           Talk to us
         </Link>
         <Link
           href="/"
-          className="inline-flex w-fit items-center rounded-full border border-[var(--fs-ink)]/20 px-6 py-3 text-sm font-semibold text-[var(--fs-ink)] transition-colors hover:bg-[var(--fs-ink)]/5"
+          className="inline-flex w-fit items-center rounded-lg border border-[var(--fs-rule)] bg-[var(--fs-glass-bg)] px-6 py-3 text-sm font-semibold text-[var(--fs-ink)] backdrop-blur-sm transition-colors hover:border-[var(--purple-primary)]/40"
         >
           Back to Flowstarter
         </Link>

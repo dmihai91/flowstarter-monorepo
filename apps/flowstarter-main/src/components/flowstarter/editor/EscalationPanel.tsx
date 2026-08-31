@@ -88,13 +88,13 @@ export function EscalationPanel({
   return (
     <div
       data-testid="editor-escalation-panel"
-      className="flex flex-col gap-3 rounded-2xl border border-[var(--fs-ink)]/10 bg-white/70 px-4 py-4"
+      className="flex flex-col gap-3 rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-4 py-4 shadow-[var(--fs-card-shadow)] backdrop-blur-xl"
     >
       <div>
         <p className="text-sm font-semibold text-[var(--fs-ink)]">
           Want something bigger?
         </p>
-        <p className="mt-1 text-sm leading-relaxed text-[var(--fs-ink)]/70">
+        <p className="mt-1 text-sm leading-relaxed text-[var(--fs-ink-dim)]">
           New pages, layout changes, bookings, colors: describe it and it goes
           straight to your team. Wording and picture changes you can do yourself
           in the other tabs.
@@ -113,15 +113,15 @@ export function EscalationPanel({
         rows={4}
         maxLength={2000}
         placeholder="e.g. Add a page for group workshops with its own booking calendar"
-        className="w-full resize-y rounded-xl border border-[var(--fs-ink)]/15 bg-white px-3 py-2 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink)]/35 focus:border-[var(--fs-ink)]/40 focus:outline-none"
+        className="w-full resize-y rounded-lg border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-3.5 py-2.5 text-sm text-[var(--fs-ink)] outline-none transition-[box-shadow,border-color] duration-150 placeholder:text-[var(--fs-ink-faint)] hover:border-[var(--purple-primary)]/30 focus:border-[var(--purple-primary)]/40 focus:shadow-[0_0_0_4px_var(--purple-primary-lightest)]"
       />
 
       {outcome.state === 'self-serve' ? (
         <div
           data-testid="escalation-self-serve"
-          className="rounded-xl border border-[var(--fs-ink)]/15 bg-[var(--fs-ink)]/[0.04] px-4 py-3"
+          className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-4 py-3"
         >
-          <p className="text-sm text-[var(--fs-ink)]/80">
+          <p className="text-sm text-[var(--fs-ink-dim)]">
             {SELF_SERVE_HINT[outcome.capability]}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -130,7 +130,7 @@ export function EscalationPanel({
               onClick={() =>
                 onGoToTab(outcome.capability === 'image' ? 'images' : 'text')
               }
-              className="rounded-full bg-[var(--fs-ink)] px-3 py-1.5 text-sm font-semibold text-white"
+              className="rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-3 py-1.5 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:pointer-events-none"
             >
               {outcome.capability === 'image'
                 ? 'Open the Pictures tab'
@@ -140,7 +140,7 @@ export function EscalationPanel({
               type="button"
               data-testid="escalation-send-anyway"
               onClick={() => void submit(true)}
-              className="rounded-full border border-[var(--fs-ink)]/20 px-3 py-1.5 text-sm font-semibold text-[var(--fs-ink)]/75"
+              className="rounded-lg border border-[var(--fs-rule)] px-3 py-1.5 text-sm font-semibold text-[var(--fs-ink)] transition-colors hover:border-[var(--purple-primary)]/40"
             >
               Send it to the team anyway
             </button>
@@ -155,7 +155,9 @@ export function EscalationPanel({
           email.
         </p>
       ) : outcome.state === 'error' ? (
-        <p className="text-sm text-red-600">{outcome.message}</p>
+        <p className="rounded-xl border border-red-600/25 bg-red-600/10 px-4 py-3 text-sm text-red-800 dark:text-red-300">
+          {outcome.message}
+        </p>
       ) : null}
 
       <button
@@ -163,7 +165,7 @@ export function EscalationPanel({
         data-testid="escalation-submit"
         onClick={() => void submit(false)}
         disabled={request.trim().length < 10 || outcome.state === 'sending'}
-        className="self-start rounded-full bg-[var(--fs-ink)] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+        className="self-start rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:pointer-events-none"
       >
         {outcome.state === 'sending' ? 'Sending…' : 'Send to my team'}
       </button>

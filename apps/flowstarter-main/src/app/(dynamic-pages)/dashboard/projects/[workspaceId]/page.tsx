@@ -78,7 +78,7 @@ export default async function ClientProjectPage({
   });
 
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-5 py-12">
+    <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-5 py-12">
       <header className="flex flex-col gap-2">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--purple-primary)]">
           Your project
@@ -110,54 +110,54 @@ export default async function ClientProjectPage({
         </Link>
       </header>
 
-      <section className="rounded-2xl border border-[var(--fs-ink)]/10 bg-white/60 px-6 py-6">
+      <section className="rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-6 py-6 shadow-[var(--fs-card-shadow)] backdrop-blur-xl">
         <ProjectStateStepper state={state} />
       </section>
 
       {payments.due ? (
         <section
           data-testid={`payment-cta-${payments.due.kind}`}
-          className="flex flex-col gap-3 rounded-2xl border border-[var(--fs-ink)]/15 bg-white/70 px-6 py-6"
+          className="flex flex-col gap-3 rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-6 py-6 shadow-[var(--fs-card-shadow)] backdrop-blur-xl"
         >
           <h2 className="text-base font-bold text-[var(--fs-ink)]">
             {payments.due.kind === 'deposit'
               ? 'Start the build'
               : 'Settle the balance'}
           </h2>
-          <p className="max-w-2xl text-sm leading-relaxed text-[var(--fs-ink)]/70">
+          <p className="max-w-2xl text-sm leading-relaxed text-[var(--fs-ink-dim)]">
             {payments.due.explainer}
           </p>
           <dl className="flex flex-wrap gap-x-8 gap-y-1 text-sm">
             <div className="flex items-baseline gap-2">
-              <dt className="text-[var(--fs-ink)]/60">Due now</dt>
+              <dt className="text-[var(--fs-ink-faint)]">Due now</dt>
               <dd className="font-bold text-[var(--fs-ink)]">
                 {formatMinor(payments.due.amountMinor, payments.due.currency)}
               </dd>
             </div>
             <div className="flex items-baseline gap-2">
-              <dt className="text-[var(--fs-ink)]/60">Total quoted</dt>
-              <dd className="font-semibold text-[var(--fs-ink)]/80">
+              <dt className="text-[var(--fs-ink-faint)]">Total quoted</dt>
+              <dd className="font-semibold text-[var(--fs-ink-dim)]">
                 {formatMinor(payments.quoteMinor, payments.currency)}
               </dd>
             </div>
           </dl>
           <Link
             href={payments.due.href}
-            className="inline-flex w-fit items-center rounded-full bg-[var(--fs-ink)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            className="inline-flex w-fit items-center rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] active:translate-y-0"
           >
             {payments.due.label}
           </Link>
         </section>
       ) : null}
 
-      <section className="rounded-2xl border border-[var(--fs-ink)]/10 bg-white/60 px-6 py-6">
+      <section className="rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-6 py-6 shadow-[var(--fs-card-shadow)] backdrop-blur-xl">
         {/* `workspaceId` is what turns each ask into an upload control; the
             uploader posts to /api/client/assets/[workspaceId], which runs the
             same access check this page did. */}
         <OpenAsks messages={messages} workspaceId={workspaceId} />
       </section>
 
-      <section className="flex flex-col gap-4 rounded-2xl border border-[var(--fs-ink)]/10 bg-white/60 px-6 py-6">
+      <section className="flex flex-col gap-4 rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-6 py-6 shadow-[var(--fs-card-shadow)] backdrop-blur-xl">
         <h2 className="text-base font-bold text-[var(--fs-ink)]">Messages</h2>
         <ProjectThread
           workspaceId={workspaceId}

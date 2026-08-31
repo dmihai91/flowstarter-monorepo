@@ -205,13 +205,13 @@ export function SiteEditor({
 
   return (
     <div className="flex min-h-screen w-full flex-col gap-4 px-4 py-6 lg:flex-row lg:px-6">
-      <section className="flex min-h-[420px] flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--fs-ink)]/10 bg-white/70">
-        <header className="flex items-center justify-between gap-3 border-b border-[var(--fs-ink)]/10 px-4 py-3">
+      <section className="flex min-h-[420px] flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] shadow-[var(--fs-card-shadow)] backdrop-blur-xl">
+        <header className="flex items-center justify-between gap-3 border-b border-[var(--fs-rule)] px-4 py-3">
           <div>
             <p className="text-sm font-bold text-[var(--fs-ink)]">
               {initial.site.name}
             </p>
-            <p className="text-xs text-[var(--fs-ink)]/55">
+            <p className="text-xs text-[var(--fs-ink-faint)]">
               {initial.site.rendersBuiltHtml
                 ? `Your site · version ${version || 1}`
                 : `Content preview · version ${version || 1}${
@@ -224,7 +224,7 @@ export function SiteEditor({
           <button
             type="button"
             onClick={() => setFrameKey((key) => key + 1)}
-            className="rounded-full border border-[var(--fs-ink)]/15 px-3 py-1.5 text-xs font-semibold text-[var(--fs-ink)]/70 hover:bg-[var(--fs-ink)]/5"
+            className="shrink-0 rounded-full border border-[var(--fs-rule)] px-3 py-1.5 text-xs font-semibold text-[var(--fs-ink-dim)] transition-colors hover:border-[var(--purple-primary)]/40 hover:text-[var(--fs-ink)]"
           >
             Refresh
           </button>
@@ -243,7 +243,7 @@ export function SiteEditor({
       </section>
 
       <aside className="flex w-full flex-col gap-4 lg:w-[420px]">
-        <nav className="flex gap-1 rounded-full border border-[var(--fs-ink)]/10 bg-white/70 p-1 text-sm">
+        <nav className="flex gap-1 rounded-full border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] p-1 text-sm shadow-[var(--fs-card-shadow)] backdrop-blur-xl">
           {(
             [
               ['text', 'Words'],
@@ -257,10 +257,10 @@ export function SiteEditor({
               type="button"
               onClick={() => setTab(value)}
               data-testid={`editor-tab-${value}`}
-              className={`flex-1 rounded-full px-3 py-1.5 font-semibold transition-colors ${
+              className={`flex-1 whitespace-nowrap rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors ${
                 tab === value
-                  ? 'bg-[var(--fs-ink)] text-white'
-                  : 'text-[var(--fs-ink)]/65 hover:bg-[var(--fs-ink)]/5'
+                  ? 'bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] text-white shadow-lg shadow-[var(--purple-primary-lightest)]'
+                  : 'text-[var(--fs-ink-dim)] hover:text-[var(--fs-ink)]'
               }`}
             >
               {label}
@@ -269,13 +269,13 @@ export function SiteEditor({
         </nav>
 
         {tab === 'text' ? (
-          <div className="flex flex-col gap-4 rounded-2xl border border-[var(--fs-ink)]/10 bg-white/70 px-4 py-4">
+          <div className="flex flex-col gap-4 rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-4 py-4 shadow-[var(--fs-card-shadow)] backdrop-blur-xl">
             <PolicyNotice decision={contentPolicy} />
 
             <div>
               <label
                 htmlFor="editor-target"
-                className="text-xs font-semibold uppercase tracking-widest text-[var(--fs-ink)]/50"
+                className="text-xs font-semibold uppercase tracking-widest text-[var(--fs-ink-faint)]"
               >
                 What are you changing?
               </label>
@@ -287,7 +287,7 @@ export function SiteEditor({
                   setSelectedId(event.target.value || null);
                   setProposal(null);
                 }}
-                className="mt-1 w-full rounded-xl border border-[var(--fs-ink)]/15 bg-white px-3 py-2 text-sm text-[var(--fs-ink)]"
+                className="mt-1 w-full rounded-lg border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-3.5 py-2.5 text-sm text-[var(--fs-ink)] outline-none transition-[box-shadow,border-color] duration-150 hover:border-[var(--purple-primary)]/30 focus:border-[var(--purple-primary)]/40 focus:shadow-[0_0_0_4px_var(--purple-primary-lightest)]"
               >
                 <option value="">Click something in your site…</option>
                 {sections.map(([section, group]) => (
@@ -303,8 +303,8 @@ export function SiteEditor({
             </div>
 
             {selected ? (
-              <div className="rounded-xl bg-[var(--fs-ink)]/[0.04] px-3 py-3">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--fs-ink)]/45">
+              <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-3 py-3">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--fs-ink-faint)]">
                   {selected.section} · {selected.key}
                 </p>
                 <p
@@ -319,7 +319,7 @@ export function SiteEditor({
             <div>
               <label
                 htmlFor="editor-instruction"
-                className="text-xs font-semibold uppercase tracking-widest text-[var(--fs-ink)]/50"
+                className="text-xs font-semibold uppercase tracking-widest text-[var(--fs-ink-faint)]"
               >
                 What should it say instead?
               </label>
@@ -332,9 +332,9 @@ export function SiteEditor({
                 rows={3}
                 disabled={!canEdit || !selected}
                 placeholder="Warmer, and mention that we open on Saturdays"
-                className="mt-1 w-full rounded-xl border border-[var(--fs-ink)]/15 bg-white px-3 py-2 text-sm text-[var(--fs-ink)] disabled:opacity-50"
+                className="mt-1 w-full rounded-lg border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-3.5 py-2.5 text-sm text-[var(--fs-ink)] outline-none transition-[box-shadow,border-color] duration-150 placeholder:text-[var(--fs-ink-faint)] hover:border-[var(--purple-primary)]/30 focus:border-[var(--purple-primary)]/40 focus:shadow-[0_0_0_4px_var(--purple-primary-lightest)] disabled:opacity-50"
               />
-              <p className="mt-1 text-xs text-[var(--fs-ink)]/50">
+              <p className="mt-1 text-xs text-[var(--fs-ink-faint)]">
                 {used} of {initial.allowance.cap} changes used today.
               </p>
             </div>
@@ -346,7 +346,7 @@ export function SiteEditor({
               disabled={
                 !canEdit || !selected || !instruction.trim() || busy !== null
               }
-              className="rounded-full bg-[var(--fs-ink)] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-40"
+              className="rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:pointer-events-none"
             >
               {busy === 'edit' ? 'Writing…' : 'Suggest a change'}
             </button>
@@ -354,9 +354,9 @@ export function SiteEditor({
             {proposal ? (
               <div
                 data-testid="editor-proposal"
-                className="flex flex-col gap-3 rounded-xl border border-[var(--fs-ink)]/15 px-3 py-3"
+                className="flex flex-col gap-3 rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-3 py-3"
               >
-                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--fs-ink)]/50">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--fs-ink-faint)]">
                   Before you save
                 </p>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -368,10 +368,10 @@ export function SiteEditor({
                       key={index}
                       className={
                         part.kind === 'removed'
-                          ? 'bg-red-100 text-red-900 line-through'
+                          ? 'rounded bg-red-600/10 text-red-800 line-through dark:text-red-300'
                           : part.kind === 'added'
-                          ? 'bg-emerald-100 text-emerald-900'
-                          : 'text-[var(--fs-ink)]/80'
+                          ? 'rounded bg-emerald-600/10 text-emerald-800 dark:text-emerald-300'
+                          : 'text-[var(--fs-ink-dim)]'
                       }
                     >
                       {part.text}
@@ -384,14 +384,14 @@ export function SiteEditor({
                     data-testid="editor-apply"
                     onClick={apply}
                     disabled={busy !== null}
-                    className="rounded-full bg-[var(--fs-ink)] px-5 py-2 text-sm font-semibold text-white disabled:opacity-40"
+                    className="rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:pointer-events-none"
                   >
                     {busy === 'apply' ? 'Saving…' : 'Use this'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setProposal(null)}
-                    className="rounded-full border border-[var(--fs-ink)]/15 px-5 py-2 text-sm font-semibold text-[var(--fs-ink)]/70"
+                    className="rounded-lg border border-[var(--fs-rule)] px-5 py-2 text-sm font-semibold text-[var(--fs-ink)] transition-colors hover:border-[var(--purple-primary)]/40"
                   >
                     Discard
                   </button>
@@ -402,13 +402,13 @@ export function SiteEditor({
             {error ? (
               <p
                 data-testid="editor-error"
-                className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800"
+                className="rounded-xl border border-red-600/25 bg-red-600/10 px-3 py-2 text-sm text-red-800 dark:text-red-300"
               >
                 {error}
               </p>
             ) : null}
             {notice ? (
-              <p className="text-sm text-[var(--fs-ink)]/60">{notice}</p>
+              <p className="text-sm text-[var(--fs-ink-dim)]">{notice}</p>
             ) : null}
           </div>
         ) : null}
@@ -447,7 +447,7 @@ export function SiteEditor({
 
         <Link
           href={`/dashboard/projects/${workspaceId}`}
-          className="text-sm font-semibold text-[var(--fs-ink)]/60 underline underline-offset-4"
+          className="text-sm font-semibold text-[var(--fs-ink-dim)] underline underline-offset-4 transition-colors hover:text-[var(--fs-ink)]"
         >
           Back to your project
         </Link>

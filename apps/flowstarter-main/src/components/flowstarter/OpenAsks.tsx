@@ -121,7 +121,7 @@ export function OpenAsks({
       </h2>
       {asks.length === 0 ? (
         <p
-          className="text-sm text-[var(--fs-ink)]/65"
+          className="text-sm text-[var(--fs-ink-dim)]"
           data-testid="open-asks-empty"
         >
           Nothing right now. If we need anything we&apos;ll ask you here and
@@ -133,10 +133,13 @@ export function OpenAsks({
             <li
               key={ask.key}
               data-testid="open-ask"
-              className="flex flex-col gap-3 rounded-xl border border-amber-300/60 bg-amber-50/70 px-4 py-3 text-sm text-[var(--fs-ink)]"
+              className="flex flex-col gap-3 rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-[var(--fs-ink)]"
             >
               <div className="flex items-start gap-3">
-                <span aria-hidden className="mt-0.5 text-amber-600">
+                <span
+                  aria-hidden
+                  className="mt-0.5 text-amber-600 dark:text-amber-400"
+                >
                   •
                 </span>
                 <span>{ask.label}</span>
@@ -159,14 +162,14 @@ export function OpenAsks({
       {sufficiency ? (
         <div
           data-testid="open-asks-remaining"
-          className="rounded-xl border border-[var(--fs-ink)]/10 bg-white/60 px-4 py-3 text-sm text-[var(--fs-ink)]"
+          className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-4 py-3 text-sm text-[var(--fs-ink)]"
         >
           {sufficiency.missing.length === 0 ? (
             <p>That&apos;s everything we need. We&apos;ll take it from here.</p>
           ) : (
             <>
               <p className="font-semibold">Still outstanding</p>
-              <ul className="mt-1 flex flex-col gap-1 text-[var(--fs-ink)]/75">
+              <ul className="mt-1 flex flex-col gap-1 text-[var(--fs-ink-dim)]">
                 {sufficiency.missing.map((item, index) => (
                   <li key={item.code ?? index}>
                     {item.message ?? item.code ?? 'Something else'}

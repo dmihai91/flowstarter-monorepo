@@ -217,7 +217,7 @@ export function AssetUploader({
         <label
           htmlFor={inputId}
           className={cn(
-            'inline-flex cursor-pointer items-center rounded-full border border-[var(--fs-ink)]/20 bg-white px-4 py-2 text-xs font-semibold text-[var(--fs-ink)] transition-opacity hover:opacity-80',
+            'inline-flex cursor-pointer items-center rounded-lg border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)] px-4 py-2 text-xs font-semibold text-[var(--fs-ink)] transition-colors hover:border-[var(--purple-primary)]/40',
             busy && 'pointer-events-none opacity-60'
           )}
         >
@@ -236,7 +236,7 @@ export function AssetUploader({
             if (files) void send(files);
           }}
         />
-        <span className="text-xs text-[var(--fs-ink)]/55">
+        <span className="text-xs text-[var(--fs-ink-faint)]">
           JPEG, PNG, GIF or WebP · up to 8MB each
         </span>
       </div>
@@ -248,10 +248,10 @@ export function AssetUploader({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-label="Upload progress"
-          className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--fs-ink)]/10"
+          className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--fs-rule)]"
         >
           <div
-            className="h-full rounded-full bg-[var(--fs-ink)] transition-[width]"
+            className="h-full rounded-full bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] transition-[width]"
             style={{ width: `${percent}%` }}
           />
         </div>
@@ -261,7 +261,7 @@ export function AssetUploader({
         <p
           role="alert"
           data-testid="asset-uploader-error"
-          className="text-xs font-medium text-red-700"
+          className="text-xs font-medium text-red-600 dark:text-red-400"
         >
           {error}
         </p>
@@ -278,7 +278,7 @@ export function AssetUploader({
                 data-testid="asset-thumbnail"
                 data-usable={asset.usable ? 'true' : 'false'}
                 className={cn(
-                  'h-16 w-16 rounded-lg border border-[var(--fs-ink)]/15 object-cover',
+                  'h-16 w-16 rounded-xl border border-[var(--fs-rule)] object-cover',
                   !asset.usable && 'opacity-60'
                 )}
               />
@@ -288,14 +288,14 @@ export function AssetUploader({
       ) : null}
 
       {needsRights ? (
-        <div className="flex flex-col gap-2 rounded-lg border border-[var(--fs-ink)]/15 bg-white/70 px-3 py-3">
+        <div className="flex flex-col gap-2 rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-3 py-3">
           <label className="flex items-start gap-2 text-xs leading-relaxed text-[var(--fs-ink)]">
             <input
               type="checkbox"
               checked={agreed}
               disabled={busy}
               onChange={(event) => setAgreed(event.target.checked)}
-              className="mt-0.5 size-4 shrink-0 rounded border-[var(--fs-ink)]/30"
+              className="mt-0.5 size-4 shrink-0 rounded border-[var(--fs-rule)] accent-[var(--purple-primary)]"
               data-testid="rights-checkbox"
             />
             <span>{statement}</span>
@@ -305,11 +305,11 @@ export function AssetUploader({
             disabled={!agreed || busy}
             onClick={() => void confirmRights()}
             data-testid="confirm-rights"
-            className="w-fit rounded-full bg-[var(--fs-ink)] px-4 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="w-fit rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-xs font-semibold text-white shadow-md shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] active:translate-y-0 disabled:pointer-events-none disabled:opacity-40"
           >
             {phase === 'confirming' ? 'Saving…' : 'Confirm and use these'}
           </button>
-          <p className="text-[11px] text-[var(--fs-ink)]/55">
+          <p className="text-[11px] text-[var(--fs-ink-faint)]">
             We won&apos;t put anything on your site until you confirm this.
           </p>
         </div>
@@ -318,7 +318,7 @@ export function AssetUploader({
       {phase === 'confirmed' && uploaded.length > 0 ? (
         <p
           data-testid="asset-uploader-done"
-          className="text-xs font-medium text-emerald-700"
+          className="text-xs font-medium text-emerald-700 dark:text-emerald-400"
         >
           Thanks, {uploaded.length === 1 ? 'that file is' : 'those files are'}{' '}
           with us and cleared for use.

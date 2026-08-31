@@ -46,12 +46,12 @@ export default async function ClientProjectsPage() {
             <li key={workspace.id}>
               <Link
                 href={`/dashboard/projects/${workspace.id}`}
-                className="flex flex-col gap-1 rounded-2xl border border-[var(--fs-ink)]/10 bg-white/60 px-5 py-4 transition-colors hover:border-[var(--fs-ink)]/30"
+                className="flex flex-col gap-1 rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-5 py-4 shadow-[var(--fs-card-shadow)] backdrop-blur-xl transition-colors hover:border-[var(--purple-primary)]/40"
               >
                 <span className="text-base font-semibold text-[var(--fs-ink)]">
                   {workspaceDisplayName(workspace)}
                 </span>
-                <span className="text-sm text-[var(--fs-ink)]/65">
+                <span className="text-sm text-[var(--fs-ink-dim)]">
                   {stage.title}
                 </span>
               </Link>

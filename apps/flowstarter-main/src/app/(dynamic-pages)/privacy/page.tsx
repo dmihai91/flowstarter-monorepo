@@ -21,7 +21,7 @@ export default function PrivacyPage() {
           eyebrow="Privacy"
           headlinePrefix="Your data,"
           headlineFlourish="handled with care."
-          sub="We collect what we need to build, host, and support your site — and nothing more. No surveillance ad tech, no broker resale, no surprises."
+          sub="We collect what we need to build, host, and support your site, and nothing more. No surveillance ad tech, no broker resale, no surprises."
           meta={
             <span className="ls-page-meta">
               <span>Last updated</span>
@@ -53,26 +53,26 @@ export default function PrivacyPage() {
           </p>
           <ul>
             <li>
-              <strong>Account data</strong> — name, email, and (for paying
+              <strong>Account data</strong>: name, email, and (for paying
               clients) billing address and VAT number. Collected at sign-up and
               during invoicing.
             </li>
             <li>
-              <strong>Discovery-call submissions</strong> — the goals, business
+              <strong>Discovery-call submissions</strong>: the goals, business
               details, and current-site URL you share when booking a free call.
             </li>
             <li>
-              <strong>Site usage</strong> — anonymised analytics events such as
+              <strong>Site usage</strong>: anonymised analytics events such as
               page views, referrers, and aggregated device class. No cross-site
               tracking.
             </li>
             <li>
-              <strong>Uploaded content</strong> — copy, images, logos, and brand
+              <strong>Uploaded content</strong>: copy, images, logos, and brand
               assets you (or your team) upload to your project. Stored encrypted
               at rest.
             </li>
             <li>
-              <strong>Cookies</strong> — a small number of strictly necessary
+              <strong>Cookies</strong>: a small number of strictly necessary
               cookies for auth and theme preference. Details on the{' '}
               <a href="/cookies">cookie page</a>.
             </li>
@@ -86,19 +86,19 @@ export default function PrivacyPage() {
               support.
             </li>
             <li>
-              <strong>Billing</strong> — generating invoices, processing
+              <strong>Billing</strong>: generating invoices, processing
               payments, and meeting our tax obligations.
             </li>
             <li>
-              <strong>Transactional email</strong> — confirmations, project
+              <strong>Transactional email</strong>: confirmations, project
               updates, security alerts, and renewal notices.
             </li>
             <li>
-              <strong>Product improvement</strong> — aggregated, de-identified
+              <strong>Product improvement</strong>: aggregated, de-identified
               analytics used to improve the editor and the marketing site.
             </li>
             <li>
-              <strong>Marketing email</strong> — only with your explicit opt-in
+              <strong>Marketing email</strong>: only with your explicit opt-in
               consent, and only to subscribers who actively chose to receive it.
             </li>
           </ul>
@@ -106,19 +106,19 @@ export default function PrivacyPage() {
           <h2>4. Legal basis (GDPR Article 6)</h2>
           <ul>
             <li>
-              <strong>Contract performance</strong> — for everything we do to
+              <strong>Contract performance</strong>: for everything we do to
               deliver and support your project.
             </li>
             <li>
-              <strong>Legitimate interest</strong> — for aggregated analytics,
+              <strong>Legitimate interest</strong>: for aggregated analytics,
               security monitoring, and fraud prevention.
             </li>
             <li>
-              <strong>Legal obligation</strong> — for tax and accounting
+              <strong>Legal obligation</strong>: for tax and accounting
               records.
             </li>
             <li>
-              <strong>Consent</strong> — for marketing email and any optional
+              <strong>Consent</strong>: for marketing email and any optional
               analytics or functional cookies.
             </li>
           </ul>
@@ -131,35 +131,35 @@ export default function PrivacyPage() {
           </p>
           <ul>
             <li>
-              <strong>Clerk</strong> (US, EU SCCs) — authentication and session
+              <strong>Clerk</strong> (US, EU SCCs): authentication and session
               management.
             </li>
             <li>
-              <strong>Supabase</strong> (EU region) — primary database and file
+              <strong>Supabase</strong> (EU region): primary database and file
               storage for client projects.
             </li>
             <li>
-              <strong>Hetzner</strong> (Germany / Finland) — application hosting
+              <strong>Hetzner</strong> (Germany / Finland): application hosting
               and customer-site servers.
             </li>
             <li>
-              <strong>Cloudflare</strong> (US, EU SCCs) — DNS, edge CDN, and
+              <strong>Cloudflare</strong> (US, EU SCCs): DNS, edge CDN, and
               DDoS protection.
             </li>
             <li>
-              <strong>Stripe</strong> (Ireland) — payments, invoicing, and tax
+              <strong>Stripe</strong> (Ireland): payments, invoicing, and tax
               calculation.
             </li>
             <li>
-              <strong>Resend</strong> (US, EU SCCs) — transactional email
+              <strong>Resend</strong> (US, EU SCCs): transactional email
               delivery.
             </li>
             <li>
-              <strong>Calendly</strong> (US, EU SCCs) — discovery-call
+              <strong>Calendly</strong> (US, EU SCCs): discovery-call
               scheduling.
             </li>
             <li>
-              <strong>Plausible</strong> (EU) — privacy-friendly, cookie-less
+              <strong>Plausible</strong> (EU): privacy-friendly, cookie-less
               analytics for flowstarter.net.
             </li>
           </ul>
@@ -182,22 +182,22 @@ export default function PrivacyPage() {
           <h2>7. Retention</h2>
           <ul>
             <li>
-              <strong>Account data</strong> — kept for the lifetime of the
+              <strong>Account data</strong>: kept for the lifetime of the
               account, then deleted 30 days after closure.
             </li>
             <li>
-              <strong>Uploaded site assets</strong> — kept until you delete
+              <strong>Uploaded site assets</strong>: kept until you delete
               them, or 30 days after account closure.
             </li>
             <li>
-              <strong>Analytics events</strong> — retained for 12 months.
+              <strong>Analytics events</strong>: retained for 12 months.
             </li>
             <li>
-              <strong>Billing and invoices</strong> — retained for 7 years to
+              <strong>Billing and invoices</strong>: retained for 7 years to
               meet EU tax-record obligations.
             </li>
             <li>
-              <strong>Email logs</strong> — retained for 30 days for
+              <strong>Email logs</strong>: retained for 30 days for
               deliverability troubleshooting.
             </li>
           </ul>
@@ -206,31 +206,31 @@ export default function PrivacyPage() {
           <p>You have the right to:</p>
           <ul>
             <li>
-              <strong>Access</strong> — request a copy of the personal data we
+              <strong>Access</strong>: request a copy of the personal data we
               hold about you.
             </li>
             <li>
-              <strong>Rectification</strong> — correct any inaccurate or
+              <strong>Rectification</strong>: correct any inaccurate or
               incomplete data.
             </li>
             <li>
-              <strong>Erasure</strong> — ask us to delete your data, subject to
+              <strong>Erasure</strong>: ask us to delete your data, subject to
               legal-retention obligations.
             </li>
             <li>
-              <strong>Portability</strong> — receive your data in a
+              <strong>Portability</strong>: receive your data in a
               machine-readable format.
             </li>
             <li>
-              <strong>Objection</strong> — object to processing based on
+              <strong>Objection</strong>: object to processing based on
               legitimate interest.
             </li>
             <li>
-              <strong>Restriction</strong> — limit how we process your data
+              <strong>Restriction</strong>: limit how we process your data
               while a query is being resolved.
             </li>
             <li>
-              <strong>Complaint</strong> — lodge a complaint with your national
+              <strong>Complaint</strong>: lodge a complaint with your national
               data-protection authority.
             </li>
           </ul>

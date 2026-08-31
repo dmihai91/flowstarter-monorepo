@@ -18,13 +18,13 @@ import type { Project } from './form-helpers';
 import { fieldsDirty } from './form-helpers';
 
 const STAGES = [
-  { value: 'intake', label: 'Intake — discovery call booked / completed' },
-  { value: 'brief', label: 'Brief — requirements captured, ready to build' },
-  { value: 'build', label: 'Building — site under construction' },
-  { value: 'internal_review', label: 'Internal review — team QA' },
-  { value: 'client_review', label: 'Client review — client approving' },
-  { value: 'launched', label: 'Launched — live on production' },
-  { value: 'care', label: 'Care — ongoing maintenance / changes' },
+  { value: 'intake', label: 'Intake: discovery call booked / completed' },
+  { value: 'brief', label: 'Brief: requirements captured, ready to build' },
+  { value: 'build', label: 'Building: site under construction' },
+  { value: 'internal_review', label: 'Internal review: team QA' },
+  { value: 'client_review', label: 'Client review: client approving' },
+  { value: 'launched', label: 'Launched: live on production' },
+  { value: 'care', label: 'Care: ongoing maintenance / changes' },
 ] as const;
 
 type ConciergeState = { concierge_stage: string };

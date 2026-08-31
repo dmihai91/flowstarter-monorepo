@@ -83,7 +83,7 @@ export const adminKeys = {
   'admin.dashboard.table.tier': 'Tier',
   'admin.dashboard.table.stage': 'Stage',
   'admin.dashboard.table.updated': 'Updated',
-  'admin.dashboard.table.emptyAccount': '—',
+  'admin.dashboard.table.emptyAccount': '–',
   'admin.dashboard.projects.emptyTitle': 'No projects yet',
   'admin.dashboard.projects.emptyBody':
     'After you create a project, it will appear here',

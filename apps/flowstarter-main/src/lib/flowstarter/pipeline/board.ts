@@ -219,7 +219,7 @@ export function stallReasonsFor(input: {
           `${job.kind} has been queued for ${formatDuration(
             waiting
           )} without ` +
-            'being picked up — dispatch to the worker may have been dropped'
+            'being picked up: dispatch to the worker may have been dropped'
         );
       }
     } else if (job.status === 'running') {

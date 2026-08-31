@@ -57,7 +57,7 @@ export async function injectPreviewTeaser(
 ): Promise<{ layoutsPatched: number }> {
   const keepHome = options.keepHomeSections ?? 3;
   const keepSub = options.keepSubpageSections ?? 1;
-  const label = (options.label ?? 'Part of your full site — unlocked after the preview call')
+  const label = (options.label ?? 'Part of your full site, unlocked after the preview call')
     .slice(0, 120);
   const unlockUrl = options.unlockUrl
     ? assertSafeUnlockUrl(options.unlockUrl)
@@ -168,7 +168,7 @@ const TEASER_JS = `
       // whole page rather than open inside the frame.
       veil.target = '_top';
       veil.rel = 'noopener';
-      veil.setAttribute('aria-label', UNLOCK_LABEL + ' — ' + label);
+      veil.setAttribute('aria-label', UNLOCK_LABEL + ': ' + label);
       var cta = document.createElement('span');
       cta.className = 'fs-teaser-cta';
       cta.textContent = UNLOCK_LABEL;

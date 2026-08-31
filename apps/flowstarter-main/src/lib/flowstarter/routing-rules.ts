@@ -130,7 +130,7 @@ export const ROUTING_RULES: RoutingRule[] = [
       d.commerceMode === 'none' &&
       !hasCustomIntegrationRequest(d.customIntegrations),
     reason:
-      'No commerce or custom integration — fits the standard brochure flow',
+      'No commerce or custom integration, fits the standard brochure flow',
   },
   {
     id: 'bookingOrPortfolioGoal',

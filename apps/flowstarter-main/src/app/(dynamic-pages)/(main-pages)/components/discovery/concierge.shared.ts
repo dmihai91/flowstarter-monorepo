@@ -106,7 +106,7 @@ export function depositQuote(tier: Tier | '' | undefined): DepositQuote | null {
  */
 export function previewMeaningMessage(quote: DepositQuote | null): string {
   const what =
-    'What you are about to watch is a preview of your full site — one real, ' +
+    'What you are about to watch is a preview of your full site: one real, ' +
     'working page, built from your answers, so you can judge the direction ' +
     'before you spend anything.';
   if (!quote) {
@@ -123,7 +123,7 @@ export function previewMeaningMessage(quote: DepositQuote | null): string {
 /** Said again once the preview is on screen, next to the CTA. */
 export function previewReadyMessage(quote: DepositQuote | null): string {
   const what =
-    'That is your preview — a page of your full site, not the whole site.';
+    'That is your preview: a page of your full site, not the whole site.';
   if (!quote) {
     return `${what} To have the rest built, you pay the 20% deposit now and the balance only once it is finished and you have approved it.`;
   }
@@ -140,9 +140,9 @@ export function previewReadyMessage(quote: DepositQuote | null): string {
 /** The primary button under that message. */
 export function depositCtaLabel(quote: DepositQuote | null): string {
   return quote
-    ? `Reserve my full site — pay the ${quote.depositLabel} deposit`
-    : 'Reserve my full site — pay the 20% deposit';
+    ? `Reserve my full site: pay the ${quote.depositLabel} deposit`
+    : 'Reserve my full site: pay the 20% deposit';
 }
 
 /** The quieter way out, always offered next to it. */
-export const KEEP_EXPLORING_LABEL = 'Not yet — keep exploring the preview';
+export const KEEP_EXPLORING_LABEL = 'Not yet, keep exploring the preview';

@@ -320,7 +320,7 @@ export function AssetUploader({
           data-testid="asset-uploader-done"
           className="text-xs font-medium text-emerald-700"
         >
-          Thanks — {uploaded.length === 1 ? 'that file is' : 'those files are'}{' '}
+          Thanks, {uploaded.length === 1 ? 'that file is' : 'those files are'}{' '}
           with us and cleared for use.
         </p>
       ) : null}

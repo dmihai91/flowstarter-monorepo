@@ -286,7 +286,7 @@ describe('what the visitor is told this is', () => {
     ).toBeInTheDocument();
     expect(
       within(log).getByRole('button', {
-        name: 'Reserve my full site — pay the €159.80 deposit',
+        name: 'Reserve my full site: pay the €159.80 deposit',
       })
     ).toBeInTheDocument();
     // And the quieter way past it, always.

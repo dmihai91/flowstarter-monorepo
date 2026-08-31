@@ -64,9 +64,9 @@ const scenarios: Scenario[] = [
   {
     id: 'deposit',
     number: '05',
-    title: 'Deposit paid, build queued — the operator side',
+    title: 'Deposit paid, build queued: the operator side',
     summary:
-      'The real operator console: the 20% deposit invoice goes out as an actual Stripe invoice, the payment webhook lands, and the workspace advances to DEPOSIT_PAID with a full-site build queued on the ledger — no manual bookkeeping.',
+      'The real operator console: the 20% deposit invoice goes out as an actual Stripe invoice, the payment webhook lands, and the workspace advances to DEPOSIT_PAID with a full-site build queued on the ledger, no manual bookkeeping.',
     outcome: 'A paid deposit that queues the site build by itself',
     steps: [
       'Operator console',
@@ -82,7 +82,7 @@ const scenarios: Scenario[] = [
     number: '06',
     title: 'Instagram profile in, portfolio site out',
     summary:
-      'A real client scenario end to end: the public Instagram profile @darius.flowstarter is analyzed for brand identity — bio, captions and images — the sigma classifier picks the template deterministically in milliseconds, and the tiered agents build a 13-page developer portfolio. The clip scrolls the actual generated site.',
+      'A real client scenario end to end: the public Instagram profile @darius.flowstarter is analyzed for brand identity (bio, captions and images), the sigma classifier picks the template deterministically in milliseconds, and the tiered agents build a 13-page developer portfolio. The clip scrolls the actual generated site.',
     outcome: 'A live portfolio derived from a real Instagram identity',
     steps: [
       'Public profile analysis',

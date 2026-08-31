@@ -515,7 +515,7 @@ function ServerRow({
             onClick={() => {
               const force = server.sites_count > 0;
               const message = force
-                ? `Decommission "${server.name}" with ${server.sites_count} active sites? This forces deletion — sites will go down.`
+                ? `Decommission "${server.name}" with ${server.sites_count} active sites? This forces deletion, sites will go down.`
                 : `Decommission "${server.name}"? This deletes the Hetzner server.`;
               if (confirm(message)) onDecommission(force);
             }}

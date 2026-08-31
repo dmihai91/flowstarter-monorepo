@@ -72,7 +72,7 @@ export default async function UnlockPage({
           <p className="ls-body ls-body--lead ls-unlock__lead">
             The blurred sections are the rest of the site we already generated
             for you. Book the call and we agree the scope, the price and the
-            date — then the same agents finish the build.
+            date, then the same agents finish the build.
           </p>
 
           <ol className="ls-unlock__steps">
@@ -140,7 +140,7 @@ export default async function UnlockPage({
 
       {alreadyPaid ? (
         <p className="text-base leading-relaxed text-[var(--fs-ink)]/75">
-          Your deposit is already paid and the full build is underway — the
+          Your deposit is already paid and the full build is underway. The
           blurred sections of your preview are being finished now. We will be in
           touch as soon as the complete site is ready to review.
         </p>

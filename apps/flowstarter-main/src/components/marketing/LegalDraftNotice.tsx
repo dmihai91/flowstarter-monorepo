@@ -16,7 +16,7 @@ export function LegalDraftNotice() {
           color: 'var(--ls-ink-faint)',
         }}
       >
-        Draft — under legal review
+        Draft: under legal review
       </p>
       <p style={{ marginTop: '0.6rem' }}>
         The terms below describe our current operating practice and are binding

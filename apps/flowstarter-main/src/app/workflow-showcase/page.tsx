@@ -6,7 +6,7 @@ import './workflow-showcase.css';
 
 export const metadata: Metadata = {
   colorScheme: 'light dark',
-  title: 'How Flowstarter works — workflow films',
+  title: 'How Flowstarter works: workflow films',
   description:
     'Watch Flowstarter turn a business idea into a tailored preview, a reviewed website, and a safely editable live service.',
 };

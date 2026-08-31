@@ -124,7 +124,7 @@ function ClientRowItem({ client }: { client: Client }) {
             </span>
           ) : null}
           {!client.email && !client.phone && (
-            <span className="text-[var(--ls-ink-faint)]">—</span>
+            <span className="text-[var(--ls-ink-faint)]">–</span>
           )}
         </div>
       </td>
@@ -134,7 +134,7 @@ function ClientRowItem({ client }: { client: Client }) {
             {tierLabel}
           </span>
         ) : (
-          <span className="text-[var(--ls-ink-faint)]">—</span>
+          <span className="text-[var(--ls-ink-faint)]">–</span>
         )}
       </td>
       <td

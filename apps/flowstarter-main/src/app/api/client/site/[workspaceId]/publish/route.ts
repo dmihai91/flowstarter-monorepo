@@ -108,7 +108,7 @@ export async function POST(
       no_host:
         'This project does not have a server allocated yet, so your change is saved and marked to publish. We will put it live when the site is hosted.',
       awaiting_build:
-        'Your change is saved and marked to publish. The site is rebuilt from these files before it goes live, and we run that build for you — nothing else is needed from you.',
+        'Your change is saved and marked to publish. The site is rebuilt from these files before it goes live, and we run that build for you: nothing else is needed from you.',
       dry_run:
         'Your change is saved and marked to publish. This environment has no deploy agent configured, so nothing was pushed to a server (dry run).',
       agent:

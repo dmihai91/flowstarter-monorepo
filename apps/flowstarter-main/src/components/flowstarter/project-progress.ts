@@ -26,7 +26,7 @@ export const PROJECT_STAGES: readonly ProjectStage[] = [
     label: 'Your details',
     title: "We're getting to know your business",
     detail:
-      "We're collecting what we need to design your site — your business details, your photos, and what you want the site to do for you.",
+      "We're collecting what we need to design your site: your business details, your photos, and what you want the site to do for you.",
   },
   {
     state: ProjectState.PREVIEW_READY,
@@ -38,7 +38,7 @@ export const PROJECT_STAGES: readonly ProjectStage[] = [
   {
     state: ProjectState.DEPOSIT_PAID,
     label: 'Deposit paid',
-    title: 'Thanks — your deposit is in',
+    title: 'Thanks, your deposit is in',
     detail:
       'Your build is booked and about to start. Nothing is needed from you right now.',
   },

@@ -34,7 +34,7 @@ const SERVER_PHASES = [
   'Publishing your live preview',
   'Reviewing the rendered preview',
   'Repairing rendered issues',
-  'Done — your site is ready',
+  'Done, your site is ready',
 ];
 
 /** The landing page's own roster (`landing-copy.ts` → team.agents). */
@@ -152,10 +152,10 @@ describe('what the visitor is told', () => {
 
   it('puts the real amount on the button, and always offers the way out', () => {
     expect(depositCtaLabel(starter)).toBe(
-      'Reserve my full site — pay the €159.80 deposit'
+      'Reserve my full site: pay the €159.80 deposit'
     );
     expect(depositCtaLabel(null)).toBe(
-      'Reserve my full site — pay the 20% deposit'
+      'Reserve my full site: pay the 20% deposit'
     );
     expect(KEEP_EXPLORING_LABEL).toMatch(/keep exploring the preview/i);
   });

@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
             currency: 'eur',
             unit_amount: amountEur * 100,
             product_data: {
-              name: `Flowstarter discovery call deposit — ${lead.tier}`,
+              name: `Flowstarter discovery call deposit: ${lead.tier}`,
               description:
                 'Refundable after the call, before any build work starts. Credited toward your setup fee if you proceed.',
             },

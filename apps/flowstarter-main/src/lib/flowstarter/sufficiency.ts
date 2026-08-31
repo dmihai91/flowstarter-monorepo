@@ -175,18 +175,18 @@ export const SECTION_VISIBILITY_ORDER = [
  */
 export const MISSING_MESSAGES: Record<MissingCode, string> = {
   hero_image_missing:
-    'One wide landscape photo for the top of your homepage — the outside of ' +
+    'One wide landscape photo for the top of your homepage: the outside of ' +
     'the premises, your team, or you at work. Landscape (wider than it is ' +
     'tall), at least 1600 pixels across. Straight off a recent phone is fine; ' +
     'a screenshot or a photo of a printout is not.',
   hero_image_low_resolution:
     'A larger version of your main photo. The one we have is too small or too ' +
-    'tall to run across the top of the homepage — it needs to be landscape ' +
+    'tall to run across the top of the homepage: it needs to be landscape ' +
     'and at least 1600 pixels wide. The original file from the camera or ' +
     'phone, rather than one saved from WhatsApp or Facebook, is usually big ' +
     'enough.',
   section_images_missing:
-    'Two more photos for the middle of the page — ideally finished work, the ' +
+    'Two more photos for the middle of the page: ideally finished work, the ' +
     'space itself, or your team. At least 800 pixels across each. Different ' +
     'subjects, not two angles of the same thing.',
   logo_missing:
@@ -196,7 +196,7 @@ export const MISSING_MESSAGES: Record<MissingCode, string> = {
   business_text_thin:
     'A few sentences in your own words: what you do, who you do it for, and ' +
     'what makes someone choose you over the place down the road. Three or ' +
-    'four sentences is plenty — we will not publish it verbatim, we need it ' +
+    'four sentences is plenty: we will not publish it verbatim, we need it ' +
     'so the site says true things.',
   contact_signal_missing:
     'One way for a customer to reach you that we can put on the site: a phone ' +
@@ -204,7 +204,7 @@ export const MISSING_MESSAGES: Record<MissingCode, string> = {
     'one you actually answer.',
   services_missing:
     'A list of at least three things you sell or do, named the way you name ' +
-    'them to customers. One line each — no descriptions needed.',
+    'them to customers. One line each, no descriptions needed.',
 };
 
 /** Which sections each requirement is holding up, when slots cannot say. */

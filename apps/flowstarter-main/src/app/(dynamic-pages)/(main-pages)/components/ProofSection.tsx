@@ -90,7 +90,7 @@ export function ProofSection() {
                   ? { target: '_blank', rel: 'noreferrer' }
                   : {})}
                 className="ls-proof-card"
-                aria-label={`${item.title} — ${item.kicker}`}
+                aria-label={`${item.title}: ${item.kicker}`}
               >
                 <div className="ls-proof-frame">
                   {item.thumbnail ? (

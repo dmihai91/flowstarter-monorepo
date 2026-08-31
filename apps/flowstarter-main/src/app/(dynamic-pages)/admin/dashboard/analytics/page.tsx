@@ -239,7 +239,7 @@ export default function AnalyticsPage() {
         {/* Activity chart */}
         <ShellCard className="lg:col-span-2 !p-5">
           <p className="text-sm font-semibold text-[var(--fs-ink)] mb-4">
-            Projects created — last 30 days
+            Projects created: last 30 days
           </p>
           {isLoading ? (
             <div className="h-24 animate-pulse rounded-lg bg-[var(--fs-bg-elevated)]" />

@@ -57,7 +57,7 @@ import {
 } from './ConciergePanes';
 
 const OPENING_LINE =
-  'Before I build your preview — a couple of quick questions. Two minutes, ' +
+  'Before I build your preview, a couple of quick questions. Two minutes, ' +
   'in your own words. You can skip straight to the preview whenever you like.';
 
 interface NameSuggestion {
@@ -109,7 +109,7 @@ export function InfoAgentStep({
           // neither is worth stopping the funnel over.
           setData((previous) => ({ ...previous, intakeChatStatus: 'skipped' }));
           setError(
-            'Let us come back to this later — your preview is ready to build.'
+            'Let us come back to this later. Your preview is ready to build.'
           );
           return;
         }
@@ -136,7 +136,7 @@ export function InfoAgentStep({
       } catch {
         setData((previous) => ({ ...previous, intakeChatStatus: 'skipped' }));
         setError(
-          'Let us come back to this later — your preview is ready to build.'
+          'Let us come back to this later. Your preview is ready to build.'
         );
       } finally {
         setPending(false);
@@ -268,7 +268,7 @@ export function InfoAgentStep({
               </ul>
               {assets.length > 0 && (
                 <p className="mt-2.5 text-[12px] leading-snug text-[var(--fs-ink-faint)]">
-                  Photos and logos are not something you can type — you will be
+                  Photos and logos are not something you can type. You will be
                   able to upload those once the preview is yours. Until then the
                   site uses template artwork.
                 </p>
@@ -289,7 +289,7 @@ export function InfoAgentStep({
             </ChatBubble>
             {transcript.length === 0 && !pending && (
               <ChatBubble tone="earlier">
-                Nothing to ask — your answers already cover what we need.
+                Nothing to ask, your answers already cover what we need.
               </ChatBubble>
             )}
             {transcript.map((entry, index) => (
@@ -396,7 +396,7 @@ export function InfoAgentStep({
               </ul>
             ) : (
               <p className="mt-2 text-sm text-[var(--fs-ink-faint)]">
-                No suggestions this time — your own name is the safer bet
+                No suggestions this time, your own name is the safer bet
                 anyway.
               </p>
             )}
@@ -412,8 +412,8 @@ export function InfoAgentStep({
                 If you skip, we will build the preview with placeholder{' '}
                 {placeholdered
                   .map((item) => GAP_LABELS[item.code].toLowerCase())
-                  .join(', ')}{' '}
-                — you can replace all of it later, nothing is locked in.
+                  .join(', ')}
+                . You can replace all of it later, nothing is locked in.
               </p>
             )}
           </div>

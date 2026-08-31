@@ -113,7 +113,7 @@ const composer = (d) => d.getByLabel('Your answer');
 const sendBtn = (d) => d.getByRole('button', { name: 'Send', exact: true });
 const doneBtn = (d) => d.getByRole('button', { name: "That's it", exact: true });
 const skipBtn = (d) => d.getByRole('button', { name: 'Skip this one', exact: true }).first();
-const confirmBtn = (d) => d.getByRole('button', { name: 'Looks good — carry on', exact: true });
+const confirmBtn = (d) => d.getByRole('button', { name: 'Looks good, carry on', exact: true });
 
 /**
  * Waits for the wizard to have filed a question away.
@@ -609,7 +609,7 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       await pause(page, 4000);
 
       // ...and now the offer arrives, because both changes are spent.
-      await d.getByText('Done — that second change is in.')
+      await d.getByText('Done, that second change is in.')
         .first().waitFor({ state: 'visible', timeout: 60000 })
         .catch(() => console.log('    (the second-change line scrolled out of view)'));
       await depositCta.last().waitFor({ state: 'visible', timeout: 120000 });

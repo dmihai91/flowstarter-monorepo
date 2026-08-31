@@ -352,8 +352,8 @@ export function PreviewStep({
         {
           role: 'agent',
           text: progress.personalized
-            ? `Your site is live. You have ${LIVE_EDIT_CAP} changes on me — tell me what to adjust and watch it happen.`
-            : 'Here’s your starting point — personalizing it for your business now…',
+            ? `Your site is live. You have ${LIVE_EDIT_CAP} changes on me: tell me what to adjust and watch it happen.`
+            : 'Here’s your starting point, personalizing it for your business now…',
         },
       ]);
     }
@@ -366,7 +366,7 @@ export function PreviewStep({
       setChat([
         {
           role: 'agent',
-          text: `Your personalized site is live. You have ${LIVE_EDIT_CAP} changes on me — tell me what to adjust and watch it happen.`,
+          text: `Your personalized site is live. You have ${LIVE_EDIT_CAP} changes on me: tell me what to adjust and watch it happen.`,
         },
       ]);
       return;
@@ -531,7 +531,7 @@ export function PreviewStep({
       if (json.limitReached) {
         setEditsLeft(0);
         setOfferRevealed(true);
-        setLastAgent("That was your last change — let's make this real.");
+        setLastAgent("That was your last change. Let's make this real.");
         setEditBusy(false);
         return;
       }
@@ -570,9 +570,9 @@ export function PreviewStep({
           // so this is the moment the deposit ask appears.
           if (s.editsLeft === 0) {
             setOfferRevealed(true);
-            setLastAgent('Done — that second change is in. Take a look.');
+            setLastAgent('Done, that second change is in. Take a look.');
           } else {
-            setLastAgent('Done — updating your live preview.');
+            setLastAgent('Done, updating your live preview.');
           }
           setIframeNonce((n) => n + 1);
           break;
@@ -750,7 +750,7 @@ export function PreviewStep({
       {buildFailure && (
         <ChatBubble tone="alert" author="Your team of agents">
           <span className="block">
-            That build did not finish — {buildFailure}. Nothing is lost, and you
+            That build did not finish: {buildFailure}. Nothing is lost, and you
             have not paid anything.
           </span>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -792,7 +792,7 @@ export function PreviewStep({
       {finished && previewId && !offerReady && !editBusy && (
         <ChatBubble tone="agent" author="Your team of agents">
           <span className="block">
-            That is a page of your full site, and it is editable — ask for up to{' '}
+            That is a page of your full site, and it is editable: ask for up to{' '}
             {LIVE_EDIT_CAP} changes in the box under the preview and watch the
             team apply them.
           </span>
@@ -813,7 +813,7 @@ export function PreviewStep({
           {offerSnoozed ? (
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span className="text-[12px] text-[var(--fs-ink-faint)]">
-                No rush — the preview stays here while you look around.
+                No rush, the preview stays here while you look around.
               </span>
               <button
                 type="button"
@@ -958,7 +958,7 @@ export function PreviewStep({
               aria-label="Ask for a change"
               placeholder={
                 editsLeft <= 0
-                  ? 'No prompts left — ready to make it real?'
+                  ? 'No prompts left, ready to make it real?'
                   : 'e.g. make the hero warmer and add a pricing section'
               }
               className="w-full rounded-lg border border-[var(--fs-rule)] bg-white px-3 py-2 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/30 disabled:opacity-50 dark:bg-white/[0.03]"

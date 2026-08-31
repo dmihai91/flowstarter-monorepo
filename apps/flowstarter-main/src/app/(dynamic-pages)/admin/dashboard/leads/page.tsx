@@ -127,7 +127,7 @@ export default function LeadsPage() {
                       </td>
                       <td className="py-3 pr-4">
                         <div className="text-[var(--ls-ink)]">
-                          {l.business_name || '—'}
+                          {l.business_name || '–'}
                         </div>
                         <div className="text-[12px] text-[var(--ls-ink-faint)]">
                           {l.industry || ''}
@@ -137,7 +137,7 @@ export default function LeadsPage() {
                         {l.selected_tier}
                       </td>
                       <td className="py-3 pr-4 capitalize">
-                        {l.subscription || '—'}
+                        {l.subscription || '–'}
                       </td>
                       <td className="py-3 pr-4">
                         <DepositBadge
@@ -155,7 +155,7 @@ export default function LeadsPage() {
                           </a>
                         ) : (
                           <span className="text-[12px] text-[var(--ls-ink-faint)]">
-                            —
+                            –
                           </span>
                         )}
                       </td>

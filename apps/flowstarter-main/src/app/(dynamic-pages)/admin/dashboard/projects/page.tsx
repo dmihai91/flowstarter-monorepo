@@ -265,7 +265,7 @@ export default function TeamProjectsPage() {
                             {t(tierKey)}
                           </span>
                         ) : (
-                          <span className="text-[var(--ls-ink-faint)]">—</span>
+                          <span className="text-[var(--ls-ink-faint)]">–</span>
                         )}
                       </td>
                       <td className="px-3 py-3">
@@ -276,7 +276,7 @@ export default function TeamProjectsPage() {
                           </span>
                         ) : (
                           <span className="text-xs text-[var(--ls-ink-faint)]">
-                            —
+                            –
                           </span>
                         )}
                       </td>
@@ -284,7 +284,7 @@ export default function TeamProjectsPage() {
                         className="px-3 py-3 text-right font-mono text-[10.5px] tabular-nums text-[var(--ls-ink-faint)]"
                         style={{ fontVariantNumeric: 'tabular-nums' }}
                       >
-                        {updatedAt ? compactRelative(updatedAt) : '—'}
+                        {updatedAt ? compactRelative(updatedAt) : '–'}
                       </td>
                       <td className="py-3 pr-5 text-right text-[var(--ls-ink-faint)]">
                         <ChevronRight className="ml-auto h-4 w-4" />

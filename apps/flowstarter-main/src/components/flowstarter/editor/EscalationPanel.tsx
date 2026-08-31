@@ -29,9 +29,9 @@ type Outcome =
 
 const SELF_SERVE_HINT: Record<'content' | 'image', string> = {
   content:
-    'This looks like a wording change you can make yourself, right now, in the Words tab — no waiting on us.',
+    'This looks like a wording change you can make yourself, right now, in the Words tab: no waiting on us.',
   image:
-    'This looks like a picture swap you can do yourself, right now, in the Pictures tab — no waiting on us.',
+    'This looks like a picture swap you can do yourself, right now, in the Pictures tab: no waiting on us.',
 };
 
 export function EscalationPanel({
@@ -95,7 +95,7 @@ export function EscalationPanel({
           Want something bigger?
         </p>
         <p className="mt-1 text-sm leading-relaxed text-[var(--fs-ink)]/70">
-          New pages, layout changes, bookings, colors — describe it and it goes
+          New pages, layout changes, bookings, colors: describe it and it goes
           straight to your team. Wording and picture changes you can do yourself
           in the other tabs.
         </p>
@@ -151,7 +151,7 @@ export function EscalationPanel({
           data-testid="escalation-sent"
           className="rounded-xl border border-emerald-600/25 bg-emerald-600/10 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300"
         >
-          Sent to your team. You will get a reply on your project page — and by
+          Sent to your team. You will get a reply on your project page, and by
           email.
         </p>
       ) : outcome.state === 'error' ? (

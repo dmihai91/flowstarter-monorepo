@@ -329,7 +329,7 @@ export const LANDING_COPY = {
       },
       {
         role: 'Design matcher',
-        does: 'Picks the starting design from our approved library by how your business is shaped — the pages you need, not the colours you like.',
+        does: 'Picks the starting design from our approved library by how your business is shaped: the pages you need, not the colours you like.',
         limit: 'It can only choose a design we already build and maintain.',
       },
       {
@@ -340,7 +340,7 @@ export const LANDING_COPY = {
       },
       {
         role: 'Honesty editor',
-        does: 'Rereads the whole site in your voice and strips anything invented — clients you never had, numbers nobody measured, filler nobody would say out loud.',
+        does: 'Rereads the whole site in your voice and strips anything invented: clients you never had, numbers nobody measured, filler nobody would say out loud.',
         limit:
           'If a section has no true content, it says less rather than making something up.',
       },

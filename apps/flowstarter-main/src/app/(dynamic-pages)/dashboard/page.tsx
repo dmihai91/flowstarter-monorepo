@@ -47,7 +47,7 @@ function NoProjectYet() {
       </h1>
       <p className="mb-7 max-w-xl text-base leading-relaxed text-[var(--fs-ink)]/75">
         You&apos;re signed in, but no project is linked to this account yet.
-        Your project appears here as soon as it&apos;s been claimed — that
+        Your project appears here as soon as it&apos;s been claimed, that
         normally happens right after you open the preview link we sent you.
       </p>
       <div className="flex flex-wrap gap-3">

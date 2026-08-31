@@ -138,7 +138,7 @@ function JobRow({
           {job.errorCode && (
             <p className="mt-1 text-xs text-red-500">
               {job.errorCode}
-              {job.errorDetail ? ` — ${job.errorDetail}` : ''}
+              {job.errorDetail ? `: ${job.errorDetail}` : ''}
             </p>
           )}
         </div>

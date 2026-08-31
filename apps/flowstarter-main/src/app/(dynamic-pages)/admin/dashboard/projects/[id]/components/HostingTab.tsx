@@ -285,7 +285,7 @@ export function HostingTab({ project }: { project: Project }) {
               Site directory
             </dt>
             <dd className="font-mono text-xs text-[var(--fs-ink-dim)] truncate">
-              {workspace.site_directory ?? '—'}
+              {workspace.site_directory ?? '–'}
             </dd>
           </div>
           <div>
@@ -304,7 +304,7 @@ export function HostingTab({ project }: { project: Project }) {
                   <ExternalLink className="w-3 h-3" />
                 </a>
               ) : (
-                '—'
+                '–'
               )}
             </dd>
           </div>
@@ -396,7 +396,7 @@ export function HostingTab({ project }: { project: Project }) {
                 IPv4
               </dt>
               <dd className="font-mono text-xs text-[var(--fs-ink-dim)]">
-                {server.ipv4 ?? '—'}
+                {server.ipv4 ?? '–'}
               </dd>
             </div>
             <div className="col-span-2">
@@ -404,7 +404,7 @@ export function HostingTab({ project }: { project: Project }) {
                 IPv6
               </dt>
               <dd className="font-mono text-xs text-[var(--fs-ink-dim)] truncate">
-                {server.ipv6 ?? '—'}
+                {server.ipv6 ?? '–'}
               </dd>
             </div>
           </dl>
@@ -470,7 +470,7 @@ export function HostingTab({ project }: { project: Project }) {
                       })}
                     </td>
                     <td className="px-3 py-2 text-xs text-[var(--fs-ink-dim)] truncate max-w-[20rem]">
-                      {d.status_detail ?? '—'}
+                      {d.status_detail ?? '–'}
                     </td>
                   </tr>
                 ))}

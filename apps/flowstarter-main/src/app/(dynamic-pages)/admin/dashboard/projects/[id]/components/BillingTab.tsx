@@ -165,7 +165,7 @@ export function BillingTab({ project }: { project: Project }) {
         <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
           <AlertCircle className="inline-block w-4 h-4 mr-1 -mt-0.5" />
           Set <strong>Client email</strong> on the Overview tab before
-          generating invoices — Stripe needs it to create a Customer.
+          generating invoices. Stripe needs it to create a Customer.
         </div>
       )}
 
@@ -304,7 +304,7 @@ export function BillingTab({ project }: { project: Project }) {
               Trial ends
             </dt>
             <dd className="text-[var(--fs-ink-dim)]">
-              {formatDate(subscriptionTrialEnds) || '—'}
+              {formatDate(subscriptionTrialEnds) || '–'}
             </dd>
           </div>
           <div>
@@ -312,7 +312,7 @@ export function BillingTab({ project }: { project: Project }) {
               Next billing
             </dt>
             <dd className="text-[var(--fs-ink-dim)]">
-              {formatDate(subscriptionNextBilling) || '—'}
+              {formatDate(subscriptionNextBilling) || '–'}
             </dd>
           </div>
         </dl>
@@ -411,7 +411,7 @@ export function BillingTab({ project }: { project: Project }) {
                   }
                   await navigator.clipboard.writeText(data.url);
                   toast.success(
-                    'Portal link copied — paste into the client email'
+                    'Portal link copied, paste into the client email'
                   );
                 } catch (e) {
                   toast.error(
@@ -435,7 +435,7 @@ export function BillingTab({ project }: { project: Project }) {
               Customer ID
             </dt>
             <dd className="font-mono text-[var(--fs-ink-dim)]">
-              {stripeCustomerId ?? '—'}
+              {stripeCustomerId ?? '–'}
             </dd>
           </div>
           <div>
@@ -443,7 +443,7 @@ export function BillingTab({ project }: { project: Project }) {
               Subscription ID
             </dt>
             <dd className="font-mono text-[var(--fs-ink-dim)]">
-              {stripeSubscriptionId ?? '—'}
+              {stripeSubscriptionId ?? '–'}
             </dd>
           </div>
           <div>
@@ -451,7 +451,7 @@ export function BillingTab({ project }: { project: Project }) {
               Deposit invoice
             </dt>
             <dd className="font-mono text-[var(--fs-ink-dim)] truncate">
-              {(project.deposit_invoice_id as string | null) ?? '—'}
+              {(project.deposit_invoice_id as string | null) ?? '–'}
             </dd>
           </div>
           <div>
@@ -459,7 +459,7 @@ export function BillingTab({ project }: { project: Project }) {
               Final invoice
             </dt>
             <dd className="font-mono text-[var(--fs-ink-dim)] truncate">
-              {(project.final_invoice_id as string | null) ?? '—'}
+              {(project.final_invoice_id as string | null) ?? '–'}
             </dd>
           </div>
         </dl>

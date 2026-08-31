@@ -663,7 +663,7 @@ export async function POST(req: NextRequest) {
         previewUrl: result.previewUrl,
         sandboxId: result.sandboxId,
         personalized: true,
-        phase: 'Done — your site is ready',
+        phase: 'Done, your site is ready',
         teardown: result.teardown,
       });
       await recordGenerationCost({

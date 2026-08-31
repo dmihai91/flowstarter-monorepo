@@ -97,7 +97,7 @@ export async function POST(
           product_data: {
             name: `${
               workspace.client_business_name ?? 'Flowstarter website'
-            } — 20% build deposit`,
+            }: 20% build deposit`,
             description:
               'Locks the approved preview and starts the full website build.',
           },

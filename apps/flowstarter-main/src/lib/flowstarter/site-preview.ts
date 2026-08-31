@@ -306,7 +306,7 @@ export function renderContentPreview(input: ContentPreviewInput): string {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex, nofollow" />
-<title>${escapeHtml(input.siteName)} — content preview</title>
+<title>${escapeHtml(input.siteName)}: content preview</title>
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
@@ -327,7 +327,7 @@ ${SELECTION_BRIDGE_STYLE}
 </head>
 <body>
 <header class="banner">
-  <p><strong>Content preview</strong> — version ${input.version || 1}${
+  <p><strong>Content preview</strong>: version ${input.version || 1}${
     input.templateSlug
       ? `, rendered through the <strong>${escapeHtml(
           input.templateSlug

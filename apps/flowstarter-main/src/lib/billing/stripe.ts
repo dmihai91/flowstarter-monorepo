@@ -142,7 +142,7 @@ export class StripeBilling {
       ...opts,
       invoiceType: 'deposit',
       defaultDescription:
-        opts.description ?? 'Flowstarter setup fee — 20% deposit',
+        opts.description ?? 'Flowstarter setup fee: 20% deposit',
     });
   }
 
@@ -164,7 +164,7 @@ export class StripeBilling {
       ...opts,
       invoiceType: 'final',
       defaultDescription:
-        opts.description ?? 'Flowstarter setup fee — final 80% on approval',
+        opts.description ?? 'Flowstarter setup fee: final 80% on approval',
     });
   }
 

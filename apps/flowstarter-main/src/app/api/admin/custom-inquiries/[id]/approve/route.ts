@@ -102,7 +102,7 @@ export async function POST(
         {
           error: `Inquiry already ${
             (inquiry as { status: string }).status
-          } — refresh the page.`,
+          }, refresh the page.`,
         },
         { status: 409 }
       );
@@ -126,7 +126,7 @@ export async function POST(
       await sendEmail({
         to: (inquiry as { email: string }).email,
         subject:
-          'Your Custom Solution consultation — book time with Flowstarter',
+          'Your Custom Solution consultation: book time with Flowstarter',
         html: messageToHtml(message, booking_link),
       });
     } catch (err) {

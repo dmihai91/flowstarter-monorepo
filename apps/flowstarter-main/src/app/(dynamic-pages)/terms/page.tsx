@@ -77,7 +77,7 @@ export default function TermsPage() {
             Setup fees are split: 20% to start, 80% on launch. Monthly or yearly
             care fees are billed in advance and renew automatically until
             cancelled. Your first month is free. If you are not happy with the
-            result within 30 days of launch, we refund 50% of the setup fee — no
+            result within 30 days of launch, we refund 50% of the setup fee, no
             questions asked.
           </p>
 
@@ -90,8 +90,8 @@ export default function TermsPage() {
 
           <h2>Confidentiality</h2>
           <p>
-            We treat anything we learn about your business — strategy, pricing,
-            customer lists — as confidential. We will not share it with anyone,
+            We treat anything we learn about your business (strategy, pricing,
+            customer lists) as confidential. We will not share it with anyone,
             including future clients in your industry, without your explicit
             permission.
           </p>

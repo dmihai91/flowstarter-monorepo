@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
           env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
           onProgress: (e) =>
             updateJob(demoId, {
-              editPhase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
+              editPhase: e.detail ? `${e.phase}: ${e.detail}` : e.phase,
             }),
         });
       } else {

@@ -256,7 +256,7 @@ async function handleBookingDepositPaid(
   try {
     await sendEmail({
       to: notifyTo,
-      subject: `Deposit paid — ${m['name'] || 'prospect'} (${
+      subject: `Deposit paid: ${m['name'] || 'prospect'} (${
         m['tier']
       }) ${amount}`,
       replyTo: m['email'] || undefined,
@@ -279,7 +279,7 @@ async function handleBookingDepositPaid(
       m['tier'] || ''
     }</td></tr>
     <tr><td style="padding:3px 10px;color:#6b7280;">Monthly plan</td><td style="padding:3px 10px;">${
-      m['subscription'] || '—'
+      m['subscription'] || '–'
     }</td></tr>
     <tr><td style="padding:3px 10px;color:#6b7280;">Source</td><td style="padding:3px 10px;">${
       m['source'] || ''

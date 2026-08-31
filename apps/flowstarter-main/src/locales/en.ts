@@ -150,7 +150,7 @@ const en = {
   // Clerk error messages
   'auth.errors.somethingWentWrong': 'Something went wrong',
   'auth.errors.deviceNotTrusted':
-    "This browser has not been approved for the development sign-in yet. Your email and password are fine — try again from the app's own sign-in page, or contact us if it persists.",
+    "This browser has not been approved for the development sign-in yet. Your email and password are fine. Try again from the app's own sign-in page, or contact us if it persists.",
   'auth.errors.signInInvalid':
     'Incorrect email or password. Try again, or reset your password',
   'auth.errors.formIdentifierNotFound':
@@ -2110,7 +2110,7 @@ const en = {
   'landing.prequal.close': 'Close',
 
   // Discovery wizard (multi-step pre-call form)
-  'landing.discovery.eyebrow': 'Free discovery — a few minutes',
+  'landing.discovery.eyebrow': 'Free discovery: a few minutes',
   'landing.discovery.nav.back': 'Back',
   'landing.discovery.nav.continue': 'Continue',
   'landing.discovery.nav.bookCall': 'book my call',
@@ -2136,10 +2136,10 @@ const en = {
     'We pick the simplest provider that handles your needs',
   'landing.discovery.steps.recommendation.title': 'Your recommended plan',
   'landing.discovery.steps.recommendation.subtitle':
-    "Based on your answers. You can adjust before booking — we'll confirm scope on the call",
+    "Based on your answers. You can adjust before booking, and we'll confirm scope on the call",
   'landing.discovery.steps.subscription.title': 'Pick your care plan',
   'landing.discovery.steps.subscription.subtitle':
-    'Separate from the one-time build. It controls editor capabilities — change it anytime',
+    'Separate from the one-time build. It controls editor capabilities, and you can change it anytime',
   'landing.discovery.steps.subscription.subtitleStore':
     'Your store runs on a dedicated plan built for selling, not the standard editor tiers',
   'landing.discovery.subscription.tiers.starter': 'Starter',
@@ -2149,7 +2149,7 @@ const en = {
   'landing.discovery.subscription.cadence.monthly': 'Monthly',
   'landing.discovery.subscription.cadence.yearly': 'Yearly',
   'landing.discovery.subscription.footnote':
-    'First month is free. No lock-in — move up or down a plan whenever you want.',
+    'First month is free. No lock-in, so move up or down a plan whenever you want.',
   'landing.discovery.subscription.storeEyebrow': 'Dedicated store plan',
   'landing.discovery.subscription.storeName': 'Commerce',
   'landing.discovery.subscription.storeOps':
@@ -2171,18 +2171,18 @@ const en = {
   'landing.discovery.preview.build.s3': 'Writing your sections',
   'landing.discovery.preview.build.s4': 'Putting the page together',
   'landing.discovery.preview.editorTitle':
-    'Try the editor — ask for changes in plain English',
+    'Try the editor: ask for changes in plain English',
   'landing.discovery.preview.editsLeft': 'edits left',
   'landing.discovery.preview.editorPlaceholder':
     'e.g. "make the headline punchier" or "use a teal accent"',
   'landing.discovery.preview.apply': 'Apply',
   'landing.discovery.preview.applying': 'Applying…',
   'landing.discovery.preview.editFailed':
-    "Couldn't apply that one — try rewording it.",
+    "Couldn't apply that one. Try rewording it.",
   'landing.discovery.preview.limitReached':
     "You've used all your demo edits. The real editor has no limit.",
   'landing.discovery.preview.editorUnavailable':
-    'Live editing is off in this environment — this is a static preview.',
+    'Live editing is off in this environment: this is a static preview.',
   'landing.discovery.preview.disclaimer':
     'A working preview built from your answers. The complete site is built by your agent team once the 20% deposit is paid, checked by us before it goes live, and ships with an editor that has no edit limit.',
 
@@ -2198,7 +2198,7 @@ const en = {
   // filled from the visitor's own earlier answers.
   'landing.discovery.chat.title': "Let's talk about your site",
   'landing.discovery.chat.intro':
-    "Hi — I'm your Flowstarter agent. A few short questions, and at the end of them you get a working preview of your site. Skip anything you'd rather not answer.",
+    "Hi, I'm your Flowstarter agent. A few short questions, and at the end of them you get a working preview of your site. Skip anything you'd rather not answer.",
   'landing.discovery.chat.agentName': 'Flowstarter agent',
   'landing.discovery.chat.logLabel': 'Your conversation',
   'landing.discovery.chat.progressLabel': 'Questions answered',
@@ -2207,40 +2207,40 @@ const en = {
   'landing.discovery.chat.composerPlaceholder': 'Type your answer…',
   'landing.discovery.chat.send': 'Send',
   'landing.discovery.chat.done': "That's it",
-  'landing.discovery.chat.confirm': 'Looks good — carry on',
+  'landing.discovery.chat.confirm': 'Looks good, carry on',
   'landing.discovery.chat.edit': 'Edit',
   'landing.discovery.chat.reask': "Sure, let's redo that one.",
   'landing.discovery.chat.skip': 'Skip this one',
   'landing.discovery.chat.skipped': 'Skipped for now',
   'landing.discovery.chat.skipRest': 'Skip ahead to the preview',
   'landing.discovery.chat.skipRestHint':
-    'You can fill the rest in later — nothing here is locked in.',
+    'You can fill the rest in later. Nothing here is locked in.',
   'landing.discovery.chat.skipRestActive':
-    'Skipping ahead — only the answers we cannot build without are left.',
+    'Skipping ahead: only the answers we cannot build without are left.',
   'landing.discovery.chat.stillNeeded':
-    'Happy to jump ahead — I just need {count} more from you first, then the preview is yours.',
+    'Happy to jump ahead. I just need {count} more from you first, then the preview is yours.',
   'landing.discovery.chat.tokens.you': 'there',
   'landing.discovery.chat.tokens.business': 'your business',
 
   'landing.discovery.chat.errors.required':
-    "I do need this one, sorry — it's one of the few I can't build anything without.",
+    "I do need this one, sorry. It's one of the few I can't build anything without.",
   'landing.discovery.chat.errors.fullName':
-    'A first name is plenty — I just need something to call you.',
+    'A first name is plenty. I just need something to call you.',
   'landing.discovery.chat.errors.email':
     "That doesn't look like an email address. Mind checking it?",
   'landing.discovery.chat.errors.description':
-    'A little more than that, if you can — a sentence or two is all I need.',
+    'A little more than that, if you can: a sentence or two is all I need.',
   'landing.discovery.chat.errors.goal':
     'Pick at least one, or tell me in your own words.',
   'landing.discovery.chat.errors.choice':
-    "I didn't catch that one — tapping one of the options above is easiest.",
+    "I didn't catch that one. Tapping one of the options above is easiest.",
 
   'landing.discovery.chat.q.fullName.prompt':
     'First things first: what should I call you?',
   'landing.discovery.chat.q.email.prompt':
     'Good to meet you, {name}. Where should I send your preview?',
   'landing.discovery.chat.q.businessName.prompt':
-    "And what's the business called? If you haven't settled on a name, skip it — we can come back to it.",
+    "And what's the business called? If you haven't settled on a name, skip it. We can come back to it.",
   'landing.discovery.chat.q.description.prompt':
     'Now the one that matters most: what does {business} actually do? Your own words, a sentence or two.',
   'landing.discovery.chat.q.industry.prompt':
@@ -2248,7 +2248,7 @@ const en = {
   'landing.discovery.chat.q.targetAudience.prompt':
     "Who are you trying to reach? Describe them the way you'd describe them to a friend.",
   'landing.discovery.chat.q.links.prompt':
-    'Anything of yours I can look at — Instagram, LinkedIn? Paste a link and I will match your voice to it.',
+    'Anything of yours I can look at: Instagram, LinkedIn? Paste a link and I will match your voice to it.',
   'landing.discovery.chat.q.links.placeholder':
     'instagram.com/yourbusiness, linkedin.com/company/…',
   'landing.discovery.chat.q.goal.prompt':
@@ -2268,7 +2268,7 @@ const en = {
   'landing.discovery.chat.q.customIntegrations.prompt':
     'Last one about the business: anything unusual it has to plug into? Bookings, payments, a mailing list, a member area.',
   'landing.discovery.chat.q.selectedTier.prompt':
-    "That's everything I need. Here's the build package your answers point to — change it if you would rather.",
+    "That's everything I need. Here's the build package your answers point to. Change it if you would rather.",
   'landing.discovery.chat.q.subscription.prompt':
     "One last decision: the monthly plan. It's separate from the build, and it's what decides how much you can change yourself afterwards.",
 
@@ -2296,13 +2296,13 @@ const en = {
 
   // Hints
   'landing.discovery.hints.businessName':
-    'Optional — leave blank if you have not picked a name yet',
+    'Optional: leave blank if you have not picked a name yet',
   'landing.discovery.hints.description':
     'Plain language. What you do and who for',
   'landing.discovery.hints.socialProfiles':
     'Optional. We use public business content to learn your voice and visual direction.',
   'landing.discovery.hints.pageCount':
-    'Rough estimate — we will refine on the call',
+    'Rough estimate: we will refine on the call',
   'landing.discovery.hints.customIntegrations':
     'Bookings, customer lists, payments, member areas, or anything unusual',
 
@@ -2401,7 +2401,7 @@ const en = {
   'landing.discovery.recommendation.from': 'from',
   'landing.discovery.recommendation.bestMatchBadge': 'Match',
   'landing.discovery.recommendation.overrideLabel':
-    'Want a different tier? Pick one — we will discuss on the call',
+    'Want a different tier? Pick one, and we will discuss on the call',
   'landing.discovery.recommendation.footnote':
     'All prices are starting points. Final scope is agreed on the discovery call.',
 
@@ -2432,7 +2432,7 @@ const en = {
   'landing.discovery.recommendation.reasons.portfolioFriendly':
     'A portfolio does not need the cost or complexity of an online store',
   'landing.discovery.recommendation.reasons.fastTurnaround':
-    'Tight timeline — we will scope something we can ship in weeks, not months',
+    'Tight timeline: we will scope something we can ship in weeks, not months',
   'landing.discovery.recommendation.reasons.default':
     'Best match based on your answers',
 

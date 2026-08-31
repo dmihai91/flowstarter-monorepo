@@ -297,14 +297,14 @@ function Card({
           </span>
         ) : (
           <span className="font-mono text-[9.5px] text-[var(--ls-ink-faint)]">
-            —
+            –
           </span>
         )}
         <span
           className="font-mono text-[11px] tabular-nums text-[var(--ls-ink-faint)]"
           style={{ fontVariantNumeric: 'tabular-nums' }}
         >
-          {updatedAt ? compactRelative(updatedAt) : '—'}
+          {updatedAt ? compactRelative(updatedAt) : '–'}
         </span>
       </div>
     </article>
@@ -326,7 +326,7 @@ function EmptyColumn({
     return (
       <div className="flex flex-1 items-center justify-center px-2 py-6">
         <span className="font-mono text-[9.5px] uppercase tracking-[0.18em] text-[var(--ls-ink-faint)]/60">
-          —
+          –
         </span>
       </div>
     );

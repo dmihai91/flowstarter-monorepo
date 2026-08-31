@@ -51,7 +51,7 @@ const COMMON_INTENT_KEYWORDS = [
 ];
 
 const OPERATOR_HANDOFF_REPLY =
-  'This looks like a custom request. I am routing this to a human operator now — please email hello@flowstarter.net and include your goal, timeline, and any links so we can help quickly.';
+  'This looks like a custom request. I am routing this to a human operator now. Please email hello@flowstarter.net and include your goal, timeline, and any links so we can help quickly.';
 
 function isCommonSupportQuestion(input: string): boolean {
   const normalized = input.toLowerCase().trim();

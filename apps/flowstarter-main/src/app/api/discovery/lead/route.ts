@@ -232,7 +232,7 @@ export async function POST(request: NextRequest) {
   try {
     await sendEmail({
       to: notifyTo,
-      subject: `New discovery lead — ${lead.fullName} (${lead.selectedTier})`,
+      subject: `New discovery lead: ${lead.fullName} (${lead.selectedTier})`,
       html: buildEmailHtml(lead),
       replyTo: lead.email,
     });

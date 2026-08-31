@@ -89,7 +89,7 @@ export function BillingDetailsForm() {
       if (r.ok) {
         setMsg({
           ok: true,
-          text: d.stripeSynced ? 'Saved — billing details updated.' : 'Saved.',
+          text: d.stripeSynced ? 'Saved, billing details updated.' : 'Saved.',
         });
       } else {
         setMsg({
@@ -98,7 +98,7 @@ export function BillingDetailsForm() {
         });
       }
     } catch {
-      setMsg({ ok: false, text: 'Network error — please try again.' });
+      setMsg({ ok: false, text: 'Network error, please try again.' });
     } finally {
       setSaving(false);
     }
@@ -110,7 +110,7 @@ export function BillingDetailsForm() {
         Company billing details
       </h2>
       <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-        Optional — add these if you need the invoice issued to your company
+        Optional: add these if you need the invoice issued to your company
         (company name on the invoice, VAT / CUI for reverse-charge).
       </p>
 

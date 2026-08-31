@@ -6,6 +6,7 @@ import {
   enqueueFullBuildFromDeposit,
   enqueueFullBuildFromDepositInvoice,
 } from '@/lib/flowstarter/deposit-workflow';
+import { provisionGuestDeposit } from '@/lib/flowstarter/guest-deposit';
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -326,12 +327,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     switch (event.type) {
-      case 'payment_intent.succeeded':
-        await enqueueFullBuildFromDeposit(
-          event,
-          event.data.object as Stripe.PaymentIntent
-        );
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        // Two deposit shapes, told apart by metadata.kind. Each handler returns
+        // null for the other's events, so both can run without either seeing
+        // payments that are not its own.
+        await enqueueFullBuildFromDeposit(event, paymentIntent);
+        const guest = await provisionGuestDeposit(event, paymentIntent);
+        if (guest) {
+          // No email address and no password: this line goes to a log an
+          // operator reads over somebody's shoulder.
+          console.info(
+            `[Stripe] guest deposit provisioned workspace ${guest.workspaceId} ` +
+              `(account ${guest.accountKind}, build ${guest.jobId})` +
+              (guest.alreadyProvisioned ? ' (redelivery)' : '') +
+              (guest.emailed || guest.alreadyProvisioned
+                ? ''
+                : ' -- WELCOME EMAIL FAILED, client cannot sign in')
+          );
+        }
         break;
+      }
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(
           event,

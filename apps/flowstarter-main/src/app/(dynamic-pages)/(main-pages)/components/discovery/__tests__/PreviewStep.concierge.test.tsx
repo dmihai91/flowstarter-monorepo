@@ -11,7 +11,8 @@
  *   - "this is a preview of your full site, the deposit is €X" is said before
  *     the build starts and again when it finishes;
  *   - a failed build is admitted and the visitor chooses what happens next;
- *   - the offer button still claims the preview through the claim endpoint;
+ *   - the offer button claims the preview through the claim endpoint when the
+ *     visitor is signed in, and goes straight to Stripe when they are not;
  *   - the panes stack status → site → conversation, which is the mobile order.
  */
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -21,11 +22,11 @@ import { EMPTY_DISCOVERY, type DiscoveryData } from '../discovery.logic';
 import { PreviewStep } from '../steps/PreviewStep';
 
 const auth = { isSignedIn: true, isLoaded: true };
-const openSignIn = vi.fn();
 
+// No `useClerk`: a signed-out visitor is no longer shown a sign-in modal, and
+// the component must not be able to quietly start asking for one again.
 vi.mock('@clerk/nextjs', () => ({
   useAuth: () => auth,
-  useClerk: () => ({ openSignIn }),
 }));
 
 type Listener = (event: { data: string }) => void;
@@ -77,16 +78,30 @@ const originalFetch = global.fetch;
 
 interface Calls {
   claim: RequestInit[];
+  /** The signed-out deposit: straight to Stripe, no account first. */
+  guestCheckout: Array<{ url: string; init: RequestInit }>;
   live: number;
 }
 
 function routedFetch(
   calls: Calls,
-  handlers: { postLive?: (n: number) => unknown; claim?: () => unknown } = {}
+  handlers: {
+    postLive?: (n: number) => unknown;
+    claim?: () => unknown;
+    guestCheckout?: () => unknown;
+  } = {}
 ) {
   return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
     const method = (init?.method ?? 'GET').toUpperCase();
+    if (url.includes('/guest-deposit-checkout')) {
+      calls.guestCheckout.push({ url, init: init ?? {} });
+      return {
+        ok: false,
+        json: async () =>
+          handlers.guestCheckout?.() ?? { error: 'Stopped before navigating.' },
+      };
+    }
     if (url.startsWith('/api/flowstarter/projects/claim')) {
       calls.claim.push(init ?? {});
       return {
@@ -151,7 +166,7 @@ afterEach(() => {
 
 describe('the site pane', () => {
   it('is an obvious skeleton until there is a real site, then the site', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     const { source } = await startBuild();
 
     const sitePane = screen.getByTestId('concierge-site-pane');
@@ -173,7 +188,7 @@ describe('the site pane', () => {
 
 describe('the conversation', () => {
   it('carries the info agent’s questions and the visitor’s answers into it', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     await startBuild();
 
     expect(
@@ -185,7 +200,7 @@ describe('the conversation', () => {
   });
 
   it('reports each phase as a message, in order, signed by the agent that owns it', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     const { source } = await startBuild();
 
     act(() =>
@@ -216,7 +231,7 @@ describe('the conversation', () => {
   });
 
   it('keeps the phase in progress named in the always-visible Now line', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     const { source } = await startBuild();
 
     expect(nowLine()).toHaveTextContent(/getting your build started/i);
@@ -243,7 +258,7 @@ describe('the conversation', () => {
 
 describe('what the visitor is told this is', () => {
   it('says it is a preview of the full site, with the deposit, before any phase runs', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     await startBuild();
 
     const log = conversation();
@@ -257,7 +272,7 @@ describe('what the visitor is told this is', () => {
   });
 
   it('quotes the tier the visitor actually confirmed', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     await startBuild({ ...DATA, selectedTier: 'commerce' });
 
     expect(
@@ -266,7 +281,7 @@ describe('what the visitor is told this is', () => {
   });
 
   it('says it again when the preview is ready, next to the button', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     const { source } = await startBuild();
 
     act(() =>
@@ -296,7 +311,7 @@ describe('what the visitor is told this is', () => {
   });
 
   it('lets the visitor put the offer aside without losing it', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     const { source } = await startBuild();
     act(() =>
       source.emit('ready', {
@@ -325,7 +340,7 @@ describe('what the visitor is told this is', () => {
 
 describe('the deposit ask waits its turn', () => {
   it('invites the two changes first and holds the deposit button back', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     const { source } = await startBuild();
     act(() =>
       source.emit('ready', {
@@ -351,7 +366,7 @@ describe('the deposit ask waits its turn', () => {
 
 describe('the offer button', () => {
   it('still claims the preview through the claim endpoint', async () => {
-    const calls: Calls = { claim: [], live: 0 };
+    const calls: Calls = { claim: [], guestCheckout: [], live: 0 };
     global.fetch = routedFetch(calls);
     const { source } = await startBuild();
     act(() =>
@@ -374,9 +389,12 @@ describe('the offer button', () => {
     expect(body.intakeChat).toBeTruthy();
   });
 
-  it('sends a signed-out visitor through the sign-in modal first', async () => {
+  it('sends a signed-out visitor straight to Stripe, with no account first', async () => {
+    // The sign-up form used to sit here, between a decided buyer and their
+    // card. The account is created from the paid email afterwards, by the
+    // webhook, so nothing the visitor typed is lost by leaving now.
     auth.isSignedIn = false;
-    const calls: Calls = { claim: [], live: 0 };
+    const calls: Calls = { claim: [], guestCheckout: [], live: 0 };
     global.fetch = routedFetch(calls);
     const { source } = await startBuild();
     act(() =>
@@ -391,14 +409,23 @@ describe('the offer button', () => {
       await screen.findByRole('button', { name: /pay the €159\.80 deposit/ })
     );
 
-    expect(openSignIn).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(calls.guestCheckout).toHaveLength(1));
+    expect(calls.guestCheckout[0]!.url).toBe(
+      '/api/discovery/preview/demo-1/guest-deposit-checkout'
+    );
+    const body = JSON.parse(String(calls.guestCheckout[0]!.init.body));
+    // The tier travels as a NAME. The euro figure is the server's.
+    expect(body.tier).toBe('starter');
+    expect(body).not.toHaveProperty('amountMinor');
+    expect(body).not.toHaveProperty('quoteMinor');
+    // The claim endpoint needs a session and must not be attempted.
     expect(calls.claim).toHaveLength(0);
   });
 });
 
 describe('when the build fails', () => {
   it('says so and offers the choice, instead of falling back silently', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     const { source } = await startBuild();
 
     act(() => source.emit('failed', { error: 'the sandbox ran out of time' }));
@@ -422,7 +449,7 @@ describe('when the build fails', () => {
   });
 
   it('starts a genuinely new build when the visitor asks to try again', async () => {
-    const calls: Calls = { claim: [], live: 0 };
+    const calls: Calls = { claim: [], guestCheckout: [], live: 0 };
     global.fetch = routedFetch(calls, {
       postLive: (n) => ({ demoId: `demo-${n}` }),
     });
@@ -443,7 +470,7 @@ describe('when the build fails', () => {
 
 describe('the layout', () => {
   it('stacks status, then the site, then the conversation — the mobile order', async () => {
-    global.fetch = routedFetch({ claim: [], live: 0 });
+    global.fetch = routedFetch({ claim: [], guestCheckout: [], live: 0 });
     await startBuild();
 
     const panes = screen.getByTestId('concierge-panes');

@@ -13,6 +13,10 @@ import {
   isSafeRedirectUrl,
 } from '@flowstarter/platform-config';
 import { NextResponse, type NextRequest } from 'next/server';
+import {
+  forcedPasswordChangeRedirect,
+  type ForcedPasswordClaims,
+} from '@/lib/auth/forced-password-change';
 import { applySecurityHeaders } from './utils/security-headers';
 
 /**
@@ -225,6 +229,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/support-chat(.*)', // Public support bot LLM endpoint
   '/api/discovery(.*)', // Public discovery wizard: lead capture + booking deposit
   '/unlock(.*)', // Preview unlock landing: reached from a generated site, viewer may be signed out
+  '/welcome(.*)', // Guest deposit landing: Stripe returns here before the account exists
   '/gdpr(.*)',
   '/contact(.*)',
   '/help(.*)', // Public help page
@@ -255,6 +260,8 @@ const isPublicRoute = createRouteMatcher([
 const isKnownAppRoute = createRouteMatcher([
   '/',
   '/unlock(.*)',
+  '/welcome(.*)',
+  '/account/password(.*)', // Forced password change for guest-provisioned clients
   '/about(.*)',
   '/login(.*)',
   '/assistant(.*)', // Client-facing "Flowstarter Assistant" sign-in (reached from workspace landings)
@@ -716,6 +723,26 @@ export default clerkMiddleware(async (auth, req) => {
       url.pathname = isTeamRoute ? '/admin/login' : '/login';
       url.searchParams.set('reason', 'unauthenticated');
       url.searchParams.set('next', next);
+      return NextResponse.redirect(url);
+    }
+
+    // ── Forced password change ────────────────────────────────────────────
+    // A client who paid as a guest was given an account with a password WE
+    // chose and emailed. Until they replace it, the only app page they can
+    // reach is the one that replaces it. Public pages have already returned
+    // above, and API routes are exempt so the change itself can be saved.
+    //
+    // The test is `=== true`, so the moment the flag is cleared a stale session
+    // token stops matching and the gate opens; the page refreshes the token
+    // itself rather than relying on that.
+    const passwordChangePath = forcedPasswordChangeRedirect(
+      pathname,
+      authResult?.sessionClaims as ForcedPasswordClaims | undefined
+    );
+    if (passwordChangePath) {
+      const url = req.nextUrl.clone();
+      url.pathname = passwordChangePath;
+      url.search = '';
       return NextResponse.redirect(url);
     }
 

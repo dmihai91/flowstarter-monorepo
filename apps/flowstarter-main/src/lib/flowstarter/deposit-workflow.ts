@@ -29,11 +29,36 @@ export async function enqueueFullBuildFromDeposit(
   paymentIntent: Stripe.PaymentIntent
 ): Promise<DepositBuildEnqueueResult | null> {
   if (paymentIntent.metadata['kind'] !== 'flowstarter_deposit') return null;
-  if (paymentIntent.status !== 'succeeded')
-    throw new Error('Deposit PaymentIntent is not succeeded');
 
   const workspaceId = paymentIntent.metadata['workspaceId'];
   if (!workspaceId || !UUID.test(workspaceId))
+    throw new Error('Deposit is missing a valid workspaceId');
+
+  return verifyDepositAndEnqueue(event, paymentIntent, workspaceId);
+}
+
+/**
+ * The money checks, shared by every Checkout deposit however the workspace was
+ * found.
+ *
+ * The signed-in path reads the workspace id straight off the PaymentIntent
+ * metadata, because the workspace existed before the Checkout session did. The
+ * guest path has no workspace at Checkout time: it creates one from the preview
+ * when the payment lands and then brings it here, so the amount, the currency
+ * and the lifecycle state are held to exactly the same standard on both. There
+ * is deliberately no second, laxer copy of these checks for guests.
+ *
+ * `workspaceId` is server-derived on both paths and is never read from a
+ * browser.
+ */
+export async function verifyDepositAndEnqueue(
+  event: Stripe.Event,
+  paymentIntent: Stripe.PaymentIntent,
+  workspaceId: string
+): Promise<DepositBuildEnqueueResult> {
+  if (paymentIntent.status !== 'succeeded')
+    throw new Error('Deposit PaymentIntent is not succeeded');
+  if (!UUID.test(workspaceId))
     throw new Error('Deposit is missing a valid workspaceId');
 
   const supabase = createSupabaseServiceRoleClient();

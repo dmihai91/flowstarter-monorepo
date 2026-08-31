@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth, useClerk } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   type DiscoveryData,
@@ -407,13 +407,8 @@ export function PreviewStep({
   // artifacts, and makes the signed-in visitor a member of it, which is
   // exactly what /unlock/[workspaceId] and the deposit Checkout check for.
   const { isSignedIn, isLoaded: authLoaded } = useAuth();
-  const { openSignIn } = useClerk();
   const [claimBusy, setClaimBusy] = useState(false);
   const [claimError, setClaimError] = useState<string | null>(null);
-  // Set when a signed-out visitor asks to claim; the effect below finishes the
-  // job once Clerk's modal reports them signed in, so the preview they were
-  // looking at is still on screen and still theirs.
-  const [claimPending, setClaimPending] = useState(false);
 
   const previewId = liveDemoId ?? demo?.demoId ?? null;
 
@@ -470,27 +465,67 @@ export function PreviewStep({
     }
   }, [previewId, data]);
 
+  /**
+   * The signed-out path: straight to Stripe, no account first.
+   *
+   * A sign-up form between a decided buyer and their card lost people who had
+   * already said yes. The workspace, the account and the credentials email are
+   * all created by the deposit webhook once the money is real, so nothing the
+   * visitor typed is lost by leaving now. The tier is sent by NAME; the amount
+   * is computed server-side from the published price table.
+   */
+  const startGuestCheckout = useCallback(async () => {
+    if (!previewId) return;
+    setClaimBusy(true);
+    setClaimError(null);
+    try {
+      const res = await fetch(
+        `/api/discovery/preview/${previewId}/guest-deposit-checkout`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...(data.selectedTier ? { tier: data.selectedTier } : {}),
+            ...(data.subscription ? { subscription: data.subscription } : {}),
+            ...(data.billingCadence
+              ? { billingCadence: data.billingCadence }
+              : {}),
+            // The address they gave at step 1. It becomes the Stripe customer
+            // email and, after payment, their sign-in identifier.
+            email: data.email,
+            fullName: data.fullName,
+            businessName: data.businessName,
+          }),
+        }
+      );
+      const json = (await res.json().catch(() => ({}))) as {
+        url?: string;
+        error?: string;
+      };
+      if (!res.ok || !json.url) {
+        setClaimError(json.error ?? 'We could not open checkout. Try again.');
+        return;
+      }
+      window.location.assign(json.url);
+    } catch {
+      setClaimError('We could not open checkout. Try again.');
+    } finally {
+      setClaimBusy(false);
+    }
+  }, [previewId, data]);
+
   function claimSite() {
-    // Clerk not settled yet: acting now would POST without a session and take
-    // a 401 for it. The button is disabled in that window anyway.
+    // Clerk not settled yet: acting now would take the guest path for somebody
+    // who is actually signed in. The button is disabled in that window anyway.
     if (claimBusy || !previewId || !authLoaded) return;
     if (!isSignedIn) {
-      setClaimPending(true);
-      // Modal rather than a page redirect: a full navigation would tear down
-      // the wizard and lose the preview this visitor just spent minutes
-      // editing. The fallback is pinned to this page for the same reason —
-      // the provider's default sends people to /admin/dashboard.
-      openSignIn({ fallbackRedirectUrl: window.location.href });
+      void startGuestCheckout();
       return;
     }
+    // Already signed in: claim first, then the authenticated deposit Checkout,
+    // exactly as before.
     void submitClaim();
   }
-
-  useEffect(() => {
-    if (!claimPending || !authLoaded || !isSignedIn) return;
-    setClaimPending(false);
-    void submitClaim();
-  }, [claimPending, authLoaded, isSignedIn, submitClaim]);
 
   // ---- Live conversational editor ----
   async function sendEdit() {
@@ -831,7 +866,11 @@ export function PreviewStep({
                 disabled={claimBusy || !authLoaded}
                 className="rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-50"
               >
-                {claimBusy ? 'Saving your site…' : depositCtaLabel(quote)}
+                {claimBusy
+                  ? isSignedIn
+                    ? 'Saving your site…'
+                    : 'Opening secure checkout…'
+                  : depositCtaLabel(quote)}
               </button>
               <button
                 type="button"

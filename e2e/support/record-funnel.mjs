@@ -491,12 +491,20 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       // one, and it is the same sentence the visitor is shown.
       const stopped = async () =>
         /The build stopped/i.test(await now.innerText().catch(() => ''));
-      const deadline = Date.now() + 12 * 60 * 1000;
+      // One budget covering both waits below, because they are two halves of a
+      // single pipeline run. Twelve minutes used to be generous and is now too
+      // tight: since ecd3babd the build also generates the site's imagery, and
+      // a run that produced four images and a good preview reported
+      // `stream ... 200 in 12.6min` — thirty seconds past the old deadline, so
+      // a take that had actually worked was thrown away and refilmed. The
+      // pipeline reports its own surrender through `stopped()`, which is what
+      // ends a dead attempt early; this is only the backstop behind it.
+      const deadline = Date.now() + 22 * 60 * 1000;
       for (;;) {
         if (await frame.isVisible().catch(() => false)) break;
         if (fellBack) throw new Error('generation fell back to the JSON preview');
         if (await stopped()) throw new Error('the build stopped before publishing a preview');
-        if (Date.now() > deadline) throw new Error('no preview inside 12 minutes');
+        if (Date.now() > deadline) throw new Error('no preview inside the build budget');
         await pause(page, 2000);
       }
       mark(t0, 'baseReady');
@@ -510,7 +518,7 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
         if (await inviteLink.isVisible().catch(() => false)) break;
         if (fellBack) throw new Error('generation fell back to the JSON preview');
         if (await stopped()) throw new Error('the build stopped during personalization');
-        if (Date.now() > deadline) throw new Error('personalization did not finish in 12 minutes');
+        if (Date.now() > deadline) throw new Error('personalization did not finish inside the build budget');
         await pause(page, 2000);
       }
       personalised = true;
@@ -544,9 +552,11 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
        * Asks for one change and waits for the app to say it landed.
        *
        * "Landed" is the counter on the edit box going down, not a sentence:
-       * the two changes end on different lines ("Done — updating your live
-       * preview." for the first, "Done — that second change is in." for the
-       * second), and the counter is the same signal behind both.
+       * the two changes end on different lines ("Done, updating your live
+       * preview." for the first, "Done, that second change is in." for the
+       * second), and the counter is the same signal behind both. Waiting on
+       * the counter is also why the em-dash sweep (f74abe31) could rewrite
+       * both of those lines without breaking this wait.
        */
       const askForChange = async (text, expectLeft) => {
         const promptBox = d.getByLabel('Ask for a change');
@@ -712,26 +722,75 @@ if (claimPayload && previewId) {
   writeFileSync('/tmp/showcase-workspace.txt', workspaceId ?? '');
 }
 
+// Filmed signed OUT, which is how the page is actually met: the unlock link is
+// reached from the visitor's own generated site, and `middleware.ts` marks
+// `/unlock(.*)` public with exactly that note. It is also the only way it can
+// be filmed today — see the defect report below — but the anonymous viewer is
+// the honest one either way, and it matches the rest of this funnel, which is
+// filmed signed out from the landing page to the offer.
+//
+// DEFECT (app side, not worked around here): signed IN, this route never
+// renders. `NavigationWrapper`'s client-side `publicRoutes` list is an exact
+// match array that never got `/unlock`, unlike the middleware, so the page is
+// gated on Clerk's `isLoaded` with no timeout fallback; and on this route
+// Clerk goes into a `/v1/client/handshake` -> 307 -> `?__clerk_handshake=`
+// -> 307 exchange after which `clerk.browser.js` never finishes, so `isLoaded`
+// stays false forever. The result is a full-screen "Loading your experience…"
+// over a page the server rendered correctly in ~200ms.
+let unlockFilmed = false;
+
+/**
+ * True once the page is actually showing, not still behind the loading screen.
+ *
+ * The overlay covers a fully rendered page, so "did it load" cannot be asked
+ * of the network or of `domcontentloaded` — both say yes while the viewer sees
+ * a spinner. It has to be asked of what is on the glass.
+ */
+const painted = async (page, ms = 25000) => {
+  const deadline = Date.now() + ms;
+  for (;;) {
+    const txt = await page.evaluate(
+      () => document.body.innerText.replace(/\s+/g, ' ')
+    ).catch(() => '');
+    // Checked after the overlay has had a chance to mount: immediately after
+    // navigation the server's HTML is on screen and the overlay is not, which
+    // reads as success for about a second and then stops being true.
+    if (txt && !/Loading your experience/i.test(txt)) return true;
+    if (Date.now() > deadline) return false;
+    await pause(page, 1000);
+  }
+};
+
 if (workspaceId) {
-  results.push(await clip(browser, '05b-unlock',
-    { storageState: '/tmp/showcase-client-state.json' }, async (page) => {
-      await page.goto(`${APP}/unlock/${workspaceId}`, { waitUntil: 'domcontentloaded' });
-      await pause(page, 5000);
-      await slowScroll(page, 3, 300, 750);      // the quote and the 20/80 split
-      await pause(page, 5000);
+  // The deposit goes through whether or not the page can be filmed: it is a
+  // signed webhook against the live route, and the ledger it moves is the
+  // point. Only the filming of it is conditional.
+  const out = execFileSync('node',
+    ['e2e/support/simulate-payment.mjs', '--workspace', workspaceId, '--kind', 'deposit'],
+    { encoding: 'utf8' });
+  writeFileSync('/tmp/deposit-run.txt', out);
+  console.log('  deposit webhook posted');
 
-      // The deposit, through the signed webhook.
-      const out = execFileSync('node',
-        ['e2e/support/simulate-payment.mjs', '--workspace', workspaceId, '--kind', 'deposit'],
-        { encoding: 'utf8' });
-      writeFileSync('/tmp/deposit-run.txt', out);
-      console.log('  deposit webhook posted');
-
-      await page.reload({ waitUntil: 'domcontentloaded' });
-      await pause(page, 6000);
-      await slowScroll(page, 2, 260, 750);
-      await pause(page, 5000);
-    }));
+  const shot = await clip(browser, '05b-unlock', {}, async (page) => {
+    await page.goto(`${APP}/unlock/${workspaceId}`, { waitUntil: 'domcontentloaded' });
+    await pause(page, 2500);
+    if (!(await painted(page))) {
+      throw new Error('the unlock page never came out from behind the loading screen');
+    }
+    await pause(page, 5000);
+    await slowScroll(page, 3, 300, 750);      // the quote and the 20/80 split
+    await pause(page, 5000);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await pause(page, 4000);
+  });
+  results.push(shot);
+  unlockFilmed = !shot.error;
+  if (!unlockFilmed) {
+    // Left out of clip 05 rather than published: twenty-six seconds of a
+    // spinner is not a clip, and a showcase that shows one is worse than a
+    // showcase that says the page could not be filmed.
+    console.log(`  05b-unlock omitted from clip 05 — ${shot.error}`);
+  }
 }
 
 // ── The mobile pass of the generated site ───────────────────────────────────
@@ -761,7 +820,11 @@ if (ffmpegOk() && M.end) {
   // and the deposit landing on it.
   cut(src, join(VID, '05a-offer.webm'), M.claimStart, M.end);
   const five = [join(VID, '05a-offer.webm')];
-  if (existsSync(join(VID, '05b-unlock.webm'))) five.push(join(VID, '05b-unlock.webm'));
+  // `unlockFilmed`, not merely "the file is there": a take that spent its
+  // whole length behind the loading screen still writes a webm.
+  if (unlockFilmed && existsSync(join(VID, '05b-unlock.webm'))) {
+    five.push(join(VID, '05b-unlock.webm'));
+  }
   concat(five, join(VID, '05-claim-and-deposit.webm'));
 
   // Clip 03: the skeleton and the NOW line, the base template landing, the
@@ -788,6 +851,8 @@ writeManifest({
   editApplied,
   editsApplied,
   offerRevealed,
+  // Whether clip 05 got as far as the unlock page, or stops at the claim.
+  unlockFilmed,
   // Cleared, not merely absent: `record-preview-site.mjs` set this when the
   // site pane recorded as blank white and the page had to caption its way
   // around it. The pane records the real site now (310148ee), so the caption

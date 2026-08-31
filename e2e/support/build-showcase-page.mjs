@@ -78,6 +78,9 @@ const commits = (M.commits ?? []).map((c) => `<li><code>${esc(c)}</code></li>`).
  */
 const twoChanges = M.editsApplied === 2 && M.offerRevealed === true;
 
+/** Whether clip 05 reaches the unlock page or stops at the claim. */
+const unlockFilmed = M.unlockFilmed === true;
+
 /**
  * Facts for the two re-shot clips, read back out of the database by
  * `retake-facts.mjs` after the takes. Kept separate from `M.notes` so a
@@ -208,7 +211,16 @@ ${clip('05-claim-and-deposit', 'The offer, then the money',
   `${twoChanges ? 'The offer the second change unlocked, with' : 'The offer is restated next to the preview with'}
 the real split — a &euro;159.80 deposit against a &euro;799 build, &euro;639.20 on completion — and a
 quieter way out beside it. A signed-out click opens Clerk's modal rather than navigating, because a
-redirect here would throw away the preview. Then the unlock page, and the deposit landing on it.`)}
+redirect here would throw away the preview.${unlockFilmed
+  ? ' Then the unlock page, and the deposit landing on it.'
+  : ''}`)}
+${unlockFilmed ? '' : `<div class="note"><b>The unlock page is not in this clip, and the reason is a bug of
+ours.</b> The deposit below is real and the workspace really moved to <code>DEPOSIT_PAID</code> — the
+transcript is printed underneath. What could not be filmed is the page the client lands on afterwards:
+<code>NavigationWrapper</code> keeps its own hardcoded list of public routes, <code>/unlock</code> was
+never added to it (the middleware does treat it as public), so the route is held behind a full-screen
+loading screen until Clerk reports <code>isLoaded</code> — and on this route Clerk never does, so the
+screen never lifts. Rather than publish twenty-six seconds of a spinner, the clip stops at the claim.</div>`}
 <div class="note"><b>One click is not on camera.</b> This Clerk instance answers a scripted sign-in with
 <code>needs_client_trust</code> — bot protection a headless browser cannot satisfy — and redeeming a
 sign-in token calls <code>setActive</code>, which navigates and would destroy the preview. So the modal

@@ -31,7 +31,22 @@ export function loadEnv() {
   return { ...of('apps/flowstarter-main/.env'), ...of('apps/flowstarter-main/.env.local') };
 }
 
-export const users = () => JSON.parse(readFileSync('/tmp/showcase-users.json', 'utf8'));
+/**
+ * The two Clerk users the recorders film with.
+ *
+ * `retake-users.mjs mint` is the only thing that creates them and it writes
+ * /tmp/retake-users.json, so that file is read first. The older
+ * /tmp/showcase-users.json is still honoured when it is the only one there,
+ * but nothing writes it any more: its accounts were minted once and then
+ * deleted by a teardown, and the stale ids it kept serving failed the claim
+ * with `sign_in_tokens -> 404` — a run that had filmed perfectly well.
+ */
+export const users = () => {
+  for (const f of ['/tmp/retake-users.json', '/tmp/showcase-users.json']) {
+    if (existsSync(f)) return JSON.parse(readFileSync(f, 'utf8'));
+  }
+  throw new Error('no filming users on disk — run: node e2e/support/retake-users.mjs mint');
+};
 
 const SUPABASE = 'http://127.0.0.1:54321';
 

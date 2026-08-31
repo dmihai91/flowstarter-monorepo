@@ -44,7 +44,9 @@ export async function POST(req: NextRequest) {
   const { demoId, instruction } = parsed.data;
   const job = getJob(demoId);
 
-  if (!job || job.status !== 'ready' || !job.sandboxId) {
+  // A preview is editable behind either a Daytona sandbox or (in
+  // FLOWSTARTER_LOCAL_PREVIEW mode) the local on-disk workspace.
+  if (!job || job.status !== 'ready' || (!job.sandboxId && !job.localRoot)) {
     return NextResponse.json({ error: 'demo not ready' }, { status: 409 });
   }
   if (job.editStatus === 'editing') {
@@ -99,9 +101,10 @@ export async function POST(req: NextRequest) {
       };
       let editModel: string;
       if (structural) {
-        // Autonomous multi-file change — needs the Claude Agent SDK. Fails open
-        // (the visitor just retries) if no Anthropic key is configured.
-        if (!anthropicApiKey) {
+        // Autonomous multi-file change — needs the Claude Agent SDK and a
+        // sandbox to run it in. Fails open (the visitor just retries) when
+        // either is missing.
+        if (!anthropicApiKey || !job.sandboxId) {
           updateJob(demoId, {
             editStatus: 'failed',
             editError: 'structural edits unavailable',
@@ -123,16 +126,32 @@ export async function POST(req: NextRequest) {
         // Fast content edit: Kimi implements, Haiku critic checks, 1 retry.
         editModel = 'moonshotai/kimi-k2.6';
         updateJob(demoId, { editPhase: 'Applying your change' });
-        r = await fastEditInSandbox(job.sandboxId!, instruction, {
-          openRouterKey,
-          runnerPath: join(
-            repoRoot,
-            'packages/agentic-codegen/sandbox/fast-edit-runner.mjs'
-          ),
-          model: editModel,
-          criticModel: 'anthropic/claude-haiku-4.5',
-          env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
-        });
+        const runnerPath = join(
+          repoRoot,
+          'packages/agentic-codegen/sandbox/fast-edit-runner.mjs'
+        );
+        if (job.sandboxId) {
+          r = await fastEditInSandbox(job.sandboxId, instruction, {
+            openRouterKey,
+            runnerPath,
+            model: editModel,
+            criticModel: 'anthropic/claude-haiku-4.5',
+            env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+          });
+        } else {
+          // Local preview: same runner, run against the on-disk workspace the
+          // local `astro dev` serves — HMR shows the change the same way.
+          const { fastEditLocal } = await import(
+            '@/lib/discovery/local-fast-edit'
+          );
+          r = await fastEditLocal(job.localRoot!, instruction, {
+            openRouterKey,
+            runnerPath,
+            contentRel: job.contentRel,
+            model: editModel,
+            criticModel: 'anthropic/claude-haiku-4.5',
+          });
+        }
       }
 
       await recordGenerationCost({

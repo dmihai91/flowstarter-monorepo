@@ -32,6 +32,12 @@ export interface LiveJob {
   /** 'pending' | 'live' | 'failed' | 'removed', straight off funnel_previews. */
   hostedPreviewStatus?: string;
   sandboxId?: string;
+  /**
+   * FLOWSTARTER_LOCAL_PREVIEW mode: absolute path of the on-disk workspace the
+   * local `astro dev` serves. The edit loop targets this when there is no
+   * sandbox.
+   */
+  localRoot?: string;
   /** Absolute path to the site's single content file (for edits). */
   contentFile?: string;
   /** Relative path of that file inside the sandbox workspace. */

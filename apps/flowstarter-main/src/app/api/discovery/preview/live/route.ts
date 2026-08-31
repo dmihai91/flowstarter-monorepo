@@ -318,6 +318,7 @@ async function publishLocalPreview(input: {
 }): Promise<{
   previewUrl: string;
   artifactUrl: string;
+  localRoot: string;
   teardown: () => Promise<void>;
 }> {
   if (process.env.FLOWSTARTER_LOCAL_PREVIEW !== 'true') {
@@ -392,6 +393,7 @@ async function publishLocalPreview(input: {
   return {
     previewUrl: `http://${host}:${port}`,
     artifactUrl: `local://${localRoot}`,
+    localRoot,
     teardown,
   };
 }
@@ -537,6 +539,10 @@ export async function POST(req: NextRequest) {
                   templateSlug: input.template.slug,
                   workspaceRoot: input.workspaceRoot,
                 });
+                // Recorded here (not off the orchestrator result, which only
+                // keeps the sandbox fields) so the edit loop can target the
+                // local workspace when there is no sandbox behind the preview.
+                updateJob(demoId, { localRoot: local.localRoot });
                 return { ...local, files };
               } catch (localError) {
                 throw new Error(

@@ -21,9 +21,14 @@ export interface CachedAssetFile {
   heroEligible?: boolean;
 }
 
-/** Raster-only: SVG can carry scripts and scraped media never needs it. */
-const SAFE_FILE_NAME = /^[a-z0-9][a-z0-9._-]{0,80}\.(png|jpe?g|webp|gif)$/i;
-const MAX_ASSET_BYTES = 8 * 1024 * 1024;
+/**
+ * Raster-only: SVG can carry scripts and scraped media never needs it.
+ * Exported so every writer into public/flowstarter-assets/ — client media here,
+ * model-generated artwork in generated-assets.ts — shares one rule rather than
+ * drifting into two.
+ */
+export const SAFE_FILE_NAME = /^[a-z0-9][a-z0-9._-]{0,80}\.(png|jpe?g|webp|gif)$/i;
+export const MAX_ASSET_BYTES = 8 * 1024 * 1024;
 
 export interface CachedAssetEntry {
   sourceId: string;

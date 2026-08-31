@@ -61,3 +61,4 @@ export * from './flowstarter/workflows';
 export * from './flowstarter/template-classifier';
 export * from './flowstarter/preview-teaser';
 export * from './flowstarter/site-media';
+export * from './flowstarter/generated-assets';

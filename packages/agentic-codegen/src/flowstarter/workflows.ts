@@ -9,6 +9,8 @@ import {
   type CachedAssetEntry,
   type CachedAssetFile,
 } from './preview-assets';
+import { generateSiteAssets, type GeneratedAssetEntry } from './generated-assets';
+import { listSiteImageSlots } from './site-media';
 import { assertSafeBusinessIntake } from './intake-guard';
 import type { TemplateLibrary } from './template-library-mcp';
 import {
@@ -79,6 +81,12 @@ export interface PreviewPipelineResult {
   files: TemplateScaffoldFile[];
   sandboxId?: string;
   teardown?: () => Promise<void>;
+  /**
+   * Spend on generated site imagery for this run, in USD. Reported so the
+   * caller can add it to the funnel budget it already meters LLM tokens
+   * against; zero when the stage was skipped or every image failed.
+   */
+  generatedAssetsCostUsd: number;
 }
 
 export class PreviewGenerationPipeline {
@@ -106,6 +114,12 @@ export class PreviewGenerationPipeline {
      * entries are merged into cachedAssets for the agent.
      */
     cachedAssetFiles?: CachedAssetFile[];
+    /**
+     * The funnel is over its soft spending threshold. Optional extras that
+     * cost money — currently the generated site imagery — are dropped, and
+     * the preview falls back to the template's own artwork.
+     */
+    budgetDegraded?: boolean;
     onPhase?: (phase: string) => void;
   }): Promise<PreviewPipelineResult> {
     assertSafeBusinessIntake(input.intake);
@@ -144,6 +158,39 @@ export class PreviewGenerationPipeline {
           input.cachedAssetFiles ?? [],
         )),
       ];
+      // Brand-matched imagery, painted from this brief. Best-effort by
+      // design: the stage swallows its own failures and an empty result just
+      // means the template keeps the artwork it shipped with.
+      const generated = await generateSiteAssets({
+        workspaceRoot: workspace.root,
+        brief: {
+          industry: input.intake.business.niche,
+          ...(input.intake.business.description === undefined
+            ? {}
+            : { description: input.intake.business.description }),
+          ...(input.intake.business.targetAudience === undefined
+            ? {}
+            : { targetAudience: input.intake.business.targetAudience }),
+          brandTone: brandConfig.voice.adjectives,
+          location: input.intake.business.location,
+        },
+        slots: await listSiteImageSlots(workspace.root),
+        assetLibrary: extractAssetLibraryEntries(scaffold.template.config),
+        hasClientMedia: cachedAssets.length > 0,
+        ...(input.budgetDegraded === undefined
+          ? {}
+          : { budgetDegraded: input.budgetDegraded }),
+        ...(input.onPhase ? { onPhase: input.onPhase } : {}),
+      }).catch((error: unknown) => {
+        // Nothing in this stage may cost a client their preview.
+        console.warn(
+          `[generated-assets] stage skipped: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+        return { entries: [] as GeneratedAssetEntry[], costUsd: 0 };
+      });
+
       const personalize = (feedback?: string) =>
         this.agents.buildPreview({
           workspaceRoot: workspace.root,
@@ -151,6 +198,7 @@ export class PreviewGenerationPipeline {
           brandConfig,
           templateSlug: template.slug,
           cachedAssets,
+          generatedAssets: generated.entries,
           templateConfig: scaffold.template.config,
           feedback,
           fullTemplateContext: this.options.fullTemplateContext,
@@ -264,7 +312,12 @@ export class PreviewGenerationPipeline {
           });
         }
       }
-      return { brandConfig, template, ...published };
+      return {
+        brandConfig,
+        template,
+        ...published,
+        generatedAssetsCostUsd: generated.costUsd,
+      };
     } finally {
       await rm(workspace.root, { recursive: true, force: true });
     }
@@ -294,6 +347,28 @@ export class PreviewGenerationPipeline {
       confidence: Math.min(0.99, score),
     };
   }
+}
+
+/**
+ * The template's artwork manifest, reduced to what slot planning needs: a
+ * path and its `kind`. Only used to spot the entries that depict a person, so
+ * an entry missing a description still counts — unlike the richer projection
+ * the preview prompt builds, dropping one here would silently un-exclude a
+ * face.
+ */
+function extractAssetLibraryEntries(
+  config: Record<string, unknown> | undefined,
+): Array<{ path?: string; kind?: string }> | undefined {
+  const entries = config?.assetLibrary;
+  if (!Array.isArray(entries)) return undefined;
+  return entries
+    .filter((entry): entry is Record<string, unknown> =>
+      Boolean(entry) && typeof entry === 'object',
+    )
+    .map((entry) => ({
+      ...(typeof entry.path === 'string' ? { path: entry.path } : {}),
+      ...(typeof entry.kind === 'string' ? { kind: entry.kind } : {}),
+    }));
 }
 
 /**

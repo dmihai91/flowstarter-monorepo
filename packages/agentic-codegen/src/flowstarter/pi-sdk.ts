@@ -52,6 +52,7 @@ import {
   TEMPLATE_SELECTION_SYSTEM_PROMPT,
   TEMPLATE_SELECTION_REPAIR_SYSTEM_PROMPT,
 } from './prompts';
+import type { GeneratedAssetEntry } from './generated-assets';
 import type { TemplateLibrary } from './template-library-mcp';
 import type {
   BrandConfig,
@@ -511,6 +512,8 @@ export class PiSdkFlowstarterAgents {
     brandConfig: BrandConfig;
     templateSlug: string;
     cachedAssets: Array<{ sourceId: string; publicPath: string }>;
+    /** Brand-matched artwork painted for this brief by the generated-assets stage. */
+    generatedAssets?: GeneratedAssetEntry[];
     templateConfig?: Record<string, unknown>;
     /** Trusted orchestrator validation feedback for a bounded repair pass. */
     feedback?: string;
@@ -570,6 +573,7 @@ export class PiSdkFlowstarterAgents {
         brandConfig: input.brandConfig,
         templateSlug: input.templateSlug,
         cachedAssets: input.cachedAssets,
+        generatedAssets: input.generatedAssets,
         editablePaths,
         styleTokenPaths,
         fileTree,

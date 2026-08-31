@@ -62,6 +62,31 @@ describe('security-headers', () => {
       expect(frameSrc).toContain('https://*.daytonaproxy01.net');
     });
 
+    it('allows local preview origins in frame-src only in local-preview dev', () => {
+      // FLOWSTARTER_LOCAL_PREVIEW serves the generated site from a local
+      // astro dev on its own port; the wizard iframe is blocked by our own
+      // frame-src unless that origin is allowed. Both showcase filming runs
+      // recorded a white pane because of this.
+      vi.stubEnv('NODE_ENV', 'development');
+      vi.stubEnv('FLOWSTARTER_LOCAL_PREVIEW', 'true');
+      const frameSrc = buildCSPHeader()
+        .split(';')
+        .map((d) => d.trim())
+        .find((d) => d.startsWith('frame-src'));
+      expect(frameSrc).toContain('http://127.0.0.1:*');
+      expect(frameSrc).toContain('http://localhost:*');
+    });
+
+    it('never allows local preview origins in production, even with the flag', () => {
+      vi.stubEnv('FLOWSTARTER_LOCAL_PREVIEW', 'true');
+      const frameSrc = buildCSPHeader()
+        .split(';')
+        .map((d) => d.trim())
+        .find((d) => d.startsWith('frame-src'));
+      expect(frameSrc).not.toContain('http://127.0.0.1');
+      expect(frameSrc).not.toContain('http://localhost');
+    });
+
     it('includes object-src none', () => {
       expect(buildCSPHeader()).toContain("object-src 'none'");
     });

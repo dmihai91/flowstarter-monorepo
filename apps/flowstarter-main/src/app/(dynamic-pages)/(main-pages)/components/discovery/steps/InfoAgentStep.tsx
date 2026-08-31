@@ -396,8 +396,7 @@ export function InfoAgentStep({
               </ul>
             ) : (
               <p className="mt-2 text-sm text-[var(--fs-ink-faint)]">
-                No suggestions this time, your own name is the safer bet
-                anyway.
+                No suggestions this time, your own name is the safer bet anyway.
               </p>
             )}
           </div>

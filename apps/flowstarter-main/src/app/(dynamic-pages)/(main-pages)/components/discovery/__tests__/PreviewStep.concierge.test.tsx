@@ -335,7 +335,9 @@ describe('the deposit ask waits its turn', () => {
     );
 
     const log = conversation();
-    expect(await within(log).findByText(/up to 2 changes/i)).toBeInTheDocument();
+    expect(
+      await within(log).findByText(/up to 2 changes/i)
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /pay the €159\.80 deposit/ })
     ).toBeNull();

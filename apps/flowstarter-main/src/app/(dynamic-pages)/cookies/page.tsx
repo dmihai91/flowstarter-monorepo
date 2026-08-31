@@ -129,8 +129,8 @@ export default function CookiesPage() {
               cross-site advertising tracker.
             </li>
             <li>
-              <strong>Advertising</strong>: we do not use advertising cookies
-              of any kind.
+              <strong>Advertising</strong>: we do not use advertising cookies of
+              any kind.
             </li>
           </ul>
 
@@ -237,16 +237,15 @@ export default function CookiesPage() {
           <p>You can also manage cookies directly in your browser:</p>
           <ul>
             <li>
-              <strong>Chrome</strong>: Settings → Privacy and security →
-              Cookies and other site data.
+              <strong>Chrome</strong>: Settings → Privacy and security → Cookies
+              and other site data.
             </li>
             <li>
               <strong>Firefox</strong>: Settings → Privacy &amp; Security →
               Cookies and Site Data.
             </li>
             <li>
-              <strong>Safari</strong>: Settings → Privacy → Manage Website
-              Data.
+              <strong>Safari</strong>: Settings → Privacy → Manage Website Data.
             </li>
             <li>
               <strong>Edge</strong>: Settings → Cookies and site permissions →

@@ -114,8 +114,7 @@ export default function PrivacyPage() {
               security monitoring, and fraud prevention.
             </li>
             <li>
-              <strong>Legal obligation</strong>: for tax and accounting
-              records.
+              <strong>Legal obligation</strong>: for tax and accounting records.
             </li>
             <li>
               <strong>Consent</strong>: for marketing email and any optional
@@ -143,8 +142,8 @@ export default function PrivacyPage() {
               and customer-site servers.
             </li>
             <li>
-              <strong>Cloudflare</strong> (US, EU SCCs): DNS, edge CDN, and
-              DDoS protection.
+              <strong>Cloudflare</strong> (US, EU SCCs): DNS, edge CDN, and DDoS
+              protection.
             </li>
             <li>
               <strong>Stripe</strong> (Ireland): payments, invoicing, and tax
@@ -186,8 +185,8 @@ export default function PrivacyPage() {
               account, then deleted 30 days after closure.
             </li>
             <li>
-              <strong>Uploaded site assets</strong>: kept until you delete
-              them, or 30 days after account closure.
+              <strong>Uploaded site assets</strong>: kept until you delete them,
+              or 30 days after account closure.
             </li>
             <li>
               <strong>Analytics events</strong>: retained for 12 months.
@@ -226,8 +225,8 @@ export default function PrivacyPage() {
               legitimate interest.
             </li>
             <li>
-              <strong>Restriction</strong>: limit how we process your data
-              while a query is being resolved.
+              <strong>Restriction</strong>: limit how we process your data while
+              a query is being resolved.
             </li>
             <li>
               <strong>Complaint</strong>: lodge a complaint with your national

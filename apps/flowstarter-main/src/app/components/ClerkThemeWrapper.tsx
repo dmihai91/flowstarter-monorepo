@@ -65,8 +65,10 @@ export function ClerkThemeWrapper({ children }: { children: React.ReactNode }) {
     '--fs-rule',
     isDarkMode ? 'rgba(244,238,228,0.12)' : 'rgba(18,10,34,0.10)'
   );
-  const surface = resolveVar('--fs-bg-elevated', isDarkMode ? '#100e1c' : '#ffffff');
-  const raised = resolveVar('--fs-bg-raised', isDarkMode ? '#0a0714' : '#f6f3ec');
+  const surface = resolveVar(
+    '--fs-bg-elevated',
+    isDarkMode ? '#100e1c' : '#ffffff'
+  );
   const accent = resolveVar(
     '--purple-primary',
     isDarkMode ? 'hsl(233,70%,74%)' : 'hsl(233,65%,50%)'

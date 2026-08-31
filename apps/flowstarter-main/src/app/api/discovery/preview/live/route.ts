@@ -598,6 +598,9 @@ export async function POST(req: NextRequest) {
       const result = await pipeline.run({
         ...evidence,
         cachedAssets: [],
+        // Soft budget threshold: the pipeline skips brief-generated imagery
+        // (and any other optional spend) when the funnel is over it.
+        budgetDegraded: budgetState === 'degrade',
         onPhase: (phase) => updateJob(demoId, { phase }),
       });
 
@@ -668,6 +671,11 @@ export async function POST(req: NextRequest) {
         model: process.env.PI_MODEL?.trim() || 'z-ai/glm-5.2',
         demoId,
         ip,
+        // Brief-generated imagery is the one spend the Pi usage sink does not
+        // see; without this the funnel cap never learns about it.
+        ...(result.generatedAssetsCostUsd > 0
+          ? { costUsd: result.generatedAssetsCostUsd }
+          : {}),
       }).catch(() => {});
     } catch (e) {
       updateJob(demoId, {

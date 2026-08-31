@@ -112,13 +112,13 @@ const heroParagraphSegments = heroParagraphs.map((paragraph) =>
 </SectionBlock>
 
 <style>
-  .hero {
+  :global(.hero) {
     overflow: clip;
     min-height: 100vh;
     position: relative;
   }
 
-  .hero::before {
+  :global(.hero)::before {
     content: "";
     position: absolute;
     inset: 0;

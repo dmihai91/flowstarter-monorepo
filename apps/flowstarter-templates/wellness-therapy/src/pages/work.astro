@@ -55,7 +55,7 @@ const pageTitle = `How I help — ${(siteLabels as any).siteMeta?.title ?? ''}`;
     text-align: center;
   }
 
-  .work-hero__title {
+  :global(.work-hero__title) {
     font-family: var(--font-title);
     font-size: clamp(3rem, 7vw, 6.5rem);
     font-weight: var(--fw-headline);

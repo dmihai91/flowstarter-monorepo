@@ -33,12 +33,12 @@ const eyebrow: string =
 </SectionBlock>
 
 <style>
-  .cta-section {
+  :global(.cta-section) {
     position: relative;
     overflow: clip;
   }
 
-  .cta-section::before {
+  :global(.cta-section)::before {
     content: "";
     position: absolute;
     inset: 0;

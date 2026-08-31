@@ -44,7 +44,7 @@ const { heroLines, heroImages } = Astro.props;
     gap: 120px;
   }
 
-  .services-hero-section__title {
+  :global(.services-hero-section__title) {
     font-family: var(--font-title);
     font-size: var(--fs-h1);
     font-weight: var(--fw-bold);
@@ -52,7 +52,7 @@ const { heroLines, heroImages } = Astro.props;
     line-height: 1.1;
   }
 
-  .services-hero-section__title :global(.animated-word-title__line) {
+  :global(.services-hero-section__title) :global(.animated-word-title__line) {
     white-space: nowrap;
   }
 
@@ -126,11 +126,11 @@ const { heroLines, heroImages } = Astro.props;
       padding-top: 48px;
     }
 
-    .services-hero-section__title {
+    :global(.services-hero-section__title) {
       font-size: 2.5rem;
     }
 
-    .services-hero-section__title :global(.animated-word-title__line) {
+    :global(.services-hero-section__title) :global(.animated-word-title__line) {
       white-space: normal;
     }
 

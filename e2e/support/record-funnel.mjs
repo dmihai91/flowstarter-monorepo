@@ -5,8 +5,8 @@
  * That is not a stylistic choice — the generated preview lives in React state
  * on the wizard page, and opening a second tab would start a second three to
  * six minute generation rather than resume the one already on screen. So the
- * page stays alive across generation, the prompt edit and the claim, and the
- * boundaries are timestamps recorded as the run happens.
+ * page stays alive across generation, the two free changes and the claim, and
+ * the boundaries are timestamps recorded as the run happens.
  *
  * Clips 01 and 02 are separate takes. The wizard autosaves its draft to
  * sessionStorage and restores it on mount, so resuming mid-wizard is the app's
@@ -21,10 +21,18 @@
  * of the questions; the script does, and this only answers them.
  *
  *   node e2e/support/record-funnel.mjs
+ *   node e2e/support/record-funnel.mjs --resume-draft   # 03/04/05 only
+ *   node e2e/support/record-funnel.mjs --only-02        # the info agent only
+ *
+ * `--resume-draft` starts at the continuous take, reusing the draft the last
+ * full run left in /tmp/showcase-draft.json. Clips 01 and 02 take four minutes
+ * of typing and produce nothing the later clips need except that draft, and the
+ * generation half needs several attempts to land — so a re-take of 03/04/05
+ * neither refilms nor overwrites 01 and 02, which are already good.
  */
 import { chromium } from '@playwright/test';
 import { execFileSync } from 'node:child_process';
-import { writeFileSync, existsSync } from 'node:fs';
+import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   OUT, VID, RAW, APP, DESKTOP, MOBILE, ensureDirs, users, pause, slowScroll,
@@ -63,17 +71,28 @@ const BRIEF = {
 
 const DRAFT_KEY = 'fs-discovery-draft-v1';
 const DEMO_KEY = 'fs-discovery-demo-v1';
+const DRAFT_FILE = '/tmp/showcase-draft.json';
+const RESUME_ONLY = process.argv.includes('--resume-draft');
+// `--only-02` re-shoots the info agent on its own. The agent's phrasing is a
+// prompt, so it changes without the flow changing (3cca5562 gave it an
+// introduction and a specific acknowledgement of each answer) — and when only
+// the words move, clip 02 is the only clip that needs filming again. Clip 01
+// is already published and must not be overwritten to get at 02.
+const ONLY_02 = process.argv.includes('--only-02');
+// Both modes start from the draft the last full run saved rather than typing
+// steps 1–6 again.
+const FROM_DRAFT = RESUME_ONLY || ONLY_02;
 
 // Without site-per-process disabled, Chromium hosts the cross-origin preview
 // iframe (the local astro dev server on its own port) in a separate renderer
 // process, and Playwright's screencast records that frame as blank white.
 //
-// Kept, but it is NOT sufficient on its own: the 2026-08-31 run recorded the
-// site pane as blank white with this flag in place, on a preview the server
-// was serving fine (200) and which the page had finished loading — the
-// skeleton overlay was gone. Whatever composites that frame, this flag does
-// not reach it, so a clip that has to *show* the generated site still needs a
-// full-frame pass over the preview URL (`03b-mobile` below does exactly that).
+// This flag is sufficient. The blank pane that survived it on the 2026-08-31
+// run was not a compositing problem at all: our own CSP had no `frame-src` for
+// the preview's origin, so the browser refused to load the iframe and painted
+// nothing. Fixed in 310148ee, and the pane now genuinely renders the generated
+// site inside the recording. `03b-mobile` below is kept because a phone-width
+// pass over the site is worth showing, not because the desktop pane is empty.
 const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });
 const results = [];
 const marks = {};
@@ -111,6 +130,41 @@ async function answeredIds(page) {
       return raw ? JSON.parse(raw).answered ?? [] : [];
     } catch { return []; }
   }, DRAFT_KEY);
+}
+
+/**
+ * The info agent's transcript, as the wizard itself has stored it.
+ *
+ * `intakeChat` rides along in the same autosaved draft as the intake's cursor,
+ * so the conversation on the info step can be waited on the same way every
+ * other turn in this file is: against the app's own state rather than a guess
+ * at how long a model call takes.
+ */
+async function intakeChat(page) {
+  return page.evaluate((k) => {
+    try {
+      const raw = sessionStorage.getItem(k);
+      const d = raw ? JSON.parse(raw).data ?? {} : {};
+      return { turns: (d.intakeChat ?? []).length, status: d.intakeChatStatus ?? '' };
+    } catch { return { turns: 0, status: '' }; }
+  }, DRAFT_KEY);
+}
+
+/**
+ * Waits for the agent to have answered.
+ *
+ * A finished conversation is also an answer: once the gate is satisfied the
+ * agent stops asking, and `intakeChatStatus` is how it says so. Waiting only
+ * for another turn would hang for the full timeout on the last exchange.
+ */
+async function replied(page, turns, timeout = 90000) {
+  const deadline = Date.now() + timeout;
+  for (;;) {
+    const s = await intakeChat(page);
+    if (s.turns >= turns || s.status) return;
+    if (Date.now() > deadline) return;   // pacing only; never fail a take on it
+    await pause(page, 500);
+  }
 }
 
 async function settled(page, id, timeout = 30000) {
@@ -223,31 +277,40 @@ async function talkThroughIntake(page, d) {
 }
 
 // ── 01 — landing to the recommendation ──────────────────────────────────────
-console.log('01-intake');
 let draft = null;
-results.push(await clip(browser, '01-intake', {}, async (page) => {
-  await page.goto(APP, { waitUntil: 'domcontentloaded' });
-  await pause(page, 2600);
-  await slowScroll(page, 4, 420, 420);
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await pause(page, 1200);
+if (FROM_DRAFT) {
+  if (!existsSync(DRAFT_FILE)) {
+    console.error(`--resume-draft and --only-02 need ${DRAFT_FILE}; run the full script once first`);
+    process.exit(1);
+  }
+  draft = readFileSync(DRAFT_FILE, 'utf8');
+  console.log(`${ONLY_02 ? '01 skipped' : '01/02 skipped'} — resuming from the draft in ${DRAFT_FILE}`);
+} else {
+  console.log('01-intake');
+  results.push(await clip(browser, '01-intake', {}, async (page) => {
+    await page.goto(APP, { waitUntil: 'domcontentloaded' });
+    await pause(page, 2600);
+    await slowScroll(page, 4, 420, 420);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await pause(page, 1200);
 
-  await page.getByTestId('open-discovery').first().click();
-  const d = page.getByRole('dialog');
-  await d.waitFor({ state: 'visible', timeout: 20000 });
-  await pause(page, 1600);
+    await page.getByTestId('open-discovery').first().click();
+    const d = page.getByRole('dialog');
+    await d.waitFor({ state: 'visible', timeout: 20000 });
+    await pause(page, 1600);
 
-  await talkThroughIntake(page, d);
-  // Sitting on the info step is where clip 02 picks up.
-  await pause(page, 1500);
-  draft = await page.evaluate((k) => sessionStorage.getItem(k), DRAFT_KEY);
-}));
+    await talkThroughIntake(page, d);
+    // Sitting on the info step is where clip 02 picks up.
+    await pause(page, 1500);
+    draft = await page.evaluate((k) => sessionStorage.getItem(k), DRAFT_KEY);
+  }));
 
-if (!draft) {
-  console.error('no wizard draft was saved — cannot resume for later clips');
-  process.exit(1);
+  if (!draft) {
+    console.error('no wizard draft was saved — cannot resume for later clips');
+    process.exit(1);
+  }
+  writeFileSync(DRAFT_FILE, draft);
 }
-writeFileSync('/tmp/showcase-draft.json', draft);
 
 /**
  * Reopens the wizard at the saved step, using the app's own resume path.
@@ -270,6 +333,7 @@ const resume = async (page, step) => {
 };
 
 // ── 02 — the info agent ─────────────────────────────────────────────────────
+if (!RESUME_ONLY) {
 console.log('02-info-agent');
 results.push(await clip(browser, '02-info-agent', {}, async (page) => {
   const d = await resume(page, 7);
@@ -290,20 +354,40 @@ results.push(await clip(browser, '02-info-agent', {}, async (page) => {
   await pause(page, 1200);
 
   for (const answer of BRIEF.answers) {
+    const before = (await intakeChat(page)).turns;
     await box.scrollIntoViewIfNeeded().catch(() => {});
     await box.click();
     await box.type(answer, { delay: 12 });
     await pause(page, 900);
     await d.getByRole('button', { name: 'Send', exact: true }).first().click();
-    // The follow-up question is a live model call; give it room to land.
-    await pause(page, 20000);
+    // The reply is a live model call, so it is waited for rather than slept
+    // through: the transcript is part of the wizard's autosaved draft, and it
+    // gains two turns per exchange — the answer, then the agent on top of it.
+    // A flat 20s sleep ended the clip before the second acknowledgement had
+    // landed and left twelve seconds of a motionless screen in its place.
+    await replied(page, before + 2);
+    await pause(page, 4200);           // the reply, read
   }
 
   await skip.scrollIntoViewIfNeeded().catch(() => {});
   await pause(page, 3000);
 }));
+}
 
-// ── 03/04/05 — one take: generation, a prompt edit, the claim, the deposit ──
+// A 02-only re-shoot stops here. The clips below need a generation run, and
+// starting one would spend five minutes and a model call to throw the result
+// away. Only this clip's own entry is written back to the manifest, so the
+// facts the later clips are captioned with survive untouched.
+if (ONLY_02) {
+  await browser.close();
+  writeManifest({
+    clips: Object.fromEntries(results.map((r) => [r.name, { seconds: r.seconds, error: r.error }])),
+  });
+  console.log('02 re-shot;', results.map((r) => `${r.name} ${r.seconds}s`).join(', '));
+  process.exit(0);
+}
+
+// ── 03/04/05 — one take: generation, two changes, the claim, the deposit ────
 // The preview step is a conversation with two panes: the talk on the left, the
 // site on the right, and a sticky NOW line naming the phase and how long it has
 // been running. The site pane moves through three real states — an empty
@@ -318,6 +402,11 @@ let previewUrl = null;
 let claimOk = false;
 let personalised = false;
 let editApplied = false;
+// How many of the two free changes actually landed, and whether the deposit
+// ask appeared behind them. Both are what clip 04 has to prove, so both are
+// conditions on calling an attempt good rather than notes about it.
+let editsApplied = 0;
+let offerRevealed = false;
 let previewId = null;
 // The last body the edit endpoint's poll returned. The UI shows the phase, not
 // the reason, so this is what a failed edit gets reported with.
@@ -336,6 +425,12 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
   previewUrl = null;
   personalised = false;
   editApplied = false;
+  editsApplied = 0;
+  offerRevealed = false;
+  // Cleared per attempt: a poll body left over from the previous attempt was
+  // printed under this attempt's failure and named an edit error for a run
+  // that had actually died in generation.
+  lastEditPoll = null;
 
   journey = await clip(browser, `journey-${attempt}`,
     { size: DESKTOP, saveState: '/tmp/showcase-client-state.json' },
@@ -380,8 +475,17 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
 
       // ---- 03b: the base template arrives in the site pane ------------------
       const frame = d.locator('iframe[title="Live site preview"]');
-      const claimCta = d.getByRole('button', { name: /Reserve my full site/i }).first();
+      // The deposit ask is no longer what "personalization finished" looks
+      // like: since 6f57cdc0 the offer stays out of the conversation until the
+      // visitor has spent both free changes. What appears the moment the
+      // personalised site lands is the invitation to spend them, and the quiet
+      // link inside it that pulls the offer forward — so that link is the
+      // signal 03c waits on. Waiting on the old button here would have hung
+      // until the 12-minute deadline on a run that was actually fine.
+      const inviteLink = d.getByRole('button', { name: /Happy already/i }).first();
       const now = d.locator('[data-testid="concierge-now"]');
+      const editsChip = d.getByText(/\d+\/2 changes left/);
+      const depositCta = d.getByRole('button', { name: /Reserve my full site/i });
       // The step says "The build stopped" when the pipeline gives up. Reading
       // it turns a dead attempt into a 7-minute loss rather than a 12-minute
       // one, and it is the same sentence the visitor is shown.
@@ -401,9 +505,9 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       await pause(page, 11000);
       mark(t0, 'baseEnd');
 
-      // ---- 03c: personalization hot-swapped in, and the offer restated ------
+      // ---- 03c: personalization hot-swapped in, and the two changes offered --
       for (;;) {
-        if (await claimCta.isVisible().catch(() => false)) break;
+        if (await inviteLink.isVisible().catch(() => false)) break;
         if (fellBack) throw new Error('generation fell back to the JSON preview');
         if (await stopped()) throw new Error('the build stopped during personalization');
         if (Date.now() > deadline) throw new Error('personalization did not finish in 12 minutes');
@@ -411,55 +515,106 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       }
       personalised = true;
       mark(t0, 'personalisedReady');
-      console.log('    personalised site ready, offer on screen');
+      console.log('    personalised site ready, two changes offered');
       await pause(page, 9000);
       await page.mouse.move(950, 420);
       await slowScroll(page, 3, 280, 700);
       await pause(page, 6000);
       mark(t0, 'genEnd');
 
-      // ---- 04: one plain-English prompt, and the change landing ------------
-      // The edit runs against the generated source and reports its phases into
-      // the same conversation. So the clip waits for the app's own "done" line
+      // ---- 04: two free changes, then — and only then — the deposit ask -----
+      // The visitor is given two changes before any money is mentioned, so the
+      // clip has to show both of them being asked for and landing, and the
+      // offer arriving after the second rather than sitting there all along.
+      // Each edit runs against the generated source and reports its phases into
+      // the same conversation, so the clip waits for the app's own counter
       // rather than for a fixed number of seconds — a flat sleep either cut the
       // reveal off or sat on a finished screen for a minute.
-      mark(t0, 'editStart');
-      const promptBox = d.getByLabel('Ask for a change');
-      await promptBox.scrollIntoViewIfNeeded().catch(() => {});
-      await promptBox.waitFor({ state: 'visible', timeout: 30000 });
-      await pause(page, 2000);
-      await promptBox.click();
-      await promptBox.type(
+      //
+      // Both prompts are copy edits on purpose. The local preview edits the
+      // generated source in place with no sandbox to build in, so a structural
+      // instruction ("add a page", "create a new section") has nowhere to land
+      // and comes back as a failure; rewording what is already there does not.
+      const PROMPTS = [
         'Make the headline warmer and say clearly that the first intro call is free.',
-        { delay: 16 }
-      );
-      await pause(page, 1400);
-      await d.getByRole('button', { name: 'Send', exact: true }).first().click();
-      console.log('    edit prompt sent');
+        'Mention evening and online sessions in the services section.',
+      ];
 
-      // "Done — updating your live preview." is the line the step writes when
-      // the edit has landed and it has bumped the iframe. Anything else in
-      // that bubble is the edit having failed, and a failed edit is not a clip.
-      const editDone = d.getByText('Done — updating your live preview.');
-      const editDeadline = Date.now() + 6 * 60 * 1000;
-      for (;;) {
-        if (await editDone.isVisible().catch(() => false)) break;
-        const log = await d.locator('[data-testid="concierge-conversation-pane"]')
-          .innerText().catch(() => '');
-        // Report the sentence that actually matched, not the tail of the pane:
-        // the offer bubble sits at the bottom, so a tail slice named the wrong
-        // thing and made a real failure look like a false positive.
-        const bad = /[^.\n]*(?:didn't work|Something went wrong|couldn't start that edit|demo not ready)[^.\n]*/i.exec(log);
-        if (bad) {
-          throw new Error(`the prompt edit failed: ${bad[0].trim()}`);
+      /**
+       * Asks for one change and waits for the app to say it landed.
+       *
+       * "Landed" is the counter on the edit box going down, not a sentence:
+       * the two changes end on different lines ("Done — updating your live
+       * preview." for the first, "Done — that second change is in." for the
+       * second), and the counter is the same signal behind both.
+       */
+      const askForChange = async (text, expectLeft) => {
+        const promptBox = d.getByLabel('Ask for a change');
+        await promptBox.scrollIntoViewIfNeeded().catch(() => {});
+        await promptBox.waitFor({ state: 'visible', timeout: 30000 });
+        await pause(page, 2000);
+        await promptBox.click();
+        await promptBox.type(text, { delay: 16 });
+        await pause(page, 1400);
+        await d.getByRole('button', { name: 'Send', exact: true }).first().click();
+        console.log(`    change asked for (${expectLeft} left when it lands)`);
+
+        const landed = d.getByText(`${expectLeft}/2 changes left`);
+        const editDeadline = Date.now() + 6 * 60 * 1000;
+        for (;;) {
+          if (await landed.isVisible().catch(() => false)) break;
+          const log = await d.locator('[data-testid="concierge-conversation-pane"]')
+            .innerText().catch(() => '');
+          // Report the sentence that actually matched, not the tail of the
+          // pane: the offer bubble sits at the bottom, so a tail slice named
+          // the wrong thing and made a real failure look like a false positive.
+          const bad = /[^.\n]*(?:didn't work|Something went wrong|couldn't start that edit|demo not ready)[^.\n]*/i.exec(log);
+          if (bad) throw new Error(`the prompt edit failed: ${bad[0].trim()}`);
+          if (Date.now() > editDeadline) throw new Error('the prompt edit did not finish in 6 minutes');
+          await pause(page, 2500);
         }
-        if (Date.now() > editDeadline) throw new Error('the prompt edit did not finish in 6 minutes');
-        await pause(page, 2500);
+      };
+
+      mark(t0, 'editStart');
+      // The invitation, and the counter standing at two, before anything is
+      // spent. If the offer is already on screen here the gate is not holding
+      // and the clip would be showing the old flow.
+      await editsChip.first().waitFor({ state: 'visible', timeout: 30000 });
+      if (await depositCta.first().isVisible().catch(() => false)) {
+        throw new Error('the deposit offer was on screen before either free change was spent');
       }
-      console.log('    edit applied; iframe refreshed');
-      editApplied = true;
+      await pause(page, 5000);
+
+      // Change one.
+      await askForChange(PROMPTS[0], 1);
+      console.log('    first change applied; iframe refreshed');
+      mark(t0, 'edit1Done');
       await pause(page, 9000);         // the refreshed site, on screen
       await slowScroll(page, 2, 260, 800);
+      await pause(page, 4000);
+      // Still no money talk: one change spent, one to go.
+      if (await depositCta.first().isVisible().catch(() => false)) {
+        throw new Error('the deposit offer appeared after only one free change');
+      }
+      editsApplied = 1;
+
+      // Change two — the one that spends the last change and opens the ask.
+      await askForChange(PROMPTS[1], 0);
+      console.log('    second change applied; iframe refreshed');
+      mark(t0, 'edit2Done');
+      editsApplied = 2;
+      editApplied = true;
+      await pause(page, 9000);
+      await slowScroll(page, 2, 260, 800);
+      await pause(page, 4000);
+
+      // ...and now the offer arrives, because both changes are spent.
+      await d.getByText('Done — that second change is in.')
+        .first().waitFor({ state: 'visible', timeout: 60000 })
+        .catch(() => console.log('    (the second-change line scrolled out of view)'));
+      await depositCta.last().waitFor({ state: 'visible', timeout: 120000 });
+      console.log('    deposit ask revealed after the second change');
+      offerRevealed = true;
       await pause(page, 6000);
       mark(t0, 'editEnd');
 
@@ -511,7 +666,7 @@ for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     });
 
   attemptUsed = attempt;
-  if (personalised && editApplied && previewId && marks.end) {
+  if (personalised && editsApplied === 2 && offerRevealed && previewId && marks.end) {
     marksFinal = { ...marks };
     console.log(`  attempt ${attempt} succeeded`);
     break;
@@ -631,6 +786,13 @@ writeManifest({
   claimOk,
   personalised,
   editApplied,
+  editsApplied,
+  offerRevealed,
+  // Cleared, not merely absent: `record-preview-site.mjs` set this when the
+  // site pane recorded as blank white and the page had to caption its way
+  // around it. The pane records the real site now (310148ee), so the caption
+  // it drives would be a lie about a clip that no longer needs it.
+  iframeNotCaptured: false,
   marks: M,
   generation: claimOk
     ? `succeeded on attempt ${attemptUsed} of ${MAX_ATTEMPTS}`

@@ -68,6 +68,17 @@ const clip = (name, title, caption) => {
 const commits = (M.commits ?? []).map((c) => `<li><code>${esc(c)}</code></li>`).join('');
 
 /**
+ * Whether clip 04 on disk is the two-change take or the older single-change one.
+ *
+ * Read from the manifest rather than assumed, because the two are different
+ * films: the new flow withholds the deposit ask until both free changes are
+ * spent, and captioning the old footage that way would describe a gate the
+ * clip never shows. The recorder records what it actually achieved, so the
+ * page can describe whichever take it is looking at.
+ */
+const twoChanges = M.editsApplied === 2 && M.offerRevealed === true;
+
+/**
  * Facts for the two re-shot clips, read back out of the database by
  * `retake-facts.mjs` after the takes. Kept separate from `M.notes` so a
  * caption below cannot quietly fall back to a number an older run measured.
@@ -152,7 +163,11 @@ explanation.`)}
 <h2><span class="n">02</span>The info agent</h2>
 ${clip('02-info-agent', 'What is still missing', `The gate lists what it does not yet know in plain language.
 The replies are typed in, and the follow-up question is a live model call through OpenRouter — not a
-scripted line. <strong>Skip and show me the preview</strong> stays visible the whole time; the agent
+scripted line: the agent introduces itself, then picks a concrete detail out of the answer
+(&ldquo;trauma-informed and paced by the client&rdquo;) before asking the next question. That is phrasing
+only — the sufficiency gate still decides what gets asked and in what order, and it stops asking as soon
+as it has enough, which is why the last answer draws no reply.
+<strong>Skip and show me the preview</strong> stays visible the whole time; the agent
 can never trap someone in a conversation.`)}
 
 <h2><span class="n">03</span>Generation</h2>
@@ -172,12 +187,25 @@ site is filmed by opening the same preview URL the pane points at. The conversat
 the timings are the original take.</div>` : ''}
 
 <h2><span class="n">04</span>Editing by prompt</h2>
-${clip('04-prompt-edit', 'One sentence, one change', `A plain-English instruction is sent to the live preview and the
-change lands in the iframe. No template picker, no CSS — the visitor describes the change and the
-model applies it to the generated source.`)}
+${twoChanges
+  ? clip('04-prompt-edit', 'Two changes on the house, then the ask', `The site arrives with an offer of
+<strong>two changes</strong>, not a price — a counter on the edit box tracks them. Both are spent here:
+the headline is rewritten to say the intro call is free, then evening and online sessions are worked
+into the services. Each instruction is plain English, and each change lands in the same iframe; no
+template picker, no CSS. The deposit ask stays out of the conversation until the second change is in
+&mdash; deterministic, a counter and a click, with a quiet <em>Happy already?</em> link for anyone who
+wants to skip ahead.`)
+  : clip('04-prompt-edit', 'One sentence, one change', `A plain-English instruction is sent to the live
+preview and the change lands in the iframe. No template picker, no CSS — the visitor describes the
+change and the model applies it to the generated source.`)}
+${twoChanges ? '' : `<div class="note"><b>This clip predates the two-change flow.</b> The product now offers
+two free changes before it mentions money, and holds the deposit ask back until both are spent
+(<code>6f57cdc0</code>). The take above is the earlier single-change version; it is kept because it is
+the most recent footage in which a prompt edit actually completed.</div>`}
 
 <h2><span class="n">05</span>Claim and deposit</h2>
-${clip('05-claim-and-deposit', 'The offer, then the money', `The offer is restated next to the preview with
+${clip('05-claim-and-deposit', 'The offer, then the money',
+  `${twoChanges ? 'The offer the second change unlocked, with' : 'The offer is restated next to the preview with'}
 the real split — a &euro;159.80 deposit against a &euro;799 build, &euro;639.20 on completion — and a
 quieter way out beside it. A signed-out click opens Clerk's modal rather than navigating, because a
 redirect here would throw away the preview. Then the unlock page, and the deposit landing on it.`)}

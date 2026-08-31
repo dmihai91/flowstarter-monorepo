@@ -429,6 +429,24 @@ export async function POST(req: NextRequest) {
   const ip = clientIp(req);
   const spec = parsed.data;
 
+  // A generation that never settles is as bad as one that fails outright —
+  // the wizard just polls a 'building' status forever. Imagery-enabled runs
+  // have taken ~13-14 min; this gives real headroom before declaring one
+  // hung. Cleared in `finally` below on every real outcome.
+  const GENERATION_WATCHDOG_MS = 20 * 60_000;
+  const watchdog = setTimeout(() => {
+    const job = getJob(demoId);
+    if (job && job.status === 'building') {
+      void job.teardown?.().catch(() => {});
+      updateJob(demoId, {
+        status: 'failed',
+        error: 'Preview generation timed out',
+        teardown: undefined,
+      });
+    }
+  }, GENERATION_WATCHDOG_MS);
+  watchdog.unref?.();
+
   // Detached: do NOT await. The wizard polls GET while the Pi agent analyzes
   // the brand, selects an approved MCP template, edits only its isolated
   // workspace, validates it, and publishes the result to Daytona.
@@ -604,6 +622,18 @@ export async function POST(req: NextRequest) {
         onPhase: (phase) => updateJob(demoId, { phase }),
       });
 
+      // Wire the teardown in the instant the sandbox/local `astro dev` child
+      // is confirmed live, not after the awaited bookkeeping below. Before
+      // this fix, a throw from `rememberClaimablePreview` (or anything else
+      // between here and the final `updateJob`) orphaned an already-running
+      // process with no handle anywhere in the job store to close it —
+      // the catch block only ever set `status: 'failed'`.
+      updateJob(demoId, {
+        previewUrl: result.previewUrl,
+        sandboxId: result.sandboxId,
+        teardown: result.teardown,
+      });
+
       // The manifest, brand config and template exist only in this process:
       // the browser is handed a URL, never the files. Stash them against the
       // demo id so that if the visitor signs in and claims this preview
@@ -660,11 +690,8 @@ export async function POST(req: NextRequest) {
 
       updateJob(demoId, {
         status: 'ready',
-        previewUrl: result.previewUrl,
-        sandboxId: result.sandboxId,
         personalized: true,
         phase: 'Done, your site is ready',
-        teardown: result.teardown,
       });
       await recordGenerationCost({
         kind: 'codegen',
@@ -678,11 +705,21 @@ export async function POST(req: NextRequest) {
           : {}),
       }).catch(() => {});
     } catch (e) {
+      // A failed job has no further use for a sandbox or local `astro dev`
+      // child it already provisioned — tear it down now rather than leaving
+      // it for the 45-minute reaper (or, worse, forever, if nothing calls
+      // that reaper). Best-effort: a teardown that itself fails must not
+      // stop the job from being reported as failed.
+      await getJob(demoId)
+        ?.teardown?.()
+        .catch(() => {});
       updateJob(demoId, {
         status: 'failed',
         error: e instanceof Error ? e.message : 'live demo error',
+        teardown: undefined,
       });
     } finally {
+      clearTimeout(watchdog);
       await closeLibrary?.().catch(() => {});
     }
   })();

@@ -120,3 +120,23 @@ export async function reapStaleJobs(ttlMs = 45 * 60_000): Promise<void> {
     }
   }
 }
+
+// `reapStaleJobs` used to only exist for callers to invoke; nothing did, so
+// every local `astro dev` child (and every Daytona sandbox) a demo ever
+// opened stayed up until the process restarted — ~12 zombies were found
+// squatting ports on 2026-08-31. One interval per process, anchored on
+// globalThis for the same reason the job Map is: `next dev` bundles this
+// module once per route, and each bundle re-running this file must not start
+// its own timer. `unref()` so it never keeps a short-lived process (tests,
+// a serverless worker) alive just to be a backstop.
+const REAP_INTERVAL_MS = 5 * 60_000;
+const globalReaper = globalThis as typeof globalThis & {
+  __flowstarterLiveJobsReaperStarted?: boolean;
+};
+if (!globalReaper.__flowstarterLiveJobsReaperStarted) {
+  globalReaper.__flowstarterLiveJobsReaperStarted = true;
+  const timer = setInterval(() => {
+    void reapStaleJobs();
+  }, REAP_INTERVAL_MS);
+  timer.unref?.();
+}

@@ -60,7 +60,10 @@ import {
  * offers the choice — try again, or take the deterministic JSON preview.
  */
 
-const LIVE_EDIT_CAP = 15;
+// Two free changes before the deposit ask — enough to see the team edit the
+// site live, few enough that the preview never becomes the product. Must
+// match LIVE_EDIT_CAP in lib/discovery/live-jobs.ts (server-enforced).
+const LIVE_EDIT_CAP = 2;
 
 /**
  * Render a friendly fake hostname for the iframe chrome bar
@@ -197,6 +200,10 @@ export function PreviewStep({
 
   // The offer, and the quiet way past it.
   const [offerSnoozed, setOfferSnoozed] = useState(false);
+  // The deposit ask waits until the visitor has seen editing in action: it
+  // reveals after both free changes are spent, or when they ask for it
+  // themselves. Deterministic — a counter and a click, no model involved.
+  const [offerRevealed, setOfferRevealed] = useState(false);
 
   // A fresh frame starts invisible and fades in once it has painted.
   useEffect(() => {
@@ -345,7 +352,7 @@ export function PreviewStep({
         {
           role: 'agent',
           text: progress.personalized
-            ? `Your site is live. Tell me what to change — ${LIVE_EDIT_CAP} prompts to make it yours.`
+            ? `Your site is live. You have ${LIVE_EDIT_CAP} changes on me — tell me what to adjust and watch it happen.`
             : 'Here’s your starting point — personalizing it for your business now…',
         },
       ]);
@@ -359,7 +366,7 @@ export function PreviewStep({
       setChat([
         {
           role: 'agent',
-          text: `Your personalized site is live. Tell me what to change — you have ${LIVE_EDIT_CAP} prompts to make it yours.`,
+          text: `Your personalized site is live. You have ${LIVE_EDIT_CAP} changes on me — tell me what to adjust and watch it happen.`,
         },
       ]);
       return;
@@ -523,7 +530,8 @@ export function PreviewStep({
       };
       if (json.limitReached) {
         setEditsLeft(0);
-        setLastAgent("That was your last prompt — let's make this real.");
+        setOfferRevealed(true);
+        setLastAgent("That was your last change — let's make this real.");
         setEditBusy(false);
         return;
       }
@@ -558,7 +566,14 @@ export function PreviewStep({
         if (s.editPhase) setLastAgent(s.editPhase);
         if (s.editStatus === 'done') {
           if (typeof s.editsLeft === 'number') setEditsLeft(s.editsLeft);
-          setLastAgent('Done — updating your live preview.');
+          // Both free changes spent: the visitor has seen editing in action,
+          // so this is the moment the deposit ask appears.
+          if (s.editsLeft === 0) {
+            setOfferRevealed(true);
+            setLastAgent('Done — that second change is in. Take a look.');
+          } else {
+            setLastAgent('Done — updating your live preview.');
+          }
           setIframeNonce((n) => n + 1);
           break;
         }
@@ -635,6 +650,10 @@ export function PreviewStep({
 
   const previewShown = (mode === 'live' && !!liveUrl) || mode === 'json';
   const finished = previewShown && !personalizing;
+  // Live mode holds the deposit ask back until the visitor has tried their
+  // two changes (or asked for it); the JSON fallback has no live editing to
+  // show off, so its offer appears as before.
+  const offerReady = mode !== 'live' || offerRevealed;
   const elapsed = useElapsedSeconds(!finished && !buildFailure);
 
   const nowState: NowState = buildFailure
@@ -768,8 +787,27 @@ export function PreviewStep({
         )
       )}
 
+      {/* Before the ask: an open invitation to spend the two free changes.
+          The visitor who is already sold can pull the offer forward. */}
+      {finished && previewId && !offerReady && !editBusy && (
+        <ChatBubble tone="agent" author="Your team of agents">
+          <span className="block">
+            That is a page of your full site, and it is editable — ask for up to{' '}
+            {LIVE_EDIT_CAP} changes in the box under the preview and watch the
+            team apply them.
+          </span>
+          <button
+            type="button"
+            onClick={() => setOfferRevealed(true)}
+            className="mt-2 text-[12px] font-semibold text-[var(--purple-primary)] underline underline-offset-2"
+          >
+            Happy already? Show me how to reserve the full site
+          </button>
+        </ChatBubble>
+      )}
+
       {/* The last message in the conversation: the offer, with a button. */}
-      {finished && previewId && (
+      {finished && previewId && offerReady && (
         <ChatBubble tone="offer" author="Your team of agents">
           <span className="block">{previewReadyMessage(quote)}</span>
           {offerSnoozed ? (
@@ -901,12 +939,12 @@ export function PreviewStep({
             <span
               className={[
                 'rounded-full px-2 py-0.5 text-[11px] font-semibold',
-                editsLeft <= 3
+                editsLeft <= 1
                   ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
                   : 'bg-[var(--purple-primary)]/12 text-[var(--purple-primary)]',
               ].join(' ')}
             >
-              {editsLeft}/{LIVE_EDIT_CAP} prompts left
+              {editsLeft}/{LIVE_EDIT_CAP} changes left
             </span>
           </div>
           <div className="flex gap-2 p-3">

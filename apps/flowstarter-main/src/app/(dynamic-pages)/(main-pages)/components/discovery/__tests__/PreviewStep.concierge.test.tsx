@@ -120,6 +120,19 @@ async function startBuild(data: DiscoveryData = DATA) {
 const conversation = () => screen.getByRole('log');
 const nowLine = () => screen.getByTestId('concierge-now');
 
+/**
+ * The deposit ask hides behind the two free changes; visitors who are already
+ * sold pull it forward with this link. Tests that assert on the offer go
+ * through the same door.
+ */
+async function revealOffer() {
+  await userEvent.click(
+    await screen.findByRole('button', {
+      name: /show me how to reserve the full site/i,
+    })
+  );
+}
+
 beforeEach(() => {
   FakeEventSource.instances = [];
   (globalThis as { EventSource?: unknown }).EventSource = FakeEventSource;
@@ -262,6 +275,7 @@ describe('what the visitor is told this is', () => {
         personalized: true,
       })
     );
+    await revealOffer();
 
     const log = conversation();
     expect(
@@ -290,6 +304,7 @@ describe('what the visitor is told this is', () => {
         personalized: true,
       })
     );
+    await revealOffer();
     const later = await screen.findByRole('button', {
       name: /keep exploring the preview/i,
     });
@@ -308,6 +323,30 @@ describe('what the visitor is told this is', () => {
   });
 });
 
+describe('the deposit ask waits its turn', () => {
+  it('invites the two changes first and holds the deposit button back', async () => {
+    global.fetch = routedFetch({ claim: [], live: 0 });
+    const { source } = await startBuild();
+    act(() =>
+      source.emit('ready', {
+        previewUrl: 'https://acme.preview.example',
+        personalized: true,
+      })
+    );
+
+    const log = conversation();
+    expect(await within(log).findByText(/up to 2 changes/i)).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /pay the €159\.80 deposit/ })
+    ).toBeNull();
+
+    await revealOffer();
+    expect(
+      screen.getByRole('button', { name: /pay the €159\.80 deposit/ })
+    ).toBeInTheDocument();
+  });
+});
+
 describe('the offer button', () => {
   it('still claims the preview through the claim endpoint', async () => {
     const calls: Calls = { claim: [], live: 0 };
@@ -319,6 +358,7 @@ describe('the offer button', () => {
         personalized: true,
       })
     );
+    await revealOffer();
 
     await userEvent.click(
       await screen.findByRole('button', { name: /pay the €159\.80 deposit/ })
@@ -343,6 +383,7 @@ describe('the offer button', () => {
         personalized: true,
       })
     );
+    await revealOffer();
 
     await userEvent.click(
       await screen.findByRole('button', { name: /pay the €159\.80 deposit/ })

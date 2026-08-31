@@ -2,14 +2,19 @@ import 'server-only';
 
 /**
  * In-memory live-demo job store. A demo = one generated, sandbox-hosted site
- * the visitor can see and edit up to 15 times. Keyed by demoId.
+ * the visitor can see and edit up to LIVE_EDIT_CAP times. Keyed by demoId.
  *
  * NOTE: process-local and ephemeral by design — fine for a single Node
  * worker / local dev. Production (multi-instance) must back this with a
  * durable store (Supabase) + the existing demo_edit_counters cap; the route
  * shapes here are written so that swap is mechanical.
  */
-export const LIVE_EDIT_CAP = 15;
+/**
+ * Two free changes before the deposit ask: enough to prove the team edits the
+ * site live, few enough that the preview never becomes the product. The
+ * wizard reveals the deposit offer once both are spent.
+ */
+export const LIVE_EDIT_CAP = 2;
 
 export interface LiveJob {
   demoId: string;
@@ -54,7 +59,7 @@ export interface LiveJob {
   phases?: Array<{ phase: string; at: number }>;
   /** Base template live? then personalization hot-swapped in (progressive). */
   personalized?: boolean;
-  /** 15-prompt edit loop state. */
+  /** Capped edit-loop state (see LIVE_EDIT_CAP). */
   editStatus?: 'idle' | 'editing' | 'done' | 'failed';
   editPhase?: string;
   editError?: string;

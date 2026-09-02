@@ -251,6 +251,8 @@ async function talkThroughIntake(page, d) {
 
   // 4 — commerce. "No products" means no catalog question is ever asked.
   await tap(page, d, 'commerceMode', BRIEF.commerce);
+  // Booking is already in her goals; the dedicated Cal field is optional.
+  await skip(page, d, 'calComUrl');
   // Skipped, and not for pacing: the brief has no unusual system to plug into,
   // and `recommendTier` treats *any* answer here as a custom-integration
   // request — one sentence in this box moves the brief off the €799 build and

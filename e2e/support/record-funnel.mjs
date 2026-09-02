@@ -191,10 +191,19 @@ async function already(page, id) {
   return (await answeredIds(page)).includes(id);
 }
 
-/** Wait for the graph's next ask to render its composer (or a chip row). */
+/** Wait until the graph is not mid-flight and a turn control is on screen. */
 async function readyForTurn(page, d) {
-  await composer(d).or(d.getByRole('button', { name: 'Skip this one', exact: true }))
+  await d
+    .getByText('Loading your experience')
+    .waitFor({ state: 'hidden', timeout: COMPOSER_MS })
+    .catch(() => {});
+  // Choice / multi turns have chips (and maybe "That's it") but no composer.
+  // Panels have the confirm button. Text turns have the labelled box.
+  await composer(d)
+    .or(d.getByRole('button', { name: 'Skip this one', exact: true }))
+    .or(d.getByRole('button', { name: "That's it", exact: true }))
     .or(confirmBtn(d))
+    .or(d.locator('button').filter({ hasText: /.+/ }).nth(0))
     .first()
     .waitFor({ state: 'visible', timeout: COMPOSER_MS });
 }

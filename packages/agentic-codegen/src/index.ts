@@ -48,6 +48,15 @@ export type { Workspace } from './workspace';
 
 export { AGENT_BUILD_SYSTEM, buildAgentTask } from './agent-build';
 
+export {
+  injectCalCom,
+  injectCalComPreviewDemo,
+  injectIntegrations,
+  normalizeCalLink,
+  applyIntegrationsToWorkspace,
+} from './integrations';
+export type { FileMap, CalComOptions, IntegrationsConfig } from './integrations';
+
 export * from './flowstarter/types';
 export * from './flowstarter/state-machine';
 export * from './flowstarter/brand-config';
@@ -62,3 +71,4 @@ export * from './flowstarter/template-classifier';
 export * from './flowstarter/preview-teaser';
 export * from './flowstarter/site-media';
 export * from './flowstarter/generated-assets';
+export * from './flowstarter/site-tarball';

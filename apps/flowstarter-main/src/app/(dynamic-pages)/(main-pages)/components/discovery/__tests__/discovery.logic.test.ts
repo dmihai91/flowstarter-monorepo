@@ -8,6 +8,8 @@ import {
   bookingDepositAmount,
   bookingDepositFor,
   canProceed,
+  extractCalComUrl,
+  resolveDiscoveryCalComUrl,
   recommendTier,
   usesDedicatedSubscription,
 } from '../discovery.logic';
@@ -26,6 +28,49 @@ describe('booking deposit amounts', () => {
   it('formats with the euro sign', () => {
     expect(bookingDepositFor('starter')).toBe('€79');
     expect(bookingDepositFor('custom')).toBe('€199');
+  });
+});
+
+describe('extractCalComUrl', () => {
+  it('finds a bare cal.com link mentioned alongside other text', () => {
+    expect(extractCalComUrl('Cal.com: cal.com/acme/intro')).toBe('cal.com/acme/intro');
+  });
+
+  it('finds a full https app.cal.com URL', () => {
+    expect(
+      extractCalComUrl('please use https://app.cal.com/acme-studio for bookings')
+    ).toBe('https://app.cal.com/acme-studio');
+  });
+
+  it('strips trailing prose punctuation', () => {
+    expect(extractCalComUrl('booking via cal.com/acme, thanks!')).toBe('cal.com/acme');
+  });
+
+  it('returns null when no Cal.com link is mentioned', () => {
+    expect(extractCalComUrl('Calendly: calendly.com/acme')).toBeNull();
+    expect(extractCalComUrl('Mailchimp newsletter, Stripe payments')).toBeNull();
+    expect(extractCalComUrl('')).toBeNull();
+  });
+});
+
+describe('resolveDiscoveryCalComUrl', () => {
+  it('prefers the dedicated calComUrl field over free-text integrations', () => {
+    expect(
+      resolveDiscoveryCalComUrl({
+        ...EMPTY_DISCOVERY,
+        calComUrl: 'https://cal.com/dedicated/intro',
+        customIntegrations: 'also cal.com/other/event',
+      })
+    ).toBe('https://cal.com/dedicated/intro');
+  });
+
+  it('falls back to extracting from customIntegrations', () => {
+    expect(
+      resolveDiscoveryCalComUrl({
+        ...EMPTY_DISCOVERY,
+        customIntegrations: 'Book via cal.com/acme/intro please',
+      })
+    ).toBe('cal.com/acme/intro');
   });
 });
 

@@ -60,6 +60,7 @@ export type IntakeQuestionId =
   | 'timeline'
   | 'commerceMode'
   | 'catalogSize'
+  | 'calComUrl'
   | 'customIntegrations'
   | 'selectedTier'
   | 'subscription';
@@ -558,6 +559,16 @@ export const INTAKE_SCRIPT: readonly IntakeQuestion[] = [
     validate: choiceValidator(CATALOG_OPTIONS),
     apply: choiceApplier('catalogSize', CATALOG_OPTIONS),
     value: (data) => (data.catalogSize === 'na' ? '' : data.catalogSize),
+  },
+  {
+    id: 'calComUrl',
+    step: 4,
+    kind: 'text',
+    promptKey: `${Q}calComUrl.prompt`,
+    placeholderKey: 'landing.discovery.placeholders.calComUrl',
+    required: false,
+    apply: textApplier('calComUrl'),
+    value: (data) => data.calComUrl,
   },
   {
     id: 'customIntegrations',

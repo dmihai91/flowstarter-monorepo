@@ -34,7 +34,10 @@ vi.mock('@flowstarter/daytona-utils', () => ({
   })),
 }));
 
-vi.mock('@flowstarter/agentic-codegen', () => ({
+// The heavy classes are stubbed; the deterministic Cal injectors are the real
+// ones, because the route's preview path runs them over the generated files.
+vi.mock('@flowstarter/agentic-codegen', async () => ({
+  ...(await import('@flowstarter/agentic-codegen/src/integrations')),
   FlowstarterMcpTemplateLibrary: class {
     close() {
       return Promise.resolve();

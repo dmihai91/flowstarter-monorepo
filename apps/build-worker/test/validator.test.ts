@@ -2,7 +2,11 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { CommandSiteValidator, SiteValidationError } from '../src/validator';
+import {
+  CommandSiteValidator,
+  NoopSiteValidator,
+  SiteValidationError,
+} from '../src/validator';
 
 const temporaryDirectories: string[] = [];
 
@@ -27,6 +31,16 @@ const BUILD_OK = {
   bin: 'node',
   args: ['-e', 'require("node:fs").mkdirSync("dist",{recursive:true})'],
 };
+
+describe('NoopSiteValidator', () => {
+  it('passes without a package manifest or dist output', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'flowstarter-noop-validator-'));
+    temporaryDirectories.push(root);
+    const validator = new NoopSiteValidator();
+    await expect(validator.validate(root, 'full')).resolves.toBeUndefined();
+    await expect(validator.validate(root, 'preview')).resolves.toBeUndefined();
+  });
+});
 
 describe('CommandSiteValidator', () => {
   it('passes a site that installs, builds and emits output', async () => {

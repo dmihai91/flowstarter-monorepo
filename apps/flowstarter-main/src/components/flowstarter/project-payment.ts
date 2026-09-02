@@ -131,3 +131,56 @@ export function projectPayments(
     due,
   };
 }
+
+export interface PaymentPositionLine {
+  key: 'deposit' | 'balance';
+  label: string;
+  amountMinor: number;
+  status: 'paid' | 'due' | 'upcoming';
+  note: string;
+}
+
+/**
+ * The client's money position, stated even when nothing is owed. A client
+ * mid-build deserves to see "deposit paid, balance falls due after final
+ * checks" rather than a page that only mentions money when it wants some.
+ * Pure projection of ProjectPayments; the due/not-due decisions above stay
+ * the only authority.
+ */
+export function paymentPosition(
+  payments: ProjectPayments
+): PaymentPositionLine[] {
+  if (payments.quoteMinor <= 0) return [];
+  return [
+    {
+      key: 'deposit',
+      label: 'Deposit (20%)',
+      amountMinor: payments.depositMinor,
+      status: payments.depositPaid
+        ? 'paid'
+        : payments.due?.kind === 'deposit'
+        ? 'due'
+        : 'upcoming',
+      note: payments.depositPaid
+        ? 'Paid. This is what started your build.'
+        : payments.due?.kind === 'deposit'
+        ? 'Due now. Paying it starts the full build.'
+        : 'Becomes payable once your preview is ready.',
+    },
+    {
+      key: 'balance',
+      label: 'Balance (80%)',
+      amountMinor: payments.balanceMinor,
+      status: payments.balancePaid
+        ? 'paid'
+        : payments.due?.kind === 'balance'
+        ? 'due'
+        : 'upcoming',
+      note: payments.balancePaid
+        ? 'Paid. Your site is cleared to go live.'
+        : payments.due?.kind === 'balance'
+        ? 'Due now. A person has checked every page of the finished site.'
+        : 'Falls due only after we have checked the finished site.',
+    },
+  ];
+}

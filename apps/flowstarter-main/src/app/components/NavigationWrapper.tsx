@@ -103,7 +103,10 @@ export function NavigationWrapper() {
   const [authWaitExpired, setAuthWaitExpired] = useState(false);
   useEffect(() => {
     if (isLoaded) return;
-    const timer = setTimeout(() => setAuthWaitExpired(true), CLERK_LOAD_GRACE_MS);
+    const timer = setTimeout(
+      () => setAuthWaitExpired(true),
+      CLERK_LOAD_GRACE_MS
+    );
     return () => clearTimeout(timer);
   }, [isLoaded]);
   const authSettled = isLoaded || authWaitExpired;

@@ -27,6 +27,7 @@ import type {
   TemplateScaffoldFile,
   TemplateSelection,
 } from './types';
+import { applyIntegrationsToWorkspace } from '../integrations';
 
 export interface SiteValidator {
   /** Trusted, operator-defined formatter/check/build commands run outside Pi. */
@@ -587,6 +588,12 @@ export interface FullSiteBuildJob {
   brandConfig: BrandConfig;
   approvedPreviewFiles: TemplateScaffoldFile[];
   requiredIntegrations: string[];
+  /**
+   * Tenant Cal.com URL from `workspaces.cal_com_url`. Wired as a live embed
+   * after the preview scaffold is materialized — preview files only carry a
+   * blurred demo.
+   */
+  calComUrl?: string | null;
 }
 
 export interface FullSiteBuildJobStore {
@@ -602,12 +609,24 @@ export interface FullSiteBuildJobStore {
   ): Promise<void>;
 }
 
+/**
+ * What turns a validated build into something a human can review.
+ *
+ * Two implementations exist. The GitHub one opens the internal draft PR that
+ * gates HUMAN_QA. The local one packages the build output and deploys it, and
+ * needs `siteRoot` (the directory that was actually built, not the worktree
+ * root) and `calComUrl` (so a built tree whose source injection did not take
+ * still gets the tenant's live embed rather than the blurred preview demo).
+ * Both fields are optional so the GitHub publisher can ignore them.
+ */
 export interface PullRequestPublisher {
   create(input: {
     projectId: string;
     branch: string;
     worktreePath: string;
     commitSha: string;
+    siteRoot?: string;
+    calComUrl?: string | null;
   }): Promise<{ pullRequestUrl: string; stagingUrl: string }>;
 }
 
@@ -637,6 +656,14 @@ export class FullSiteBuildWorker {
       const siteRoot = join(worktree.path, 'generated-sites', job.projectId);
       await mkdir(siteRoot, { recursive: true, mode: 0o700 });
       await materializeScaffold(siteRoot, job.approvedPreviewFiles);
+      // Preview artifacts carry a blurred Cal demo only. Wire the live tenant
+      // embed here, before the agent expands the site, so the full build has
+      // a real calendar and the agent does not invent one.
+      if (job.calComUrl) {
+        await applyIntegrationsToWorkspace(siteRoot, {
+          booking: { provider: 'cal.com', url: job.calComUrl },
+        });
+      }
       await this.store.markAgentWorking(jobId, worktree);
       const build = await this.agents.buildFullSite({
         workspaceRoot: siteRoot,
@@ -658,6 +685,8 @@ export class FullSiteBuildWorker {
         branch: worktree.branch,
         worktreePath: worktree.path,
         commitSha,
+        siteRoot,
+        calComUrl: job.calComUrl ?? null,
       });
       await this.store.markHumanQa(jobId, { commitSha, ...published });
     } catch (error) {

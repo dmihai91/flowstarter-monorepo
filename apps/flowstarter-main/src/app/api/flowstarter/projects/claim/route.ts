@@ -73,6 +73,7 @@ const ClaimSchema = z.object({
     .enum(['na', '1-5', '6-25', '26-100', '100+', 'unsure'])
     .optional()
     .default('na'),
+  calComUrl: z.string().max(400).optional().default(''),
   customIntegrations: z.string().max(2000).optional().default(''),
   /**
    * The info-agent conversation from the wizard's step 7. Bounded like every
@@ -105,6 +106,7 @@ function discoveryDataFrom(spec: z.infer<typeof ClaimSchema>): DiscoveryData {
     timeline: spec.timeline as TimelineId,
     commerceMode: spec.commerceMode as CommerceMode,
     catalogSize: spec.catalogSize as CatalogSize,
+    calComUrl: spec.calComUrl,
     customIntegrations: spec.customIntegrations,
     selectedTier: spec.tier ?? '',
     subscription: '',
@@ -160,8 +162,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         timeline: spec.timeline,
         commerceMode: spec.commerceMode,
         catalogSize: spec.catalogSize,
+        calComUrl: spec.calComUrl,
         customIntegrations: spec.customIntegrations,
       },
+      ...(spec.calComUrl ? { calComUrl: spec.calComUrl } : {}),
       ...(spec.intakeChat ? { intakeChat: spec.intakeChat } : {}),
       routing: classifyRouting(discoveryDataFrom(spec)),
     });

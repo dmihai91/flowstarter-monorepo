@@ -78,11 +78,29 @@ if (!SHARED_SECRET) {
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]{0,58}[a-z0-9])?$/;
 
 interface DeployBody {
+  /** Empty when the caller streamed the tarball instead of naming a URL. */
   artifact_url: string;
   artifact_sha256?: string | null;
   primary_domain?: string | null;
   additional_domains?: string[];
+  /** Set when the artifact arrived as `application/octet-stream`. */
+  artifact_bytes?: Uint8Array | null;
 }
+
+/**
+ * Optional plain-HTTP static server for the extracted sites, keyed by path:
+ * `http://<host>:<port>/<slug>/…` serves `<SITES_ROOT>/<slug>/…`.
+ *
+ * A real host does not need this — Caddy serves the same directories by
+ * hostname with TLS, which is what the snippets this agent writes configure.
+ * A laptop has no wildcard DNS, no certificate and (in dev) a Caddy reload
+ * that is `echo reloaded`, so without this the deploy chain ends at "the files
+ * are on disk somewhere" and nobody can open the site. Off unless
+ * DEPLOY_AGENT_STATIC_PORT is set.
+ */
+const STATIC_PORT = process.env.DEPLOY_AGENT_STATIC_PORT
+  ? Number(process.env.DEPLOY_AGENT_STATIC_PORT)
+  : null;
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -325,19 +343,44 @@ async function reloadCaddy(): Promise<{ ok: boolean; stderr: string }> {
   return shellOk(CADDY_RELOAD_CMD);
 }
 
+/**
+ * Stage a tarball the caller streamed to us. Same verification and same temp
+ * file as the URL path, so `handleDeploy` cannot tell the two apart after this
+ * point.
+ */
+async function stageUploadedArtifact(
+  bytes: Uint8Array,
+  expectedSha256: string | null | undefined
+): Promise<{ tarballPath: string; actualSha256: string; sizeBytes: number }> {
+  const hash = createHash('sha256').update(bytes).digest('hex');
+  if (expectedSha256 && expectedSha256.toLowerCase() !== hash) {
+    throw new Error(`sha256 mismatch: expected ${expectedSha256}, got ${hash}`);
+  }
+  const stamp = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const tarballPath = join(TEMP_ROOT, `${stamp}.tar.gz`);
+  await writeFile(tarballPath, bytes);
+  return { tarballPath, actualSha256: hash, sizeBytes: bytes.length };
+}
+
 async function handleDeploy(slug: string, body: DeployBody): Promise<Response> {
-  if (typeof body.artifact_url !== 'string' || !body.artifact_url) {
-    return jsonResponse({ error: 'artifact_url required' }, 400);
+  const uploaded = body.artifact_bytes ?? null;
+  if (!uploaded && (typeof body.artifact_url !== 'string' || !body.artifact_url)) {
+    return jsonResponse(
+      { error: 'artifact_url required (or POST the tarball as application/octet-stream)' },
+      400
+    );
   }
   await ensureDirs();
 
   let fetched;
   try {
-    fetched = await fetchAndVerify(body.artifact_url, body.artifact_sha256 ?? null);
+    fetched = uploaded
+      ? await stageUploadedArtifact(uploaded, body.artifact_sha256 ?? null)
+      : await fetchAndVerify(body.artifact_url, body.artifact_sha256 ?? null);
   } catch (e) {
     return jsonResponse(
       { error: e instanceof Error ? e.message : 'fetch failed' },
-      502
+      uploaded ? 400 : 502
     );
   }
 
@@ -414,6 +457,24 @@ async function handleRemove(slug: string): Promise<Response> {
 }
 
 async function readBody(req: Request): Promise<DeployBody> {
+  // `HttpDeployAgentClient` supports both artifact shapes. Raw bytes carry the
+  // domains in headers because there is no JSON envelope to put them in.
+  const contentType = req.headers.get('content-type') ?? '';
+  if (contentType.startsWith('application/octet-stream')) {
+    const bytes = new Uint8Array(await req.arrayBuffer());
+    const additional = (req.headers.get('x-site-additional-domains') ?? '')
+      .split(',')
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.length > 0);
+    return {
+      artifact_url: '',
+      artifact_bytes: bytes,
+      artifact_sha256: req.headers.get('x-artifact-sha256'),
+      primary_domain: req.headers.get('x-site-primary-domain') || null,
+      additional_domains: additional,
+    };
+  }
+
   const text = await req.text();
   if (!text) return { artifact_url: '' };
   try {
@@ -421,6 +482,86 @@ async function readBody(req: Request): Promise<DeployBody> {
   } catch {
     return { artifact_url: '' };
   }
+}
+
+const CONTENT_TYPES: Record<string, string> = {
+  html: 'text/html; charset=utf-8',
+  htm: 'text/html; charset=utf-8',
+  css: 'text/css; charset=utf-8',
+  js: 'text/javascript; charset=utf-8',
+  mjs: 'text/javascript; charset=utf-8',
+  json: 'application/json; charset=utf-8',
+  svg: 'image/svg+xml',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  webp: 'image/webp',
+  avif: 'image/avif',
+  ico: 'image/x-icon',
+  woff: 'font/woff',
+  woff2: 'font/woff2',
+  txt: 'text/plain; charset=utf-8',
+  xml: 'application/xml; charset=utf-8',
+  webmanifest: 'application/manifest+json',
+};
+
+function contentTypeFor(path: string): string {
+  const ext = path.split('.').pop()?.toLowerCase() ?? '';
+  return CONTENT_TYPES[ext] ?? 'application/octet-stream';
+}
+
+/**
+ * Serve `<SITES_ROOT>/<slug>/<rest>` with the try_files behaviour the Caddy
+ * snippets use: exact file, then `<rest>/index.html`, then the site's own
+ * `index.html` so a client-routed page still resolves.
+ *
+ * Every candidate is re-resolved and checked to be inside the site directory,
+ * so a `..` in the request path cannot read the host's filesystem.
+ */
+async function serveStatic(url: URL): Promise<Response> {
+  const segments = url.pathname.split('/').filter((s) => s.length > 0);
+  const slug = decodeURIComponent(segments[0] ?? '').toLowerCase();
+  if (!slug || !SLUG_RE.test(slug)) {
+    return new Response('Not found', { status: 404 });
+  }
+  const siteDir = resolve(SITES_ROOT, slug);
+  if (!(await exists(siteDir))) {
+    return new Response(`No site deployed for "${slug}"`, { status: 404 });
+  }
+
+  // A bare `/slug` must become `/slug/` or every relative asset on the page
+  // resolves one level too high.
+  if (segments.length === 1 && !url.pathname.endsWith('/')) {
+    return Response.redirect(`${url.origin}${url.pathname}/${url.search}`, 308);
+  }
+
+  const rest = segments
+    .slice(1)
+    .map((segment) => decodeURIComponent(segment))
+    .join('/');
+  const candidates = rest
+    ? [rest, `${rest}/index.html`, 'index.html']
+    : ['index.html'];
+
+  for (const candidate of candidates) {
+    const target = resolve(siteDir, candidate);
+    if (target !== siteDir && !target.startsWith(`${siteDir}/`)) continue;
+    try {
+      if (!(await stat(target)).isFile()) continue;
+    } catch {
+      continue;
+    }
+    return new Response(await readFile(target), {
+      headers: {
+        'Content-Type': contentTypeFor(target),
+        // Dev only: a cached build is the fastest way to be confused about
+        // whether a redeploy actually landed.
+        'Cache-Control': 'no-store',
+      },
+    });
+  }
+  return new Response('Not found', { status: 404 });
 }
 
 const server = Bun.serve({
@@ -462,7 +603,21 @@ const server = Bun.serve({
   },
 });
 
+const staticServer =
+  STATIC_PORT !== null && Number.isFinite(STATIC_PORT)
+    ? Bun.serve({
+        port: STATIC_PORT,
+        hostname: '0.0.0.0',
+        fetch: (req) => serveStatic(new URL(req.url)),
+      })
+    : null;
+
 console.info(
   `[deploy-agent] v${VERSION} mode=${MODE} listening on :${server.port} ` +
     `(sites root ${SITES_ROOT}, caddy snippets ${CADDY_SITES_DIR})`
 );
+if (staticServer) {
+  console.info(
+    `[deploy-agent] serving extracted sites on http://localhost:${staticServer.port}/{slug}/`
+  );
+}

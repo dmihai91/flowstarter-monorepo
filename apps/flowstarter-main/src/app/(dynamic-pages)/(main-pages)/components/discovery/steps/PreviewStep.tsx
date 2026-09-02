@@ -157,6 +157,8 @@ function previewPayload(data: DiscoveryData) {
     // every generated site with placeholder social links.
     instagramUrl: data.instagramUrl,
     linkedinUrl: data.linkedinUrl,
+    calComUrl: data.calComUrl,
+    customIntegrations: data.customIntegrations,
   };
 }
 
@@ -440,6 +442,7 @@ export function PreviewStep({
           ...(data.timeline ? { timeline: data.timeline } : {}),
           ...(data.commerceMode ? { commerceMode: data.commerceMode } : {}),
           catalogSize: data.catalogSize,
+          calComUrl: data.calComUrl,
           customIntegrations: data.customIntegrations,
           // The intake conversation: the highest-value evidence we hold. The
           // server files it as corpus documents against the new workspace so

@@ -223,6 +223,9 @@ const isPublicRoute = createRouteMatcher([
   '/reset-password(.*)',
   '/verify(.*)',
   '/api/webhooks(.*)',
+  // Service callers, not people: no Clerk session exists to check. Every route
+  // under it verifies a shared secret itself (see api/internal/build/deploy).
+  '/api/internal(.*)',
   '/api/health(.*)',
   '/api/auth/session(.*)', // Session check
   '/api/contact(.*)', // Public contact form API
@@ -459,10 +462,17 @@ export default clerkMiddleware(async (auth, req) => {
       const isAuthApi = pathname.startsWith('/api/auth/'); // Protected by Clerk auth
       const isIntegrationsApi = pathname.startsWith('/api/integrations/'); // Protected by Clerk auth
       const isAnalyticsApi = pathname.startsWith('/api/analytics/'); // Protected by Clerk auth
+      // Service-to-service callbacks (the build worker's deploy). A CSRF check
+      // asks "did a browser on another site cause this?", and these callers are
+      // not browsers: they send no Origin or Referer, so a same-origin test can
+      // only ever reject them. Each route authenticates its caller with a shared
+      // secret, which is the defence that fits a service.
+      const isInternalApi = pathname.startsWith('/api/internal/');
       const unsafe = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
       if (
         unsafe &&
         !isWebhook &&
+        !isInternalApi &&
         !isTeamApi &&
         !isAiApi &&
         !isAuthApi &&

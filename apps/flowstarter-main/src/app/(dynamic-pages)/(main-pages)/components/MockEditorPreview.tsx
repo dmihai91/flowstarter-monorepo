@@ -134,16 +134,18 @@ export function MockEditorPreview({
             </div>
           </div>
 
-          {/* Split: Chat + Preview */}
-          <div className="flex flex-col sm:flex-row sm:divide-x divide-gray-200/30 dark:divide-white/5 h-[900px] sm:h-[760px] lg:h-[860px]">
+          {/* Split: Chat + Preview.
+              Stack until lg — Fold cover/inner portrait sit in the sm–md band
+              (~360–800px) where a half-width chat pane crushes the prompt box. */}
+          <div className="flex flex-col lg:flex-row lg:divide-x divide-gray-200/30 dark:divide-white/5 h-[900px] lg:h-[760px] xl:h-[860px]">
             {/* Chat Panel */}
-            <div className="w-full sm:w-1/2 p-3 sm:p-4 flex flex-col border-b sm:border-b-0 h-[420px] sm:h-auto border-gray-200/30 dark:border-white/5">
+            <div className="w-full lg:w-1/2 p-3 sm:p-4 flex flex-col border-b lg:border-b-0 h-[420px] lg:h-auto border-gray-200/30 dark:border-white/5">
               <div className="text-xs tracking-[0.12em] uppercase font-bold mb-2 sm:mb-3 bg-gradient-to-r from-[var(--fs-accent)] to-blue-500 bg-clip-text text-transparent">
                 {t('mockEditor.chatTitle')}
               </div>
 
               {/* Messages - grows to fill space */}
-              <div className="flex-1 space-y-2.5 sm:space-y-3 overflow-y-auto mb-2 sm:mb-3 pr-1 max-h-[240px] sm:max-h-none">
+              <div className="flex-1 space-y-2.5 sm:space-y-3 overflow-y-auto mb-2 sm:mb-3 pr-1 max-h-[240px] lg:max-h-none">
                 {messages.map((msg, i) =>
                   msg.role === 'user' ? (
                     <div key={i} className="flex justify-end">
@@ -267,7 +269,7 @@ export function MockEditorPreview({
             </div>
 
             {/* Mock Site Preview */}
-            <div className="relative flex w-full flex-col overflow-hidden overflow-y-auto bg-[#f3f3eb] text-[#12352c] sm:w-1/2">
+            <div className="relative flex w-full flex-col overflow-hidden overflow-y-auto bg-[#f3f3eb] text-[#12352c] lg:w-1/2">
               {/* Realistic site header */}
               <header
                 className={`sticky top-0 z-10 flex min-h-14 items-center justify-between border-b border-[#12352c]/10 bg-[#f3f3eb]/95 px-5 backdrop-blur-sm transition-colors duration-200 ${

@@ -25,6 +25,10 @@ import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
 import { llmActionConfig, recordLlmUsage } from '@/lib/ai/llm';
 import { createJob, getJob, updateJob } from '@/lib/discovery/live-jobs';
 import { rememberClaimablePreview } from '@/lib/flowstarter/claim';
+import {
+  injectCalComPreviewDemoIntoScaffoldFiles,
+  resolveTenantCalComUrl,
+} from '@/lib/flowstarter/cal-com';
 import { publishFunnelPreview } from '@/lib/hosting/preview-publisher';
 import type {
   BusinessIntakePayload,
@@ -54,6 +58,10 @@ const SpecSchema = z.object({
   // malformed, so a bad paste costs the profile link, not the preview.
   instagramUrl: z.string().max(300).optional().default(''),
   linkedinUrl: z.string().max(300).optional().default(''),
+  /** Dedicated Cal.com booking link from intake (per tenant). */
+  calComUrl: z.string().max(400).optional().default(''),
+  /** Free-text integrations; may still contain a cal.com URL as fallback. */
+  customIntegrations: z.string().max(2000).optional().default(''),
 });
 
 /**
@@ -622,6 +630,17 @@ export async function POST(req: NextRequest) {
         onPhase: (phase) => updateJob(demoId, { phase }),
       });
 
+      // Preview never loads the live Cal.com embed — only a blurred demo.
+      // The tenant URL is stashed for claim → workspaces.cal_com_url and wired
+      // on the paid full-site build.
+      const calComUrl = resolveTenantCalComUrl({
+        calComUrl: spec.calComUrl,
+        customIntegrations: spec.customIntegrations,
+      });
+      const filesWithCal = injectCalComPreviewDemoIntoScaffoldFiles(
+        result.files
+      );
+
       // Wire the teardown in the instant the sandbox/local `astro dev` child
       // is confirmed live, not after the awaited bookkeeping below. Before
       // this fix, a throw from `rememberClaimablePreview` (or anything else
@@ -644,7 +663,8 @@ export async function POST(req: NextRequest) {
         intake: evidence.intake,
         brandConfig: result.brandConfig,
         template: result.template,
-        files: result.files,
+        files: filesWithCal,
+        ...(calComUrl ? { calComUrl } : {}),
         ...(result.artifactUrl
           ? { previewArtifactUrl: result.artifactUrl }
           : {}),
@@ -660,7 +680,7 @@ export async function POST(req: NextRequest) {
       // alongside it once (if) it comes up.
       void publishFunnelPreview({
         previewId: demoId,
-        files: result.files as Array<{ path: string; content: string }>,
+        files: filesWithCal as Array<{ path: string; content: string }>,
         templateSlug: result.template?.slug ?? null,
         brandConfig: result.brandConfig,
       })

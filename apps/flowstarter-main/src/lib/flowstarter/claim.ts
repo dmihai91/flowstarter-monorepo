@@ -45,6 +45,10 @@ import { recordIntakeSubmission } from './intake-submission';
 import { ensureClientMembership } from './membership';
 import { appendClientReplyToCorpus } from './messaging';
 import { savePreviewArtifacts } from './preview-artifacts';
+import {
+  injectCalComPreviewDemoIntoScaffoldFiles,
+  resolveTenantCalComUrl,
+} from './cal-com';
 import { parseQuoteInputToMinor } from './quote';
 import type { RoutingResult } from './routing-rules';
 
@@ -77,6 +81,8 @@ export interface ClaimablePreview {
   brandConfig: BrandConfig;
   template: TemplateSelection;
   files: readonly TemplateScaffoldFile[];
+  /** Tenant Cal.com URL captured at preview time (from intake). */
+  calComUrl?: string | null;
   /** `daytona://<sandbox>` or `local://<path>` — provenance, not a promise. */
   previewArtifactUrl?: string;
   previewUrl?: string;
@@ -124,6 +130,7 @@ export async function rememberClaimablePreview(
       manifest: {
         files: preview.files,
         intake: preview.intake,
+        ...(preview.calComUrl ? { calComUrl: preview.calComUrl } : {}),
         ...(preview.previewArtifactUrl
           ? { previewArtifactUrl: preview.previewArtifactUrl }
           : {}),
@@ -161,6 +168,7 @@ export async function getClaimablePreview(
   const manifest = (row.manifest ?? {}) as {
     files?: readonly TemplateScaffoldFile[];
     intake?: BusinessIntakePayload;
+    calComUrl?: string;
     previewArtifactUrl?: string;
     previewUrl?: string;
   };
@@ -175,6 +183,7 @@ export async function getClaimablePreview(
       ...(row.templateVersion ? { version: row.templateVersion } : {}),
     } as TemplateSelection,
     files: manifest.files,
+    ...(manifest.calComUrl ? { calComUrl: manifest.calComUrl } : {}),
     ...(manifest.previewArtifactUrl
       ? { previewArtifactUrl: manifest.previewArtifactUrl }
       : {}),
@@ -368,6 +377,12 @@ export interface ClaimPreviewInput {
   /** Wizard answers, kept on the claim event for provenance. */
   intakeSummary?: Record<string, unknown>;
   /**
+   * Dedicated Cal.com booking URL from intake. Prefer this over scraping
+   * `customIntegrations`. Also recovered from the stashed preview when the
+   * guest-deposit path never re-sends wizard fields.
+   */
+  calComUrl?: string | null;
+  /**
    * The info-agent conversation from step 7, if the visitor had one. These are
    * the client's own words about their own business — the best evidence the
    * generator will ever get — so they are filed as corpus documents rather
@@ -455,6 +470,23 @@ export async function claimPreview(
   const businessName = input.businessName?.trim() || null;
   const name = businessName || `${input.clientName?.trim() || 'New'} project`;
 
+  // Resolve Cal before insert so guest claims (no intakeSummary) still pick up
+  // the URL stashed on the preview at generation time.
+  const previewForCal = await getClaimablePreview(input.previewId);
+  const calComUrl = resolveTenantCalComUrl({
+    calComUrl:
+      input.calComUrl ??
+      (typeof input.intakeSummary?.['calComUrl'] === 'string'
+        ? (input.intakeSummary['calComUrl'] as string)
+        : null) ??
+      previewForCal?.calComUrl ??
+      null,
+    customIntegrations:
+      typeof input.intakeSummary?.['customIntegrations'] === 'string'
+        ? (input.intakeSummary['customIntegrations'] as string)
+        : null,
+  });
+
   const insert = await supabase
     .from('workspaces')
     .insert({
@@ -467,6 +499,7 @@ export async function claimPreview(
       client_email: input.clientEmail?.trim() || null,
       client_business_name: businessName,
       claimed_preview_id: input.previewId,
+      ...(calComUrl ? { cal_com_url: calComUrl } : {}),
       concierge_stage: 'intake',
       // Artifacts move this to PREVIEW_READY below; a workspace with no
       // preview behind it must not look ready to take a deposit.
@@ -519,9 +552,12 @@ export async function claimPreview(
   // (the same preview id re-claims it); a paid build with nothing to build
   // from is not.
   let previewReady = false;
-  const preview = await getClaimablePreview(input.previewId);
+  const preview = previewForCal ?? (await getClaimablePreview(input.previewId));
   if (preview) {
     try {
+      // Keep the blurred preview demo in artifacts; live Cal.com is wired only
+      // when the full-site build runs (workspaces.cal_com_url).
+      const files = injectCalComPreviewDemoIntoScaffoldFiles(preview.files);
       const saved = await savePreviewArtifacts({
         workspaceId,
         // The manifest was generated against the demo id. The build worker
@@ -530,7 +566,7 @@ export async function claimPreview(
         intake: { ...preview.intake, projectId: workspaceId },
         brandConfig: preview.brandConfig,
         template: preview.template,
-        files: preview.files,
+        files,
         ...(preview.previewArtifactUrl
           ? { previewArtifactUrl: preview.previewArtifactUrl }
           : {}),

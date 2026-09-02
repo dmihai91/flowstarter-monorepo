@@ -93,7 +93,8 @@ const FULL_ANSWERS: Record<string, string> = {
   pageCount: '5-7',
   timeline: 'asap',
   commerceMode: 'none',
-  customIntegrations: 'Calendly for bookings',
+  calComUrl: 'https://cal.com/ionescu-dental/intro',
+  customIntegrations: 'Mailchimp for newsletters',
   selectedTier: 'starter',
   subscription: 'pro',
 };
@@ -116,6 +117,7 @@ describe('the script itself', () => {
       'timeline',
       'commerceMode',
       // no catalogSize: this business sells nothing
+      'calComUrl',
       'customIntegrations',
       'selectedTier',
       'subscription',
@@ -255,7 +257,8 @@ describe('answers landing in DiscoveryData', () => {
       timeline: 'asap',
       commerceMode: 'none',
       catalogSize: 'na',
-      customIntegrations: 'Calendly for bookings',
+      calComUrl: 'https://cal.com/ionescu-dental/intro',
+      customIntegrations: 'Mailchimp for newsletters',
     });
     expect(Object.keys(data).sort()).toEqual(
       Object.keys(EMPTY_DISCOVERY).sort()

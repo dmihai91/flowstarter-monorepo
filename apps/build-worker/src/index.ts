@@ -24,13 +24,18 @@ import {
   FullSiteBuildWorker,
   PiSdkFlowstarterAgents,
   SafeGitWorktreeManager,
+  type PullRequestPublisher,
 } from '@flowstarter/agentic-codegen';
+import { ArtifactStore, artifactTokenFromPath } from './artifacts';
 import { ConfigError, loadConfig } from './config';
 import { handleRequest, VERSION } from './http';
 import { SupabaseFullSiteBuildJobStore } from './job-store';
+import { LocalSitePublisher } from './local-publisher';
+import { ensureLocalSitesRepository } from './local-repo';
 import { GitHubPullRequestPublisher } from './pull-requests';
 import { BuildQueue } from './queue';
-import { CommandSiteValidator } from './validator';
+import { createStubFullSiteAgent } from './stub-agent';
+import { CommandSiteValidator, NoopSiteValidator } from './validator';
 
 const MAX_BODY_BYTES = 64 * 1024;
 
@@ -71,27 +76,51 @@ const worktrees = new SafeGitWorktreeManager({
   worktreesRoot: config.git.worktreesRoot,
   baseRef: config.git.baseRef,
 });
-const agents = new PiSdkFlowstarterAgents({
-  provider: config.pi.provider,
-  modelId: config.pi.modelId,
-  apiKey: config.pi.apiKey,
-  thinkingLevel: config.pi.thinkingLevel,
-  timeoutMs: config.pi.timeoutMs,
-});
-const validator = new CommandSiteValidator({
-  commands: config.validateCommands,
-  timeoutMs: config.buildTimeoutMs,
-  onProgress: (message) => console.info(`[build-worker] ${message}`),
-});
-const pullRequests = new GitHubPullRequestPublisher({
-  apiBaseUrl: config.github.apiBaseUrl,
-  owner: config.github.owner,
-  repo: config.github.repo,
-  token: config.github.token,
-  remote: config.git.remote,
-  baseRef: config.git.baseRef,
-  stagingUrlTemplate: config.stagingUrlTemplate,
-});
+const agents = config.local?.stubAgent
+  ? createStubFullSiteAgent()
+  : new PiSdkFlowstarterAgents({
+      provider: config.pi.provider,
+      modelId: config.pi.modelId,
+      apiKey: config.pi.apiKey,
+      thinkingLevel: config.pi.thinkingLevel,
+      timeoutMs: config.pi.timeoutMs,
+    });
+const validator = config.local?.stubAgent
+  ? new NoopSiteValidator()
+  : new CommandSiteValidator({
+      commands: config.validateCommands,
+      timeoutMs: config.buildTimeoutMs,
+      onProgress: (message) => console.info(`[build-worker] ${message}`),
+    });
+
+const artifacts = config.local
+  ? new ArtifactStore({
+      root: config.local.artifactsRoot,
+      baseUrl: config.local.artifactBaseUrl,
+    })
+  : null;
+
+const pullRequests: PullRequestPublisher =
+  config.local && artifacts
+    ? new LocalSitePublisher({
+        store: artifacts,
+        flowstarterMainUrl: config.local.flowstarterMainUrl,
+        sharedSecret: config.sharedSecret,
+        outputDir: config.local.outputDir,
+        stagingUrlTemplate: config.stagingUrlTemplate,
+        onProgress: (message) => console.info(`[build-worker] ${message}`),
+      })
+    : new GitHubPullRequestPublisher({
+        // Non-null by construction: config.github is only null in local mode,
+        // which the branch above already took.
+        apiBaseUrl: config.github!.apiBaseUrl,
+        owner: config.github!.owner,
+        repo: config.github!.repo,
+        token: config.github!.token,
+        remote: config.git.remote,
+        baseRef: config.git.baseRef,
+        stagingUrlTemplate: config.stagingUrlTemplate,
+      });
 
 const worker = new FullSiteBuildWorker(
   store,
@@ -132,6 +161,27 @@ async function readBody(req: IncomingMessage): Promise<string | null> {
 const server = createServer((req: IncomingMessage, res: ServerResponse) => {
   void (async () => {
     const path = new URL(req.url ?? '/', 'http://localhost').pathname;
+
+    // Local mode only. The deploy-agent fetches the artifact it is told to
+    // extract and has no bearer token for us, so this route is open — which is
+    // safe only because the token in the file name is 128 bits of CSPRNG.
+    const token = artifacts ? artifactTokenFromPath(path) : null;
+    if (token && req.method === 'GET') {
+      const bytes = await artifacts!.read(token);
+      if (!bytes) {
+        res.writeHead(404, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({ error: 'not found' }));
+        return;
+      }
+      res.writeHead(200, {
+        'content-type': 'application/gzip',
+        'content-length': bytes.length,
+        'cache-control': 'no-store',
+      });
+      res.end(bytes);
+      return;
+    }
+
     const body = await readBody(req);
     const result =
       body === null
@@ -159,12 +209,37 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
   });
 });
 
-server.listen(config.port, config.hostname, () => {
-  console.info(
-    `[build-worker] v${VERSION} listening on ${config.hostname}:${config.port} ` +
-      `(model ${config.pi.modelId}, concurrency ${config.concurrency}, ` +
-      `repo ${config.github.owner}/${config.github.repo})`,
+async function start(): Promise<void> {
+  if (config.local) {
+    const { created } = await ensureLocalSitesRepository(
+      config.git.repositoryRoot,
+      config.git.baseRef,
+    );
+    if (created) {
+      console.info(
+        `[build-worker] initialised a local sites repository at ${config.git.repositoryRoot}`,
+      );
+    }
+  }
+  server.listen(config.port, config.hostname, () => {
+    const target = config.local
+      ? `local deploy via ${config.local.flowstarterMainUrl}` +
+        (config.local.stubAgent ? ', stub agent' : '')
+      : `repo ${config.github?.owner}/${config.github?.repo}`;
+    console.info(
+      `[build-worker] v${VERSION} listening on ${config.hostname}:${config.port} ` +
+        `(mode ${config.publishMode}, model ${config.pi.modelId}, ` +
+        `concurrency ${config.concurrency}, ${target})`,
+    );
+  });
+}
+
+void start().catch((error: unknown) => {
+  console.error(
+    '[build-worker] refusing to start:',
+    error instanceof Error ? error.message : error,
   );
+  process.exit(1);
 });
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {

@@ -90,6 +90,7 @@ describe('POST /api/discovery/recommend', () => {
       commerceMode: BROCHURE_PAYLOAD.commerceMode as 'none',
       catalogSize: BROCHURE_PAYLOAD.catalogSize as 'na',
       customIntegrations: BROCHURE_PAYLOAD.customIntegrations,
+      calComUrl: '',
       selectedTier: '',
       subscription: '',
       billingCadence: 'monthly',

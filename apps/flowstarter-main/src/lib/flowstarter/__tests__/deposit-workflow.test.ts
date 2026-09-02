@@ -25,8 +25,10 @@ const script: ClientScript = {};
 const captured: {
   insert?: Record<string, unknown>;
   update?: Record<string, unknown>;
+  /** Every insert into `project_events`, in call order — dispatch failures land here. */
+  events: Array<Record<string, unknown>>;
   tables: string[];
-} = { tables: [] };
+} = { events: [], tables: [] };
 
 function builderFor(table: string) {
   captured.tables.push(table);
@@ -37,7 +39,14 @@ function builderFor(table: string) {
     },
     insert(values: Record<string, unknown>) {
       builder._mode = 'insert';
-      captured.insert = values;
+      // project_events is a side-channel audit trail, not the row under test:
+      // routing it separately means it can never clobber the job/workspace
+      // insert a test is actually asserting on.
+      if (table === 'project_events') {
+        captured.events.push(values);
+      } else {
+        captured.insert = values;
+      }
       return builder;
     },
     update(values: Record<string, unknown>) {
@@ -114,6 +123,7 @@ beforeEach(() => {
   delete script.stateUpdate;
   captured.insert = undefined;
   captured.update = undefined;
+  captured.events = [];
   captured.tables = [];
 });
 
@@ -160,6 +170,8 @@ describe('deposit paid by operator invoice', () => {
     script.workspace = workspaceRow();
     const previousEnv = process.env.NODE_ENV;
     vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('FLOWSTARTER_BUILD_WORKER_URL', '');
+    vi.stubEnv('FLOWSTARTER_BUILD_WORKER_SECRET', '');
     const errors = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
@@ -174,9 +186,52 @@ describe('deposit paid by operator invoice', () => {
       // The operator has to be able to find the job that needs picking up.
       expect(errors.mock.calls[0]?.[0]).toContain('job-1');
       expect(errors.mock.calls[0]?.[0]).toContain('could not be dispatched');
+      // A log line is not enough on its own: it must also land on the
+      // project's timeline so an operator sees it without tailing a server.
+      expect(captured.events).toHaveLength(1);
+      expect(captured.events[0]).toMatchObject({
+        workspace_id: WORKSPACE_ID,
+        kind: 'build_dispatch_failed',
+      });
+      expect(captured.events[0]?.payload).toMatchObject({ jobId: 'job-1' });
     } finally {
       errors.mockRestore();
       vi.stubEnv('NODE_ENV', previousEnv ?? 'test');
+    }
+  });
+
+  it('still records a dispatch-failed event outside production, quietly', async () => {
+    // Locally the build worker is normally unconfigured — that must not be
+    // silent. It is expected, so it logs at `warn`, but it still lands on the
+    // timeline exactly like the production failure above.
+    script.workspace = workspaceRow();
+    const warnings = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    const errors = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    try {
+      vi.stubEnv('FLOWSTARTER_BUILD_WORKER_URL', '');
+      vi.stubEnv('FLOWSTARTER_BUILD_WORKER_SECRET', '');
+      const result = await enqueueFullBuildFromDepositInvoice(
+        event(),
+        depositInvoice()
+      );
+
+      expect(result).toMatchObject({ jobId: 'job-1', duplicate: false });
+      expect(warnings.mock.calls[0]?.[0]).toContain('could not be dispatched');
+      expect(errors).not.toHaveBeenCalled();
+      expect(captured.events).toHaveLength(1);
+      expect(captured.events[0]).toMatchObject({
+        workspace_id: WORKSPACE_ID,
+        kind: 'build_dispatch_failed',
+        actor: 'system',
+      });
+    } finally {
+      warnings.mockRestore();
+      errors.mockRestore();
     }
   });
 

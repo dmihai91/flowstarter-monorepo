@@ -125,6 +125,26 @@ function matchers(params: URLSearchParams): Array<(row: Row) => boolean> {
   return predicates;
 }
 
+/** `order=version.desc` + `limit=1`, the only shapes the flow asks for. */
+function paginate(rows: Row[], params: URLSearchParams): Row[] {
+  let result = rows;
+  const order = params.get('order');
+  if (order) {
+    const [column, ...modifiers] = order.split('.');
+    const descending = modifiers.includes('desc');
+    result = [...result].sort((a, b) => {
+      const left = a[column as string];
+      const right = b[column as string];
+      if (left === right) return 0;
+      const ascending = (left as number) < (right as number) ? -1 : 1;
+      return descending ? -ascending : ascending;
+    });
+  }
+  const limit = params.get('limit');
+  if (limit) result = result.slice(0, Number(limit));
+  return result;
+}
+
 function conflictingIndex(
   table: string,
   candidate: Row,
@@ -188,7 +208,14 @@ export async function startFakePostgrest(): Promise<FakePostgrest> {
       const predicates = matchers(url.searchParams);
       const selected = store.filter((row) => predicates.every((p) => p(row)));
 
-      if (req.method === 'GET') return respond(200, selected);
+      if (req.method === 'GET') {
+        // `order`/`limit` matter to the deploy path: the next deployment
+        // version is "the highest one so far, plus one", and without the limit
+        // a second deploy asks for a single row, gets two, and PostgREST's
+        // object negotiation turns that into "no previous deploy" — resetting
+        // the version counter to 1 forever.
+        return respond(200, paginate(selected, url.searchParams));
+      }
 
       if (req.method === 'POST') {
         const parsed = JSON.parse(body || '{}') as Row | Row[];

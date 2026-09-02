@@ -12,12 +12,47 @@ export interface ValidatorCommand {
   args: string[];
 }
 
+/**
+ * How a finished build reaches a reviewer.
+ *
+ * `github` is production: push the client branch and open the internal draft
+ * PR that gates HUMAN_QA. `local` is the dev/dry path: package the build
+ * output into a tarball, serve it off this worker, and ask flowstarter-main to
+ * deploy it through the ordinary `deploySite` → deploy-agent route. Local mode
+ * needs no GitHub credentials and no Hetzner host, which is the whole point:
+ * the ledger → build → deploy → serve chain can be exercised end to end on a
+ * laptop.
+ */
+export type PublishMode = 'github' | 'local';
+
+export interface LocalPublishConfig {
+  /** Where packaged tarballs are written and served from. */
+  artifactsRoot: string;
+  /** Base URL the deploy-agent will fetch artifacts from. */
+  artifactBaseUrl: string;
+  /** flowstarter-main, which owns `deploySite` and the deployments ledger. */
+  flowstarterMainUrl: string;
+  /**
+   * Directory inside the built site to package, relative to the site root.
+   * Falls back to the site root itself when it does not exist, so a manifest
+   * that is already plain HTML still deploys.
+   */
+  outputDir: string;
+  /**
+   * Replace the Pi coding session with a deterministic pass that only
+   * materializes and marks the approved preview. Lets CI and a laptop without
+   * a model key still drive the whole chain.
+   */
+  stubAgent: boolean;
+}
+
 export interface WorkerConfig {
   port: number;
   hostname: string;
   sharedSecret: string;
   supabaseUrl: string;
   supabaseServiceRoleKey: string;
+  publishMode: PublishMode;
   pi: {
     provider: string;
     modelId: string;
@@ -31,12 +66,15 @@ export interface WorkerConfig {
     baseRef: string;
     remote: string;
   };
+  /** Null in local mode, where no PR is opened and no token is needed. */
   github: {
     apiBaseUrl: string;
     owner: string;
     repo: string;
     token: string;
-  };
+  } | null;
+  /** Null in github mode. */
+  local: LocalPublishConfig | null;
   stagingUrlTemplate: string;
   validateCommands: ValidatorCommand[];
   buildTimeoutMs: number;
@@ -133,6 +171,29 @@ function parseRepository(value: string): { owner: string; repo: string } {
   return { owner: match[1] as string, repo: match[2] as string };
 }
 
+function parsePublishMode(raw: string | undefined): PublishMode {
+  const mode = raw?.trim() || 'github';
+  if (mode !== 'github' && mode !== 'local') {
+    throw new ConfigError(
+      `FLOWSTARTER_BUILD_MODE must be "github" or "local", received "${mode}"`,
+    );
+  }
+  return mode;
+}
+
+function parseHttpUrl(value: string, key: string): string {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new ConfigError(`${key} is not a valid URL`);
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    throw new ConfigError(`${key} must be an http(s) URL`);
+  }
+  return value.replace(/\/$/, '');
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): WorkerConfig {
   const sharedSecret = required(env, 'FLOWSTARTER_BUILD_WORKER_SECRET');
   if (sharedSecret.length < 32) {
@@ -141,10 +202,23 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): WorkerConfig {
     );
   }
 
+  const publishMode = parsePublishMode(env.FLOWSTARTER_BUILD_MODE);
+  const port = optionalNumber(env, 'FLOWSTARTER_BUILD_WORKER_PORT', 8787, {
+    min: 1,
+    max: 65_535,
+  });
+  // A stub agent is only meaningful in local mode; production must never
+  // silently ship a site nothing personalized.
+  const stubAgent =
+    publishMode === 'local' && env.FLOWSTARTER_BUILD_STUB_AGENT === 'true';
+
   const piApiKey =
     env.PI_API_KEY?.trim() || env.OPENROUTER_API_KEY?.trim() || '';
-  if (!piApiKey) {
-    throw new ConfigError('PI_API_KEY (or OPENROUTER_API_KEY) is required');
+  if (!piApiKey && !stubAgent) {
+    throw new ConfigError(
+      'PI_API_KEY (or OPENROUTER_API_KEY) is required ' +
+        '(or set FLOWSTARTER_BUILD_MODE=local with FLOWSTARTER_BUILD_STUB_AGENT=true)',
+    );
   }
 
   const thinkingLevel = env.PI_THINKING_LEVEL?.trim() || 'medium';
@@ -152,8 +226,18 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): WorkerConfig {
     throw new ConfigError(`PI_THINKING_LEVEL "${thinkingLevel}" is not supported`);
   }
 
-  const repositoryRoot = required(env, 'FLOWSTARTER_REPOSITORY_ROOT');
-  const worktreesRoot = required(env, 'FLOWSTARTER_WORKTREES_ROOT');
+  // Local mode is expected to run on a laptop with nothing provisioned, so the
+  // git roots get defaults there. Production still has to say where they are.
+  const repositoryRoot =
+    publishMode === 'local'
+      ? env.FLOWSTARTER_REPOSITORY_ROOT?.trim() ||
+        '/tmp/flowstarter-local/repository'
+      : required(env, 'FLOWSTARTER_REPOSITORY_ROOT');
+  const worktreesRoot =
+    publishMode === 'local'
+      ? env.FLOWSTARTER_WORKTREES_ROOT?.trim() ||
+        '/tmp/flowstarter-local/worktrees'
+      : required(env, 'FLOWSTARTER_WORKTREES_ROOT');
   if (!repositoryRoot.startsWith('/') || !worktreesRoot.startsWith('/')) {
     throw new ConfigError(
       'FLOWSTARTER_REPOSITORY_ROOT and FLOWSTARTER_WORKTREES_ROOT must be absolute paths',
@@ -162,25 +246,26 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): WorkerConfig {
 
   const stagingUrlTemplate =
     env.FLOWSTARTER_STAGING_URL_TEMPLATE?.trim() ||
-    'https://{projectId}.staging.flowstarter.net';
+    (publishMode === 'local'
+      ? 'http://localhost:8788/{projectId}/'
+      : 'https://{projectId}.staging.flowstarter.net');
   if (!stagingUrlTemplate.includes('{projectId}')) {
     throw new ConfigError(
       'FLOWSTARTER_STAGING_URL_TEMPLATE must contain the {projectId} placeholder',
     );
   }
-  if (!stagingUrlTemplate.startsWith('https://')) {
+  // Local mode serves from loopback, where there is no certificate to have.
+  if (publishMode !== 'local' && !stagingUrlTemplate.startsWith('https://')) {
     throw new ConfigError('FLOWSTARTER_STAGING_URL_TEMPLATE must be https');
   }
 
   return {
-    port: optionalNumber(env, 'FLOWSTARTER_BUILD_WORKER_PORT', 8787, {
-      min: 1,
-      max: 65_535,
-    }),
+    port,
     hostname: env.FLOWSTARTER_BUILD_WORKER_HOST?.trim() || '0.0.0.0',
     sharedSecret,
     supabaseUrl: required(env, 'NEXT_PUBLIC_SUPABASE_URL'),
     supabaseServiceRoleKey: required(env, 'SUPABASE_SERVICE_ROLE_KEY'),
+    publishMode,
     pi: {
       provider: env.PI_PROVIDER?.trim() || 'openrouter',
       modelId: env.PI_MODEL?.trim() || 'z-ai/glm-5.2',
@@ -197,13 +282,35 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): WorkerConfig {
       baseRef: env.FLOWSTARTER_SITES_BASE_REF?.trim() || 'main',
       remote: env.FLOWSTARTER_SITES_REMOTE?.trim() || 'origin',
     },
-    github: {
-      apiBaseUrl:
-        env.GITHUB_API_BASE_URL?.trim().replace(/\/$/, '') ||
-        'https://api.github.com',
-      ...parseRepository(required(env, 'FLOWSTARTER_SITES_REPO')),
-      token: required(env, 'FLOWSTARTER_SITES_GITHUB_TOKEN'),
-    },
+    github:
+      publishMode === 'github'
+        ? {
+            apiBaseUrl:
+              env.GITHUB_API_BASE_URL?.trim().replace(/\/$/, '') ||
+              'https://api.github.com',
+            ...parseRepository(required(env, 'FLOWSTARTER_SITES_REPO')),
+            token: required(env, 'FLOWSTARTER_SITES_GITHUB_TOKEN'),
+          }
+        : null,
+    local:
+      publishMode === 'local'
+        ? {
+            artifactsRoot:
+              env.FLOWSTARTER_BUILD_ARTIFACTS_ROOT?.trim() ||
+              '/tmp/flowstarter-build-artifacts',
+            artifactBaseUrl: parseHttpUrl(
+              env.FLOWSTARTER_BUILD_ARTIFACT_BASE_URL?.trim() ||
+                `http://127.0.0.1:${port}`,
+              'FLOWSTARTER_BUILD_ARTIFACT_BASE_URL',
+            ),
+            flowstarterMainUrl: parseHttpUrl(
+              env.FLOWSTARTER_MAIN_URL?.trim() || 'http://127.0.0.1:3000',
+              'FLOWSTARTER_MAIN_URL',
+            ),
+            outputDir: env.FLOWSTARTER_BUILD_OUTPUT_DIR?.trim() || 'dist',
+            stubAgent,
+          }
+        : null,
     stagingUrlTemplate,
     validateCommands: parseValidateCommands(
       env.FLOWSTARTER_BUILD_VALIDATE_COMMANDS,

@@ -287,6 +287,7 @@ describe('the commercial panels', () => {
     await tap(user, t('landing.discovery.chat.skip')); // page count
     await tap(user, t('landing.discovery.chat.skip')); // timeline
     await tap(user, t('landing.discovery.options.commerce.none.label'));
+    await tap(user, t('landing.discovery.chat.skip')); // cal.com booking link
     await tap(user, t('landing.discovery.chat.skip')); // integrations
 
     // The build package, introduced by the agent and shown as its own message.

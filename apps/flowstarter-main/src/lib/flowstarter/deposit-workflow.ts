@@ -1,8 +1,9 @@
 import type Stripe from 'stripe';
-import { dispatchAgentJob } from './pipeline/dispatch';
+import { dispatchAgentJob, DispatchError } from './pipeline/dispatch';
 import { depositAmountMinor } from '@flowstarter/agentic-codegen/src/flowstarter/state-machine';
 import { ProjectState } from '@flowstarter/agentic-codegen/src/flowstarter/types';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
+import type { Json } from '@/lib/database.types';
 
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -258,40 +259,84 @@ async function enqueueBuildAndAdvance(input: {
   // sooner. Letting a failed nudge throw would fail the webhook *after* the
   // deposit is recorded and the job is queued, and Stripe would then retry for
   // days over something a retry cannot fix — an unreachable or unconfigured
-  // worker. Surface it loudly and report success for the work that did happen.
-  try {
-    await dispatchBuildJob(jobId);
-  } catch (error) {
-    console.error(
-      `[Flowstarter] build job ${jobId} is queued for workspace ${workspaceId} ` +
-        'but could not be dispatched; it needs picking up: ' +
-        (error instanceof Error ? error.message : 'unknown error')
-    );
-  }
+  // worker. dispatchBuildJob never throws: it reports success for the work
+  // that did happen and leaves an operator-visible trail for the nudge that
+  // did not.
+  await dispatchBuildJob({ supabase, workspaceId, jobId });
   return { workspaceId, jobId, duplicate };
 }
 
 /**
- * Nudges the build worker for a job the ledger already holds.
+ * Nudges the build worker for a job the ledger already holds, and makes sure
+ * a failed nudge is impossible to miss.
  *
  * The transport lives in `pipeline/dispatch.ts` so the operator's manual
- * re-dispatch and this automatic one cannot disagree about what dispatch
- * means. The policy differs and stays here: an unconfigured worker outside
- * production is a normal local setup, so it warns and returns, whereas the
- * operator path throws because someone is watching and needs to know the
- * nudge did not happen.
+ * re-dispatch (`pipeline/api.ts`) and this automatic one cannot disagree about
+ * what dispatch means or what "unconfigured" looks like. This never throws —
+ * the deposit must land either way — but it never merely warns into a log
+ * nobody is tailing either: every failure, including "the worker is simply
+ * not configured", is written to `project_events` as `build_dispatch_failed`
+ * before returning, so it shows up on the project's timeline (and therefore
+ * the pipeline board) the moment it happens rather than after the 15-minute
+ * stall window in `board.ts` finally notices a job nobody picked up.
  */
-async function dispatchBuildJob(jobId: string): Promise<void> {
-  const configured =
-    process.env.FLOWSTARTER_BUILD_WORKER_URL &&
-    process.env.FLOWSTARTER_BUILD_WORKER_SECRET;
-  if (!configured && process.env.NODE_ENV !== 'production') {
-    console.warn(
-      `[Flowstarter] build job ${jobId} queued; local worker dispatch is not configured`
+async function dispatchBuildJob(input: {
+  supabase: SupabaseServiceClient;
+  workspaceId: string;
+  jobId: string;
+}): Promise<void> {
+  const { supabase, workspaceId, jobId } = input;
+  try {
+    await dispatchAgentJob(jobId);
+  } catch (error) {
+    const detail =
+      error instanceof Error ? error.message : 'unknown dispatch error';
+    // An unconfigured worker outside production is a normal local setup and
+    // gets a quieter log level; everything else (production, or a configured
+    // worker that actually rejected the call) is a real operator problem.
+    const isExpectedLocalGap =
+      error instanceof DispatchError &&
+      process.env.NODE_ENV !== 'production' &&
+      /not configured/.test(detail);
+    const log = isExpectedLocalGap ? console.warn : console.error;
+    log(
+      `[Flowstarter] build job ${jobId} is queued for workspace ${workspaceId} ` +
+        `but could not be dispatched; it needs picking up: ${detail}`
     );
-    return;
+    await recordDispatchFailure({ supabase, workspaceId, jobId, detail });
   }
-  await dispatchAgentJob(jobId);
+}
+
+/**
+ * Best-effort audit trail for a dispatch nudge that did not happen. Never
+ * throws: losing this note is not a reason to make the deposit itself fail,
+ * it just means the operator falls back to the stall detector and the logs.
+ */
+async function recordDispatchFailure(input: {
+  supabase: SupabaseServiceClient;
+  workspaceId: string;
+  jobId: string;
+  detail: string;
+}): Promise<void> {
+  const { supabase, workspaceId, jobId, detail } = input;
+  try {
+    const { error } = await supabase.from('project_events').insert({
+      workspace_id: workspaceId,
+      kind: 'build_dispatch_failed',
+      actor: 'system',
+      payload: { jobId, detail } as Json,
+    });
+    if (error) {
+      console.error(
+        `[Flowstarter] could not record build_dispatch_failed for workspace ${workspaceId}: ${error.message}`
+      );
+    }
+  } catch (error) {
+    console.error(
+      `[Flowstarter] could not record build_dispatch_failed for workspace ${workspaceId}:`,
+      error
+    );
+  }
 }
 
 export function productionActivationAllowed(input: {

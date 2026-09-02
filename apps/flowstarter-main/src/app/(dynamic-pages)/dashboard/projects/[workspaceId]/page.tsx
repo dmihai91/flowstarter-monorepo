@@ -18,6 +18,7 @@ import { messagesFromPayload } from '@/components/flowstarter/project-messages';
 import { projectStateFrom } from '@/components/flowstarter/project-progress';
 import {
   formatMinor,
+  paymentPosition,
   projectPayments,
 } from '@/components/flowstarter/project-payment';
 import { resolveSiteLink } from '@/components/flowstarter/site-link';
@@ -71,6 +72,7 @@ export default async function ClientProjectPage({
   const messages = messagesFromPayload(messageRows ?? []);
   const state = projectStateFrom(workspace.project_state);
   const payments = projectPayments(workspace, workspaceId);
+  const position = paymentPosition(payments);
   const site = resolveSiteLink({
     slug: workspace.slug,
     deployStatus: workspace.deploy_status,
@@ -108,45 +110,93 @@ export default async function ClientProjectPage({
         >
           Edit your site
         </Link>
+        <Link
+          href={`/dashboard/projects/${workspaceId}/booking`}
+          data-testid="booking-settings-link"
+          className="w-fit text-sm font-semibold text-[var(--purple-primary)] underline underline-offset-4"
+        >
+          Cal.com booking
+        </Link>
       </header>
 
       <section className="rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-6 py-6 shadow-[var(--fs-card-shadow)] backdrop-blur-xl">
         <ProjectStateStepper state={state} />
       </section>
 
-      {payments.due ? (
+      {position.length > 0 ? (
         <section
-          data-testid={`payment-cta-${payments.due.kind}`}
-          className="flex flex-col gap-3 rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-6 py-6 shadow-[var(--fs-card-shadow)] backdrop-blur-xl"
+          data-testid={
+            payments.due
+              ? `payment-cta-${payments.due.kind}`
+              : 'payment-position'
+          }
+          className="flex flex-col gap-4 rounded-2xl border border-[var(--fs-glass-edge)] bg-[var(--fs-glass-bg)] px-6 py-6 shadow-[var(--fs-card-shadow)] backdrop-blur-xl"
         >
-          <h2 className="text-base font-bold text-[var(--fs-ink)]">
-            {payments.due.kind === 'deposit'
-              ? 'Start the build'
-              : 'Settle the balance'}
-          </h2>
-          <p className="max-w-2xl text-sm leading-relaxed text-[var(--fs-ink-dim)]">
-            {payments.due.explainer}
-          </p>
-          <dl className="flex flex-wrap gap-x-8 gap-y-1 text-sm">
-            <div className="flex items-baseline gap-2">
-              <dt className="text-[var(--fs-ink-faint)]">Due now</dt>
-              <dd className="font-bold text-[var(--fs-ink)]">
-                {formatMinor(payments.due.amountMinor, payments.due.currency)}
-              </dd>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <dt className="text-[var(--fs-ink-faint)]">Total quoted</dt>
-              <dd className="font-semibold text-[var(--fs-ink-dim)]">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-base font-bold text-[var(--fs-ink)]">
+              {payments.due
+                ? payments.due.kind === 'deposit'
+                  ? 'Start the build'
+                  : 'Settle the balance'
+                : 'Payments'}
+            </h2>
+            <p className="text-sm text-[var(--fs-ink-faint)]">
+              Total quoted{' '}
+              <span className="font-semibold text-[var(--fs-ink-dim)]">
                 {formatMinor(payments.quoteMinor, payments.currency)}
-              </dd>
-            </div>
+              </span>
+            </p>
+          </div>
+          {payments.due ? (
+            <p className="max-w-2xl text-sm leading-relaxed text-[var(--fs-ink-dim)]">
+              {payments.due.explainer}
+            </p>
+          ) : null}
+          <dl className="flex flex-col gap-2">
+            {position.map((line) => (
+              <div
+                key={line.key}
+                data-testid={`payment-line-${line.key}`}
+                className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-xl border border-[var(--fs-rule)] px-4 py-3"
+              >
+                <dt className="text-sm font-semibold text-[var(--fs-ink)]">
+                  {line.label}
+                </dt>
+                <dd className="text-sm font-bold text-[var(--fs-ink)]">
+                  {formatMinor(line.amountMinor, payments.currency)}
+                </dd>
+                <dd>
+                  <span
+                    className={[
+                      'rounded-full border px-2 py-0.5 text-[11px] font-semibold',
+                      line.status === 'paid'
+                        ? 'border-emerald-600/25 bg-emerald-600/10 text-emerald-700 dark:text-emerald-300'
+                        : line.status === 'due'
+                        ? 'border-[var(--purple-primary)]/25 bg-[var(--purple-primary)]/10 text-[var(--purple-primary)]'
+                        : 'border-[var(--fs-rule)] bg-[var(--fs-ink)]/5 text-[var(--fs-ink-faint)]',
+                    ].join(' ')}
+                  >
+                    {line.status === 'paid'
+                      ? 'Paid'
+                      : line.status === 'due'
+                      ? 'Due now'
+                      : 'Not yet due'}
+                  </span>
+                </dd>
+                <dd className="basis-full text-sm text-[var(--fs-ink-faint)] sm:basis-auto">
+                  {line.note}
+                </dd>
+              </div>
+            ))}
           </dl>
-          <Link
-            href={payments.due.href}
-            className="inline-flex w-fit items-center rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] active:translate-y-0"
-          >
-            {payments.due.label}
-          </Link>
+          {payments.due ? (
+            <Link
+              href={payments.due.href}
+              className="inline-flex w-fit items-center rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--purple-primary-lightest)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[linear-gradient(135deg,var(--landing-btn-hover-from),var(--landing-btn-hover-via))] active:translate-y-0"
+            >
+              {payments.due.label}
+            </Link>
+          ) : null}
         </section>
       ) : null}
 

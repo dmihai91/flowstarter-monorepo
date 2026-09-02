@@ -73,9 +73,9 @@ export function MockEditorControls({
   ];
 
   return (
-    <div className="mt-2.5 border-t border-gray-200/60 pt-2.5 dark:border-white/10">
+    <div className="@container mt-2.5 border-t border-gray-200/60 pt-2.5 dark:border-white/10">
       <div
-        className="grid grid-cols-4 gap-1"
+        className="flex flex-wrap gap-1"
         aria-label={t('mockEditor.tools')}
       >
         {tools.map((tool) => (
@@ -85,7 +85,7 @@ export function MockEditorControls({
             disabled={isTyping}
             aria-pressed={activeTool === tool.id}
             onClick={() => setActiveTool(tool.id)}
-            className={`min-h-8 rounded-lg px-1.5 text-[0.6875rem] font-semibold transition-colors disabled:opacity-50 sm:text-[0.75rem] ${
+            className={`min-h-8 shrink-0 rounded-lg px-2.5 text-[0.6875rem] font-semibold transition-colors disabled:opacity-50 sm:text-[0.75rem] ${
               activeTool === tool.id
                 ? 'bg-[var(--fs-accent)] text-white'
                 : 'border border-gray-200/70 bg-white/65 text-gray-600 hover:border-[var(--fs-accent)]/35 hover:text-[var(--fs-accent)] dark:border-white/10 dark:bg-white/[0.04] dark:text-white/60'
@@ -104,7 +104,7 @@ export function MockEditorControls({
             handleGuidedRewrite(rewriteTarget, rewriteDirection);
           }}
         >
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 @[22rem]:grid-cols-2">
             <label className={labelClass}>
               {t('mockEditor.rewrite.what')}
               <select
@@ -165,7 +165,7 @@ export function MockEditorControls({
             handleGuidedPrice(priceAmount, priceCadence, deliveryIncluded);
           }}
         >
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 @[22rem]:grid-cols-3">
             <label className={labelClass}>
               {t('mockEditor.price.amount')}
               <select
@@ -232,7 +232,7 @@ export function MockEditorControls({
             handleGuidedTone(toneTarget, tone);
           }}
         >
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 @[22rem]:grid-cols-2">
             <label className={labelClass}>
               {t('mockEditor.tone.what')}
               <select
@@ -283,7 +283,7 @@ export function MockEditorControls({
             handleGuidedTranslation(translationTarget, translationLanguage);
           }}
         >
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 @[22rem]:grid-cols-2">
             <label className={labelClass}>
               {t('mockEditor.translate.what')}
               <select

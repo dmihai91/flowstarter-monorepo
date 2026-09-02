@@ -125,6 +125,7 @@ export function buildJobFromRows(input: {
   job: JobLedgerRow;
   projectState: string;
   artifacts: ProjectArtifactRow;
+  calComUrl?: string | null;
 }): FullSiteBuildJob {
   const intake = asRecord(
     input.artifacts.intake_payload,
@@ -139,6 +140,18 @@ export function buildJobFromRows(input: {
     );
   }
 
+  const requiredIntegrations = parseRequiredIntegrations(
+    input.job.payload,
+    input.artifacts.preview_manifest,
+  );
+  const calComUrl =
+    typeof input.calComUrl === 'string' && input.calComUrl.trim()
+      ? input.calComUrl.trim()
+      : null;
+  if (calComUrl && !requiredIntegrations.includes('cal.com')) {
+    requiredIntegrations.push('cal.com');
+  }
+
   return {
     id: input.job.id,
     projectId: input.job.workspace_id,
@@ -151,10 +164,8 @@ export function buildJobFromRows(input: {
     approvedPreviewFiles: parseApprovedPreviewFiles(
       input.artifacts.preview_manifest,
     ),
-    requiredIntegrations: parseRequiredIntegrations(
-      input.job.payload,
-      input.artifacts.preview_manifest,
-    ),
+    requiredIntegrations,
+    ...(calComUrl ? { calComUrl } : {}),
   };
 }
 
@@ -207,9 +218,13 @@ export class SupabaseFullSiteBuildJobStore implements FullSiteBuildJobStore {
     try {
       const { data: workspace, error: workspaceError } = await this.client
         .from('workspaces')
-        .select('id, project_state')
+        .select('id, project_state, cal_com_url')
         .eq('id', row.workspace_id)
-        .maybeSingle<{ id: string; project_state: string }>();
+        .maybeSingle<{
+          id: string;
+          project_state: string;
+          cal_com_url: string | null;
+        }>();
       if (workspaceError) throw workspaceError;
       if (!workspace) throw new JobArtifactError('Build workspace does not exist');
 
@@ -234,6 +249,7 @@ export class SupabaseFullSiteBuildJobStore implements FullSiteBuildJobStore {
         job: row,
         projectState: workspace.project_state,
         artifacts,
+        calComUrl: workspace.cal_com_url,
       });
     } catch (error) {
       await this.markFailed(jobId, {

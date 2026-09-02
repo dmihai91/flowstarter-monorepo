@@ -14,6 +14,16 @@ const execFileAsync = promisify(execFile);
 
 export class SiteValidationError extends Error {}
 
+/**
+ * Skips trusted validation when the stub agent runs.
+ *
+ * The dry path materializes plain HTML with no package manifest; the real
+ * validator would reject it before LocalSitePublisher can pack the site root.
+ */
+export class NoopSiteValidator implements SiteValidator {
+  async validate(_workspaceRoot: string, _phase: 'preview' | 'full'): Promise<void> {}
+}
+
 export interface CommandSiteValidatorOptions {
   commands: ValidatorCommand[];
   timeoutMs: number;

@@ -113,6 +113,12 @@ export interface DiscoveryData {
   // Step 4 — commerce + integrations
   commerceMode: CommerceMode | '';
   catalogSize: CatalogSize;
+  /**
+   * Dedicated Cal.com booking link/handle for this tenant's site. Prefer this
+   * over fishing a URL out of `customIntegrations`. Empty when they skip it
+   * or do not use Cal.com yet.
+   */
+  calComUrl: string;
   customIntegrations: string;
 
   // Step 5 — recommendation
@@ -173,6 +179,7 @@ export const EMPTY_DISCOVERY: DiscoveryData = {
   timeline: '',
   commerceMode: '',
   catalogSize: 'na',
+  calComUrl: '',
   customIntegrations: '',
   selectedTier: '',
   subscription: '',
@@ -477,6 +484,38 @@ export function hasCustomIntegrationRequest(
   return integrationRequestList(customIntegrations).some(
     (request) => !STANDARD_INTEGRATION_RE.test(request)
   );
+}
+
+/**
+ * A Cal.com URL/handle mentioned in free text (usually `customIntegrations`),
+ * e.g. "Cal.com: cal.com/acme/intro" or "booking via app.cal.com/acme". Prefer
+ * the dedicated `DiscoveryData.calComUrl` field when present — this extractor
+ * is only the fallback for answers typed before that field existed, or when
+ * the visitor pasted the link into the general integrations box.
+ *
+ * Deliberately narrow: only recognizes cal.com/app.cal.com links, matching
+ * this project's stated preference for Cal.com over Calendly in new code
+ * (docs/INTEGRATIONS-PLAN.md). Returns null when nothing matches.
+ */
+const CAL_COM_URL_RE =
+  /\b(?:https?:\/\/)?(?:www\.|app\.)?cal\.com\/[a-z0-9][a-z0-9/_-]*/i;
+
+export function extractCalComUrl(customIntegrations: string): string | null {
+  const match = customIntegrations.match(CAL_COM_URL_RE);
+  if (!match) return null;
+  // Trailing punctuation from prose ("...cal.com/acme, thanks!") is not part
+  // of the link.
+  return match[0].replace(/[.,;:)]+$/, '');
+}
+
+/**
+ * Tenant booking URL for inject/claim: dedicated field first, then a cal.com
+ * link found in the free-text integrations answer.
+ */
+export function resolveDiscoveryCalComUrl(d: DiscoveryData): string | null {
+  const dedicated = d.calComUrl?.trim();
+  if (dedicated) return dedicated;
+  return extractCalComUrl(d.customIntegrations);
 }
 
 /**

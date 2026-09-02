@@ -27,8 +27,25 @@ procs:
     # `/api/team/projects/[id]/site/deploy` works end-to-end in dev. Logs
     # are noisy because the Caddy reload command is a no-op (`echo
     # reloaded`); ignore those.
-    shell: "DEPLOY_AGENT_SHARED_SECRET=dev-secret DEPLOY_AGENT_SITES_ROOT=/tmp/fs-sites DEPLOY_AGENT_CADDY_SITES_DIR=/tmp/fs-caddy-sites DEPLOY_AGENT_CADDY_RELOAD_CMD='echo reloaded' pnpm --dir apps/deploy-agent dev"
+    #
+    # DEPLOY_AGENT_STATIC_PORT is dev-only: on a real host Caddy serves the
+    # extracted sites by hostname with TLS, but a laptop has no wildcard DNS
+    # and the reload here is a no-op, so the agent also serves them by path at
+    # http://localhost:8788/{slug}/.
+    shell: "pnpm dev:deploy-agent"
     autostart: true
+
+  "🔨 Build Worker":
+    # Local-mode build worker: no GitHub, no Hetzner, no Pi key. Drains
+    # FULL_SITE_BUILD jobs, packages the built site, and calls
+    # /api/internal/build/deploy so the ordinary deploySite path puts it on the
+    # deploy-agent above. Off by default because a build touches real
+    # workspaces; start it (highlight + `s`) when exercising deposit → site.
+    #
+    # Needs FLOWSTARTER_BUILD_WORKER_SECRET (>= 32 chars, same value in
+    # apps/flowstarter-main/.env.local) — see apps/build-worker/.env.example.
+    shell: "pnpm dev:build-worker:local"
+    autostart: false
 
   "✏️  Editor":
     # Flowstarter editor (forked T3 Code) — single-port dev. The script

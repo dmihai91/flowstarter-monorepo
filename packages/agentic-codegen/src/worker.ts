@@ -14,6 +14,7 @@ import {
   type OrchestrateOptions,
   type EditResult,
 } from './orchestrator';
+import { applyIntegrationsToWorkspace, type IntegrationsConfig } from './integrations';
 
 export type { EditResult } from './orchestrator';
 
@@ -34,6 +35,13 @@ export interface CodegenOptions {
   verifyBuild?: boolean;
   keepWorkspace?: boolean;
   onEvent?: (e: CodegenEvent) => void;
+  /**
+   * Deterministic, no-LLM post-processing (docs/INTEGRATIONS-PLAN.md):
+   * currently the Cal.com booking embed. Applied after content generation
+   * and before the build-verification step, so a broken embed would still
+   * be caught by `astro build`.
+   */
+  integrations?: IntegrationsConfig;
 }
 
 export interface CodegenResult {
@@ -51,6 +59,8 @@ export interface CodegenResult {
   contentChanged: boolean;
   /** Implementer passes that ran (waves + revision). */
   attempts: number;
+  /** Relative paths touched by deterministic integration injection (e.g. Cal.com). */
+  integrationsApplied: string[];
   failure?: { stage: 'generation' | 'invalid-output' | 'build'; log: string };
   cleanup: () => Promise<void>;
 }
@@ -192,6 +202,7 @@ export async function runCodegen(
     totalMs: 0,
     contentChanged: false,
     attempts: 0,
+    integrationsApplied: [],
     cleanup: ws.cleanup,
   };
 
@@ -215,6 +226,14 @@ export async function runCodegen(
   }
 
   await writeFile(ws.contentFile, orch.content, 'utf8');
+
+  if (options.integrations) {
+    options.onEvent?.({ phase: 'Connecting your booking calendar' });
+    const applied = await applyIntegrationsToWorkspace(ws.buildDir, options.integrations).catch(
+      () => ({ applied: false, changedPaths: [] as string[] })
+    );
+    result.integrationsApplied = applied.changedPaths;
+  }
 
   if (!verifyBuild) {
     result.ok = true;

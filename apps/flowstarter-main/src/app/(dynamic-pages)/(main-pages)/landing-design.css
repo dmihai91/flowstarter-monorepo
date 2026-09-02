@@ -1539,14 +1539,16 @@
   margin-bottom: 0 !important;
 }
 
-/* Tighten mobile sizing */
-@media (max-width: 640px) {
+/* Tighten mobile / fold-portrait sizing.
+   Side-by-side chat|preview starts at lg (1024). Fold inner portrait is
+   typically ~700–800px, so keep the stacked height rules through that band. */
+@media (max-width: 1023px) {
   .ls-editor-stage {
     padding: 1.25rem 0.25rem;
   }
   .ls-editor-surface--mobile-fixed [class*='h-[900px]'],
-  .ls-editor-surface--mobile-fixed [class*='sm:h-[760px]'],
-  .ls-editor-surface--mobile-fixed [class*='lg:h-[860px]'] {
+  .ls-editor-surface--mobile-fixed [class*='lg:h-[760px]'],
+  .ls-editor-surface--mobile-fixed [class*='xl:h-[860px]'] {
     height: 620px !important;
     min-height: 620px !important;
     max-height: 620px !important;
@@ -1557,8 +1559,8 @@
   }
 
   .ls-editor-surface--mobile-expanded [class*='h-[900px]'],
-  .ls-editor-surface--mobile-expanded [class*='sm:h-[760px]'],
-  .ls-editor-surface--mobile-expanded [class*='lg:h-[860px]'] {
+  .ls-editor-surface--mobile-expanded [class*='lg:h-[760px]'],
+  .ls-editor-surface--mobile-expanded [class*='xl:h-[860px]'] {
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
@@ -1569,10 +1571,10 @@
   }
 }
 
-@media (min-width: 641px) {
+@media (min-width: 1024px) {
   .ls-editor-surface [class*='h-[900px]'],
-  .ls-editor-surface [class*='sm:h-[760px]'],
-  .ls-editor-surface [class*='lg:h-[860px]'] {
+  .ls-editor-surface [class*='lg:h-[760px]'],
+  .ls-editor-surface [class*='xl:h-[860px]'] {
     max-height: none !important;
   }
 }

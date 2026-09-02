@@ -409,7 +409,9 @@ describe('guest deposit provisioning', () => {
 
   it('files the stashed intake conversation with the claim', async () => {
     stashPreview();
-    const { readGuestIntakeChat } = await import('@/lib/hosting/funnel-previews');
+    const { readGuestIntakeChat } = await import(
+      '@/lib/hosting/funnel-previews'
+    );
     vi.mocked(readGuestIntakeChat).mockResolvedValueOnce({
       transcript: [
         { role: 'agent', text: 'What makes people pick you?' },
@@ -435,8 +437,12 @@ describe('guest deposit provisioning', () => {
 
   it('survives a stash that does not parse', async () => {
     stashPreview();
-    const { readGuestIntakeChat } = await import('@/lib/hosting/funnel-previews');
-    vi.mocked(readGuestIntakeChat).mockResolvedValueOnce({ transcript: 'garbage' });
+    const { readGuestIntakeChat } = await import(
+      '@/lib/hosting/funnel-previews'
+    );
+    vi.mocked(readGuestIntakeChat).mockResolvedValueOnce({
+      transcript: 'garbage',
+    });
     const result = await provisionGuestDeposit(event(), guestIntent());
     expect(result?.workspaceId).toBeTruthy();
   });

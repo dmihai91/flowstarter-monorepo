@@ -1505,6 +1505,7 @@ export type Database = {
           balance_percent: number
           billing_currency: string
           billing_interval: string
+          cal_com_url: string | null
           claimed_preview_id: string | null
           client_business_name: string | null
           client_email: string | null
@@ -1574,6 +1575,7 @@ export type Database = {
           balance_percent?: number
           billing_currency?: string
           billing_interval?: string
+          cal_com_url?: string | null
           claimed_preview_id?: string | null
           client_business_name?: string | null
           client_email?: string | null
@@ -1643,6 +1645,7 @@ export type Database = {
           balance_percent?: number
           billing_currency?: string
           billing_interval?: string
+          cal_com_url?: string | null
           claimed_preview_id?: string | null
           client_business_name?: string | null
           client_email?: string | null

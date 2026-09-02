@@ -2265,8 +2265,10 @@ const en = {
     'Will you be selling anything through the site?',
   'landing.discovery.chat.q.catalogSize.prompt':
     'Roughly how many products or services?',
+  'landing.discovery.chat.q.calComUrl.prompt':
+    'If you already book clients on Cal.com, paste your booking link. Leave blank if you do not use Cal.com yet — you can add it later from your project.',
   'landing.discovery.chat.q.customIntegrations.prompt':
-    'Last one about the business: anything unusual it has to plug into? Bookings, payments, a mailing list, a member area.',
+    'Anything else it has to plug into? Payments, a mailing list, a member area — bookings are covered above.',
   'landing.discovery.chat.q.selectedTier.prompt':
     "That's everything I need. Here's the build package your answers point to. Change it if you would rather.",
   'landing.discovery.chat.q.subscription.prompt':
@@ -2291,6 +2293,7 @@ const en = {
   'landing.discovery.fields.timeline': 'Timeline',
   'landing.discovery.fields.commerceMode': 'What will the site sell?',
   'landing.discovery.fields.catalogSize': 'How many products / services?',
+  'landing.discovery.fields.calComUrl': 'Cal.com booking link',
   'landing.discovery.fields.customIntegrations':
     'Anything custom we should know about?',
 
@@ -2304,7 +2307,9 @@ const en = {
   'landing.discovery.hints.pageCount':
     'Rough estimate: we will refine on the call',
   'landing.discovery.hints.customIntegrations':
-    'Bookings, customer lists, payments, member areas, or anything unusual',
+    'Payments, mailing lists, member areas — not Cal.com (that has its own field)',
+  'landing.discovery.hints.calComUrl':
+    'Example: https://cal.com/your-name/intro',
 
   // Placeholders
   'landing.discovery.placeholders.fullName': 'Maria Ionescu',
@@ -2316,8 +2321,9 @@ const en = {
   'landing.discovery.placeholders.industryOther': 'Tell us your industry',
   'landing.discovery.placeholders.targetAudience':
     'Who your ideal customers are, in plain words',
+  'landing.discovery.placeholders.calComUrl': 'https://cal.com/your-name/intro',
   'landing.discovery.placeholders.customIntegrations':
-    'e.g. Calendly for bookings, Mailchimp for newsletters, FANBox pickup points',
+    'e.g. Stripe payment links, Mailchimp for newsletters, FANBox pickup points',
 
   // Goal options
   'landing.discovery.options.goal.leads.label': 'Get leads',

@@ -97,7 +97,6 @@ export function IntakeGraphConversation({
   const [draft, setDraft] = useState('');
   const [booted, setBooted] = useState(false);
   const composerRef = useRef<HTMLTextAreaElement>(null);
-  const bootRef = useRef(false);
 
   const history = useMemo(
     () => answeredQuestions(data, answered),
@@ -128,8 +127,9 @@ export function IntakeGraphConversation({
   );
 
   useEffect(() => {
-    if (bootRef.current) return;
-    bootRef.current = true;
+    // No bootRef: React Strict Mode runs effect → cleanup → effect on the
+    // same instance. A latch would swallow the second start after the first
+    // was cancelled, and the UI would sit on "Loading…" forever.
     let cancelled = false;
     setBusy(true);
     postGraph({
@@ -144,8 +144,9 @@ export function IntakeGraphConversation({
         applyTurn(result);
         setBooted(true);
       })
-      .catch(() => {
+      .catch((error) => {
         if (cancelled) return;
+        console.error('[intake-graph] start failed', error);
         setBooted(true);
         setErrorKey('landing.discovery.chat.errors.required');
       })

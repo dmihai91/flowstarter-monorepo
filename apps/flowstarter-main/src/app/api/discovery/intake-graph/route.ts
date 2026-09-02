@@ -144,7 +144,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const latest =
       parsed.data.resume.kind === 'text' ? parsed.data.resume.text : '';
-    if (latest) {
+    // Only moderate substantial prose — a name or chip value is not a brief,
+    // and the business-site moderator will false-positive on short strings.
+    if (latest.trim().length >= 80) {
       const verdict = await aiModerateContent({
         description: latest,
         industry: '',

@@ -225,16 +225,40 @@ function routeAfterTurn(state: GraphState): typeof END | 'turn' {
   return pending ? 'turn' : END;
 }
 
-const checkpointer = new MemorySaver();
+const checkpointer = (() => {
+  // Survive Next.js HMR / duplicate module evaluations so a start→resume
+  // pair in the same process still shares the checkpoint.
+  const g = globalThis as unknown as {
+    __flowstarterIntakeGraphCheckpointer?: InstanceType<typeof MemorySaver>;
+  };
+  if (!g.__flowstarterIntakeGraphCheckpointer) {
+    g.__flowstarterIntakeGraphCheckpointer = new MemorySaver();
+  }
+  return g.__flowstarterIntakeGraphCheckpointer;
+})();
 
-const compiled = new StateGraph(IntakeState)
-  .addNode('turn', turnNode)
-  .addEdge(START, 'turn')
-  .addConditionalEdges('turn', routeAfterTurn, {
-    turn: 'turn',
-    [END]: END,
-  })
-  .compile({ checkpointer });
+function buildCompiledGraph() {
+  return new StateGraph(IntakeState)
+    .addNode('turn', turnNode)
+    .addEdge(START, 'turn')
+    .addConditionalEdges('turn', routeAfterTurn, {
+      turn: 'turn',
+      [END]: END,
+    })
+    .compile({ checkpointer });
+}
+
+type CompiledIntakeGraph = ReturnType<typeof buildCompiledGraph>;
+
+const compiled = (() => {
+  const g = globalThis as unknown as {
+    __flowstarterIntakeGraph?: CompiledIntakeGraph;
+  };
+  if (!g.__flowstarterIntakeGraph) {
+    g.__flowstarterIntakeGraph = buildCompiledGraph();
+  }
+  return g.__flowstarterIntakeGraph;
+})();
 
 function toResult(
   threadId: string,

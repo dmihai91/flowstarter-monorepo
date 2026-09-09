@@ -88,3 +88,47 @@ test.describe("Client surfaces (unauthenticated)", () => {
     });
   }
 });
+
+// The console filter itself, checked in place. There is no root vitest
+// project to hang a unit test off, so it runs here: it is a pure function and
+// needs no page, and this is the spec that depends on it.
+test.describe("Netlify drawer console filter", () => {
+  // The real message, copied from a run against
+  // deploy-preview-37--flowstarter-landing.netlify.app.
+  const REAL_DRAWER_MESSAGE =
+    "Framing 'https://app.netlify.com/' violates the following Content " +
+    'Security Policy directive: "frame-src \'self\' ' +
+    "https://accounts.google.com https://*.clerk.accounts.dev " +
+    "https://challenges.cloudflare.com https://calendly.com https://cal.com " +
+    "https://*.cal.com https://ux-journey.com " +
+    "https://lebadusularticoledepescuit.ro https://www.openstreetmap.org " +
+    'https://*.daytonaproxy01.net". The request has been blocked.';
+
+  test("ignores the drawer's own violation", () => {
+    expect(isNetlifyPreviewDrawerNoise(REAL_DRAWER_MESSAGE)).toBe(true);
+  });
+
+  test("does not ignore a host that merely contains the drawer's name", () => {
+    const spoofed = REAL_DRAWER_MESSAGE.replace(
+      "https://app.netlify.com/",
+      "https://evil.example/app.netlify.com/",
+    );
+    expect(isNetlifyPreviewDrawerNoise(spoofed)).toBe(false);
+  });
+
+  test("does not ignore a CSP violation from another host", () => {
+    const other = REAL_DRAWER_MESSAGE.replace(
+      "https://app.netlify.com/",
+      "https://tracker.example/",
+    );
+    expect(isNetlifyPreviewDrawerNoise(other)).toBe(false);
+  });
+
+  test("does not ignore a non-CSP error that names the drawer", () => {
+    expect(
+      isNetlifyPreviewDrawerNoise(
+        "TypeError: failed to load https://app.netlify.com/widget.js",
+      ),
+    ).toBe(false);
+  });
+});

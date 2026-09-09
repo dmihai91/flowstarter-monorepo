@@ -152,9 +152,22 @@ export function assertSafeUploadedImage(bytes: Buffer): VerifiedUpload {
 /** Client media lives apart from template artwork so handover stays legible. */
 const CLIENT_MEDIA_DIR = 'public/flowstarter-media';
 
+/**
+ * Leading and trailing `-` counted off rather than stripped with
+ * `/^-+|-+$/`: the trailing half of that pattern backtracks from every offset
+ * on a name that is all dashes.
+ */
+function trimDashes(value: string): string {
+  let start = 0;
+  let end = value.length;
+  while (start < end && value[start] === '-') start += 1;
+  while (end > start && value[end - 1] === '-') end -= 1;
+  return value.slice(start, end);
+}
+
 function safeMediaName(slot: SiteImageSlot, extension: string): string {
   const base = basename(slot.currentPath).replace(/\.[a-z0-9]+$/i, '');
-  const stem = base.replace(/[^a-z0-9-]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase();
+  const stem = trimDashes(base.replace(/[^a-z0-9-]+/gi, '-')).toLowerCase();
   return `${stem || 'image'}-${slot.line}.${extension}`;
 }
 

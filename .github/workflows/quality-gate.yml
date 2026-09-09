@@ -26,6 +26,12 @@ concurrency:
 env:
   NODE_VERSION: '22'
 
+# Every job here only reads the repository: checkout, install, run.
+# Nothing writes a comment, a status or a commit, so the token gets
+# read-only contents and nothing else.
+permissions:
+  contents: read
+
 jobs:
   # ── 1. Lint ────────────────────────────────────────────────────────────────
   lint:
@@ -153,8 +159,19 @@ jobs:
           supabase start \
             --exclude gotrue,realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
 
+      # `supabase status` reports nothing on this runner: the stack is started
+      # with most services excluded, and the CLI answers both `-o json` and
+      # `-o env` with a "Stopped services" line and no keys. So the script is
+      # handed the JWT secret and signs its own anon and service_role tokens,
+      # which is all PostgREST verifies. The default below is the Supabase
+      # CLI's published local-development secret, the same string every
+      # `supabase start` on every machine uses. It is a fixture, not a
+      # credential, and it only ever reaches a throwaway stack on 127.0.0.1.
       - name: Verify RLS — tenant B cannot read tenant A's rows
         run: node apps/flowstarter-main/scripts/verify-rls-local.mjs
+        env:
+          SUPABASE_URL: http://127.0.0.1:54321
+          SUPABASE_JWT_SECRET: ${{ secrets.SUPABASE_LOCAL_JWT_SECRET || 'super-secret-jwt-token-with-at-least-32-characters-long' }}
 
       - name: Stop local Supabase stack
         if: always()

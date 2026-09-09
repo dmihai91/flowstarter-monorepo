@@ -354,7 +354,7 @@ function manualDnsRecord(
     note:
       `At your domain registrar (GoDaddy, Namecheap, or wherever ${domain} is ` +
       `registered), add an A record for "${domain}" pointing to ${serverIpv4}. ` +
-      'No CNAME, no proxy — a plain A record. It can take up to a few hours to ' +
+      'No CNAME and no proxy, just a plain A record. It can take up to a few hours to ' +
       'propagate after you save it.',
   };
 }

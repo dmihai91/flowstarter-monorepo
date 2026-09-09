@@ -19,10 +19,41 @@ export interface Frontmatter {
 
 /** Split a markdown-frontmatter file into its `---` envelope + trailing body. */
 export function splitFrontmatter(raw: string): Frontmatter {
-  // Tolerate a leading BOM (﻿) before the opening fence.
-  const m = raw.match(/^﻿?---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
-  if (!m) return { hasFm: false, yaml: raw, body: '' };
-  return { hasFm: true, yaml: m[1] ?? '', body: m[2] ?? '' };
+  // Scanned rather than matched. The pattern this replaces
+  // (`/^\ufeff?---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/`) put `\s*` next to
+  // the `\n` beside it, and the two overlap, so a file carrying a long run of
+  // whitespace cost time quadratic in its length. The rules below are that
+  // pattern's, unchanged.
+  const noFrontmatter: Frontmatter = { hasFm: false, yaml: raw, body: '' };
+  // Tolerate a leading BOM (\ufeff) before the opening fence.
+  const text = raw.charCodeAt(0) === 0xfeff ? raw.slice(1) : raw;
+  if (!text.startsWith('---')) return noFrontmatter;
+
+  // Opening fence: blanks after `---` that have to contain a newline. The
+  // YAML may start after any of them; the pattern preferred the last and fell
+  // back towards the first when no closing fence followed, so does this.
+  const yamlStarts: number[] = [];
+  let cursor = 3;
+  while (cursor < text.length && /\s/.test(text[cursor]!)) {
+    if (text[cursor] === '\n') yamlStarts.push(cursor + 1);
+    cursor += 1;
+  }
+
+  for (let index = yamlStarts.length - 1; index >= 0; index -= 1) {
+    const start = yamlStarts[index]!;
+    const close = text.indexOf('\n---', start);
+    if (close === -1) continue;
+    // Blanks after the closing fence belong to neither side.
+    let bodyStart = close + 4;
+    while (bodyStart < text.length && /\s/.test(text[bodyStart]!))
+      bodyStart += 1;
+    return {
+      hasFm: true,
+      yaml: text.slice(start, close),
+      body: text.slice(bodyStart),
+    };
+  }
+  return noFrontmatter;
 }
 
 /** Re-wrap rewritten YAML in the original envelope (model tends to drop `---`). */

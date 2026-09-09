@@ -126,6 +126,40 @@ describe('artifact parsing', () => {
     ]);
   });
 
+  it('keeps a real Cal.com link and adds the integration the build needs', () => {
+    const job = buildJobFromRows({
+      job: ledgerRow(),
+      projectState: ProjectState.DEPOSIT_PAID,
+      artifacts: artifacts(),
+      calComUrl: '  https://cal.com/calm-path/intro  ',
+    });
+
+    expect(job.calComUrl).toBe('https://cal.com/calm-path/intro');
+    expect(job.requiredIntegrations).toEqual(['cal.com']);
+  });
+
+  it('drops a booking link on a host that only looks like Cal.com', () => {
+    // The workspace row is client-supplied and its value is written into the
+    // built site. A substring or prefix test on "cal.com" would accept every
+    // one of these, so the host itself is what gets checked.
+    for (const lookalike of [
+      'https://cal.com.attacker.example/book',
+      'https://notcal.com/book',
+      'https://cal.com@attacker.example/book',
+      'https://evil.example/cal.com/book',
+    ]) {
+      const job = buildJobFromRows({
+        job: ledgerRow(),
+        projectState: ProjectState.DEPOSIT_PAID,
+        artifacts: artifacts(),
+        calComUrl: lookalike,
+      });
+
+      expect(job.calComUrl).toBeUndefined();
+      expect(job.requiredIntegrations).toEqual([]);
+    }
+  });
+
   it('refuses an intake whose projectId does not match the paid workspace', () => {
     expect(() =>
       buildJobFromRows({

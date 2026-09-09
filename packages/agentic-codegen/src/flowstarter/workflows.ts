@@ -537,12 +537,17 @@ const IMAGE_TEXT_KEY = /(^|[_-])(alt|imagealt|imagedescription)$/i;
  * selector all change the skeleton.
  */
 export function cssSkeleton(css: string): string {
-  return css
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/([\w-]+)\s*:\s*[^;{}]*;/g, '$1:_;')
-    .replace(/\s+/g, ' ')
-    .replace(/\s*([{};,>+~])\s*/g, '$1')
-    .trim();
+  return (
+    css
+      // The comment pattern is unrolled rather than `\/\*[\s\S]*?\*\/`: the
+      // lazy form retries from every `/*` when a comment is left unclosed,
+      // which is quadratic on a stylesheet the model truncated mid-write.
+      .replace(/\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g, '')
+      .replace(/([\w-]+)\s*:\s*[^;{}]*;/g, '$1:_;')
+      .replace(/\s+/g, ' ')
+      .replace(/\s*([{};,>+~])\s*/g, '$1')
+      .trim()
+  );
 }
 
 /**
@@ -579,7 +584,10 @@ export function firstSkeletonDifference(
  */
 export function cssSyntaxIssue(css: string): string | undefined {
   const cleaned = css
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    // The comment pattern is unrolled rather than `\/\*[\s\S]*?\*\/`: the
+    // lazy form retries from every `/*` when a comment is left unclosed,
+    // which is quadratic on a stylesheet the model truncated mid-write.
+    .replace(/\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g, ' ')
     .replace(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g, '""')
     .replace(/url\([^)]*\)/gi, 'url()');
   const opens: number[] = [];
@@ -1097,7 +1105,21 @@ const REPLY_EXCERPT_MAX = 1_500;
  * last stretch of text, cut at a sentence boundary.
  */
 export function replyExcerpt(summary: string): string {
-  const text = summary.replace(/\s+\n/g, '\n').trim();
+  // Trailing blanks off each line and blank lines dropped, by hand. The
+  // `/\s+\n/g` this replaces let `\s+` overlap the `\n` after it, so a
+  // transcript with a long whitespace run cost time quadratic in its length,
+  // and a transcript is exactly what this is handed.
+  const lines = summary.split('\n');
+  const text = lines
+    .filter(
+      (line, index) =>
+        index === 0 || index === lines.length - 1 || line.trim() !== '',
+    )
+    .map((line, index, kept) =>
+      index === kept.length - 1 ? line : line.trimEnd(),
+    )
+    .join('\n')
+    .trim();
   if (!text) return 'Pass finished without a summary.';
   const heading = text.search(
     /(?:^|\n)\s*(?:#+\s*)?summary\b[^\n]*(?![\s\S]*(?:^|\n)\s*(?:#+\s*)?summary\b)/i,

@@ -1,0 +1,55 @@
+/**
+ * The local stack's environment, read from the app's own env files.
+ *
+ * The support scripts used to paste the local service-role JWT in as a
+ * literal. It is only the demo key every `supabase start` ships, but a JWT
+ * committed to the tree is a JWT every secret scanner has to argue with, and
+ * a pasted copy goes stale the moment anyone rotates their local stack. So
+ * the value is read from the same gitignored files the app boots with, and
+ * the repository carries no copy of it at all.
+ */
+import { existsSync, readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+
+/** The monorepo root, so a script works from any working directory. */
+export const repoRoot = resolve(import.meta.dirname, '..', '..');
+
+const ENV_FILES = ['apps/flowstarter-main/.env', 'apps/flowstarter-main/.env.local'];
+
+/** The app's env files merged, `.env.local` winning. Missing files are skipped. */
+export function loadEnv() {
+  const values = {};
+  for (const file of ENV_FILES) {
+    const path = join(repoRoot, file);
+    if (!existsSync(path)) continue;
+    for (const line of readFileSync(path, 'utf8').split('\n')) {
+      if (!/^[A-Z]/.test(line)) continue;
+      const separator = line.indexOf('=');
+      if (separator === -1) continue;
+      values[line.slice(0, separator)] = line
+        .slice(separator + 1)
+        .trim()
+        .replace(/^["']|["']$/g, '');
+    }
+  }
+  return values;
+}
+
+/**
+ * The local service-role key: the environment first, then the app's env
+ * files. Exits with a usable message rather than sending an empty `apikey`
+ * header and letting PostgREST answer 401 for a reason nobody can read.
+ */
+export function requireServiceRoleKey(env = loadEnv()) {
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (!key) {
+    console.error(
+      'No SUPABASE_SERVICE_ROLE_KEY. Set it in the environment, or in ' +
+        'apps/flowstarter-main/.env.local (run `supabase start` and copy the ' +
+        'service_role key it prints).'
+    );
+    process.exit(2);
+  }
+  return key;
+}

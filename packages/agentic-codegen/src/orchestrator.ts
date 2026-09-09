@@ -123,7 +123,10 @@ export interface OrchestrateOptions {
 export function parseJsonLoose<T>(text: string): T | null {
   if (!text) return null;
   let t = text.trim();
-  const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  // No `\s*` before the capture: it overlaps `[\s\S]*?` and made the match
+  // quadratic in the length of the model's reply. The capture is trimmed
+  // below, which is what that `\s*` was buying.
+  const fence = t.match(/```(?:json)?([\s\S]*?)```/i);
   if (fence) t = fence[1]!.trim();
   const start = t.indexOf('{');
   const end = t.lastIndexOf('}');

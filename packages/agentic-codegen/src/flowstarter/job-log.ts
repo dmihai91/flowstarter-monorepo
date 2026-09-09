@@ -95,7 +95,10 @@ export class JobLogSink implements JobLogWriter {
     // One batch carries one source, because the event payload names one
     // source. A source change is therefore a batch boundary.
     for (const raw of String(line.text ?? '').split('\n')) {
-      const text = raw.replace(/\s+$/, '');
+      // `trimEnd()`, not `/\s+$/`: the regex backtracks from every offset on
+      // a log line that is all whitespace, and these lines come off an agent's
+      // stdout. The two strip exactly the same characters.
+      const text = raw.trimEnd();
       if (text.trim().length === 0) continue;
       const clipped =
         text.length > LINE_MAX_CHARS

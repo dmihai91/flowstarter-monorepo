@@ -48,6 +48,10 @@ const TENANT_TABLES = new Set([
   'intake_submissions',
   'brand_signals',
   'asset_rights_confirmations',
+  // The worker has no query on these two yet. They are listed so the guard is
+  // already standing when it grows one, rather than after.
+  'flowstarter_change_requests',
+  'site_versions',
 ]);
 
 interface AllowListEntry {

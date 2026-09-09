@@ -23,12 +23,25 @@
 /** A template's file tree: relative path (posix, no leading slash) → content. */
 export type FileMap = Record<string, string>;
 
-const MANAGED_BLOCK_RE =
-  /<div\b[^>]*\bdata-flowstarter-cal-embed="true"[^>]*>[\s\S]*?<\/div>/;
-const PREVIEW_DEMO_BLOCK_RE =
-  /<div\b[^>]*\bdata-flowstarter-cal-preview="true"[^>]*>[\s\S]*?<\/div>/;
-const PLACEHOLDER_CALENDAR_RE =
-  /<div class="book-page__calendar">[\s\S]*?<\/div>/;
+/**
+ * "Everything up to the first `</div>`", written as an unrolled loop rather
+ * than `[\s\S]*?<\/div>`. The lazy form has to retry from every offset when
+ * the closing tag is missing, which is quadratic in the size of the page, and
+ * these run over model-written and already-built HTML.
+ */
+const UNTIL_DIV_CLOSE = String.raw`[^<]*(?:<(?!\/div>)[^<]*)*<\/div>`;
+
+const MANAGED_BLOCK_RE = new RegExp(
+  String.raw`<div\b[^>]*\bdata-flowstarter-cal-embed="true"[^>]*>` +
+    UNTIL_DIV_CLOSE,
+);
+const PREVIEW_DEMO_BLOCK_RE = new RegExp(
+  String.raw`<div\b[^>]*\bdata-flowstarter-cal-preview="true"[^>]*>` +
+    UNTIL_DIV_CLOSE,
+);
+const PLACEHOLDER_CALENDAR_RE = new RegExp(
+  String.raw`<div class="book-page__calendar">` + UNTIL_DIV_CLOSE,
+);
 const LAST_MAIN_CLOSE_RE = /<\/main>(?![\s\S]*<\/main>)/;
 
 /**
@@ -89,7 +102,12 @@ export function normalizeCalLink(calUrl: string | null | undefined): string | nu
 
   rest = rest.replace(/^\/+/, '');
   rest = rest.split(/[?#]/)[0] ?? '';
-  rest = rest.replace(/\/+$/, '');
+  // Trailing slashes are counted off by hand: `/\/+$/` has to backtrack from
+  // every offset on a value that is nothing but slashes, and this one arrives
+  // straight from a client's form field.
+  let end = rest.length;
+  while (end > 0 && rest[end - 1] === '/') end -= 1;
+  rest = rest.slice(0, end);
 
   return rest || null;
 }

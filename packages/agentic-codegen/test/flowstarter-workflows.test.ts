@@ -1741,6 +1741,16 @@ describe('the integrity gate on the files the agent edits', () => {
     '}',
     'body { color: var(--brand); }',
   ].join('\n');
+
+  /**
+   * The same stylesheet with one extra declaration inside `:root`.
+   *
+   * Split/join rather than `CSS.replace('}', …)`: a string pattern rewrites
+   * only the first match, which reads as a bug even where the fixture makes
+   * it unambiguous. `\n}\n` is the `:root` close and nothing else.
+   */
+  const withRootDeclaration = (declaration: string) =>
+    CSS.split('\n}\n').join(`\n  ${declaration}\n}\n`);
   const styleScaffold = [
     { path: 'src/styles/global.css', content: CSS, type: 'file' as const },
     {
@@ -1762,7 +1772,7 @@ describe('the integrity gate on the files the agent edits', () => {
       cssSkeleton(CSS),
     );
     // So is a new declaration, or a lost brace.
-    expect(cssSkeleton(CSS.replace('}', '  --extra: 1;\n}'))).not.toBe(
+    expect(cssSkeleton(withRootDeclaration('--extra: 1;'))).not.toBe(
       cssSkeleton(CSS),
     );
     expect(cssSkeleton(CSS.replace('body {', 'body '))).not.toBe(
@@ -1813,9 +1823,7 @@ describe('the integrity gate on the files the agent edits', () => {
       '../src/flowstarter/workflows'
     );
     // A new token the prompt forbids, but Astro builds it: no restore.
-    const drifted = await workspaceWith(
-      CSS.replace('}', '  --signal: #f00;\n}'),
-    );
+    const drifted = await workspaceWith(withRootDeclaration('--signal: #f00;'));
     expect(
       await findWorkspaceIntegrityIssue(drifted, styleScaffold),
     ).toBeUndefined();

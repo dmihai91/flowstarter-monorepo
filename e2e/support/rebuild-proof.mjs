@@ -6,6 +6,7 @@
 //   node e2e/support/rebuild-proof.mjs
 import { readFileSync, writeFileSync } from 'node:fs';
 import { chromium } from '@playwright/test';
+import { loadEnv, requireServiceRoleKey } from './local-env.mjs';
 
 const APP = process.env.APP_ORIGIN ?? 'http://localhost:3005';
 const WS = process.env.WORKSPACE_ID ?? '1b2666b2-7c87-4573-a685-3a076de65ada';
@@ -13,13 +14,8 @@ const OUT = process.env.OUT ?? '/tmp/fs-rebuild-admin.png';
 const INSTRUCTION = 'Make this warmer and mention we welcome new patients.';
 const client = JSON.parse(readFileSync('/tmp/fs-client.json', 'utf8'));
 const operator = JSON.parse(readFileSync('/tmp/fs-operator.json', 'utf8'));
-const env = Object.fromEntries(
-  ['apps/flowstarter-main/.env', 'apps/flowstarter-main/.env.local'].flatMap((file) =>
-    readFileSync(file, 'utf8').split('\n').filter((l) => /^[A-Z]/.test(l))
-      .map((l) => [l.split('=')[0], l.split('=').slice(1).join('=').trim().replace(/^"|"$/g, '')])
-  )
-);
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
+const env = loadEnv();
+const SUPABASE_KEY = requireServiceRoleKey(env);
 const db = async (path) => (await fetch(`http://127.0.0.1:54321/rest/v1/${path}`, { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } })).json();
 const log = (...a) => console.log(...a);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

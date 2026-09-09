@@ -32,8 +32,32 @@ export function parseBrandConfig(raw: string, knownSourceIds: ReadonlySet<string
  * so malformed output cannot slip through.
  */
 export function stripJsonFence(raw: string): string {
-  const match = /^\s*```(?:json)?\s*\n([\s\S]*?)\n\s*```\s*$/.exec(raw);
-  return match?.[1] ?? raw;
+  // Read rather than matched. The regex this replaces chained `\s*` against
+  // `\n` and `[\s\S]*?`, which overlap, so a long model reply that is not a
+  // clean fence cost time quadratic in its length before failing. The
+  // acceptance rules below are the ones that regex encoded, unchanged.
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith('```') || !trimmed.endsWith('```')) return raw;
+
+  // Opening fence: ``` then an optional `json` tag, then blanks that have to
+  // contain at least one newline. The body may begin after any of those
+  // newlines; the regex preferred the last and fell back towards the first,
+  // so these are collected in that order.
+  const bodyStarts: number[] = [];
+  let cursor = trimmed.startsWith('json', 3) ? 7 : 3;
+  while (cursor < trimmed.length && /\s/.test(trimmed[cursor]!)) {
+    if (trimmed[cursor] === '\n') bodyStarts.push(cursor + 1);
+    cursor += 1;
+  }
+
+  // Closing fence: the body ends at the first newline of the blank run that
+  // runs into the backticks, which is the shortest body the regex would take.
+  for (let index = bodyStarts.length - 1; index >= 0; index -= 1) {
+    const inner = trimmed.slice(bodyStarts[index]!, trimmed.length - 3);
+    const closerStart = inner.indexOf('\n', inner.trimEnd().length);
+    if (closerStart !== -1) return inner.slice(0, closerStart);
+  }
+  return raw;
 }
 
 export function validateBrandConfig(

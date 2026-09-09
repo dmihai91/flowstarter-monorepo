@@ -170,7 +170,12 @@ const TEASER_CSS = `
   letter-spacing: 0.02em; box-shadow: 0 10px 30px -12px rgba(0,0,0,0.5);
   pointer-events: none; text-align: center; max-width: 82%;
 }
-.fs-teaser-locked > .fs-teaser-veil .fs-teaser-chip::before { content: '🔒'; }
+/* A dot drawn in CSS, not a lock emoji: the glyph rendered as a different
+   picture on every platform and as a blank box on some Linux hosts. */
+.fs-teaser-locked > .fs-teaser-veil .fs-teaser-chip::before {
+  content: ''; flex: none; width: 6px; height: 6px;
+  border-radius: 50%; background: currentColor; opacity: 0.72;
+}
 
 /* Link state: the whole veil is clickable, with a real button as the affordance. */
 a.fs-teaser-veil { cursor: pointer; }

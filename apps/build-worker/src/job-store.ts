@@ -10,6 +10,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import {
   ProjectState,
+  normalizeCalLink,
   type BrandConfig,
   type BusinessIntakePayload,
   type FullSiteBuildEvent,
@@ -131,6 +132,28 @@ export function parseRequiredIntegrations(
   return [];
 }
 
+/** The integration slug a booking link asks the build for. */
+const CAL_COM = 'cal.com';
+
+/**
+ * The workspace's booking link, or null when it is not a Cal.com one.
+ *
+ * The row is operator- and client-supplied and ends up in the built site's
+ * `booking.url`, so the host is checked rather than the string: a substring
+ * test would wave through `https://cal.com.attacker.example/book`, and so
+ * would a `startsWith`. `normalizeCalLink` is the same gate the injector
+ * uses: it parses the host off the value and demands an exact `cal.com`,
+ * `www.cal.com` or `app.cal.com`, so a link the worker keeps is a link the
+ * embed will accept. The original string is kept, not the normalized handle,
+ * because that is what the site data has always carried.
+ */
+function parseCalComUrl(raw: string | null | undefined): string | null {
+  if (typeof raw !== 'string') return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  return normalizeCalLink(trimmed) ? trimmed : null;
+}
+
 export function buildJobFromRows(input: {
   job: JobLedgerRow;
   projectState: string;
@@ -156,12 +179,9 @@ export function buildJobFromRows(input: {
     input.job.payload,
     input.artifacts.preview_manifest,
   );
-  const calComUrl =
-    typeof input.calComUrl === 'string' && input.calComUrl.trim()
-      ? input.calComUrl.trim()
-      : null;
-  if (calComUrl && !requiredIntegrations.includes('cal.com')) {
-    requiredIntegrations.push('cal.com');
+  const calComUrl = parseCalComUrl(input.calComUrl);
+  if (calComUrl && !requiredIntegrations.some((slug) => slug === CAL_COM)) {
+    requiredIntegrations.push(CAL_COM);
   }
 
   return {

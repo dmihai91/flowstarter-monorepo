@@ -22,7 +22,7 @@ function loadKey() {
 loadKey();
 const key = process.env.OPENROUTER_API_KEY;
 if (!key) { console.error('✗ no OPENROUTER_API_KEY found in env files'); process.exit(2); }
-console.log(`✓ key found (…${key.slice(-4)})`);
+console.log(`✓ key found (${key.length} chars)`);
 
 async function ping(model) {
   const t0 = Date.now();

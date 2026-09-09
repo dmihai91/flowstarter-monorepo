@@ -7,7 +7,8 @@
  *     node e2e/support/record-e2e-proof-part2.mjs
  */
 import { chromium } from '@playwright/test';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
+import { loadEnv, requireServiceRoleKey } from './local-env.mjs';
 
 const BASE = process.env.APP_ORIGIN ?? 'http://localhost:3005';
 const WORKSPACE_ID = process.env.WORKSPACE_ID;
@@ -16,17 +17,9 @@ if (!WORKSPACE_ID || !CLIENT_EMAIL) throw new Error('WORKSPACE_ID and CLIENT_EMA
 const VIDEO_DIR = '/tmp/fs-e2e-video-2';
 const MARKS_FILE = '/tmp/fs-e2e-marks-2.json';
 const SUPABASE = 'http://127.0.0.1:54321';
-const SUPABASE_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
+const SUPABASE_KEY = requireServiceRoleKey();
 // The Clerk keys live in the base .env; .env.local holds the rest.
-const env = Object.fromEntries(
-  ['apps/flowstarter-main/.env', 'apps/flowstarter-main/.env.local'].flatMap((file) =>
-    readFileSync(file, 'utf8')
-      .split('\n')
-      .filter((line) => /^[A-Z]/.test(line))
-      .map((line) => [line.split('=')[0], line.split('=').slice(1).join('=').trim().replace(/^"|"$/g, '')])
-  )
-);
+const env = loadEnv();
 const CLERK_SECRET_KEY = env.CLERK_SECRET_KEY;
 
 const browser = await chromium.launch({ args: ['--disable-features=site-per-process'] });

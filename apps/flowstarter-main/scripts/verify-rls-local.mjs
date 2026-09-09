@@ -19,26 +19,73 @@
  * hosted project: it writes.
  */
 import { createHmac, randomUUID } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 
 // ─── Local stack configuration ─────────────────────────────────────────────
 
+/**
+ * A short, single-line preview of CLI output that can never carry a key.
+ * Anything shaped like a JWT or a Supabase token is blanked first, then the
+ * whitespace is folded so the warning stays one line.
+ */
+function preview(text) {
+  return (text ?? '')
+    .replace(/eyJ[A-Za-z0-9_.\-]{8,}/g, '[redacted]')
+    .replace(/sb[a-z]*_[A-Za-z0-9_\-]{8,}/g, '[redacted]')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 200);
+}
+
+/**
+ * The local stack's keys as `supabase status -o json` reports them.
+ *
+ * A failure here is not fatal, because the environment is consulted first
+ * and can supply the same four values, but it must not be silent. CI spent a build
+ * failing as "Missing local keys" because this swallowed a non-zero exit and
+ * returned an empty object, so every miss now says why, with the exit code
+ * and a redacted slice of what the CLI actually printed.
+ */
 function fromSupabaseStatus() {
+  // CI starts the stack with most services excluded, and the CLI then prints
+  // "Stopped services: [...]" instead of a payload. `SUPABASE_STATUS=off`
+  // skips the call outright so the keys come from the environment.
+  if (process.env.SUPABASE_STATUS === 'off') return {};
+  const run = spawnSync('supabase', ['status', '-o', 'json'], { encoding: 'utf8' });
+  const stdout = run.stdout ?? '';
+  const stderr = run.stderr ?? '';
+  const warn = (reason) =>
+    console.warn(
+      `[verify-rls] ${reason} (exit ${run.status ?? 'n/a'}); falling back to the environment. ` +
+        `stderr: ${preview(stderr) || '(empty)'} | stdout: ${preview(stdout) || '(empty)'}`
+    );
+
+  if (run.error) {
+    warn(`could not run \`supabase status\`: ${run.error.message}`);
+    return {};
+  }
+  if (run.status !== 0) {
+    warn('`supabase status -o json` exited non-zero');
+    return {};
+  }
+  // Some CLI versions print a human preamble before the payload, so the JSON
+  // is taken from the first `{` to the last `}` rather than the whole stream.
+  const start = stdout.indexOf('{');
+  const end = stdout.lastIndexOf('}');
+  if (start === -1 || end < start) {
+    warn('`supabase status -o json` printed no JSON object');
+    return {};
+  }
   try {
-    const raw = execFileSync('supabase', ['status', '-o', 'json'], {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    });
-    return JSON.parse(raw);
+    return JSON.parse(stdout.slice(start, end + 1));
   } catch {
+    warn('`supabase status -o json` output did not parse as JSON');
     return {};
   }
 }
 
 const status = fromSupabaseStatus();
 const API_URL = process.env.SUPABASE_URL ?? status.API_URL ?? 'http://127.0.0.1:54321';
-const ANON_KEY = process.env.SUPABASE_ANON_KEY ?? status.ANON_KEY;
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? status.SERVICE_ROLE_KEY;
 const JWT_SECRET = process.env.SUPABASE_JWT_SECRET ?? status.JWT_SECRET;
 
 const host = new URL(API_URL).hostname;
@@ -46,10 +93,11 @@ if (host !== '127.0.0.1' && host !== 'localhost' && host !== '::1') {
   console.error(`Refusing to run against non-local host: ${host}`);
   process.exit(2);
 }
-if (!ANON_KEY || !SERVICE_KEY || !JWT_SECRET) {
+if (!JWT_SECRET) {
   console.error(
-    'Missing local keys. Start the stack with `supabase start`, or set ' +
-      'SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY / SUPABASE_JWT_SECRET.'
+    'Missing the local JWT secret. Start the stack with `supabase start`, or set ' +
+      'SUPABASE_JWT_SECRET (and, if you have them, SUPABASE_ANON_KEY / ' +
+      'SUPABASE_SERVICE_ROLE_KEY).'
   );
   process.exit(2);
 }
@@ -59,18 +107,9 @@ if (!ANON_KEY || !SERVICE_KEY || !JWT_SECRET) {
 const b64url = (input) =>
   Buffer.from(input).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
-function mintClerkStyleJwt(clerkUserId) {
+function signJwt(claims) {
   const header = b64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const now = Math.floor(Date.now() / 1000);
-  const payload = b64url(
-    JSON.stringify({
-      sub: clerkUserId, // Clerk user id — what current_clerk_user_id() reads
-      role: 'authenticated', // selects the database role in PostgREST
-      aud: 'authenticated',
-      iat: now,
-      exp: now + 600,
-    })
-  );
+  const payload = b64url(JSON.stringify(claims));
   const signature = createHmac('sha256', JWT_SECRET)
     .update(`${header}.${payload}`)
     .digest('base64')
@@ -79,6 +118,36 @@ function mintClerkStyleJwt(clerkUserId) {
     .replace(/=+$/, '');
   return `${header}.${payload}.${signature}`;
 }
+
+function mintClerkStyleJwt(clerkUserId) {
+  const now = Math.floor(Date.now() / 1000);
+  return signJwt({
+    sub: clerkUserId, // Clerk user id, what current_clerk_user_id() reads
+    role: 'authenticated', // selects the database role in PostgREST
+    aud: 'authenticated',
+    iat: now,
+    exp: now + 600,
+  });
+}
+
+/**
+ * An `anon` or `service_role` key for the local stack, signed here.
+ *
+ * The stack's own keys are used when they can be read, but CI starts the
+ * stack with most services excluded and `supabase status` then reports no
+ * keys at all, in either output format. Those keys are nothing more than
+ * HS256 tokens carrying a role claim over the local JWT secret, which is the
+ * only thing PostgREST checks, so a runner holding the secret can sign its
+ * own rather than depend on the CLI printing them.
+ */
+function mintRoleKey(role) {
+  const now = Math.floor(Date.now() / 1000);
+  return signJwt({ iss: 'supabase-demo', role, iat: now, exp: now + 3600 });
+}
+
+const ANON_KEY = process.env.SUPABASE_ANON_KEY ?? status.ANON_KEY ?? mintRoleKey('anon');
+const SERVICE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ?? status.SERVICE_ROLE_KEY ?? mintRoleKey('service_role');
 
 // ─── REST helpers ──────────────────────────────────────────────────────────
 

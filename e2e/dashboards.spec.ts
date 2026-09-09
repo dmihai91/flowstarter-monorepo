@@ -11,6 +11,7 @@
  */
 
 import { test, expect, type Page } from "@playwright/test";
+import { isNetlifyPreviewDrawerNoise } from "./support/console-noise";
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
@@ -40,11 +41,16 @@ async function assertNoRuntimeCrash(page: Page, path: string) {
       // Filter out the noisy 401-from-Clerk warnings; we expect those when
       // unauthenticated. Real React error boundaries surface different
       // messages.
+      //
+      // Also drop Netlify's Deploy Preview collaboration drawer being blocked
+      // by our own CSP: preview-only tooling the host injects, and the block
+      // is the CSP doing its job. See ./support/console-noise.ts.
       if (
         !text.includes("Failed to load resource") &&
         !text.includes("status of 401") &&
         !text.includes("status of 403") &&
-        !text.includes("net::ERR")
+        !text.includes("net::ERR") &&
+        !isNetlifyPreviewDrawerNoise(text)
       ) {
         consoleErrors.push(`console.error: ${text}`);
       }

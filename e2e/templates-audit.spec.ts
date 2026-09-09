@@ -21,6 +21,7 @@
 import { test, expect, Page } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
+import { isNetlifyPreviewDrawerNoise } from './support/console-noise';
 
 type TemplateAuditEntry = {
   slug: string;
@@ -84,7 +85,11 @@ async function captureRoute(page: Page, route: string) {
   page.removeAllListeners('response');
 
   page.on('console', (msg) => {
-    if (msg.type() === 'error') {
+    // Netlify's Deploy Preview collaboration drawer is blocked by our CSP on
+    // every preview. It is the host's tooling, not our page, and the block is
+    // desired; keeping it out of the audit report keeps the report readable.
+    // See ./support/console-noise.ts.
+    if (msg.type() === 'error' && !isNetlifyPreviewDrawerNoise(msg.text())) {
       issues.push({
         route,
         theme: 'light',

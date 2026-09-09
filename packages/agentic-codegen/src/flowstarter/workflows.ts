@@ -530,6 +530,33 @@ function isOutOfTime(error: unknown): boolean {
 const IMAGE_TEXT_KEY = /(^|[_-])(alt|imagealt|imagedescription)$/i;
 
 /**
+ * A stylesheet with every closed `/* … *\/` comment replaced.
+ *
+ * Scanned, not matched. Both of the patterns that did this before (the lazy
+ * `\/\*[\s\S]*?\*\/` and the unrolled loop that replaced it) cost time
+ * quadratic in the length of a stylesheet the model truncated mid-write,
+ * because every unterminated `/*` sends the engine back to try again from the
+ * next one. Two `indexOf` calls per comment cannot.
+ *
+ * The rule is the one the regex had: a comment runs to the first `*\/` after
+ * it, comments do not nest, and an unterminated `/*` is left exactly as it is
+ * along with everything after it.
+ */
+export function stripBlockComments(source: string, replacement = ''): string {
+  let out = '';
+  let cursor = 0;
+  for (;;) {
+    const open = source.indexOf('/*', cursor);
+    if (open === -1) break;
+    const close = source.indexOf('*/', open + 2);
+    if (close === -1) break;
+    out += source.slice(cursor, open) + replacement;
+    cursor = close + 2;
+  }
+  return out + source.slice(cursor);
+}
+
+/**
  * A stylesheet reduced to its structure: comments gone, whitespace folded,
  * every declaration value replaced by a placeholder. Two files with the same
  * skeleton differ only in values, which is exactly what the preview agent is
@@ -537,17 +564,11 @@ const IMAGE_TEXT_KEY = /(^|[_-])(alt|imagealt|imagedescription)$/i;
  * selector all change the skeleton.
  */
 export function cssSkeleton(css: string): string {
-  return (
-    css
-      // The comment pattern is unrolled rather than `\/\*[\s\S]*?\*\/`: the
-      // lazy form retries from every `/*` when a comment is left unclosed,
-      // which is quadratic on a stylesheet the model truncated mid-write.
-      .replace(/\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g, '')
-      .replace(/([\w-]+)\s*:\s*[^;{}]*;/g, '$1:_;')
-      .replace(/\s+/g, ' ')
-      .replace(/\s*([{};,>+~])\s*/g, '$1')
-      .trim()
-  );
+  return stripBlockComments(css)
+    .replace(/([\w-]+)\s*:\s*[^;{}]*;/g, '$1:_;')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([{};,>+~])\s*/g, '$1')
+    .trim();
 }
 
 /**
@@ -583,11 +604,7 @@ export function firstSkeletonDifference(
  * way). Returns a one-line reason, or undefined when the file is sound.
  */
 export function cssSyntaxIssue(css: string): string | undefined {
-  const cleaned = css
-    // The comment pattern is unrolled rather than `\/\*[\s\S]*?\*\/`: the
-    // lazy form retries from every `/*` when a comment is left unclosed,
-    // which is quadratic on a stylesheet the model truncated mid-write.
-    .replace(/\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g, ' ')
+  const cleaned = stripBlockComments(css, ' ')
     .replace(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g, '""')
     .replace(/url\([^)]*\)/gi, 'url()');
   const opens: number[] = [];
@@ -1097,6 +1114,76 @@ const BUILD_EVENT_BODY_MAX = 4_000;
 /** How much of the agent's closing words the board shows. */
 const REPLY_EXCERPT_MAX = 1_500;
 
+/** Every character JavaScript's `\s` matches, as a set. */
+const WHITESPACE = new Set(
+  ' \t\n\r\f\v\u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff',
+);
+
+/** `\w`, for the word boundary after the heading. */
+function isWordCharacter(char: string | undefined): boolean {
+  return (
+    char !== undefined &&
+    ((char >= 'a' && char <= 'z') ||
+      (char >= 'A' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      char === '_')
+  );
+}
+
+/**
+ * Does a "Summary" heading begin at `from`? Returns the index just past the
+ * word, or -1.
+ *
+ * `from` is either 0 or the index of a newline. Past it come blanks, then an
+ * optional run of `#` and more blanks, then the word on a word boundary. The
+ * greedy runs never need to be walked back: nothing that may follow them
+ * starts with a blank or a `#`.
+ */
+function summaryHeadingEnd(text: string, from: number): number {
+  let cursor = from === 0 ? 0 : from + 1;
+  while (cursor < text.length && WHITESPACE.has(text[cursor]!)) cursor += 1;
+  if (text[cursor] === '#') {
+    while (text[cursor] === '#') cursor += 1;
+    while (cursor < text.length && WHITESPACE.has(text[cursor]!)) cursor += 1;
+  }
+  const word = text.slice(cursor, cursor + 7);
+  if (word.toLowerCase() !== 'summary') return -1;
+  return isWordCharacter(text[cursor + 7]) ? -1 : cursor + 7;
+}
+
+/**
+ * Where the last "Summary" heading in a transcript starts, or -1.
+ *
+ * This was a single pattern carrying a negative lookahead over `[\s\S]*` to
+ * mean "and no later one", which made it quadratic in the length of the
+ * transcript it reads. Scanning line starts costs one pass instead.
+ *
+ * The index returned is the pattern's: a heading reached across blank lines
+ * is reported from the first newline that reaches it, not from the word.
+ */
+function lastSummaryHeadingIndex(text: string): number {
+  // Every place the old pattern could begin: the start of the text, then
+  // each newline. `starts` keeps the ones that carry a heading, with the end
+  // of the heading's line, which is where its lookahead began.
+  const starts: Array<{ at: number; lineEnd: number }> = [];
+  for (let from = 0; from !== -1; from = text.indexOf('\n', from + 1)) {
+    const end = summaryHeadingEnd(text, from);
+    if (end === -1) continue;
+    const newline = text.indexOf('\n', end);
+    starts.push({ at: from, lineEnd: newline === -1 ? text.length : newline });
+  }
+  if (starts.length === 0) return -1;
+
+  // The lookahead held only where no heading began at or after the line's
+  // end. Several starts can reach one heading (blank lines between them), so
+  // this reports the earliest start of the last heading, as the pattern did.
+  const latest = starts[starts.length - 1]!.at;
+  for (const start of starts) {
+    if (start.lineEnd > latest) return start.at;
+  }
+  return -1;
+}
+
 /**
  * The agent's reply for the board, from a session transcript that is every
  * text delta of every turn run together ("Let me look at... Let me check...").
@@ -1121,9 +1208,7 @@ export function replyExcerpt(summary: string): string {
     .join('\n')
     .trim();
   if (!text) return 'Pass finished without a summary.';
-  const heading = text.search(
-    /(?:^|\n)\s*(?:#+\s*)?summary\b[^\n]*(?![\s\S]*(?:^|\n)\s*(?:#+\s*)?summary\b)/i,
-  );
+  const heading = lastSummaryHeadingIndex(text);
   let tail = heading >= 0 ? text.slice(heading).trim() : text;
   if (tail.length > REPLY_EXCERPT_MAX) {
     tail = tail.slice(-REPLY_EXCERPT_MAX);

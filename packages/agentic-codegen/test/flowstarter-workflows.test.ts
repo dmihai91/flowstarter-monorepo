@@ -13,6 +13,7 @@ import {
   FullSiteBuildWorker,
   operatorNotesFeedback,
   replyExcerpt,
+  stripBlockComments,
   PreviewGenerationPipeline,
   ProjectState,
   type BrandConfig,
@@ -1729,6 +1730,87 @@ describe('the quality sweep is decided by a residue check, not run by habit', ()
     );
     expect(feedbacks).toHaveLength(2);
     expect(feedbacks[1]).toContain('Quality sweep');
+  });
+});
+
+describe('block comments are stripped by scanning, not by pattern', () => {
+  it('removes a closed comment and leaves the rest of the line', () => {
+    expect(stripBlockComments('a /* gone */ b')).toBe('a  b');
+    expect(stripBlockComments('a /* gone */ b', ' ')).toBe('a   b');
+  });
+
+  it('removes every comment in a file, not just the first', () => {
+    expect(stripBlockComments('/*one*/a/*two*/b/*three*/')).toBe('ab');
+  });
+
+  it('does not treat comments as nesting: the first close wins', () => {
+    // CSS has no nested comments, so the inner `/*` is just text and the
+    // trailing `*/` is left behind exactly as a CSS parser would see it.
+    expect(stripBlockComments('a/* outer /* inner */ tail */b')).toBe(
+      'a tail */b',
+    );
+  });
+
+  it('leaves an unterminated comment, and everything after it, untouched', () => {
+    const truncated = ':root { --a: 1; } /* the model stopped here';
+    expect(stripBlockComments(truncated)).toBe(truncated);
+    expect(stripBlockComments('/*done*/ then /* not done')).toBe(
+      ' then /* not done',
+    );
+  });
+
+  it('leaves a lone slash-star-slash alone: it never closed', () => {
+    expect(stripBlockComments('/*/')).toBe('/*/');
+    expect(stripBlockComments('/**/')).toBe('');
+    expect(stripBlockComments('/***/')).toBe('');
+  });
+
+  it('cssSkeleton and cssSyntaxIssue read a commented stylesheet the same way', async () => {
+    const { cssSkeleton, cssSyntaxIssue } = await import(
+      '../src/flowstarter/workflows'
+    );
+    const bare = ':root { --a: 1; }';
+    const commented = '/* tokens */ :root { /* brand */ --a: 1; }';
+    expect(cssSkeleton(commented)).toBe(cssSkeleton(bare));
+    expect(cssSyntaxIssue(commented)).toBeUndefined();
+    // A brace inside a comment is not a brace.
+    expect(cssSyntaxIssue(':root { --a: 1; /* } */ }')).toBeUndefined();
+  });
+});
+
+describe('the reply the board shows is cut at the last Summary heading', () => {
+  it('takes the tail from the heading, not the first mention of one', () => {
+    const transcript = [
+      'Let me look at the file.',
+      '## Summary',
+      'An early pass that got superseded.',
+      'Let me check one more thing.',
+      '## Summary',
+      'The closing words the operator wants.',
+    ].join('\n');
+
+    expect(replyExcerpt(transcript)).toBe(
+      ['## Summary', 'The closing words the operator wants.'].join('\n'),
+    );
+  });
+
+  it('accepts a heading with no hashes, and any casing', () => {
+    expect(replyExcerpt('Working.\nSUMMARY: it builds.')).toBe(
+      'SUMMARY: it builds.',
+    );
+    expect(replyExcerpt('Working.\n   #### summary\nDone.')).toBe(
+      '#### summary\nDone.',
+    );
+  });
+
+  it('is not fooled by a word that merely starts with "summary"', () => {
+    const transcript = 'I will summarywrite this.\nAnd then stop.';
+    expect(replyExcerpt(transcript)).toBe(transcript);
+  });
+
+  it('falls back to the whole transcript when no heading was written', () => {
+    expect(replyExcerpt('Just did the work.')).toBe('Just did the work.');
+    expect(replyExcerpt('   \n\n  ')).toBe('Pass finished without a summary.');
   });
 });
 

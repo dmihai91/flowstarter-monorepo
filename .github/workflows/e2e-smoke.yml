@@ -57,9 +57,31 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps
 
+      # Is there a Netlify credential at all?
+      #
+      # Dependabot pull requests are handed no secrets, so the wait script
+      # died on its `NETLIFY_AUTH_TOKEN is required` guard and painted every
+      # dependency bump red for a reason that had nothing to do with the bump.
+      # The `secrets` context is not readable from a step-level `if`, so turn
+      # presence into an output here and gate the two Netlify-dependent steps
+      # on it. A missing secret now skips with a warning instead of failing.
+      - name: Check the Netlify credentials
+        id: netlify_creds
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          if [ -n "$NETLIFY_AUTH_TOKEN" ] && [ -n "$NETLIFY_SITE_ID" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::NETLIFY_AUTH_TOKEN or NETLIFY_SITE_ID is not set (expected on dependabot pull requests); skipping the platform smoke run."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
       # ── Resolve the Netlify Deploy Preview for this commit ─────────────────
       - name: Wait for Netlify Deploy Preview
         id: netlify
+        if: steps.netlify_creds.outputs.present == 'true'
         run: bash .github/scripts/wait-for-netlify-deploy.sh
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
@@ -72,6 +94,7 @@ jobs:
 
       # ── Run smoke against the resolved Netlify preview URL ─────────────────
       - name: E2E — Platform smoke (landing, auth guards, pricing)
+        if: steps.netlify_creds.outputs.present == 'true'
         run: pnpm exec playwright test --config playwright.config.ts
         env:
           CI: true

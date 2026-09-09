@@ -81,6 +81,12 @@ e2e/screenshots/
 playwright-report/
 test-results/
 
+# Visual check — only the linux/ baselines are committed (CI runs on
+# ubuntu-latest). macOS baselines render fonts/AA differently and would
+# never match the Linux ones, so darwin/ stays local-only.
+# See e2e/visual/README.md.
+e2e/visual/__screenshots__/darwin/
+
 # Dev screenshots / artifacts
 docs/screenshots/
 

@@ -80,14 +80,31 @@ worker or agentic-codegen suites, so run those yourself when you change them.
 
 ## CI
 
-- Quality Gate (`.github/workflows/quality-gate.yml`): lint, typecheck, unit
+The four lanes below now run on Depot (`depot-ubuntu-latest`) from
+`.depot/workflows/`, the way DMPResearch/ereno runs its CI. Depot's Code
+Access GitHub App (`depot-code-access`) posts the checks on the pull
+request. The `.github/workflows/` copies of the same four files are kept
+only until the Depot-posted contexts are green on a pull request; once that
+is confirmed, the GitHub Actions copies are deleted and Depot is the only
+place these lanes run. Until then, both copies exist and both may run on a
+push or pull request.
+
+Depot secrets and variables are separate from GitHub repository secrets:
+Depot does not read GitHub's secret store, so anything a workflow needs has
+to be imported into Depot directly (`depot ci secrets add` / `depot ci vars
+add`), scoped to this repo. The names in use:
+  - secrets: `OLLAMA_API_KEY`, `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`, and
+    optionally `GH_REVIEW_TOKEN`
+  - vars: `AI_REVIEW_SMALL_MODEL`, `AI_REVIEW_BIG_MODEL`
+
+- Quality Gate (`.depot/workflows/quality-gate.yml`): lint, typecheck, unit
   tests, and tenant isolation proved against a throwaway local Supabase stack
   with all migrations applied. This is the blocking lane. Lint is currently
   advisory inside it (`continue-on-error`).
-- E2E smoke (`.github/workflows/e2e-smoke.yml`): waits for this commit's
+- E2E smoke (`.depot/workflows/e2e-smoke.yml`): waits for this commit's
   Netlify Deploy Preview, then runs the Playwright platform smoke against it.
   Skips with a warning when the Netlify secrets are absent.
-- OpenCode review (`.github/workflows/opencode-review.yml`): the default
+- OpenCode review (`.depot/workflows/opencode-review.yml`): the default
   reviewer, advisory only, never a required check and never in another job's
   `needs`. It runs in two tiers, decided from the diff size: small and medium
   changes on GLM 5.2, big ones (more than 8 changed files or more than 300
@@ -97,7 +114,7 @@ worker or agentic-codegen suites, so run those yourself when you change them.
   not review on its own and no pull request spends a credit by default. To
   request the paid reviewer, mention the bot in a comment on the pull
   request. That is a human decision, never a workflow step.
-- UI visual check (`.github/workflows/visual-check.yml`): Playwright
+- UI visual check (`.depot/workflows/visual-check.yml`): Playwright
   screenshots compared against committed Linux baselines.
 
 ## Review focus

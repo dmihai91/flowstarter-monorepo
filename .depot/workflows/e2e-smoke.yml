@@ -1,3 +1,9 @@
+# Depot CI Migration
+# Source: .github/workflows/e2e-smoke.yml
+#
+# Changes made:
+# - Changed GitHub runs-on labels to their Depot equivalents
+
 ##############################################################################
 # e2e-smoke.yml
 #
@@ -30,48 +36,37 @@
 ##############################################################################
 
 name: E2E Smoke — Concierge Flow
-
 on:
   push:
     branches: [main, master, 'feature/**']
   pull_request:
     branches: [main, master]
-
 concurrency:
-  group: e2e-smoke-${{ github.ref }}
+  group: e2e-smoke-depot-${{ github.ref }}
   cancel-in-progress: true
-
 env:
   NODE_VERSION: '22'
-
 # Every job here only reads the repository: checkout, install, run.
 # Nothing writes a comment, a status or a commit, so the token gets
 # read-only contents and nothing else.
 permissions:
   contents: read
-
 jobs:
   platform-smoke:
     name: Platform Smoke — flowstarter-main routes
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-latest # was: ubuntu-latest. Mapped standard GitHub runner to Depot equivalent.
     timeout-minutes: 20
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps
-
       # Is there a Netlify credential at all?
       #
       # Dependabot pull requests are handed no secrets, so the wait script
@@ -92,7 +87,6 @@ jobs:
             echo "::warning::NETLIFY_AUTH_TOKEN or NETLIFY_SITE_ID is not set (expected on dependabot pull requests); skipping the platform smoke run."
             echo "present=false" >> "$GITHUB_OUTPUT"
           fi
-
       # ── Resolve the Netlify Deploy Preview for this commit ─────────────────
       # continue-on-error: a missing preview is an infrastructure signal, not
       # a code defect, so a timeout here must not redden the job. The next
@@ -110,7 +104,6 @@ jobs:
           COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           TIMEOUT_SECONDS: '600'
           POLL_INTERVAL: '15'
-
       - name: No Netlify Deploy Preview available
         if: steps.netlify_creds.outputs.present == 'true' && steps.netlify.outputs.url == ''
         env:
@@ -119,7 +112,6 @@ jobs:
           message="No Netlify Deploy Preview for ${SHA}; the Netlify site is linked to the old repository address (dmihai91/flowstarter-monorepo) and must be re-linked to DMPResearch/flowstarter-monorepo under Site settings > Build & deploy > Continuous deployment. Skipping."
           echo "::warning::${message}"
           echo "${message}" >> "$GITHUB_STEP_SUMMARY"
-
       # ── Run smoke against the resolved Netlify preview URL ─────────────────
       - name: E2E — Platform smoke (landing, auth guards, pricing)
         if: steps.netlify_creds.outputs.present == 'true' && steps.netlify.outputs.url != ''
@@ -127,7 +119,6 @@ jobs:
         env:
           CI: true
           PLAYWRIGHT_BASE_URL: ${{ steps.netlify.outputs.url }}
-
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4

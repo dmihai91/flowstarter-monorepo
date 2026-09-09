@@ -1,0 +1,6 @@
+self-hosted-runner:
+  # Depot's runner label. actionlint has no built-in knowledge of Depot, so
+  # without this every workflow under .depot/workflows/ fails the
+  # runner-label rule on `runs-on: depot-ubuntu-latest`.
+  labels:
+    - depot-ubuntu-latest

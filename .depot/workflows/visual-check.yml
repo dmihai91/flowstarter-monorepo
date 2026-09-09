@@ -1,3 +1,9 @@
+# Depot CI Migration
+# Source: .github/workflows/visual-check.yml
+#
+# Changes made:
+# - Changed GitHub runs-on labels to their Depot equivalents
+
 ##############################################################################
 # visual-check.yml
 #
@@ -57,7 +63,6 @@
 ##############################################################################
 
 name: UI Visual Check
-
 on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
@@ -72,22 +77,18 @@ on:
         description: 'Branch to refresh (default: the branch this workflow is dispatched from)'
         type: string
         default: ''
-
 concurrency:
-  group: visual-check-${{ github.event.pull_request.number || inputs.ref || github.ref }}
+  group: visual-check-depot-${{ github.event.pull_request.number || inputs.ref || github.ref }}
   cancel-in-progress: true
-
 env:
   NODE_VERSION: '22'
-
 permissions:
   contents: write
   pull-requests: write
-
 jobs:
   visual:
     name: Visual check
-    runs-on: ubuntu-latest
+    runs-on: depot-ubuntu-latest # was: ubuntu-latest. Mapped standard GitHub runner to Depot equivalent.
     timeout-minutes: 30
     if: github.event.pull_request.draft != true
     steps:
@@ -108,7 +109,6 @@ jobs:
             echo "::warning::NETLIFY_AUTH_TOKEN or NETLIFY_SITE_ID is not set (expected on dependabot/fork pull requests); skipping the visual check."
             echo "present=false" >> "$GITHUB_OUTPUT"
           fi
-
       # ── Resolve which ref to check out / refresh ───────────────────────────
       # pull_request: always the PR head SHA.
       # workflow_dispatch: `inputs.ref` when given, else the branch the
@@ -130,18 +130,15 @@ jobs:
             echo "ref=$PR_HEAD_SHA" >> "$GITHUB_OUTPUT"
             echo "branch=" >> "$GITHUB_OUTPUT"
           fi
-
       - name: Checkout
         if: steps.netlify_creds.outputs.present == 'true'
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.target.outputs.ref }}
-
       - name: Resolve commit SHA
         if: steps.netlify_creds.outputs.present == 'true'
         id: sha
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
       - name: Check whether Linux baselines are committed
         if: steps.netlify_creds.outputs.present == 'true'
         id: baseline
@@ -151,26 +148,21 @@ jobs:
           else
             echo "missing=true" >> "$GITHUB_OUTPUT"
           fi
-
       - name: Set up pnpm
         if: steps.netlify_creds.outputs.present == 'true'
         uses: pnpm/action-setup@v4
-
       - name: Set up Node
         if: steps.netlify_creds.outputs.present == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-
       - name: Install dependencies
         if: steps.netlify_creds.outputs.present == 'true'
         run: pnpm install --frozen-lockfile
-
       - name: Install Playwright browsers
         if: steps.netlify_creds.outputs.present == 'true'
         run: pnpm exec playwright install chromium --with-deps
-
       # ── Resolve the Netlify Deploy Preview for this commit ─────────────────
       # continue-on-error: a missing preview is an infrastructure signal, not
       # a code defect, so a timeout here must not redden the job. The steps
@@ -186,7 +178,6 @@ jobs:
           COMMIT_SHA: ${{ steps.sha.outputs.sha }}
           TIMEOUT_SECONDS: '600'
           POLL_INTERVAL: '15'
-
       - name: No Netlify Deploy Preview available
         if: steps.netlify_creds.outputs.present == 'true' && steps.netlify.outputs.url == ''
         env:
@@ -195,7 +186,6 @@ jobs:
           message="No Netlify Deploy Preview for ${SHA}; the Netlify site is linked to the old repository address (dmihai91/flowstarter-monorepo) and must be re-linked to DMPResearch/flowstarter-monorepo under Site settings > Build & deploy > Continuous deployment. Skipping."
           echo "::warning::${message}"
           echo "${message}" >> "$GITHUB_STEP_SUMMARY"
-
       # ── Decide whether this run should write (not just compare) snapshots ──
       # Two cases need --update-snapshots:
       #   - an explicit workflow_dispatch refresh (update_baselines=true) —
@@ -224,7 +214,6 @@ jobs:
             echo "update=false" >> "$GITHUB_OUTPUT"
             echo "reason=none" >> "$GITHUB_OUTPUT"
           fi
-
       # ── Run the visual suite ────────────────────────────────────────────────
       # continue-on-error: a real diff (or a first-run seed) must still reach
       # the artifact-upload and comment steps below with the right pass/fail
@@ -250,7 +239,6 @@ jobs:
               --project visual-desktop --project visual-mobile \
               --reporter=list,html,json
           fi
-
       - name: Summarize per-project results
         id: summary
         if: always() && steps.netlify_creds.outputs.present == 'true' && steps.netlify.outputs.url != ''
@@ -276,7 +264,6 @@ jobs:
             echo "$summary"
             echo "VISUAL_SUMMARY_EOF"
           } >> "$GITHUB_OUTPUT"
-
       # ── Commit + push refreshed baselines (dispatched refresh only) ────────
       - name: Commit refreshed baselines
         if: steps.mode.outputs.reason == 'dispatch' && steps.netlify_creds.outputs.present == 'true' && steps.netlify.outputs.url != ''
@@ -294,7 +281,6 @@ jobs:
           git commit -m "test(visual): refresh Linux baselines" \
             -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
           git push origin "HEAD:refs/heads/$BRANCH"
-
       # ── Artifacts, always ────────────────────────────────────────────────
       - name: Upload visual check artifacts
         if: always() && steps.netlify_creds.outputs.present == 'true'
@@ -306,7 +292,6 @@ jobs:
             test-results/
           retention-days: 14
           if-no-files-found: ignore
-
       # ── Sticky PR comment ───────────────────────────────────────────────
       - name: Build comment body
         if: always() && github.event_name == 'pull_request'
@@ -344,7 +329,6 @@ jobs:
             echo "- Preview URL: ${NETLIFY_URL:-n/a}"
             echo "- Run: ${RUN_URL}"
           } > comment-body.md
-
       - name: Post or update sticky comment
         if: always() && github.event_name == 'pull_request'
         env:
@@ -363,7 +347,6 @@ jobs:
             gh api --method POST "repos/$REPO/issues/$PR_NUMBER/comments" \
               -f body=@comment-body.md
           fi
-
       # ── Final conclusion ─────────────────────────────────────────────────
       # A first-run seed (reason=missing) or a dispatched refresh
       # (reason=dispatch) is expected to "fail" the raw playwright invocation

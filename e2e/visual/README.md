@@ -41,16 +41,32 @@ A local `--update-snapshots` run can't touch `linux/` at all — `{platform}`
 in the path template resolves to whatever OS you're running on, so a Mac
 always writes to the gitignored `darwin/` tree. The only way to write (and
 commit) the `linux/` baselines that CI compares against is to run the
-suite on Linux, which is what the dispatched workflow does:
+suite on Linux, which is what the dispatched workflow does. The lane now
+runs on Depot from `.depot/workflows/visual-check.yml` (the GitHub Actions
+copy at `.github/workflows/visual-check.yml` stays only until the Depot
+contexts are confirmed green and is then retired), so dispatch it through
+whichever of the two is currently active:
 
-1. Go to **Actions -> UI Visual Check -> Run workflow**.
-2. Set `update_baselines` to `true`.
-3. Set `ref` to the branch whose baselines you want to refresh (leave it
-   empty to refresh whichever branch you dispatched the workflow from).
-4. Run it. The job re-renders every page with `--update-snapshots` on an
-   actual Linux runner against that branch's Netlify Deploy Preview, then
-   commits and pushes the changed files under
-   `e2e/visual/__screenshots__/linux/` to that branch as `github-actions[bot]`.
+- On GitHub: go to **Actions -> UI Visual Check -> Run workflow**.
+  1. Set `update_baselines` to `true`.
+  2. Set `ref` to the branch whose baselines you want to refresh (leave it
+     empty to refresh whichever branch you dispatched the workflow from).
+  3. Run it.
+- On Depot, the equivalent dispatch is the CLI:
+
+  ```
+  depot ci dispatch --repo DMPResearch/flowstarter-monorepo \
+    --workflow visual-check.yml --ref <branch> --input update_baselines=true
+  ```
+
+  `<branch>` is the branch whose baselines you want to refresh; omit
+  `--input update_baselines=true` and it just runs the comparison instead of
+  a refresh.
+
+Either way, the job re-renders every page with `--update-snapshots` on an
+actual Linux runner against that branch's Netlify Deploy Preview, then
+commits and pushes the changed files under
+`e2e/visual/__screenshots__/linux/` to that branch as `github-actions[bot]`.
 
 Review the resulting commit like any other change before merging — a
 baseline refresh should be a deliberate, reviewed act.

@@ -8,6 +8,11 @@ const __dirname = path.dirname(__filename);
 // Resolve templates directory - try multiple locations for different run contexts
 function resolveTemplatesDir(): string {
 	const candidates = [
+		// Canonical monorepo template catalog. The MCP server is the read-only
+		// discovery/scaffold boundary; sources remain workspace packages so they
+		// can be independently checked and built by CI.
+		path.resolve(__dirname, '..', '..', '..', 'flowstarter-templates'),
+		path.resolve(process.cwd(), 'apps', 'flowstarter-templates'),
 		path.resolve(__dirname, '..', '..', 'templates'),
 		path.resolve(process.cwd(), 'apps', 'flowstarter-library', 'templates'),
 		path.resolve(process.cwd(), 'templates'),

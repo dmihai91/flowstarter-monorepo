@@ -80,6 +80,13 @@ const { title, items } = Astro.props;
       max-width: 14ch;
     }
 
+    .services-faq-section__list {
+      /* The desktop 700px fixed width becomes the grid track's min-content
+         size once the layout is single-column — on phones it forced the
+         whole page to ~744px wide and made the site scroll sideways. */
+      width: 100%;
+    }
+
     .services-faq-section__list :global(.faq-accordion-item) {
       width: 100%;
     }

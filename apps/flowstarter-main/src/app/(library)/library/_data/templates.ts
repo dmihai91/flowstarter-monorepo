@@ -137,9 +137,9 @@ export const TEMPLATES: readonly TemplateEntry[] = [
     category: 'Independent professional',
     year: '2026',
     kicker:
-      'Hand-crafted portfolio template by Dorin — the canonical starter for serious independents.',
+      'Hand-crafted portfolio template by Dorin: the canonical starter for serious independents.',
     blurb:
-      'A portfolio template authored from scratch by Dorin Andrei. Case studies are the page; everything else gets out of their way. Six pages — home, work, case studies, services, about, contact — fast, lightweight layouts with hand-written CSS. No utility-class framework, no AI-template feel. Designed to age well, ship fast, and let the work itself do the talking. This is the starter we actually deploy when a freelancer or independent professional engages Flowstarter for a portfolio site.',
+      'A portfolio template authored from scratch by Dorin Andrei. Case studies are the page; everything else gets out of their way. Six pages: home, work, case studies, services, about, contact, in fast, lightweight layouts with hand-written CSS. No utility-class framework, no AI-template feel. Designed to age well, ship fast, and let the work itself do the talking. This is the starter we actually deploy when a freelancer or independent professional engages Flowstarter for a portfolio site.',
     built: ['Custom layout & typography', 'Fast, lightweight pages'],
     tags: ['case studies', 'independent professionals', 'creative work'],
     repoUrl: 'https://github.com/DorinAndrei007/Portfolio-Template',

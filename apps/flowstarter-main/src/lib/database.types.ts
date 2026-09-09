@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   public: {
     Tables: {
       ai_audit_logs: {
@@ -60,6 +55,174 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "ai_audit_logs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_rights_confirmations: {
+        Row: {
+          asset_ids: string[]
+          confirmed_at: string
+          confirmed_by: string
+          created_at: string
+          id: string
+          ip: string | null
+          statement_version: string | null
+          user_agent: string | null
+          workspace_id: string
+        }
+        Insert: {
+          asset_ids?: string[]
+          confirmed_at?: string
+          confirmed_by: string
+          created_at?: string
+          id?: string
+          ip?: string | null
+          statement_version?: string | null
+          user_agent?: string | null
+          workspace_id: string
+        }
+        Update: {
+          asset_ids?: string[]
+          confirmed_at?: string
+          confirmed_by?: string
+          created_at?: string
+          id?: string
+          ip?: string | null
+          statement_version?: string | null
+          user_agent?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_rights_confirmations_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assets: {
+        Row: {
+          ai_generated: boolean
+          aspect_ratio: number | null
+          caption: string | null
+          created_at: string
+          dominant_colors: string[] | null
+          has_transparency: boolean | null
+          height: number | null
+          id: string
+          is_placeholder: boolean
+          kind: string | null
+          mime: string | null
+          project_id: string | null
+          rights_confirmed_at: string | null
+          selected: boolean
+          sha256: string | null
+          sharpness_score: number | null
+          source: string
+          source_url: string | null
+          storage_path: string | null
+          usable_for: string[]
+          width: number | null
+          workspace_id: string
+        }
+        Insert: {
+          ai_generated?: boolean
+          aspect_ratio?: number | null
+          caption?: string | null
+          created_at?: string
+          dominant_colors?: string[] | null
+          has_transparency?: boolean | null
+          height?: number | null
+          id?: string
+          is_placeholder?: boolean
+          kind?: string | null
+          mime?: string | null
+          project_id?: string | null
+          rights_confirmed_at?: string | null
+          selected?: boolean
+          sha256?: string | null
+          sharpness_score?: number | null
+          source: string
+          source_url?: string | null
+          storage_path?: string | null
+          usable_for?: string[]
+          width?: number | null
+          workspace_id: string
+        }
+        Update: {
+          ai_generated?: boolean
+          aspect_ratio?: number | null
+          caption?: string | null
+          created_at?: string
+          dominant_colors?: string[] | null
+          has_transparency?: boolean | null
+          height?: number | null
+          id?: string
+          is_placeholder?: boolean
+          kind?: string | null
+          mime?: string | null
+          project_id?: string | null
+          rights_confirmed_at?: string | null
+          selected?: boolean
+          sha256?: string | null
+          sharpness_score?: number | null
+          source?: string
+          source_url?: string | null
+          storage_path?: string | null
+          usable_for?: string[]
+          width?: number | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brand_signals: {
+        Row: {
+          created_at: string
+          derived_at: string
+          id: string
+          keywords: string[]
+          palette: Json
+          sources: string[]
+          tone_notes: string | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          derived_at?: string
+          id?: string
+          keywords?: string[]
+          palette?: Json
+          sources?: string[]
+          tone_notes?: string | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          derived_at?: string
+          id?: string
+          keywords?: string[]
+          palette?: Json
+          sources?: string[]
+          tone_notes?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brand_signals_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -221,6 +384,138 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_inquiries: {
+        Row: {
+          admin_notes: string | null
+          booking_link: string | null
+          budget_range: string
+          company_name: string
+          created_at: string
+          email: string
+          id: string
+          industry: string
+          justification: string
+          name: string
+          project_type_other: string | null
+          project_types: string[]
+          referral_source: string | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          role: string
+          status: string
+          timeline: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          booking_link?: string | null
+          budget_range: string
+          company_name: string
+          created_at?: string
+          email: string
+          id?: string
+          industry: string
+          justification: string
+          name: string
+          project_type_other?: string | null
+          project_types?: string[]
+          referral_source?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role: string
+          status?: string
+          timeline: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          booking_link?: string | null
+          budget_range?: string
+          company_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          industry?: string
+          justification?: string
+          name?: string
+          project_type_other?: string | null
+          project_types?: string[]
+          referral_source?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role?: string
+          status?: string
+          timeline?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      demo_edit_counters: {
+        Row: {
+          created_at: string
+          demo_id: string
+          edits_used: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          demo_id?: string
+          edits_used?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          demo_id?: string
+          edits_used?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      demo_generation_costs: {
+        Row: {
+          cost_eur: number
+          created_at: string
+          demo_id: string | null
+          id: string
+          ip: string | null
+          kind: string
+          lead_email: string | null
+          model: string | null
+          tokens_in: number
+          tokens_out: number
+        }
+        Insert: {
+          cost_eur?: number
+          created_at?: string
+          demo_id?: string | null
+          id?: string
+          ip?: string | null
+          kind: string
+          lead_email?: string | null
+          model?: string | null
+          tokens_in?: number
+          tokens_out?: number
+        }
+        Update: {
+          cost_eur?: number
+          created_at?: string
+          demo_id?: string | null
+          id?: string
+          ip?: string | null
+          kind?: string
+          lead_email?: string | null
+          model?: string | null
+          tokens_in?: number
+          tokens_out?: number
+        }
+        Relationships: []
+      }
       deployments: {
         Row: {
           artifact_bytes: number | null
@@ -284,6 +579,110 @@ export type Database = {
           },
         ]
       }
+      discovery_leads: {
+        Row: {
+          billing_cadence: string
+          brand_tone: string | null
+          business_name: string | null
+          catalog_size: string | null
+          commerce_mode: string | null
+          created_at: string
+          custom_integrations: string | null
+          demo_id: string | null
+          deposit_amount_eur: number | null
+          deposit_paid_at: string | null
+          deposit_status: string
+          description: string
+          email: string
+          full_name: string
+          goal: string | null
+          id: string
+          industry: string | null
+          instagram_url: string | null
+          linkedin_url: string | null
+          page_count: string | null
+          project_id: string | null
+          secondary_goals: string[] | null
+          selected_tier: string
+          source: string | null
+          stripe_session_id: string | null
+          subscription: string | null
+          target_audience: string | null
+          timeline: string | null
+          updated_at: string
+        }
+        Insert: {
+          billing_cadence?: string
+          brand_tone?: string | null
+          business_name?: string | null
+          catalog_size?: string | null
+          commerce_mode?: string | null
+          created_at?: string
+          custom_integrations?: string | null
+          demo_id?: string | null
+          deposit_amount_eur?: number | null
+          deposit_paid_at?: string | null
+          deposit_status?: string
+          description: string
+          email: string
+          full_name: string
+          goal?: string | null
+          id?: string
+          industry?: string | null
+          instagram_url?: string | null
+          linkedin_url?: string | null
+          page_count?: string | null
+          project_id?: string | null
+          secondary_goals?: string[] | null
+          selected_tier: string
+          source?: string | null
+          stripe_session_id?: string | null
+          subscription?: string | null
+          target_audience?: string | null
+          timeline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          billing_cadence?: string
+          brand_tone?: string | null
+          business_name?: string | null
+          catalog_size?: string | null
+          commerce_mode?: string | null
+          created_at?: string
+          custom_integrations?: string | null
+          demo_id?: string | null
+          deposit_amount_eur?: number | null
+          deposit_paid_at?: string | null
+          deposit_status?: string
+          description?: string
+          email?: string
+          full_name?: string
+          goal?: string | null
+          id?: string
+          industry?: string | null
+          instagram_url?: string | null
+          linkedin_url?: string | null
+          page_count?: string | null
+          project_id?: string | null
+          secondary_goals?: string[] | null
+          selected_tier?: string
+          source?: string | null
+          stripe_session_id?: string | null
+          subscription?: string | null
+          target_audience?: string | null
+          timeline?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discovery_leads_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       editor_sessions: {
         Row: {
           ended_at: string | null
@@ -328,6 +727,324 @@ export type Database = {
           {
             foreignKeyName: "editor_sessions_workspace_id_fkey"
             columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flowstarter_change_requests: {
+        Row: {
+          classification: string
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          currency: string
+          id: string
+          matched_rules: Json
+          message_id: string | null
+          paid_at: string | null
+          quote_minor: number | null
+          quote_note: string | null
+          quoted_at: string | null
+          quoted_by: string | null
+          request: string
+          responded_at: string | null
+          status: string
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          classification?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          currency?: string
+          id?: string
+          matched_rules?: Json
+          message_id?: string | null
+          paid_at?: string | null
+          quote_minor?: number | null
+          quote_note?: string | null
+          quoted_at?: string | null
+          quoted_by?: string | null
+          request: string
+          responded_at?: string | null
+          status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          classification?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          currency?: string
+          id?: string
+          matched_rules?: Json
+          message_id?: string | null
+          paid_at?: string | null
+          quote_minor?: number | null
+          quote_note?: string | null
+          quoted_at?: string | null
+          quoted_by?: string | null
+          request?: string
+          responded_at?: string | null
+          status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flowstarter_change_requests_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "project_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flowstarter_change_requests_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flowstarter_agent_job_events: {
+        Row: {
+          actor: string
+          body: string
+          created_at: string
+          id: string
+          job_id: string
+          kind: string
+          payload: Json
+          workspace_id: string
+        }
+        Insert: {
+          actor?: string
+          body: string
+          created_at?: string
+          id?: string
+          job_id: string
+          kind: string
+          payload?: Json
+          workspace_id: string
+        }
+        Update: {
+          actor?: string
+          body?: string
+          created_at?: string
+          id?: string
+          job_id?: string
+          kind?: string
+          payload?: Json
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flowstarter_agent_job_events_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "flowstarter_agent_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flowstarter_agent_job_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flowstarter_agent_jobs: {
+        Row: {
+          attempt_count: number
+          created_at: string
+          error_code: string | null
+          error_detail: string | null
+          finished_at: string | null
+          id: string
+          idempotency_key: string | null
+          kind: string
+          max_attempts: number
+          payload: Json
+          pull_request_url: string | null
+          run_after: string
+          started_at: string | null
+          status: string
+          stripe_event_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          workspace_id: string | null
+          worktree_branch: string | null
+          worktree_path: string | null
+        }
+        Insert: {
+          attempt_count?: number
+          created_at?: string
+          error_code?: string | null
+          error_detail?: string | null
+          finished_at?: string | null
+          id?: string
+          idempotency_key?: string | null
+          kind: string
+          max_attempts?: number
+          payload?: Json
+          pull_request_url?: string | null
+          run_after?: string
+          started_at?: string | null
+          status?: string
+          stripe_event_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          workspace_id?: string | null
+          worktree_branch?: string | null
+          worktree_path?: string | null
+        }
+        Update: {
+          attempt_count?: number
+          created_at?: string
+          error_code?: string | null
+          error_detail?: string | null
+          finished_at?: string | null
+          id?: string
+          idempotency_key?: string | null
+          kind?: string
+          max_attempts?: number
+          payload?: Json
+          pull_request_url?: string | null
+          run_after?: string
+          started_at?: string | null
+          status?: string
+          stripe_event_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          workspace_id?: string | null
+          worktree_branch?: string | null
+          worktree_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flowstarter_agent_jobs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flowstarter_project_artifacts: {
+        Row: {
+          brand_config: Json | null
+          client_reply_corpus: Json
+          created_at: string
+          intake_payload: Json
+          preview_artifact_url: string | null
+          preview_manifest: Json
+          scrape_manifest: Json
+          template_selection_reason: string | null
+          template_slug: string | null
+          template_version: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          brand_config?: Json | null
+          client_reply_corpus?: Json
+          created_at?: string
+          intake_payload?: Json
+          preview_artifact_url?: string | null
+          preview_manifest?: Json
+          scrape_manifest?: Json
+          template_selection_reason?: string | null
+          template_slug?: string | null
+          template_version?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          brand_config?: Json | null
+          client_reply_corpus?: Json
+          created_at?: string
+          intake_payload?: Json
+          preview_artifact_url?: string | null
+          preview_manifest?: Json
+          scrape_manifest?: Json
+          template_selection_reason?: string | null
+          template_slug?: string | null
+          template_version?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flowstarter_project_artifacts_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funnel_previews: {
+        Row: {
+          artifact_path: string | null
+          brand_config: Json
+          claimed_workspace_id: string | null
+          created_at: string
+          deploy_status: string
+          deployment_error: string | null
+          expires_at: string
+          hostname: string | null
+          manifest: Json
+          preview_id: string
+          template_slug: string | null
+          template_version: string | null
+          updated_at: string
+        }
+        Insert: {
+          artifact_path?: string | null
+          brand_config?: Json
+          claimed_workspace_id?: string | null
+          created_at?: string
+          deploy_status?: string
+          deployment_error?: string | null
+          expires_at: string
+          hostname?: string | null
+          manifest?: Json
+          preview_id: string
+          template_slug?: string | null
+          template_version?: string | null
+          updated_at?: string
+        }
+        Update: {
+          artifact_path?: string | null
+          brand_config?: Json
+          claimed_workspace_id?: string | null
+          created_at?: string
+          deploy_status?: string
+          deployment_error?: string | null
+          expires_at?: string
+          hostname?: string | null
+          manifest?: Json
+          preview_id?: string
+          template_slug?: string | null
+          template_version?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funnel_previews_claimed_workspace_id_fkey"
+            columns: ["claimed_workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
             referencedColumns: ["id"]
@@ -406,6 +1123,56 @@ export type Database = {
         }
         Relationships: []
       }
+      intake_submissions: {
+        Row: {
+          created_at: string
+          decided_by: string
+          id: string
+          outcome: string | null
+          overridden: boolean
+          override_reason: string | null
+          payload: Json
+          routing_decision: string
+          rules_fired: string[]
+          score: number | null
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_by?: string
+          id?: string
+          outcome?: string | null
+          overridden?: boolean
+          override_reason?: string | null
+          payload?: Json
+          routing_decision: string
+          rules_fired?: string[]
+          score?: number | null
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          decided_by?: string
+          id?: string
+          outcome?: string | null
+          overridden?: boolean
+          override_reason?: string | null
+          payload?: Json
+          routing_decision?: string
+          rules_fired?: string[]
+          score?: number | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_submissions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -468,6 +1235,53 @@ export type Database = {
           },
         ]
       }
+      llm_usage: {
+        Row: {
+          action: string
+          cached_tokens: number
+          cost_estimate: number | null
+          created_at: string
+          id: string
+          model: string | null
+          project_id: string | null
+          tokens_in: number
+          tokens_out: number
+          workspace_id: string | null
+        }
+        Insert: {
+          action: string
+          cached_tokens?: number
+          cost_estimate?: number | null
+          created_at?: string
+          id?: string
+          model?: string | null
+          project_id?: string | null
+          tokens_in?: number
+          tokens_out?: number
+          workspace_id?: string | null
+        }
+        Update: {
+          action?: string
+          cached_tokens?: number
+          cost_estimate?: number | null
+          created_at?: string
+          id?: string
+          model?: string | null
+          project_id?: string | null
+          tokens_in?: number
+          tokens_out?: number
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "llm_usage_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -497,6 +1311,91 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      project_events: {
+        Row: {
+          actor: string
+          created_at: string
+          id: string
+          kind: string
+          payload: Json
+          workspace_id: string
+        }
+        Insert: {
+          actor?: string
+          created_at?: string
+          id?: string
+          kind: string
+          payload?: Json
+          workspace_id: string
+        }
+        Update: {
+          actor?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          payload?: Json
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_messages: {
+        Row: {
+          answered_at: string | null
+          asks: Json
+          body: string | null
+          created_at: string
+          created_by: string | null
+          direction: string
+          id: string
+          kind: string
+          sent_at: string | null
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          answered_at?: string | null
+          asks?: Json
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          direction: string
+          id?: string
+          kind: string
+          sent_at?: string | null
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          answered_at?: string | null
+          asks?: Json
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          direction?: string
+          id?: string
+          kind?: string
+          sent_at?: string | null
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_messages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       setup_payment_milestones: {
         Row: {
@@ -554,6 +1453,47 @@ export type Database = {
           },
         ]
       }
+      site_versions: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          manifest: Json
+          published_at: string | null
+          summary: string | null
+          version: number
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          manifest: Json
+          published_at?: string | null
+          summary?: string | null
+          version: number
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          manifest?: Json
+          published_at?: string | null
+          summary?: string | null
+          version?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_versions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vault_encrypted_secrets: {
         Row: {
           created_at: string
@@ -584,6 +1524,50 @@ export type Database = {
             foreignKeyName: "vault_encrypted_secrets_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspace_billing_profiles: {
+        Row: {
+          bill_to_company: boolean
+          billing_address: string | null
+          company_name: string | null
+          country: string | null
+          created_at: string
+          registration_no: string | null
+          updated_at: string
+          vat_id: string | null
+          workspace_id: string
+        }
+        Insert: {
+          bill_to_company?: boolean
+          billing_address?: string | null
+          company_name?: string | null
+          country?: string | null
+          created_at?: string
+          registration_no?: string | null
+          updated_at?: string
+          vat_id?: string | null
+          workspace_id: string
+        }
+        Update: {
+          bill_to_company?: boolean
+          billing_address?: string | null
+          company_name?: string | null
+          country?: string | null
+          created_at?: string
+          registration_no?: string | null
+          updated_at?: string
+          vat_id?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_billing_profiles_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: true
             referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
@@ -649,7 +1633,12 @@ export type Database = {
       }
       workspaces: {
         Row: {
+          balance_payment_intent_id: string | null
+          balance_percent: number
+          billing_currency: string
           billing_interval: string
+          cal_com_url: string | null
+          claimed_preview_id: string | null
           client_business_name: string | null
           client_email: string | null
           client_name: string | null
@@ -670,12 +1659,17 @@ export type Database = {
           deposit_invoice_id: string | null
           deposit_invoice_url: string | null
           deposit_paid_at: string | null
+          deposit_payment_intent_id: string | null
+          deposit_percent: number
           deposit_status: string
+          editor_repo_ref: string
+          editor_repo_url: string | null
           final_amount: number | null
           final_invoice_id: string | null
           final_invoice_url: string | null
           final_paid_at: string | null
           final_status: string
+          final_value_minor: number | null
           founding_locked_until: string | null
           hosting_server_id: string | null
           id: string
@@ -685,6 +1679,7 @@ export type Database = {
           monthly_fee: number | null
           name: string
           outstanding_payment: boolean
+          project_state: string
           setup_fee: number | null
           setup_go_live_at: string | null
           setup_mockup_approved_at: string | null
@@ -697,16 +1692,23 @@ export type Database = {
           ssl_status: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
+          subscription_ai_cost_usd_this_month: number
           subscription_next_billing: string | null
           subscription_rollover_remaining: number
           subscription_sessions_used_this_month: number
           subscription_status: string | null
           subscription_trial_ends: string | null
+          subscription_usage_period_start: string
           tier_name: string | null
           updated_at: string
         }
         Insert: {
+          balance_payment_intent_id?: string | null
+          balance_percent?: number
+          billing_currency?: string
           billing_interval?: string
+          cal_com_url?: string | null
+          claimed_preview_id?: string | null
           client_business_name?: string | null
           client_email?: string | null
           client_name?: string | null
@@ -727,12 +1729,17 @@ export type Database = {
           deposit_invoice_id?: string | null
           deposit_invoice_url?: string | null
           deposit_paid_at?: string | null
+          deposit_payment_intent_id?: string | null
+          deposit_percent?: number
           deposit_status?: string
+          editor_repo_ref?: string
+          editor_repo_url?: string | null
           final_amount?: number | null
           final_invoice_id?: string | null
           final_invoice_url?: string | null
           final_paid_at?: string | null
           final_status?: string
+          final_value_minor?: number | null
           founding_locked_until?: string | null
           hosting_server_id?: string | null
           id?: string
@@ -742,6 +1749,7 @@ export type Database = {
           monthly_fee?: number | null
           name: string
           outstanding_payment?: boolean
+          project_state?: string
           setup_fee?: number | null
           setup_go_live_at?: string | null
           setup_mockup_approved_at?: string | null
@@ -754,16 +1762,23 @@ export type Database = {
           ssl_status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
+          subscription_ai_cost_usd_this_month?: number
           subscription_next_billing?: string | null
           subscription_rollover_remaining?: number
           subscription_sessions_used_this_month?: number
           subscription_status?: string | null
           subscription_trial_ends?: string | null
+          subscription_usage_period_start?: string
           tier_name?: string | null
           updated_at?: string
         }
         Update: {
+          balance_payment_intent_id?: string | null
+          balance_percent?: number
+          billing_currency?: string
           billing_interval?: string
+          cal_com_url?: string | null
+          claimed_preview_id?: string | null
           client_business_name?: string | null
           client_email?: string | null
           client_name?: string | null
@@ -784,12 +1799,17 @@ export type Database = {
           deposit_invoice_id?: string | null
           deposit_invoice_url?: string | null
           deposit_paid_at?: string | null
+          deposit_payment_intent_id?: string | null
+          deposit_percent?: number
           deposit_status?: string
+          editor_repo_ref?: string
+          editor_repo_url?: string | null
           final_amount?: number | null
           final_invoice_id?: string | null
           final_invoice_url?: string | null
           final_paid_at?: string | null
           final_status?: string
+          final_value_minor?: number | null
           founding_locked_until?: string | null
           hosting_server_id?: string | null
           id?: string
@@ -799,6 +1819,7 @@ export type Database = {
           monthly_fee?: number | null
           name?: string
           outstanding_payment?: boolean
+          project_state?: string
           setup_fee?: number | null
           setup_go_live_at?: string | null
           setup_mockup_approved_at?: string | null
@@ -811,11 +1832,13 @@ export type Database = {
           ssl_status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
+          subscription_ai_cost_usd_this_month?: number
           subscription_next_billing?: string | null
           subscription_rollover_remaining?: number
           subscription_sessions_used_this_month?: number
           subscription_status?: string | null
           subscription_trial_ends?: string | null
+          subscription_usage_period_start?: string
           tier_name?: string | null
           updated_at?: string
         }
@@ -841,12 +1864,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_old_security_audit_logs: {
-        Args: { retention_days?: number }
-        Returns: number
+      add_workspace_ai_cost_usd: {
+        Args: { p_usd: number; p_workspace_id: string }
+        Returns: undefined
       }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
+      current_clerk_user_id: { Args: never; Returns: string }
+      increment_workspace_sessions_used: {
+        Args: { p_workspace_id: string }
+        Returns: undefined
+      }
+      is_workspace_member: { Args: { ws: string }; Returns: boolean }
+      tenant_path_workspace_id: {
+        Args: { object_name: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
@@ -979,3 +2010,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

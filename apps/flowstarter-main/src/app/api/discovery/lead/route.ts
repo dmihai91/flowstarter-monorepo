@@ -14,6 +14,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { sendEmail } from '@/lib/email';
+import { containsAgentControlInstructions } from '@flowstarter/agentic-codegen/src/flowstarter/intake-guard';
 
 /**
  * Untyped service-role client — `discovery_leads` isn't in the generated
@@ -35,6 +36,20 @@ const DiscoveryLeadSchema = z.object({
   industry: z.string().max(200).optional().default(''),
   description: z.string().min(1).max(5000),
   targetAudience: z.string().max(500).optional().default(''),
+  instagramUrl: z
+    .string()
+    .url()
+    .max(500)
+    .or(z.literal(''))
+    .optional()
+    .default(''),
+  linkedinUrl: z
+    .string()
+    .url()
+    .max(500)
+    .or(z.literal(''))
+    .optional()
+    .default(''),
   // Free-form (chips + freetext, comma-joined) — see discovery.logic.
   goal: z.string().max(400).optional().default(''),
   secondaryGoals: z.array(z.string().max(120)).optional().default([]),
@@ -52,6 +67,7 @@ const DiscoveryLeadSchema = z.object({
   customIntegrations: z.string().max(2000).optional().default(''),
   selectedTier: TIER,
   subscription: z.enum(['starter', 'pro', 'max', '']).optional().default(''),
+  billingCadence: z.enum(['monthly', 'yearly']).optional().default('monthly'),
   source: z.string().max(100).optional().default('cta'),
 });
 
@@ -105,6 +121,8 @@ function buildEmailHtml(lead: DiscoveryLead): string {
     ${row('Industry', lead.industry)}
     ${row('Description', lead.description)}
     ${row('Target audience', lead.targetAudience)}
+    ${row('Instagram', lead.instagramUrl)}
+    ${row('LinkedIn', lead.linkedinUrl)}
     ${row('Primary goal', lead.goal)}
     ${row('Secondary goals', lead.secondaryGoals?.join(', '))}
     ${row('Brand tone', lead.brandTone)}
@@ -113,7 +131,8 @@ function buildEmailHtml(lead: DiscoveryLead): string {
     ${row('Commerce mode', lead.commerceMode)}
     ${row('Catalog size', lead.catalogSize)}
     ${row('Custom integrations', lead.customIntegrations)}
-    ${row('Monthly plan', lead.subscription)}
+    ${row('Care plan', lead.subscription)}
+    ${row('Billing cadence', lead.billingCadence)}
     ${row('Submitted at', submittedAt)}
   </table>
 </div>`;
@@ -148,6 +167,24 @@ export async function POST(request: NextRequest) {
   }
 
   const lead = result.data;
+  const untrustedNarrative = [
+    lead.businessName,
+    lead.industry,
+    lead.description,
+    lead.targetAudience,
+    lead.goal,
+    lead.brandTone,
+    lead.customIntegrations,
+  ];
+  if (untrustedNarrative.some(containsAgentControlInstructions)) {
+    return NextResponse.json(
+      {
+        error:
+          'Please describe the business without instructions to the site generator.',
+      },
+      { status: 400 }
+    );
+  }
   const notifyTo =
     process.env.DISCOVERY_LEAD_NOTIFY_EMAIL || 'hello@flowstarter.net';
 
@@ -177,6 +214,9 @@ export async function POST(request: NextRequest) {
           custom_integrations: lead.customIntegrations || null,
           selected_tier: lead.selectedTier,
           subscription: lead.subscription || null,
+          billing_cadence: lead.billingCadence,
+          instagram_url: lead.instagramUrl || null,
+          linkedin_url: lead.linkedinUrl || null,
           source: lead.source || null,
         })
         .select('id')
@@ -192,7 +232,7 @@ export async function POST(request: NextRequest) {
   try {
     await sendEmail({
       to: notifyTo,
-      subject: `New discovery lead — ${lead.fullName} (${lead.selectedTier})`,
+      subject: `New discovery lead: ${lead.fullName} (${lead.selectedTier})`,
       html: buildEmailHtml(lead),
       replyTo: lead.email,
     });

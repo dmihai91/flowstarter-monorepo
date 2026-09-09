@@ -52,7 +52,7 @@ export function leadNotificationEmail(props: LeadNotificationProps): {
     ? `Hi ${escapeHtml(props.recipientName)},`
     : 'Hi there,';
   const subject = `New lead on ${projectName}${
-    props.leadName ? ` — ${props.leadName}` : ''
+    props.leadName ? `: ${props.leadName}` : ''
   }`;
 
   const message = props.leadMessage?.trim();

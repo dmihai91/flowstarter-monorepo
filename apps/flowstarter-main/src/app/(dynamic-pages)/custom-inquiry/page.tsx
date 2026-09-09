@@ -5,7 +5,7 @@ import { CustomInquiryForm } from './CustomInquiryForm';
 export const metadata: Metadata = {
   title: 'Custom Solution Inquiry · Flowstarter',
   description:
-    'Bespoke builds for small and medium businesses. Tell us about the project — we respond within 2 business days.',
+    'Bespoke builds for small and medium businesses. Tell us about the project, and we respond within 2 business days.',
   robots: { index: true, follow: true },
 };
 

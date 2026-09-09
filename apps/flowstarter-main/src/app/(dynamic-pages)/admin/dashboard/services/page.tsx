@@ -103,7 +103,7 @@ export default function ServicesPage() {
               </p>
               <p className="mt-0.5 text-sm text-emerald-800/90 dark:text-emerald-300/90">
                 API keys are stored via Supabase Vault (pgsodium). Only opaque
-                UUID references live in the database — plaintext is never
+                UUID references live in the database, plaintext is never
                 persisted.
               </p>
             </div>

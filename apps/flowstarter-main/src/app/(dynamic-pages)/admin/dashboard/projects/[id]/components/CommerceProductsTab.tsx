@@ -297,7 +297,7 @@ export function CommerceProductsTab({ project }: { project: Project }) {
                   <td className="px-3 py-2 text-[var(--fs-ink-dim)] text-xs">
                     {p.price_amount != null
                       ? `${p.price_amount} ${p.currency}`
-                      : '—'}
+                      : '–'}
                   </td>
                   <td className="px-3 py-2">
                     <span className="inline-flex rounded-full bg-slate-100 dark:bg-white/5 px-2 py-0.5 text-[0.65rem] text-[var(--fs-ink-dim)] capitalize">

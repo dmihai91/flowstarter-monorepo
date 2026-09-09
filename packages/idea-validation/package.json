@@ -1,0 +1,21 @@
+{
+  "name": "@flowstarter/idea-validation",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Phase 1 of the self-service pivot: a ReAct pipeline that researches a user's business idea and returns a corroborated go/no-go verdict (PMF, competitors, market signals). Ported from the ask-sage research engine — the deterministic corroboration core never fabricates a number. All LLM calls go through OpenRouter (hybrid routing); the seam is injectable so the whole loop runs with no network in tests.",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:live": "tsx test/live.ts",
+    "dev": "tsx dev/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.13",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.3",
+    "vitest": "^4.0.0"
+  }
+}

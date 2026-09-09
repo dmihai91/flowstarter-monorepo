@@ -13,6 +13,10 @@ import {
   isSafeRedirectUrl,
 } from '@flowstarter/platform-config';
 import { NextResponse, type NextRequest } from 'next/server';
+import {
+  forcedPasswordChangeRedirect,
+  type ForcedPasswordClaims,
+} from '@/lib/auth/forced-password-change';
 import { applySecurityHeaders } from './utils/security-headers';
 
 /**
@@ -219,11 +223,16 @@ const isPublicRoute = createRouteMatcher([
   '/reset-password(.*)',
   '/verify(.*)',
   '/api/webhooks(.*)',
+  // Service callers, not people: no Clerk session exists to check. Every route
+  // under it verifies a shared secret itself (see api/internal/build/deploy).
+  '/api/internal(.*)',
   '/api/health(.*)',
   '/api/auth/session(.*)', // Session check
   '/api/contact(.*)', // Public contact form API
   '/api/support-chat(.*)', // Public support bot LLM endpoint
   '/api/discovery(.*)', // Public discovery wizard: lead capture + booking deposit
+  '/unlock(.*)', // Preview unlock landing: reached from a generated site, viewer may be signed out
+  '/welcome(.*)', // Guest deposit landing: Stripe returns here before the account exists
   '/gdpr(.*)',
   '/contact(.*)',
   '/help(.*)', // Public help page
@@ -253,6 +262,9 @@ const isPublicRoute = createRouteMatcher([
 // Everything else is a 404 — let Next.js render it instead of redirecting to login.
 const isKnownAppRoute = createRouteMatcher([
   '/',
+  '/unlock(.*)',
+  '/welcome(.*)',
+  '/account/password(.*)', // Forced password change for guest-provisioned clients
   '/about(.*)',
   '/login(.*)',
   '/assistant(.*)', // Client-facing "Flowstarter Assistant" sign-in (reached from workspace landings)
@@ -284,6 +296,18 @@ const isKnownAppRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  // ── Workflow showcase subdomain rewrite ──────────────────────────────────
+  // Keep the public demo URL clean while preserving the real app route and
+  // its same-origin video assets under the hood.
+  {
+    const host = (req.headers.get('host') ?? '').toLowerCase().split(':')[0];
+    if (host === 'workflows.flowstarter.dev' && req.nextUrl.pathname === '/') {
+      const url = req.nextUrl.clone();
+      url.pathname = '/workflow-showcase';
+      return NextResponse.rewrite(url);
+    }
+  }
+
   // ── Library subdomain rewrite ─────────────────────────────────────────────
   // The library lives at https://library.flowstarter.net but is served from
   // the same Next.js app under /library/*. Rewrite the host to the internal
@@ -329,7 +353,12 @@ export default clerkMiddleware(async (auth, req) => {
   // Static template previews must be embeddable by the same-origin library
   // detail page (DeferredPreviewFrame), so relax frame-ancestors/X-Frame-Options
   // to 'self'/SAMEORIGIN for /preview/* only — everything else stays locked.
-  const frameable = pathname.startsWith('/preview');
+  // The client editor renders the tenant's site in a same-origin iframe from
+  // /api/client/site/<id>/preview; without this exception the response is
+  // stamped frame-ancestors 'none' and every client sees a blank pane.
+  const frameable =
+    pathname.startsWith('/preview') ||
+    /^\/api\/client\/site\/[0-9a-f-]{36}\/preview(?:\/|$)/i.test(pathname);
 
   // Check for path traversal patterns (including URL-encoded variants)
   const pathTraversalPatterns = [
@@ -433,10 +462,17 @@ export default clerkMiddleware(async (auth, req) => {
       const isAuthApi = pathname.startsWith('/api/auth/'); // Protected by Clerk auth
       const isIntegrationsApi = pathname.startsWith('/api/integrations/'); // Protected by Clerk auth
       const isAnalyticsApi = pathname.startsWith('/api/analytics/'); // Protected by Clerk auth
+      // Service-to-service callbacks (the build worker's deploy). A CSRF check
+      // asks "did a browser on another site cause this?", and these callers are
+      // not browsers: they send no Origin or Referer, so a same-origin test can
+      // only ever reject them. Each route authenticates its caller with a shared
+      // secret, which is the defence that fits a service.
+      const isInternalApi = pathname.startsWith('/api/internal/');
       const unsafe = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
       if (
         unsafe &&
         !isWebhook &&
+        !isInternalApi &&
         !isTeamApi &&
         !isAiApi &&
         !isAuthApi &&
@@ -697,6 +733,26 @@ export default clerkMiddleware(async (auth, req) => {
       url.pathname = isTeamRoute ? '/admin/login' : '/login';
       url.searchParams.set('reason', 'unauthenticated');
       url.searchParams.set('next', next);
+      return NextResponse.redirect(url);
+    }
+
+    // ── Forced password change ────────────────────────────────────────────
+    // A client who paid as a guest was given an account with a password WE
+    // chose and emailed. Until they replace it, the only app page they can
+    // reach is the one that replaces it. Public pages have already returned
+    // above, and API routes are exempt so the change itself can be saved.
+    //
+    // The test is `=== true`, so the moment the flag is cleared a stale session
+    // token stops matching and the gate opens; the page refreshes the token
+    // itself rather than relying on that.
+    const passwordChangePath = forcedPasswordChangeRedirect(
+      pathname,
+      authResult?.sessionClaims as ForcedPasswordClaims | undefined
+    );
+    if (passwordChangePath) {
+      const url = req.nextUrl.clone();
+      url.pathname = passwordChangePath;
+      url.search = '';
       return NextResponse.redirect(url);
     }
 

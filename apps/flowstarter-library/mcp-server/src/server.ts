@@ -1,7 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import * as path from 'path';
-import { fileURLToPath } from 'url';
+import { timingSafeEqual } from 'node:crypto';
 import { TemplateFetcher } from './utils/template-fetcher.js';
 import { listTemplates } from './tools/list.js';
 import { getTemplateDetails, GetTemplateDetailsSchema } from './tools/details.js';
@@ -12,26 +11,31 @@ import { getProjectDetails, GetProjectSchema, getUserProjects, GetUserProjectsSc
 import { scaffoldToConvex, ScaffoldToConvexSchema } from './tools/scaffold-to-convex.js';
 import { getCodingGuide, GetCodingGuideSchema } from './tools/coding-guide.js';
 import { verifyAuth, checkUserPermissions, AuthContext } from './utils/auth.js';
+import { TEMPLATES_DIR } from './config.js';
 
 // Pre-defined tool schemas using .shape to get raw shape objects
 // This avoids deep type inference that causes TS2589 with MCP SDK
 const ListTemplatesInputSchema = z.object({
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 const GetTemplateDetailsInputSchema = z.object({
   slug: z.string().describe('The template slug (e.g., local-business-pro)'),
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 const ScaffoldTemplateInputSchema = z.object({
   slug: z.string().describe('The template slug to scaffold (e.g., local-business-pro)'),
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 const SearchTemplatesInputSchema = z.object({
   query: z.string().describe('Search query to match against template names, descriptions, and use cases'),
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 const CloneTemplateInputSchema = z.object({
@@ -39,24 +43,28 @@ const CloneTemplateInputSchema = z.object({
   projectName: z.string().describe('Name for the new project'),
   projectDescription: z.string().optional().describe('Optional description for the project'),
   customizations: z.record(z.unknown()).optional().describe('Optional customization parameters'),
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 const GetProjectInputSchema = z.object({
   projectId: z.string().describe('The unique ID of the project to retrieve'),
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 const GetUserProjectsInputSchema = z.object({
   userId: z.string().describe('The user ID to retrieve projects for'),
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 // New: Get coding guide for AI agents
 const GetCodingGuideInputSchema = z.object({
   templateSlug: z.string().optional().describe('Optional: Get guidance specific to a template slug'),
   topic: z.enum(['content', 'components', 'themes', 'icons', 'structure', 'all']).optional().describe('Specific topic to get guidance on'),
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 // New: Scaffold directly to Convex (faster template cloning)
@@ -82,7 +90,8 @@ const ScaffoldToConvexInputSchema = z.object({
     body: z.object({ family: z.string(), weight: z.number() }),
     googleFonts: z.string(),
   }).optional().describe('Font pairing for customization'),
-  _sessionToken: z.string().optional()
+  _sessionToken: z.string().optional(),
+  _internalToken: z.string().optional()
 }).shape;
 
 // Standardized error response structure
@@ -104,12 +113,6 @@ function createErrorResponse(error: string, statusCode: number, code: string) {
   };
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Templates directory: flowstarter-library/templates (actual templates at root; example/ has deprecated ones)
-const TEMPLATES_DIR = path.resolve(__dirname, '..', '..', 'templates');
-
 // Helper function to verify auth for each tool call
 async function verifyToolAuth(args: any, toolName: string): Promise<{ success: true; authContext: AuthContext } | { success: false; error: any }> {
   // Skip authentication if disabled
@@ -121,6 +124,24 @@ async function verifyToolAuth(args: any, toolName: string): Promise<{ success: t
         sessionId: 'dev-session',
         isAuthenticated: true,
         user: { id: 'dev-user', email: 'dev@local.test' }
+      }
+    };
+  }
+
+  const configuredInternalToken = process.env.FLOWSTARTER_MCP_INTERNAL_TOKEN;
+  const suppliedInternalToken = (args as { _internalToken?: unknown })?._internalToken;
+  if (
+    configuredInternalToken &&
+    typeof suppliedInternalToken === 'string' &&
+    secureEqual(suppliedInternalToken, configuredInternalToken)
+  ) {
+    return {
+      success: true,
+      authContext: {
+        userId: 'flowstarter-build-worker',
+        sessionId: 'internal-mcp',
+        isAuthenticated: true,
+        user: { id: 'flowstarter-build-worker', email: 'internal@flowstarter.invalid' }
       }
     };
   }
@@ -176,13 +197,24 @@ async function verifyToolAuth(args: any, toolName: string): Promise<{ success: t
   return { success: true, authContext };
 }
 
-export async function createMcpServer(): Promise<{ server: McpServer; fetcher: TemplateFetcher }> {
-  console.error('Starting Flowstarter MCP Server...');
-  console.error(`Templates directory: ${TEMPLATES_DIR}`);
+function secureEqual(left: string, right: string): boolean {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+  return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
+}
 
-  // Initialize template fetcher
-  const fetcher = new TemplateFetcher(TEMPLATES_DIR);
-  await fetcher.initialize();
+export async function createMcpServer(
+  existingFetcher?: TemplateFetcher
+): Promise<{ server: McpServer; fetcher: TemplateFetcher }> {
+  if (!existingFetcher) {
+    console.error('Starting Flowstarter MCP Server...');
+    console.error(`Templates directory: ${TEMPLATES_DIR}`);
+  }
+
+  // HTTP mode reuses the read-only index while creating the request-scoped
+  // MCP server/transport pair required by stateless Streamable HTTP.
+  const fetcher = existingFetcher ?? new TemplateFetcher(TEMPLATES_DIR);
+  if (!existingFetcher) await fetcher.initialize();
 
   // Create MCP server
   const server = new McpServer({

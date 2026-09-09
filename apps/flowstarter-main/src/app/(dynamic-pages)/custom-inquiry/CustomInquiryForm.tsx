@@ -249,7 +249,7 @@ export function CustomInquiryForm() {
         >
           {status === 'duplicate'
             ? 'We already have your inquiry'
-            : 'Thanks — we got it'}
+            : 'Thanks, we got it'}
         </h2>
         <p
           className="ls-body"

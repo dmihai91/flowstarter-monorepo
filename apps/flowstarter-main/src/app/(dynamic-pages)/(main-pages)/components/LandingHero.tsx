@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/unified-button';
 import { useI18n } from '@/lib/i18n';
 import { useBookingModal } from './booking-modal-store';
@@ -13,6 +13,7 @@ export function LandingHero() {
   const { t: tStrict } = useI18n();
   const t = tStrict as (key: string) => string;
   const openBookingModal = useBookingModal((s) => s.open);
+  const [activeStep, setActiveStep] = useState(0);
   // Always revealed — entrance animation via CSS, not JS state.
   // JS-gated opacity caused hero flash/reflow on Android Chrome on first paint.
   const revealed = true;
@@ -38,24 +39,37 @@ export function LandingHero() {
     }ms, transform 900ms cubic-bezier(0.19,1,0.22,1) ${order * 110}ms`,
   });
 
-  const filled = PROGRESS_STEPS;
+  useEffect(() => {
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
 
-  const stats = [
-    { val: t('landing.hero.stat1Value'), lbl: t('landing.hero.stat1Label') },
-    { val: t('landing.hero.stat2Value'), lbl: t('landing.hero.stat2Label') },
-    { val: t('landing.hero.stat3Value'), lbl: t('landing.hero.stat3Label') },
-    { val: t('landing.hero.stat4Value'), lbl: t('landing.hero.stat4Label') },
-  ];
+    if (reducedMotion) {
+      setActiveStep(PROGRESS_STEPS - 1);
+      return;
+    }
+
+    const timers = Array.from({ length: PROGRESS_STEPS - 1 }, (_, index) =>
+      window.setTimeout(() => setActiveStep(index + 1), (index + 1) * 1900)
+    );
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, []);
+
+  const progressLabels = useMemo(
+    () => [
+      t('landing.hero.brief.progressLearning'),
+      t('landing.hero.brief.progressVoice'),
+      t('landing.hero.brief.progressDesign'),
+      t('landing.hero.brief.progressReady'),
+    ],
+    [t]
+  );
+  const filled = activeStep + 1;
+  const isReady = activeStep === PROGRESS_STEPS - 1;
 
   return (
-    <section
-      className="ls-scope ls-section ls-section--pad-lg ls-fade-bottom"
-      style={{
-        minHeight: '100svh',
-        paddingTop: 'clamp(4.5rem, 9vh, 6.5rem)',
-        paddingBottom: 'clamp(3rem, 6vh, 5rem)',
-      }}
-    >
+    <section className="ls-scope ls-section ls-hero-section ls-fade-bottom">
       <div className="ls-container">
         <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <div className="ls-hero-content">
@@ -100,6 +114,7 @@ export function LandingHero() {
               className="mt-10 flex w-full flex-wrap items-center gap-3 sm:gap-6"
             >
               <Button
+                data-testid="open-discovery"
                 onClick={openBookingModal}
                 className="ls-cta-hero w-full sm:w-auto h-14 px-8 text-[1.02rem] sm:text-[1.08rem]"
               >
@@ -132,44 +147,6 @@ export function LandingHero() {
                 {t('landing.hero.secondaryCta')}
               </a>
             </div>
-
-            <p
-              style={{
-                ...reveal(6),
-                color: 'var(--ls-ink-faint)',
-                fontFamily: 'var(--ls-mono)',
-              }}
-              className="mt-5 text-[10.5px] uppercase tracking-[0.18em]"
-            >
-              {t('landing.hero.guaranteeShort')}
-            </p>
-
-            <div
-              style={reveal(7)}
-              className="ls-hero-trust mt-10 flex flex-wrap items-stretch border-t"
-            >
-              {stats.map((s) => (
-                <div key={s.lbl} className="ls-hero-stat">
-                  <span className="val">{s.val}</span>
-                  <span className="lbl">{s.lbl}</span>
-                </div>
-              ))}
-            </div>
-
-            <div
-              style={reveal(8)}
-              className="mt-6 flex flex-wrap items-center gap-3"
-            >
-              <span className="ls-pill ls-pill--accent">
-                {t('landing.hero.pills.label')}
-              </span>
-              <span className="ls-pill">{t('landing.hero.pills.booking')}</span>
-              <span className="ls-pill">
-                {t('landing.hero.pills.newsletter')}
-              </span>
-              <span className="ls-pill">{t('landing.hero.pills.leads')}</span>
-              <span className="ls-pill">{t('landing.hero.pills.edit')}</span>
-            </div>
           </div>
 
           <aside
@@ -180,11 +157,13 @@ export function LandingHero() {
                 : 'translateY(22px) translateX(16px)',
             }}
             className="ls-card ls-brief"
+            data-hero-stage={activeStep + 1}
           >
             <div className="ls-brief-hdr">
               <span className="ls-brief-live">
-                <span className="dot" />
-                {t('landing.hero.brief.live')}
+                {isReady
+                  ? t('landing.hero.brief.live')
+                  : t('landing.hero.brief.liveWorking')}
               </span>
               <span className="ls-brief-serial">
                 {t('landing.hero.brief.serial')}
@@ -198,9 +177,16 @@ export function LandingHero() {
               {t('landing.hero.brief.subtitle')}
             </div>
 
-            {briefFields.map((field) => {
+            {briefFields.map((field, index) => {
               return (
-                <div key={field.label} className="ls-field">
+                <div
+                  key={field.label}
+                  className={`ls-field ${
+                    index === activeStep ? 'is-active' : ''
+                  } ${index < activeStep ? 'is-complete' : ''} ${
+                    index > activeStep ? 'is-pending' : ''
+                  }`}
+                >
                   <span className="lbl">{field.label}</span>
                   <span className="val">{field.value}</span>
                 </div>
@@ -212,8 +198,8 @@ export function LandingHero() {
                 <span className="lbl">
                   {t('landing.hero.brief.progressLabel')}
                 </span>
-                <span className="val">
-                  {t('landing.hero.brief.progressReady')}
+                <span className="val" aria-live="polite">
+                  {progressLabels[activeStep]}
                 </span>
               </div>
               <div className="ls-bar">
@@ -230,9 +216,11 @@ export function LandingHero() {
             <button
               type="button"
               onClick={openBookingModal}
-              className="ls-brief-finish ready"
+              className={`ls-brief-finish ${isReady ? 'ready' : ''}`}
             >
-              {t('landing.hero.brief.ctaReady')}
+              {isReady
+                ? t('landing.hero.brief.ctaReady')
+                : t('landing.hero.brief.ctaPending')}
               <svg
                 className="h-3.5 w-3.5"
                 fill="none"

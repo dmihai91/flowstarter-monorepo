@@ -14,58 +14,22 @@ export function ProcessSection() {
       <div className="ls-mesh" aria-hidden />{' '}
       <div className="ls-grain" aria-hidden />
       <div className="ls-container">
-        <div className="text-center max-w-3xl mx-auto">
-          <div
-            className="ls-eyebrow inline-flex items-center justify-center gap-3"
-            style={{ justifyContent: 'center' }}
-          >
-            <span
-              aria-hidden
-              style={{
-                display: 'inline-block',
-                width: '28px',
-                height: '1px',
-                background: 'var(--ls-ink-faint)',
-              }}
-            />
-            <span className="num">{t('landing.process.eyebrow')}</span>
-            <span
-              aria-hidden
-              style={{
-                display: 'inline-block',
-                width: '28px',
-                height: '1px',
-                background: 'var(--ls-ink-faint)',
-              }}
-            />
-          </div>
-
-          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+        <div className="ls-section-intro">
+          <h2 className="ls-display" style={{ textWrap: 'balance' }}>
             <span className="line">{t('landing.process.headlinePrefix')}</span>
             <span className="line flourish mt-2">
               {t('landing.process.headlineFlourish')}
             </span>
           </h2>
-
-          <p className="ls-body ls-body--lead mt-7 mx-auto">
-            {t('landing.process.sub')}
-          </p>
+          <p className="ls-body ls-body--lead">{t('landing.process.sub')}</p>
         </div>
 
-        <div className="ls-process-grid mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 md:gap-6 lg:gap-8">
-          {process.steps.map((step, i) => (
-            <div
-              key={step.title}
-              className="ls-card ls-process-card"
-              style={{
-                animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
-                  i * 120
-                }ms both`,
-              }}
-            >
+        <div className="ls-process-grid">
+          {process.steps.map((step) => (
+            <div key={step.title} className="ls-process-card">
+              <div className="ls-process-num">{step.number}</div>
               <h3 className="ls-process-title">{step.title}</h3>
               <p className="ls-process-body">{step.description}</p>
-              <div className="ls-process-rule" />
             </div>
           ))}
         </div>

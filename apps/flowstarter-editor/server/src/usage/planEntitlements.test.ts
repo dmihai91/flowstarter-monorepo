@@ -14,65 +14,43 @@ import {
 const ALL_PLANS: PlanKey[] = ["starter", "pro", "max", "ecommerce", "admin"];
 
 describe("PLAN_ENTITLEMENTS — agreed matrix", () => {
-  it("starter: 30 sessions, €0.50 per-edit cap, €20 monthly budget, locked autorouter, constrained, no store ops", () => {
+  it("starter: locked autorouter, constrained editing, no store ops", () => {
     expect(PLAN_ENTITLEMENTS.starter).toMatchObject({
-      sessionsPerMonth: 30,
-      eurCostCapPerSession: 0.5,
-      monthlySoftThresholdEur: 15,
-      monthlyHardCeilingEur: 20,
       modelAccess: "autorouter-locked",
       editScope: "constrained",
       storeOps: false,
     });
   });
 
-  it("pro: 60 sessions, €0.50 per-edit cap, €50 monthly budget, picker unlocked, constrained", () => {
+  it("pro: picker unlocked, constrained editing", () => {
     expect(PLAN_ENTITLEMENTS.pro).toMatchObject({
-      sessionsPerMonth: 60,
-      eurCostCapPerSession: 0.5,
-      monthlySoftThresholdEur: 38,
-      monthlyHardCeilingEur: 50,
       modelAccess: "autorouter+picker",
       editScope: "constrained",
       storeOps: false,
     });
   });
 
-  it("max: 120 sessions, €0.50 per-edit cap, €150 monthly budget, code unlocked", () => {
+  it("max: code experimentation unlocked", () => {
     expect(PLAN_ENTITLEMENTS.max).toMatchObject({
-      sessionsPerMonth: 120,
-      eurCostCapPerSession: 0.5,
-      monthlySoftThresholdEur: 112,
-      monthlyHardCeilingEur: 150,
       modelAccess: "autorouter+picker+code",
       editScope: "code",
       storeOps: false,
     });
   });
 
-  it("ecommerce: Pro+ sessions, €0.50 per-edit cap, €75 monthly budget, store ops with a separate allowance", () => {
+  it("ecommerce: picker unlocked with store ops", () => {
     expect(PLAN_ENTITLEMENTS.ecommerce).toMatchObject({
-      sessionsPerMonth: 90,
-      eurCostCapPerSession: 0.5,
-      monthlySoftThresholdEur: 56,
-      monthlyHardCeilingEur: 75,
       modelAccess: "autorouter+picker",
       editScope: "constrained",
       storeOps: true,
-      storeOpsAllowance: 200,
     });
   });
 
   it("admin: unlimited everything, full access", () => {
     expect(PLAN_ENTITLEMENTS.admin).toMatchObject({
-      sessionsPerMonth: null,
-      eurCostCapPerSession: null,
-      monthlySoftThresholdEur: null,
-      monthlyHardCeilingEur: null,
       modelAccess: "autorouter+picker+code",
       editScope: "code",
       storeOps: true,
-      storeOpsAllowance: null,
     });
   });
 
@@ -82,14 +60,6 @@ describe("PLAN_ENTITLEMENTS — agreed matrix", () => {
     }
   });
 
-  it("hard ceiling is always >= soft threshold where both are set", () => {
-    for (const plan of ALL_PLANS) {
-      const e = entitlementForPlan(plan);
-      if (e.monthlySoftThresholdEur !== null && e.monthlyHardCeilingEur !== null) {
-        expect(e.monthlyHardCeilingEur).toBeGreaterThanOrEqual(e.monthlySoftThresholdEur);
-      }
-    }
-  });
 });
 
 describe("normalisePlanKey — read-boundary normalization", () => {

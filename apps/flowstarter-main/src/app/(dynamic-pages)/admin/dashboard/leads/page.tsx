@@ -30,10 +30,12 @@ function DepositBadge({
   status: string;
   amount: number | null;
 }) {
+  // Same chip recipe as the pipeline board and the project tabs.
   const map: Record<string, string> = {
-    paid: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-    refunded: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-    none: 'bg-[var(--ls-glass-bg)] text-[var(--ls-ink-faint)]',
+    paid: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+    refunded:
+      'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+    none: 'border-[var(--ls-rule)] bg-transparent text-[var(--ls-ink-dim)]',
   };
   const label =
     status === 'paid'
@@ -43,7 +45,7 @@ function DepositBadge({
       : 'No deposit';
   return (
     <span
-      className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium leading-5 ${
         map[status] ?? map.none
       }`}
     >
@@ -127,7 +129,7 @@ export default function LeadsPage() {
                       </td>
                       <td className="py-3 pr-4">
                         <div className="text-[var(--ls-ink)]">
-                          {l.business_name || '—'}
+                          {l.business_name || '–'}
                         </div>
                         <div className="text-[12px] text-[var(--ls-ink-faint)]">
                           {l.industry || ''}
@@ -137,7 +139,7 @@ export default function LeadsPage() {
                         {l.selected_tier}
                       </td>
                       <td className="py-3 pr-4 capitalize">
-                        {l.subscription || '—'}
+                        {l.subscription || '–'}
                       </td>
                       <td className="py-3 pr-4">
                         <DepositBadge
@@ -155,7 +157,7 @@ export default function LeadsPage() {
                           </a>
                         ) : (
                           <span className="text-[12px] text-[var(--ls-ink-faint)]">
-                            —
+                            –
                           </span>
                         )}
                       </td>

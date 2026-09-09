@@ -58,9 +58,9 @@ const PROVIDER_LABELS: Record<string, string> = {
 
 const STATUS_LABELS: Record<string, string> = {
   not_needed: 'Not needed',
-  discovery: 'Discovery — gathering requirements',
-  configured: 'Configured — provider set up, not live',
-  live: 'Live — selling',
+  discovery: 'Discovery: gathering requirements',
+  configured: 'Configured: provider set up, not live',
+  live: 'Live: selling',
   needs_custom_build: 'Needs custom build (escalate)',
 };
 
@@ -230,7 +230,7 @@ export function CommerceTab({ project }: { project: Project }) {
         <div>
           <Label htmlFor="commerce-notes">Notes</Label>
           <p className="text-xs text-[var(--fs-ink-faint)] mb-2">
-            Tax, shipping, fulfillment, license delivery — anything that shapes
+            Tax, shipping, fulfillment, license delivery: anything that shapes
             commerce setup.
           </p>
           <Textarea

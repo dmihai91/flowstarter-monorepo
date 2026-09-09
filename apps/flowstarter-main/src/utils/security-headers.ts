@@ -165,7 +165,17 @@ export function buildCSPHeader(nonce?: string, frameable = false): string {
         : ''
     }`,
     `font-src ${ALLOWED_FONT_DOMAINS.join(' ')}`,
-    `frame-src ${ALLOWED_FRAME_DOMAINS.join(' ')}`,
+    // FLOWSTARTER_LOCAL_PREVIEW serves the generated site from a local
+    // `astro dev` on its own port — a different origin than 'self', so
+    // without this the browser blocks the wizard's preview iframe exactly
+    // like the un-allowlisted Daytona case: an empty white frame whose
+    // `load` event still fires (which is why the skeleton got out of its
+    // way). Dev-only by construction; the env flag is never set in prod.
+    `frame-src ${ALLOWED_FRAME_DOMAINS.join(' ')}${
+      isDev && process.env.FLOWSTARTER_LOCAL_PREVIEW === 'true'
+        ? ' http://127.0.0.1:* http://localhost:*'
+        : ''
+    }`,
     // Static template previews under /preview/* must be embeddable by the
     // same-origin library detail page; everything else stays 'none' to block
     // clickjacking.

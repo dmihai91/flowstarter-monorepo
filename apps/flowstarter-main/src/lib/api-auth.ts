@@ -258,3 +258,80 @@ export async function requireTeamAuth(): Promise<TeamAuthResult> {
     };
   }
 }
+
+export type WorkspaceAccessResult =
+  | {
+      authorized: true;
+      userId: string;
+      workspaceId: string;
+      via: 'membership' | 'team';
+    }
+  | { authorized: false; response: NextResponse };
+
+/**
+ * Authorizes a caller for one workspace's data.
+ *
+ * Service-role queries bypass RLS, so a route that takes a workspace id from
+ * the request and queries with that client is only as isolated as the check in
+ * front of it. Every route hand-rolled that check, and one of them
+ * (`/api/leads/list`) did not have it at all: any signed-in user could read
+ * another client's leads by changing a query parameter. This is the single
+ * place to get it right.
+ *
+ * Team and admin roles intentionally pass for any workspace — the operator
+ * dashboards are cross-tenant by design.
+ *
+ * Returns 404 rather than 403 for a workspace the caller cannot see, so the
+ * response does not confirm that an id exists.
+ */
+export async function requireWorkspaceAccess(
+  workspaceId: string
+): Promise<WorkspaceAccessResult> {
+  const authResult = await requireAuth();
+  if (!authResult.authenticated) {
+    return { authorized: false, response: authResult.response };
+  }
+  const { userId } = authResult;
+
+  if (!UUID_PATTERN.test(workspaceId)) {
+    return {
+      authorized: false,
+      response: NextResponse.json(
+        { error: 'Invalid workspace id', code: 'BAD_REQUEST' },
+        { status: 400 }
+      ),
+    };
+  }
+
+  const role = await resolveUserRole(userId);
+  if (role === 'team' || role === 'admin') {
+    return { authorized: true, userId, workspaceId, via: 'team' };
+  }
+
+  const { createSupabaseServiceRoleClient } = await import(
+    '@/supabase-clients/server'
+  );
+  const supabase = createSupabaseServiceRoleClient();
+  const { data: membership, error } = await supabase
+    .from('workspace_memberships')
+    .select('workspace_id')
+    .eq('workspace_id', workspaceId)
+    .eq('clerk_user_id', userId)
+    .maybeSingle();
+  if (error) throw error;
+
+  if (!membership) {
+    return {
+      authorized: false,
+      response: NextResponse.json(
+        { error: 'Workspace not found', code: 'NOT_FOUND' },
+        { status: 404 }
+      ),
+    };
+  }
+
+  return { authorized: true, userId, workspaceId, via: 'membership' };
+}
+
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

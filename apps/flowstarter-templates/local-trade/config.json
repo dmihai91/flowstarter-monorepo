@@ -1,0 +1,101 @@
+{
+  "name": "Local Trade",
+  "slug": "local-trade",
+  "description": "Practical local-conversion template for trades, salons, cleaners, instructors, repair services, and other location-based operators.",
+  "category": "local-business",
+  "framework": "astro",
+  "tags": [
+    "local business",
+    "trade",
+    "salon",
+    "cleaner",
+    "contractor",
+    "repair",
+    "quote request",
+    "service area"
+  ],
+  "features": [
+    "service-area proof",
+    "services grid",
+    "trust signals",
+    "quote CTA",
+    "mobile contact flow"
+  ],
+  "bestFor": [
+    "local service businesses",
+    "phone or quote conversion",
+    "clear service-area communication"
+  ],
+  "assetLibrary": [
+    {
+      "path": "/images/about-freelancer.jpg",
+      "kind": "photo-generic",
+      "description": "Empty park benches under autumn trees. No face."
+    },
+    {
+      "path": "/images/services-1.jpg",
+      "kind": "photo-people-scene",
+      "description": "Black-and-white meeting room, people at a distance."
+    },
+    {
+      "path": "/images/services-2.jpg",
+      "kind": "photo-generic",
+      "description": "An empty modern office corridor. No face."
+    },
+    {
+      "path": "/images/work-1.jpg",
+      "kind": "photo-people-scene",
+      "description": "A team workshop around a table with sticky notes on the wall."
+    },
+    {
+      "path": "/images/work-2.jpg",
+      "kind": "photo-people-scene",
+      "description": "Two colleagues talking across a desk, faces visible."
+    },
+    {
+      "path": "/images/work-3.jpg",
+      "kind": "photo-people-scene",
+      "description": "A workshop in a bright office, several people and a whiteboard."
+    },
+    {
+      "path": "/images/work-4.jpg",
+      "kind": "photo-people-scene",
+      "description": "A boardroom of people with laptops during a presentation."
+    },
+    {
+      "path": "/images/work-5.jpg",
+      "kind": "photo-people-scene",
+      "description": "Hands gesturing beside a laptop in a meeting."
+    },
+    {
+      "path": "/images/work-6.jpg",
+      "kind": "photo-generic",
+      "description": "A laptop showing a dashboard on a desk. No face."
+    },
+    {
+      "path": "/images/blog-1.jpg",
+      "kind": "photo-generic",
+      "description": "Hands writing in a notebook beside a coffee cup. No face."
+    },
+    {
+      "path": "/images/blog-3.jpg",
+      "kind": "photo-generic",
+      "description": "Silhouette of a person meditating against a sunset. Unidentifiable."
+    },
+    {
+      "path": "/images/workshop-bench.svg",
+      "kind": "abstract",
+      "description": "Label-free line drawing of a workbench. Fallback art."
+    },
+    {
+      "path": "/images/team-van.svg",
+      "kind": "abstract",
+      "description": "Label-free line drawing of a van. Fallback art."
+    },
+    {
+      "path": "/images/finished-staircase.svg",
+      "kind": "abstract",
+      "description": "Label-free line drawing of joinery. Fallback art."
+    }
+  ]
+}

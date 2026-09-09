@@ -76,7 +76,7 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
       <div className="text-[11px] uppercase tracking-[0.12em] text-[var(--ls-ink-faint)]">
         {label}
       </div>
-      <div className="mt-1 text-sm text-[var(--ls-ink)]">{value || '—'}</div>
+      <div className="mt-1 text-sm text-[var(--ls-ink)]">{value || '–'}</div>
     </div>
   );
 }
@@ -97,7 +97,8 @@ Book your Strategy Call: https://flowstarter.net/#pricing
 
 Looking forward to working together.
 
-— The Flowstarter team`;
+Best,
+The Flowstarter team`;
 
 const APPROVE_DEFAULT_MESSAGE = (
   name: string,
@@ -117,7 +118,8 @@ By the end of the call, you'll have clear next steps regardless of whether we wo
 
 Looking forward to the conversation.
 
-— The Flowstarter team`;
+Best,
+The Flowstarter team`;
 
 export default function InquiryDetailPage() {
   const { t } = useTranslations();
@@ -354,7 +356,7 @@ export default function InquiryDetailPage() {
                   if (notesDirty) saveNotes.mutate(notes);
                 }}
                 rows={6}
-                placeholder="Private notes — not sent to the prospect."
+                placeholder="Private notes: not sent to the prospect."
                 className="mt-2 w-full rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)] p-2 text-sm text-[var(--ls-ink)] outline-none"
               />
               <p className="mt-1 text-[11px] text-[var(--ls-ink-faint)]">

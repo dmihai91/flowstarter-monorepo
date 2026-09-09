@@ -1,27 +1,71 @@
-import { useEffect, useRef, useState } from 'react';
+'use client';
+
+import { useAuth } from '@clerk/nextjs';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   type DiscoveryData,
   type DemoSite,
   type GeneratedSiteCopy,
+  type Tier,
   type ToneId,
   DEMO_STATE_KEY,
   MAX_DEMO_EDITS,
   buildDemoSite,
   previewCtaLabel,
+  recommendTier,
 } from '../discovery.logic';
+import {
+  KEEP_EXPLORING_LABEL,
+  agentForPhase,
+  depositCtaLabel,
+  depositQuote,
+  previewMeaningMessage,
+  previewReadyMessage,
+} from '../concierge.shared';
+import {
+  claimIntakeChatPayload,
+  describeWithIntakeAnswers,
+} from '../intake-chat.shared';
+import { usePreviewProgress } from '../usePreviewProgress';
 import { DemoSiteFrame } from './DemoSiteFrame';
+import {
+  ChatBubble,
+  ConciergePanes,
+  ConversationLog,
+  NowLine,
+  SITE_PANE_HEIGHT_CLASS,
+  SiteSkeleton,
+  useElapsedSeconds,
+  useSiteViewport,
+  type NowState,
+} from './ConciergePanes';
 
 /**
- * Step 7. Primary path: the in-sandbox autonomous Agent-SDK pipeline
+ * Step 8 — the generation stage of the concierge conversation.
+ *
+ * The visitor does not change screens between the info agent and this: the
+ * same two panes stay up, the same conversation keeps running. What changes is
+ * who is talking. The info agent stops asking, and the build agents start
+ * reporting — each pipeline phase arrives as a message signed by the
+ * specialist that owns it, while the site itself assembles on the right, from
+ * a page-shaped skeleton to the base template to the personalized site.
+ *
+ * The offer is stated twice, in plain words, because a preview that is mistaken
+ * for a finished site is a refund conversation later: this is a preview of the
+ * full site, a 20% deposit has it built, the balance falls due on completion.
+ *
+ * Primary path: the in-sandbox autonomous Agent-SDK pipeline
  * (/api/discovery/preview/live) builds a real personalized site in a Daytona
- * sandbox; we embed its live URL and give the visitor a T3-Code-style
- * conversational editor — up to 15 plain-English prompts, applied by the
- * agent in the same sandbox (HMR updates the preview). Fail-open: if the
- * live pipeline is unavailable / budget-blocked / errors, fall back to the
- * deterministic JSON demo so the funnel never dead-ends.
+ * sandbox; we embed its live URL and give the visitor up to 15 plain-English
+ * prompts, applied by the agent in the same sandbox (HMR updates the preview).
+ * If the live pipeline is unavailable or fails, the funnel says so out loud and
+ * offers the choice — try again, or take the deterministic JSON preview.
  */
 
-const LIVE_EDIT_CAP = 15;
+// Two free changes before the deposit ask — enough to see the team edit the
+// site live, few enough that the preview never becomes the product. Must
+// match LIVE_EDIT_CAP in lib/discovery/live-jobs.ts (server-enforced).
+const LIVE_EDIT_CAP = 2;
 
 /**
  * Render a friendly fake hostname for the iframe chrome bar
@@ -41,13 +85,6 @@ interface DemoState {
   site: DemoSite;
   editsUsed: number;
 }
-
-const BUILD_STEPS = [
-  'landing.discovery.preview.build.s1',
-  'landing.discovery.preview.build.s2',
-  'landing.discovery.preview.build.s3',
-  'landing.discovery.preview.build.s4',
-] as const;
 
 function fallbackSite(data: DiscoveryData): DemoSite {
   const firstSentence =
@@ -102,6 +139,31 @@ interface ChatTurn {
   text: string;
 }
 
+/**
+ * Shared by both the JSON-fallback and the live-preview POST: the info-agent
+ * step's answers ride in on `description`, the only free-prose field the
+ * generator takes. Without this the conversation would only reach the
+ * generator after a claim, and the preview shown right now would ignore
+ * what the visitor just told us.
+ */
+function previewPayload(data: DiscoveryData) {
+  return {
+    businessName: data.businessName,
+    fullName: data.fullName,
+    description: describeWithIntakeAnswers(data),
+    industry: data.industry,
+    targetAudience: data.targetAudience,
+    goal: data.goal,
+    brandTone: data.brandTone,
+    // Collected two steps earlier and previously dropped here, which left
+    // every generated site with placeholder social links.
+    instagramUrl: data.instagramUrl,
+    linkedinUrl: data.linkedinUrl,
+    calComUrl: data.calComUrl,
+    customIntegrations: data.customIntegrations,
+  };
+}
+
 export function PreviewStep({
   data,
   t,
@@ -112,9 +174,13 @@ export function PreviewStep({
   const [mode, setMode] = useState<Mode>('loading');
   const [liveUrl, setLiveUrl] = useState<string | null>(null);
   const [liveDemoId, setLiveDemoId] = useState<string | null>(null);
-  const [livePhase, setLivePhase] = useState<string | null>(null);
   const [iframeNonce, setIframeNonce] = useState(0);
   const [personalizing, setPersonalizing] = useState(false);
+  const [frameLoaded, setFrameLoaded] = useState(false);
+
+  // Real-time build progress over SSE (falls back to polling only if the
+  // stream errors or is unavailable — see usePreviewProgress).
+  const progress = usePreviewProgress(liveDemoId);
 
   // Conversational editor (live mode).
   const [chat, setChat] = useState<ChatTurn[]>([]);
@@ -127,175 +193,125 @@ export function PreviewStep({
   const [prompt, setPrompt] = useState('');
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const [buildStep, setBuildStep] = useState(0);
-  const chatEndRef = useRef<HTMLDivElement>(null);
 
+  // Honesty about the build: a failed pipeline is said out loud and the
+  // visitor picks what happens next. Nothing falls back behind their back.
+  const [buildFailure, setBuildFailure] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  // Set when the live pipeline was never available (budget, config, skip) and
+  // the deterministic preview stood in for it.
+  const [steppedDown, setSteppedDown] = useState(false);
+
+  // The offer, and the quiet way past it.
+  const [offerSnoozed, setOfferSnoozed] = useState(false);
+  // The deposit ask waits until the visitor has seen editing in action: it
+  // reveals after both free changes are spent, or when they ask for it
+  // themselves. Deterministic — a counter and a click, no model involved.
+  const [offerRevealed, setOfferRevealed] = useState(false);
+
+  // A fresh frame starts invisible and fades in once it has painted.
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chat]);
+    setFrameLoaded(false);
+  }, [iframeNonce, liveUrl]);
 
-  useEffect(() => {
-    if (mode !== 'loading' || livePhase) return;
-    const id = setInterval(
-      () => setBuildStep((s) => Math.min(s + 1, BUILD_STEPS.length - 1)),
-      2600
-    );
-    return () => clearInterval(id);
-  }, [mode, livePhase]);
+  // The live site is laid out at desktop width and scaled to the pane, so
+  // what the visitor sees is the page as a laptop would show it.
+  const viewport = useSiteViewport();
 
-  useEffect(() => {
-    let cancelled = false;
-
-    const payload = {
-      businessName: data.businessName,
-      fullName: data.fullName,
-      description: data.description,
-      industry: data.industry,
-      targetAudience: data.targetAudience,
-      goal: data.goal,
-      brandTone: data.brandTone,
-    };
-
-    async function loadJsonFallback() {
-      if (typeof window !== 'undefined') {
-        try {
-          const raw = window.sessionStorage.getItem(DEMO_STATE_KEY);
-          if (raw) {
-            const saved = JSON.parse(raw) as DemoState;
-            if (saved?.site) {
-              if (cancelled) return;
-              setDemo(saved);
-              setMode('json');
-              return;
-            }
-          }
-        } catch {
-          /* ignore */
-        }
-      }
+  // Shared by the mount effect below (on a failed/skip POST) and by the
+  // visitor's own choice after a failure: whichever path a preview takes,
+  // this is the one place that decides what "no live preview" falls back to.
+  const loadJsonFallback = useCallback(async () => {
+    setBuildFailure(null);
+    if (typeof window !== 'undefined') {
       try {
-        const res = await fetch('/api/discovery/preview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        const json = (await res.json().catch(() => ({}))) as {
-          site?: DemoSite;
-          demoId?: string | null;
-          skip?: boolean;
-        };
-        if (cancelled) return;
-        if (res.ok && json.site) {
-          setDemo({
-            demoId: json.demoId ?? null,
-            site: json.site,
-            editsUsed: 0,
-          });
-        } else {
-          setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
-          setNotice(t('landing.discovery.preview.editorUnavailable'));
+        const raw = window.sessionStorage.getItem(DEMO_STATE_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw) as DemoState;
+          if (saved?.site) {
+            setDemo(saved);
+            setMode('json');
+            return;
+          }
         }
       } catch {
-        if (!cancelled) {
-          setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
-          setNotice(t('landing.discovery.preview.editorUnavailable'));
-        }
-      } finally {
-        if (!cancelled) setMode('json');
+        /* ignore */
       }
     }
+    try {
+      const res = await fetch('/api/discovery/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(previewPayload(data)),
+      });
+      const json = (await res.json().catch(() => ({}))) as {
+        site?: DemoSite;
+        demoId?: string | null;
+        skip?: boolean;
+      };
+      if (res.ok && json.site) {
+        setDemo({
+          demoId: json.demoId ?? null,
+          site: json.site,
+          editsUsed: 0,
+        });
+      } else {
+        setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
+        setNotice(t('landing.discovery.preview.editorUnavailable'));
+      }
+    } catch {
+      setDemo({ demoId: null, site: fallbackSite(data), editsUsed: 0 });
+      setNotice(t('landing.discovery.preview.editorUnavailable'));
+    } finally {
+      setMode('json');
+    }
+  }, [data, t]);
 
-    async function runLive() {
-      let demoId: string | null = null;
+  const shownBaseRef = useRef(false);
+  const resolvedRef = useRef(false);
+
+  const startLive = useCallback(
+    async (isCancelled: () => boolean) => {
       try {
         const res = await fetch('/api/discovery/preview/live', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(previewPayload(data)),
         });
         const json = (await res.json().catch(() => ({}))) as {
           demoId?: string;
           skip?: boolean;
         };
-        if (cancelled) return;
-        if (json.skip || !json.demoId) return loadJsonFallback();
-        demoId = json.demoId;
-        setLiveDemoId(demoId);
+        if (isCancelled()) return;
+        if (json.skip || !json.demoId) {
+          // The pipeline was never started (budget, configuration, or an
+          // explicit skip). That is not a build that failed, but the visitor
+          // is still told the preview they get is the simpler one.
+          setSteppedDown(true);
+          void loadJsonFallback();
+          return;
+        }
+        setLiveDemoId(json.demoId);
       } catch {
-        return loadJsonFallback();
-      }
-
-      const started = Date.now();
-      let shownBase = false;
-      while (!cancelled && Date.now() - started < 18 * 60_000) {
-        await new Promise((r) => setTimeout(r, 3500));
-        if (cancelled) return;
-        let s: {
-          status?: string;
-          phase?: string;
-          previewUrl?: string;
-          personalized?: boolean;
-          error?: string;
-        } = {};
-        try {
-          const r = await fetch(
-            `/api/discovery/preview/live?demoId=${encodeURIComponent(demoId)}`
-          );
-          s = (await r.json().catch(() => ({}))) as typeof s;
-        } catch {
-          continue;
-        }
-        if (s.phase) setLivePhase(s.phase);
-
-        // First time it's ready: show the base template live immediately.
-        if (s.status === 'ready' && s.previewUrl && !shownBase) {
-          if (cancelled) return;
-          shownBase = true;
-          setLiveUrl(s.previewUrl);
-          setMode('live');
-          setPersonalizing(!s.personalized);
-          setChat([
-            {
-              role: 'agent',
-              text: s.personalized
-                ? `Your site is live. Tell me what to change — ${LIVE_EDIT_CAP} prompts to make it yours.`
-                : 'Here’s your starting point — personalizing it for your business now…',
-            },
-          ]);
-        }
-        // Personalization hot-swapped in: refresh the iframe, hand over.
-        if (shownBase && s.personalized) {
-          if (cancelled) return;
-          setPersonalizing(false);
-          setIframeNonce((n) => n + 1);
-          setChat([
-            {
-              role: 'agent',
-              text: `Your personalized site is live. Tell me what to change — you have ${LIVE_EDIT_CAP} prompts to make it yours.`,
-            },
-          ]);
-          return;
-        }
-        if (s.status === 'failed') return loadJsonFallback();
-        if (
-          shownBase &&
-          s.phase &&
-          /personalization unavailable/i.test(s.phase)
-        ) {
-          // Fail-soft: base template stays as a real, relevant demo.
-          setPersonalizing(false);
-          return;
+        if (!isCancelled()) {
+          setSteppedDown(true);
+          void loadJsonFallback();
         }
       }
-      if (!cancelled && !shownBase) return loadJsonFallback();
-    }
+    },
+    [data, loadJsonFallback]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
 
     // Defer the kickoff one macrotask so React Strict Mode's
     // mount → unmount → remount cancels the throwaway first run *before*
     // it POSTs. Exactly one live job is ever created (dev and prod alike);
-    // the surviving mount is the one that polls to completion.
+    // the surviving mount is the one whose demoId feeds usePreviewProgress,
+    // which takes it from there over SSE.
     const startTimer = setTimeout(() => {
-      if (!cancelled) runLive();
+      if (!cancelled) void startLive(() => cancelled);
     }, 30);
     return () => {
       cancelled = true;
@@ -303,6 +319,84 @@ export function PreviewStep({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /** Offered after a failure: same brief, a second attempt at the real build. */
+  const retryLive = useCallback(async () => {
+    if (retrying) return;
+    setRetrying(true);
+    setBuildFailure(null);
+    shownBaseRef.current = false;
+    resolvedRef.current = false;
+    setLiveUrl(null);
+    setPersonalizing(false);
+    setChat([]);
+    setLiveDemoId(null);
+    try {
+      await startLive(() => false);
+    } finally {
+      setRetrying(false);
+    }
+  }, [retrying, startLive]);
+
+  // Drives the live-preview state machine off the SSE-backed progress hook
+  // instead of a manual poll loop: show the base template the moment the
+  // build reports ready, hand over once personalization lands, or say so if
+  // the build fails. shownBaseRef/resolvedRef make each transition fire
+  // exactly once, same as the old loop's early `return`s.
+  useEffect(() => {
+    if (!liveDemoId) return;
+
+    // First time it's ready: show the base template live immediately.
+    if (
+      progress.status === 'ready' &&
+      progress.previewUrl &&
+      !shownBaseRef.current
+    ) {
+      shownBaseRef.current = true;
+      setLiveUrl(progress.previewUrl);
+      setMode('live');
+      setPersonalizing(!progress.personalized);
+      setChat([
+        {
+          role: 'agent',
+          text: progress.personalized
+            ? `Your site is live. You have ${LIVE_EDIT_CAP} changes on me: tell me what to adjust and watch it happen.`
+            : 'Here’s your starting point, personalizing it for your business now…',
+        },
+      ]);
+    }
+
+    // Personalization hot-swapped in: refresh the iframe, hand over.
+    if (shownBaseRef.current && progress.personalized && !resolvedRef.current) {
+      resolvedRef.current = true;
+      setPersonalizing(false);
+      setIframeNonce((n) => n + 1);
+      setChat([
+        {
+          role: 'agent',
+          text: `Your personalized site is live. You have ${LIVE_EDIT_CAP} changes on me: tell me what to adjust and watch it happen.`,
+        },
+      ]);
+      return;
+    }
+
+    if (progress.status === 'failed' && !resolvedRef.current) {
+      resolvedRef.current = true;
+      setBuildFailure(progress.error ?? 'Generation failed');
+      return;
+    }
+
+    if (
+      shownBaseRef.current &&
+      progress.phase &&
+      /personalization unavailable/i.test(progress.phase) &&
+      !resolvedRef.current
+    ) {
+      // Fail-soft: base template stays as a real, relevant demo.
+      resolvedRef.current = true;
+      setPersonalizing(false);
+    }
+  }, [progress, liveDemoId]);
 
   useEffect(() => {
     if (!demo || typeof window === 'undefined') return;
@@ -312,6 +406,140 @@ export function PreviewStep({
       /* best-effort */
     }
   }, [demo]);
+
+  // ---- Claim: the preview becomes a workspace this visitor owns ----
+  //
+  // Until this runs the preview is entirely ephemeral (a demo id, a sandbox,
+  // nothing persisted), and the deposit flow can never see it. Claiming
+  // creates the workspace, saves the generated manifest as its build
+  // artifacts, and makes the signed-in visitor a member of it, which is
+  // exactly what /unlock/[workspaceId] and the deposit Checkout check for.
+  const { isSignedIn, isLoaded: authLoaded } = useAuth();
+  const [claimBusy, setClaimBusy] = useState(false);
+  const [claimError, setClaimError] = useState<string | null>(null);
+
+  const previewId = liveDemoId ?? demo?.demoId ?? null;
+
+  const submitClaim = useCallback(async () => {
+    if (!previewId) return;
+    setClaimBusy(true);
+    setClaimError(null);
+    try {
+      const res = await fetch('/api/flowstarter/projects/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          previewId,
+          // The tier is a name, not a price: the server maps it to the
+          // published setup fee so the browser cannot quote itself.
+          ...(data.selectedTier ? { tier: data.selectedTier } : {}),
+          businessName: data.businessName,
+          fullName: data.fullName,
+          email: data.email,
+          description: data.description,
+          industry: data.industry,
+          targetAudience: data.targetAudience,
+          goal: data.goal,
+          brandTone: data.brandTone,
+          // Scope answers, so the server can re-run the standard-vs-custom
+          // routing classifier on the answers themselves. The wizard's own
+          // copy of the verdict is deliberately not sent.
+          ...(data.pageCount ? { pageCount: data.pageCount } : {}),
+          ...(data.timeline ? { timeline: data.timeline } : {}),
+          ...(data.commerceMode ? { commerceMode: data.commerceMode } : {}),
+          catalogSize: data.catalogSize,
+          calComUrl: data.calComUrl,
+          customIntegrations: data.customIntegrations,
+          // The intake conversation: the highest-value evidence we hold. The
+          // server files it as corpus documents against the new workspace so
+          // the generator may cite the client's own words.
+          ...(claimIntakeChatPayload(data)
+            ? { intakeChat: claimIntakeChatPayload(data) }
+            : {}),
+        }),
+      });
+      const json = (await res.json().catch(() => ({}))) as {
+        unlockUrl?: string;
+        error?: string;
+      };
+      if (!res.ok || !json.unlockUrl) {
+        setClaimError(json.error ?? 'We could not save your site. Try again.');
+        return;
+      }
+      window.location.assign(json.unlockUrl);
+    } catch {
+      setClaimError('We could not save your site. Try again.');
+    } finally {
+      setClaimBusy(false);
+    }
+  }, [previewId, data]);
+
+  /**
+   * The signed-out path: straight to Stripe, no account first.
+   *
+   * A sign-up form between a decided buyer and their card lost people who had
+   * already said yes. The workspace, the account and the credentials email are
+   * all created by the deposit webhook once the money is real, so nothing the
+   * visitor typed is lost by leaving now. The tier is sent by NAME; the amount
+   * is computed server-side from the published price table.
+   */
+  const startGuestCheckout = useCallback(async () => {
+    if (!previewId) return;
+    setClaimBusy(true);
+    setClaimError(null);
+    try {
+      const res = await fetch(
+        `/api/discovery/preview/${previewId}/guest-deposit-checkout`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...(data.selectedTier ? { tier: data.selectedTier } : {}),
+            ...(data.subscription ? { subscription: data.subscription } : {}),
+            ...(data.billingCadence
+              ? { billingCadence: data.billingCadence }
+              : {}),
+            // The address they gave at step 1. It becomes the Stripe customer
+            // email and, after payment, their sign-in identifier.
+            email: data.email,
+            fullName: data.fullName,
+            businessName: data.businessName,
+            // Stashed server-side onto the durable preview so the webhook's
+            // claim files the same citable conversation a signed-in claim does.
+            ...(claimIntakeChatPayload(data)
+              ? { intakeChat: claimIntakeChatPayload(data) }
+              : {}),
+          }),
+        }
+      );
+      const json = (await res.json().catch(() => ({}))) as {
+        url?: string;
+        error?: string;
+      };
+      if (!res.ok || !json.url) {
+        setClaimError(json.error ?? 'We could not open checkout. Try again.');
+        return;
+      }
+      window.location.assign(json.url);
+    } catch {
+      setClaimError('We could not open checkout. Try again.');
+    } finally {
+      setClaimBusy(false);
+    }
+  }, [previewId, data]);
+
+  function claimSite() {
+    // Clerk not settled yet: acting now would take the guest path for somebody
+    // who is actually signed in. The button is disabled in that window anyway.
+    if (claimBusy || !previewId || !authLoaded) return;
+    if (!isSignedIn) {
+      void startGuestCheckout();
+      return;
+    }
+    // Already signed in: claim first, then the authenticated deposit Checkout,
+    // exactly as before.
+    void submitClaim();
+  }
 
   // ---- Live conversational editor ----
   async function sendEdit() {
@@ -351,7 +579,8 @@ export function PreviewStep({
       };
       if (json.limitReached) {
         setEditsLeft(0);
-        setLastAgent("That was your last prompt — let's make this real.");
+        setOfferRevealed(true);
+        setLastAgent("That was your last change. Let's make this real.");
         setEditBusy(false);
         return;
       }
@@ -386,7 +615,14 @@ export function PreviewStep({
         if (s.editPhase) setLastAgent(s.editPhase);
         if (s.editStatus === 'done') {
           if (typeof s.editsLeft === 'number') setEditsLeft(s.editsLeft);
-          setLastAgent('Done — updating your live preview.');
+          // Both free changes spent: the visitor has seen editing in action,
+          // so this is the moment the deposit ask appears.
+          if (s.editsLeft === 0) {
+            setOfferRevealed(true);
+            setLastAgent('Done, that second change is in. Take a look.');
+          } else {
+            setLastAgent('Done, updating your live preview.');
+          }
           setIframeNonce((n) => n + 1);
           break;
         }
@@ -459,111 +695,269 @@ export function PreviewStep({
     }
   }
 
-  return (
-    <div className="space-y-4">
-      <header className="space-y-1">
-        <h3 className="text-lg font-bold text-[var(--fs-ink)]">
-          {t('landing.discovery.steps.preview.title')}
-        </h3>
-        <p className="text-sm text-[var(--fs-ink-faint)]">
-          {mode === 'loading'
-            ? t('landing.discovery.preview.generating')
-            : t('landing.discovery.steps.preview.subtitle')}
-        </p>
-      </header>
+  /* ─────────────────────── The stage, as one status ────────────────────── */
 
-      {mode === 'loading' && (
-        <div className="flex h-64 flex-col justify-center gap-3 rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 px-6">
-          {livePhase ? (
-            <div className="flex items-center gap-3 text-sm text-[var(--fs-ink)]">
-              <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
-              <span>{livePhase}</span>
-            </div>
-          ) : (
-            BUILD_STEPS.map((key, i) => {
-              const done = i < buildStep;
-              const active = i === buildStep;
-              return (
-                <div
-                  key={key}
-                  className={[
-                    'flex items-center gap-3 text-sm transition-opacity',
-                    done || active
-                      ? 'text-[var(--fs-ink)]'
-                      : 'text-[var(--fs-ink-faint)] opacity-50',
-                  ].join(' ')}
-                >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center">
-                    {done ? (
-                      <svg
-                        className="h-4 w-4 text-[var(--purple-primary)]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    ) : active ? (
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
-                    ) : (
-                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--fs-ink-faint)]" />
-                    )}
-                  </span>
-                  <span>
-                    {t(key)}
-                    {active && '…'}
-                  </span>
-                </div>
-              );
-            })
-          )}
-        </div>
+  const previewShown = (mode === 'live' && !!liveUrl) || mode === 'json';
+  const finished = previewShown && !personalizing;
+  // Live mode holds the deposit ask back until the visitor has tried their
+  // two changes (or asked for it); the JSON fallback has no live editing to
+  // show off, so its offer appears as before.
+  const offerReady = mode !== 'live' || offerRevealed;
+  const elapsed = useElapsedSeconds(!finished && !buildFailure);
+
+  const nowState: NowState = buildFailure
+    ? 'failed'
+    : finished
+    ? 'done'
+    : 'working';
+  const nowLabel = buildFailure
+    ? 'The build stopped'
+    : finished
+    ? 'Your preview is ready'
+    : progress.phase ??
+      (mode === 'json'
+        ? 'Putting your preview together'
+        : 'Getting your build started');
+
+  // The offer, in the numbers of the tier this visitor confirmed. Falls back
+  // to the deterministic recommendation if they somehow reached here without
+  // confirming one, so the sentence is never quoted without a figure.
+  const quotedTier: Tier | '' =
+    (data.selectedTier as Tier | '') || recommendTier(data).tier;
+  const quote = depositQuote(quotedTier);
+
+  const earlier = data.intakeChat ?? [];
+
+  /* ───────────────────────────── The panes ─────────────────────────────── */
+
+  const conversation = (
+    <ConversationLog
+      label="Your build, as it happens"
+      scrollSignal={earlier.length + progress.phases.length + chat.length}
+    >
+      {earlier.length > 0 && (
+        <p className="pb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--fs-ink-faint)]">
+          Earlier, with your info agent
+        </p>
+      )}
+      {earlier.map((entry, index) =>
+        entry.role === 'client' ? (
+          <ChatBubble key={`earlier-${index}`} tone="you">
+            {entry.text}
+          </ChatBubble>
+        ) : (
+          <ChatBubble
+            key={`earlier-${index}`}
+            tone="earlier"
+            author="Info agent"
+          >
+            {entry.text}
+          </ChatBubble>
+        )
       )}
 
-      {mode === 'live' && liveUrl && (
-        <div className="space-y-3">
-          <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
-            <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] px-3 py-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
-              <span className="ml-3 truncate rounded bg-black/5 px-2 py-0.5 text-[11px] text-[var(--fs-ink-faint)] dark:bg-white/10">
-                {previewHostLabel(data.businessName)}
+      {/* Said before a single phase runs: what this is, and what it costs. */}
+      <ChatBubble tone="offer" author="Your team of agents">
+        {previewMeaningMessage(quote)}
+      </ChatBubble>
+
+      {steppedDown && (
+        <ChatBubble tone="alert" author="Your team of agents">
+          The live build was not available just now, so this is the simpler
+          preview, written from your answers. It is a real draft, but it is not
+          the generated site.
+        </ChatBubble>
+      )}
+
+      {/* The pipeline's own phases, verbatim, signed by the agent that owns
+          each one. The last one is the one in progress. */}
+      {progress.phases.map((entry, index) => {
+        const isCurrent =
+          index === progress.phases.length - 1 && !finished && !buildFailure;
+        return (
+          <ChatBubble
+            key={entry.index}
+            tone="agent"
+            author={agentForPhase(entry.phase)}
+            meta={`${entry.at}s`}
+            state={isCurrent ? 'working' : 'done'}
+          >
+            <span
+              className={
+                isCurrent
+                  ? 'font-semibold text-[var(--fs-ink)]'
+                  : 'text-[var(--fs-ink-faint)]'
+              }
+            >
+              {entry.phase}
+              {isCurrent ? '…' : ''}
+            </span>
+          </ChatBubble>
+        );
+      })}
+
+      {buildFailure && (
+        <ChatBubble tone="alert" author="Your team of agents">
+          <span className="block">
+            That build did not finish: {buildFailure}. Nothing is lost, and you
+            have not paid anything.
+          </span>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => void retryLive()}
+              disabled={retrying}
+              className="rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50"
+            >
+              {retrying ? 'Starting again…' : 'Try the build again'}
+            </button>
+            <button
+              type="button"
+              onClick={() => void loadJsonFallback()}
+              className="rounded-lg border border-[var(--fs-rule)] px-3 py-1.5 text-[12px] font-semibold text-[var(--fs-ink)] hover:border-[var(--purple-primary)]/40"
+            >
+              Show me the simpler preview instead
+            </button>
+          </div>
+        </ChatBubble>
+      )}
+
+      {/* The editor's own progress reads as conversation, though the box it
+          is typed into lives under the site on the right. */}
+      {chat.map((m, i) =>
+        m.role === 'you' ? (
+          <ChatBubble key={`chat-${i}`} tone="you">
+            {m.text}
+          </ChatBubble>
+        ) : (
+          <ChatBubble key={`chat-${i}`} tone="agent" author="Site builder">
+            {m.text}
+          </ChatBubble>
+        )
+      )}
+
+      {/* Before the ask: an open invitation to spend the two free changes.
+          The visitor who is already sold can pull the offer forward. */}
+      {finished && previewId && !offerReady && !editBusy && (
+        <ChatBubble tone="agent" author="Your team of agents">
+          <span className="block">
+            That is a page of your full site, and it is editable: ask for up to{' '}
+            {LIVE_EDIT_CAP} changes in the box under the preview and watch the
+            team apply them.
+          </span>
+          <button
+            type="button"
+            onClick={() => setOfferRevealed(true)}
+            className="mt-2 text-[12px] font-semibold text-[var(--purple-primary)] underline underline-offset-2"
+          >
+            Happy already? Show me how to reserve the full site
+          </button>
+        </ChatBubble>
+      )}
+
+      {/* The last message in the conversation: the offer, with a button. */}
+      {finished && previewId && offerReady && (
+        <ChatBubble tone="offer" author="Your team of agents">
+          <span className="block">{previewReadyMessage(quote)}</span>
+          {offerSnoozed ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="text-[12px] text-[var(--fs-ink-faint)]">
+                No rush, the preview stays here while you look around.
               </span>
-              {personalizing ? (
-                <span className="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-[var(--purple-primary)]">
-                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
-                  Personalizing for {data.businessName || 'your business'}…
-                </span>
-              ) : (
-                <a
-                  href={liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-auto flex shrink-0 items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold text-[var(--purple-primary)] hover:bg-[var(--purple-primary)]/10 transition-colors"
-                >
-                  Open in new tab
-                  <svg
-                    className="h-3 w-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
-                </a>
+              <button
+                type="button"
+                onClick={() => setOfferSnoozed(false)}
+                className="text-[12px] font-semibold text-[var(--purple-primary)] underline underline-offset-2"
+              >
+                Show me the deposit again
+              </button>
+            </div>
+          ) : (
+            <div className="mt-2 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={claimSite}
+                disabled={claimBusy || !authLoaded}
+                className="rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-[13px] font-semibold text-white disabled:opacity-50"
+              >
+                {claimBusy
+                  ? isSignedIn
+                    ? 'Saving your site…'
+                    : 'Opening secure checkout…'
+                  : depositCtaLabel(quote)}
+              </button>
+              <button
+                type="button"
+                onClick={() => setOfferSnoozed(true)}
+                className="self-start text-[12px] font-medium text-[var(--fs-ink-faint)] underline underline-offset-2 hover:text-[var(--fs-ink)]"
+              >
+                {KEEP_EXPLORING_LABEL}
+              </button>
+              {claimError && (
+                <p className="text-[12px] font-medium text-amber-600 dark:text-amber-400">
+                  {claimError}
+                </p>
               )}
             </div>
+          )}
+        </ChatBubble>
+      )}
+    </ConversationLog>
+  );
+
+  const sitePane = (
+    <div className="space-y-2.5">
+      <div className="overflow-hidden rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
+        <div className="flex items-center gap-1.5 border-b border-[var(--fs-rule)] px-3 py-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
+          <span className="ml-3 truncate rounded bg-black/5 px-2 py-0.5 text-[11px] text-[var(--fs-ink-faint)] dark:bg-white/10">
+            {previewHostLabel(data.businessName)}
+          </span>
+          {personalizing ? (
+            <span className="ml-auto flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-[var(--purple-primary)]">
+              <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--purple-primary)] border-t-transparent" />
+              Personalizing for {data.businessName || 'your business'}…
+            </span>
+          ) : liveUrl ? (
+            <a
+              href={liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto flex shrink-0 items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold text-[var(--purple-primary)] hover:bg-[var(--purple-primary)]/10 transition-colors"
+            >
+              Open in new tab
+              <svg
+                className="h-3 w-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
+          ) : (
+            <span className="ml-auto shrink-0 text-[11px] font-semibold text-[var(--fs-ink-faint)]">
+              {t('landing.discovery.preview.paneTitle')}
+            </span>
+          )}
+        </div>
+
+        {mode === 'json' && demo ? (
+          <DemoSiteFrame site={demo.site} />
+        ) : liveUrl ? (
+          <div
+            ref={viewport.ref}
+            data-testid="concierge-site-viewport"
+            data-scale={viewport.scale.toFixed(3)}
+            className={`relative w-full overflow-hidden bg-white ${SITE_PANE_HEIGHT_CLASS}`}
+          >
             <iframe
               key={iframeNonce}
               src={
@@ -574,93 +968,71 @@ export function PreviewStep({
                   : liveUrl
               }
               title="Live site preview"
-              className="h-[52vh] w-full bg-white"
+              onLoad={() => setFrameLoaded(true)}
+              style={viewport.frameStyle}
+              className={[
+                'block border-0 bg-white transition-opacity duration-700',
+                frameLoaded ? 'opacity-100' : 'opacity-0',
+              ].join(' ')}
               sandbox="allow-scripts allow-same-origin"
               loading="lazy"
             />
+            {!frameLoaded && (
+              <div className="pointer-events-none absolute inset-0" aria-hidden>
+                <SiteSkeleton caption="" />
+              </div>
+            )}
           </div>
+        ) : (
+          <SiteSkeleton caption={t('landing.discovery.preview.paneSkeleton')} />
+        )}
+      </div>
 
-          {/* T3-Code-style conversational editor */}
-          <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
-            <div className="flex items-center justify-between border-b border-[var(--fs-rule)] px-3 py-2">
-              <p className="text-[12px] font-semibold text-[var(--fs-ink)]">
-                Smart editor — ask for any change
-              </p>
-              <span
-                className={[
-                  'rounded-full px-2 py-0.5 text-[11px] font-semibold',
-                  editsLeft <= 3
-                    ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
-                    : 'bg-[var(--purple-primary)]/12 text-[var(--purple-primary)]',
-                ].join(' ')}
-              >
-                {editsLeft}/{LIVE_EDIT_CAP} prompts left
-              </span>
-            </div>
-            <div className="max-h-56 space-y-2 overflow-y-auto px-3 py-3">
-              {chat.map((m, i) => (
-                <div
-                  key={i}
-                  className={
-                    m.role === 'you' ? 'flex justify-end' : 'flex justify-start'
-                  }
-                >
-                  <span
-                    className={[
-                      'max-w-[85%] rounded-2xl px-3 py-1.5 text-[13px] leading-snug',
-                      m.role === 'you'
-                        ? 'bg-[var(--purple-primary)] text-white'
-                        : 'bg-[var(--fs-bg-elevated)] text-[var(--fs-ink)] border border-[var(--fs-rule)]',
-                    ].join(' ')}
-                  >
-                    {m.text}
-                  </span>
-                </div>
-              ))}
-              <div ref={chatEndRef} />
-            </div>
-            <div className="flex gap-2 border-t border-[var(--fs-rule)] p-3">
-              <input
-                value={editPrompt}
-                onChange={(e) => setEditPrompt(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') sendEdit();
-                }}
-                disabled={editBusy || editsLeft <= 0}
-                placeholder={
-                  editsLeft <= 0
-                    ? 'No prompts left — ready to make it real?'
-                    : 'e.g. make the hero warmer and add a pricing section'
-                }
-                className="w-full rounded-lg border border-[var(--fs-rule)] bg-white px-3 py-2 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/30 disabled:opacity-50 dark:bg-white/[0.03]"
-              />
-              <button
-                type="button"
-                onClick={sendEdit}
-                disabled={editBusy || editsLeft <= 0 || !editPrompt.trim()}
-                className="shrink-0 rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-              >
-                {editBusy ? 'Editing…' : 'Send'}
-              </button>
-            </div>
+      {/* Ask for a change — under the site, answered on the left. */}
+      {mode === 'live' && liveUrl && (
+        <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40">
+          <div className="flex items-center justify-between border-b border-[var(--fs-rule)] px-3 py-2">
+            <p className="text-[12px] font-semibold text-[var(--fs-ink)]">
+              {t('landing.discovery.preview.askForChange')}
+            </p>
+            <span
+              className={[
+                'rounded-full px-2 py-0.5 text-[11px] font-semibold',
+                editsLeft <= 1
+                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                  : 'bg-[var(--purple-primary)]/12 text-[var(--purple-primary)]',
+              ].join(' ')}
+            >
+              {editsLeft}/{LIVE_EDIT_CAP} changes left
+            </span>
           </div>
-
-          {/* Pay CTA */}
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-[var(--purple-primary)]/30 bg-[var(--purple-primary)]/[0.06] p-4 text-center">
-            <p className="text-sm font-semibold text-[var(--fs-ink)]">
-              Love it? Let’s make it real — yours, on your domain.
-            </p>
-            <p className="text-[12px] text-[var(--fs-ink-faint)]">
-              Continue to reserve your build.{' '}
-              {editsLeft < LIVE_EDIT_CAP
-                ? 'Your changes are saved to this preview.'
-                : ''}
-            </p>
+          <div className="flex gap-2 p-3">
+            <input
+              value={editPrompt}
+              onChange={(e) => setEditPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') sendEdit();
+              }}
+              disabled={editBusy || editsLeft <= 0}
+              aria-label="Ask for a change"
+              placeholder={
+                editsLeft <= 0
+                  ? 'No prompts left, ready to make it real?'
+                  : 'e.g. make the hero warmer and add a pricing section'
+              }
+              className="w-full rounded-lg border border-[var(--fs-rule)] bg-white px-3 py-2 text-sm text-[var(--fs-ink)] placeholder:text-[var(--fs-ink-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--purple-primary)]/30 disabled:opacity-50 dark:bg-white/[0.03]"
+            />
+            <button
+              type="button"
+              onClick={sendEdit}
+              disabled={editBusy || editsLeft <= 0 || !editPrompt.trim()}
+              className="shrink-0 rounded-lg bg-[linear-gradient(135deg,var(--landing-btn-from),var(--landing-btn-via))] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {editBusy ? 'Editing…' : 'Send'}
+            </button>
           </div>
         </div>
       )}
-
-      {mode === 'json' && demo && <DemoSiteFrame site={demo.site} />}
 
       {mode === 'json' && demo?.demoId && (
         <div className="rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 p-3">
@@ -709,6 +1081,18 @@ export function PreviewStep({
           )}
         </div>
       )}
+    </div>
+  );
+
+  return (
+    <div className="space-y-3">
+      <ConciergePanes
+        now={
+          <NowLine label={nowLabel} state={nowState} elapsedSeconds={elapsed} />
+        }
+        site={sitePane}
+        conversation={conversation}
+      />
 
       <p className="text-[12px] leading-snug text-[var(--fs-ink-faint)]">
         {t('landing.discovery.preview.disclaimer')}

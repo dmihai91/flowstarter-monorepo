@@ -1,8 +1,7 @@
 import 'server-only';
 
-import { generateText } from 'ai';
-
-import { models, isOpenRouterConfigured } from './client';
+import { isOpenRouterConfigured } from './client';
+import { callLlm, llmActionConfig } from './llm';
 import type {
   DiscoveryData,
   Recommendation,
@@ -84,8 +83,12 @@ function coerce(raw: unknown): Recommendation | null {
   };
 }
 
-/** OpenRouter model id used for the recommendation (for cost attribution). */
-export const RECOMMEND_MODEL = 'meta-llama/llama-3.1-70b-instruct';
+/**
+ * OpenRouter model id used for the recommendation (for cost attribution).
+ * Sourced from the wrapper's budget config so an ops model override stays
+ * consistent with what the funnel ledger records.
+ */
+export const RECOMMEND_MODEL = llmActionConfig('recommend_tier').model;
 
 export interface RecommendLLMResult {
   rec: Recommendation;
@@ -108,8 +111,8 @@ export async function recommendTierLLM(
   if (!isOpenRouterConfigured()) return null;
 
   try {
-    const { text, usage } = await generateText({
-      model: models.llama,
+    const { text, usage } = await callLlm({
+      action: 'recommend_tier',
       messages: [
         {
           role: 'system',
@@ -119,7 +122,6 @@ export async function recommendTierLLM(
         { role: 'user', content: buildPrompt(d) },
       ],
       temperature: 0.1,
-      maxOutputTokens: 120,
     });
 
     if (!text) return null;
@@ -130,7 +132,10 @@ export async function recommendTierLLM(
       .trim();
     const rec = coerce(JSON.parse(clean));
     if (!rec) return null;
-    return { rec, usage: usage as RecommendLLMResult['usage'] };
+    return {
+      rec,
+      usage: { inputTokens: usage.tokensIn, outputTokens: usage.tokensOut },
+    };
   } catch {
     return null;
   }

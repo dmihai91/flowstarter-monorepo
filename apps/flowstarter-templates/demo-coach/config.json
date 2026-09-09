@@ -1,0 +1,10 @@
+{
+  "name": "Coach Starter",
+  "slug": "demo-coach",
+  "description": "Focused single-page template for an individual coach who needs a fast offer, proof, and consultation flow.",
+  "category": "personal-brand",
+  "framework": "astro",
+  "tags": ["coach", "consultant", "personal brand", "single page", "discovery call"],
+  "features": ["single-page offer", "coach profile", "program summary", "discovery CTA"],
+  "bestFor": ["simple coaching offers", "early-stage personal brands", "one primary conversion path"]
+}

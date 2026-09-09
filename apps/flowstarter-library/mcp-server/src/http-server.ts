@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import * as fs from 'fs';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { TemplateFetcher } from './utils/template-fetcher.js';
 import {
 	createMcpRoutes,
 	createScaffoldRoutes,
@@ -11,7 +11,7 @@ import {
 } from './routes/index.js';
 import { PORT, HOST, CORS_ORIGIN, PUBLIC_DIR, TEMPLATES_DIR } from './config.js';
 
-export async function startHttpServer(server: McpServer) {
+export async function startHttpServer(fetcher: TemplateFetcher) {
 	const app = express();
 
 	// CORS configuration
@@ -37,9 +37,8 @@ export async function startHttpServer(server: McpServer) {
 	});
 
 	// Mount MCP routes (must come first, before static files)
-	const { router: mcpRouter, connectionPromise } = createMcpRoutes(server);
+	const { router: mcpRouter } = createMcpRoutes(fetcher);
 	app.use(mcpRouter);
-	await connectionPromise;
 
 	// Serve static files from public directory (showcase app)
 	console.error(`[HTTP] Checking for public directory at: ${PUBLIC_DIR}`);

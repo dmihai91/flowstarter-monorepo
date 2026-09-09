@@ -22,7 +22,6 @@ import {
 } from "effect";
 
 import { ServerConfig } from "./config";
-import { configureWorkspaceSlug } from "./usage/usageAccounting.ts";
 import { Keybindings } from "./keybindings";
 import { Open } from "./open";
 import { OrchestrationEngineService } from "./orchestration/Services/OrchestrationEngine";
@@ -163,12 +162,6 @@ const autoBootstrapWelcome = Effect.gen(function* () {
   const projectionReadModelQuery = yield* ProjectionSnapshotQuery;
   const orchestrationEngine = yield* OrchestrationEngineService;
   const path = yield* Path.Path;
-
-  // Single-workspace-per-process: the workspace slug is the cwd basename
-  // (e.g. /workspaces/lebadusul → "lebadusul"). Configure it once so the
-  // usage-accounting turn-path hooks can resolve the workspace without
-  // threading ServerConfig through the orchestration Effect layers.
-  configureWorkspaceSlug(path.basename(serverConfig.cwd));
 
   let bootstrapProjectId: ProjectId | undefined;
   let bootstrapThreadId: ThreadId | undefined;

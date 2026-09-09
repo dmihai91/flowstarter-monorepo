@@ -5,43 +5,36 @@
  * Setup fees in EUR (founding price not exposed publicly here).
  */
 
-export type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export type Tier = 'starter' | 'pro' | 'commerce' | 'custom';
 
 /**
  * Monthly subscription is INDEPENDENT of the one-time setup package. The
  * client picks a build package (Tier) and, separately, a monthly plan sized
- * by AI edit sessions. The Commerce build package is the exception: it has a
- * dedicated flat store subscription instead of the 3-tier picker.
+ * by editor capabilities. The Commerce build package is the exception: it has
+ * a dedicated flat store subscription instead of the 3-tier picker.
  */
 export type SubscriptionTier = 'starter' | 'pro' | 'max';
+export type BillingCadence = 'monthly' | 'yearly';
 
 export const SUBSCRIPTIONS: Record<
   SubscriptionTier,
-  { priceEur: number; sessions: number }
+  { priceEur: number; summary: string }
 > = {
-  // Mirrors PLAN_ENTITLEMENTS in
-  // apps/flowstarter-editor/server/src/usage/planEntitlements.ts (the
-  // runtime source of truth). Change that table, then mirror here.
-  starter: { priceEur: 49, sessions: 30 },
-  pro: { priceEur: 99, sessions: 60 },
-  max: { priceEur: 249, sessions: 120 },
+  starter: { priceEur: 49, summary: 'Guided editor access' },
+  pro: { priceEur: 99, summary: 'Manual model picker included' },
+  max: { priceEur: 249, summary: 'Code experimentation included' },
 };
 
 /**
- * Commerce build → dedicated "Pro+" store plan: more AI sessions than Pro
- * plus store editing (products/collections from a separate ops pool).
+ * Commerce build → dedicated store plan with product and collection editing.
  * Mirrors PLAN_ENTITLEMENTS.ecommerce.
  */
-export const ECOMMERCE_SUBSCRIPTION = { priceEur: 129, sessions: 90 };
-
-/** Session multiple vs Starter, for "2×"/"4×" style labels (no drift). */
-export function sessionMultiple(tier: SubscriptionTier): number {
-  return Math.round(
-    SUBSCRIPTIONS[tier].sessions / SUBSCRIPTIONS.starter.sessions
-  );
-}
+export const ECOMMERCE_SUBSCRIPTION = {
+  priceEur: 129,
+  summary: 'Store editing for products and collections',
+};
 
 /** True when the build tier uses the dedicated store subscription. */
 export function usesDedicatedSubscription(tier: Tier | ''): boolean {
@@ -105,6 +98,8 @@ export interface DiscoveryData {
   industry: string;
   description: string;
   targetAudience: string;
+  instagramUrl: string;
+  linkedinUrl: string;
 
   // Step 3 — goals. Free-form: chip presets + freetext, comma-joined.
   goal: string;
@@ -118,6 +113,12 @@ export interface DiscoveryData {
   // Step 4 — commerce + integrations
   commerceMode: CommerceMode | '';
   catalogSize: CatalogSize;
+  /**
+   * Dedicated Cal.com booking link/handle for this tenant's site. Prefer this
+   * over fishing a URL out of `customIntegrations`. Empty when they skip it
+   * or do not use Cal.com yet.
+   */
+  calComUrl: string;
   customIntegrations: string;
 
   // Step 5 — recommendation
@@ -127,6 +128,39 @@ export interface DiscoveryData {
   // Step 6 — monthly plan (independent of setup; n/a for Commerce, which
   // uses the dedicated store subscription)
   subscription: SubscriptionTier | '';
+  billingCadence: BillingCadence;
+
+  // Step 7 — the info agent. Everything below is filled by the conversation,
+  // never typed into a form field, and every one of them is optional: the
+  // step is skippable by design (see `canProceed`).
+  //
+  // All optional: the step is skippable, a draft saved before it existed has
+  // none of them, and every caller that builds a `DiscoveryData` by hand
+  // (routes, tests) predates them. Read them with `?? ''` / `?? []`.
+  /** A phone number the visitor mentioned, if they mentioned one. */
+  phone?: string;
+  /** What they sell, named the way they name it to customers. */
+  services?: string[];
+  /** The visitor's own words — the evidence the generator may cite. */
+  intakeAnswers?: string[];
+  /** The conversation itself, carried to the claim for provenance. */
+  intakeChat?: IntakeChatTurn[];
+  /** Documents the info agent filed at the end of the interview. */
+  intakeChatDocuments?: IntakeChatDocument[];
+  /** '' — not started; 'complete' — agent ran out of asks; 'skipped' — visitor moved on. */
+  intakeChatStatus?: '' | 'complete' | 'skipped';
+}
+
+/** One turn of the info-agent conversation. `client` is the visitor. */
+export interface IntakeChatTurn {
+  role: 'agent' | 'client';
+  text: string;
+}
+
+/** One answer, topically grouped, in the client's own words. */
+export interface IntakeChatDocument {
+  topic: string;
+  text: string;
 }
 
 export const EMPTY_DISCOVERY: DiscoveryData = {
@@ -136,6 +170,8 @@ export const EMPTY_DISCOVERY: DiscoveryData = {
   industry: '',
   description: '',
   targetAudience: '',
+  instagramUrl: '',
+  linkedinUrl: '',
   goal: '',
   secondaryGoals: [],
   brandTone: '',
@@ -143,9 +179,17 @@ export const EMPTY_DISCOVERY: DiscoveryData = {
   timeline: '',
   commerceMode: '',
   catalogSize: 'na',
+  calComUrl: '',
   customIntegrations: '',
   selectedTier: '',
   subscription: '',
+  billingCadence: 'monthly',
+  phone: '',
+  services: [],
+  intakeAnswers: [],
+  intakeChat: [],
+  intakeChatDocuments: [],
+  intakeChatStatus: '',
 };
 
 export const STEPS: Array<{ n: Step; key: string }> = [
@@ -155,10 +199,17 @@ export const STEPS: Array<{ n: Step; key: string }> = [
   { n: 4, key: 'commerce' },
   { n: 5, key: 'recommendation' },
   { n: 6, key: 'subscription' },
-  { n: 7, key: 'preview' },
+  // The info agent: the gap-filler between the form and the preview. It has
+  // no locale key of its own — its copy lives in `InfoAgentStep` — so the
+  // wizard supplies the heading for this one step.
+  { n: 7, key: 'info' },
+  { n: 8, key: 'preview' },
 ];
 
-export const LAST_STEP: Step = 7;
+export const LAST_STEP: Step = 8;
+
+/** The conversational step. Always passable: conversion beats completeness. */
+export const INFO_STEP: Step = 7;
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
@@ -178,6 +229,11 @@ export function canProceed(step: Step, d: DiscoveryData): boolean {
       // Commerce uses the dedicated store subscription — nothing to pick.
       return usesDedicatedSubscription(d.selectedTier) || d.subscription !== '';
     case 7:
+      // The info agent never gates the funnel. A visitor who wants the
+      // preview now gets the preview now, with placeholders where the answers
+      // would have gone.
+      return true;
+    case 8:
       return true;
   }
 }
@@ -325,8 +381,8 @@ const DEFAULT_ORDER: DemoSectionId[] = [
 
 /**
  * Compose the editable DemoSite from the generated copy + wizard answers.
- * Value props are distilled from the first services; the testimonial is a
- * neutral placeholder (clearly a demo, not a fabricated real review).
+ * Value props are distilled from the first services. Testimonials stay hidden
+ * until the client supplies approved evidence.
  */
 export function buildDemoSite(
   d: Pick<
@@ -369,10 +425,8 @@ export function buildDemoSite(
     },
     about: copy.about,
     testimonial: {
-      quote: d.targetAudience.trim()
-        ? `Exactly what ${d.targetAudience.trim()} were looking for.`
-        : 'Exactly what our clients were looking for.',
-      author: 'Sample testimonial — replace with a real one',
+      quote: 'Client-approved testimonial content can appear here.',
+      author: 'Hidden until evidence is supplied',
     },
     cta: {
       headline: copy.finalCta.headline,
@@ -380,7 +434,7 @@ export function buildDemoSite(
       button: copy.finalCta.button,
     },
     order: [...DEFAULT_ORDER],
-    hidden: [],
+    hidden: ['testimonial'],
   };
 }
 
@@ -405,14 +459,75 @@ export interface Recommendation {
 }
 
 /**
+ * Standard, pre-approved integrations the packaged flow already supports.
+ * Anything a client asks for that falls outside this list is a bespoke
+ * integration request. Shared by `recommendTier` and the routing rules
+ * (`lib/flowstarter/routing-rules.ts`) so both read the same definition of
+ * "custom integration".
+ */
+const STANDARD_INTEGRATION_RE =
+  /\b(cal\.com|calendly|stripe|payment links?|newsletter|mailchimp|convertkit|brevo|contact forms?|booking)\b/i;
+
+/** Splits the free-text integrations field into individual requests. */
+export function integrationRequestList(customIntegrations: string): string[] {
+  return customIntegrations
+    .trim()
+    .split(/[,;\n]|\band\b/gi)
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+/** True when at least one requested integration is outside the standard allow-list. */
+export function hasCustomIntegrationRequest(
+  customIntegrations: string
+): boolean {
+  return integrationRequestList(customIntegrations).some(
+    (request) => !STANDARD_INTEGRATION_RE.test(request)
+  );
+}
+
+/**
+ * A Cal.com URL/handle mentioned in free text (usually `customIntegrations`),
+ * e.g. "Cal.com: cal.com/acme/intro" or "booking via app.cal.com/acme". Prefer
+ * the dedicated `DiscoveryData.calComUrl` field when present — this extractor
+ * is only the fallback for answers typed before that field existed, or when
+ * the visitor pasted the link into the general integrations box.
+ *
+ * Deliberately narrow: only recognizes cal.com/app.cal.com links, matching
+ * this project's stated preference for Cal.com over Calendly in new code
+ * (docs/INTEGRATIONS-PLAN.md). Returns null when nothing matches.
+ */
+const CAL_COM_URL_RE =
+  /\b(?:https?:\/\/)?(?:www\.|app\.)?cal\.com\/[a-z0-9][a-z0-9/_-]*/i;
+
+export function extractCalComUrl(customIntegrations: string): string | null {
+  const match = customIntegrations.match(CAL_COM_URL_RE);
+  if (!match) return null;
+  // Trailing punctuation from prose ("...cal.com/acme, thanks!") is not part
+  // of the link.
+  return match[0].replace(/[.,;:)]+$/, '');
+}
+
+/**
+ * Tenant booking URL for inject/claim: dedicated field first, then a cal.com
+ * link found in the free-text integrations answer.
+ */
+export function resolveDiscoveryCalComUrl(d: DiscoveryData): string | null {
+  const dedicated = d.calComUrl?.trim();
+  if (dedicated) return dedicated;
+  return extractCalComUrl(d.customIntegrations);
+}
+
+/**
  * Deterministic tier recommendation. Order matters — first match wins for the
  * primary tier, but reasonKeys aggregate every signal for transparency.
  */
 export function recommendTier(d: DiscoveryData): Recommendation {
   const reasons: string[] = [];
 
-  const integrations = d.customIntegrations.trim();
-  const hasCustomIntegrations = integrations.length > 5;
+  const hasCustomIntegrations = hasCustomIntegrationRequest(
+    d.customIntegrations
+  );
 
   const physicalOrMixed =
     d.commerceMode === 'physical' || d.commerceMode === 'mixed';

@@ -12,9 +12,10 @@ import CTASection from '../components/CTASection.astro';
 import { getAboutPageData } from '../lib/site-data';
 
 const aboutPage = getAboutPageData();
+import { pageTitle } from '../lib/site-data';
 ---
 
-<Layout title="The Firm | Halden & Roe">
+<Layout title={pageTitle('The Firm')}>
   <Header activeIndex={2} />
   <main class="about-page">
     <AboutHeroSection heroLines={aboutPage.heroLines} />
@@ -39,6 +40,10 @@ const aboutPage = getAboutPageData();
     display: flex;
     flex-direction: column;
     gap: var(--about-page-gap, 120px);
+    /* The zigzag reveal parks parts sideways before they animate in;
+       without this the right-shifted ones widen the page on phones and the
+       whole site scrolls sideways. */
+    overflow-x: clip;
   }
 
   .about-page :global([data-about-reveal]) {

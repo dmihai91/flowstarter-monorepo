@@ -1,0 +1,33 @@
+# Named tunnel: flowstarter-dev (9e39eaf5-69f6-437b-ac3c-eab194f1a5b7)
+#
+# Hosting map (do not point apex at the Next demo — leave flowstarter.dev /
+# ereno.flowstarter.dev alone for other stacks):
+#
+#   www.flowstarter.dev        → local Next (pivot filming / staging demo) :3000
+#   workflows.flowstarter.dev  → same Next app (showcase rewrite)          :3000
+#   flowstarter.dev (apex)     → legacy local :5733  (NOT the MVP demo)
+#   admin.flowstarter.dev      → legacy local :5733
+#   *.flowstarter.dev          → legacy catch-all :5733
+#   ereno.flowstarter.dev      → other tunnel (sage-dev) — do not override DNS
+#
+# DNS: www CNAME already routed to this tunnel (2026-08-31).
+# Run: cloudflared tunnel --config scripts/cloudflared-flowstarter-workflows.yml run
+
+tunnel: 9e39eaf5-69f6-437b-ac3c-eab194f1a5b7
+credentials-file: /Users/darius91/.cloudflared/9e39eaf5-69f6-437b-ac3c-eab194f1a5b7.json
+protocol: http2
+
+ingress:
+  # MVP demo + filming — explicit www BEFORE wildcard
+  - hostname: www.flowstarter.dev
+    service: http://127.0.0.1:3000
+  - hostname: workflows.flowstarter.dev
+    service: http://127.0.0.1:3000
+  # Apex kept off the Next demo so it does not fight ereno / other apex uses
+  - hostname: flowstarter.dev
+    service: http://127.0.0.1:5733
+  - hostname: admin.flowstarter.dev
+    service: http://127.0.0.1:5733
+  - hostname: "*.flowstarter.dev"
+    service: http://127.0.0.1:5733
+  - service: http_status:404

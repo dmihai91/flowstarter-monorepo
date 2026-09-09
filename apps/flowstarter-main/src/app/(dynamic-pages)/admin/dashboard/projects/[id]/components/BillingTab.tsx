@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { quoteMajorFrom, type QuoteBearingRow } from '@/lib/flowstarter/quote';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
@@ -29,23 +30,28 @@ type SubscriptionState =
   | string
   | null;
 
+/**
+ * One chip recipe across the console: a hairline border, a 10% tint and a
+ * readable text tone in both themes. Matches the pipeline board's chips.
+ */
+const NEUTRAL_TONE =
+  'border-[var(--fs-rule)] bg-transparent text-[var(--fs-ink-dim)]';
+
 const INVOICE_TONE: Record<string, string> = {
-  paid: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
-  sent: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-  pending:
-    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
-  overdue: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400',
+  paid: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  sent: 'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+  pending: NEUTRAL_TONE,
+  overdue: 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-300',
 };
 
 const SUBSCRIPTION_TONE: Record<string, string> = {
-  trial: 'bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-400',
+  trial: 'border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300',
   active:
-    'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
-  past_due: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400',
-  cancelled:
-    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-400',
+    'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  past_due: 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-300',
+  cancelled: NEUTRAL_TONE,
   incomplete:
-    'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+    'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
 };
 
 function StatusPill({
@@ -55,21 +61,38 @@ function StatusPill({
   status: string;
   tone: Record<string, string>;
 }) {
-  const cls = tone[status] ?? 'bg-slate-100 text-slate-700';
+  // The old fallback had no dark variant, so an unmapped status rendered as
+  // dark slate text on a light slate chip in dark mode.
+  const cls = tone[status] ?? NEUTRAL_TONE;
   return (
     <span
-      className={`inline-flex rounded-full px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide ${cls}`}
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium uppercase leading-5 tracking-wide ${cls}`}
     >
       {status.replace(/_/g, ' ')}
     </span>
   );
 }
 
+/**
+ * Displays a milestone's share of the setup fee exactly as the invoice route
+ * charges it: `resolveAmountMinor` computes `round(setupFee × percent)` minor
+ * units, so €799 splits into €159.80 / €639.20 — not round euros.
+ */
+function formatSetupSplit(setupFeeMajor: number, percent: number): string {
+  const major = Math.round(setupFeeMajor * percent) / 100;
+  return major.toLocaleString(undefined, {
+    minimumFractionDigits: Number.isInteger(major) ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 export function BillingTab({ project }: { project: Project }) {
   const qc = useQueryClient();
   const [busy, setBusy] = useState<string | null>(null);
 
-  const setupFee = (project.setup_fee as number | null) ?? 0;
+  // Reads the same quote the deposit Checkout and the webhook use, so the
+  // split shown here cannot disagree with what the client is charged.
+  const setupFee = quoteMajorFrom(project as QuoteBearingRow);
   const monthlyFee = (project.monthly_fee as number | null) ?? 0;
   const depositStatus = (project.deposit_status as InvoiceState) ?? 'pending';
   const finalStatus = (project.final_status as InvoiceState) ?? 'pending';
@@ -149,7 +172,7 @@ export function BillingTab({ project }: { project: Project }) {
         <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
           <AlertCircle className="inline-block w-4 h-4 mr-1 -mt-0.5" />
           Set <strong>Client email</strong> on the Overview tab before
-          generating invoices — Stripe needs it to create a Customer.
+          generating invoices. Stripe needs it to create a Customer.
         </div>
       )}
 
@@ -161,7 +184,7 @@ export function BillingTab({ project }: { project: Project }) {
               Setup fee
             </h3>
             <p className="text-xs text-[var(--fs-ink-faint)]">
-              Two invoices: 50% deposit upfront + 50% on approval.
+              Two invoices: 20% deposit upfront + 80% on approval.
             </p>
           </div>
           <p className="text-sm font-bold text-[var(--fs-ink)]">
@@ -174,12 +197,12 @@ export function BillingTab({ project }: { project: Project }) {
           <div className="rounded-lg border border-[var(--fs-rule)] p-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-[var(--fs-ink-dim)]">
-                Deposit (50%)
+                Deposit (20%)
               </span>
               <StatusPill status={depositStatus} tone={INVOICE_TONE} />
             </div>
             <p className="text-lg font-semibold text-[var(--fs-ink)]">
-              €{Math.round(setupFee * 0.5).toLocaleString()}
+              €{formatSetupSplit(setupFee, 20)}
             </p>
             {depositInvoiceUrl && (
               <a
@@ -218,12 +241,12 @@ export function BillingTab({ project }: { project: Project }) {
           <div className="rounded-lg border border-[var(--fs-rule)] p-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-[var(--fs-ink-dim)]">
-                Final (50%)
+                Final (80%)
               </span>
               <StatusPill status={finalStatus} tone={INVOICE_TONE} />
             </div>
             <p className="text-lg font-semibold text-[var(--fs-ink)]">
-              €{Math.round(setupFee * 0.5).toLocaleString()}
+              €{formatSetupSplit(setupFee, 80)}
             </p>
             {finalInvoiceUrl && (
               <a
@@ -288,7 +311,7 @@ export function BillingTab({ project }: { project: Project }) {
               Trial ends
             </dt>
             <dd className="text-[var(--fs-ink-dim)]">
-              {formatDate(subscriptionTrialEnds) || '—'}
+              {formatDate(subscriptionTrialEnds) || '–'}
             </dd>
           </div>
           <div>
@@ -296,7 +319,7 @@ export function BillingTab({ project }: { project: Project }) {
               Next billing
             </dt>
             <dd className="text-[var(--fs-ink-dim)]">
-              {formatDate(subscriptionNextBilling) || '—'}
+              {formatDate(subscriptionNextBilling) || '–'}
             </dd>
           </div>
         </dl>
@@ -395,7 +418,7 @@ export function BillingTab({ project }: { project: Project }) {
                   }
                   await navigator.clipboard.writeText(data.url);
                   toast.success(
-                    'Portal link copied — paste into the client email'
+                    'Portal link copied, paste into the client email'
                   );
                 } catch (e) {
                   toast.error(
@@ -419,7 +442,7 @@ export function BillingTab({ project }: { project: Project }) {
               Customer ID
             </dt>
             <dd className="font-mono text-[var(--fs-ink-dim)]">
-              {stripeCustomerId ?? '—'}
+              {stripeCustomerId ?? '–'}
             </dd>
           </div>
           <div>
@@ -427,7 +450,7 @@ export function BillingTab({ project }: { project: Project }) {
               Subscription ID
             </dt>
             <dd className="font-mono text-[var(--fs-ink-dim)]">
-              {stripeSubscriptionId ?? '—'}
+              {stripeSubscriptionId ?? '–'}
             </dd>
           </div>
           <div>
@@ -435,7 +458,7 @@ export function BillingTab({ project }: { project: Project }) {
               Deposit invoice
             </dt>
             <dd className="font-mono text-[var(--fs-ink-dim)] truncate">
-              {(project.deposit_invoice_id as string | null) ?? '—'}
+              {(project.deposit_invoice_id as string | null) ?? '–'}
             </dd>
           </div>
           <div>
@@ -443,7 +466,7 @@ export function BillingTab({ project }: { project: Project }) {
               Final invoice
             </dt>
             <dd className="font-mono text-[var(--fs-ink-dim)] truncate">
-              {(project.final_invoice_id as string | null) ?? '—'}
+              {(project.final_invoice_id as string | null) ?? '–'}
             </dd>
           </div>
         </dl>

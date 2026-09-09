@@ -46,6 +46,10 @@ export class TemplateFetcher {
           
           try {
             const template = await parseTemplate(templatePath, entry.name);
+            if (template.config.catalogEnabled === false) {
+              console.log(`Skipping catalog-disabled template: ${entry.name}`);
+              continue;
+            }
             this.templates.set(entry.name, template);
             console.log(`✓ Loaded ${entry.name} (${template.metadata.stats.fileCount} files, ${template.metadata.stats.totalLOC} LOC)`);
           } catch (error) {
@@ -70,20 +74,33 @@ export class TemplateFetcher {
   }
 
   searchTemplates(query: string): Template[] {
-    const lowerQuery = query.toLowerCase();
-    
-    return this.getAllTemplates().filter(template => {
+    const lowerQuery = query.toLowerCase().trim();
+    if (!lowerQuery) return this.getAllTemplates();
+    const tokens = Array.from(
+      new Set(lowerQuery.split(/[^a-z0-9]+/).filter(token => token.length >= 2))
+    );
+
+    return this.getAllTemplates().map(template => {
       const meta = template.metadata;
-      return (
-        (meta.displayName?.toLowerCase() || '').includes(lowerQuery) ||
-        (meta.description?.toLowerCase() || '').includes(lowerQuery) ||
-        (meta.category?.toLowerCase() || '').includes(lowerQuery) ||
-        (Array.isArray(meta.useCase) 
-          ? meta.useCase.some(uc => uc.toLowerCase().includes(lowerQuery))
-          : (meta.useCase as any)?.toString().toLowerCase().includes(lowerQuery) || false) ||
-        (meta.targetAudience?.toLowerCase() || '').includes(lowerQuery)
+      const haystack = [
+        meta.displayName,
+        meta.description,
+        meta.category,
+        meta.targetAudience,
+        ...(Array.isArray(meta.useCase) ? meta.useCase : []),
+        ...(Array.isArray(meta.features) ? meta.features : []),
+        ...(Array.isArray(template.config.bestFor) ? template.config.bestFor : []),
+      ].join(' ').toLowerCase();
+      const tokenScore = tokens.reduce(
+        (score, token) => score + (haystack.includes(token) ? 1 : 0),
+        0
       );
-    });
+      const phraseBonus = haystack.includes(lowerQuery) ? tokens.length + 1 : 0;
+      return { template, score: tokenScore + phraseBonus };
+    })
+      .filter(result => result.score > 0)
+      .sort((a, b) => b.score - a.score || a.template.metadata.slug.localeCompare(b.template.metadata.slug))
+      .map(result => result.template);
   }
 
   getTemplatesByCategory(category: string): Template[] {

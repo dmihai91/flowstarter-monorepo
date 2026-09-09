@@ -5,12 +5,12 @@ import Footer from '@/components/Footer';
 import { CookieConsent } from '@/components/CookieConsent';
 
 import { LandingHero } from './components/LandingHero';
+import { BrandIntelligenceSection } from './components/BrandIntelligenceSection';
+import { TemplateLibrarySection } from './components/TemplateLibrarySection';
 import { EditorShowcase } from './components/EditorShowcase';
-import { ProblemSection } from './components/ProblemSection';
-import { SolutionSection } from './components/SolutionSection';
 import { DifferentiationSection } from './components/DifferentiationSection';
+import { TeamSection } from './components/TeamSection';
 import { ProcessSection } from './components/ProcessSection';
-import { AudienceSection } from './components/AudienceSection';
 import { ProofSection } from './components/ProofSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { ScrollFab } from './components/ScrollFab';
@@ -46,17 +46,17 @@ export default function LandingPage() {
         <LandingHero />
         <BookingModalProvider />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
-        <EditorShowcase />
+        <BrandIntelligenceSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
-        <ProblemSection />
-        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
-        <SolutionSection />
-        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
-        <DifferentiationSection />
+        <TemplateLibrarySection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <ProcessSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
-        <AudienceSection />
+        <DifferentiationSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <TeamSection />
+        <hr className="ls-scope ls-section-divider" aria-hidden="true" />
+        <EditorShowcase />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />
         <ProofSection />
         <hr className="ls-scope ls-section-divider" aria-hidden="true" />

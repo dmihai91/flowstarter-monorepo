@@ -6,7 +6,7 @@ import { AboutCtaBand } from './AboutCtaBand';
 export const metadata = {
   title: 'About',
   description:
-    'Flowstarter is a two-person studio — Darius and Dorin — hand-building premium websites for service professionals across Europe.',
+    'Flowstarter is a two-person studio, Darius and Dorin, hand-building premium websites for service professionals across Europe.',
 };
 
 const founderCardStyle = {

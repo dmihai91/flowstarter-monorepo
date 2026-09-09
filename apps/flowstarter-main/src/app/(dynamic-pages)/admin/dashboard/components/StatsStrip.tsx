@@ -78,7 +78,7 @@ export function StatsStrip({
 
   const aiSub =
     stats == null
-      ? '—'
+      ? '–'
       : stats.aiSessionsThisMonth === 0
       ? t('admin.dashboard.stats.aiThisMonthSubEmpty')
       : stats.aiSessionsThisMonth === 1
@@ -115,13 +115,13 @@ export function StatsStrip({
       </div>
     </div>
   ) : (
-    '—'
+    '–'
   );
 
   const clientsSub: ReactNode = clientsLoading
-    ? '—'
+    ? '–'
     : clientCount === null
-    ? '—'
+    ? '–'
     : clientCount === 0
     ? t('admin.dashboard.stats.clientsSubEmpty')
     : clientCount === 1
@@ -137,7 +137,7 @@ export function StatsStrip({
             draft: stats.draftCount,
             building: stats.inProgressCount,
           })
-        : '—',
+        : '–',
       icon: FolderKanban,
       loadingOverride: loading,
     },
@@ -245,7 +245,7 @@ function StatCell({
           {loading ? (
             <span className="inline-block h-8 w-20 animate-pulse rounded bg-[var(--ls-rule)] align-middle" />
           ) : error || value === null ? (
-            <span className="text-[var(--ls-ink-faint)]">—</span>
+            <span className="text-[var(--ls-ink-faint)]">–</span>
           ) : (
             value
           )}

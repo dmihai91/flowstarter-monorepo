@@ -1,0 +1,13 @@
+{
+  "strictness": 2,
+  "commentTypes": [
+    "logic",
+    "syntax"
+  ],
+  "skipReview": "AUTOMATIC",
+  "triggerOnUpdates": false,
+  "triggerOnDrafts": false,
+  "statusCheck": true,
+  "statusCommentsEnabled": true,
+  "instructions": "Follow AGENTS.md in the repository root. Prioritize correctness, tenant isolation (a query on a workspace-scoped table with no workspace filter and no RLS behind it), authorization, billing and Stripe mode, generated output patched instead of its generator, rules moved from deterministic code into a model prompt, secrets reaching logs, and missing behavioral tests. User-visible copy belongs in apps/flowstarter-main/src/locales and uses no em dashes and no emojis. Treat unresolved material findings as blocking."
+}

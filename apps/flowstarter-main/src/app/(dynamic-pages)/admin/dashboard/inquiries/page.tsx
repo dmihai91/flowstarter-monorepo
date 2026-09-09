@@ -43,13 +43,19 @@ const STATUS_LABEL: Record<string, string> = {
   archived: 'Archived',
 };
 
+/** Same chip recipe as the pipeline board and the project tabs. */
 const STATUS_CLASS: Record<string, string> = {
-  pending_review: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  approved: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  rejected: 'bg-rose-500/15 text-rose-600 dark:text-rose-400',
-  scheduled: 'bg-blue-500/15 text-blue-600 dark:text-blue-400',
-  completed: 'bg-violet-500/15 text-violet-600 dark:text-violet-400',
-  archived: 'bg-[var(--ls-glass-bg)] text-[var(--ls-ink-faint)]',
+  pending_review:
+    'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+  approved:
+    'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  rejected:
+    'border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-300',
+  scheduled:
+    'border-blue-500/25 bg-blue-500/10 text-blue-700 dark:text-blue-300',
+  completed:
+    'border-violet-500/25 bg-violet-500/10 text-violet-700 dark:text-violet-300',
+  archived: 'border-[var(--ls-rule)] bg-transparent text-[var(--ls-ink-dim)]',
 };
 
 const BUDGET_LABEL: Record<string, string> = {
@@ -72,7 +78,7 @@ const PROJECT_TYPE_LABEL: Record<string, string> = {
 function StatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium leading-5 ${
         STATUS_CLASS[status] ?? STATUS_CLASS.archived
       }`}
     >
@@ -128,7 +134,7 @@ export default function InquiriesPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="h-9 flex-1 min-w-[200px] rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)] px-3 text-sm text-[var(--ls-ink)] outline-none"
+            className="h-9 flex-1 min-w-[200px] rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)] px-3 text-sm text-[var(--ls-ink)] outline-none transition-[box-shadow,border-color] duration-150 placeholder:text-[var(--ls-ink-faint)] hover:border-[var(--ls-accent)]/40 focus:border-[var(--ls-accent)] focus:ring-2 focus:ring-[var(--ls-accent)]/25"
           />
           <select
             value={status}
@@ -136,7 +142,7 @@ export default function InquiriesPage() {
               setStatus(e.target.value);
               setPage(1);
             }}
-            className="h-9 rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)] px-3 text-sm text-[var(--ls-ink)]"
+            className="h-9 cursor-pointer rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)] px-3 text-sm text-[var(--ls-ink)] outline-none transition-[box-shadow,border-color] duration-150 hover:border-[var(--ls-accent)]/40 focus:border-[var(--ls-accent)] focus:ring-2 focus:ring-[var(--ls-accent)]/25"
           >
             <option value="">All statuses</option>
             {Object.entries(STATUS_LABEL).map(([v, l]) => (
@@ -151,7 +157,7 @@ export default function InquiriesPage() {
               setBudget(e.target.value);
               setPage(1);
             }}
-            className="h-9 rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)] px-3 text-sm text-[var(--ls-ink)]"
+            className="h-9 cursor-pointer rounded-lg border border-[var(--ls-rule)] bg-[var(--ls-glass-bg)] px-3 text-sm text-[var(--ls-ink)] outline-none transition-[box-shadow,border-color] duration-150 hover:border-[var(--ls-accent)]/40 focus:border-[var(--ls-accent)] focus:ring-2 focus:ring-[var(--ls-accent)]/25"
           >
             <option value="">All budgets</option>
             {Object.entries(BUDGET_LABEL).map(([v, l]) => (

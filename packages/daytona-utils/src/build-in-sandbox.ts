@@ -244,6 +244,9 @@ export async function buildSiteInSandbox(
 export interface InSandboxEdit {
   ok: boolean;
   costUsd?: number;
+  /** Token usage from the fast (OpenRouter) edit path, for cost recording. */
+  tokensIn?: number;
+  tokensOut?: number;
   error?: string;
 }
 
@@ -334,10 +337,14 @@ export async function fastEditInSandbox(
   sandboxId: string,
   instruction: string,
   opts: {
-    anthropicApiKey: string;
+    /** OpenRouter key — the fast runner uses Kimi (impl) + Haiku (critic). */
+    openRouterKey: string;
     /** Host path to sandbox/fast-edit-runner.mjs. */
     runnerPath: string;
+    /** Implementer model. Default moonshotai/kimi-k2.6. */
     model?: string;
+    /** Snappy critic model. Default anthropic/claude-haiku-4.5. */
+    criticModel?: string;
     env?: DaytonaEnv;
     timeoutMs?: number;
   }
@@ -348,8 +355,8 @@ export async function fastEditInSandbox(
     const workDir = (await sandbox.getWorkDir().catch(() => '')) || '/home/daytona';
     const agentDir = `${workDir}/.agent`;
     const siteRoot = `${workDir}/site`;
-    const claudeBin = `${agentDir}/node_modules/.bin/claude`;
-    const model = opts.model ?? 'claude-haiku-4-5';
+    const model = opts.model ?? 'moonshotai/kimi-k2.6';
+    const criticModel = opts.criticModel ?? 'anthropic/claude-haiku-4.5';
     const id = Date.now();
     const instrFile = `${agentDir}/fastedit-${id}.txt`;
 
@@ -361,8 +368,8 @@ export async function fastEditInSandbox(
 
     const r = await sandbox.process.executeCommand(
       `cd "${agentDir}" && FS_SITE_LABELS="${siteRoot}/src/content/site-labels.md" ` +
-        `FS_INSTRUCTION_FILE="${instrFile}" FS_CLAUDE_BIN="${claudeBin}" ` +
-        `FS_MODEL="${model}" ANTHROPIC_API_KEY="${opts.anthropicApiKey}" ` +
+        `FS_INSTRUCTION_FILE="${instrFile}" FS_OPENROUTER_KEY="${opts.openRouterKey}" ` +
+        `FS_MODEL="${model}" FS_CRITIC_MODEL="${criticModel}" ` +
         `node fast-edit-runner.mjs`,
       workDir,
       undefined,
@@ -376,7 +383,12 @@ export async function fastEditInSandbox(
       try {
         const o = JSON.parse(line) as Record<string, unknown>;
         if (o.type === 'done')
-          return { ok: true, costUsd: typeof o.costUsd === 'number' ? o.costUsd : 0 };
+          return {
+            ok: true,
+            costUsd: typeof o.costUsd === 'number' ? o.costUsd : 0,
+            tokensIn: typeof o.tokensIn === 'number' ? o.tokensIn : 0,
+            tokensOut: typeof o.tokensOut === 'number' ? o.tokensOut : 0,
+          };
         return { ok: false, error: String(o.message ?? 'fast edit failed') };
       } catch {
         /* fall through */

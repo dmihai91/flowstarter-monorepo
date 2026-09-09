@@ -72,17 +72,19 @@ type SiteResponse = {
   deployments: Deployment[];
 };
 
+/** Same chip recipe as the pipeline board and the billing tab. */
+const NEUTRAL_TONE =
+  'border-[var(--fs-rule)] bg-transparent text-[var(--fs-ink-dim)]';
+
 const DEPLOY_STATUS_TONE: Record<string, string> = {
-  pending:
-    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
+  pending: NEUTRAL_TONE,
   deploying:
-    'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
-  live: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300',
-  failed: 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300',
+    'border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+  live: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+  failed: 'border-red-500/25 bg-red-500/10 text-red-700 dark:text-red-300',
   rolled_back:
-    'bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300',
-  archived:
-    'bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
+    'border-orange-500/25 bg-orange-500/10 text-orange-700 dark:text-orange-300',
+  archived: NEUTRAL_TONE,
 };
 
 const SERVER_STATUS_TONE: Record<string, string> = {
@@ -96,8 +98,8 @@ const SERVER_STATUS_TONE: Record<string, string> = {
 function StatusPill({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide ${
-        DEPLOY_STATUS_TONE[status] ?? DEPLOY_STATUS_TONE.pending
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium uppercase leading-5 tracking-wide ${
+        DEPLOY_STATUS_TONE[status] ?? NEUTRAL_TONE
       }`}
     >
       {status.replace(/_/g, ' ')}
@@ -285,7 +287,7 @@ export function HostingTab({ project }: { project: Project }) {
               Site directory
             </dt>
             <dd className="font-mono text-xs text-[var(--fs-ink-dim)] truncate">
-              {workspace.site_directory ?? '—'}
+              {workspace.site_directory ?? '–'}
             </dd>
           </div>
           <div>
@@ -304,7 +306,7 @@ export function HostingTab({ project }: { project: Project }) {
                   <ExternalLink className="w-3 h-3" />
                 </a>
               ) : (
-                '—'
+                '–'
               )}
             </dd>
           </div>
@@ -396,7 +398,7 @@ export function HostingTab({ project }: { project: Project }) {
                 IPv4
               </dt>
               <dd className="font-mono text-xs text-[var(--fs-ink-dim)]">
-                {server.ipv4 ?? '—'}
+                {server.ipv4 ?? '–'}
               </dd>
             </div>
             <div className="col-span-2">
@@ -404,7 +406,7 @@ export function HostingTab({ project }: { project: Project }) {
                 IPv6
               </dt>
               <dd className="font-mono text-xs text-[var(--fs-ink-dim)] truncate">
-                {server.ipv6 ?? '—'}
+                {server.ipv6 ?? '–'}
               </dd>
             </div>
           </dl>
@@ -470,7 +472,7 @@ export function HostingTab({ project }: { project: Project }) {
                       })}
                     </td>
                     <td className="px-3 py-2 text-xs text-[var(--fs-ink-dim)] truncate max-w-[20rem]">
-                      {d.status_detail ?? '—'}
+                      {d.status_detail ?? '–'}
                     </td>
                   </tr>
                 ))}

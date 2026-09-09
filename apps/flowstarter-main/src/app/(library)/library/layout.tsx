@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://library.flowstarter.net'),
   title: {
     default:
-      'Flowstarter Library — A small, considered shelf of work and starters',
-    template: '%s — Flowstarter Library',
+      'Flowstarter Library: A small, considered shelf of work and starters',
+    template: '%s: Flowstarter Library',
   },
   description:
     'A curated shelf of sites we have shipped and starter templates we have hand-crafted. Restraint over decoration. Craft over volume.',

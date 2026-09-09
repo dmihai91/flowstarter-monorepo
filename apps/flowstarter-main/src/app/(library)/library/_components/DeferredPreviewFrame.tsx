@@ -64,7 +64,7 @@ export function DeferredPreviewFrame({
         <iframe
           ref={iframeRef}
           src={previewUrl}
-          title={`${title} — live preview`}
+          title={`${title}: live preview`}
           loading="eager"
           onLoad={
             isExternal

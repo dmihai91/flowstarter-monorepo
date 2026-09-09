@@ -1,8 +1,7 @@
 import 'server-only';
-import { models } from './client';
 import { MVP_INDUSTRIES, type IndustryId } from '@/lib/industries';
 import type { PlatformType } from '@/types/project-config';
-import { generateText } from 'ai';
+import { callLlm } from './llm';
 
 export interface ClassificationResult {
   platformType: PlatformType;
@@ -67,8 +66,8 @@ async function callOpenRouter(prompt: string): Promise<ClassificationResult> {
     throw new Error('OPENROUTER_API_KEY is not configured');
   }
 
-  const { text: content } = await generateText({
-    model: models.projectDetails,
+  const { text: content } = await callLlm({
+    action: 'classify_project',
     messages: [
       {
         role: 'system',
@@ -81,7 +80,6 @@ async function callOpenRouter(prompt: string): Promise<ClassificationResult> {
       },
     ],
     temperature: 0.1, // Low temperature for consistent classification
-    maxOutputTokens: 150,
   });
 
   if (!content) {

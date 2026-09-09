@@ -7,9 +7,10 @@ import AnimatedWordTitle from '../components/shared/AnimatedWordTitle.astro';
 import { frontmatter as siteLabels } from '../content/site-labels.md';
 
 const { articles } = (siteLabels as any).blogPage;
+import { pageTitle } from '../lib/site-data';
 ---
 
-<Layout title="Journal — Atelier Verso">
+<Layout title={pageTitle('Journal')}>
   <Header activeIndex={4} />
   <main class="blog-page">
 
@@ -80,7 +81,7 @@ const { articles } = (siteLabels as any).blogPage;
     text-align: center;
   }
 
-  .blog-hero__title {
+  :global(.blog-hero__title) {
     font-family: var(--font-title);
     font-size: clamp(3rem, 7vw, 6.5rem);
     font-weight: var(--fw-headline);

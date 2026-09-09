@@ -7,10 +7,19 @@ const { mockGenerateText } = vi.hoisted(() => ({
 
 vi.mock('ai', () => ({
   generateText: mockGenerateText,
+  generateObject: vi.fn(),
+  streamText: vi.fn(),
 }));
 
 vi.mock('@/lib/ai/client', () => ({
   models: { gpt4: { id: 'mock-gpt4' } },
+  getModel: (id?: string) => ({ modelId: id ?? 'mock-gpt4' }),
+  isOpenRouterConfigured: () => true,
+}));
+vi.mock('@/supabase-clients/server', () => ({
+  createSupabaseServiceRoleClient: () => ({
+    from: () => ({ insert: () => Promise.resolve({ error: null }) }),
+  }),
 }));
 
 // Import once — mocks are already in place via vi.mock hoisting

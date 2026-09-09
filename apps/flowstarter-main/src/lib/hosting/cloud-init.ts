@@ -22,7 +22,7 @@
  * agent, we'll fill the ExecStart in.
  */
 
-const CLOUD_INIT_VERSION = 2;
+const CLOUD_INIT_VERSION = 3;
 
 /**
  * Pinned versions for the host's coding-agent stack. Bump these together
@@ -57,7 +57,40 @@ export interface CloudInitOptions {
    * file is left empty so an operator can drop the key in later.
    */
   anthropicApiKey?: string | null;
+  /**
+   * Bearer token for the SECOND deploy-agent instance — the one that serves
+   * funnel previews. Distinct from `deployAgentSharedSecret` on purpose: the
+   * previews agent can write to `/var/www/previews` and `/etc/caddy/previews`
+   * and to nothing else, so leaking it costs previews, not customer sites.
+   *
+   * Omit it and none of the previews stack is emitted at all — the output is
+   * then byte-for-byte the paid-sites host we have always built.
+   */
+  previewsDeployAgentSharedSecret?: string | null;
+  /**
+   * The zone preview hostnames live under. Must match the wildcard DNS record
+   * (`*.preview.flowstarter.net`, dns-only so Caddy can answer the ACME
+   * HTTP-01 challenge itself) and `PREVIEW_DOMAIN_SUFFIX` in
+   * `lib/hosting/preview-publisher.ts`.
+   */
+  previewsHostSuffix?: string;
 }
+
+/**
+ * Ports and paths for the previews stack. Every one of them differs from the
+ * paid-site equivalent; that difference IS the isolation.
+ */
+const PREVIEWS = {
+  /** Second deploy-agent instance. The paid one keeps 8443. */
+  agentPort: 8444,
+  /** Second Caddy instance. The paid one keeps 80/443. */
+  caddyHttpPort: 9080,
+  caddyHttpsPort: 9443,
+  sitesRoot: '/var/www/previews',
+  caddyDir: '/etc/caddy/previews',
+  caddySitesDir: '/etc/caddy/previews/sites',
+  defaultHostSuffix: 'preview.flowstarter.net',
+} as const;
 
 export function getCloudInitVersion(): number {
   return CLOUD_INIT_VERSION;
@@ -82,6 +115,9 @@ export function buildCloudInit(opts: CloudInitOptions): string {
   const sshKeys = opts.sshAuthorizedKeys ?? [];
   const hostname = opts.hostname ?? 'flowstarter-host';
   const artifactUrl = opts.deployAgentArtifactUrl;
+  const previewsSecret = opts.previewsDeployAgentSharedSecret?.trim() || null;
+  const previewsSuffix =
+    opts.previewsHostSuffix?.trim() || PREVIEWS.defaultHostSuffix;
 
   const sshKeysYaml = sshKeys.length
     ? sshKeys.map((k) => `      - ${escapeYaml(k)}`).join('\n')
@@ -138,11 +174,54 @@ write_files:
     permissions: '0600'
   - path: /etc/caddy/Caddyfile
     content: |
-      # Base Caddyfile — per-site vhosts live in /etc/caddy/sites/*.caddy
-      {
-        email ${opts.caddyAcmeEmail}
+      # Base Caddyfile — per-site vhosts live in /etc/caddy/sites/*.caddy${
+        previewsSecret
+          ? `
+      #
+      # This file and that glob are the PAID-SITE Caddy instance, and it never
+      # imports anything the previews agent writes. Preview snippets live under
+      # ${PREVIEWS.caddySitesDir}/*.caddy, a different directory loaded by a
+      # different Caddy process (caddy-previews.service). A preview snippet
+      # that does not parse takes that process down and leaves every customer
+      # site on this box serving.`
+          : ''
       }
-      import /etc/caddy/sites/*.caddy
+      {
+        email ${opts.caddyAcmeEmail}${
+    previewsSecret
+      ? `
+        # Certificates for preview hostnames are issued on demand and only for
+        # hostnames the previews agent confirms it is actually serving — the
+        # ask endpoint is what stops a stranger pointing DNS at this box and
+        # making us mint certificates for them. (Caddy removed the older
+        # \`interval\`/\`burst\` rate limiters; \`ask\` is the control now,
+        # which is why it is not optional here.)
+        on_demand_tls {
+          ask http://127.0.0.1:${PREVIEWS.agentPort}/tls-ask
+        }`
+      : ''
+  }
+      }
+      import /etc/caddy/sites/*.caddy${
+        previewsSecret
+          ? `
+
+      # ─── Previews ────────────────────────────────────────────────────────
+      # ONE static block, written once at boot and never touched again by any
+      # agent. It terminates TLS for the whole preview zone and hands the
+      # request to the previews Caddy on loopback. Nothing here is generated,
+      # so nothing generated can break it.
+      *.${previewsSuffix} {
+        tls {
+          on_demand
+        }
+        # Belt to the meta tag's braces: every HTML file in a preview also
+        # carries <meta name="robots" content="noindex, ...">.
+        header X-Robots-Tag "noindex, nofollow, noarchive"
+        reverse_proxy 127.0.0.1:${PREVIEWS.caddyHttpPort}
+      }`
+          : ''
+      }
     owner: root:root
     permissions: '0644'
   - path: /etc/systemd/system/flowstarter-deploy-agent.service
@@ -162,7 +241,7 @@ write_files:
       WantedBy=multi-user.target
     owner: root:root
     permissions: '0644'
-
+${previewsSecret ? previewsWriteFiles(previewsSecret, previewsSuffix) : ''}
 runcmd:
   # ─── Caddy install (official repo) ────────────────────────────────────
   - curl -1sLf https://dl.cloudsmith.io/public/caddy/stable/gpg.key | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
@@ -189,7 +268,20 @@ runcmd:
   - mkdir -p /var/www/sites
   - chown -R caddy:caddy /var/www/sites
   - systemctl reload caddy
-
+${
+  previewsSecret
+    ? `
+  # ─── Previews: separate roots, separate Caddy ─────────────────────────
+  # Different directories from the paid sites above, owned by the same user
+  # only so Caddy can read them. The previews agent is the only writer.
+  - mkdir -p ${PREVIEWS.caddySitesDir}
+  - mkdir -p ${PREVIEWS.sitesRoot}
+  - chown -R caddy:caddy ${PREVIEWS.sitesRoot}
+  - systemctl daemon-reload
+  - systemctl enable --now caddy-previews
+`
+    : ''
+}
   # ─── Firewall ─────────────────────────────────────────────────────────
   - ufw default deny incoming
   - ufw default allow outgoing
@@ -206,7 +298,15 @@ ${
       )} -o /usr/local/bin/flowstarter-deploy-agent
   - chmod +x /usr/local/bin/flowstarter-deploy-agent
   - systemctl daemon-reload
-  - systemctl enable --now flowstarter-deploy-agent`
+  - systemctl enable --now flowstarter-deploy-agent${
+    previewsSecret
+      ? `
+  # Same binary, second instance: everything that differs (port, secret,
+  # sites root, Caddy dir, reload command, snippet shape) comes from
+  # /etc/flowstarter/preview-deploy-agent.env.
+  - systemctl enable --now flowstarter-preview-deploy-agent`
+      : ''
+  }`
     : `  # Deploy-agent artifact URL not provided. Service unit installed but disabled.
   - systemctl daemon-reload`
 }
@@ -218,6 +318,106 @@ final_message: "Flowstarter host bootstrap complete (cloud_init_version=${CLOUD_
       ? 'wired'
       : 'placeholder (drop key in /etc/flowstarter/anthropic.env)'
   }."
+`;
+}
+
+/**
+ * The previews half of the host: a second deploy-agent instance and a second
+ * Caddy, sharing nothing writable with the paid-site stack.
+ *
+ * What is actually separated, and why each one matters:
+ *
+ *  - SITES ROOT. Previews extract into /var/www/previews/{slug}/. The previews
+ *    agent's DEPLOY_AGENT_SITES_ROOT never points at /var/www/sites, so a
+ *    preview slug that collides with a customer's workspace slug overwrites
+ *    another preview, not their site.
+ *  - CADDY CONFIG DIRECTORY. Preview snippets are written to
+ *    /etc/caddy/previews/sites/*.caddy. The paid Caddyfile imports
+ *    /etc/caddy/sites/*.caddy and nothing else, so a snippet that does not
+ *    parse cannot be loaded by the process that serves customers.
+ *  - CADDY PROCESS. caddy-previews.service is a separate unit with its own
+ *    config and its own ports. Caddy refuses to load a config with a bad
+ *    import — the isolation only holds if that failure happens to a different
+ *    process, which is the whole reason there are two.
+ *  - PORT + SECRET. 8444 and its own bearer token. The previews token cannot
+ *    deploy to a customer host, and the customer token is never sent to the
+ *    previews agent.
+ *
+ * The one thing they share is the public listener: the paid Caddy owns 80/443
+ * because only one process can, and hands the preview zone to the previews
+ * Caddy over loopback through a single static block that no agent ever writes.
+ */
+function previewsWriteFiles(sharedSecret: string, hostSuffix: string): string {
+  return `  - path: /etc/flowstarter/preview-deploy-agent.env
+    content: |
+      # SECOND deploy-agent instance — funnel previews only.
+      # Same binary as the paid agent, everything that matters different.
+      DEPLOY_AGENT_MODE=previews
+      DEPLOY_AGENT_SHARED_SECRET=${sharedSecret}
+      DEPLOY_AGENT_PORT=${PREVIEWS.agentPort}
+      DEPLOY_AGENT_SITES_ROOT=${PREVIEWS.sitesRoot}
+      DEPLOY_AGENT_CADDY_SITES_DIR=${PREVIEWS.caddySitesDir}
+      DEPLOY_AGENT_CADDY_RELOAD_CMD=systemctl reload caddy-previews
+      DEPLOY_AGENT_TEMP_ROOT=/tmp/flowstarter-preview-deploys
+      DEPLOY_AGENT_SITE_PORT=${PREVIEWS.caddyHttpPort}
+      DEPLOY_AGENT_PREVIEW_HOST_SUFFIX=${hostSuffix}
+    owner: root:root
+    permissions: '0600'
+  - path: ${PREVIEWS.caddyDir}/Caddyfile
+    content: |
+      # PREVIEWS Caddy — a different process from the one in /etc/caddy.
+      #
+      # TLS is terminated by the paid Caddy on 443 and the request arrives here
+      # over loopback, so this instance speaks plain HTTP and auto_https is off.
+      # It imports ONLY its own snippet directory; nothing in here can be
+      # reached from /etc/caddy/Caddyfile's import glob.
+      {
+        admin off
+        auto_https off
+        http_port ${PREVIEWS.caddyHttpPort}
+        https_port ${PREVIEWS.caddyHttpsPort}
+      }
+      import ${PREVIEWS.caddySitesDir}/*.caddy
+    owner: root:root
+    permissions: '0644'
+  - path: /etc/systemd/system/caddy-previews.service
+    content: |
+      [Unit]
+      Description=Caddy (funnel previews)
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      User=caddy
+      Group=caddy
+      ExecStart=/usr/bin/caddy run --environ --config ${PREVIEWS.caddyDir}/Caddyfile
+      ExecReload=/usr/bin/caddy reload --config ${PREVIEWS.caddyDir}/Caddyfile --force
+      Restart=on-failure
+      RestartSec=5
+      # A previews Caddy that cannot start must not take the box with it.
+      TimeoutStopSec=5s
+
+      [Install]
+      WantedBy=multi-user.target
+    owner: root:root
+    permissions: '0644'
+  - path: /etc/systemd/system/flowstarter-preview-deploy-agent.service
+    content: |
+      [Unit]
+      Description=Flowstarter deploy-agent (funnel previews)
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      EnvironmentFile=/etc/flowstarter/preview-deploy-agent.env
+      ExecStart=/usr/local/bin/flowstarter-deploy-agent
+      Restart=on-failure
+      RestartSec=5
+
+      [Install]
+      WantedBy=multi-user.target
+    owner: root:root
+    permissions: '0644'
 `;
 }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { quoteMajorFrom, type QuoteBearingRow } from '@/lib/flowstarter/quote';
 import { toast } from 'sonner';
 import { Save } from 'lucide-react';
 import { ShellCard } from '../../../components/TeamDashboardShell';
@@ -21,7 +22,8 @@ type OverviewState = {
 function fromProject(p: Project): OverviewState {
   return {
     name: p.name ?? '',
-    setup_fee: String(p.setup_fee ?? 0),
+    // Shows the quote money is actually computed from, not the mirror.
+    setup_fee: String(quoteMajorFrom(p as QuoteBearingRow)),
     monthly_fee: String(p.monthly_fee ?? 0),
     is_founding: Boolean(p.is_founding),
   };
@@ -49,7 +51,9 @@ export function OverviewTab({ project }: { project: Project }) {
     try {
       await update.mutateAsync({
         name: state.name.trim(),
-        setup_fee: Number(state.setup_fee) || 0,
+        // Sent as typed: the endpoint parses and validates it. Coercing here
+        // would turn a typo into a silent 0 before the server could reject it.
+        setup_fee: state.setup_fee,
         monthly_fee: Number(state.monthly_fee) || 0,
         is_founding: state.is_founding,
       });

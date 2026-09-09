@@ -7,8 +7,24 @@ import { useI18n } from '@/lib/i18n';
 import { LANDING_COPY } from '../landing-copy';
 import { PreQualModal } from './PreQualModal';
 
-// Storage tiers are not advertised on the concierge offer.
-const STORAGE_BY_PLAN: Record<string, string> = {};
+const CARE_PLANS = [
+  {
+    name: 'Starter care',
+    price: 'from €49 / month',
+    description: 'Hosting, domain, maintenance, support and guided AI edits.',
+  },
+  {
+    name: 'Pro care',
+    price: '€99 / month',
+    description:
+      'More editor capacity, advanced controls and priority support.',
+  },
+  {
+    name: 'Store care',
+    price: '€129 / month',
+    description: 'Store operations, product editing and commerce maintenance.',
+  },
+] as const;
 
 export function LandingPricing() {
   const { t: tStrict } = useI18n();
@@ -30,154 +46,79 @@ export function LandingPricing() {
       <div className="ls-grain" aria-hidden />
 
       <div className="ls-container">
-        <div className="text-center max-w-3xl mx-auto">
-          <div
-            className="ls-eyebrow inline-flex items-center justify-center gap-3"
-            style={{ justifyContent: 'center' }}
-          >
-            <span
-              aria-hidden
-              style={{
-                display: 'inline-block',
-                width: '28px',
-                height: '1px',
-                background: 'var(--ls-ink-faint)',
-              }}
-            />
-            <span className="num">{t('landing.pricing.eyebrow')}</span>
-            <span
-              aria-hidden
-              style={{
-                display: 'inline-block',
-                width: '28px',
-                height: '1px',
-                background: 'var(--ls-ink-faint)',
-              }}
-            />
-          </div>
-
-          <h2 className="ls-display mt-7" style={{ textWrap: 'balance' }}>
+        <div className="ls-section-intro">
+          <h2 className="ls-display" style={{ textWrap: 'balance' }}>
             <span className="line">{t('landing.pricing.headlinePrefix')}</span>
             <span className="line flourish mt-2">
               {t('landing.pricing.headlineFlourish')}
             </span>
           </h2>
-
-          <p className="ls-body ls-body--lead mt-7 mx-auto">
-            {pricing.subtitle}
-          </p>
+          <p className="ls-body ls-body--lead">{pricing.subtitle}</p>
         </div>
 
-        <div className="ls-pricing-grid mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
-          {pricing.plans.map((plan, i) => {
-            const isHighlighted = plan.recommended === true;
-            const isCustomInquiry = plan.kind === 'custom-inquiry';
-            const storage = STORAGE_BY_PLAN[plan.name];
-            return (
-              <div
-                key={plan.name}
-                className={`ls-card ls-price-card ${
-                  isHighlighted ? 'ls-price-card--hi' : ''
-                } ${isCustomInquiry ? 'ls-price-card--custom' : ''}`}
-                style={{
-                  animation: `ls-reveal 900ms cubic-bezier(0.19,1,0.22,1) ${
-                    i * 110
-                  }ms both`,
-                }}
-              >
-                {plan.badge && (
-                  <div
-                    className={`ls-price-badge ${
-                      isHighlighted ? 'ls-price-badge--hi' : ''
-                    }`}
-                  >
-                    {isHighlighted && <span className="dot" />}
-                    {plan.badge}
-                  </div>
-                )}
-
-                <div className="ls-price-name">{plan.name}</div>
-                <h3 className="ls-price-label">{plan.label}</h3>
-
-                <div className="ls-price-cost">
-                  <span className="setup">{plan.setupPrice}</span>
-                </div>
-                {plan.monthlyPrice && (
-                  <p className="ls-price-monthly">{plan.monthlyPrice}</p>
-                )}
-
-                {storage && (
-                  <div className="ls-price-storage">
-                    <span className="lbl">Storage</span>
-                    <span className="val">{storage}</span>
-                  </div>
-                )}
-
-                <ul className="ls-price-features">
-                  {plan.features.map((feature) => (
-                    <li key={feature}>
-                      <span className="check" aria-hidden>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path
-                            d="M2 7.5l3 3 7-7"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {plan.note && <p className="ls-price-plan-note">{plan.note}</p>}
-
-                {isCustomInquiry ? (
-                  <Link
-                    href="/custom-inquiry"
-                    className="ls-price-cta-link mt-auto inline-flex h-[46px] w-full items-center justify-center rounded-[12px] border border-[var(--ls-rule)] bg-transparent text-[0.9rem] font-semibold text-[var(--ls-ink)] transition-colors hover:border-[var(--ls-accent)] hover:text-[var(--ls-accent)]"
-                  >
-                    {plan.cta}
-                  </Link>
-                ) : (
-                  <Button
-                    onClick={() => handlePlanClick(plan.name.toLowerCase())}
-                    className="mt-auto h-[46px] w-full text-[0.9rem]"
-                  >
-                    {plan.cta}
-                  </Button>
-                )}
-              </div>
-            );
-          })}
+        <div className="ls-payment-terms">
+          <div className="ls-payment-milestone">
+            <span>No charge</span>
+            <strong>Tailored preview</strong>
+            <p>Review the creative direction and receive your final quote.</p>
+          </div>
+          <div className="ls-payment-milestone ls-payment-milestone--accent">
+            <span>20%</span>
+            <strong>Start the full build</strong>
+            <p>The approved direction becomes a complete multi-page site.</p>
+          </div>
+          <div className="ls-payment-milestone">
+            <span>80%</span>
+            <strong>Approve and launch</strong>
+            <p>Pay the balance only after human QA and your final approval.</p>
+          </div>
         </div>
 
-        {pricing.secondaryCta && (
-          <p className="ls-price-secondary-cta mt-10 mx-auto max-w-2xl text-center text-[14px] text-[var(--ls-ink-dim)]">
-            {pricing.secondaryCta.lead}{' '}
-            <Link
-              href={pricing.secondaryCta.href}
-              className="font-semibold text-[var(--ls-accent)] underline-offset-4 hover:underline"
+        <div className="ls-care-pricing">
+          <div className="ls-care-pricing-intro">
+            <span>After launch</span>
+            <h3>One care plan keeps everything operational.</h3>
+            <p>
+              Choose monthly or yearly billing. Your plan covers the operational
+              layer, and your site remains yours.
+            </p>
+            <Button
+              onClick={() => handlePlanClick('starter')}
+              className="h-12 w-full sm:w-auto px-7"
             >
-              {pricing.secondaryCta.label}
-            </Link>
-          </p>
-        )}
+              Build my site
+            </Button>
+          </div>
 
-        {pricing.socialProof && (
-          <p className="mt-12 mx-auto max-w-2xl text-center text-[var(--ls-ink-dim)] text-[15px] leading-relaxed">
-            {pricing.socialProof}
-          </p>
-        )}
-        <p className="ls-price-note mt-4 mx-auto max-w-2xl text-center text-[13px]">
-          {pricing.note}
+          <div className="ls-care-plan-list">
+            {CARE_PLANS.map((plan) => (
+              <button
+                type="button"
+                key={plan.name}
+                onClick={() => handlePlanClick(plan.name.toLowerCase())}
+                className="ls-care-plan-row"
+              >
+                <span>
+                  <strong>{plan.name}</strong>
+                  <small>{plan.description}</small>
+                </span>
+                <b>{plan.price}</b>
+              </button>
+            ))}
+            <Link href="/custom-inquiry" className="ls-care-custom-row">
+              <span>
+                <strong>Custom software</strong>
+                <small>
+                  Integrations, automations and software beyond the site.
+                </small>
+              </span>
+              <b>Custom quote</b>
+            </Link>
+          </div>
+        </div>
+
+        <p className="ls-price-note ls-price-note--terms">
+          {pricing.guarantee}
         </p>
       </div>
 

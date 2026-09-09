@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 644 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Lumen Festival campaign">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 644 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Abstract editorial artwork">
   <rect width="644" height="560" fill="#1B1430"/>
   <g stroke="#FF3B1F" stroke-width="2" stroke-opacity="0.8" fill="none">
     <circle cx="322" cy="280" r="60"/>
@@ -7,6 +7,4 @@
     <circle cx="322" cy="280" r="240"/>
   </g>
   <circle cx="322" cy="280" r="30" fill="#FF3B1F"/>
-  <text x="40" y="100" font-family="'Space Grotesk',sans-serif" font-size="16" letter-spacing="6" fill="#F4F1EA">LUMEN FESTIVAL</text>
-  <text x="40" y="520" font-family="Georgia,serif" font-style="italic" font-size="52" fill="#F4F1EA">Light, at scale.</text>
 </svg>

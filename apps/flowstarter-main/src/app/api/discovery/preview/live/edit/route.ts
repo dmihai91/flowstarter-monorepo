@@ -44,7 +44,9 @@ export async function POST(req: NextRequest) {
   const { demoId, instruction } = parsed.data;
   const job = getJob(demoId);
 
-  if (!job || job.status !== 'ready' || !job.sandboxId) {
+  // A preview is editable behind either a Daytona sandbox or (in
+  // FLOWSTARTER_LOCAL_PREVIEW mode) the local on-disk workspace.
+  if (!job || job.status !== 'ready' || (!job.sandboxId && !job.localRoot)) {
     return NextResponse.json({ error: 'demo not ready' }, { status: 409 });
   }
   if (job.editStatus === 'editing') {
@@ -57,8 +59,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Fast content edits run Kimi+Haiku over OpenRouter; structural edits use the
+  // autonomous Claude agent (ANTHROPIC_API_KEY). Require at least OpenRouter.
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
   const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
-  if (!anthropicApiKey) {
+  if (!openRouterKey) {
     return NextResponse.json({ error: 'unavailable' }, { status: 503 });
   }
 
@@ -82,41 +87,78 @@ export async function POST(req: NextRequest) {
         /\b(re-?structure|re-?layout|re-?build|rework the (layout|structure)|new layout|change the layout|add a page|new page)\b/i.test(
           instruction
         );
-      const editModel = structural ? 'claude-sonnet-4-6' : 'claude-haiku-4-5';
       const repoRoot = join(process.cwd(), '..', '..');
       const { fastEditInSandbox, editSiteInSandbox } = await import(
         '@flowstarter/daytona-utils'
       );
-      updateJob(demoId, {
-        editPhase: structural
-          ? 'Planning a structural change'
-          : 'Applying your change',
-      });
 
-      const r = structural
-        ? await editSiteInSandbox(job.sandboxId!, instruction, {
-            anthropicApiKey,
+      let r: {
+        ok: boolean;
+        error?: string;
+        costUsd?: number;
+        tokensIn?: number;
+        tokensOut?: number;
+      };
+      let editModel: string;
+      if (structural) {
+        // Autonomous multi-file change — needs the Claude Agent SDK and a
+        // sandbox to run it in. Fails open (the visitor just retries) when
+        // either is missing.
+        if (!anthropicApiKey || !job.sandboxId) {
+          updateJob(demoId, {
+            editStatus: 'failed',
+            editError: 'structural edits unavailable',
+          });
+          return;
+        }
+        editModel = 'claude-sonnet-4-6';
+        updateJob(demoId, { editPhase: 'Planning a structural change' });
+        r = await editSiteInSandbox(job.sandboxId!, instruction, {
+          anthropicApiKey,
+          model: editModel,
+          env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+          onProgress: (e) =>
+            updateJob(demoId, {
+              editPhase: e.detail ? `${e.phase}: ${e.detail}` : e.phase,
+            }),
+        });
+      } else {
+        // Fast content edit: Kimi implements, Haiku critic checks, 1 retry.
+        editModel = 'moonshotai/kimi-k2.6';
+        updateJob(demoId, { editPhase: 'Applying your change' });
+        const runnerPath = join(
+          repoRoot,
+          'packages/agentic-codegen/sandbox/fast-edit-runner.mjs'
+        );
+        if (job.sandboxId) {
+          r = await fastEditInSandbox(job.sandboxId, instruction, {
+            openRouterKey,
+            runnerPath,
             model: editModel,
-            env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
-            onProgress: (e) =>
-              updateJob(demoId, {
-                editPhase: e.detail ? `${e.phase} — ${e.detail}` : e.phase,
-              }),
-          })
-        : await fastEditInSandbox(job.sandboxId!, instruction, {
-            anthropicApiKey,
-            runnerPath: join(
-              repoRoot,
-              'packages/agentic-codegen/sandbox/fast-edit-runner.mjs'
-            ),
-            model: editModel,
+            criticModel: 'anthropic/claude-haiku-4.5',
             env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
           });
+        } else {
+          // Local preview: same runner, run against the on-disk workspace the
+          // local `astro dev` serves — HMR shows the change the same way.
+          const { fastEditLocal } = await import(
+            '@/lib/discovery/local-fast-edit'
+          );
+          r = await fastEditLocal(job.localRoot!, instruction, {
+            openRouterKey,
+            runnerPath,
+            contentRel: job.contentRel,
+            model: editModel,
+            criticModel: 'anthropic/claude-haiku-4.5',
+          });
+        }
+      }
 
       await recordGenerationCost({
         kind: 'edit',
         model: editModel,
-        usage: {},
+        usage: { inputTokens: r.tokensIn ?? 0, outputTokens: r.tokensOut ?? 0 },
+        costUsd: r.costUsd,
         demoId,
         ip,
       }).catch(() => {});

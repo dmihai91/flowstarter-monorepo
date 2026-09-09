@@ -2,9 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { pageTitle } from '../lib/site-data';
 ---
 
-<Layout title="Book a Site Visit — Hearthstone Joinery">
+<Layout title={pageTitle('Book a Site Visit')}>
   <Header ctaDisabled={true} />
   <main class="book-page">
     <div class="book-page__inner container">

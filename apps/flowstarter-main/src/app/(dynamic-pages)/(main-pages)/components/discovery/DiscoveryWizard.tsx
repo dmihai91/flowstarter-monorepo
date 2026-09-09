@@ -8,18 +8,19 @@ import {
   type Tier,
   DEMO_STATE_KEY,
   EMPTY_DISCOVERY,
+  INFO_STEP,
   LAST_STEP,
-  STEPS,
-  bookingDepositFor,
   canProceed,
   recommendTier,
 } from './discovery.logic';
-import { AboutStep } from './steps/AboutStep';
-import { BusinessStep } from './steps/BusinessStep';
-import { GoalsStep } from './steps/GoalsStep';
-import { CommerceStep } from './steps/CommerceStep';
-import { RecommendationStep } from './steps/RecommendationStep';
-import { SubscriptionStep } from './steps/SubscriptionStep';
+import {
+  type IntakeQuestionId,
+  CONVERSATION_LAST_STEP,
+  questionById,
+  stepForConversation,
+} from './intake-script';
+import { IntakeConversation } from './steps/IntakeConversation';
+import { InfoAgentStep } from './steps/InfoAgentStep';
 import { PreviewStep } from './steps/PreviewStep';
 
 /**
@@ -32,6 +33,20 @@ const DRAFT_KEY = 'fs-discovery-draft-v1';
 interface Draft {
   data: DiscoveryData;
   step: Step;
+  /**
+   * Which questions the visitor has already dealt with. The conversation's
+   * cursor, kept here rather than on `DiscoveryData` because it is wizard
+   * bookkeeping — an answer left blank on purpose is indistinguishable from an
+   * unasked one in the data alone, and nothing downstream of the preview has
+   * any business knowing about it.
+   *
+   * A v1 draft (saved by the form this replaced) has no cursor, so it restores
+   * to the top of the conversation with every answer it captured waiting in
+   * its composer — asked again, but never from nothing.
+   */
+  answered: IntakeQuestionId[];
+  /** The visitor asked to skip ahead: only the essentials are still asked. */
+  skippedAhead: boolean;
 }
 
 function loadDraft(): Draft | null {
@@ -45,8 +60,18 @@ function loadDraft(): Draft | null {
     const step = (
       Number.isFinite(stepNum) ? Math.min(LAST_STEP, Math.max(1, stepNum)) : 1
     ) as Step;
+    // Drop anything the script no longer recognises, so a renamed question in
+    // a newer build cannot leave an old draft stuck on a cursor that is gone.
+    const answered = (
+      Array.isArray(parsed.answered) ? parsed.answered : []
+    ).filter((id): id is IntakeQuestionId => Boolean(questionById(String(id))));
     // Merge over EMPTY so a schema change can't yield missing keys.
-    return { data: { ...EMPTY_DISCOVERY, ...parsed.data }, step };
+    return {
+      data: { ...EMPTY_DISCOVERY, ...parsed.data },
+      step,
+      answered,
+      skippedAhead: parsed.skippedAhead === true,
+    };
   } catch {
     return null;
   }
@@ -72,6 +97,7 @@ export function DiscoveryWizard({
   source,
   onComplete,
   onWideChange,
+  conversationPaceMs,
   t,
 }: {
   initialTier?: Tier | null;
@@ -79,6 +105,8 @@ export function DiscoveryWizard({
   onComplete: (payload: DiscoveryCompletePayload) => void;
   /** Signals the host modal to widen for the large preview step. */
   onWideChange?: (wide: boolean) => void;
+  /** The agent's pause before a new question. Tests pass 0; the default is the conversation's. */
+  conversationPaceMs?: number;
   t: (key: string) => string;
 }) {
   // Restore an in-progress draft so a refresh doesn't lose the input.
@@ -93,6 +121,12 @@ export function DiscoveryWizard({
     }
     return { ...EMPTY_DISCOVERY, selectedTier: initialTier ?? '' };
   });
+  const [answered, setAnswered] = useState<IntakeQuestionId[]>(
+    () => loadDraft()?.answered ?? []
+  );
+  const [skippedAhead, setSkippedAhead] = useState<boolean>(
+    () => loadDraft()?.skippedAhead ?? false
+  );
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -100,15 +134,66 @@ export function DiscoveryWizard({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
-      window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ data, step }));
+      window.sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ data, step, answered, skippedAhead })
+      );
     } catch {
       // storage full / disabled — autosave is best-effort
     }
-  }, [data, step]);
+  }, [answered, data, skippedAhead, step]);
 
-  // The preview/editor step needs more room — ask the modal to widen.
+  /**
+   * The conversation moves the wizard, not the other way round.
+   *
+   * `step` is still the wizard's spine — it decides what is rendered, what the
+   * draft restores to, and (through `canProceed`) what counts as passable — but
+   * while the intake is being talked through, the step is a *consequence* of
+   * which question is on screen rather than something the visitor navigates.
+   * The script decides the order; this only follows it. When the script runs
+   * out of questions the conversation is over, and the wizard hands off to the
+   * info agent.
+   */
   useEffect(() => {
-    onWideChange?.(step === LAST_STEP);
+    if (step > CONVERSATION_LAST_STEP) return;
+    const target = stepForConversation(
+      data,
+      answered,
+      // A visitor who asked to skip ahead gets the preview when the essentials
+      // are in, not another conversation.
+      skippedAhead ? LAST_STEP : INFO_STEP,
+      skippedAhead
+    );
+    if (target !== step) setStep(target);
+  }, [answered, data, skippedAhead, step]);
+
+  // Skipped ahead and arrived: the build package falls back to the
+  // deterministic recommendation, which is the same rule the submit path uses.
+  // Idempotent, so a visitor who picked one themselves is never overruled.
+  useEffect(() => {
+    if (!skippedAhead || step < LAST_STEP) return;
+    setData((previous) =>
+      previous.selectedTier
+        ? previous
+        : { ...previous, selectedTier: recommendTier(previous).tier }
+    );
+  }, [skippedAhead, step]);
+
+  // The concierge stage — the info agent and the preview it flows into — is
+  // two panes wide, so the modal widens one step earlier than it used to and
+  // stays wide. Widening at the preview alone would have resized the modal
+  // underneath a conversation that never stopped.
+  //
+  // Re-asserted on the next macrotask as well as immediately: the host modal
+  // clears its own `wide` flag when it opens, and React runs this child's
+  // effects *before* the parent's, so a wizard that mounts straight onto the
+  // concierge stage (a restored draft) would otherwise be reset back to narrow
+  // a moment after asking for the room it needs.
+  useEffect(() => {
+    const wide = step >= INFO_STEP;
+    onWideChange?.(wide);
+    const reassert = setTimeout(() => onWideChange?.(wide), 0);
+    return () => clearTimeout(reassert);
   }, [step, onWideChange]);
 
   const update = useCallback(
@@ -119,15 +204,45 @@ export function DiscoveryWizard({
   );
 
   const proceed = canProceed(step, data);
+  const talking = step <= CONVERSATION_LAST_STEP;
 
   const handleNext = useCallback(() => {
     if (!proceed) return;
     setStep((s) => Math.min(LAST_STEP, s + 1) as Step);
   }, [proceed]);
 
+  /**
+   * Back, in a conversation, is "unsay the last thing". The question returns
+   * to the composer with the old answer in it; the step follows.
+   */
   const handleBack = useCallback(() => {
-    setStep((s) => Math.max(1, s - 1) as Step);
+    if (step > INFO_STEP) {
+      setStep(INFO_STEP);
+      return;
+    }
+    setAnswered((previous) => previous.slice(0, -1));
+    if (step === INFO_STEP) setStep(CONVERSATION_LAST_STEP);
+  }, [step]);
+
+  const handleAnswer = useCallback((id: IntakeQuestionId, raw: string) => {
+    const question = questionById(id);
+    if (!question) return;
+    setData((previous) => question.apply(previous, raw));
+    setAnswered((previous) =>
+      previous.includes(id) ? previous : [...previous, id]
+    );
   }, []);
+
+  /**
+   * The escape hatch, and the reason the conversation can never be a trap.
+   *
+   * It narrows the script to the five answers the wizard has always required —
+   * dropping every optional question and both commercial panels — and from
+   * there the next stop is the preview. A one-way flag rather than a pile of
+   * pre-filled skips, so nothing the visitor was never asked turns up in the
+   * transcript as something they declined.
+   */
+  const handleSkipRest = useCallback(() => setSkippedAhead(true), []);
 
   const handleSubmit = useCallback(async () => {
     if (!proceed) return;
@@ -136,57 +251,21 @@ export function DiscoveryWizard({
     const tier = (data.selectedTier as Tier | '') || recommendTier(data).tier;
 
     // Best-effort lead capture — never block the user from booking.
-    // Capture the persisted lead id so the deposit webhook can mark it paid.
-    let leadId: string | null = null;
     try {
       const leadRes = await fetch('/api/discovery/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, selectedTier: tier, source }),
       });
-      const leadJson = (await leadRes.json().catch(() => ({}))) as {
-        leadId?: string | null;
-      };
-      leadId = leadJson.leadId ?? null;
+      await leadRes.json().catch(() => ({}));
     } catch {
       // Swallow — capture is non-blocking
     }
 
-    // Submitted — drop the autosaved draft (covers both the Stripe
-    // redirect-away path and the straight-to-Calendly fallback below).
+    // Submitted — drop the autosaved draft. Payment is deliberately not part
+    // of discovery: the exact 20% build deposit is offered only after the
+    // generated preview and server-owned final quote are approved.
     clearDraft();
-
-    // Booking deposit: send the prospect to Stripe Checkout. On success
-    // Stripe redirects back with ?deposit=paid and the modal reopens on the
-    // calendar step. If Stripe is unconfigured or errors, the endpoint
-    // returns { skip:true } and we fall through straight to Calendly so the
-    // funnel never dead-ends.
-    try {
-      const res = await fetch('/api/discovery/deposit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tier,
-          fullName: data.fullName,
-          email: data.email,
-          businessName: data.businessName,
-          subscription: data.subscription,
-          source,
-          leadId,
-        }),
-      });
-      const json = (await res.json().catch(() => ({}))) as {
-        url?: string;
-        skip?: boolean;
-      };
-      if (res.ok && json.url) {
-        window.location.href = json.url;
-        return; // leaving the SPA — keep the spinner until navigation
-      }
-    } catch {
-      // Fail open — proceed to booking without the deposit gate
-    }
-
     setSubmitting(false);
     onComplete({ tier: tier as Tier, data });
   }, [data, onComplete, proceed, source]);
@@ -199,80 +278,42 @@ export function DiscoveryWizard({
           {t('landing.discovery.eyebrow')}
         </p>
         <h2 className="text-xl sm:text-2xl font-bold text-[var(--fs-ink)] leading-tight">
-          {t(`landing.discovery.steps.${STEPS[step - 1].key}.title`)}
+          {t(
+            talking
+              ? 'landing.discovery.chat.title'
+              : step === INFO_STEP
+              ? 'landing.discovery.steps.info.title'
+              : 'landing.discovery.steps.preview.title'
+          )}
         </h2>
       </div>
 
-      {/* Step indicator */}
-      <ol className="mb-7 flex items-center gap-1.5" aria-label="progress">
-        {STEPS.map((s, idx) => {
-          const isActive = s.n === step;
-          const isDone = s.n < step;
-          const clickable = isDone;
-          return (
-            <li key={s.n} className="flex flex-1 items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => clickable && setStep(s.n)}
-                disabled={!clickable && !isActive}
-                aria-current={isActive ? 'step' : undefined}
-                aria-label={t(`landing.discovery.steps.${s.key}.title`)}
-                className={[
-                  'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold transition-colors',
-                  isActive
-                    ? 'bg-[var(--purple-primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]'
-                    : '',
-                  isDone
-                    ? 'bg-[var(--purple-primary)]/15 text-[var(--purple-primary)] cursor-pointer hover:bg-[var(--purple-primary)]/25'
-                    : '',
-                  !isActive && !isDone
-                    ? 'border border-[var(--fs-rule)] text-[var(--fs-ink-faint)] bg-transparent'
-                    : '',
-                ].join(' ')}
-              >
-                {isDone ? (
-                  <svg
-                    className="h-3.5 w-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                ) : (
-                  s.n
-                )}
-              </button>
-              {idx < STEPS.length - 1 && (
-                <div
-                  className={[
-                    'h-px flex-1 transition-colors',
-                    s.n < step
-                      ? 'bg-[var(--purple-primary)]/40'
-                      : 'bg-[var(--fs-rule)]',
-                  ].join(' ')}
-                  aria-hidden
-                />
-              )}
-            </li>
-          );
-        })}
-      </ol>
-
-      {/* Step body */}
+      {/* Step body. Steps 1–6 are one conversation; the numbered indicator
+          they used to sit under went with the form, replaced by the quiet
+          progress line the conversation draws for itself. */}
       <section>
-        {step === 1 && <AboutStep data={data} update={update} t={t} />}
-        {step === 2 && <BusinessStep data={data} update={update} t={t} />}
-        {step === 3 && <GoalsStep data={data} update={update} t={t} />}
-        {step === 4 && <CommerceStep data={data} update={update} t={t} />}
-        {step === 5 && <RecommendationStep data={data} update={update} t={t} />}
-        {step === 6 && <SubscriptionStep data={data} update={update} t={t} />}
-        {step === 7 && <PreviewStep data={data} t={t} />}
+        {talking && (
+          <IntakeConversation
+            data={data}
+            update={update}
+            answered={answered}
+            essentialsOnly={skippedAhead}
+            onAnswer={handleAnswer}
+            onSkipRest={handleSkipRest}
+            paceMs={conversationPaceMs}
+            t={t}
+          />
+        )}
+        {step === INFO_STEP && (
+          <InfoAgentStep
+            data={data}
+            setData={setData}
+            // Skipping is a jump to the preview, not a refusal: the wizard
+            // treats this step as passed either way (see `canProceed`).
+            onSkip={() => setStep(LAST_STEP)}
+          />
+        )}
+        {step === LAST_STEP && <PreviewStep data={data} t={t} />}
       </section>
 
       {submitError && (
@@ -291,7 +332,7 @@ export function DiscoveryWizard({
           variant="ghost"
           size="sm"
           onClick={handleBack}
-          disabled={step === 1}
+          disabled={step === 1 && answered.length === 0}
           icon={
             <svg
               fill="none"
@@ -311,7 +352,10 @@ export function DiscoveryWizard({
           {t('landing.discovery.nav.back')}
         </Button>
 
-        {step < LAST_STEP ? (
+        {/* No Continue while the intake is being talked through: the composer
+            and the quick replies are the way forward, and a second forward
+            button next to them is the form leaking back in. */}
+        {talking ? null : step < LAST_STEP ? (
           <Button
             variant="primary"
             size="sm"
@@ -338,7 +382,9 @@ export function DiscoveryWizard({
           </Button>
         ) : (
           <Button
-            variant="primary"
+            // The deposit CTA lives in the conversation; this is the quieter
+            // route for a visitor who would rather talk first.
+            variant="secondary"
             size="sm"
             onClick={handleSubmit}
             disabled={!proceed || submitting}
@@ -363,10 +409,8 @@ export function DiscoveryWizard({
             iconPosition="right"
           >
             {submitting
-              ? t('landing.discovery.nav.redirecting')
-              : `${t('landing.discovery.nav.payPrefix')} ${bookingDepositFor(
-                  (data.selectedTier as Tier | '') || recommendTier(data).tier
-                )} · ${t('landing.discovery.nav.bookCall')}`}
+              ? t('landing.discovery.nav.submitting')
+              : t('landing.discovery.nav.saveAndBook')}
           </Button>
         )}
       </div>

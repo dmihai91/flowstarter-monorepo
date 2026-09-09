@@ -3,7 +3,6 @@ import {
   type SubscriptionTier,
   ECOMMERCE_SUBSCRIPTION,
   SUBSCRIPTIONS,
-  sessionMultiple,
   usesDedicatedSubscription,
 } from '../discovery.logic';
 
@@ -38,6 +37,28 @@ export function SubscriptionStep({
         </p>
       </header>
 
+      <div
+        className="flex border-b border-[var(--fs-rule)]"
+        aria-label="Billing cadence"
+      >
+        {(['monthly', 'yearly'] as const).map((cadence) => (
+          <button
+            key={cadence}
+            type="button"
+            onClick={() => update('billingCadence', cadence)}
+            aria-pressed={data.billingCadence === cadence}
+            className={[
+              'border-b-2 px-4 py-2 text-sm font-medium transition-colors',
+              data.billingCadence === cadence
+                ? 'border-[var(--purple-primary)] text-[var(--fs-ink)]'
+                : 'border-transparent text-[var(--fs-ink-faint)] hover:text-[var(--fs-ink)]',
+            ].join(' ')}
+          >
+            {t(`landing.discovery.subscription.cadence.${cadence}`)}
+          </button>
+        ))}
+      </div>
+
       {dedicated ? (
         /* Commerce build package → dedicated, fixed store subscription */
         <div className="rounded-lg border border-[var(--purple-primary)]/40 bg-[var(--purple-primary)]/[0.06] p-5">
@@ -50,16 +71,18 @@ export function SubscriptionStep({
                 {t('landing.discovery.subscription.storeName')}
               </h4>
               <p className="mt-1 text-sm text-[var(--fs-ink-faint)]">
-                {ECOMMERCE_SUBSCRIPTION.sessions}{' '}
-                {t('landing.discovery.subscription.sessionsSuffix')} ·{' '}
+                {ECOMMERCE_SUBSCRIPTION.summary} ·{' '}
                 {t('landing.discovery.subscription.storeOps')}
               </p>
             </div>
             <div className="text-right">
               <div className="text-base font-bold text-[var(--fs-ink)]">
-                €{ECOMMERCE_SUBSCRIPTION.priceEur}
+                €
+                {data.billingCadence === 'yearly'
+                  ? ECOMMERCE_SUBSCRIPTION.priceEur * 12
+                  : ECOMMERCE_SUBSCRIPTION.priceEur}
                 <span className="text-[12px] font-medium text-[var(--fs-ink-faint)]">
-                  /mo
+                  {data.billingCadence === 'yearly' ? '/yr' : '/mo'}
                 </span>
               </div>
             </div>
@@ -72,6 +95,8 @@ export function SubscriptionStep({
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {ORDER.map((tier) => {
             const plan = SUBSCRIPTIONS[tier];
+            const yearly = data.billingCadence === 'yearly';
+            const recurringPrice = yearly ? plan.priceEur * 12 : plan.priceEur;
             const active = data.subscription === tier;
             const isPro = tier === 'pro';
             return (
@@ -95,15 +120,13 @@ export function SubscriptionStep({
                   {t(`landing.discovery.subscription.tiers.${tier}`)}
                 </div>
                 <div className="mt-1 text-lg font-bold text-[var(--fs-ink)]">
-                  €{plan.priceEur}
+                  €{recurringPrice}
                   <span className="text-[12px] font-medium text-[var(--fs-ink-faint)]">
-                    /mo
+                    {yearly ? '/yr' : '/mo'}
                   </span>
                 </div>
                 <div className="mt-1 text-[12px] text-[var(--fs-ink-faint)]">
-                  {plan.sessions}{' '}
-                  {t('landing.discovery.subscription.sessionsSuffix')}
-                  {tier !== 'starter' && ` (${sessionMultiple(tier)}×)`}
+                  {plan.summary}
                 </div>
               </button>
             );

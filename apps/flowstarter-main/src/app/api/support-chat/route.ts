@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { generateText } from 'ai';
-import { models, isOpenRouterConfigured } from '@/lib/ai/client';
+import { isOpenRouterConfigured } from '@/lib/ai/client';
+import { callLlm } from '@/lib/ai/llm';
 
 const SupportChatSchema = z.object({
   message: z.string().min(1).max(600),
@@ -51,7 +51,7 @@ const COMMON_INTENT_KEYWORDS = [
 ];
 
 const OPERATOR_HANDOFF_REPLY =
-  'This looks like a custom request. I am routing this to a human operator now — please email hello@flowstarter.net and include your goal, timeline, and any links so we can help quickly.';
+  'This looks like a custom request. I am routing this to a human operator now. Please email hello@flowstarter.net and include your goal, timeline, and any links so we can help quickly.';
 
 function isCommonSupportQuestion(input: string): boolean {
   const normalized = input.toLowerCase().trim();
@@ -102,12 +102,16 @@ export async function POST(request: NextRequest) {
       ? `Conversation so far:\n${historyBlock}\n\nNew user question:\n${message}`
       : message;
 
-    const { text } = await generateText({
-      model: models.claude,
+    // Budget, ledger row and prompt caching all live in the wrapper; the
+    // 220-token completion cap now comes from LLM_BUDGETS.support_chat.
+    // A reply clipped at that cap is still a usable answer, so truncation is
+    // not treated as a budget breach here.
+    const { text } = await callLlm({
+      action: 'support_chat',
       system: SUPPORT_SYSTEM_PROMPT,
       prompt,
-      maxOutputTokens: 220,
       temperature: 0.4,
+      allowTruncation: true,
     });
 
     return NextResponse.json({ reply: text.trim(), handoff: false });

@@ -19,7 +19,6 @@ import { makeDrainableWorker } from "@flowstarter/editor-shared/DrainableWorker"
 import { ProviderService } from "../../provider/Services/ProviderService.ts";
 import { ProjectionTurnRepository } from "../../persistence/Services/ProjectionTurns.ts";
 import { ProjectionTurnRepositoryLive } from "../../persistence/Layers/ProjectionTurns.ts";
-import { recordTurnCostForConfiguredWorkspace } from "../../usage/usageAccounting.ts";
 import { resolveThreadWorkspaceCwd } from "../../checkpointing/Utils.ts";
 import { isGitRepository } from "../../git/Utils.ts";
 import { OrchestrationEngineService } from "../Services/OrchestrationEngine.ts";
@@ -1106,19 +1105,6 @@ const make = Effect.fn("make")(function* () {
     }
 
     if (event.type === "turn.completed") {
-      // Accumulate this turn's provider cost onto the workspace's monthly €
-      // total (fire-and-forget, fail-open: never blocks turn finalization,
-      // never throws). Feeds the monthly-budget gate.
-      const completedPayload = event.payload as { readonly totalCostUsd?: number };
-      if (
-        typeof completedPayload.totalCostUsd === "number" &&
-        completedPayload.totalCostUsd > 0
-      ) {
-        const turnCostUsd = completedPayload.totalCostUsd;
-        yield* Effect.forkDaemon(
-          Effect.promise(() => recordTurnCostForConfiguredWorkspace(turnCostUsd)),
-        );
-      }
       const turnId = toTurnId(event.turnId);
       if (turnId) {
         const assistantMessageIds = yield* getAssistantMessageIdsForTurn(thread.id, turnId);

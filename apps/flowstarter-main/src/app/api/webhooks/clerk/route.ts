@@ -197,6 +197,83 @@ function fullName(user: ClerkUserData): string | null {
   return parts.length > 0 ? parts.join(' ') : null;
 }
 
+const ANTHROPIC_INVITE_ROLES = new Set([
+  'user',
+  'developer',
+  'billing',
+  'claude_code_user',
+]);
+
+function shouldAutoInviteAnthropicUser(): boolean {
+  return process.env.ANTHROPIC_ORG_AUTO_INVITE === '1';
+}
+
+function anthropicInviteRole(): string {
+  const role =
+    process.env.ANTHROPIC_ORG_INVITE_ROLE?.trim() || 'claude_code_user';
+  return ANTHROPIC_INVITE_ROLES.has(role) ? role : 'claude_code_user';
+}
+
+/**
+ * Optional Anthropic org invite. This is intentionally best-effort so Clerk
+ * profile sync never fails because Anthropic is unavailable or out of seats.
+ */
+async function maybeInviteAnthropicUser(data: ClerkUserData): Promise<void> {
+  if (!shouldAutoInviteAnthropicUser()) return;
+
+  const email = primaryEmail(data);
+  if (!email) {
+    console.warn(
+      `[Clerk Webhook] Anthropic invite skipped for ${data.id}: no primary email.`
+    );
+    return;
+  }
+
+  const adminApiKey =
+    process.env.ANTHROPIC_ADMIN_API_KEY?.trim() ||
+    process.env.ANTHROPIC_ADMIN_KEY?.trim();
+  if (!adminApiKey) {
+    console.warn(
+      '[Clerk Webhook] Anthropic invite skipped: ANTHROPIC_ADMIN_API_KEY is not configured.'
+    );
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      'https://api.anthropic.com/v1/organizations/invites',
+      {
+        method: 'POST',
+        headers: {
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'x-api-key': adminApiKey,
+        },
+        body: JSON.stringify({
+          email,
+          role: anthropicInviteRole(),
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const detail = await response.text();
+      console.warn(
+        `[Clerk Webhook] Anthropic invite failed for ${email} (${response.status}): ${detail}`
+      );
+      return;
+    }
+
+    console.info(`[Clerk Webhook] Anthropic invite sent to ${email}.`);
+  } catch (error) {
+    console.warn(
+      `[Clerk Webhook] Anthropic invite failed for ${email}: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+  }
+}
+
 /**
  * Mirror the Clerk user into our profiles table so SQL joins resolve.
  * Workspace ownership is tracked separately via workspace_memberships.
@@ -289,6 +366,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     switch (event.type) {
       case 'user.created':
+        await upsertProfile(event.data);
+        await maybeInviteAnthropicUser(event.data);
+        break;
       case 'user.updated':
         await upsertProfile(event.data);
         break;

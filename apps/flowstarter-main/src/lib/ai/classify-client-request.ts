@@ -1,6 +1,5 @@
 import 'server-only';
-import { models } from './client';
-import { generateText } from 'ai';
+import { callLlm } from './llm';
 
 /**
  * Classify a client_request into an actionable type for the team.
@@ -105,8 +104,8 @@ export async function classifyClientRequest(
     throw new Error('classifyClientRequest: requestText is required');
   }
 
-  const { text } = await generateText({
-    model: models.projectDetails,
+  const { text } = await callLlm({
+    action: 'classify_client_request',
     prompt: buildPrompt(input),
     temperature: 0.1,
   });

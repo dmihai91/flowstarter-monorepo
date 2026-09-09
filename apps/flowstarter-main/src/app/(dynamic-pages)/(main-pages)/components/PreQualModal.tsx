@@ -149,7 +149,7 @@ export function PreQualModal({
             step === 'calendar'
               ? 'max-w-3xl'
               : step === 'discovery' && wizardWide
-              ? 'max-w-[min(95vw,1400px)]'
+              ? 'max-w-[min(96vw,1600px)]'
               : 'max-w-2xl',
           ].join(' ')}
         >

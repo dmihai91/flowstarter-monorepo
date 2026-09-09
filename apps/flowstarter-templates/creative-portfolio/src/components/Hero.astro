@@ -3,8 +3,25 @@ import { frontmatter as siteLabels } from '../content/site-labels.md';
 import SectionBlock from './design-system/SectionBlock.astro';
 import ActionButton from './design-system/ActionButton.astro';
 
-const { hero } = siteLabels;
+const { hero, header } = siteLabels;
+// The art panel's monogram used to be a hardcoded "V" for the demo brand
+// Atelier Verso, which left a stray initial on every personalized site. The
+// agent cannot edit components, so it has to come from the content layer.
+const artMark: string =
+  (typeof hero.artMark === 'string' && hero.artMark.trim()) ||
+  (typeof header?.logo === 'string' && header.logo.trim()[0]) ||
+  '\u2014';
 const heroImage: string = typeof hero.image === 'string' ? hero.image.trim() : '';
+// Where to anchor the crop. The panel is landscape on wide screens while a
+// client portrait is tall, so `center top` fills it with whatever is above the
+// subject — sky, ceiling, wall. Anchoring nearer the upper third keeps faces in
+// frame for both orientations, and content can override per photo.
+const HERO_POSITION = /^(left|center|right|\d{1,3}%)\s+(top|center|bottom|\d{1,3}%)$/;
+const rawHeroPosition =
+  typeof hero.imagePosition === 'string' ? hero.imagePosition.trim() : '';
+const heroImagePosition = HERO_POSITION.test(rawHeroPosition)
+  ? rawHeroPosition
+  : 'center 30%';
 const heroHighlights: string[] = Array.isArray(hero.highlights)
   ? hero.highlights.filter((item: unknown): item is string => typeof item === 'string' && item.trim() !== '')
   : [];
@@ -76,12 +93,12 @@ const heroParagraphSegments = heroParagraphs.map((paragraph) =>
           class="hero__photo"
           role="img"
           aria-label={hero.title}
-          style={`background-image:url('${heroImage}');`}
+          style={`background-image:url('${heroImage}');--hero-photo-position:${heroImagePosition};`}
         ></div>
       ) : (
         <div class="hero__art" aria-hidden="true">
           <span class="hero__art-index">№ 01 — 06</span>
-          <span class="hero__art-mark">V</span>
+          <span class="hero__art-mark">{artMark}</span>
           <div class="hero__art-rules">
             {hero.tags && hero.tags.slice(0, 4).map((tag: string) => (
               <span class="hero__art-rule">{tag}</span>
@@ -95,13 +112,13 @@ const heroParagraphSegments = heroParagraphs.map((paragraph) =>
 </SectionBlock>
 
 <style>
-  .hero {
+  :global(.hero) {
     overflow: clip;
     min-height: 100vh;
     position: relative;
   }
 
-  .hero::before {
+  :global(.hero)::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -143,7 +160,7 @@ const heroParagraphSegments = heroParagraphs.map((paragraph) =>
     font-weight: var(--fw-semibold);
     text-transform: uppercase;
     letter-spacing: 0.3em;
-    color: var(--signal);
+    color: var(--signal-on-dark);
     margin-bottom: 28px;
     padding-bottom: 14px;
     border-bottom: 1px solid var(--border-color);
@@ -409,7 +426,7 @@ const heroParagraphSegments = heroParagraphs.map((paragraph) =>
     left: 0;
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: center top;
+    background-position: var(--hero-photo-position, center 30%);
     filter: grayscale(0.15) contrast(1.04);
   }
 
@@ -422,15 +439,20 @@ const heroParagraphSegments = heroParagraphs.map((paragraph) =>
       padding: 32px 0 48px;
     }
 
+    /* The inner grid drops the container gutter so the photo can run
+       full-bleed; the text column must reclaim it or copy hits the edge. */
     .hero__content-wrap {
-      padding: 0;
+      padding: 0 22px;
     }
 
+    /* Sized against the viewport, not a fixed 520px: on a phone a fixed
+       block pushed the headline and CTAs entirely below the fold, so the
+       first screen was all photo and no proposition. */
     .hero__image {
       order: -1;
-      margin-top: 64px;
-      min-height: 520px;
-      height: auto;
+      margin-top: 40px;
+      min-height: min(42vh, 360px);
+      height: min(42vh, 360px);
       overflow: hidden;
     }
 
@@ -441,8 +463,8 @@ const heroParagraphSegments = heroParagraphs.map((paragraph) =>
       right: auto;
       bottom: auto;
       left: auto;
-      min-height: 520px;
-      background-position: center top;
+      min-height: min(42vh, 360px);
+      background-position: var(--hero-photo-position, center 28%);
     }
 
     .hero__art-mark {

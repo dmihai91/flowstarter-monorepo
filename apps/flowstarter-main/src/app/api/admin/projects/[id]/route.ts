@@ -1,6 +1,11 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { requireTeamAuth } from '@/lib/api-auth';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  InvalidQuoteError,
+  parseQuoteInputToMinor,
+} from '@/lib/flowstarter/quote';
 import {
   COMMERCE_MODES,
   COMMERCE_PRODUCT_TYPES,
@@ -64,45 +69,6 @@ function assignNonNegativeIntegerField(
   }
   updateData[field] = Math.floor(numberValue);
   return { ok: true };
-}
-
-async function requireTeamAuth() {
-  try {
-    const { userId, sessionClaims } = await auth();
-    if (!userId) {
-      return {
-        authorized: false,
-        response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
-      };
-    }
-
-    let role = (
-      sessionClaims?.metadata as { role?: string }
-    )?.role?.toLowerCase();
-
-    if (!role) {
-      const user = await currentUser();
-      role = (user?.publicMetadata as { role?: string })?.role?.toLowerCase();
-    }
-
-    if (role !== 'team' && role !== 'admin') {
-      return {
-        authorized: false,
-        response: NextResponse.json(
-          { error: 'Not a team member' },
-          { status: 403 }
-        ),
-      };
-    }
-
-    return { authorized: true, userId, role };
-  } catch (error) {
-    console.error('[Team Auth] Error:', error);
-    return {
-      authorized: false,
-      response: NextResponse.json({ error: 'Auth failed' }, { status: 500 }),
-    };
-  }
 }
 
 /**
@@ -216,7 +182,25 @@ export async function PATCH(
     }
 
     if (setup_fee !== undefined) {
-      updateData.setup_fee = Number(setup_fee) || 0;
+      // The operator types euros; the quote is stored in minor units, which is
+      // what the deposit Checkout and the 20% webhook check read. Both columns
+      // are written so an existing report reading setup_fee stays correct,
+      // but final_value_minor is the one money is computed from.
+      try {
+        const minor = parseQuoteInputToMinor(setup_fee);
+        updateData.final_value_minor = minor;
+        updateData.setup_fee = minor / 100;
+      } catch (error) {
+        return NextResponse.json(
+          {
+            error:
+              error instanceof InvalidQuoteError
+                ? error.message
+                : 'Invalid project value',
+          },
+          { status: 400 }
+        );
+      }
     }
 
     if (monthly_fee !== undefined) {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { quoteMajorFrom } from '@/lib/flowstarter/quote';
 import { requireTeamAuth } from '@/lib/api-auth';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import {
@@ -15,13 +16,13 @@ import {
 /**
  * POST /api/admin/projects/[id]/billing/deposit-invoice
  *
- * Creates the 50% deposit invoice for a project's setup fee.
+ * Creates the 20% deposit invoice for a project's setup fee.
  *
  * Request body:
  *   { amount?: number, daysUntilDue?: number }
  *
  * Defaults:
- *   - amount → projects.setup_fee × 0.5 (in major units, e.g. 799 → 39950 minor)
+ *   - amount → projects.setup_fee × 0.2 (in major units, e.g. 799 → 15980 minor)
  *   - daysUntilDue → 14
  *
  * Idempotent guard: refuses if deposit_status is already 'paid'.
@@ -82,14 +83,14 @@ export async function POST(
 
   const amountMinor = resolveAmountMinor(
     body.amount,
-    row.setup_fee ?? 0,
-    /* halfOfSetup */ true
+    quoteMajorFrom(row),
+    /* percentageOfSetup */ 20
   );
   if (amountMinor <= 0) {
     return NextResponse.json(
       {
         error:
-          'Cannot derive amount. Set workspaces.setup_fee, or pass an explicit amount in major units (e.g. 399.5 for €399.50).',
+          'Cannot derive amount. Set the project value, or pass an explicit amount in major units (e.g. 159.8 for €159.80).',
       },
       { status: 400 }
     );

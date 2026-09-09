@@ -2,21 +2,42 @@
  * POST /api/discovery/preview/live   — start a real, sandbox-hosted demo
  * GET  /api/discovery/preview/live?demoId=…  — poll its status
  *
- * Calls the agentic-codegen engine (industry-routed, ~60-95s personalization)
- * then Daytona (live `astro dev` → public preview URL). Work runs detached;
+ * Runs the headless Pi SDK pipeline (brand intelligence → MCP template
+ * selection → bounded template personalization) and publishes the result to
+ * Daytona. Work runs detached;
  * POST returns a demoId immediately and the wizard polls GET (the build-step
  * checklist covers the wait). Fails open: budget-blocked / engine or sandbox
  * error → { skip:true }, so step-7 falls back to the deterministic JSON demo
  * and the funnel never dead-ends.
  *
- * Node runtime + long maxDuration: this needs the `claude` binary, a
- * filesystem and ~90s — it must run on a Node host, not a short Netlify fn.
+ * Node runtime + long maxDuration: Pi needs a filesystem and multiple model
+ * turns, so this must run on a durable Node host rather than a short function.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'node:crypto';
+import { spawn } from 'node:child_process';
+import { cp, mkdir, readdir, readFile, rm, symlink } from 'node:fs/promises';
+import { createServer } from 'node:net';
+import { tmpdir } from 'node:os';
+import { join, relative, resolve, sep } from 'node:path';
 import { z } from 'zod';
 import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
+import { llmActionConfig, recordLlmUsage } from '@/lib/ai/llm';
 import { createJob, getJob, updateJob } from '@/lib/discovery/live-jobs';
+import { isTransientPipelineFailure } from '@/lib/discovery/preview-failure';
+import { rememberClaimablePreview } from '@/lib/flowstarter/claim';
+import {
+  injectCalComPreviewDemoIntoScaffoldFiles,
+  resolveTenantCalComUrl,
+} from '@/lib/flowstarter/cal-com';
+import { publishFunnelPreview } from '@/lib/hosting/preview-publisher';
+import type {
+  BusinessIntakePayload,
+  PreviewPublisher,
+  ScrapeCorpus,
+  SiteValidator,
+  TemplateScaffoldFile,
+} from '@flowstarter/agentic-codegen';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300;
@@ -30,13 +51,388 @@ const SpecSchema = z.object({
   targetAudience: z.string().max(500).optional().default(''),
   goal: z.string().max(400).optional().default(''),
   brandTone: z.string().max(400).optional().default(''),
+  // The wizard already collects these; without them the generated site ends
+  // up with placeholder '#' social links and no sense of the person behind
+  // the business.
+  // Not .url(): an empty default would fail that check and reject the whole
+  // request. socialTargets() validates scheme and host and drops anything
+  // malformed, so a bad paste costs the profile link, not the preview.
+  instagramUrl: z.string().max(300).optional().default(''),
+  linkedinUrl: z.string().max(300).optional().default(''),
+  /** Dedicated Cal.com booking link from intake (per tenant). */
+  calComUrl: z.string().max(400).optional().default(''),
+  /** Free-text integrations; may still contain a cal.com URL as fallback. */
+  customIntegrations: z.string().max(2000).optional().default(''),
 });
+
+/**
+ * Only well-formed public profile URLs on the expected host are passed on;
+ * `assertSafeBusinessIntake` re-checks scheme and host before any agent sees
+ * them, so a malformed paste degrades to "no profile" rather than failing the
+ * whole preview.
+ */
+function socialTargets(
+  spec: z.infer<typeof SpecSchema>
+): BusinessIntakePayload['socialMedia'] {
+  const candidates: Array<{ platform: 'instagram' | 'linkedin'; raw: string }> =
+    [
+      { platform: 'instagram', raw: spec.instagramUrl },
+      { platform: 'linkedin', raw: spec.linkedinUrl },
+    ];
+  const targets: BusinessIntakePayload['socialMedia'] = [];
+  for (const { platform, raw } of candidates) {
+    if (!raw.trim()) continue;
+    let url: URL;
+    try {
+      url = new URL(raw.trim());
+    } catch {
+      continue;
+    }
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
+    if (url.protocol !== 'https:') continue;
+    if (host !== `${platform}.com` && !host.endsWith(`.${platform}.com`))
+      continue;
+    targets.push({
+      platform,
+      handle: url.pathname.split('/').filter(Boolean).pop()?.slice(0, 100),
+      profileUrl: url.toString(),
+      // No scrape is run here: the URL is a real link and evidence that the
+      // profile exists, not a source we claim to have read.
+      scraper: { provider: 'not-requested', status: 'pending' },
+    });
+  }
+  return targets;
+}
+
+/**
+ * The sigma classifier needs an ONNX runtime and a model directory that a
+ * serverless target may not have. It is an optimisation, not a requirement:
+ * when it cannot load, selection falls back to the model exactly as before.
+ */
+let classifierPromise: Promise<unknown> | undefined;
+function loadTemplateClassifier(): Promise<unknown> {
+  classifierPromise ??= (async () => {
+    const dir = process.env.SIGMA_MODEL_DIR?.trim();
+    if (!dir) return undefined;
+    try {
+      const { TemplateClassifier, MiniLmOnnxEmbedder } = await import(
+        '@flowstarter/agentic-codegen/src/flowstarter/template-classifier'
+      );
+      return new TemplateClassifier(new MiniLmOnnxEmbedder(dir));
+    } catch (error) {
+      console.warn(
+        `[Flowstarter] template classifier unavailable, using the model: ${
+          error instanceof Error ? error.message : 'unknown'
+        }`
+      );
+      return undefined;
+    }
+  })();
+  return classifierPromise;
+}
+
+/**
+ * The unlock link is injected into a site we hand to a client, so the teaser
+ * refuses anything that is not HTTPS (or loopback in development). A LAN
+ * address in NEXT_PUBLIC_SITE_URL is neither, and a misconfigured origin must
+ * not cost a generation that has already run for minutes: return undefined and
+ * the sections stay gated, just without a clickable CTA.
+ */
+function previewUnlockUrl(demoId: string): string | undefined {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000';
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    return undefined;
+  }
+  const loopback = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  if (url.protocol !== 'https:' && !(loopback && url.protocol === 'http:')) {
+    console.warn(
+      `[Flowstarter] NEXT_PUBLIC_SITE_URL (${url.origin}) cannot be used for the ` +
+        'preview unlock link; gating the sections without a CTA'
+    );
+    return undefined;
+  }
+  return `${url.origin}/unlock/${demoId}`;
+}
+
+/**
+ * The Pi model catalogue does not carry this one yet, so selecting it means
+ * supplying the descriptor alongside the id.
+ */
+const GLM_53_FLASH = {
+  id: 'z-ai/glm-5.3-flash',
+  name: 'Z.ai: GLM 5.3 Flash',
+  api: 'openai-completions',
+  baseUrl: 'https://openrouter.ai/api/v1',
+  provider: 'openrouter',
+  reasoning: true,
+  input: ['text', 'image'],
+  cost: { input: 0.07, output: 0.25, cacheRead: 0.014, cacheWrite: 0 },
+  contextWindow: 1_310_720,
+  maxTokens: 131_072,
+  compat: { supportsDeveloperRole: false, thinkingFormat: 'openrouter' },
+  thinkingLevelMap: { xhigh: 'xhigh' },
+} as const;
 
 function clientIp(req: NextRequest): string {
   return (
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     req.headers.get('x-real-ip') ||
     'unknown'
+  );
+}
+
+function buildPiEvidence(
+  demoId: string,
+  spec: z.infer<typeof SpecSchema>
+): { intake: BusinessIntakePayload; corpus: ScrapeCorpus } {
+  const submittedAt = new Date().toISOString();
+  const targets = socialTargets(spec);
+  const intake: BusinessIntakePayload = {
+    projectId: demoId,
+    business: {
+      name: spec.businessName.trim(),
+      niche: spec.industry.trim() || 'Service business',
+      location: 'Not provided',
+      description: spec.description.trim(),
+      targetAudience: spec.targetAudience.trim() || undefined,
+      primaryGoal: spec.goal.trim() || undefined,
+    },
+    socialMedia: targets,
+    locale: 'en',
+    submittedAt,
+    // Consent is recorded only when the client volunteered a profile URL in
+    // their own intake form, and only then are any targets attached. Nothing
+    // is scraped from them here — the URL becomes a link on the client's own
+    // site — but the guard treats profiles as personal data either way, and
+    // claiming consent nobody gave would be the wrong way to satisfy it.
+    consent: {
+      publicProfileAnalysis: targets.length > 0,
+      acceptedAt: targets.length > 0 ? submittedAt : '',
+    },
+  };
+  const corpus: ScrapeCorpus = {
+    projectId: demoId,
+    completedAt: submittedAt,
+    documents: [
+      {
+        sourceId: 'intake-description',
+        platform: 'intake',
+        kind: 'intake_answer',
+        text: [
+          `Business: ${spec.businessName.trim()}`,
+          `Industry: ${spec.industry.trim() || 'Not provided'}`,
+          `Description: ${spec.description.trim()}`,
+          `Audience: ${spec.targetAudience.trim() || 'Not provided'}`,
+          `Goal: ${spec.goal.trim() || 'Not provided'}`,
+          `Desired tone: ${spec.brandTone.trim() || 'Not provided'}`,
+        ].join('\n'),
+      },
+    ],
+    images: [],
+  };
+  return { intake, corpus };
+}
+
+/**
+ * Files that must never be read as text. Reading a JPEG as UTF-8 yields NUL
+ * bytes, which Postgres jsonb refuses ("unsupported Unicode escape
+ * sequence") — one image in the manifest lost the whole funnel_previews row,
+ * and the tarball packed the same mangled bytes as the site's images.
+ */
+const BINARY_PREVIEW_EXTENSIONS = new Set([
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.webp',
+  '.avif',
+  '.ico',
+  '.bmp',
+  '.woff',
+  '.woff2',
+  '.ttf',
+  '.otf',
+  '.eot',
+  '.pdf',
+  '.mp4',
+  '.webm',
+  '.mp3',
+  '.zip',
+  '.gz',
+]);
+
+function isBinaryPreviewPath(path: string): boolean {
+  const dot = path.lastIndexOf('.');
+  return (
+    dot >= 0 && BINARY_PREVIEW_EXTENSIONS.has(path.slice(dot).toLowerCase())
+  );
+}
+
+async function readPreviewFiles(root: string): Promise<TemplateScaffoldFile[]> {
+  const files: TemplateScaffoldFile[] = [];
+  async function walk(directory: string): Promise<void> {
+    for (const entry of await readdir(directory, { withFileTypes: true })) {
+      if (entry.name === 'node_modules' || entry.name.startsWith('.git'))
+        continue;
+      const absolute = join(directory, entry.name);
+      if (entry.isDirectory()) {
+        await walk(absolute);
+      } else if (entry.isFile()) {
+        const path = relative(root, absolute).split(sep).join('/');
+        if (isBinaryPreviewPath(path)) {
+          files.push({
+            path,
+            content: (await readFile(absolute)).toString('base64'),
+            encoding: 'base64',
+            type: 'file',
+          });
+        } else {
+          files.push({
+            path,
+            content: await readFile(absolute, 'utf8'),
+            type: 'file',
+          });
+        }
+      }
+    }
+  }
+  await walk(root);
+  return files;
+}
+
+async function reserveLocalPort(): Promise<number> {
+  return new Promise((resolvePort, reject) => {
+    const server = createServer();
+    server.once('error', reject);
+    server.listen(0, '0.0.0.0', () => {
+      const address = server.address();
+      const port = typeof address === 'object' && address ? address.port : 0;
+      server.close((error) =>
+        error || port === 0
+          ? reject(error ?? new Error('No local preview port'))
+          : resolvePort(port)
+      );
+    });
+  });
+}
+
+async function publishLocalPreview(input: {
+  projectId: string;
+  templateSlug: string;
+  workspaceRoot: string;
+}): Promise<{
+  previewUrl: string;
+  artifactUrl: string;
+  localRoot: string;
+  teardown: () => Promise<void>;
+}> {
+  if (process.env.FLOWSTARTER_LOCAL_PREVIEW !== 'true') {
+    throw new Error('Local preview publishing is disabled');
+  }
+  const templateRoot =
+    process.env.FLOWSTARTER_TEMPLATE_ROOT?.trim() ||
+    resolve(process.cwd(), '../flowstarter-templates');
+  const dependencies = resolve(
+    templateRoot,
+    input.templateSlug,
+    'node_modules'
+  );
+  const localParent = join(tmpdir(), 'flowstarter-local-previews');
+  const localRoot = join(localParent, input.projectId);
+  await mkdir(localParent, { recursive: true });
+  await rm(localRoot, { recursive: true, force: true });
+  await cp(input.workspaceRoot, localRoot, { recursive: true });
+  await symlink(dependencies, join(localRoot, 'node_modules'), 'dir');
+
+  const port = await reserveLocalPort();
+  const astroCli = resolve(dependencies, '.bin', 'astro');
+  const child = spawn(
+    astroCli,
+    ['dev', '--host', '0.0.0.0', '--port', String(port)],
+    {
+      cwd: localRoot,
+      env: process.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      detached: false,
+    }
+  );
+  let launchOutput = '';
+  const captureLaunchOutput = (chunk: Buffer) => {
+    launchOutput = `${launchOutput}${chunk.toString('utf8')}`.slice(-4_000);
+  };
+  child.stdout?.on('data', captureLaunchOutput);
+  child.stderr?.on('data', captureLaunchOutput);
+  const teardown = async () => {
+    if (!child.killed) child.kill('SIGTERM');
+    await rm(localRoot, { recursive: true, force: true });
+  };
+
+  let ready = false;
+  for (let attempt = 0; attempt < 240; attempt++) {
+    if (child.exitCode !== null) break;
+    try {
+      const response = await fetch(`http://127.0.0.1:${port}`, {
+        signal: AbortSignal.timeout(1_000),
+      });
+      if (response.ok) {
+        ready = true;
+        break;
+      }
+    } catch {
+      // Astro is still starting.
+    }
+    await new Promise((resolveDelay) => setTimeout(resolveDelay, 250));
+  }
+  if (!ready) {
+    await teardown();
+    const diagnostic = launchOutput.trim().replace(/\s+/g, ' ').slice(-1_000);
+    throw new Error(
+      `Local preview server did not become ready${
+        diagnostic ? `: ${diagnostic}` : ''
+      }`
+    );
+  }
+
+  const host =
+    process.env.FLOWSTARTER_LOCAL_PREVIEW_HOST?.trim() || '127.0.0.1';
+  return {
+    previewUrl: `http://${host}:${port}`,
+    artifactUrl: `local://${localRoot}`,
+    localRoot,
+    teardown,
+  };
+}
+
+/**
+ * One line per finished job, machine-readable, so reliability is a grep over
+ * the server log rather than a memory: status, where it failed, how long it
+ * took, what it cost in tokens. The job store forgets after 45 minutes; this
+ * does not.
+ */
+function logPreviewOutcome(
+  demoId: string,
+  status: 'ready' | 'failed',
+  detail: {
+    error?: string;
+    failedPhase?: string;
+    tokensUsed?: number;
+    template?: string;
+  }
+): void {
+  const job = getJob(demoId);
+  console.info(
+    '[preview-outcome] ' +
+      JSON.stringify({
+        demoId,
+        status,
+        seconds: job ? Math.round((Date.now() - job.createdAt) / 1000) : null,
+        phases: job?.phases ?? [],
+        ...detail,
+      })
   );
 }
 
@@ -53,11 +449,15 @@ export async function POST(req: NextRequest) {
   }
 
   // Budget kill-switch: over the monthly cap → deterministic demo instead.
+  // Over the soft threshold → 'degrade' so the orchestrator runs in lite mode
+  // (single Kimi pass, no Sonnet brain) to keep spending bounded.
+  let budgetState: 'ok' | 'degrade' | 'blocked' = 'ok';
   try {
     const budget = await funnelBudgetState();
     if (budget.state === 'blocked') {
       return NextResponse.json({ skip: true }, { status: 200 });
     }
+    budgetState = budget.state;
   } catch {
     /* fail-safe: continue */
   }
@@ -67,110 +467,405 @@ export async function POST(req: NextRequest) {
   const ip = clientIp(req);
   const spec = parsed.data;
 
-  // Detached: do NOT await — the wizard polls GET while progress streams.
-  // PROGRESSIVE path: show the matched industry template LIVE first (~15-40s),
-  // then single-shot personalize and hot-swap the content into the running
-  // sandbox via HMR — the visitor watches a real site become theirs instead
-  // of waiting on a blank screen.
+  // A generation that never settles is as bad as one that fails outright —
+  // the wizard just polls a 'building' status forever. Imagery-enabled runs
+  // have taken ~13-14 min; this gives real headroom before declaring one
+  // hung. Cleared in `finally` below on every real outcome.
+  const GENERATION_WATCHDOG_MS = 20 * 60_000;
+  // A restart is only worth it while a second full run still fits under the
+  // watchdog. Past this the visitor gets the plainer demo now instead of the
+  // same failure at minute twenty.
+  const RESTART_DEADLINE_MS = 4 * 60_000;
+  // A failure before personalization started has thrown little away, so it
+  // is worth a restart for longer: the rerun still fits under the deadline.
+  const EARLY_RESTART_DEADLINE_MS = 8 * 60_000;
+  const EARLY_PHASE = /^(Learning|Choosing|Preparing)/;
+  // Every model session of this job must finish before this; the session
+  // runner caps each attempt at what is left, so retries cannot stack past
+  // the watchdog. The gap after it is for publishing and bookkeeping.
+  const RUN_DEADLINE_MS = 16 * 60_000;
+  const watchdog = setTimeout(() => {
+    const job = getJob(demoId);
+    if (job && job.status === 'building') {
+      void job.teardown?.().catch(() => {});
+      updateJob(demoId, {
+        status: 'failed',
+        error: 'Preview generation timed out',
+        ...(job.phase ? { failedPhase: job.phase } : {}),
+        teardown: undefined,
+      });
+      logPreviewOutcome(demoId, 'failed', {
+        error: 'Preview generation timed out',
+        ...(job.phase ? { failedPhase: job.phase } : {}),
+      });
+    }
+  }, GENERATION_WATCHDOG_MS);
+  watchdog.unref?.();
+
+  // Detached: do NOT await. The wizard polls GET while the Pi agent analyzes
+  // the brand, selects an approved MCP template, edits only its isolated
+  // workspace, validates it, and publishes the result to Daytona.
   void (async () => {
+    let closeLibrary: (() => Promise<void>) | undefined;
     try {
-      const { selectBaseTemplateSmart, createWorkspace, generateSiteContent } =
-        await import('@flowstarter/agentic-codegen');
-      const { previewInSandbox, pushFileToSandbox } = await import(
-        '@flowstarter/daytona-utils'
+      const {
+        FlowstarterMcpTemplateLibrary,
+        PiSdkFlowstarterAgents,
+        PreviewGenerationPipeline,
+      } = await import('@flowstarter/agentic-codegen');
+      const { previewInSandbox } = await import('@flowstarter/daytona-utils');
+
+      const piApiKey =
+        process.env.PI_API_KEY?.trim() ||
+        process.env.OPENROUTER_API_KEY?.trim();
+      const mcpUrl = process.env.FLOWSTARTER_MCP_URL?.trim();
+      const mcpToken = process.env.FLOWSTARTER_MCP_INTERNAL_TOKEN?.trim();
+      if (!piApiKey || !mcpUrl || !mcpToken || !process.env.DAYTONA_API_KEY) {
+        updateJob(demoId, {
+          status: 'failed',
+          error: 'Pi preview infrastructure is not configured',
+        });
+        return;
+      }
+
+      // The preview pass carries the bulk of the tokens and all of the wall
+      // clock, so it gets its own tier: a fast, large-context model that can
+      // hold the whole template. The previous single-tier config ran at
+      // thinkingLevel 'low', where this family reliably returns without
+      // writing a file, and capped every call at 240s — shorter than the
+      // personalization actually takes, so the funnel timed out mid-pass.
+      const previewModel =
+        process.env.PI_PREVIEW_MODEL?.trim() || GLM_53_FLASH.id;
+      const baseModel = process.env.PI_MODEL?.trim() || 'z-ai/glm-5.2';
+      // The last attempt of a failing session runs on another model family.
+      // Brand analysis and template selection fall over to the flash tier
+      // (it already holds the whole template for the preview pass, so a JSON
+      // brief is well within it); the preview pass falls over to the base
+      // model unless the operator names something else.
+      const previewFallback =
+        process.env.PI_PREVIEW_FALLBACK_MODEL?.trim() || baseModel;
+      const runDeadlineAt =
+        (getJob(demoId)?.createdAt ?? Date.now()) + RUN_DEADLINE_MS;
+      const agents = new PiSdkFlowstarterAgents({
+        provider: process.env.PI_PROVIDER?.trim() || 'openrouter',
+        modelId: baseModel,
+        apiKey: piApiKey,
+        thinkingLevel: 'medium',
+        timeoutMs: 420_000,
+        deadlineAt: runDeadlineAt,
+        ...(baseModel === GLM_53_FLASH.id
+          ? {}
+          : {
+              fallbackModelId: GLM_53_FLASH.id,
+              fallbackModelOverride: GLM_53_FLASH,
+            }),
+        // Whole-preview token ceiling, from the same budget config the AI-SDK
+        // wrapper uses. Breaching it aborts the pipeline; the catch below
+        // fails the job open to the deterministic demo.
+        maxRunTokens: llmActionConfig('preview_generate').maxTokens,
+        // Anonymous funnel traffic: no workspace or project yet, so the ledger
+        // row carries nulls. Never awaited — accounting must not slow a build.
+        usageSink: (usage) => {
+          void recordLlmUsage({
+            workspaceId: null,
+            projectId: null,
+            action: usage.action,
+            model: usage.model,
+            tokensIn: usage.tokensIn,
+            tokensOut: usage.tokensOut,
+            cachedTokens: usage.cachedTokens,
+          });
+        },
+        roles: {
+          // A JSON brief and a template pick are short turns. Capping them at
+          // four minutes keeps a stalled stream inside the window the session
+          // runner will retry, and its last attempt then runs on the flash
+          // fallback instead of waiting seven minutes to fail.
+          brand: { timeoutMs: 240_000 },
+          templateSelection: { timeoutMs: 240_000 },
+          preview: {
+            modelId: previewModel,
+            ...(previewModel === GLM_53_FLASH.id
+              ? { modelOverride: GLM_53_FLASH }
+              : {}),
+            ...(previewFallback !== previewModel
+              ? {
+                  fallbackModelId: previewFallback,
+                  ...(previewFallback === GLM_53_FLASH.id
+                    ? { fallbackModelOverride: GLM_53_FLASH }
+                    : {}),
+                }
+              : {}),
+            maxOutputTokens: 30_000,
+            timeoutMs: 600_000,
+          },
+        },
+      });
+      const library = new FlowstarterMcpTemplateLibrary({
+        endpoint: mcpUrl,
+        internalToken: mcpToken,
+      });
+      closeLibrary = () => library.close();
+
+      const validator: SiteValidator = {
+        validate: async (workspaceRoot, phase) => {
+          if (phase !== 'preview')
+            throw new Error('Unexpected validation phase');
+          const files = await readPreviewFiles(workspaceRoot);
+          const paths = new Set(files.map((file) => file.path));
+          if (!paths.has('package.json'))
+            throw new Error('Selected template has no package manifest');
+          if (!Array.from(paths).some((path) => path.startsWith('src/')))
+            throw new Error('Selected template has no source files');
+          const manifest = JSON.parse(
+            files.find((file) => file.path === 'package.json')?.content ?? '{}'
+          ) as { scripts?: Record<string, unknown> };
+          if (!manifest.scripts?.dev && !manifest.scripts?.start)
+            throw new Error('Selected template has no preview command');
+        },
+      };
+
+      const publisher: PreviewPublisher = {
+        publish: async (input) => {
+          const files = await readPreviewFiles(input.workspaceRoot);
+          const preview = await previewInSandbox(input.workspaceRoot, {
+            projectId: input.projectId,
+            env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
+            onProgress: () =>
+              updateJob(demoId, { phase: 'Publishing your live preview' }),
+          });
+          if (!preview.success || !preview.previewUrl || !preview.sandboxId) {
+            await preview.teardown().catch(() => {});
+            if (process.env.FLOWSTARTER_LOCAL_PREVIEW === 'true') {
+              try {
+                const local = await publishLocalPreview({
+                  projectId: input.projectId,
+                  templateSlug: input.template.slug,
+                  workspaceRoot: input.workspaceRoot,
+                });
+                // Recorded here (not off the orchestrator result, which only
+                // keeps the sandbox fields) so the edit loop can target the
+                // local workspace when there is no sandbox behind the preview.
+                updateJob(demoId, { localRoot: local.localRoot });
+                return { ...local, files };
+              } catch (localError) {
+                throw new Error(
+                  `${
+                    preview.error ?? 'Preview sandbox unavailable'
+                  }; local fallback: ${
+                    localError instanceof Error
+                      ? localError.message
+                      : 'unknown error'
+                  }`
+                );
+              }
+            }
+            throw new Error(preview.error ?? 'Preview sandbox unavailable');
+          }
+          return {
+            previewUrl: preview.previewUrl,
+            artifactUrl: `daytona://${preview.sandboxId}`,
+            files,
+            sandboxId: preview.sandboxId,
+            teardown: preview.teardown,
+          };
+        },
+      };
+
+      // The funnel gets the same pipeline the scenarios do. Without these the
+      // visitor's preview is a plainer site than the one this project has
+      // been reviewed on: no deterministic template pick, no honesty sweep,
+      // and no gated sections to convert against.
+      const pipeline = new PreviewGenerationPipeline(
+        agents,
+        library,
+        validator,
+        publisher,
+        (await loadTemplateClassifier()) as never,
+        {
+          fullTemplateContext: true,
+          qualitySweep: true,
+          // Generous on purpose: the visitor sees most of the home page and
+          // every section's heading, and pays for the substance behind them.
+          teaser: {
+            keepHomeSections: 6,
+            keepSubpageSections: 3,
+            minLockedSections: 2,
+            revealTop: 0.35,
+            label: 'Part of your full site',
+            ...(previewUnlockUrl(demoId)
+              ? {
+                  unlockUrl: previewUnlockUrl(demoId),
+                  unlockLabel: 'Unlock the full site',
+                }
+              : {}),
+          },
+        }
+      );
+      const evidence = buildPiEvidence(demoId, spec);
+      const runPipeline = () =>
+        pipeline.run({
+          ...evidence,
+          cachedAssets: [],
+          // Soft budget threshold: the pipeline skips brief-generated imagery
+          // (and any other optional spend) when the funnel is over it.
+          budgetDegraded: budgetState === 'degrade',
+          deadlineAt: runDeadlineAt,
+          onPhase: (phase) => updateJob(demoId, { phase }),
+        });
+      let result: Awaited<ReturnType<typeof runPipeline>>;
+      try {
+        result = await runPipeline();
+      } catch (firstError) {
+        // The session runner has already retried inside each stage. What
+        // reaches here is a stage that stayed down, or a publish step that
+        // could not get a server up. One clean restart from the top, on the
+        // same run budget, is the last thing tried before the visitor is
+        // shown the plainer demo. Never for a budget breach or a bad intake.
+        if (!isTransientPipelineFailure(firstError)) throw firstError;
+        const job = getJob(demoId);
+        const elapsed = Date.now() - (job?.createdAt ?? Date.now());
+        const early = EARLY_PHASE.test(job?.phase ?? '');
+        if (elapsed > (early ? EARLY_RESTART_DEADLINE_MS : RESTART_DEADLINE_MS))
+          throw firstError;
+        console.warn(
+          `[Flowstarter] preview ${demoId} restarting after a transient failure: ${
+            firstError instanceof Error ? firstError.message : 'unknown'
+          }`
+        );
+        updateJob(demoId, { phase: 'Starting over after a provider hiccup' });
+        result = await runPipeline();
+      }
+
+      // Preview never loads the live Cal.com embed — only a blurred demo.
+      // The tenant URL is stashed for claim → workspaces.cal_com_url and wired
+      // on the paid full-site build.
+      const calComUrl = resolveTenantCalComUrl({
+        calComUrl: spec.calComUrl,
+        customIntegrations: spec.customIntegrations,
+      });
+      const filesWithCal = injectCalComPreviewDemoIntoScaffoldFiles(
+        result.files
       );
 
-      if (!process.env.ANTHROPIC_API_KEY) {
-        updateJob(demoId, {
-          status: 'failed',
-          error: 'ANTHROPIC_API_KEY missing',
-        });
+      // The watchdog may already have failed this job while the pipeline was
+      // still running; a late success must not resurrect it under a visitor
+      // who has long since been shown the plainer demo.
+      if (getJob(demoId)?.status === 'failed') {
+        await result.teardown?.().catch(() => {});
         return;
       }
 
-      const codegenSpec = {
-        businessName: spec.businessName,
-        industry: spec.industry,
-        description: spec.description,
-        targetAudience: spec.targetAudience,
-        goal: spec.goal,
-        brandTone: spec.brandTone,
-      };
-
-      updateJob(demoId, { phase: 'Choosing the best template for you' });
-      const base = await selectBaseTemplateSmart(codegenSpec);
-      const ws = await createWorkspace(base);
-      const cleanupAll = (extra?: () => Promise<void>) => async () => {
-        if (extra) await extra().catch(() => {});
-        await ws.cleanup().catch(() => {});
-      };
-
-      // 1) Bring the BASE template up live, fast.
-      updateJob(demoId, { phase: 'Building your live preview' });
-      const preview = await previewInSandbox(ws.buildDir, {
-        projectId: demoId,
-        env: { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY },
-        // Don't surface Daytona's internal step labels ("Provisioning
-        // sandbox", "Starting dev server") to the visitor — keep one
-        // friendly phase for the whole base-build stage.
-        onProgress: () =>
-          updateJob(demoId, { phase: 'Building your live preview' }),
+      // Wire the teardown in the instant the sandbox/local `astro dev` child
+      // is confirmed live, not after the awaited bookkeeping below. Before
+      // this fix, a throw from `rememberClaimablePreview` (or anything else
+      // between here and the final `updateJob`) orphaned an already-running
+      // process with no handle anywhere in the job store to close it —
+      // the catch block only ever set `status: 'failed'`.
+      updateJob(demoId, {
+        previewUrl: result.previewUrl,
+        sandboxId: result.sandboxId,
+        teardown: result.teardown,
       });
-      if (!preview.success || !preview.previewUrl) {
-        updateJob(demoId, {
-          status: 'failed',
-          error: preview.error ?? 'preview unavailable',
-        });
-        await cleanupAll(preview.teardown)();
-        return;
-      }
 
-      // Visitor now sees a real, on-vertical site immediately.
+      // The manifest, brand config and template exist only in this process:
+      // the browser is handed a URL, never the files. Stash them against the
+      // demo id so that if the visitor signs in and claims this preview
+      // (/api/flowstarter/projects/claim) the workspace is built from the
+      // exact site they were looking at, rather than a regenerated guess.
+      await rememberClaimablePreview({
+        previewId: demoId,
+        intake: evidence.intake,
+        brandConfig: result.brandConfig,
+        template: result.template,
+        files: filesWithCal,
+        ...(calComUrl ? { calComUrl } : {}),
+        ...(result.artifactUrl
+          ? { previewArtifactUrl: result.artifactUrl }
+          : {}),
+        ...(result.previewUrl ? { previewUrl: result.previewUrl } : {}),
+      });
+
+      // The same moment, the durable half: package the site (noindex injected
+      // into every HTML file) and push it to the PREVIEWS deploy-agent, which
+      // is a different agent on a different port with a different secret and
+      // its own Caddy — a malformed generated preview can break previews and
+      // nothing a customer paid for. Never blocks the wizard: the sandbox URL
+      // above is what the iframe shows, and the hosted one is reported
+      // alongside it once (if) it comes up.
+      void publishFunnelPreview({
+        previewId: demoId,
+        files: filesWithCal as Array<{ path: string; content: string }>,
+        templateSlug: result.template?.slug ?? null,
+        brandConfig: result.brandConfig,
+      })
+        .then((published) => {
+          updateJob(demoId, {
+            hostedPreviewStatus: published.status,
+            ...(published.status === 'live'
+              ? { hostedPreviewUrl: published.url }
+              : {}),
+          });
+          if (published.status !== 'live') {
+            console.warn(
+              `[Flowstarter] preview ${demoId} was not hosted: ${
+                published.detail ?? 'unknown reason'
+              }`
+            );
+          }
+        })
+        .catch((error) => {
+          updateJob(demoId, { hostedPreviewStatus: 'failed' });
+          console.warn(
+            `[Flowstarter] preview ${demoId} could not be published to the ` +
+              'previews host: ' +
+              (error instanceof Error ? error.message : 'unknown error')
+          );
+        });
+
       updateJob(demoId, {
         status: 'ready',
-        previewUrl: preview.previewUrl,
-        sandboxId: preview.sandboxId,
-        contentFile: ws.contentFile,
-        personalized: false,
-        phase: 'Personalizing it for your business…',
-        teardown: cleanupAll(preview.teardown),
+        personalized: true,
+        phase: 'Done, your site is ready',
       });
-
-      // 2) Personalize, then hot-swap into the running sandbox (HMR).
-      const gen = await generateSiteContent(codegenSpec, ws.contentBefore);
+      logPreviewOutcome(demoId, 'ready', {
+        tokensUsed: agents.tokensUsed,
+        template: result.template?.slug,
+      });
       await recordGenerationCost({
         kind: 'codegen',
-        model: 'claude-haiku-4-5',
-        usage: {},
+        model: process.env.PI_MODEL?.trim() || 'z-ai/glm-5.2',
         demoId,
         ip,
+        // Brief-generated imagery is the one spend the Pi usage sink does not
+        // see; without this the funnel cap never learns about it.
+        ...(result.generatedAssetsCostUsd > 0
+          ? { costUsd: result.generatedAssetsCostUsd }
+          : {}),
       }).catch(() => {});
-
-      if (gen.ok && gen.content && preview.sandboxId) {
-        const pushed = await pushFileToSandbox(
-          preview.sandboxId,
-          base.contentFileRel,
-          gen.content,
-          { DAYTONA_API_KEY: process.env.DAYTONA_API_KEY }
-        );
-        updateJob(demoId, {
-          personalized: pushed,
-          phase: pushed
-            ? 'Done — your site is ready'
-            : 'Showing the starting template (personalization unavailable)',
-        });
-      } else {
-        // Fail-soft: the base template is still a real, relevant site.
-        updateJob(demoId, {
-          personalized: false,
-          phase: 'Showing the starting template (personalization unavailable)',
-        });
-      }
     } catch (e) {
+      // A failed job has no further use for a sandbox or local `astro dev`
+      // child it already provisioned — tear it down now rather than leaving
+      // it for the 45-minute reaper (or, worse, forever, if nothing calls
+      // that reaper). Best-effort: a teardown that itself fails must not
+      // stop the job from being reported as failed.
+      await getJob(demoId)
+        ?.teardown?.()
+        .catch(() => {});
+      const failedPhase = getJob(demoId)?.phase;
       updateJob(demoId, {
         status: 'failed',
         error: e instanceof Error ? e.message : 'live demo error',
+        ...(failedPhase ? { failedPhase } : {}),
+        teardown: undefined,
       });
+      logPreviewOutcome(demoId, 'failed', {
+        error: e instanceof Error ? e.message : 'live demo error',
+        ...(failedPhase ? { failedPhase } : {}),
+      });
+    } finally {
+      clearTimeout(watchdog);
+      await closeLibrary?.().catch(() => {});
     }
   })();
 
@@ -210,8 +905,14 @@ export async function GET(req: NextRequest) {
       phase: job.phase,
       personalized: job.personalized ?? false,
       previewUrl: job.status === 'ready' ? job.previewUrl : undefined,
+      // Both, deliberately: the sandbox URL is what the iframe renders, the
+      // hosted one is the durable, shareable copy on the previews host — and
+      // it is only ever present once that host reported the site live.
+      hostedPreviewUrl: job.hostedPreviewUrl,
+      hostedPreviewStatus: job.hostedPreviewStatus,
       editsUsed: job.editsUsed,
       error: job.status === 'failed' ? job.error : undefined,
+      failedPhase: job.status === 'failed' ? job.failedPhase : undefined,
     },
     { status: 200 }
   );

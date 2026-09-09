@@ -171,7 +171,7 @@ Each workspace contains:
 
 > **Updated (this revision):** pricing was restructured. The build (one-time
 > setup) and the monthly plan are now **decoupled** — the client picks a build
-> package and, separately, a monthly plan sized by AI edit sessions. Prices
+> package and, separately, a monthly plan sized by editor capabilities. Prices
 > were tuned down for Romanian-market reach and the storefront tier was opened
 > to everyone (no longer "coming soon"). The tables below reflect what is
 > shipped in code (`landing-copy.ts`, `discovery.logic.ts`).
@@ -187,49 +187,31 @@ Each workspace contains:
 
 ### Monthly Plan — independent of the build
 
-The subscription is chosen separately from the build and sized by AI edit
-sessions. Change or cancel anytime; first month free.
+The subscription is chosen separately from the build and sized by editor
+capabilities. Claude Code owns token/session management. Change or cancel
+anytime; first month free.
 
 > **AMENDMENT (pending Dorin sign-off — explicit instruction from Darius,
-> 2026-05-16):** restructured around the autorouter + per-session
-> AI-cost caps + a capability ladder. Runtime source of truth is
+> 2026-06-03):** restructured around the autorouter + capability ladder.
+> Flowstarter no longer enforces custom token/session/cost limits in the
+> editor; Claude Code owns token management. Runtime source of truth is
 > `apps/flowstarter-editor/server/src/usage/planEntitlements.ts`
-> (`PLAN_ENTITLEMENTS`); this table mirrors it. The €/session cap and
-> the monthly soft/hard thresholds are internal cost guards, not
-> customer-facing prices. Ecommerce repositioned to €129/mo with 90 AI
-> edit sessions ("Pro+", was €149/60); cost guards scaled down
-> proportionally (soft 43, hard 95). Starter monthly raised €39→€49
-> (2026-05-16, explicit Darius instruction); launch-discount /
-> rate-lock scaffolding dropped — one price: €799 setup + €49/mo.
+> (`PLAN_ENTITLEMENTS`); this table mirrors it. Starter monthly raised
+> €39→€49 (2026-05-16, explicit Darius instruction); launch-discount /
+> rate-lock scaffolding dropped: one price: €799 setup + €49/mo.
+> Anthropic org access is handled by invitations; see
+> `docs/ANTHROPIC_ORG_USERS.md`.
 
-| Plan | Price | AI edit sessions/mo | €/session cap | Model access | Edit scope | Store ops |
-|------|-------|---------------------|---------------|--------------|-----------|-----------|
-| Starter | €49/mo | 30 | €0.50 | Autorouter, locked to small models (sonnet-4.6 / gpt-5.4-mini) | Constrained | — |
-| Pro | €99/mo | 60 | €0.50 | Autorouter + manual model picker | Constrained | — |
-| Max | €249/mo | 120 | €0.50 | Pro + code experimentation (break-risk warning; paid help €20/h) | Code | — |
-| Ecommerce | €129/mo | 90 | €0.50 | Pro+ (more sessions than Pro) | Constrained | Products + collections (separate allowance) |
-
-Internal cost guards (EUR, not shown to customers, tunable in
-`planEntitlements.ts`). Model: **many edits, each bounded in depth.**
-- **Per-edit depth cap** (the €/session column, €0.50 flat): interrupts a
-  single back-and-forth edit when its provider cost exceeds the cap.
-  Calibrated against live usage (shallow edit ≈ €0.11, deep whole-page
-  analysis + plan ≈ €0.28), so €0.50 clears normal deep work and bounds
-  only runaways.
-- **Monthly soft threshold**: upgrade/buy-extra nudge (~75% of hard).
-- **Monthly hard ceiling**: overall AI budget / margin circuit-breaker.
-  Founding-phase generous set (2026-05-31, explicit Darius instruction):
-  **€20 Starter / €50 Pro / €75 Ecommerce / €150 Max** (soft €15 / €38 /
-  €56 / €112). At 10 clients/host (€3.25 infra ea), worst-case margin
-  (budget fully spent) ≈ 37–51%; at 70–80% utilization ≈ 49–63%; typical
-  observed usage is far lighter so realized margin is much higher.
-  Deliberately generous early; tighten before scaling past founding
-  clients. NOTE: only session *count* is enforced today (`tierLimits.ts`)
-  — the € caps are declared, not yet wired to interrupt/block.
+| Plan | Price | Model access | Edit scope | Store ops |
+|------|-------|--------------|-----------|-----------|
+| Starter | €49/mo | Autorouter, locked to small models (sonnet-4.6 / gpt-5.4-mini) | Constrained | — |
+| Pro | €99/mo | Autorouter + manual model picker | Constrained | — |
+| Max | €249/mo | Pro + code experimentation (break-risk warning; paid help €20/h) | Code | — |
+| Ecommerce | €129/mo | Autorouter + manual model picker | Constrained | Products + collections |
 
 The **Ecommerce** build package still auto-applies its dedicated store
-plan for Commerce builds; store editing (products + collections) draws
-from a separate store-ops allowance, not the AI-edit-session pool.
+plan for Commerce builds; store editing is a capability gate, not an
+AI-edit-session pool.
 
 ### Booking Deposit (pre-call)
 

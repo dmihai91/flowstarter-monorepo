@@ -116,7 +116,7 @@ export function IntegrationDialog({
             <Label htmlFor="dialog-name">Label (optional)</Label>
             <Input
               id="dialog-name"
-              placeholder={`${INTEGRATION_META[dialogType].name} — Client Name`}
+              placeholder={`${INTEGRATION_META[dialogType].name}: Client Name`}
               value={integrationName}
               onChange={(e) => setIntegrationName(e.target.value)}
             />
@@ -160,7 +160,7 @@ export function IntegrationDialog({
             </div>
             <p className="text-xs text-gray-500 dark:text-white/40 flex items-center gap-1.5">
               <Lock className="w-3 h-3 text-emerald-500" />
-              Encrypted with Supabase Vault — never stored in plaintext
+              Encrypted with Supabase Vault, never stored in plaintext
             </p>
           </div>
         </div>

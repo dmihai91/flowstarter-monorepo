@@ -3,9 +3,18 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 const generateTextMock = vi.fn();
 vi.mock('ai', () => ({
   generateText: (args: unknown) => generateTextMock(args),
+  generateObject: vi.fn(),
+  streamText: vi.fn(),
 }));
 vi.mock('@/lib/ai/client', () => ({
   models: { projectDetails: { id: 'mock-model' } },
+  getModel: (id?: string) => ({ modelId: id ?? 'mock-model' }),
+  isOpenRouterConfigured: () => true,
+}));
+vi.mock('@/supabase-clients/server', () => ({
+  createSupabaseServiceRoleClient: () => ({
+    from: () => ({ insert: () => Promise.resolve({ error: null }) }),
+  }),
 }));
 
 import { classifyClientRequest } from '../classify-client-request';

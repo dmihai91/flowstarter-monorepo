@@ -1,0 +1,49 @@
+---
+/**
+ * Picks the mark from the destination rather than the slot it sits in.
+ *
+ * The about-page button used to hardcode the LinkedIn glyph while its label
+ * and href came from the content layer, so a client whose profile is on
+ * Instagram got an Instagram link wearing a LinkedIn icon. The agent cannot
+ * edit components, so the only way the two stay in agreement is to derive one
+ * from the other.
+ */
+interface Props {
+  href?: string;
+  class?: string;
+}
+
+const { href = '', class: className = '' } = Astro.props;
+
+function networkOf(raw: string): 'linkedin' | 'instagram' | 'generic' {
+  try {
+    const host = new URL(raw).hostname.toLowerCase().replace(/^www\./, '');
+    if (host === 'linkedin.com' || host.endsWith('.linkedin.com')) return 'linkedin';
+    if (host === 'instagram.com' || host.endsWith('.instagram.com')) return 'instagram';
+  } catch {
+    /* relative or empty href: fall through to the neutral mark */
+  }
+  return 'generic';
+}
+
+const network = networkOf(href);
+---
+
+{network === 'linkedin' && (
+  <svg class={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M6.94 5.5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0ZM3.4 8.9h3.1V21H3.4V8.9Zm5.06 0h2.97v1.65h.04c.41-.78 1.42-1.6 2.93-1.6 3.13 0 3.71 2.06 3.71 4.74V21h-3.1v-5.68c0-1.35-.02-3.1-1.89-3.1-1.89 0-2.18 1.48-2.18 3v5.78h-3.1V8.9Z"/>
+  </svg>
+)}
+{network === 'instagram' && (
+  <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="5"/>
+    <circle cx="12" cy="12" r="4"/>
+    <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/>
+  </svg>
+)}
+{network === 'generic' && (
+  <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M10.5 13.5a4 4 0 0 0 5.66 0l2.83-2.83a4 4 0 1 0-5.66-5.66l-1.41 1.41"/>
+    <path d="M13.5 10.5a4 4 0 0 0-5.66 0L5 13.34a4 4 0 1 0 5.66 5.66l1.41-1.41"/>
+  </svg>
+)}

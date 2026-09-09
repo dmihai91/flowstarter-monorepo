@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { quoteMajorFrom } from '@/lib/flowstarter/quote';
 import {
   TeamDashboardShell,
   ShellCard,
@@ -31,6 +32,7 @@ interface Project {
   monthly_fee: number | null;
   is_paid: boolean | null;
   setup_fee: number | null;
+  final_value_minor?: number | null;
   template_id: string | null;
   user_id: string;
   client_name: string | null;
@@ -100,7 +102,7 @@ export default function AnalyticsPage() {
   ).length;
 
   // Revenue
-  const totalSetupFee = projects.reduce((s, p) => s + (p.setup_fee ?? 0), 0);
+  const totalSetupFee = projects.reduce((s, p) => s + quoteMajorFrom(p), 0);
   const totalMonthly = projects.reduce((s, p) => s + (p.monthly_fee ?? 0), 0);
   const paidCount = projects.filter((p) => p.is_paid).length;
 
@@ -198,7 +200,7 @@ export default function AnalyticsPage() {
             <StatCard
               icon={<Sparkles className="w-4 h-4 text-[var(--purple)]" />}
               iconBg="bg-[var(--purple)]/10"
-              label="AI credits used"
+              label="AI usage units"
               value={totalCredits.toLocaleString()}
               sub={`${aiGeneratedCount} sites generated`}
             />
@@ -237,7 +239,7 @@ export default function AnalyticsPage() {
         {/* Activity chart */}
         <ShellCard className="lg:col-span-2 !p-5">
           <p className="text-sm font-semibold text-[var(--fs-ink)] mb-4">
-            Projects created — last 30 days
+            Projects created: last 30 days
           </p>
           {isLoading ? (
             <div className="h-24 animate-pulse rounded-lg bg-[var(--fs-bg-elevated)]" />

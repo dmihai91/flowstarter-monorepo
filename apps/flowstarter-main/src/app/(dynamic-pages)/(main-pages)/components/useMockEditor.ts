@@ -10,6 +10,300 @@ declare global {
   }
 }
 
+export type MockPreviewField =
+  | 'headline'
+  | 'introduction'
+  | 'cta'
+  | 'service'
+  | 'price';
+
+export type GuidedRewriteTarget = 'headline' | 'introduction' | 'cta';
+export type GuidedRewriteDirection =
+  | 'warmer'
+  | 'shorter'
+  | 'more-confident'
+  | 'more-direct';
+export type GuidedPriceAmount = '24' | '29' | '35';
+export type GuidedPriceCadence = 'two-weeks' | 'monthly';
+export type GuidedToneTarget = 'headline' | 'introduction' | 'service';
+export type GuidedTone = 'warm' | 'calm' | 'playful' | 'expert';
+export type GuidedTranslationTarget =
+  | 'headline'
+  | 'introduction'
+  | 'service'
+  | 'cta';
+export type GuidedTranslationLanguage = 'ro' | 'fr' | 'es';
+
+export interface MockSiteState {
+  hasContactForm: boolean;
+  hasTestimonials: boolean;
+  hasPricingSection: boolean;
+  primaryColor: string;
+  hasAboutPage: boolean;
+  headerStyle: string;
+  hasFAQ: boolean;
+  hasNewsletter: boolean;
+  headline: string;
+  introduction: string;
+  ctaLabel: string;
+  serviceDescription: string;
+  subscriptionPrice: string;
+  language: 'en' | GuidedTranslationLanguage;
+  updatedField: MockPreviewField | null;
+  revision: number;
+}
+
+type TextEditPatch = Partial<
+  Pick<
+    MockSiteState,
+    | 'headline'
+    | 'introduction'
+    | 'ctaLabel'
+    | 'serviceDescription'
+    | 'subscriptionPrice'
+    | 'language'
+    | 'updatedField'
+  >
+>;
+
+const INITIAL_MOCK_SITE: MockSiteState = {
+  hasContactForm: false,
+  hasTestimonials: false,
+  hasPricingSection: false,
+  primaryColor: 'violet',
+  hasAboutPage: false,
+  headerStyle: 'default',
+  hasFAQ: false,
+  hasNewsletter: false,
+  headline: 'Coffee that makes mornings feel like home.',
+  introduction: 'Small-batch coffee, roasted fresh and delivered to your door.',
+  ctaLabel: 'Shop coffee',
+  serviceDescription: 'Find the blend that fits your morning.',
+  subscriptionPrice: 'From €24 every two weeks',
+  language: 'en',
+  updatedField: null,
+  revision: 0,
+};
+
+const DEMO_SEQUENCE: Array<{
+  prompt: string;
+  response: string;
+  previewPatch: Partial<MockSiteState>;
+}> = [
+  {
+    prompt: 'Make this headline feel warmer',
+    response:
+      'Done. I kept the fresh-roast promise and made the welcome feel warmer.',
+    previewPatch: {
+      headline: 'Coffee that makes every morning feel like home.',
+      updatedField: 'headline',
+    },
+  },
+  {
+    prompt: 'Shorten this introduction',
+    response:
+      'Done. The introduction now leads with freshness and delivery in four words.',
+    previewPatch: {
+      introduction: 'Fresh-roasted coffee, delivered.',
+      updatedField: 'introduction',
+    },
+  },
+  {
+    prompt: 'Make this call to action more direct',
+    response:
+      'Updated. “Find your roast” makes the next step specific and inviting.',
+    previewPatch: {
+      ctaLabel: 'Find your roast',
+      updatedField: 'cta',
+    },
+  },
+  {
+    prompt: 'Translate this service description into Romanian',
+    response:
+      'Translated. The Romanian version keeps the same warm, local voice.',
+    previewPatch: {
+      serviceDescription: 'Alege cafeaua potrivită pentru dimineața ta.',
+      language: 'ro',
+      updatedField: 'service',
+    },
+  },
+];
+
+const GUIDED_REWRITES: Record<
+  GuidedRewriteTarget,
+  Record<
+    GuidedRewriteDirection,
+    {
+      prompt: string;
+      response: string;
+      previewPatch: Partial<MockSiteState>;
+    }
+  >
+> = {
+  headline: {
+    warmer: {
+      prompt: 'Rewrite the headline · warmer',
+      response:
+        'Done. The headline feels more welcoming while keeping the coffee promise.',
+      previewPatch: {
+        headline: 'Coffee that feels like coming home.',
+        updatedField: 'headline',
+      },
+    },
+    shorter: {
+      prompt: 'Rewrite the headline · shorter',
+      response:
+        'Done. The headline lands faster without losing the morning benefit.',
+      previewPatch: {
+        headline: 'Better coffee. Better mornings.',
+        updatedField: 'headline',
+      },
+    },
+    'more-confident': {
+      prompt: 'Rewrite the headline · more confident',
+      response: 'Done. The headline sounds assured without becoming pushy.',
+      previewPatch: {
+        headline: 'Your best mornings start with better coffee.',
+        updatedField: 'headline',
+      },
+    },
+    'more-direct': {
+      prompt: 'Rewrite the headline · more direct',
+      response:
+        'Done. The headline now states the product and delivery promise immediately.',
+      previewPatch: {
+        headline: 'Fresh-roasted coffee, delivered weekly.',
+        updatedField: 'headline',
+      },
+    },
+  },
+  introduction: {
+    warmer: {
+      prompt: 'Rewrite the introduction · warmer',
+      response:
+        'Done. The introduction feels more personal while keeping the local detail.',
+      previewPatch: {
+        introduction:
+          'Roasted with care in Cluj, then delivered fresh to your door.',
+        updatedField: 'introduction',
+      },
+    },
+    shorter: {
+      prompt: 'Rewrite the introduction · shorter',
+      response:
+        'Done. The introduction is now easy to understand in three words.',
+      previewPatch: {
+        introduction: 'Fresh coffee, delivered.',
+        updatedField: 'introduction',
+      },
+    },
+    'more-confident': {
+      prompt: 'Rewrite the introduction · more confident',
+      response:
+        'Done. The introduction leads with quality and keeps the weekly rhythm clear.',
+      previewPatch: {
+        introduction:
+          'Exceptional small-batch coffee, roasted fresh every week.',
+        updatedField: 'introduction',
+      },
+    },
+    'more-direct': {
+      prompt: 'Rewrite the introduction · more direct',
+      response:
+        'Done. The introduction now explains the choice and delivery time directly.',
+      previewPatch: {
+        introduction: 'Choose your roast and get it delivered within 48 hours.',
+        updatedField: 'introduction',
+      },
+    },
+  },
+  cta: {
+    warmer: {
+      prompt: 'Rewrite the button · warmer',
+      response:
+        'Done. The button feels inviting while still asking for a clear action.',
+      previewPatch: {
+        ctaLabel: 'Choose your favourite',
+        updatedField: 'cta',
+      },
+    },
+    shorter: {
+      prompt: 'Rewrite the button · shorter',
+      response: 'Done. The button is now immediate and easy to scan.',
+      previewPatch: {
+        ctaLabel: 'Shop now',
+        updatedField: 'cta',
+      },
+    },
+    'more-confident': {
+      prompt: 'Rewrite the button · more confident',
+      response:
+        'Done. The button names the commitment clearly and confidently.',
+      previewPatch: {
+        ctaLabel: 'Start your subscription',
+        updatedField: 'cta',
+      },
+    },
+    'more-direct': {
+      prompt: 'Rewrite the button · more direct',
+      response:
+        'Done. “Find your roast” tells visitors exactly what to do next.',
+      previewPatch: {
+        ctaLabel: 'Find your roast',
+        updatedField: 'cta',
+      },
+    },
+  },
+};
+
+const GUIDED_TONE_COPY: Record<GuidedToneTarget, Record<GuidedTone, string>> = {
+  headline: {
+    warm: 'Coffee that makes every morning feel like home.',
+    calm: 'A slower morning starts with better coffee.',
+    playful: 'Good beans. Great mornings. Zero fuss.',
+    expert: 'Specialty coffee, roasted for peak freshness.',
+  },
+  introduction: {
+    warm: 'Fresh-roasted coffee for slower, better mornings.',
+    calm: 'Thoughtfully roasted coffee, delivered when you need it.',
+    playful: 'Bright beans, fresh roasts, happier mornings.',
+    expert: 'Small-batch coffee roasted weekly for clarity and balance.',
+  },
+  service: {
+    warm: "Let's find the blend that feels right for your morning.",
+    calm: 'Find a balanced blend for your everyday ritual.',
+    playful: 'Meet the coffee your alarm clock wishes it could make.',
+    expert: 'Compare roast profile, origin and tasting notes before choosing.',
+  },
+};
+
+const GUIDED_TRANSLATIONS: Record<
+  GuidedTranslationLanguage,
+  Record<GuidedTranslationTarget, string>
+> = {
+  ro: {
+    headline: 'Cafea proaspăt prăjită, pentru dimineți mai bune.',
+    introduction:
+      'Cafea în loturi mici, proaspăt prăjită și livrată la ușa ta.',
+    service: 'Alege cafeaua potrivită pentru dimineața ta.',
+    cta: 'Alege cafeaua',
+  },
+  fr: {
+    headline: 'Du café fraîchement torréfié pour de meilleurs matins.',
+    introduction:
+      'Du café en petits lots, fraîchement torréfié et livré chez vous.',
+    service: 'Trouvez le mélange qui accompagne votre matinée.',
+    cta: 'Choisir mon café',
+  },
+  es: {
+    headline: 'Café recién tostado para mejores mañanas.',
+    introduction:
+      'Café de lotes pequeños, recién tostado y entregado en tu puerta.',
+    service: 'Encuentra la mezcla ideal para tu mañana.',
+    cta: 'Elegir mi café',
+  },
+};
+
 /**
  * Hook for the landing page mock editor demo.
  * Manages mock site state, AI response simulation, typing animation.
@@ -25,94 +319,168 @@ export function useMockEditor() {
   const [typingText, setTypingText] = useState('');
   const [isTypewriting, setIsTypewriting] = useState(false);
   const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoStartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
+  const userInteractedRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Mock site state for live preview
-  const [mockSite, setMockSite] = useState({
-    hasContactForm: false,
-    hasTestimonials: false,
-    hasPricingSection: false,
-    primaryColor: 'violet',
-    hasAboutPage: false,
-    headerStyle: 'default',
-    hasFAQ: false,
-    hasNewsletter: false,
-  });
+  const [mockSite, setMockSite] = useState<MockSiteState>(INITIAL_MOCK_SITE);
+
+  const applyTextEdit = (patch: TextEditPatch) => {
+    setMockSite((current) => ({
+      ...current,
+      ...patch,
+      revision: current.revision + 1,
+    }));
+  };
 
   const aiResponses: Record<string, { text: string; action?: () => void }> = {
     contact: {
-      text: 'Done. Contact form added below hero.',
-      action: () => setMockSite((s) => ({ ...s, hasContactForm: true })),
+      text: 'I sent this to your Care team so they can place and test the form safely.',
     },
     form: {
-      text: 'Done. Contact form added below hero.',
-      action: () => setMockSite((s) => ({ ...s, hasContactForm: true })),
+      text: 'I sent this to your Care team so they can place and test the form safely.',
     },
     color: {
-      text: 'Updated. Primary color changed across the site.',
-      action: () =>
-        setMockSite((s) => ({
-          ...s,
-          primaryColor: s.primaryColor === 'violet' ? 'emerald' : 'violet',
-        })),
+      text: 'Your Care team will check contrast and consistency before changing site-wide colors.',
     },
     testimonial: {
-      text: 'Done! Added testimonials with star ratings.',
-      action: () => setMockSite((s) => ({ ...s, hasTestimonials: true })),
+      text: 'Your Care team will verify the proof and place it where it builds the most trust.',
     },
     review: {
-      text: 'Done! Added testimonials with star ratings.',
-      action: () => setMockSite((s) => ({ ...s, hasTestimonials: true })),
+      text: 'Your Care team will verify the proof and place it where it builds the most trust.',
     },
     pricing: {
-      text: 'Pricing section added with 2 plans.',
-      action: () => setMockSite((s) => ({ ...s, hasPricingSection: true })),
+      text: 'Your Care team will review the full buying journey before changing pricing.',
     },
     plan: {
-      text: 'Pricing section added with 2 plans.',
-      action: () => setMockSite((s) => ({ ...s, hasPricingSection: true })),
+      text: 'Your Care team will review the full buying journey before changing pricing.',
+    },
+    price: {
+      text: 'Updated. The price now shows the billing rhythm and confirms delivery is included.',
+      action: () =>
+        applyTextEdit({
+          subscriptionPrice: '€24 every 2 weeks · delivery included',
+          updatedField: 'price',
+        }),
     },
     about: {
-      text: 'About page created and linked in nav.',
-      action: () => setMockSite((s) => ({ ...s, hasAboutPage: true })),
+      text: 'I sent the new page request to your Care team so it fits the whole customer journey.',
     },
     page: {
-      text: 'New page created and linked in nav.',
-      action: () => setMockSite((s) => ({ ...s, hasAboutPage: true })),
+      text: 'I sent the new page request to your Care team so it fits the whole customer journey.',
     },
     header: {
-      text: 'Header updated with new style.',
-      action: () =>
-        setMockSite((s) => ({
-          ...s,
-          headerStyle: s.headerStyle === 'default' ? 'minimal' : 'default',
-        })),
+      text: 'Your Care team will review that layout change across desktop and mobile.',
     },
     faq: {
-      text: "FAQ section added — I've covered the 5 most common questions.",
-      action: () => setMockSite((s) => ({ ...s, hasFAQ: true })),
+      text: 'I sent the new section to your Care team so they can shape and test it properly.',
     },
     question: {
-      text: "FAQ section added — I've covered the 5 most common questions.",
-      action: () => setMockSite((s) => ({ ...s, hasFAQ: true })),
+      text: 'I sent the new section to your Care team so they can shape and test it properly.',
     },
     newsletter: {
-      text: 'Newsletter signup added. New subscribers go straight to your list.',
-      action: () => setMockSite((s) => ({ ...s, hasNewsletter: true })),
+      text: 'Your Care team will connect and test that service without disrupting the site.',
     },
     email: {
-      text: 'Newsletter signup added. New subscribers go straight to your list.',
-      action: () => setMockSite((s) => ({ ...s, hasNewsletter: true })),
+      text: 'Your Care team will connect and test that service without disrupting the site.',
+    },
+    warmer: {
+      text: 'Done. I kept the coffee promise and made the headline feel more welcoming.',
+      action: () =>
+        applyTextEdit({
+          headline: 'Coffee that makes every morning feel like home.',
+          updatedField: 'headline',
+        }),
+    },
+    friendlier: {
+      text: 'Done. The new headline feels like an invitation, not an advertisement.',
+      action: () =>
+        applyTextEdit({
+          headline: 'Come in. Your new favourite coffee is waiting.',
+          updatedField: 'headline',
+        }),
+    },
+    tone: {
+      text: 'Updated. The introduction now sounds warm, calm, and unhurried.',
+      action: () =>
+        applyTextEdit({
+          introduction: 'Fresh-roasted coffee for slower, better mornings.',
+          updatedField: 'introduction',
+        }),
     },
     headline: {
-      text: 'Headline rewritten. Sounds more confident and client-focused now.',
-      action: () => setMockSite((s) => ({ ...s })),
+      text: 'Rewritten. It is shorter, more confident, and easier to understand at a glance.',
+      action: () =>
+        applyTextEdit({
+          headline: 'Better coffee starts right here.',
+          updatedField: 'headline',
+        }),
+    },
+    shorten: {
+      text: 'Done. I removed the extra words and kept the freshness and delivery promise.',
+      action: () =>
+        applyTextEdit({
+          introduction: 'Fresh-roasted coffee, delivered.',
+          updatedField: 'introduction',
+        }),
+    },
+    'call to action': {
+      text: 'Updated. “Find your roast” names the next step clearly.',
+      action: () =>
+        applyTextEdit({
+          ctaLabel: 'Find your roast',
+          updatedField: 'cta',
+        }),
+    },
+    cta: {
+      text: 'Updated. “Find your roast” names the next step clearly.',
+      action: () =>
+        applyTextEdit({
+          ctaLabel: 'Find your roast',
+          updatedField: 'cta',
+        }),
+    },
+    direct: {
+      text: 'Updated. “Find your roast” names the next step clearly.',
+      action: () =>
+        applyTextEdit({
+          ctaLabel: 'Find your roast',
+          updatedField: 'cta',
+        }),
+    },
+    translate: {
+      text: 'Translated. I kept the warm voice natural in Romanian, not word for word.',
+      action: () =>
+        applyTextEdit({
+          serviceDescription: 'Alege cafeaua potrivită pentru dimineața ta.',
+          language: 'ro',
+          updatedField: 'service',
+        }),
+    },
+    romanian: {
+      text: 'Translated. I kept the warm voice natural in Romanian, not word for word.',
+      action: () =>
+        applyTextEdit({
+          serviceDescription: 'Alege cafeaua potrivită pentru dimineața ta.',
+          language: 'ro',
+          updatedField: 'service',
+        }),
     },
     copy: {
-      text: 'Copy updated across the page. Fresh, professional, on-brand.',
-      action: () => setMockSite((s) => ({ ...s })),
+      text: 'Updated. The sentence is clearer and still sounds like CoffeeRoast.',
+      action: () =>
+        applyTextEdit({
+          introduction:
+            'Fresh coffee, thoughtfully roasted for better mornings.',
+          updatedField: 'introduction',
+        }),
     },
-    default: { text: 'Changes applied. Check the preview!' },
+    default: {
+      text: 'I can refine wording here. Wider design changes go to your Care team.',
+    },
   };
 
   const getAiResponse = (
@@ -146,9 +514,7 @@ export function useMockEditor() {
       const char = text[i - 1];
       // Natural variance: pause longer after punctuation, random jitter otherwise
       const isPunct = ['.', ',', '!', '?', ':'].includes(char);
-      const delay = isPunct
-        ? 180 + Math.random() * 120
-        : 35 + Math.random() * 45;
+      const delay = isPunct ? 45 + Math.random() * 25 : 10 + Math.random() * 10;
       typewriterRef.current = setTimeout(
         typeNextChar,
         delay
@@ -161,9 +527,124 @@ export function useMockEditor() {
     ) as unknown as ReturnType<typeof setInterval>;
   };
 
+  const stopAutoDemo = () => {
+    userInteractedRef.current = true;
+    if (autoStartTimeoutRef.current) {
+      clearTimeout(autoStartTimeoutRef.current);
+      autoStartTimeoutRef.current = null;
+    }
+    if (window.__demoInterval) {
+      clearInterval(window.__demoInterval);
+      delete window.__demoInterval;
+    }
+  };
+
+  const runGuidedEdit = (
+    prompt: string,
+    response: string,
+    previewPatch: TextEditPatch
+  ) => {
+    if (isTyping) return;
+
+    stopAutoDemo();
+    setInputValue('');
+    setMessages((previous) => [...previous, { role: 'user', text: prompt }]);
+    setIsTyping(true);
+
+    setTimeout(() => {
+      setIsTyping(false);
+      applyTextEdit(previewPatch);
+      typewrite(response, () => {
+        setMessages((previous) => [
+          ...previous,
+          { role: 'ai', text: response },
+        ]);
+        setTypingText('');
+      });
+    }, 800);
+  };
+
+  const handleGuidedRewrite = (
+    target: GuidedRewriteTarget,
+    direction: GuidedRewriteDirection
+  ) => {
+    const rewrite = GUIDED_REWRITES[target][direction];
+    runGuidedEdit(rewrite.prompt, rewrite.response, rewrite.previewPatch);
+  };
+
+  const handleGuidedPrice = (
+    amount: GuidedPriceAmount,
+    cadence: GuidedPriceCadence,
+    deliveryIncluded: boolean
+  ) => {
+    const cadenceCopy = cadence === 'monthly' ? 'per month' : 'every 2 weeks';
+    const deliveryCopy = deliveryIncluded
+      ? 'delivery included'
+      : 'delivery calculated separately';
+
+    runGuidedEdit(
+      `Set the subscription to €${amount} ${cadenceCopy} · ${deliveryCopy}`,
+      'Updated. The preview now shows the chosen amount, billing rhythm and delivery terms.',
+      {
+        subscriptionPrice: `€${amount} ${cadenceCopy} · ${deliveryCopy}`,
+        updatedField: 'price',
+      }
+    );
+  };
+
+  const handleGuidedTone = (target: GuidedToneTarget, tone: GuidedTone) => {
+    const copy = GUIDED_TONE_COPY[target][tone];
+    const previewPatch: TextEditPatch =
+      target === 'headline'
+        ? { headline: copy, updatedField: 'headline' }
+        : target === 'introduction'
+        ? { introduction: copy, updatedField: 'introduction' }
+        : { serviceDescription: copy, updatedField: 'service' };
+
+    runGuidedEdit(
+      `Make the ${
+        target === 'service' ? 'service description' : target
+      } feel ${tone}`,
+      `Updated. The ${
+        target === 'service' ? 'service description' : target
+      } now has a ${tone} voice while keeping the same meaning.`,
+      previewPatch
+    );
+  };
+
+  const handleGuidedTranslation = (
+    target: GuidedTranslationTarget,
+    language: GuidedTranslationLanguage
+  ) => {
+    const copy = GUIDED_TRANSLATIONS[language][target];
+    const previewPatch: TextEditPatch =
+      target === 'headline'
+        ? { headline: copy, language, updatedField: 'headline' }
+        : target === 'introduction'
+        ? { introduction: copy, language, updatedField: 'introduction' }
+        : target === 'service'
+        ? { serviceDescription: copy, language, updatedField: 'service' }
+        : { ctaLabel: copy, language, updatedField: 'cta' };
+
+    runGuidedEdit(
+      `Translate the ${
+        target === 'service' ? 'service description' : target
+      } into ${
+        language === 'ro'
+          ? 'Romanian'
+          : language === 'fr'
+          ? 'French'
+          : 'Spanish'
+      }`,
+      'Translated. I adapted the wording so it reads naturally and keeps the same brand voice.',
+      previewPatch
+    );
+  };
+
   const handleSend = (directMessage?: string) => {
     const message = directMessage || inputValue.trim();
     if (!message || isTyping) return;
+    stopAutoDemo();
     setInputValue('');
 
     // Check if it's a known command
@@ -177,7 +658,7 @@ export function useMockEditor() {
       setTimeout(() => {
         setIsTyping(false);
         const msg1 =
-          "Great idea! Let's discuss this on a discovery call. Redirecting you to book...";
+          'That needs a wider design change, so I am opening a short call to shape it properly.';
         typewrite(msg1, () => {
           setMessages((prev) => [...prev, { role: 'ai', text: msg1 }]);
           setTypingText('');
@@ -195,115 +676,28 @@ export function useMockEditor() {
     setTimeout(() => {
       setIsTyping(false);
       const aiText = response.text;
+      response.action?.();
       typewrite(aiText, () => {
         setMessages((prev) => [...prev, { role: 'ai', text: aiText }]);
         setTypingText('');
-        if (response.action) {
-          setTimeout(() => response.action!(), 200);
-        }
       });
     }, 800 + Math.random() * 400);
   };
-
-  const initialSiteState = {
-    hasContactForm: false,
-    hasTestimonials: false,
-    hasPricingSection: false,
-    primaryColor: 'violet',
-    hasAboutPage: false,
-    headerStyle: 'default',
-    hasFAQ: false,
-    hasNewsletter: false,
-  };
-
-  // Auto-cycle demo prompts — accumulates then resets and loops
-  const demoSequence = [
-    {
-      prompt: 'Add a testimonials section',
-      response: 'Done! Added testimonials with star ratings.',
-      siteState: { ...initialSiteState, hasTestimonials: true },
-    },
-    {
-      prompt: 'Add pricing tables',
-      response: 'Pricing section added with 2 plans.',
-      siteState: {
-        ...initialSiteState,
-        hasTestimonials: true,
-        hasPricingSection: true,
-      },
-    },
-    {
-      prompt: 'Change the color scheme to green',
-      response: 'Updated. Primary color changed across the site.',
-      siteState: {
-        ...initialSiteState,
-        hasTestimonials: true,
-        hasPricingSection: true,
-        primaryColor: 'emerald',
-      },
-    },
-    {
-      prompt: 'Add a contact form',
-      response: 'Done. Contact form added below hero.',
-      siteState: {
-        ...initialSiteState,
-        hasTestimonials: true,
-        hasPricingSection: true,
-        primaryColor: 'emerald',
-        hasContactForm: true,
-      },
-    },
-    {
-      prompt: 'Add an FAQ section',
-      response: "FAQ section added — I've covered the 5 most common questions.",
-      siteState: {
-        ...initialSiteState,
-        hasTestimonials: true,
-        hasPricingSection: true,
-        primaryColor: 'emerald',
-        hasContactForm: true,
-        hasFAQ: true,
-      },
-    },
-    {
-      prompt: 'Add a newsletter signup',
-      response:
-        'Newsletter signup added. New subscribers go straight to your list.',
-      siteState: {
-        ...initialSiteState,
-        hasTestimonials: true,
-        hasPricingSection: true,
-        primaryColor: 'emerald',
-        hasContactForm: true,
-        hasFAQ: true,
-        hasNewsletter: true,
-      },
-    },
-    {
-      prompt: 'Add an about page',
-      response: 'About page created and linked in the nav.',
-      siteState: {
-        ...initialSiteState,
-        hasTestimonials: true,
-        hasPricingSection: true,
-        primaryColor: 'emerald',
-        hasContactForm: true,
-        hasFAQ: true,
-        hasNewsletter: true,
-        hasAboutPage: true,
-      },
-    },
-  ];
 
   useEffect(() => {
     setIsLoaded(true);
     // Initial state
     setMessages([
-      { role: 'user', text: demoSequence[0].prompt },
-      { role: 'ai', text: demoSequence[0].response },
+      { role: 'user', text: DEMO_SEQUENCE[0].prompt },
+      { role: 'ai', text: DEMO_SEQUENCE[0].response },
     ]);
     setTimeout(
-      () => setMockSite((s) => ({ ...s, ...demoSequence[0].siteState })),
+      () =>
+        setMockSite((current) => ({
+          ...current,
+          ...DEMO_SEQUENCE[0].previewPatch,
+          revision: current.revision + 1,
+        })),
       500
     );
 
@@ -315,8 +709,10 @@ export function useMockEditor() {
     let currentIndex = 0; // Start at 0, first advance goes to 1
 
     function advanceDemo() {
-      currentIndex = (currentIndex + 1) % demoSequence.length;
-      const demo = demoSequence[currentIndex];
+      if (userInteractedRef.current) return;
+
+      currentIndex = (currentIndex + 1) % DEMO_SEQUENCE.length;
+      const demo = DEMO_SEQUENCE[currentIndex];
 
       // When looping back to start, reset everything cleanly
       if (currentIndex === 0) {
@@ -324,7 +720,11 @@ export function useMockEditor() {
           { role: 'user', text: demo.prompt },
           { role: 'ai', text: demo.response },
         ]);
-        setMockSite(demo.siteState as typeof initialSiteState);
+        setMockSite({
+          ...INITIAL_MOCK_SITE,
+          ...demo.previewPatch,
+          revision: 1,
+        });
         return;
       }
 
@@ -341,12 +741,16 @@ export function useMockEditor() {
           setTypingText('');
         });
         // Update site state
-        setMockSite((s) => ({ ...s, ...demo.siteState }));
+        setMockSite((current) => ({
+          ...current,
+          ...demo.previewPatch,
+          revision: current.revision + 1,
+        }));
       }, 800);
     }
 
     // First advance after 3 seconds
-    const timeoutId = setTimeout(() => {
+    autoStartTimeoutRef.current = setTimeout(() => {
       advanceDemo();
 
       // Then continue every 5 seconds
@@ -357,9 +761,13 @@ export function useMockEditor() {
     }, 3000);
 
     return () => {
-      clearTimeout(timeoutId);
+      if (autoStartTimeoutRef.current) {
+        clearTimeout(autoStartTimeoutRef.current);
+        autoStartTimeoutRef.current = null;
+      }
       if (window.__demoInterval) {
         clearInterval(window.__demoInterval);
+        delete window.__demoInterval;
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -387,5 +795,9 @@ export function useMockEditor() {
     mockSite,
     messagesEndRef,
     handleSend,
+    handleGuidedRewrite,
+    handleGuidedPrice,
+    handleGuidedTone,
+    handleGuidedTranslation,
   };
 }

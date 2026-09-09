@@ -154,7 +154,7 @@ function ProjectRowItem({
             {t(tierKey)}
           </span>
         ) : (
-          <span className="text-[var(--ls-ink-faint)]">—</span>
+          <span className="text-[var(--ls-ink-faint)]">–</span>
         )}
       </td>
       <td className="px-3 py-3">
@@ -166,7 +166,7 @@ function ProjectRowItem({
         className="px-3 py-3 text-right font-mono text-[10.5px] tabular-nums text-[var(--ls-ink-faint)]"
         style={{ fontVariantNumeric: 'tabular-nums' }}
       >
-        {updatedAt ? compactRelative(updatedAt) : '—'}
+        {updatedAt ? compactRelative(updatedAt) : '–'}
       </td>
       <td className="py-3 pr-5 text-right">
         <ProjectActions project={project} />

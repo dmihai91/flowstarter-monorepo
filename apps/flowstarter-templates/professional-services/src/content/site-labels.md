@@ -6,6 +6,7 @@ siteMeta:
 header:
   logo: "Halden & Roe"
   menuAriaLabel: "Toggle menu"
+  ctaLabel: "Book a working session"
   navLinks:
     - label: "Home"
       href: "/"
@@ -27,7 +28,7 @@ hero:
     We are Halden & Roe, an independent consultancy for leaders who need their next decision to be the right one. We work alongside management teams to fix margin, sharpen strategy, and make execution stick.
 
     No deck-and-leave. We sit in the operating detail with you, find where value actually leaks, and stay until the change is running on its own.
-  image: ""
+  image: "/images/services-1.jpg"
   highlights:
     - "the right one"
     - "fix margin"

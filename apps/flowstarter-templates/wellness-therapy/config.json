@@ -1,0 +1,85 @@
+{
+  "name": "Wellness & Therapy",
+  "slug": "wellness-therapy",
+  "description": "Warm, reassuring service template for therapists, counsellors, psychologists, wellness practitioners, nutritionists, and coaches.",
+  "category": "health-wellness",
+  "framework": "astro",
+  "tags": [
+    "therapist",
+    "counsellor",
+    "psychologist",
+    "wellness",
+    "nutrition",
+    "coach",
+    "appointments"
+  ],
+  "features": [
+    "services overview",
+    "practitioner story",
+    "trust-building content",
+    "booking CTA",
+    "accessible calm layout"
+  ],
+  "bestFor": [
+    "personal care practices",
+    "appointment-led services",
+    "clients who need reassurance before booking"
+  ],
+  "assetLibrary": [
+    {
+      "path": "/images/about-therapist.jpg",
+      "kind": "photo-generic",
+      "description": "Forested mountains above low cloud. No face."
+    },
+    {
+      "path": "/images/freetime-1.jpg",
+      "kind": "photo-generic",
+      "description": "Green rolling hills. No face."
+    },
+    {
+      "path": "/images/freetime-2.jpg",
+      "kind": "photo-generic",
+      "description": "Three hands raising coffee cups together. No face."
+    },
+    {
+      "path": "/images/services-2.jpg",
+      "kind": "photo-generic",
+      "description": "An empty modern office corridor. No face."
+    },
+    {
+      "path": "/images/blog-1.jpg",
+      "kind": "photo-generic",
+      "description": "Hands writing in a notebook beside a coffee cup. No face."
+    },
+    {
+      "path": "/images/blog-3.jpg",
+      "kind": "photo-generic",
+      "description": "Silhouette of a person meditating against a sunset. Unidentifiable."
+    },
+    {
+      "path": "/images/blog-6.jpg",
+      "kind": "photo-generic",
+      "description": "Wind turbines in a field at sunset. No face."
+    },
+    {
+      "path": "/images/about-photographer.jpg",
+      "kind": "photo-generic",
+      "description": "A wooden pier disappearing into fog. No face."
+    },
+    {
+      "path": "/images/about-freelancer.jpg",
+      "kind": "photo-generic",
+      "description": "Empty park benches under autumn trees. No face."
+    },
+    {
+      "path": "/images/about-consultant.jpg",
+      "kind": "photo-generic",
+      "description": "Close-up of purple petunias. No face."
+    },
+    {
+      "path": "/images/about-fitness.jpg",
+      "kind": "photo-generic",
+      "description": "A pale overcast sky with a distant aeroplane. No face."
+    }
+  ]
+}

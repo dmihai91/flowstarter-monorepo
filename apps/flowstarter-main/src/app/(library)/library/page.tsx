@@ -28,7 +28,7 @@ export default async function GalleryPage() {
         <div className="gallery-hero-copy">
           <p className="lede reveal" data-delay="1">
             Hand-crafted sites and starter templates for service professionals.
-            Each one is the product of a real conversation with a real person —
+            Each one is the product of a real conversation with a real person:
             no template-spam, no AI slurry, no &ldquo;premium&rdquo; gradient
             stand-ins for taste. Some of these are live for clients today.
             Others are starters that will become live for you.
@@ -48,7 +48,7 @@ export default async function GalleryPage() {
             number={String(inDev).padStart(2, '0')}
             label="starters in build"
           />
-          <Stat number="—" label="limited spots each month, by design" />
+          <Stat number="–" label="limited spots each month, by design" />
         </div>
       </section>
 

@@ -3,29 +3,63 @@
 import { LoadingScreen } from '@flowstarter/flow-design-system';
 import {
   getIsErrorPage,
-  resetErrorPageFlag,
+  getIsErrorPageServerSnapshot,
+  subscribeErrorPage,
 } from '@/contexts/ErrorPageContext';
 import { I18nProvider, useTranslations } from '@/lib/i18n';
 import en from '@/locales/en';
 import ro from '@/locales/ro';
 import { useAuth } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { ExternalNavigation, ExternalNavigationWithAuth } from './Navbar';
 
-// List of public routes that don't require authentication
-const publicRoutes = [
-  '/',
+// Public page routes, mirroring middleware.ts's isPublicRoute matcher (the
+// middleware is what actually decides auth; this list only decides whether
+// the shell may render before Clerk finishes loading). Prefix-matched like
+// the middleware's `(.*)` entries. The lists drifting apart is exactly how
+// /unlock spent a day behind an infinite "Loading your experience" loader.
+const publicRoutePrefixes = [
+  '/workflow-showcase',
   '/about',
   '/login',
   '/sign-up',
+  '/forgot-password',
+  '/reset-password',
+  '/verify',
+  '/assistant',
+  '/unlock',
+  '/gdpr',
+  '/contact',
+  '/help',
+  '/privacy',
+  '/terms',
+  '/pricing',
+  '/cookies',
+  '/guides',
+  '/blogs',
+  '/cookie-policy',
+  '/term-of-service',
+  '/privacy-policy',
+  '/sitemap',
+  '/accessibility',
+  '/relaunch',
+  '/faq',
+  '/library',
   '/admin',
-  '/admin/login',
 ];
+
+function isPublicPath(pathname: string): boolean {
+  if (pathname === '/') return true;
+  return publicRoutePrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+}
 
 // Routes where we hide the default navbar (they have their own header)
 const noNavbarRoutes = [
   '/',
+  '/workflow-showcase',
   '/404',
   // Auth screens render their own <SiteHeader mode="auth" /> via AuthLayout —
   // without these the global ExternalNavigation stacks a second header on top.
@@ -58,7 +92,24 @@ export function NavigationWrapper() {
   const [isMounted, setIsMounted] = useState(false);
   const [isDraftLoading, setIsDraftLoading] = useState(false);
   const loaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isPublicRoute = publicRoutes.includes(pathname) || isTeamRoute;
+  const isPublicRoute = isPublicPath(pathname) || isTeamRoute;
+
+  // Clerk failing to load must degrade to a rendered page, never to a loader
+  // that outlives the visitor's patience: a broken auth handshake once held a
+  // fully server-rendered page behind the spinner indefinitely. After the
+  // grace period the shell renders and auth-dependent chrome hydrates
+  // whenever Clerk recovers.
+  const CLERK_LOAD_GRACE_MS = 5_000;
+  const [authWaitExpired, setAuthWaitExpired] = useState(false);
+  useEffect(() => {
+    if (isLoaded) return;
+    const timer = setTimeout(
+      () => setAuthWaitExpired(true),
+      CLERK_LOAD_GRACE_MS
+    );
+    return () => clearTimeout(timer);
+  }, [isLoaded]);
+  const authSettled = isLoaded || authWaitExpired;
   const { t } = useTranslations();
   const [hasSeenInitial, setHasSeenInitial] = useState(false);
   const isDashboardRoute = pathname === '/dashboard';
@@ -69,47 +120,15 @@ export function NavigationWrapper() {
     isTeamRoute ||
     isClientDashboard ||
     isLibraryRoute;
-  const [, setIsErrorPage] = useState(false);
-
-  // Check synchronously during render to catch error pages immediately
-  // This ensures the navbar is hidden even on the first render
-  const errorPageFlag = getIsErrorPage();
+  // Subscribed rather than polled: the flag is published by ErrorPageLayout in
+  // a layout effect, so this re-renders before paint and the two headers never
+  // appear together.
+  const errorPageFlag = useSyncExternalStore(
+    subscribeErrorPage,
+    getIsErrorPage,
+    getIsErrorPageServerSnapshot
+  );
   const shouldHideNavbar = errorPageFlag || isNoNavbarRoute;
-
-  // Sync state with flag for useEffect dependencies
-  useEffect(() => {
-    if (isTeamRoute) return; // Skip for team routes
-    setIsErrorPage(errorPageFlag);
-  }, [errorPageFlag, isTeamRoute]);
-
-  // Poll periodically to catch error pages that set the flag after NavigationWrapper renders
-  useEffect(() => {
-    const checkErrorPage = () => {
-      const currentFlag = getIsErrorPage();
-      setIsErrorPage(currentFlag);
-    };
-
-    // Poll periodically to catch error pages that render after NavigationWrapper
-    const interval = setInterval(checkErrorPage, 100);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [pathname]);
-
-  // Reset error page flag when pathname changes (user navigates away)
-  useEffect(() => {
-    // Small delay to allow error pages to set the flag if needed
-    const timer = setTimeout(() => {
-      if (!errorPageFlag && getIsErrorPage()) {
-        // Reset the flag if we're not on an error page anymore
-        resetErrorPageFlag();
-        setIsErrorPage(false);
-      }
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [pathname, errorPageFlag]);
 
   // Prevent SSR flash by waiting for client-side mounting
   useEffect(() => {
@@ -158,7 +177,7 @@ export function NavigationWrapper() {
 
   // Persist that we've already shown the initial loader once per tab session
   useEffect(() => {
-    if (!hasSeenInitial && isMounted && (isPublicRoute || isLoaded)) {
+    if (!hasSeenInitial && isMounted && (isPublicRoute || authSettled)) {
       try {
         window.sessionStorage.setItem('fs_seen_initial_v1', '1');
       } catch {
@@ -166,12 +185,12 @@ export function NavigationWrapper() {
       }
       setHasSeenInitial(true);
     }
-  }, [hasSeenInitial, isMounted, isLoaded, isPublicRoute]);
+  }, [hasSeenInitial, isMounted, authSettled, isPublicRoute]);
 
   // Show the general app loader once on the very first load of the app (public or protected)
   // Never show for team routes - they handle their own loading
   const shouldShowInitial =
-    !isTeamRoute && !hasSeenInitial && (!isMounted || !isLoaded);
+    !isTeamRoute && !hasSeenInitial && (!isMounted || !authSettled);
 
   // Consolidate all loading conditions to prevent duplicate loading screens
   // Never show for team routes
@@ -180,7 +199,7 @@ export function NavigationWrapper() {
     (shouldShowInitial ||
       isDraftLoading ||
       !isMounted ||
-      (!isPublicRoute && !isLoaded));
+      (!isPublicRoute && !authSettled));
 
   // Don't render navigation for template previews, error pages, or team routes
   // Check this FIRST before any loading logic to prevent flicker

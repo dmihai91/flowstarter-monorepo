@@ -1,4 +1,5 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { quoteMajorFrom } from '@/lib/flowstarter/quote';
 import { NextResponse } from 'next/server';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 
@@ -26,7 +27,7 @@ export async function GET() {
   const { data: workspaces, error } = await supabase
     .from('workspaces')
     .select(
-      `id, name, concierge_stage, setup_fee, created_at, updated_at,
+      `id, name, concierge_stage, setup_fee, final_value_minor, created_at, updated_at,
        client_name, client_email, client_phone, client_business_name,
        tier_name, deploy_status, commerce_mode, commerce_product_type,
        commerce_provider, commerce_status, commerce_product_count`
@@ -65,7 +66,7 @@ export async function GET() {
     const hasCommerce = commerceMode !== 'none';
     if (ex) {
       ex.projectCount++;
-      ex.totalFee += Number(w.setup_fee ?? 0);
+      ex.totalFee += quoteMajorFrom(w);
       ex.stages.push(w.concierge_stage ?? 'intake');
       ex.deployStatuses.push(w.deploy_status ?? 'pending');
       if (w.tier_name) ex.tiers.push(w.tier_name);
@@ -85,7 +86,7 @@ export async function GET() {
         phone: w.client_phone || '',
         businessName: w.client_business_name || '',
         projectCount: 1,
-        totalFee: Number(w.setup_fee ?? 0),
+        totalFee: quoteMajorFrom(w),
         stages: [w.concierge_stage ?? 'intake'],
         tiers: w.tier_name ? [w.tier_name] : [],
         deployStatuses: [w.deploy_status ?? 'pending'],

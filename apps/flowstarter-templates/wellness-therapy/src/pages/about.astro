@@ -41,6 +41,10 @@ const pageTitle = `About — ${(siteLabels as any).siteMeta?.title ?? ''}`;
     display: flex;
     flex-direction: column;
     gap: var(--about-page-gap, 120px);
+    /* The zigzag reveal parks parts sideways before they animate in;
+       without this the right-shifted ones widen the page on phones and the
+       whole site scrolls sideways. */
+    overflow-x: clip;
   }
 
   :global(html:not(.js)) .about-page :global([data-about-reveal]),

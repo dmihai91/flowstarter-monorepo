@@ -5,9 +5,10 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import Layout from '../layouts/Layout.astro';
 import AnimatedWordTitle from '../components/shared/AnimatedWordTitle.astro';
+import { pageTitle } from '../lib/site-data';
 ---
 
-<Layout title="Our Work — Hearthstone Joinery">
+<Layout title={pageTitle('Our Work')}>
   <Header activeIndex={1} />
   <main class="work-page">
 
@@ -48,7 +49,7 @@ import AnimatedWordTitle from '../components/shared/AnimatedWordTitle.astro';
     text-align: center;
   }
 
-  .work-hero__title {
+  :global(.work-hero__title) {
     font-family: var(--font-title);
     font-size: clamp(3rem, 7vw, 6.5rem);
     font-weight: var(--fw-headline);

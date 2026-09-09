@@ -1,0 +1,167 @@
+/**
+ * The local (no-GitHub, no-Hetzner) end of a full-site build.
+ *
+ * Production's `GitHubPullRequestPublisher` hands a reviewer a draft PR. This
+ * hands them a running site instead: it packages the build output, keeps the
+ * tarball on this worker where the deploy-agent can fetch it, and asks
+ * flowstarter-main to run the ordinary `deploySite` path over it. Nothing in
+ * the deploy chain is bypassed or simulated — same tarball format, same agent
+ * endpoint, same `deployments` ledger row — so the thing this proves on a
+ * laptop is the thing that runs in production.
+ *
+ * The tenant's Cal.com embed is re-applied over the packaged output. The
+ * worker already injects it into `src/pages/book.astro` before the agent runs,
+ * which is what a real `astro build` carries through; re-running it over the
+ * output covers the tree that was never built from Astro sources, so a client
+ * never gets the blurred preview demo on the site they paid for.
+ */
+
+import { injectCalCom, packSiteTarball, type ArchiveFile, type FileMap } from '@flowstarter/agentic-codegen';
+import type { PullRequestPublisher } from '@flowstarter/agentic-codegen';
+import { ArtifactStore } from './artifacts';
+import { collectSiteFiles, resolveSiteOutputDir } from './site-output';
+
+export class LocalPublishError extends Error {}
+
+export interface LocalSitePublisherOptions {
+  store: ArtifactStore;
+  /** flowstarter-main's origin; owns deploySite and the deployments ledger. */
+  flowstarterMainUrl: string;
+  /** Same secret dispatch is signed with — the internal deploy route checks it. */
+  sharedSecret: string;
+  /** Relative to the site root; falls back to the root when absent. */
+  outputDir: string;
+  /** Resolved when the deploy route reports no URL of its own. */
+  stagingUrlTemplate: string;
+  fetchImpl?: typeof globalThis.fetch;
+  requestTimeoutMs?: number;
+  onProgress?: (message: string) => void;
+}
+
+interface DeployResponse {
+  siteUrl?: string | null;
+  deployment?: { deploymentId?: string; status?: string; detail?: string | null };
+}
+
+export class LocalSitePublisher implements PullRequestPublisher {
+  constructor(private readonly options: LocalSitePublisherOptions) {}
+
+  async create(input: {
+    projectId: string;
+    branch: string;
+    worktreePath: string;
+    commitSha: string;
+    siteRoot?: string;
+    calComUrl?: string | null;
+  }): Promise<{ pullRequestUrl: string; stagingUrl: string }> {
+    const siteRoot = input.siteRoot ?? input.worktreePath;
+    const outputDir = await resolveSiteOutputDir(
+      siteRoot,
+      this.options.outputDir,
+    );
+    const collected = await collectSiteFiles(outputDir);
+    const files = withCalCom(collected, input.calComUrl ?? null);
+    this.options.onProgress?.(
+      `packaging ${files.length} files from ${outputDir}`,
+    );
+
+    const artifact = await this.options.store.put(
+      input.projectId,
+      packSiteTarball(files),
+    );
+    this.options.onProgress?.(
+      `artifact ${artifact.sizeBytes} bytes at ${artifact.url}`,
+    );
+
+    const siteUrl = await this.deploy({
+      workspaceId: input.projectId,
+      artifactUrl: artifact.url,
+      artifactSha256: artifact.sha256,
+      commitSha: input.commitSha,
+    });
+
+    return {
+      // No pull request exists in this mode, and pretending otherwise would
+      // put a dead github.com link on the job. The artifact URL is the honest
+      // answer to "what did this build produce".
+      pullRequestUrl: artifact.url,
+      stagingUrl:
+        siteUrl ??
+        this.options.stagingUrlTemplate.replace(
+          '{projectId}',
+          input.projectId.toLowerCase(),
+        ),
+    };
+  }
+
+  private async deploy(body: {
+    workspaceId: string;
+    artifactUrl: string;
+    artifactSha256: string;
+    commitSha: string;
+  }): Promise<string | null> {
+    const fetchImpl = this.options.fetchImpl ?? globalThis.fetch;
+    const url = `${this.options.flowstarterMainUrl.replace(/\/$/, '')}/api/internal/build/deploy`;
+    let response: Response;
+    try {
+      response = await fetchImpl(url, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${this.options.sharedSecret}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(this.options.requestTimeoutMs ?? 120_000),
+      });
+    } catch (error) {
+      throw new LocalPublishError(
+        `deploy request to ${url} failed: ${
+          error instanceof Error ? error.message : 'unknown transport error'
+        }`,
+      );
+    }
+
+    const text = await response.text();
+    if (!response.ok) {
+      throw new LocalPublishError(
+        `flowstarter-main rejected the deploy with ${response.status}: ${text.slice(0, 500)}`,
+      );
+    }
+    let parsed: DeployResponse;
+    try {
+      parsed = JSON.parse(text) as DeployResponse;
+    } catch {
+      throw new LocalPublishError('deploy response was not JSON');
+    }
+    if (parsed.deployment?.status && parsed.deployment.status !== 'live') {
+      throw new LocalPublishError(
+        `deploy finished as "${parsed.deployment.status}": ${
+          parsed.deployment.detail ?? 'no detail'
+        }`,
+      );
+    }
+    return parsed.siteUrl ?? null;
+  }
+}
+
+/**
+ * `injectCalCom` is a pure `FileMap` transform, and the archive carries binary
+ * entries the map has no room for. Only text entries are handed to it, and
+ * only the ones it changed are written back.
+ */
+function withCalCom(
+  files: readonly ArchiveFile[],
+  calUrl: string | null,
+): ArchiveFile[] {
+  if (!calUrl) return [...files];
+  const map: FileMap = {};
+  for (const file of files) {
+    if (file.encoding !== 'base64') map[file.path] = file.content;
+  }
+  const injected = injectCalCom(map, calUrl);
+  return files.map((file) =>
+    file.encoding !== 'base64' && injected[file.path] !== undefined
+      ? { path: file.path, content: injected[file.path] as string }
+      : file,
+  );
+}

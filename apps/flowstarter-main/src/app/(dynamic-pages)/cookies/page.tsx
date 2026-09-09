@@ -112,25 +112,25 @@ export default function CookiesPage() {
           <h2>2. The categories we use</h2>
           <ul>
             <li>
-              <strong>Strictly necessary</strong> — required for the site to
+              <strong>Strictly necessary</strong>: required for the site to
               function. These keep you signed in, remember your consent choice,
               and protect against cross-site request forgery. They are set
               whether or not you accept the cookie banner.
             </li>
             <li>
-              <strong>Functional</strong> — small comforts such as your
+              <strong>Functional</strong>: small comforts such as your
               light/dark theme preference and your chosen language. Optional; if
               you decline, the site falls back to system defaults.
             </li>
             <li>
-              <strong>Analytics</strong> — we currently use Plausible, a
+              <strong>Analytics</strong>: we currently use Plausible, a
               privacy-friendly analytics tool that does <em>not</em> set
               cookies. We do not run Google Analytics, Facebook Pixel, or any
               cross-site advertising tracker.
             </li>
             <li>
-              <strong>Advertising</strong> — we do not use advertising cookies
-              of any kind.
+              <strong>Advertising</strong>: we do not use advertising cookies of
+              any kind.
             </li>
           </ul>
 
@@ -232,24 +232,23 @@ export default function CookiesPage() {
             decline non-essential cookies on your first visit. You can change
             your choice at any time by clearing the
             <code> flowstarter_cookie_consent </code> cookie in your browser
-            settings — the banner will reappear on the next visit.
+            settings. The banner will reappear on the next visit.
           </p>
           <p>You can also manage cookies directly in your browser:</p>
           <ul>
             <li>
-              <strong>Chrome</strong> — Settings → Privacy and security →
-              Cookies and other site data.
+              <strong>Chrome</strong>: Settings → Privacy and security → Cookies
+              and other site data.
             </li>
             <li>
-              <strong>Firefox</strong> — Settings → Privacy &amp; Security →
+              <strong>Firefox</strong>: Settings → Privacy &amp; Security →
               Cookies and Site Data.
             </li>
             <li>
-              <strong>Safari</strong> — Settings → Privacy → Manage Website
-              Data.
+              <strong>Safari</strong>: Settings → Privacy → Manage Website Data.
             </li>
             <li>
-              <strong>Edge</strong> — Settings → Cookies and site permissions →
+              <strong>Edge</strong>: Settings → Cookies and site permissions →
               Manage and delete cookies and site data.
             </li>
           </ul>

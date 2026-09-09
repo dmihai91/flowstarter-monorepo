@@ -34,7 +34,7 @@ export function GalleryItem({ template, index, total }: GalleryItemProps) {
       href={detailHref}
       className="item reveal"
       data-delay={Math.min(index, 6)}
-      aria-label={`${template.title} — ${template.kicker}`}
+      aria-label={`${template.title}: ${template.kicker}`}
     >
       <div className="item-frame">
         {template.thumbnail ? (

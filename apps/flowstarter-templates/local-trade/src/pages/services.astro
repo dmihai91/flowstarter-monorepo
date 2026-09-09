@@ -10,9 +10,10 @@ import CTASection from '../components/CTASection.astro';
 import { getServicesPageData } from '../lib/site-data';
 
 const servicesPage = getServicesPageData();
+import { pageTitle } from '../lib/site-data';
 ---
 
-<Layout title="Services — Hearthstone Joinery">
+<Layout title={pageTitle('Services')}>
   <Header activeIndex={3} />
   <main class="services-page">
     <ServicesHeroSection

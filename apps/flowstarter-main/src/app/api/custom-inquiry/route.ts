@@ -169,7 +169,7 @@ function buildAdminEmail(
   const projectTypes = inquiry.projectTypes
     .map((t) => PROJECT_TYPE_LABELS[t] || t)
     .join(', ');
-  const subject = `New Custom Inquiry from ${inquiry.companyName} — ${
+  const subject = `New Custom Inquiry from ${inquiry.companyName}: ${
     BUDGET_LABELS[inquiry.budgetRange]
   }`;
   const dashboardLink = inquiryId

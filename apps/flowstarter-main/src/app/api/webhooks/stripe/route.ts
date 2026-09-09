@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import { sendEmail } from '@/lib/email';
+import {
+  enqueueFullBuildFromDeposit,
+  enqueueFullBuildFromDepositInvoice,
+} from '@/lib/flowstarter/deposit-workflow';
+import { provisionGuestDeposit } from '@/lib/flowstarter/guest-deposit';
+import {
+  CHANGE_REQUEST_CHECKOUT_KIND,
+  settleChangeRequestCheckout,
+} from '@/lib/flowstarter/change-request-checkout';
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -24,7 +33,10 @@ function workspaceIdFromMetadata(
   return undefined;
 }
 
-async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
+async function handleInvoicePaymentSucceeded(
+  event: Stripe.Event,
+  invoice: Stripe.Invoice
+) {
   const workspaceId = workspaceIdFromMetadata(invoice.metadata);
   const invoiceType = invoice.metadata?.invoiceType;
   if (!workspaceId || !invoiceType) return;
@@ -40,19 +52,25 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
         outstanding_payment: false,
       })
       .eq('id', workspaceId);
+
+    // A concierge workspace also advances PREVIEW_READY -> DEPOSIT_PAID and
+    // enqueues the full-site build. Marking the invoice paid without this is
+    // what stalled the lifecycle: the money landed and no build was queued.
+    const enqueued = await enqueueFullBuildFromDepositInvoice(event, invoice);
+    if (enqueued) {
+      console.info(
+        `[Stripe] deposit invoice queued build ${enqueued.jobId} for workspace ${workspaceId}` +
+          (enqueued.duplicate ? ' (redelivery)' : '')
+      );
+    }
   }
   if (invoiceType === 'final') {
-    const trialEnd = new Date();
-    trialEnd.setDate(trialEnd.getDate() + 30);
     await supabase
       .from('workspaces')
       .update({
         final_status: 'paid',
         final_paid_at: now,
         outstanding_payment: false,
-        setup_go_live_at: now,
-        subscription_status: 'trial',
-        subscription_trial_ends: trialEnd.toISOString(),
       })
       .eq('id', workspaceId);
   }
@@ -243,7 +261,7 @@ async function handleBookingDepositPaid(
   try {
     await sendEmail({
       to: notifyTo,
-      subject: `Deposit paid — ${m['name'] || 'prospect'} (${
+      subject: `Deposit paid: ${m['name'] || 'prospect'} (${
         m['tier']
       }) ${amount}`,
       replyTo: m['email'] || undefined,
@@ -266,7 +284,7 @@ async function handleBookingDepositPaid(
       m['tier'] || ''
     }</td></tr>
     <tr><td style="padding:3px 10px;color:#6b7280;">Monthly plan</td><td style="padding:3px 10px;">${
-      m['subscription'] || '—'
+      m['subscription'] || '–'
     }</td></tr>
     <tr><td style="padding:3px 10px;color:#6b7280;">Source</td><td style="padding:3px 10px;">${
       m['source'] || ''
@@ -313,8 +331,30 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     switch (event.type) {
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        // Two deposit shapes, told apart by metadata.kind. Each handler returns
+        // null for the other's events, so both can run without either seeing
+        // payments that are not its own.
+        await enqueueFullBuildFromDeposit(event, paymentIntent);
+        const guest = await provisionGuestDeposit(event, paymentIntent);
+        if (guest) {
+          // No email address and no password: this line goes to a log an
+          // operator reads over somebody's shoulder.
+          console.info(
+            `[Stripe] guest deposit provisioned workspace ${guest.workspaceId} ` +
+              `(account ${guest.accountKind}, build ${guest.jobId})` +
+              (guest.alreadyProvisioned ? ' (redelivery)' : '') +
+              (guest.emailed || guest.alreadyProvisioned
+                ? ''
+                : ' -- WELCOME EMAIL FAILED, client cannot sign in')
+          );
+        }
+        break;
+      }
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(
+          event,
           event.data.object as Stripe.Invoice
         );
         break;
@@ -329,11 +369,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       case 'customer.subscription.deleted':
         await handleSubscriptionEvent(event.data.object as Stripe.Subscription);
         break;
-      case 'checkout.session.completed':
-        await handleBookingDepositPaid(
-          event.data.object as Stripe.Checkout.Session
-        );
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.metadata?.['kind'] === CHANGE_REQUEST_CHECKOUT_KIND) {
+          const settled = await settleChangeRequestCheckout(session);
+          console.info(
+            `[Stripe] change request ${settled.changeRequestId} ${settled.outcome} (${session.id})`
+          );
+        } else {
+          await handleBookingDepositPaid(session);
+        }
         break;
+      }
       default:
         break;
     }

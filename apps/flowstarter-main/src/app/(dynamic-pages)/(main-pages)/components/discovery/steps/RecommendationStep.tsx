@@ -3,10 +3,8 @@ import {
   type DiscoveryData,
   type Recommendation,
   type Tier,
-  BOOKING_DEPOSIT_PERCENT,
   TIER_MONTHLY_FROM,
   TIER_SETUP_FROM,
-  bookingDepositFor,
   recommendTier,
 } from '../discovery.logic';
 
@@ -199,47 +197,16 @@ export function RecommendationStep({
         </div>
       </div>
 
-      {/* Deposit notice — uses the user's currently selected tier so the amount
-          updates if they pick a different option. */}
+      {/* Payment milestone. The amount is intentionally absent until the
+          generated preview has an approved, server-owned final quote. */}
       {data.selectedTier && (
-        <div className="rounded-lg border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--purple-primary)]/15 text-[var(--purple-primary)]">
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="text-sm font-semibold text-[var(--fs-ink)]">
-                  {t('landing.discovery.recommendation.deposit.title')}
-                </p>
-                <p className="text-sm font-bold text-[var(--purple-primary)]">
-                  {bookingDepositFor(data.selectedTier as Tier)}
-                  <span className="ml-1 text-[11px] font-medium text-[var(--fs-ink-faint)]">
-                    ({BOOKING_DEPOSIT_PERCENT}
-                    {t(
-                      'landing.discovery.recommendation.deposit.percentSuffix'
-                    )}
-                    )
-                  </span>
-                </p>
-              </div>
-              <p className="mt-1 text-[12px] leading-snug text-[var(--fs-ink-faint)]">
-                {t('landing.discovery.recommendation.deposit.body')}
-              </p>
-            </div>
-          </div>
+        <div className="border-t border-[var(--fs-rule)] pt-4">
+          <p className="text-sm font-semibold text-[var(--fs-ink)]">
+            {t('landing.discovery.recommendation.deposit.title')}
+          </p>
+          <p className="mt-1 text-[12px] leading-snug text-[var(--fs-ink-faint)]">
+            {t('landing.discovery.recommendation.deposit.body')}
+          </p>
         </div>
       )}
 

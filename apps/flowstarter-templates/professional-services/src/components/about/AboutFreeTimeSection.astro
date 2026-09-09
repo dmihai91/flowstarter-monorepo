@@ -43,14 +43,14 @@ const { freeTime } = Astro.props;
     text-align: left;
   }
 
-  .about-free-time-section__title {
+  :global(.about-free-time-section__title) {
     max-width: 100%;
     margin-bottom: 1.5rem;
     line-height: 1.05;
     text-wrap: balance;
   }
 
-  .about-free-time-section__title :global(.multi-line-title__accent),
+  :global(.about-free-time-section__title) :global(.multi-line-title__accent),
   .about-free-time-section__title :global(.multi-line-title__suffix) {
     display: inline;
     white-space: normal;

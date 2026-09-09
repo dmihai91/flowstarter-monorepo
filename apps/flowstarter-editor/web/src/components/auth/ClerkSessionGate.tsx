@@ -138,8 +138,8 @@ function ClerkSessionGateImpl({
   }, [resolutionOverride, bypass, waitingForTicketRedemption]);
 
   if (bypass) {
-    // Dev mode: no Clerk session, but downstream code (PowerUserOnly,
-    // UsageChip, etc.) calls useTier() which throws without a provider.
+    // Dev mode: no Clerk session, but downstream code (PowerUserOnly, etc.)
+    // calls useTier() which throws without a provider.
     // Wire a synthetic admin identity so the editor surfaces work.
     const devIdentity = {
       userId: "dev-bypass",

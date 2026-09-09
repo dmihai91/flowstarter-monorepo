@@ -6,7 +6,7 @@
  */
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { join, extname, resolve } from 'node:path';
+import { join, extname, resolve, sep } from 'node:path';
 import { chromium } from 'playwright';
 
 const distDir = resolve(process.argv[2] ?? '');
@@ -22,8 +22,17 @@ const server = createServer(async (req, res) => {
   try {
     let p = decodeURIComponent((req.url ?? '/').split('?')[0]);
     if (p.endsWith('/')) p += 'index.html';
-    let fp = join(distDir, p);
+    // Strip leading slash so join stays under distDir
+    const rel = p.replace(/^\/+/, '');
+    let fp = resolve(join(distDir, rel));
+    const root = resolve(distDir);
+    if (fp !== root && !fp.startsWith(root + sep)) {
+      res.writeHead(400); res.end('bad path'); return;
+    }
     try { if ((await stat(fp)).isDirectory()) fp = join(fp, 'index.html'); } catch {}
+    if (fp !== root && !fp.startsWith(root + sep)) {
+      res.writeHead(400); res.end('bad path'); return;
+    }
     const body = await readFile(fp);
     res.writeHead(200, { 'content-type': MIME[extname(fp)] ?? 'application/octet-stream' });
     res.end(body);

@@ -1,11 +1,18 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { FileNode } from '../types/templates.js';
+import { resolveUnder } from './safe-path.js';
 
 // Normalize path separators to forward slashes (POSIX style)
 // This ensures consistent paths regardless of OS
 function normalizePath(p: string): string {
 	return p.replace(/\\/g, '/');
+}
+
+function isSafeEntryName(name: string): boolean {
+	if (!name || name === '.' || name === '..') return false;
+	if (name.includes('\0') || name.includes('/') || name.includes('\\')) return false;
+	return true;
 }
 
 const EXCLUDED_DIRS = new Set([
@@ -83,6 +90,7 @@ export async function collectScaffoldAssets(
 	async function walk(dir: string, rel: string): Promise<void> {
 		const entries = await fs.readdir(dir, { withFileTypes: true });
 		for (const entry of entries) {
+			if (!isSafeEntryName(entry.name)) continue;
 			const fullPath = path.join(dir, entry.name);
 			const relPath = rel ? `${rel}/${entry.name}` : entry.name;
 			if (entry.isDirectory()) {
@@ -134,13 +142,15 @@ export async function buildFileTree(
 		const entries = await fs.readdir(dirPath);
 
 		for (const entry of entries) {
-			if (EXCLUDED_DIRS.has(entry) || EXCLUDED_FILES.has(entry)) {
+			if (!isSafeEntryName(entry) || EXCLUDED_DIRS.has(entry) || EXCLUDED_FILES.has(entry)) {
 				continue;
 			}
 
-			const fullPath = path.join(dirPath, entry);
+			const fullPath = resolveUnder(dirPath, entry);
 			// Normalize to forward slashes for cross-platform compatibility
-			const relPath = normalizePath(path.join(relativePath, entry));
+			const relPath = normalizePath(
+				relativePath ? `${relativePath}/${entry}` : entry
+			);
 
 			try {
 				const childNode = await buildFileTree(fullPath, relPath);
@@ -204,7 +214,8 @@ export async function getAllFiles(
 
 	async function traverse(node: FileNode, basePath: string) {
 		if (node.type === 'file') {
-			const fullPath = path.join(basePath, node.path);
+			// node.path is relative; reject traversal before join
+			const fullPath = resolveUnder(basePath, ...node.path.split('/').filter(Boolean));
 			const content = await readFileContent(fullPath);
 			files.push({ path: node.path, content });
 		} else if (node.children) {
@@ -228,7 +239,8 @@ export async function countLinesOfCode(
 		const entries = await fs.readdir(dir, { withFileTypes: true });
 
 		for (const entry of entries) {
-			const fullPath = path.join(dir, entry.name);
+			if (!isSafeEntryName(entry.name)) continue;
+			const fullPath = resolveUnder(dir, entry.name);
 
 			if (entry.isDirectory()) {
 				if (!EXCLUDED_DIRS.has(entry.name)) {

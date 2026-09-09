@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import * as fs from 'fs';
 import type { TemplateFetcher } from './utils/template-fetcher.js';
 import {
@@ -14,15 +15,34 @@ import { PORT, HOST, CORS_ORIGIN, PUBLIC_DIR, TEMPLATES_DIR } from './config.js'
 export async function startHttpServer(fetcher: TemplateFetcher) {
 	const app = express();
 
-	// CORS configuration
-	app.use(
-		cors({
-			origin: CORS_ORIGIN,
-			credentials: true,
-			methods: ['GET', 'POST', 'OPTIONS'],
-			allowedHeaders: ['Content-Type', 'Authorization'],
-		})
-	);
+	// CORS: reflect request origin when unset/`*`; never send Access-Control-Allow-Origin: *
+	const corsOptions =
+		!CORS_ORIGIN || CORS_ORIGIN === '*'
+			? {
+					origin: true as const,
+					credentials: true,
+					methods: ['GET', 'POST', 'OPTIONS'],
+					allowedHeaders: ['Content-Type', 'Authorization'],
+				}
+			: {
+					origin: CORS_ORIGIN.includes(',')
+						? CORS_ORIGIN.split(',').map((o) => o.trim())
+						: CORS_ORIGIN,
+					credentials: true,
+					methods: ['GET', 'POST', 'OPTIONS'],
+					allowedHeaders: ['Content-Type', 'Authorization'],
+				};
+	app.use(cors(corsOptions));
+
+	// Basic rate limiting for filesystem-backed routes (CodeQL js/missing-rate-limiting)
+	const fsRateLimit = rateLimit({
+		windowMs: 60_000,
+		limit: 120,
+		standardHeaders: true,
+		legacyHeaders: false,
+	});
+	app.use('/api/templates', fsRateLimit);
+	app.use('/api/scaffold-to-convex', fsRateLimit);
 
 	// Parse JSON bodies ONLY for non-MCP endpoints
 	// The MCP endpoint needs raw body access for StreamableHTTP transport

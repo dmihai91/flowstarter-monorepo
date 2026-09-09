@@ -3,12 +3,19 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { getTemplateConfig } from '../framework-detection.js';
 import { TEMPLATES_DIR, PUBLIC_DIR, CORS_ORIGIN } from '../config.js';
+import {
+	assertSafeSlug,
+	escapeHtml,
+	isSafeSlug,
+	resolveUnder,
+	UnsafePathError,
+} from '../utils/safe-path.js';
 
 export function createStaticRoutes() {
 	const router = Router();
 
 	// Serve template static assets (handle both /assets/* and root level files)
-	router.all("/api/templates/:slug/*", (req, res, next) => {
+	router.all('/api/templates/:slug/*', (req, res, next) => {
 		const { slug } = req.params;
 
 		// Skip if it's a specific endpoint
@@ -20,25 +27,36 @@ export function createStaticRoutes() {
 			return next();
 		}
 
-		const templateDir = path.join(TEMPLATES_DIR, slug);
-		const templateConfig = getTemplateConfig(templateDir);
-		const assetsDir = templateConfig.buildDir;
+		if (!isSafeSlug(slug)) {
+			return res.status(400).send('Invalid template slug');
+		}
 
-		if (fs.existsSync(assetsDir)) {
+		try {
+			const templateDir = resolveUnder(TEMPLATES_DIR, slug);
+			const templateConfig = getTemplateConfig(templateDir);
+			const assetsDir = templateConfig.buildDir;
+
+			if (!fs.existsSync(assetsDir)) {
+				return res.status(404).send('Template not built');
+			}
+
 			// req.path already has the base route removed by Express
 			// e.g., for '/api/templates/slug/assets/file.js', req.path will be '/assets/file.js'
 			const filePath = req.path.startsWith('/')
-				? req.path
-				: '/' + req.path;
-			const fullPath = path.join(assetsDir, filePath);
+				? req.path.slice(1)
+				: req.path;
+			const fullPath = resolveUnder(assetsDir, filePath);
 
 			if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
 				res.sendFile(fullPath);
 			} else {
-				res.status(404).send(`Asset not found: ${filePath}`);
+				res.status(404).send('Asset not found');
 			}
-		} else {
-			res.status(404).send('Template not built');
+		} catch (err) {
+			if (err instanceof UnsafePathError) {
+				return res.status(400).send('Invalid path');
+			}
+			throw err;
 		}
 	});
 
@@ -46,7 +64,16 @@ export function createStaticRoutes() {
 	// This allows templates to work with their client-side routing from root
 	router.get('/:slug', (req, res, next) => {
 		const { slug } = req.params;
-		const templateDir = path.join(TEMPLATES_DIR, slug);
+		if (!isSafeSlug(slug)) {
+			return next();
+		}
+
+		let templateDir: string;
+		try {
+			templateDir = resolveUnder(TEMPLATES_DIR, slug);
+		} catch {
+			return next();
+		}
 
 		// Check if this is actually a template directory
 		if (
@@ -58,29 +85,35 @@ export function createStaticRoutes() {
 
 		const templateConfig = getTemplateConfig(templateDir);
 		const assetsDir = templateConfig.buildDir;
+		const safeSlug = assertSafeSlug(slug);
+		const escapedSlug = escapeHtml(safeSlug);
 
 		// Serve index.html for the template with rewritten asset paths
 		const indexPath = path.join(assetsDir, 'index.html');
 		if (fs.existsSync(indexPath)) {
 			let html = fs.readFileSync(indexPath, 'utf-8');
 			// Rewrite asset paths to include template slug
-			html = html.replace(/src="\/assets\//g, `src="/${slug}/assets/`);
-			html = html.replace(/href="\/assets\//g, `href="/${slug}/assets/`);
+			html = html.replace(/src="\/assets\//g, `src="/${safeSlug}/assets/`);
+			html = html.replace(/href="\/assets\//g, `href="/${safeSlug}/assets/`);
 			// Rewrite Astro asset paths
-			html = html.replace(/src="\/_astro\//g, `src="/${slug}/_astro/`);
-			html = html.replace(/href="\/_astro\//g, `href="/${slug}/_astro/`);
+			html = html.replace(/src="\/_astro\//g, `src="/${safeSlug}/_astro/`);
+			html = html.replace(/href="\/_astro\//g, `href="/${safeSlug}/_astro/`);
 			html = html.replace(
 				/src="\/manifest\.js"/g,
-				`src="/${slug}/manifest.js"`
+				`src="/${safeSlug}/manifest.js"`
 			);
 			// Inject basepath for TanStack Router
-			const basepathScript = `<script>window.__BASEPATH__ = '/${slug}';</script>`;
+			const basepathScript = `<script>window.__BASEPATH__ = '/${escapedSlug}';</script>`;
 			html = html.replace('<head>', `<head>${basepathScript}`);
 			// Allow iframe embedding from configured origins
 			res.setHeader('Content-Type', 'text/html');
 			res.removeHeader('X-Frame-Options');
-			const frameAncestors = CORS_ORIGIN === '*' ? '*' : `'self' ${CORS_ORIGIN}`;
-			res.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
+			const frameAncestors =
+				CORS_ORIGIN === '*' ? '*' : `'self' ${CORS_ORIGIN}`;
+			res.setHeader(
+				'Content-Security-Policy',
+				`frame-ancestors ${frameAncestors}`
+			);
 			res.send(html);
 		} else {
 			next();
@@ -89,7 +122,16 @@ export function createStaticRoutes() {
 
 	router.get('/:slug/*', (req, res, next) => {
 		const { slug } = req.params;
-		const templateDir = path.join(TEMPLATES_DIR, slug);
+		if (!isSafeSlug(slug)) {
+			return next();
+		}
+
+		let templateDir: string;
+		try {
+			templateDir = resolveUnder(TEMPLATES_DIR, slug);
+		} catch {
+			return next();
+		}
 
 		// Check if this is actually a template directory
 		if (
@@ -101,15 +143,20 @@ export function createStaticRoutes() {
 
 		const templateConfig = getTemplateConfig(templateDir);
 		const assetsDir = templateConfig.buildDir;
+		const safeSlug = assertSafeSlug(slug);
+		const escapedSlug = escapeHtml(safeSlug);
 
 		// For any route under /{slug}, try to serve assets
-		const requestPath = (req.params as any)[0] || '';
+		const requestPath = (req.params as { 0?: string })[0] || '';
 
 		if (requestPath) {
-			// Serve specific asset
-			const assetPath = path.join(assetsDir, requestPath);
-			if (fs.existsSync(assetPath) && fs.statSync(assetPath).isFile()) {
-				return res.sendFile(assetPath);
+			try {
+				const assetPath = resolveUnder(assetsDir, requestPath);
+				if (fs.existsSync(assetPath) && fs.statSync(assetPath).isFile()) {
+					return res.sendFile(assetPath);
+				}
+			} catch (err) {
+				if (!(err instanceof UnsafePathError)) throw err;
 			}
 		}
 
@@ -118,22 +165,29 @@ export function createStaticRoutes() {
 		if (fs.existsSync(indexPath)) {
 			let html = fs.readFileSync(indexPath, 'utf-8');
 			// Rewrite asset paths to include template slug
-			html = html.replace(/src="\/assets\//g, `src="/${slug}/assets/`);
-			html = html.replace(/href="\/assets\//g, `href="/${slug}/assets/`);
+			html = html.replace(/src="\/assets\//g, `src="/${safeSlug}/assets/`);
+			html = html.replace(/href="\/assets\//g, `href="/${safeSlug}/assets/`);
 			// Rewrite Astro asset paths
-			html = html.replace(/src="\/_astro\//g, `src="/${slug}/_astro/`);
-			html = html.replace(/href="\/_astro\//g, `href="/${slug}/_astro/`);
+			html = html.replace(/src="\/_astro\//g, `src="/${safeSlug}/_astro/`);
+			html = html.replace(/href="\/_astro\//g, `href="/${safeSlug}/_astro/`);
 			html = html.replace(
 				/src="\/manifest\.js"/g,
-				`src="/${slug}/manifest.js"`
+				`src="/${safeSlug}/manifest.js"`
 			);
 			// Add base tag for client-side routing to work correctly
-			html = html.replace('<head>', `<head><base href="/${slug}/">`);
+			html = html.replace(
+				'<head>',
+				`<head><base href="/${escapedSlug}/">`
+			);
 			// Allow iframe embedding from configured origins
 			res.setHeader('Content-Type', 'text/html');
 			res.removeHeader('X-Frame-Options');
-			const frameAncestors = CORS_ORIGIN === '*' ? '*' : `'self' ${CORS_ORIGIN}`;
-			res.setHeader('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
+			const frameAncestors =
+				CORS_ORIGIN === '*' ? '*' : `'self' ${CORS_ORIGIN}`;
+			res.setHeader(
+				'Content-Security-Policy',
+				`frame-ancestors ${frameAncestors}`
+			);
 			res.send(html);
 		} else {
 			next();

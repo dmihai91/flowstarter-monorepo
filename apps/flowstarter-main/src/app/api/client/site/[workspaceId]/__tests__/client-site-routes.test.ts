@@ -33,6 +33,8 @@ import { POST as REVERT } from '../revert/route';
 import { POST as PUBLISH } from '../publish/route';
 import { POST as ESCALATE } from '../escalate/route';
 import { GET as PREVIEW } from '../preview/[[...path]]/route';
+import { GET as LIST_CHANGES } from '../changes/route';
+import { POST as RESPOND_CHANGE } from '../changes/[changeId]/respond/route';
 import { createFakeSiteSupabase, type Row } from './fake-site-supabase';
 
 vi.mock('server-only', () => ({}));
@@ -41,6 +43,7 @@ const WORKSPACE_A = '0f4e1088-8d8f-4f18-83b1-406cc292b23c';
 const WORKSPACE_B = '7c2a91b4-3d5e-4a17-9f88-1b2c3d4e5f60';
 const ASSET_CONFIRMED = '11111111-1111-4111-8111-111111111111';
 const ASSET_UNCONFIRMED = '22222222-2222-4222-8222-222222222222';
+const CHANGE_REQUEST = '44444444-4444-4444-8444-444444444444';
 
 // ── Clerk ──────────────────────────────────────────────────────────────────
 // Mirrors src/lib/__tests__/workspace-access.test.ts.
@@ -268,6 +271,11 @@ function params(workspaceId: string, path?: string[]) {
   };
 }
 
+/** The change-request routes carry a second segment in their params. */
+function changeParams(workspaceId: string, changeId: string) {
+  return { params: Promise.resolve({ workspaceId, changeId }) };
+}
+
 /** Everything the handlers read that is not the membership check itself. */
 function dataQueries() {
   return db.queries.filter((query) => query.table !== 'workspace_memberships');
@@ -348,6 +356,15 @@ describe('a workspace that is not yours', () => {
         'preview',
         () => PREVIEW(get('/x'), params(WORKSPACE_B, ['index.html'])),
       ],
+      ['changes:list', () => LIST_CHANGES(get('/x'), params(WORKSPACE_B))],
+      [
+        'changes:respond',
+        () =>
+          RESPOND_CHANGE(
+            post('/x', { decision: 'accept' }),
+            changeParams(WORKSPACE_B, CHANGE_REQUEST)
+          ),
+      ],
     ];
 
     for (const [name, call] of cases) {
@@ -359,6 +376,9 @@ describe('a workspace that is not yours', () => {
     expect(inlineEdit.calls).toHaveLength(0);
     expect(db.downloads).toEqual([]);
     expect(db.rows('site_versions')).toEqual([]);
+    // The other tenant's change requests were neither read nor answered.
+    expect(db.rows('change_requests')).toEqual([]);
+    expect(db.rows('project_events')).toEqual([]);
   });
 
   it('asks a signed-out caller to sign in rather than pretending it is missing', async () => {

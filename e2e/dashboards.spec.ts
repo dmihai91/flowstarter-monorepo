@@ -11,6 +11,7 @@
  */
 
 import { test, expect, type Page } from "@playwright/test";
+import { isNetlifyPreviewDrawerNoise } from "./support/console-noise";
 
 const BASE = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
@@ -40,11 +41,16 @@ async function assertNoRuntimeCrash(page: Page, path: string) {
       // Filter out the noisy 401-from-Clerk warnings; we expect those when
       // unauthenticated. Real React error boundaries surface different
       // messages.
+      //
+      // Also drop Netlify's Deploy Preview collaboration drawer being blocked
+      // by our own CSP: preview-only tooling the host injects, and the block
+      // is the CSP doing its job. See ./support/console-noise.ts.
       if (
         !text.includes("Failed to load resource") &&
         !text.includes("status of 401") &&
         !text.includes("status of 403") &&
-        !text.includes("net::ERR")
+        !text.includes("net::ERR") &&
+        !isNetlifyPreviewDrawerNoise(text)
       ) {
         consoleErrors.push(`console.error: ${text}`);
       }
@@ -81,4 +87,48 @@ test.describe("Client surfaces (unauthenticated)", () => {
       await assertNoRuntimeCrash(page, route);
     });
   }
+});
+
+// The console filter itself, checked in place. There is no root vitest
+// project to hang a unit test off, so it runs here: it is a pure function and
+// needs no page, and this is the spec that depends on it.
+test.describe("Netlify drawer console filter", () => {
+  // The real message, copied from a run against
+  // deploy-preview-37--flowstarter-landing.netlify.app.
+  const REAL_DRAWER_MESSAGE =
+    "Framing 'https://app.netlify.com/' violates the following Content " +
+    'Security Policy directive: "frame-src \'self\' ' +
+    "https://accounts.google.com https://*.clerk.accounts.dev " +
+    "https://challenges.cloudflare.com https://calendly.com https://cal.com " +
+    "https://*.cal.com https://ux-journey.com " +
+    "https://lebadusularticoledepescuit.ro https://www.openstreetmap.org " +
+    'https://*.daytonaproxy01.net". The request has been blocked.';
+
+  test("ignores the drawer's own violation", () => {
+    expect(isNetlifyPreviewDrawerNoise(REAL_DRAWER_MESSAGE)).toBe(true);
+  });
+
+  test("does not ignore a host that merely contains the drawer's name", () => {
+    const spoofed = REAL_DRAWER_MESSAGE.replace(
+      "https://app.netlify.com/",
+      "https://evil.example/app.netlify.com/",
+    );
+    expect(isNetlifyPreviewDrawerNoise(spoofed)).toBe(false);
+  });
+
+  test("does not ignore a CSP violation from another host", () => {
+    const other = REAL_DRAWER_MESSAGE.replace(
+      "https://app.netlify.com/",
+      "https://tracker.example/",
+    );
+    expect(isNetlifyPreviewDrawerNoise(other)).toBe(false);
+  });
+
+  test("does not ignore a non-CSP error that names the drawer", () => {
+    expect(
+      isNetlifyPreviewDrawerNoise(
+        "TypeError: failed to load https://app.netlify.com/widget.js",
+      ),
+    ).toBe(false);
+  });
 });

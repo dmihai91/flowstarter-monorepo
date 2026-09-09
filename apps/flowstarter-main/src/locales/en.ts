@@ -2238,7 +2238,7 @@ const en = {
   'landing.discovery.chat.q.fullName.prompt':
     'First things first: what should I call you?',
   'landing.discovery.chat.q.email.prompt':
-    'Good to meet you, {name}. Where should I send your preview?',
+    "Where should I send your preview once it's ready?",
   'landing.discovery.chat.q.businessName.prompt':
     "And what's the business called? If you haven't settled on a name, skip it. We can come back to it.",
   'landing.discovery.chat.q.description.prompt':
@@ -2273,6 +2273,102 @@ const en = {
     "That's everything I need. Here's the build package your answers point to. Change it if you would rather.",
   'landing.discovery.chat.q.subscription.prompt':
     "One last decision: the monthly plan. It's separate from the build, and it's what decides how much you can change yourself afterwards.",
+
+  // What the agent says back, before it asks the next thing. The line is
+  // picked by rule from the stored answer (`reflectionText`); {answer} is
+  // what they said, {quote} their first sentence, {list} a multi answer as
+  // "a, b and c".
+  'landing.discovery.chat.thinking': 'Thinking',
+  'landing.discovery.chat.typeInstead': 'Or type your answer…',
+  'landing.discovery.chat.tokens.and': 'and',
+  'landing.discovery.chat.reflect.skipped.0':
+    'No problem, we can come back to that.',
+  'landing.discovery.chat.reflect.skipped.1': 'Fine by me. Moving on.',
+  'landing.discovery.chat.reflect.skipped.2':
+    'Skipped. Nothing here is locked in.',
+  'landing.discovery.chat.q.fullName.reflect': 'Hey {name}, good to meet you.',
+  'landing.discovery.chat.q.email.reflect':
+    "Got it. The preview goes to {answer} once it's built, and nowhere else.",
+  'landing.discovery.chat.q.businessName.reflect':
+    "{answer}. That's the name I'll use everywhere the site says who you are.",
+  'landing.discovery.chat.q.businessName.reflect.skipped':
+    'No name yet is fine. I\'ll say "your business" for now and we can name it later.',
+  'landing.discovery.chat.q.description.reflect':
+    '"{quote}." That\'s the line I\'ll write the whole site around.',
+  'landing.discovery.chat.q.industry.reflect':
+    '{answer}, got it. That tells me which layouts and photography to start from.',
+  'landing.discovery.chat.q.industry.reflect.skipped':
+    "No box needed. I'll go by what you told me instead.",
+  'landing.discovery.chat.q.targetAudience.reflect':
+    'So the site talks to {quote}. Every headline gets written for them, not for everyone.',
+  'landing.discovery.chat.q.targetAudience.reflect.skipped':
+    "Fine, I'll write for the people your description points at.",
+  'landing.discovery.chat.q.links.reflect':
+    "Thanks. I'll read through that before I write a word, so the site sounds like you.",
+  'landing.discovery.chat.q.links.reflect.skipped':
+    "No problem. I'll work from your own words instead.",
+  'landing.discovery.chat.q.goal.reflect':
+    'So its job is to {list}. That decides what goes above the fold.',
+  'landing.discovery.chat.q.brandTone.reflect':
+    "{answer}: that's the voice, then. I'll keep every line to it.",
+  'landing.discovery.chat.q.brandTone.reflect.skipped':
+    "I'll pick a tone from how you described the business. You can change it later.",
+  'landing.discovery.chat.q.pageCount.reflect.lt-5':
+    'A small, focused site. Those usually convert best.',
+  'landing.discovery.chat.q.pageCount.reflect.5-7':
+    'Five to seven pages, the classic setup.',
+  'landing.discovery.chat.q.pageCount.reflect.8-15':
+    "A proper multi-page site. I'll plan the navigation carefully.",
+  'landing.discovery.chat.q.pageCount.reflect.15+':
+    "A big one. I'll structure it so things stay easy to find.",
+  'landing.discovery.chat.q.pageCount.reflect.unsure':
+    "No need to decide now. I'll propose a page list in the preview.",
+  'landing.discovery.chat.q.pageCount.reflect.skipped':
+    "I'll propose a page list in the preview and you can trim it.",
+  'landing.discovery.chat.q.timeline.reflect.asap':
+    'Fast it is. The preview is minutes away, and the build follows the deposit.',
+  'landing.discovery.chat.q.timeline.reflect.4-weeks':
+    'Four weeks is comfortable. Plenty of room for revisions.',
+  'landing.discovery.chat.q.timeline.reflect.1-3-months':
+    'No rush, then. We can take the time to get the content right.',
+  'landing.discovery.chat.q.timeline.reflect.flexible':
+    "Flexible works. We'll move at your pace.",
+  'landing.discovery.chat.q.commerceMode.reflect.none':
+    'No store, then. That keeps the build simpler and cheaper.',
+  'landing.discovery.chat.q.commerceMode.reflect.few-services':
+    'A few paid offers. Each one gets its own section with a clear call to action.',
+  'landing.discovery.chat.q.commerceMode.reflect.digital':
+    "Digital products. I'll plan a store with instant delivery after checkout.",
+  'landing.discovery.chat.q.commerceMode.reflect.physical':
+    "Physical products. I'll plan a store with shipping and stock in mind.",
+  'landing.discovery.chat.q.commerceMode.reflect.mixed':
+    "A bit of both. I'll set up a store that handles digital and shipped orders.",
+  'landing.discovery.chat.q.catalogSize.reflect.1-5':
+    'A small catalogue. Each item gets room to shine.',
+  'landing.discovery.chat.q.catalogSize.reflect.6-25':
+    "A mid-size catalogue. I'll add categories so it stays browsable.",
+  'landing.discovery.chat.q.catalogSize.reflect.26-100':
+    'A sizeable catalogue. Filters and search go in from the start.',
+  'landing.discovery.chat.q.catalogSize.reflect.100+':
+    "A large catalogue. I'll plan for search, filters and bulk import.",
+  'landing.discovery.chat.q.catalogSize.reflect.unsure':
+    'We can size the catalogue later. The store scales either way.',
+  'landing.discovery.chat.q.calComUrl.reflect':
+    "Booking link saved. The site's booking buttons will open it.",
+  'landing.discovery.chat.q.calComUrl.reflect.skipped':
+    'No booking link for now. You can add one from your project later.',
+  'landing.discovery.chat.q.customIntegrations.reflect':
+    "Noted. I'll flag that for the build so it's planned in, not bolted on.",
+  'landing.discovery.chat.q.customIntegrations.reflect.skipped':
+    'Nothing extra to plug in. Simple is good.',
+  'landing.discovery.chat.q.selectedTier.reflect.starter':
+    'Starter it is. Lean and quick to launch.',
+  'landing.discovery.chat.q.selectedTier.reflect.pro':
+    'Pro. Good choice for a site that needs room to grow.',
+  'landing.discovery.chat.q.selectedTier.reflect.commerce':
+    'Commerce. The store plan comes with it.',
+  'landing.discovery.chat.q.selectedTier.reflect.custom':
+    'Custom. Someone from our team will scope that with you before anything is built.',
 
   // Field labels
   'landing.discovery.fields.fullName': 'Your name',

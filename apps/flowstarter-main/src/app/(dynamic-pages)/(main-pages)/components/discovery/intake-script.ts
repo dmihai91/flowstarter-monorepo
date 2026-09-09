@@ -775,3 +775,112 @@ export function answerText(
   const option = question.options?.find((entry) => entry.value === raw);
   return option ? optionLabel(option, t) : raw;
 }
+
+// ---------------------------------------------------------------------------
+// Reactions
+// ---------------------------------------------------------------------------
+
+/**
+ * What the agent says back before it asks the next thing.
+ *
+ * A questionnaire moves straight from one field to the next. A conversation
+ * acknowledges what was just said, and the acknowledgement is specific: it
+ * picks up the answer, or the consequence of the answer, and only then moves
+ * on. Every reaction here is a rule, not a completion: the phrasing lives in
+ * the locale catalogue, the choice of phrasing is decided by the stored
+ * value, and the visitor's own words are folded in with `interpolate`.
+ *
+ * Resolution order, all in the catalogue:
+ *
+ *   skipped answer   → `…q.<id>.reflect.skipped`, else a rotating generic
+ *   chip with a value → `…q.<id>.reflect.<value>`, else `…q.<id>.reflect`
+ *   anything else    → `…q.<id>.reflect`
+ *
+ * A question with no catalogue entry at all reacts with nothing, which is a
+ * legitimate choice: the next question can be the reaction (the way "good to
+ * meet you, Maria" is), and an agent that says "got it" seventeen times in a
+ * row is a form with extra steps.
+ */
+export function reflectionText(
+  question: IntakeQuestion,
+  data: DiscoveryData,
+  t: (key: string) => string
+): string {
+  const lookup = (key: string): string | null => {
+    const text = t(key);
+    return text === key ? null : text;
+  };
+  const base = `${Q}${question.id}.reflect`;
+  const raw = question.value(data);
+  const said = answerText(question, data, t);
+
+  if (!raw && !said) {
+    const index = INTAKE_SCRIPT.findIndex((entry) => entry.id === question.id);
+    return (
+      lookup(`${base}.skipped`) ??
+      lookup(
+        `landing.discovery.chat.reflect.skipped.${
+          Math.max(index, 0) % SKIPPED_REFLECTION_VARIANTS
+        }`
+      ) ??
+      ''
+    );
+  }
+
+  const option = question.options?.find((entry) => entry.value === raw);
+  const template =
+    (option ? lookup(`${base}.${option.value}`) : null) ?? lookup(base);
+  if (!template) return '';
+
+  const firstName = data.fullName.trim().split(/\s+/)[0] ?? '';
+  return interpolate(template, {
+    name: firstName || t('landing.discovery.chat.tokens.you'),
+    business:
+      data.businessName.trim() || t('landing.discovery.chat.tokens.business'),
+    answer: said,
+    quote: firstSentence(raw),
+    list: humanList(said, t),
+  });
+}
+
+/** How many generic "skipped" lines the catalogue rotates through. */
+export const SKIPPED_REFLECTION_VARIANTS = 3;
+
+/** Longest quote the agent reads back, so a pasted essay stays a sentence. */
+const MAX_QUOTE_CHARS = 110;
+
+/**
+ * The first sentence of a prose answer, cut to a length that still reads as
+ * a quote. Reading their own line back is the most specific reaction there is
+ * and needs no model to produce.
+ */
+export function firstSentence(text: string): string {
+  const flat = trimmed(text);
+  const sentence = /^(.+?[.!?])(\s|$)/.exec(flat)?.[1] ?? flat;
+  const clean = sentence.replace(/[.!?]+$/, '');
+  if (clean.length <= MAX_QUOTE_CHARS) return clean;
+  const cut = clean.slice(0, MAX_QUOTE_CHARS);
+  const atWord = cut.lastIndexOf(' ');
+  return `${atWord > 40 ? cut.slice(0, atWord) : cut}…`;
+}
+
+/**
+ * "A, B and C" from a comma-joined multi answer, lower-cased so it sits
+ * inside a sentence. Single items pass through untouched.
+ */
+export function humanList(joined: string, t: (key: string) => string): string {
+  const items = joined
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((item) => item.charAt(0).toLowerCase() + item.slice(1));
+  if (items.length === 0) return '';
+  if (items.length === 1) return items[0] ?? '';
+  const and = t('landing.discovery.chat.tokens.and');
+  return `${items.slice(0, -1).join(', ')} ${and} ${items[items.length - 1]}`;
+}
+
+/** The keyboard shortcut for a quick reply: A, B, C… in the order shown. */
+export function shortcutLetter(index: number): string {
+  return String.fromCharCode(65 + (index % 26));
+}

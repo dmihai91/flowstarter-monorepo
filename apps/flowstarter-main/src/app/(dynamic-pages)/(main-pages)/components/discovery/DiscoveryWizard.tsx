@@ -97,6 +97,7 @@ export function DiscoveryWizard({
   source,
   onComplete,
   onWideChange,
+  conversationPaceMs,
   t,
 }: {
   initialTier?: Tier | null;
@@ -104,6 +105,8 @@ export function DiscoveryWizard({
   onComplete: (payload: DiscoveryCompletePayload) => void;
   /** Signals the host modal to widen for the large preview step. */
   onWideChange?: (wide: boolean) => void;
+  /** The agent's pause before a new question. Tests pass 0; the default is the conversation's. */
+  conversationPaceMs?: number;
   t: (key: string) => string;
 }) {
   // Restore an in-progress draft so a refresh doesn't lose the input.
@@ -297,6 +300,7 @@ export function DiscoveryWizard({
             essentialsOnly={skippedAhead}
             onAnswer={handleAnswer}
             onSkipRest={handleSkipRest}
+            paceMs={conversationPaceMs}
             t={t}
           />
         )}

@@ -128,7 +128,7 @@ export async function provisionGuestDeposit(
   }
 
   // ── 2. The account ───────────────────────────────────────────────────────
-  const account = await findOrCreateGuestUser(email);
+  const account = await findOrCreateGuestUser(email, fullName);
 
   // ── 3. The workspace ─────────────────────────────────────────────────────
   // The conversation the info agent had rides in from the durable preview

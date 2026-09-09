@@ -24,6 +24,7 @@ import { z } from 'zod';
 import { funnelBudgetState, recordGenerationCost } from '@/lib/ai/funnel-cost';
 import { llmActionConfig, recordLlmUsage } from '@/lib/ai/llm';
 import { createJob, getJob, updateJob } from '@/lib/discovery/live-jobs';
+import { isTransientPipelineFailure } from '@/lib/discovery/preview-failure';
 import { rememberClaimablePreview } from '@/lib/flowstarter/claim';
 import {
   injectCalComPreviewDemoIntoScaffoldFiles,
@@ -406,6 +407,35 @@ async function publishLocalPreview(input: {
   };
 }
 
+/**
+ * One line per finished job, machine-readable, so reliability is a grep over
+ * the server log rather than a memory: status, where it failed, how long it
+ * took, what it cost in tokens. The job store forgets after 45 minutes; this
+ * does not.
+ */
+function logPreviewOutcome(
+  demoId: string,
+  status: 'ready' | 'failed',
+  detail: {
+    error?: string;
+    failedPhase?: string;
+    tokensUsed?: number;
+    template?: string;
+  }
+): void {
+  const job = getJob(demoId);
+  console.info(
+    '[preview-outcome] ' +
+      JSON.stringify({
+        demoId,
+        status,
+        seconds: job ? Math.round((Date.now() - job.createdAt) / 1000) : null,
+        phases: job?.phases ?? [],
+        ...detail,
+      })
+  );
+}
+
 export async function POST(req: NextRequest) {
   let body: unknown;
   try {
@@ -442,6 +472,18 @@ export async function POST(req: NextRequest) {
   // have taken ~13-14 min; this gives real headroom before declaring one
   // hung. Cleared in `finally` below on every real outcome.
   const GENERATION_WATCHDOG_MS = 20 * 60_000;
+  // A restart is only worth it while a second full run still fits under the
+  // watchdog. Past this the visitor gets the plainer demo now instead of the
+  // same failure at minute twenty.
+  const RESTART_DEADLINE_MS = 4 * 60_000;
+  // A failure before personalization started has thrown little away, so it
+  // is worth a restart for longer: the rerun still fits under the deadline.
+  const EARLY_RESTART_DEADLINE_MS = 8 * 60_000;
+  const EARLY_PHASE = /^(Learning|Choosing|Preparing)/;
+  // Every model session of this job must finish before this; the session
+  // runner caps each attempt at what is left, so retries cannot stack past
+  // the watchdog. The gap after it is for publishing and bookkeeping.
+  const RUN_DEADLINE_MS = 16 * 60_000;
   const watchdog = setTimeout(() => {
     const job = getJob(demoId);
     if (job && job.status === 'building') {
@@ -449,7 +491,12 @@ export async function POST(req: NextRequest) {
       updateJob(demoId, {
         status: 'failed',
         error: 'Preview generation timed out',
+        ...(job.phase ? { failedPhase: job.phase } : {}),
         teardown: undefined,
+      });
+      logPreviewOutcome(demoId, 'failed', {
+        error: 'Preview generation timed out',
+        ...(job.phase ? { failedPhase: job.phase } : {}),
       });
     }
   }, GENERATION_WATCHDOG_MS);
@@ -489,12 +536,29 @@ export async function POST(req: NextRequest) {
       // personalization actually takes, so the funnel timed out mid-pass.
       const previewModel =
         process.env.PI_PREVIEW_MODEL?.trim() || GLM_53_FLASH.id;
+      const baseModel = process.env.PI_MODEL?.trim() || 'z-ai/glm-5.2';
+      // The last attempt of a failing session runs on another model family.
+      // Brand analysis and template selection fall over to the flash tier
+      // (it already holds the whole template for the preview pass, so a JSON
+      // brief is well within it); the preview pass falls over to the base
+      // model unless the operator names something else.
+      const previewFallback =
+        process.env.PI_PREVIEW_FALLBACK_MODEL?.trim() || baseModel;
+      const runDeadlineAt =
+        (getJob(demoId)?.createdAt ?? Date.now()) + RUN_DEADLINE_MS;
       const agents = new PiSdkFlowstarterAgents({
         provider: process.env.PI_PROVIDER?.trim() || 'openrouter',
-        modelId: process.env.PI_MODEL?.trim() || 'z-ai/glm-5.2',
+        modelId: baseModel,
         apiKey: piApiKey,
         thinkingLevel: 'medium',
         timeoutMs: 420_000,
+        deadlineAt: runDeadlineAt,
+        ...(baseModel === GLM_53_FLASH.id
+          ? {}
+          : {
+              fallbackModelId: GLM_53_FLASH.id,
+              fallbackModelOverride: GLM_53_FLASH,
+            }),
         // Whole-preview token ceiling, from the same budget config the AI-SDK
         // wrapper uses. Breaching it aborts the pipeline; the catch below
         // fails the job open to the deterministic demo.
@@ -513,10 +577,24 @@ export async function POST(req: NextRequest) {
           });
         },
         roles: {
+          // A JSON brief and a template pick are short turns. Capping them at
+          // four minutes keeps a stalled stream inside the window the session
+          // runner will retry, and its last attempt then runs on the flash
+          // fallback instead of waiting seven minutes to fail.
+          brand: { timeoutMs: 240_000 },
+          templateSelection: { timeoutMs: 240_000 },
           preview: {
             modelId: previewModel,
             ...(previewModel === GLM_53_FLASH.id
               ? { modelOverride: GLM_53_FLASH }
+              : {}),
+            ...(previewFallback !== previewModel
+              ? {
+                  fallbackModelId: previewFallback,
+                  ...(previewFallback === GLM_53_FLASH.id
+                    ? { fallbackModelOverride: GLM_53_FLASH }
+                    : {}),
+                }
               : {}),
             maxOutputTokens: 30_000,
             timeoutMs: 600_000,
@@ -607,9 +685,13 @@ export async function POST(req: NextRequest) {
         {
           fullTemplateContext: true,
           qualitySweep: true,
+          // Generous on purpose: the visitor sees most of the home page and
+          // every section's heading, and pays for the substance behind them.
           teaser: {
-            keepHomeSections: 5,
-            keepSubpageSections: 2,
+            keepHomeSections: 6,
+            keepSubpageSections: 3,
+            minLockedSections: 2,
+            revealTop: 0.35,
             label: 'Part of your full site',
             ...(previewUnlockUrl(demoId)
               ? {
@@ -621,14 +703,39 @@ export async function POST(req: NextRequest) {
         }
       );
       const evidence = buildPiEvidence(demoId, spec);
-      const result = await pipeline.run({
-        ...evidence,
-        cachedAssets: [],
-        // Soft budget threshold: the pipeline skips brief-generated imagery
-        // (and any other optional spend) when the funnel is over it.
-        budgetDegraded: budgetState === 'degrade',
-        onPhase: (phase) => updateJob(demoId, { phase }),
-      });
+      const runPipeline = () =>
+        pipeline.run({
+          ...evidence,
+          cachedAssets: [],
+          // Soft budget threshold: the pipeline skips brief-generated imagery
+          // (and any other optional spend) when the funnel is over it.
+          budgetDegraded: budgetState === 'degrade',
+          deadlineAt: runDeadlineAt,
+          onPhase: (phase) => updateJob(demoId, { phase }),
+        });
+      let result: Awaited<ReturnType<typeof runPipeline>>;
+      try {
+        result = await runPipeline();
+      } catch (firstError) {
+        // The session runner has already retried inside each stage. What
+        // reaches here is a stage that stayed down, or a publish step that
+        // could not get a server up. One clean restart from the top, on the
+        // same run budget, is the last thing tried before the visitor is
+        // shown the plainer demo. Never for a budget breach or a bad intake.
+        if (!isTransientPipelineFailure(firstError)) throw firstError;
+        const job = getJob(demoId);
+        const elapsed = Date.now() - (job?.createdAt ?? Date.now());
+        const early = EARLY_PHASE.test(job?.phase ?? '');
+        if (elapsed > (early ? EARLY_RESTART_DEADLINE_MS : RESTART_DEADLINE_MS))
+          throw firstError;
+        console.warn(
+          `[Flowstarter] preview ${demoId} restarting after a transient failure: ${
+            firstError instanceof Error ? firstError.message : 'unknown'
+          }`
+        );
+        updateJob(demoId, { phase: 'Starting over after a provider hiccup' });
+        result = await runPipeline();
+      }
 
       // Preview never loads the live Cal.com embed — only a blurred demo.
       // The tenant URL is stashed for claim → workspaces.cal_com_url and wired
@@ -640,6 +747,14 @@ export async function POST(req: NextRequest) {
       const filesWithCal = injectCalComPreviewDemoIntoScaffoldFiles(
         result.files
       );
+
+      // The watchdog may already have failed this job while the pipeline was
+      // still running; a late success must not resurrect it under a visitor
+      // who has long since been shown the plainer demo.
+      if (getJob(demoId)?.status === 'failed') {
+        await result.teardown?.().catch(() => {});
+        return;
+      }
 
       // Wire the teardown in the instant the sandbox/local `astro dev` child
       // is confirmed live, not after the awaited bookkeeping below. Before
@@ -713,6 +828,10 @@ export async function POST(req: NextRequest) {
         personalized: true,
         phase: 'Done, your site is ready',
       });
+      logPreviewOutcome(demoId, 'ready', {
+        tokensUsed: agents.tokensUsed,
+        template: result.template?.slug,
+      });
       await recordGenerationCost({
         kind: 'codegen',
         model: process.env.PI_MODEL?.trim() || 'z-ai/glm-5.2',
@@ -733,10 +852,16 @@ export async function POST(req: NextRequest) {
       await getJob(demoId)
         ?.teardown?.()
         .catch(() => {});
+      const failedPhase = getJob(demoId)?.phase;
       updateJob(demoId, {
         status: 'failed',
         error: e instanceof Error ? e.message : 'live demo error',
+        ...(failedPhase ? { failedPhase } : {}),
         teardown: undefined,
+      });
+      logPreviewOutcome(demoId, 'failed', {
+        error: e instanceof Error ? e.message : 'live demo error',
+        ...(failedPhase ? { failedPhase } : {}),
       });
     } finally {
       clearTimeout(watchdog);
@@ -787,6 +912,7 @@ export async function GET(req: NextRequest) {
       hostedPreviewStatus: job.hostedPreviewStatus,
       editsUsed: job.editsUsed,
       error: job.status === 'failed' ? job.error : undefined,
+      failedPhase: job.status === 'failed' ? job.failedPhase : undefined,
     },
     { status: 200 }
   );

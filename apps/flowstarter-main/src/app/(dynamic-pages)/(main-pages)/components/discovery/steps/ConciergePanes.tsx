@@ -14,7 +14,101 @@
  *
  * Everything here is presentational. The stages own their own state.
  */
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
+
+/**
+ * The site pane's height, shared by the skeleton, the live frame and the
+ * conversation column so the three always line up. Tall on purpose: the
+ * pane is the product, and a squat window makes a real site look like a
+ * thumbnail. Below 900px the panes stack, so the site takes less of the
+ * phone's screen and the conversation stays reachable.
+ */
+export const SITE_PANE_HEIGHT_CLASS =
+  'h-[48vh] min-h-[320px] min-[900px]:h-[68vh] min-[900px]:min-h-[480px]';
+
+/** The desktop the site is laid out for. Its own breakpoints see this width. */
+export const SITE_DESIGN_WIDTH = 1280;
+
+/**
+ * Narrower panes than this show the site at their own width instead: a
+ * phone-wide pane showing a desktop page shrunk four times over is not
+ * "what the site looks like", it is a postage stamp.
+ */
+const MIN_SCALED_PANE_WIDTH = 720;
+
+export type SiteViewport = {
+  /**
+   * Set on the element the frame sits in (position: relative, overflow
+   * hidden). A callback ref, because that element is only rendered once
+   * there is a site to show, which is after the stage has mounted.
+   */
+  ref: (el: HTMLDivElement | null) => void;
+  /** Inline style for the frame: laid out at desktop width, scaled to fit. */
+  frameStyle: CSSProperties;
+  /** The scale applied, 1 when the frame is shown at the pane's own width. */
+  scale: number;
+};
+
+/**
+ * Lays a frame out at `SITE_DESIGN_WIDTH` and scales it down to fit the
+ * pane, so the site inside renders its desktop layout (its media queries
+ * see 1280px) rather than the tablet layout a 900px iframe would trigger.
+ * The frame's height is grown by the inverse of the scale so the scaled
+ * result still fills the pane exactly.
+ *
+ * The pane is measured with a ResizeObserver; where there is none (jsdom)
+ * the frame is shown unscaled at the pane's width.
+ */
+export function useSiteViewport(): SiteViewport {
+  const observer = useRef<ResizeObserver | null>(null);
+  const [pane, setPane] = useState<{ width: number; height: number } | null>(
+    null
+  );
+
+  const ref = useCallback((el: HTMLDivElement | null) => {
+    observer.current?.disconnect();
+    observer.current = null;
+    if (!el || typeof ResizeObserver === 'undefined') {
+      setPane(null);
+      return;
+    }
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      setPane((prev) =>
+        prev && prev.width === rect.width && prev.height === rect.height
+          ? prev
+          : { width: rect.width, height: rect.height }
+      );
+    };
+    measure();
+    observer.current = new ResizeObserver(measure);
+    observer.current.observe(el);
+  }, []);
+
+  useEffect(() => () => observer.current?.disconnect(), []);
+
+  if (!pane || pane.width < MIN_SCALED_PANE_WIDTH) {
+    return { ref, frameStyle: { width: '100%', height: '100%' }, scale: 1 };
+  }
+  const scale = Math.min(1, pane.width / SITE_DESIGN_WIDTH);
+  return {
+    ref,
+    scale,
+    frameStyle: {
+      width: `${pane.width / scale}px`,
+      height: `${pane.height / scale}px`,
+      transform: `scale(${scale})`,
+      transformOrigin: 'top left',
+    },
+  };
+}
 
 export function ConciergePanes({
   now,
@@ -30,7 +124,7 @@ export function ConciergePanes({
       data-testid="concierge-panes"
       className={[
         'grid grid-cols-1 gap-3',
-        'min-[900px]:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]',
+        'min-[900px]:grid-cols-[minmax(300px,0.62fr)_minmax(0,1.38fr)]',
         'min-[900px]:grid-rows-[auto_minmax(0,1fr)] min-[900px]:items-start',
       ].join(' ')}
     >
@@ -157,7 +251,7 @@ export function SiteSkeleton({ caption }: { caption: string }) {
   return (
     <div
       data-testid="concierge-skeleton"
-      className="flex h-[52vh] min-h-[320px] w-full flex-col bg-white p-5 dark:bg-white/[0.04]"
+      className={`flex w-full flex-col bg-white p-5 dark:bg-white/[0.04] ${SITE_PANE_HEIGHT_CLASS}`}
     >
       <div
         className="flex min-h-0 flex-1 animate-pulse flex-col gap-4"
@@ -319,7 +413,7 @@ export function ConversationLog({
       ref={ref}
       role="log"
       aria-label={label}
-      className="max-h-[46vh] min-h-[180px] space-y-2 overflow-y-auto rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 p-3 min-[900px]:max-h-[calc(52vh-1.5rem)]"
+      className="max-h-[46vh] min-h-[180px] space-y-2 overflow-y-auto rounded-xl border border-[var(--fs-rule)] bg-[var(--fs-bg-elevated)]/40 p-3 min-[900px]:max-h-[calc(68vh-1.5rem)]"
     >
       {children}
     </div>

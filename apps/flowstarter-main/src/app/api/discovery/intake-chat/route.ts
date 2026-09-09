@@ -237,7 +237,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       modelId: process.env.PI_MODEL?.trim() || 'z-ai/glm-5.2',
       apiKey: piApiKey,
       thinkingLevel: 'low',
-      timeoutMs: 45_000,
+      timeoutMs: 25_000,
+      // Two short attempts fit inside this route's 60s ceiling; the session
+      // runner's default of three would not, and a chat turn that fails open
+      // is better than one the platform cuts off mid-retry.
+      maxSessionAttempts: 2,
+      retryBaseDelayMs: 500,
       // Whole-run ceiling from the same budget table the AI-SDK wrapper uses.
       maxRunTokens: budget.maxTokens,
       // Anonymous funnel traffic: no workspace, no project, so the ledger row
@@ -262,7 +267,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           ...(budget.maxOutputTokens
             ? { maxOutputTokens: budget.maxOutputTokens }
             : {}),
-          timeoutMs: 45_000,
+          timeoutMs: 25_000,
         },
       },
     });

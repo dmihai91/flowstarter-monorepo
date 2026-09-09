@@ -33,8 +33,10 @@ import {
   ConciergePanes,
   ConversationLog,
   NowLine,
+  SITE_PANE_HEIGHT_CLASS,
   SiteSkeleton,
   useElapsedSeconds,
+  useSiteViewport,
   type NowState,
 } from './ConciergePanes';
 
@@ -211,6 +213,10 @@ export function PreviewStep({
   useEffect(() => {
     setFrameLoaded(false);
   }, [iframeNonce, liveUrl]);
+
+  // The live site is laid out at desktop width and scaled to the pane, so
+  // what the visitor sees is the page as a laptop would show it.
+  const viewport = useSiteViewport();
 
   // Shared by the mount effect below (on a failed/skip POST) and by the
   // visitor's own choice after a failure: whichever path a preview takes,
@@ -946,7 +952,12 @@ export function PreviewStep({
         {mode === 'json' && demo ? (
           <DemoSiteFrame site={demo.site} />
         ) : liveUrl ? (
-          <div className="relative bg-white">
+          <div
+            ref={viewport.ref}
+            data-testid="concierge-site-viewport"
+            data-scale={viewport.scale.toFixed(3)}
+            className={`relative w-full overflow-hidden bg-white ${SITE_PANE_HEIGHT_CLASS}`}
+          >
             <iframe
               key={iframeNonce}
               src={
@@ -958,8 +969,9 @@ export function PreviewStep({
               }
               title="Live site preview"
               onLoad={() => setFrameLoaded(true)}
+              style={viewport.frameStyle}
               className={[
-                'h-[52vh] min-h-[320px] w-full bg-white transition-opacity duration-700',
+                'block border-0 bg-white transition-opacity duration-700',
                 frameLoaded ? 'opacity-100' : 'opacity-0',
               ].join(' ')}
               sandbox="allow-scripts allow-same-origin"

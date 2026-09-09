@@ -78,8 +78,28 @@ export interface GuestAccount {
  * finished, which is what keeps a redelivered Stripe event from invalidating a
  * password the client has already been emailed.
  */
-export async function findOrCreateGuestUser(
+/**
+ * The name a new account is created with. This Clerk instance requires a
+ * first and a last name, and a paid deposit must never be stranded on a
+ * missing field: the intake's full name is split, and a single word or no
+ * name at all falls back to something neutral rather than to a 422.
+ */
+export function guestNameParts(
+  fullName: string | null | undefined,
   email: string
+): { firstName: string; lastName: string } {
+  const words = (fullName ?? '').trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 2) {
+    return { firstName: words[0]!, lastName: words.slice(1).join(' ') };
+  }
+  const local = email.split('@')[0]?.split('+')[0]?.trim() || 'Client';
+  const first = words[0] ?? local.charAt(0).toUpperCase() + local.slice(1);
+  return { firstName: first.slice(0, 100), lastName: 'Client' };
+}
+
+export async function findOrCreateGuestUser(
+  email: string,
+  fullName?: string | null
 ): Promise<GuestAccount> {
   const normalized = email.trim().toLowerCase();
   if (!normalized) throw new Error('A guest account needs an email address');
@@ -121,6 +141,7 @@ export async function findOrCreateGuestUser(
   const tempPassword = generateTempPassword();
   const created = await clerk.users.createUser({
     emailAddress: [normalized],
+    ...guestNameParts(fullName, normalized),
     password: tempPassword,
     // Backend-created addresses are verified by default, which is what we want:
     // Stripe already charged this address, so it is as confirmed as it gets, and

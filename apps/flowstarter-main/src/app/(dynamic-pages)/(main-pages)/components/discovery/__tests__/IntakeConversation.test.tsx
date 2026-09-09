@@ -45,9 +45,21 @@ function draft(): DiscoveryData | null {
   return raw ? (JSON.parse(raw) as { data: DiscoveryData }).data : null;
 }
 
-function renderWizard() {
+/**
+ * The agent's beat before a new question is switched off here: it is cadence,
+ * not behaviour, and a walk through seventeen questions should not spend ten
+ * seconds admiring it. The one test that is about the beat turns it back on.
+ */
+function renderWizard(paceMs = 0) {
   const onComplete = vi.fn();
-  render(<DiscoveryWizard source="test" onComplete={onComplete} t={t} />);
+  render(
+    <DiscoveryWizard
+      source="test"
+      onComplete={onComplete}
+      conversationPaceMs={paceMs}
+      t={t}
+    />
+  );
   return { onComplete, user: userEvent.setup() };
 }
 
@@ -110,8 +122,14 @@ describe('the intake conversation', () => {
     const { user } = renderWizard();
 
     await say(user, 'Maria Ionescu');
+    // The agent says something back before it asks the next thing.
     expect(
-      await screen.findByText(/Good to meet you, Maria/)
+      await screen.findByText(
+        said('landing.discovery.chat.q.fullName.reflect', { name: 'Maria' })
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(t('landing.discovery.chat.q.email.prompt'))
     ).toBeInTheDocument();
 
     await say(user, 'maria@example.com');
@@ -136,7 +154,9 @@ describe('the intake conversation', () => {
       await screen.findByText(t('landing.discovery.chat.errors.email'))
     ).toBeInTheDocument();
     // Still on the same question, and nothing bad was written to the draft.
-    expect(screen.getByText(/Good to meet you, Maria/)).toBeInTheDocument();
+    expect(
+      screen.getByText(t('landing.discovery.chat.q.email.prompt'))
+    ).toBeInTheDocument();
     expect(draft()?.email).toBe('');
 
     await say(user, 'maria@example.com');
@@ -175,9 +195,8 @@ describe('the intake conversation', () => {
 
     await user.click(
       screen.getByRole('button', {
-        name: `${t('landing.discovery.chat.edit')}: ${said(
-          'landing.discovery.chat.q.email.prompt',
-          { name: 'Maria' }
+        name: `${t('landing.discovery.chat.edit')}: ${t(
+          'landing.discovery.chat.q.email.prompt'
         )}`,
       })
     );
@@ -203,7 +222,7 @@ describe('the intake conversation', () => {
   it('undoes the last thing said when the visitor goes back', async () => {
     const { user } = renderWizard();
     await say(user, 'Maria Ionescu');
-    await screen.findByText(/Good to meet you, Maria/);
+    await screen.findByText(t('landing.discovery.chat.q.email.prompt'));
 
     await user.click(
       screen.getByRole('button', { name: t('landing.discovery.nav.back') })
@@ -214,6 +233,167 @@ describe('the intake conversation', () => {
     expect(
       screen.getByLabelText(t('landing.discovery.chat.composerLabel'))
     ).toHaveValue('Maria Ionescu');
+  });
+});
+
+describe('what makes it a conversation', () => {
+  it('reacts to a pick with the consequence of that pick, chosen by rule', async () => {
+    const { user } = renderWizard();
+    await say(user, 'Maria Ionescu');
+    await say(user, 'maria@example.com');
+    await say(user, 'Ionescu Dental');
+    await say(user, 'A boutique dental clinic in Cluj doing cosmetic work.');
+    await tap(user, t('landing.discovery.chat.skip')); // industry
+    await tap(user, t('landing.discovery.chat.skip')); // audience
+    await tap(user, t('landing.discovery.chat.skip')); // links
+    await tap(user, 'Take bookings or appointments');
+    await tap(user, t('landing.discovery.chat.done'));
+    await tap(user, t('landing.discovery.chat.skip')); // tone
+    await tap(user, t('landing.discovery.chat.skip')); // page count
+    await tap(user, t('landing.discovery.chat.skip')); // timeline
+    await tap(user, t('landing.discovery.options.commerce.digital.label'));
+
+    const log = screen.getByRole('log');
+    // The reaction names what the pick means for the build, not "great".
+    expect(
+      await within(log).findByText(
+        t('landing.discovery.chat.q.commerceMode.reflect.digital')
+      )
+    ).toBeInTheDocument();
+    // Their own line is read back to them, word for word.
+    expect(
+      within(log).getByText(
+        said('landing.discovery.chat.q.description.reflect', {
+          quote: 'A boutique dental clinic in Cluj doing cosmetic work',
+        })
+      )
+    ).toBeInTheDocument();
+    // A multi answer is folded into a sentence.
+    expect(
+      within(log).getByText(
+        said('landing.discovery.chat.q.goal.reflect', {
+          list: 'take bookings or appointments',
+        })
+      )
+    ).toBeInTheDocument();
+    // The pick stayed where it was made, in the agent's message, and is the
+    // way back into that question.
+    expect(
+      within(log).getByText(
+        t('landing.discovery.options.commerce.digital.label')
+      )
+    ).toBeInTheDocument();
+    await user.click(
+      screen.getByRole('button', {
+        name: `${t('landing.discovery.chat.edit')}: ${t(
+          'landing.discovery.chat.q.commerceMode.prompt'
+        )}`,
+      })
+    );
+    await tap(user, t('landing.discovery.options.commerce.none.label'));
+    expect(
+      await within(log).findByText(
+        t('landing.discovery.chat.q.commerceMode.reflect.none')
+      )
+    ).toBeInTheDocument();
+    expect(
+      within(log).queryByText(
+        t('landing.discovery.chat.q.commerceMode.reflect.digital')
+      )
+    ).toBeNull();
+  });
+
+  it('takes a beat before a question it has never asked, and none before one it has', async () => {
+    const { user } = renderWizard(120);
+    // The opening question is new too: the agent is thinking, then asks.
+    expect(
+      screen.getByRole('status', {
+        name: t('landing.discovery.chat.thinking'),
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(t('landing.discovery.chat.q.fullName.prompt'))
+    ).toBeNull();
+    expect(
+      await screen.findByText(t('landing.discovery.chat.q.fullName.prompt'))
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('status', {
+        name: t('landing.discovery.chat.thinking'),
+      })
+    ).toBeNull();
+
+    await say(user, 'Maria Ionescu');
+    expect(
+      screen.getByRole('status', { name: t('landing.discovery.chat.thinking') })
+    ).toBeInTheDocument();
+    await screen.findByText(t('landing.discovery.chat.q.email.prompt'));
+
+    // Back to a familiar question: no beat.
+    await user.click(
+      screen.getByRole('button', { name: t('landing.discovery.nav.back') })
+    );
+    expect(
+      screen.getByText(t('landing.discovery.chat.q.fullName.prompt'))
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('status', {
+        name: t('landing.discovery.chat.thinking'),
+      })
+    ).toBeNull();
+  });
+
+  it('answers a lettered quick reply from the keyboard', async () => {
+    const { user } = renderWizard();
+    await say(user, 'Maria Ionescu');
+    await say(user, 'maria@example.com');
+    await say(user, 'Ionescu Dental');
+    await say(user, 'A boutique dental clinic in Cluj doing cosmetic work.');
+    await tap(user, t('landing.discovery.chat.skip')); // industry
+    await tap(user, t('landing.discovery.chat.skip')); // audience
+    await tap(user, t('landing.discovery.chat.skip')); // links
+    await tap(user, 'Take bookings or appointments');
+    await tap(user, t('landing.discovery.chat.done'));
+    await tap(user, t('landing.discovery.chat.skip')); // tone
+
+    // Page count is a lettered list; "b" is the second option.
+    await screen.findByText(t('landing.discovery.chat.q.pageCount.prompt'));
+    await user.keyboard('b');
+    await waitFor(() => expect(draft()?.pageCount).toBe('5-7'));
+    expect(
+      await screen.findByText(
+        t('landing.discovery.chat.q.pageCount.reflect.5-7')
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('answers a typed word to a choice as that choice, and a word it does not know in its own voice', async () => {
+    const { user } = renderWizard();
+    await say(user, 'Maria Ionescu');
+    await say(user, 'maria@example.com');
+    await say(user, 'Ionescu Dental');
+    await say(user, 'A boutique dental clinic in Cluj doing cosmetic work.');
+    await tap(user, t('landing.discovery.chat.skip')); // industry
+    await tap(user, t('landing.discovery.chat.skip')); // audience
+    await tap(user, t('landing.discovery.chat.skip')); // links
+    await tap(user, 'Take bookings or appointments');
+    await tap(user, t('landing.discovery.chat.done'));
+    await tap(user, t('landing.discovery.chat.skip')); // tone
+    await screen.findByText(t('landing.discovery.chat.q.pageCount.prompt'));
+
+    await say(user, 'a dozen');
+    expect(
+      await screen.findByText(t('landing.discovery.chat.errors.choice'))
+    ).toBeInTheDocument();
+    expect(draft()?.pageCount).toBe('');
+
+    await say(user, 'not sure');
+    await waitFor(() => expect(draft()?.pageCount).toBe('unsure'));
+  });
+
+  it('shows no progress bar and no step counter', () => {
+    renderWizard();
+    expect(screen.queryByRole('progressbar')).toBeNull();
   });
 });
 

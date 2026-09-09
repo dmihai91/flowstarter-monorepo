@@ -49,6 +49,11 @@ export interface LiveJob {
   contentRel: string;
   editsUsed: number;
   error?: string;
+  /**
+   * The phase the job was in when it failed. The error says what went wrong;
+   * this says where, which is what the reliability ledger is grouped by.
+   */
+  failedPhase?: string;
   /** Latest streamed progress phase. */
   phase?: string;
   /**

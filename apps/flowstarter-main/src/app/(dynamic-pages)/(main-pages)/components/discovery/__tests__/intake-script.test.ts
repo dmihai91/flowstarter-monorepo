@@ -28,11 +28,15 @@ import {
   applicableQuestions,
   conversationProgress,
   essentialRemaining,
+  firstSentence,
+  humanList,
   interpolate,
   matchOption,
   nextQuestion,
   promptText,
   questionById,
+  reflectionText,
+  shortcutLetter,
   stepForConversation,
 } from '../intake-script';
 
@@ -332,9 +336,13 @@ describe('what the visitor sees', () => {
       fullName: 'Maria Ionescu',
       businessName: 'Ionescu Dental',
     };
-    expect(promptText(questionById('email')!, data, t)).toContain('Maria');
-    expect(promptText(questionById('email')!, data, t)).not.toContain(
-      'Ionescu D'
+    // The greeting is the reaction to their name: first name only, and never
+    // the business, which they have not mentioned yet.
+    expect(reflectionText(questionById('fullName')!, data, t)).toContain(
+      'Maria'
+    );
+    expect(reflectionText(questionById('fullName')!, data, t)).not.toContain(
+      'Ionescu'
     );
     expect(promptText(questionById('description')!, data, t)).toContain(
       'Ionescu Dental'
@@ -374,5 +382,108 @@ describe('what the visitor sees', () => {
     const { data, asked } = walk(FULL_ANSWERS);
     const end = conversationProgress(data, asked);
     expect(end.done).toBe(end.total);
+  });
+});
+
+describe('what the agent says back', () => {
+  const q = (id: string) => {
+    const question = questionById(id);
+    if (!question) throw new Error(`no such question: ${id}`);
+    return question;
+  };
+
+  it('picks the reaction to a chip by the stored value, never by a model', () => {
+    const digital = q('commerceMode').apply(EMPTY_DISCOVERY, 'digital');
+    expect(reflectionText(q('commerceMode'), digital, t)).toBe(
+      t('landing.discovery.chat.q.commerceMode.reflect.digital')
+    );
+    const none = q('commerceMode').apply(EMPTY_DISCOVERY, 'none');
+    expect(reflectionText(q('commerceMode'), none, t)).toBe(
+      t('landing.discovery.chat.q.commerceMode.reflect.none')
+    );
+  });
+
+  it("folds the visitor's own words into the reaction", () => {
+    const named = q('fullName').apply(EMPTY_DISCOVERY, 'Maria Ionescu');
+    expect(reflectionText(q('fullName'), named, t)).toBe(
+      'Hey Maria, good to meet you.'
+    );
+    const described = q('description').apply(
+      named,
+      'A boutique dental clinic in Cluj. We do cosmetic work, mostly veneers.'
+    );
+    expect(reflectionText(q('description'), described, t)).toContain(
+      '"A boutique dental clinic in Cluj."'
+    );
+    const goals = q('goal').apply(
+      named,
+      'Take bookings or appointments, Grow an email list'
+    );
+    expect(reflectionText(q('goal'), goals, t)).toContain(
+      'take bookings or appointments and grow an email list'
+    );
+  });
+
+  it('has a line for a skip, specific where it matters and rotating where it does not', () => {
+    expect(reflectionText(q('businessName'), EMPTY_DISCOVERY, t)).toBe(
+      t('landing.discovery.chat.q.businessName.reflect.skipped')
+    );
+    // Timeline has no skip line of its own: a generic one, decided by index.
+    const generic = reflectionText(q('timeline'), EMPTY_DISCOVERY, t);
+    expect(generic.length).toBeGreaterThan(0);
+    expect(
+      [0, 1, 2].map((i) => t(`landing.discovery.chat.reflect.skipped.${i}`))
+    ).toContain(generic);
+  });
+
+  it('every question either reacts or deliberately stays quiet, and no reaction leaks a key', () => {
+    const full: Record<string, string> = {
+      fullName: 'Maria Ionescu',
+      email: 'maria@example.com',
+      businessName: 'Ionescu Dental',
+      description: 'A boutique dental clinic in Cluj doing cosmetic work.',
+      industry: 'Therapy & wellness',
+      targetAudience: 'Adults in Cluj who want a better smile.',
+      links: 'instagram.com/ionescudental',
+      goal: 'Take bookings or appointments',
+      brandTone: 'Warm, Premium / elegant',
+      pageCount: '5-7',
+      timeline: 'asap',
+      commerceMode: 'digital',
+      catalogSize: '6-25',
+      calComUrl: 'https://cal.com/maria',
+      customIntegrations: 'A newsletter',
+      selectedTier: 'pro',
+      subscription: 'pro',
+    };
+    let data = EMPTY_DISCOVERY;
+    for (const [id, raw] of Object.entries(full)) data = q(id).apply(data, raw);
+    const quiet: string[] = [];
+    for (const question of INTAKE_SCRIPT) {
+      const line = reflectionText(question, data, t);
+      expect(line).not.toMatch(/landing\.discovery/);
+      expect(line).not.toContain('{');
+      if (!line) quiet.push(question.id);
+    }
+    // The monthly plan is the last turn; the info agent opens right after it.
+    expect(quiet).toEqual(['subscription']);
+  });
+
+  it('reads back a first sentence, cut to a quote', () => {
+    expect(firstSentence('Short and sweet. Then more.')).toBe(
+      'Short and sweet'
+    );
+    expect(firstSentence('No full stop at all')).toBe('No full stop at all');
+    const long = `${'word '.repeat(40)}end.`;
+    const cut = firstSentence(long);
+    expect(cut.endsWith('…')).toBe(true);
+    expect(cut.length).toBeLessThanOrEqual(112);
+  });
+
+  it('turns a comma list into a sentence, and letters the quick replies', () => {
+    expect(humanList('Warm', t)).toBe('warm');
+    expect(humanList('Warm, Calm, Bold', t)).toBe('warm, calm and bold');
+    expect(humanList('', t)).toBe('');
+    expect([0, 1, 25, 26].map(shortcutLetter)).toEqual(['A', 'B', 'Z', 'A']);
   });
 });

@@ -23,6 +23,8 @@ import {
   formatChangeRequestBody,
 } from '@/lib/flowstarter/change-request';
 import { recordChangeRequest } from '@/lib/flowstarter/messaging';
+import { createChangeRequest } from '@/lib/flowstarter/change-requests';
+import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import {
   decideEditorAction,
   policyStatus,
@@ -99,11 +101,25 @@ export async function POST(
       }),
       clerkUserId: context.access.actorId,
     });
+    // The same ask, as a piece of work the team can price and the client can
+    // accept and pay. The thread message is the record; this row is the
+    // quote's home.
+    const changeRequest = await createChangeRequest(
+      createSupabaseServiceRoleClient(),
+      {
+        workspaceId: context.workspaceId,
+        request: parsed.data.request,
+        classification,
+        messageId,
+        createdBy: context.access.actorId,
+      }
+    );
     return NextResponse.json(
       {
         classification: classification.capability,
         escalated: true,
         messageId,
+        changeRequestId: changeRequest.id,
       },
       { status: 201 }
     );

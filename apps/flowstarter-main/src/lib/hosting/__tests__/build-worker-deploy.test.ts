@@ -14,7 +14,9 @@ const SECRET = 's'.repeat(48);
 
 describe('buildWorkerSecret', () => {
   it('refuses a secret short enough to brute force', () => {
-    expect(buildWorkerSecret({ FLOWSTARTER_BUILD_WORKER_SECRET: 'short' })).toBeNull();
+    expect(
+      buildWorkerSecret({ FLOWSTARTER_BUILD_WORKER_SECRET: 'short' })
+    ).toBeNull();
     expect(buildWorkerSecret({})).toBeNull();
     expect(buildWorkerSecret({ FLOWSTARTER_BUILD_WORKER_SECRET: SECRET })).toBe(
       SECRET
@@ -31,7 +33,9 @@ describe('authorizeBuildWorker', () => {
 
   it('rejects a wrong, truncated, missing or unscheme-d credential', () => {
     expect(authorizeBuildWorker(`Bearer ${'x'.repeat(48)}`, env)).toBe(false);
-    expect(authorizeBuildWorker(`Bearer ${SECRET.slice(0, 47)}`, env)).toBe(false);
+    expect(authorizeBuildWorker(`Bearer ${SECRET.slice(0, 47)}`, env)).toBe(
+      false
+    );
     expect(authorizeBuildWorker(SECRET, env)).toBe(false);
     expect(authorizeBuildWorker(null, env)).toBe(false);
     expect(authorizeBuildWorker(undefined, env)).toBe(false);
@@ -91,21 +95,21 @@ describe('resolveDeployAgentSecret', () => {
       DEPLOY_AGENT_SHARED_SECRET_LOCAL_DEV: 'per-server',
       DEPLOY_AGENT_SHARED_SECRET: 'global',
     };
-    expect(resolveDeployAgentSecret('deploy_agent_shared_secret_local_dev', env)).toBe(
-      'per-server'
-    );
-    expect(resolveDeployAgentSecret('deploy_agent_shared_secret_other', env)).toBe(
-      'global'
-    );
+    expect(
+      resolveDeployAgentSecret('deploy_agent_shared_secret_local_dev', env)
+    ).toBe('per-server');
+    expect(
+      resolveDeployAgentSecret('deploy_agent_shared_secret_other', env)
+    ).toBe('global');
     expect(resolveDeployAgentSecret('anything', {})).toBeNull();
   });
 });
 
 describe('deployAgentClientFromEnv', () => {
   it('honours the dry-run switch and defaults to the real HTTP client', () => {
-    expect(deployAgentClientFromEnv({ DEPLOY_AGENT_DRY_RUN: 'true' })).toBeInstanceOf(
-      DryRunDeployAgentClient
-    );
+    expect(
+      deployAgentClientFromEnv({ DEPLOY_AGENT_DRY_RUN: 'true' })
+    ).toBeInstanceOf(DryRunDeployAgentClient);
     expect(deployAgentClientFromEnv({})).toBeInstanceOf(HttpDeployAgentClient);
   });
 });

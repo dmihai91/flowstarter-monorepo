@@ -113,8 +113,16 @@ function approvedPreviewFiles() {
       content: JSON.stringify({ name: SLUG, private: true }, null, 2),
       type: 'file',
     },
-    { path: 'src/pages/index.astro', content: pages['src/pages/index.astro']!, type: 'file' },
-    { path: 'src/pages/book.astro', content: pages['src/pages/book.astro']!, type: 'file' },
+    {
+      path: 'src/pages/index.astro',
+      content: pages['src/pages/index.astro']!,
+      type: 'file',
+    },
+    {
+      path: 'src/pages/book.astro',
+      content: pages['src/pages/book.astro']!,
+      type: 'file',
+    },
   ];
 }
 
@@ -125,7 +133,9 @@ function seed(): void {
       name: 'local-dev',
       status: 'active',
       ipv4: '127.0.0.1',
-      deploy_agent_url: `http://127.0.0.1:${(agentServer.address() as AddressInfo).port}`,
+      deploy_agent_url: `http://127.0.0.1:${
+        (agentServer.address() as AddressInfo).port
+      }`,
       deploy_agent_secret_ref: 'deploy_agent_shared_secret_local_dev',
     },
   ]);
@@ -198,15 +208,24 @@ function signedDepositEvent(eventId: string): {
   };
 }
 
-async function waitForJobToSettle(timeoutMs = 90_000): Promise<Record<string, unknown>> {
+async function waitForJobToSettle(
+  timeoutMs = 90_000
+): Promise<Record<string, unknown>> {
   const deadline = Date.now() + timeoutMs;
   for (;;) {
-    const job = db.find('flowstarter_agent_jobs', { workspace_id: WORKSPACE_ID });
-    if (job && job['status'] !== 'queued' && job['status'] !== 'running') return job;
+    const job = db.find('flowstarter_agent_jobs', {
+      workspace_id: WORKSPACE_ID,
+    });
+    if (job && job['status'] !== 'queued' && job['status'] !== 'running')
+      return job;
     if (Date.now() > deadline) {
       throw new Error(
-        `build did not settle in ${timeoutMs}ms; last status ${String(job?.['status'])}` +
-          (workerErrors.length ? `; worker errors: ${workerErrors.join(' | ')}` : '')
+        `build did not settle in ${timeoutMs}ms; last status ${String(
+          job?.['status']
+        )}` +
+          (workerErrors.length
+            ? `; worker errors: ${workerErrors.join(' | ')}`
+            : '')
       );
     }
     await new Promise((r) => setTimeout(r, 100));
@@ -230,7 +249,8 @@ function startStandInAgent(): Promise<Server> {
         return send(401, { error: 'unauthorized' });
       }
       const match = /^\/sites\/([^/]+)\/deploy$/.exec(url.pathname);
-      if (!match || req.method !== 'POST') return send(404, { error: 'not found' });
+      if (!match || req.method !== 'POST')
+        return send(404, { error: 'not found' });
       const slug = match[1] as string;
 
       const chunks: Buffer[] = [];
@@ -255,13 +275,21 @@ function startStandInAgent(): Promise<Server> {
       await mkdir(siteDir, { recursive: true });
       await execFileAsync('tar', ['-xzf', tarball, '-C', siteDir]);
       agentDeploys.push({ slug, sha256 });
-      return send(200, { ok: true, slug, sha256, sizeBytes: bytes.length, siteDir });
+      return send(200, {
+        ok: true,
+        slug,
+        sha256,
+        sizeBytes: bytes.length,
+        siteDir,
+      });
     })().catch((error: unknown) => {
       res.writeHead(500, { 'content-type': 'application/json' });
       res.end(JSON.stringify({ error: String(error) }));
     });
   });
-  return new Promise((done) => server.listen(0, '127.0.0.1', () => done(server)));
+  return new Promise((done) =>
+    server.listen(0, '127.0.0.1', () => done(server))
+  );
 }
 
 /** What the real agent's DEPLOY_AGENT_STATIC_PORT server does: `/{slug}/…`. */
@@ -277,7 +305,9 @@ function startStaticServer(): Promise<Server> {
       }
       const siteDir = resolve(sitesRoot, slug);
       const rest = segments.slice(1).join('/');
-      for (const candidate of rest ? [rest, `${rest}/index.html`] : ['index.html']) {
+      for (const candidate of rest
+        ? [rest, `${rest}/index.html`]
+        : ['index.html']) {
         const target = resolve(siteDir, candidate);
         if (!target.startsWith(`${siteDir}/`)) continue;
         try {
@@ -292,7 +322,9 @@ function startStaticServer(): Promise<Server> {
       res.end('Not found');
     })();
   });
-  return new Promise((done) => server.listen(0, '127.0.0.1', () => done(server)));
+  return new Promise((done) =>
+    server.listen(0, '127.0.0.1', () => done(server))
+  );
 }
 
 beforeAll(async () => {
@@ -333,7 +365,9 @@ beforeAll(async () => {
 
   agentServer = await startStandInAgent();
   staticServer = await startStaticServer();
-  staticBaseUrl = `http://127.0.0.1:${(staticServer.address() as AddressInfo).port}`;
+  staticBaseUrl = `http://127.0.0.1:${
+    (staticServer.address() as AddressInfo).port
+  }`;
 
   // The worker serves its own artifacts; the agent fetches them from here.
   const artifacts = new ArtifactStore({ root: artifactsRoot, baseUrl: '' });
@@ -351,8 +385,12 @@ beforeAll(async () => {
       res.end(bytes);
     })();
   });
-  await new Promise<void>((done) => artifactServer.listen(0, '127.0.0.1', done));
-  const artifactBaseUrl = `http://127.0.0.1:${(artifactServer.address() as AddressInfo).port}`;
+  await new Promise<void>((done) =>
+    artifactServer.listen(0, '127.0.0.1', done)
+  );
+  const artifactBaseUrl = `http://127.0.0.1:${
+    (artifactServer.address() as AddressInfo).port
+  }`;
 
   process.env.STRIPE_SECRET_KEY = 'sk_test_local_deploy';
   process.env.STRIPE_WEBHOOK_SECRET = WEBHOOK_SECRET;
@@ -462,7 +500,12 @@ beforeAll(async () => {
 }, 120_000);
 
 afterAll(async () => {
-  for (const server of [workerServer, artifactServer, agentServer, staticServer]) {
+  for (const server of [
+    workerServer,
+    artifactServer,
+    agentServer,
+    staticServer,
+  ]) {
     await new Promise<void>((done) => server.close(() => done()));
   }
   await db.close();
@@ -487,7 +530,9 @@ describe('deposit -> local build -> deploy -> a site that opens', () => {
     expect(job['status']).toBe('succeeded');
     expect(job['attempt_count']).toBe(1);
     // No PR exists in local mode; the artifact URL is what the build produced.
-    expect(String(job['pull_request_url'])).toMatch(/\/artifacts\/.+\.tar\.gz$/);
+    expect(String(job['pull_request_url'])).toMatch(
+      /\/artifacts\/.+\.tar\.gz$/
+    );
     expect(job['payload']).toMatchObject({
       trigger: 'deposit_paid',
       source: 'payment_intent',

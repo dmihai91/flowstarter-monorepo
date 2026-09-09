@@ -37,7 +37,10 @@ export async function GET(
     .eq('id', access.workspaceId)
     .maybeSingle();
   if (error) {
-    return NextResponse.json({ error: 'Could not load booking' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Could not load booking' },
+      { status: 500 }
+    );
   }
   if (!data) {
     return NextResponse.json({ error: 'Workspace not found' }, { status: 404 });
@@ -65,7 +68,10 @@ export async function PATCH(
 
   const parsed = PatchSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid booking update' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid booking update' },
+      { status: 400 }
+    );
   }
 
   const raw = parsed.data.calComUrl;

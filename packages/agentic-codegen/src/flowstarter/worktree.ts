@@ -59,9 +59,53 @@ export class SafeGitWorktreeManager {
     return { branch, path: canonicalWorktree };
   }
 
+  /**
+   * Removes what an earlier attempt left behind, so a retry can start clean.
+   * A failed build's worktree and branch are otherwise permanent, and
+   * `create` rightly refuses to build over them: every retry then dies on
+   * "already exists" and the job burns its attempts without running once.
+   * Same containment checks as `create`; nothing outside the worktrees root
+   * is ever touched.
+   */
+  async discard(projectId: string): Promise<void> {
+    const normalizedProjectId = assertUuid(projectId);
+    const repositoryRoot = await realpath(this.options.repositoryRoot);
+    const worktreesRoot = await realpath(this.options.worktreesRoot).catch(() => undefined);
+    if (!worktreesRoot) return;
+    assertNotBroadRoot(worktreesRoot);
+    const branch = `client/flowstarter-${normalizedProjectId}`;
+    const worktreePath = join(worktreesRoot, `flowstarter-${normalizedProjectId}`);
+    assertContained(worktreesRoot, worktreePath);
+    if (await pathExists(worktreePath)) {
+      await runGit(repositoryRoot, ['worktree', 'remove', '--force', worktreePath], {
+        allowExitCodes: [0, 128],
+      });
+      // A directory git no longer knows about (a crashed attempt) is still
+      // in the way; git's own `remove` has already declined it.
+      if (await pathExists(worktreePath)) {
+        const { rm } = await import('node:fs/promises');
+        await rm(worktreePath, { recursive: true, force: true });
+      }
+      await runGit(repositoryRoot, ['worktree', 'prune']);
+    }
+    const branchCheck = await runGit(repositoryRoot, ['show-ref', '--verify', '--quiet', `refs/heads/${branch}`], {
+      allowExitCodes: [0, 1],
+    });
+    if (branchCheck.exitCode === 0) {
+      await runGit(repositoryRoot, ['branch', '-D', branch]);
+    }
+  }
+
   async commit(worktree: GitWorktree, message: string): Promise<string> {
     assertSafeGitRef(worktree.branch, 'branch');
-    if (!/^build: initialize Flowstarter site [0-9a-f-]{36}$/.test(message)) {
+    // Two shapes are policy: FULL_SITE_BUILD's first commit for a project,
+    // and SITE_REBUILD's commit of a client's already-approved published
+    // edit. Both name the project id and nothing else, so neither can smuggle
+    // arbitrary text into history.
+    const allowed =
+      /^build: initialize Flowstarter site [0-9a-f-]{36}$/.test(message) ||
+      /^build: publish client edit to site [0-9a-f-]{36}$/.test(message);
+    if (!allowed) {
       throw new Error('Commit message is outside the Flowstarter build policy');
     }
     const root = await realpath(worktree.path);

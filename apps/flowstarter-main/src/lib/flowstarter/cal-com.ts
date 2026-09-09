@@ -67,7 +67,7 @@ function mapScaffoldFiles<T extends { path: string; content: string }>(
  * calendar — that happens on the full-site build via `injectCalCom`.
  */
 export function injectCalComPreviewDemoIntoScaffoldFiles<
-  T extends { path: string; content: string },
+  T extends { path: string; content: string }
 >(files: readonly T[]): T[] {
   return mapScaffoldFiles(files, injectCalComPreviewDemo);
 }
@@ -77,7 +77,7 @@ export function injectCalComPreviewDemoIntoScaffoldFiles<
  * not from the funnel preview path.
  */
 export function injectCalComIntoScaffoldFiles<
-  T extends { path: string; content: string },
+  T extends { path: string; content: string }
 >(files: readonly T[], calUrl: string | null | undefined): T[] {
   if (!calUrl?.trim()) return files as T[];
   return mapScaffoldFiles(files, (map) => injectCalCom(map, calUrl));

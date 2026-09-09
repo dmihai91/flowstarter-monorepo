@@ -8,9 +8,9 @@ import {
 
 describe('resolveTenantCalComUrl', () => {
   it('normalizes a dedicated Cal.com URL onto https://cal.com/…', () => {
-    expect(
-      resolveTenantCalComUrl({ calComUrl: 'cal.com/acme/intro' })
-    ).toBe('https://cal.com/acme/intro');
+    expect(resolveTenantCalComUrl({ calComUrl: 'cal.com/acme/intro' })).toBe(
+      'https://cal.com/acme/intro'
+    );
   });
 
   it('falls back to customIntegrations when dedicated field is empty', () => {
@@ -63,7 +63,10 @@ describe('injectCalComIntoScaffoldFiles', () => {
           '<main><div class="book-page__calendar"><iframe src="https://calendly.com/x"></iframe></div></main>',
       },
     ];
-    const out = injectCalComIntoScaffoldFiles(files, 'https://cal.com/acme/intro');
+    const out = injectCalComIntoScaffoldFiles(
+      files,
+      'https://cal.com/acme/intro'
+    );
     expect(out[0]!.content).toContain('data-flowstarter-cal-embed="true"');
     expect(out[0]!.content).toContain('cal.com/acme/intro/embed');
   });

@@ -7,6 +7,10 @@ import {
   enqueueFullBuildFromDepositInvoice,
 } from '@/lib/flowstarter/deposit-workflow';
 import { provisionGuestDeposit } from '@/lib/flowstarter/guest-deposit';
+import {
+  CHANGE_REQUEST_CHECKOUT_KIND,
+  settleChangeRequestCheckout,
+} from '@/lib/flowstarter/change-request-checkout';
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -365,11 +369,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       case 'customer.subscription.deleted':
         await handleSubscriptionEvent(event.data.object as Stripe.Subscription);
         break;
-      case 'checkout.session.completed':
-        await handleBookingDepositPaid(
-          event.data.object as Stripe.Checkout.Session
-        );
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.metadata?.['kind'] === CHANGE_REQUEST_CHECKOUT_KIND) {
+          const settled = await settleChangeRequestCheckout(session);
+          console.info(
+            `[Stripe] change request ${settled.changeRequestId} ${settled.outcome} (${session.id})`
+          );
+        } else {
+          await handleBookingDepositPaid(session);
+        }
         break;
+      }
       default:
         break;
     }

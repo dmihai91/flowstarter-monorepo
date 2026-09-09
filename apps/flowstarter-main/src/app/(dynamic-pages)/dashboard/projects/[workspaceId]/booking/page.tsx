@@ -61,8 +61,8 @@ export default async function ClientBookingPage({
         </h1>
         <p className="text-sm text-[var(--fs-ink)]/70">
           Your booking calendar is per project. Previews show a blurred demo;
-          the live Cal.com embed is wired on the full site after deposit. Add
-          or update your link here anytime.
+          the live Cal.com embed is wired on the full site after deposit. Add or
+          update your link here anytime.
         </p>
       </header>
 

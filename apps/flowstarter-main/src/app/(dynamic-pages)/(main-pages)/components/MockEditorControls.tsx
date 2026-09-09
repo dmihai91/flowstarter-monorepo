@@ -74,10 +74,7 @@ export function MockEditorControls({
 
   return (
     <div className="@container mt-2.5 border-t border-gray-200/60 pt-2.5 dark:border-white/10">
-      <div
-        className="flex flex-wrap gap-1"
-        aria-label={t('mockEditor.tools')}
-      >
+      <div className="flex flex-wrap gap-1" aria-label={t('mockEditor.tools')}>
         {tools.map((tool) => (
           <button
             key={tool.id}

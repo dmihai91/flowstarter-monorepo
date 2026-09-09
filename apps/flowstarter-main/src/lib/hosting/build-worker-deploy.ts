@@ -29,9 +29,7 @@ import { deployedSiteUrl, type EnvLike } from './site-urls';
 /** Minimum length the dispatch secret must have to be usable here. */
 const MIN_SECRET_LENGTH = 32;
 
-export function buildWorkerSecret(
-  env: EnvLike = process.env
-): string | null {
+export function buildWorkerSecret(env: EnvLike = process.env): string | null {
   const secret = env.FLOWSTARTER_BUILD_WORKER_SECRET?.trim();
   return secret && secret.length >= MIN_SECRET_LENGTH ? secret : null;
 }

@@ -155,6 +155,76 @@ export class DryRunDeployAgentClient implements DeployAgentClient {
  * pushes the artifact to the agent, upserts DNS, records a `deployments`
  * row, bumps last_deploy_id on the workspace, returns the deploy.
  */
+/**
+ * Gives an unallocated workspace a hosting server by the same rule the
+ * operator route applies by hand: the least-loaded active server with room.
+ * A paid build used to stop here with "allocate first", which made the
+ * operator's click part of every guest deposit; the rule is deterministic,
+ * so the deploy applies it and records the assignment the way the route
+ * does. Exported for tests.
+ */
+export async function allocateHostingServer(
+  supabase: SupabaseClient<Database>,
+  workspace: { id: string; slug: string | null }
+): Promise<string> {
+  const { data: candidates, error } = await supabase
+    .from('hosting_servers')
+    .select('id, site_capacity, sites_count')
+    .eq('status', 'active')
+    .order('sites_count', { ascending: true })
+    .limit(5);
+  if (error) throw new DeployError('db_error', error.message, error);
+  const pick = (candidates ?? []).find(
+    (server) => server.sites_count < server.site_capacity
+  );
+  if (!pick) {
+    throw new DeployError(
+      'workspace_unallocated',
+      'Workspace has no hosting server and no active server has capacity. Provision one via /api/admin/hosting/servers.'
+    );
+  }
+  const slug = String(workspace.slug ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '')
+    .slice(0, 63);
+  if (!slug) {
+    throw new DeployError(
+      'workspace_unallocated',
+      'Workspace slug is invalid; cannot derive a site directory.'
+    );
+  }
+  const now = new Date().toISOString();
+  const { error: updateError } = await supabase
+    .from('workspaces')
+    .update({
+      hosting_server_id: pick.id,
+      site_directory: `/var/www/sites/${slug}/`,
+      deploy_status: 'pending',
+      updated_at: now,
+    })
+    .eq('id', workspace.id);
+  if (updateError) {
+    throw new DeployError('db_error', updateError.message, updateError);
+  }
+  // Best effort, like the operator route: the count is a display figure and
+  // the next allocation re-derives it.
+  try {
+    const { count } = await supabase
+      .from('workspaces')
+      .select('id', { count: 'exact', head: true })
+      .eq('hosting_server_id', pick.id);
+    if (typeof count === 'number') {
+      await supabase
+        .from('hosting_servers')
+        .update({ sites_count: count, updated_at: now })
+        .eq('id', pick.id);
+    }
+  } catch {
+    /* display figure only */
+  }
+  return pick.id;
+}
+
 export async function deploySite(opts: {
   supabase: SupabaseClient<Database>;
   agentClient: DeployAgentClient;
@@ -195,12 +265,9 @@ export async function deploySite(opts: {
       `Workspace ${opts.workspaceId} not found`
     );
   }
-  if (!workspace.hosting_server_id) {
-    throw new DeployError(
-      'workspace_unallocated',
-      'Workspace has no hosting_server_id assigned. Allocate first via /api/admin/projects/[id]/site.'
-    );
-  }
+  const hostingServerId =
+    workspace.hosting_server_id ??
+    (await allocateHostingServer(opts.supabase, workspace));
 
   // Custom domains for this workspace, in workspace_hosts.
   const { data: hosts } = await opts.supabase
@@ -217,7 +284,7 @@ export async function deploySite(opts: {
   const { data: server, error: serverErr } = await opts.supabase
     .from('hosting_servers')
     .select('*')
-    .eq('id', workspace.hosting_server_id)
+    .eq('id', hostingServerId)
     .maybeSingle();
   if (serverErr) {
     throw new DeployError('db_error', serverErr.message, serverErr);
@@ -225,7 +292,7 @@ export async function deploySite(opts: {
   if (!server) {
     throw new DeployError(
       'server_not_found',
-      `Server ${workspace.hosting_server_id} not found for this workspace`
+      `Server ${hostingServerId} not found for this workspace`
     );
   }
   if (server.status !== 'active') {

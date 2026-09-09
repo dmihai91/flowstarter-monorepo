@@ -129,3 +129,57 @@ describe('previewDomainForSlug', () => {
     expect(out.startsWith('acme.preview.')).toBe(true);
   });
 });
+
+describe('an unallocated workspace is allocated by rule at deploy time', () => {
+  it('picks the least-loaded active server with room and records it', async () => {
+    const { createFakeHostingSupabase } = await import(
+      './fake-hosting-supabase'
+    );
+    const { allocateHostingServer } = await import('../deploy');
+    const db = createFakeHostingSupabase();
+    db.seed('hosting_servers', [
+      { id: 'srv-full', status: 'active', site_capacity: 2, sites_count: 2 },
+      { id: 'srv-busy', status: 'active', site_capacity: 50, sites_count: 7 },
+      { id: 'srv-quiet', status: 'active', site_capacity: 50, sites_count: 1 },
+      {
+        id: 'srv-down',
+        status: 'provisioning',
+        site_capacity: 50,
+        sites_count: 0,
+      },
+    ]);
+    db.seed('workspaces', [
+      {
+        id: 'ws-1',
+        slug: 'Ionescu Dental!',
+        hosting_server_id: null,
+        deploy_status: 'pending',
+      },
+    ]);
+    const picked = await allocateHostingServer(db.client as never, {
+      id: 'ws-1',
+      slug: 'Ionescu Dental!',
+    });
+    expect(picked).toBe('srv-quiet');
+    const workspace = db.rows('workspaces')[0]!;
+    expect(workspace.hosting_server_id).toBe('srv-quiet');
+    expect(workspace.site_directory).toBe('/var/www/sites/ionescudental/');
+  });
+
+  it('still refuses when no active server has capacity', async () => {
+    const { createFakeHostingSupabase } = await import(
+      './fake-hosting-supabase'
+    );
+    const { allocateHostingServer, DeployError } = await import('../deploy');
+    const db = createFakeHostingSupabase();
+    db.seed('hosting_servers', [
+      { id: 'srv-full', status: 'active', site_capacity: 1, sites_count: 1 },
+    ]);
+    db.seed('workspaces', [
+      { id: 'ws-1', slug: 'acme', hosting_server_id: null },
+    ]);
+    await expect(
+      allocateHostingServer(db.client as never, { id: 'ws-1', slug: 'acme' })
+    ).rejects.toBeInstanceOf(DeployError);
+  });
+});

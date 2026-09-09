@@ -33,22 +33,30 @@ describe('booking deposit amounts', () => {
 
 describe('extractCalComUrl', () => {
   it('finds a bare cal.com link mentioned alongside other text', () => {
-    expect(extractCalComUrl('Cal.com: cal.com/acme/intro')).toBe('cal.com/acme/intro');
+    expect(extractCalComUrl('Cal.com: cal.com/acme/intro')).toBe(
+      'cal.com/acme/intro'
+    );
   });
 
   it('finds a full https app.cal.com URL', () => {
     expect(
-      extractCalComUrl('please use https://app.cal.com/acme-studio for bookings')
+      extractCalComUrl(
+        'please use https://app.cal.com/acme-studio for bookings'
+      )
     ).toBe('https://app.cal.com/acme-studio');
   });
 
   it('strips trailing prose punctuation', () => {
-    expect(extractCalComUrl('booking via cal.com/acme, thanks!')).toBe('cal.com/acme');
+    expect(extractCalComUrl('booking via cal.com/acme, thanks!')).toBe(
+      'cal.com/acme'
+    );
   });
 
   it('returns null when no Cal.com link is mentioned', () => {
     expect(extractCalComUrl('Calendly: calendly.com/acme')).toBeNull();
-    expect(extractCalComUrl('Mailchimp newsletter, Stripe payments')).toBeNull();
+    expect(
+      extractCalComUrl('Mailchimp newsletter, Stripe payments')
+    ).toBeNull();
     expect(extractCalComUrl('')).toBeNull();
   });
 });

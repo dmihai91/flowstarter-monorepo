@@ -79,6 +79,17 @@ vi.mock('@/lib/ai/llm', () => ({
   recordLlmUsage: async () => {},
 }));
 
+// The nudge to the build worker is an HTTP call to a process that is not
+// running here. The row in the ledger is the commitment and is asserted for
+// real; this only records that the nudge was attempted.
+const dispatched: string[] = [];
+vi.mock('@/lib/flowstarter/pipeline/dispatch', () => ({
+  DispatchError: class extends Error {},
+  dispatchAgentJob: async (jobId: string) => {
+    dispatched.push(jobId);
+  },
+}));
+
 /**
  * The real Pi model is not configured in this environment (no PI_API_KEY that
  * reaches a provider), so the agent is stood in for. What is NOT stubbed is
@@ -287,6 +298,7 @@ beforeEach(() => {
   authState.userId = 'user_client_a';
   authState.role = undefined;
   inlineEdit.calls.length = 0;
+  dispatched.length = 0;
   inlineEdit.reply = 'Operations and strategy consultancy';
   process.env.PI_API_KEY = 'test-key';
   seedWorkspace();
@@ -766,6 +778,31 @@ describe('serving the site into the frame', () => {
 // ── 8. Publish ─────────────────────────────────────────────────────────────
 
 describe('publishing', () => {
+  /**
+   * A project with a server allocated. Publishing from here is the case the
+   * rebuild exists for; the default fixture has no server at all.
+   */
+  function hostThePublishedSite(): void {
+    db.seed('hosting_servers', [
+      { id: 'host-1', deploy_agent_url: 'https://agent.test' },
+    ]);
+    const workspace = db
+      .rows('workspaces')
+      .find((row) => row.id === WORKSPACE_A);
+    if (workspace) workspace['hosting_server_id'] = 'host-1';
+  }
+
+  /** The manifest already carries a previous build's output. */
+  function withAPreviousBuild(): void {
+    const artifact = db
+      .rows('flowstarter_project_artifacts')
+      .find((row) => row.workspace_id === WORKSPACE_A);
+    (artifact?.['preview_manifest'] as { files: Row[] }).files.push({
+      path: 'dist/index.html',
+      content: '<html></html>',
+    });
+  }
+
   it('marks a version and says what still has to happen', async () => {
     const response = await PUBLISH(post('/x'), params(WORKSPACE_A));
     expect(response.status).toBe(200);
@@ -774,6 +811,10 @@ describe('publishing', () => {
     // No server allocated in this fixture, and that is what the client is told.
     expect(body.deploy.mode).toBe('no_host');
     expect(body.deploy.detail).toMatch(/marked to publish/);
+    // Nothing to rebuild onto, so nothing is queued and nothing is nudged.
+    expect(body.rebuildJobId).toBeNull();
+    expect(db.rows('flowstarter_agent_jobs')).toEqual([]);
+    expect(dispatched).toEqual([]);
 
     const published = db.rows('site_versions').find((row) => row.version === 1);
     expect(published?.published_at).toBeTruthy();
@@ -782,6 +823,140 @@ describe('publishing', () => {
         .rows('project_events')
         .some((row) => row.kind === 'site_publish_requested')
     ).toBe(true);
+  });
+
+  it('queues the rebuild that puts the edit live, and nudges the worker', async () => {
+    hostThePublishedSite();
+
+    const response = await PUBLISH(post('/x'), params(WORKSPACE_A));
+    expect(response.status).toBe(200);
+    const body = await response.json();
+    expect(body.deploy.mode).toBe('rebuild_queued');
+    expect(body.deploy.detail).toMatch(/being rebuilt/);
+
+    const jobs = db.rows('flowstarter_agent_jobs');
+    expect(jobs).toHaveLength(1);
+    expect(jobs[0]).toMatchObject({
+      workspace_id: WORKSPACE_A,
+      kind: 'SITE_REBUILD',
+      status: 'queued',
+    });
+    expect(jobs[0]['payload']).toMatchObject({
+      trigger: 'client_publish',
+      version: body.version,
+      publishedBy: 'user_client_a',
+    });
+    expect(body.rebuildJobId).toBe(jobs[0]['id']);
+    expect(dispatched).toEqual([jobs[0]['id']]);
+  });
+
+  it('joins the rebuild already in flight rather than starting a second one', async () => {
+    hostThePublishedSite();
+
+    const first = await (await PUBLISH(post('/x'), params(WORKSPACE_A))).json();
+    dispatched.length = 0;
+    const second = await (
+      await PUBLISH(post('/x'), params(WORKSPACE_A))
+    ).json();
+
+    // Two rebuilds of one workspace would race for the same worktree, and the
+    // loser would deploy stale files over the winner.
+    expect(db.rows('flowstarter_agent_jobs')).toHaveLength(1);
+    expect(second.rebuildJobId).toBe(first.rebuildJobId);
+    expect(second.deploy.mode).toBe('rebuild_queued');
+    // Still nudged: the first nudge may have been the one that was lost.
+    expect(dispatched).toEqual([first.rebuildJobId]);
+  });
+
+  it('queues a rebuild for a site that is already built and hosted too', async () => {
+    // The other branch: a live host with a deploy agent behind it. The
+    // previous build is exactly what must not be re-published as-is, so this
+    // still queues rather than deploying what is already there.
+    hostThePublishedSite();
+    withAPreviousBuild();
+    process.env.DEPLOY_AGENT_SHARED_SECRET = 'x'.repeat(40);
+    try {
+      const body = await (
+        await PUBLISH(post('/x'), params(WORKSPACE_A))
+      ).json();
+      expect(body.deploy.mode).toBe('rebuild_queued');
+      expect(body.deploy.hasBuild).toBe(true);
+      expect(db.rows('flowstarter_agent_jobs')).toHaveLength(1);
+    } finally {
+      delete process.env.DEPLOY_AGENT_SHARED_SECRET;
+    }
+  });
+
+  it('queues a fresh rebuild when the only one on the ledger has finished', async () => {
+    hostThePublishedSite();
+    db.seed('flowstarter_agent_jobs', [
+      {
+        id: 'done-1',
+        workspace_id: WORKSPACE_A,
+        kind: 'SITE_REBUILD',
+        status: 'succeeded',
+        payload: {},
+      },
+    ]);
+
+    const body = await (await PUBLISH(post('/x'), params(WORKSPACE_A))).json();
+    expect(body.rebuildJobId).not.toBe('done-1');
+    expect(db.rows('flowstarter_agent_jobs')).toHaveLength(2);
+  });
+
+  it('queues a second rebuild behind one that is already running, instead of joining it', async () => {
+    // The worker freezes the manifest at claim time, so a `running` job is
+    // already building the OLD manifest. Joining it would silently drop this
+    // publish's edit, so it has to get its own `queued` job that waits behind
+    // the running one.
+    hostThePublishedSite();
+    db.seed('flowstarter_agent_jobs', [
+      {
+        id: 'running-1',
+        workspace_id: WORKSPACE_A,
+        kind: 'SITE_REBUILD',
+        status: 'running',
+        payload: {},
+      },
+    ]);
+
+    const body = await (await PUBLISH(post('/x'), params(WORKSPACE_A))).json();
+    expect(body.deploy.mode).toBe('rebuild_queued');
+    expect(body.rebuildJobId).not.toBe('running-1');
+
+    const jobs = db.rows('flowstarter_agent_jobs');
+    expect(jobs).toHaveLength(2);
+    const queued = jobs.find((row) => row.id === body.rebuildJobId);
+    expect(queued).toMatchObject({ status: 'queued', kind: 'SITE_REBUILD' });
+    const running = jobs.find((row) => row.id === 'running-1');
+    expect(running?.status).toBe('running');
+  });
+
+  it('joins a queued rebuild even while a different one is already running', async () => {
+    // Confirms the join rule reads status, not just "something in flight":
+    // a queued job's manifest is not frozen yet, so it is safe to join even
+    // though a running job also exists for the same workspace.
+    hostThePublishedSite();
+    db.seed('flowstarter_agent_jobs', [
+      {
+        id: 'running-1',
+        workspace_id: WORKSPACE_A,
+        kind: 'SITE_REBUILD',
+        status: 'running',
+        payload: {},
+      },
+      {
+        id: 'queued-1',
+        workspace_id: WORKSPACE_A,
+        kind: 'SITE_REBUILD',
+        status: 'queued',
+        payload: {},
+      },
+    ]);
+
+    const body = await (await PUBLISH(post('/x'), params(WORKSPACE_A))).json();
+    expect(body.rebuildJobId).toBe('queued-1');
+    expect(db.rows('flowstarter_agent_jobs')).toHaveLength(2);
   });
 });
 

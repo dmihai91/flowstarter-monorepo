@@ -1,24 +1,28 @@
 import 'server-only';
 /**
- * POST /api/client/site/[workspaceId]/publish — mark the current version as
- * the one that should go live, and say honestly what still has to happen.
+ * POST /api/client/site/[workspaceId]/publish: mark the current version as
+ * the one that should go live, and start the build that puts it there.
  *
- * WHAT THIS DOES NOT DO, AND WHY. `deploySite` takes a built artifact — a
- * tarball or an HTTPS URL — and hands it to the per-host deploy agent, which
+ * WHY THIS ENQUEUES INSTEAD OF DEPLOYING. `deploySite` takes a built artifact,
+ * a tarball or an HTTPS URL, and hands it to the per-host deploy agent, which
  * extracts it under /var/www/sites and reloads Caddy. What an editor produces
  * is an edited *source* manifest: Astro components and content files. Pushing
  * those to the agent would publish source, not a site, and pushing the last
  * build's `preview_artifact_url` instead would publish the client's site
- * without the change they just made and report success. Both are worse than
- * waiting, so neither happens here.
+ * without the change they just made and report success. So the missing piece
+ * was never a deploy call here, it was a build of the edited manifest.
  *
- * What happens instead: the version is stamped `published_at`, an event is
- * recorded, and the response says exactly which of the three preconditions
- * (a host, a configured deploy agent, a build of this version) is missing. The
- * UI prints that rather than a spinner. When a build of the edited manifest
- * exists, this is the place that gains a `deploySite` call with the artifact
- * it produced, using `DryRunDeployAgentClient` wherever
- * `DEPLOY_AGENT_SHARED_SECRET` is unset.
+ * That build is a SITE_REBUILD job. The version is stamped `published_at`, and
+ * a job is queued and the worker is nudged; the worker materializes the same
+ * manifest column a full build reads, validates it, commits, and deploys the
+ * build output. A rebuild already `running` has frozen the manifest it will
+ * build, so it cannot pick up this publish's edit: `enqueueSiteRebuild` joins
+ * a `queued` job if one is waiting, otherwise starts a new one behind a
+ * partial unique index that allows at most one `queued` SITE_REBUILD per
+ * workspace, so at most one job ever waits behind whatever is running. The
+ * response names what actually happened, including the two cases where no
+ * build is started: a project with no server allocated yet, and an environment
+ * with no deploy agent configured, where a build would have nowhere to go.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import {
@@ -26,7 +30,9 @@ import {
   recordSiteEditorEvent,
   saveSiteVersion,
 } from '@/lib/flowstarter/site-editor';
+import { dispatchAgentJob } from '@/lib/flowstarter/pipeline/dispatch';
 import { findBuiltIndex } from '@/lib/flowstarter/site-preview';
+import { enqueueSiteRebuild } from '@/lib/flowstarter/site-rebuild';
 import { createSupabaseServiceRoleClient } from '@/supabase-clients/server';
 import {
   openSiteEditorContext,
@@ -40,6 +46,13 @@ export const dynamic = 'force-dynamic';
 interface HostingRow {
   deploy_agent_url: string | null;
 }
+
+/**
+ * The three honest answers to "did my change go live?": no server yet, no
+ * deploy agent in this environment, or a build is running that will put it
+ * there.
+ */
+type PublishMode = 'no_host' | 'dry_run' | 'rebuild_queued';
 
 export async function POST(
   _request: NextRequest,
@@ -95,35 +108,70 @@ export async function POST(
     );
     const hasBuild = Boolean(findBuiltIndex(context.site.files));
 
+    // A rebuild is only worth starting where its output has somewhere to land:
+    // a server has to be allocated, and a site that is already built is served
+    // by a deploy agent that has to be configured to receive the new build.
+    // The other two answers say which of those is missing.
+    const canRebuild = hasHost && (!hasBuild || agentConfigured);
+
+    let rebuildJobId: string | null = null;
+    let dispatched = false;
+    if (canRebuild) {
+      const rebuild = await enqueueSiteRebuild({
+        supabase,
+        workspaceId: context.workspaceId,
+        version,
+        publishedBy: context.access.actorId,
+      });
+      rebuildJobId = rebuild.jobId;
+      // The ledger row is the commitment; this is only a nudge. An unreachable
+      // worker leaves a queued job an operator can re-dispatch, which is a far
+      // better outcome than failing a publish that is already recorded.
+      try {
+        await dispatchAgentJob(rebuild.jobId);
+        dispatched = true;
+      } catch (error) {
+        console.warn(
+          '[site-publish] could not nudge the build worker:',
+          error instanceof Error ? error.message : error
+        );
+      }
+    }
+
     // Named so the UI does not have to guess which sentence to print.
-    const mode = !hasHost
+    const mode: PublishMode = canRebuild
+      ? 'rebuild_queued'
+      : !hasHost
       ? 'no_host'
-      : !hasBuild
-      ? 'awaiting_build'
-      : agentConfigured
-      ? 'agent'
       : 'dry_run';
 
-    const detail: Record<typeof mode, string> = {
+    const detail: Record<PublishMode, string> = {
       no_host:
         'This project does not have a server allocated yet, so your change is saved and marked to publish. We will put it live when the site is hosted.',
-      awaiting_build:
-        'Your change is saved and marked to publish. The site is rebuilt from these files before it goes live, and we run that build for you: nothing else is needed from you.',
       dry_run:
         'Your change is saved and marked to publish. This environment has no deploy agent configured, so nothing was pushed to a server (dry run).',
-      agent:
-        'Your change is saved and marked to publish, and this project has a live host ready to receive it.',
+      rebuild_queued:
+        'Your change is saved and the site is being rebuilt from it now. It goes live as soon as that build passes, and nothing else is needed from you.',
     };
 
     await recordSiteEditorEvent({
       workspaceId: context.workspaceId,
       kind: 'site_publish_requested',
       actor: context.access.actorId,
-      payload: { version, mode, hasHost, agentConfigured, hasBuild },
+      payload: {
+        version,
+        mode,
+        hasHost,
+        agentConfigured,
+        hasBuild,
+        rebuildJobId,
+        dispatched,
+      },
     });
 
     return NextResponse.json({
       version,
+      rebuildJobId,
       deploy: {
         mode,
         detail: detail[mode],

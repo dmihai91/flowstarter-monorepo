@@ -12,6 +12,7 @@
  * gets a send-anyway button — the classification routes, it does not refuse.
  */
 import { useState } from 'react';
+import { ChangeRequestsList } from './ChangeRequestsList';
 import { PolicyNotice } from './PolicyNotice';
 import {
   EditorRequestError,
@@ -45,6 +46,7 @@ export function EscalationPanel({
 }) {
   const [request, setRequest] = useState('');
   const [outcome, setOutcome] = useState<Outcome>({ state: 'idle' });
+  const [filed, setFiled] = useState(0);
 
   // A lapsed plan is the one thing that closes this door; the policy's own
   // words say so. maintenance_request is the normal, open-for-business state.
@@ -67,6 +69,7 @@ export function EscalationPanel({
       if (result.escalated) {
         setOutcome({ state: 'sent' });
         setRequest('');
+        setFiled((n) => n + 1);
       } else {
         setOutcome({
           state: 'self-serve',
@@ -151,8 +154,8 @@ export function EscalationPanel({
           data-testid="escalation-sent"
           className="rounded-xl border border-emerald-600/25 bg-emerald-600/10 px-4 py-3 text-sm text-emerald-800 dark:text-emerald-300"
         >
-          Sent to your team. You will get a reply on your project page, and by
-          email.
+          Sent to your team. They will put a price on it here, and you decide
+          whether to go ahead.
         </p>
       ) : outcome.state === 'error' ? (
         <p className="rounded-xl border border-red-600/25 bg-red-600/10 px-4 py-3 text-sm text-red-800 dark:text-red-300">
@@ -169,6 +172,8 @@ export function EscalationPanel({
       >
         {outcome.state === 'sending' ? 'Sending…' : 'Send to my team'}
       </button>
+
+      <ChangeRequestsList workspaceId={workspaceId} refreshSignal={filed} />
     </div>
   );
 }

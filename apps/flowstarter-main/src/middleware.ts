@@ -17,6 +17,7 @@ import {
   forcedPasswordChangeRedirect,
   type ForcedPasswordClaims,
 } from '@/lib/auth/forced-password-change';
+import { KNOWN_APP_ROUTES, PUBLIC_ROUTES } from '@/lib/route-manifest';
 import { applySecurityHeaders } from './utils/security-headers';
 
 /**
@@ -213,87 +214,15 @@ function logSecurityEventEdge(
 }
 
 // Create a middleware matcher to determine which routes should be public
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/about(.*)',
-  '/login(.*)',
-  '/assistant(.*)', // Client-facing "Flowstarter Assistant" sign-in (reached from workspace landings)
-  '/sign-up(.*)',
-  '/forgot-password(.*)',
-  '/reset-password(.*)',
-  '/verify(.*)',
-  '/api/webhooks(.*)',
-  // Service callers, not people: no Clerk session exists to check. Every route
-  // under it verifies a shared secret itself (see api/internal/build/deploy).
-  '/api/internal(.*)',
-  '/api/health(.*)',
-  '/api/auth/session(.*)', // Session check
-  '/api/contact(.*)', // Public contact form API
-  '/api/support-chat(.*)', // Public support bot LLM endpoint
-  '/api/discovery(.*)', // Public discovery wizard: lead capture + booking deposit
-  '/unlock(.*)', // Preview unlock landing: reached from a generated site, viewer may be signed out
-  '/welcome(.*)', // Guest deposit landing: Stripe returns here before the account exists
-  '/gdpr(.*)',
-  '/contact(.*)',
-  '/help(.*)', // Public help page
-  '/privacy(.*)', // Public privacy policy
-  '/terms(.*)', // Public terms of service
-  '/pricing(.*)', // Public pricing page
-  '/cookies(.*)', // Public cookie policy
-  '/guides(.*)',
-  '/blogs(.*)',
-  '/cookie-policy(.*)',
-  '/term-of-service(.*)',
-  '/privacy-policy(.*)',
-  '/sitemap(.*)',
-  '/accessibility(.*)',
-  '/admin', // Admin index (redirects to login)
-  '/admin/login(.*)', // Admin login page (public, auth handled by Clerk)
-  '/admin/join(.*)', // Admin join/invitation page (public)
-
-  // Public static pages — landing sections, legal, support
-  '/about(.*)',
-  '/relaunch(.*)',
-  '/faq(.*)',
-  '/library(.*)', // Public template library (also reachable via library.* subdomain rewrite)
-]);
+// The lists themselves live in `@/lib/route-manifest` so
+// `src/__tests__/route-manifest.test.ts` can assert every page entry against
+// the pages that exist under `src/app` without booting Clerk or the Edge
+// runtime. Add a route there, not here.
+const isPublicRoute = createRouteMatcher([...PUBLIC_ROUTES]);
 
 // Routes that only exist if they match a known app path prefix.
 // Everything else is a 404 — let Next.js render it instead of redirecting to login.
-const isKnownAppRoute = createRouteMatcher([
-  '/',
-  '/unlock(.*)',
-  '/welcome(.*)',
-  '/account/password(.*)', // Forced password change for guest-provisioned clients
-  '/about(.*)',
-  '/login(.*)',
-  '/assistant(.*)', // Client-facing "Flowstarter Assistant" sign-in (reached from workspace landings)
-  '/sign-up(.*)',
-  '/forgot-password(.*)',
-  '/reset-password(.*)',
-  '/verify(.*)',
-  '/gdpr(.*)',
-  '/contact(.*)',
-  '/help(.*)',
-  '/privacy(.*)',
-  '/terms(.*)',
-  '/pricing(.*)',
-  '/cookies(.*)',
-  '/guides(.*)',
-  '/blogs(.*)',
-  '/cookie-policy(.*)',
-  '/term-of-service(.*)',
-  '/privacy-policy(.*)',
-  '/sitemap(.*)',
-  '/accessibility(.*)',
-  '/faq(.*)',
-  '/relaunch(.*)',
-  '/admin(.*)',
-  '/dashboard(.*)',
-  '/new(.*)',
-  '/api(.*)',
-  '/library(.*)',
-]);
+const isKnownAppRoute = createRouteMatcher([...KNOWN_APP_ROUTES]);
 
 export default clerkMiddleware(async (auth, req) => {
   // ── Workflow showcase subdomain rewrite ──────────────────────────────────

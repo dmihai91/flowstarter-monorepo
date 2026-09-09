@@ -13,6 +13,15 @@ import { STORAGE_STATE } from './e2e/support/clerk-env';
 // e2e/visual/README.md.
 const VISUAL_CHECK = process.env.VISUAL_CHECK === '1';
 
+// The production synthetic (e2e/prod-synthetic.spec.ts) reads a live, deployed
+// site. It is opt-in via PROD_SYNTHETIC=1 for the same reason the visual
+// projects are opt-in: `playwright test` with no --project runs every project
+// in the array below, and the pre-push hook plus `pnpm run ci:smoke:platform`
+// both do exactly that. Only .depot/workflows/prod-synthetic.yml sets the
+// variable. The `chromium` project ignores the file so the synthetic never
+// runs against a Deploy Preview by accident.
+const PROD_SYNTHETIC = process.env.PROD_SYNTHETIC === '1';
+
 const projects: NonNullable<PlaywrightTestConfig['projects']> = [
   {
     name: 'chromium',
@@ -24,6 +33,9 @@ const projects: NonNullable<PlaywrightTestConfig['projects']> = [
       /\.auth\.spec\.ts$/,
       /global\.setup\.ts$/,
       /\.visual\.spec\.ts$/,
+      // Belongs to the opt-in `prod-synthetic` project below; it targets
+      // production, not this project's Deploy Preview base URL.
+      /prod-synthetic\.spec\.ts$/,
     ],
   },
   {
@@ -42,6 +54,14 @@ const projects: NonNullable<PlaywrightTestConfig['projects']> = [
     },
   },
 ];
+
+if (PROD_SYNTHETIC) {
+  projects.push({
+    name: 'prod-synthetic',
+    testMatch: /prod-synthetic\.spec\.ts$/,
+    use: { ...devices['Desktop Chrome'] },
+  });
+}
 
 if (VISUAL_CHECK) {
   projects.push(

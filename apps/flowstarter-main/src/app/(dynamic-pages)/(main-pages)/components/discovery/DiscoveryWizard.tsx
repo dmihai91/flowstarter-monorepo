@@ -20,8 +20,15 @@ import {
   stepForConversation,
 } from './intake-script';
 import { IntakeConversation } from './steps/IntakeConversation';
+import { IntakeGraphConversation } from './steps/IntakeGraphConversation';
 import { InfoAgentStep } from './steps/InfoAgentStep';
 import { PreviewStep } from './steps/PreviewStep';
+
+/** Opt-in LangGraph HITL intake. Scripted conversation stays the default. */
+const USE_INTAKE_GRAPH =
+  process.env.NEXT_PUBLIC_FLOWSTARTER_INTAKE_GRAPH === 'true' &&
+  process.env.VITEST !== 'true' &&
+  process.env.NODE_ENV !== 'test';
 
 /**
  * Draft autosave. sessionStorage (not localStorage) on purpose: the draft
@@ -292,18 +299,32 @@ export function DiscoveryWizard({
           they used to sit under went with the form, replaced by the quiet
           progress line the conversation draws for itself. */}
       <section>
-        {talking && (
-          <IntakeConversation
-            data={data}
-            update={update}
-            answered={answered}
-            essentialsOnly={skippedAhead}
-            onAnswer={handleAnswer}
-            onSkipRest={handleSkipRest}
-            paceMs={conversationPaceMs}
-            t={t}
-          />
-        )}
+        {talking &&
+          (USE_INTAKE_GRAPH ? (
+            <IntakeGraphConversation
+              data={data}
+              update={update}
+              answered={answered}
+              essentialsOnly={skippedAhead}
+              onState={({ data: nextData, answered: nextAnswered }) => {
+                setData(nextData);
+                setAnswered(nextAnswered);
+              }}
+              onSkipRest={handleSkipRest}
+              t={t}
+            />
+          ) : (
+            <IntakeConversation
+              data={data}
+              update={update}
+              answered={answered}
+              essentialsOnly={skippedAhead}
+              onAnswer={handleAnswer}
+              onSkipRest={handleSkipRest}
+              paceMs={conversationPaceMs}
+              t={t}
+            />
+          ))}
         {step === INFO_STEP && (
           <InfoAgentStep
             data={data}

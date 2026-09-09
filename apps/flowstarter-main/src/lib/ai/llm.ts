@@ -48,6 +48,8 @@ export const LLM_ACTIONS = [
   /** The Pi coding-agent preview pipeline (usage arrives via a sink). */
   'preview_generate',
   'intake_interview',
+  /** Natural-language intake graph (LangGraph HITL phrasing + extract). */
+  'intake_graph',
   'business_naming',
 ] as const;
 
@@ -106,6 +108,7 @@ export const LLM_BUDGETS: Record<LlmAction, LlmActionConfig> = {
   // preview needs ~300-400k uncached, so 1M leaves headroom for repairs.
   preview_generate: { maxTokens: 1_000_000, model: 'z-ai/glm-5.2' },
   intake_interview: { maxTokens: 8_000, maxOutputTokens: 800, model: SONNET },
+  intake_graph: { maxTokens: 10_000, maxOutputTokens: 1_200, model: SONNET },
   business_naming: { maxTokens: 6_000, maxOutputTokens: 600, model: SONNET },
 };
 

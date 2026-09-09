@@ -10,29 +10,17 @@ import {
 	createPreviewRoutes,
 	createStaticRoutes,
 } from './routes/index.js';
-import { PORT, HOST, CORS_ORIGIN, PUBLIC_DIR, TEMPLATES_DIR } from './config.js';
+import { PORT, HOST, PUBLIC_DIR, TEMPLATES_DIR } from './config.js';
+import { createCorsOptionsDelegate, resolveAllowedOrigins } from './cors.js';
 
 export async function startHttpServer(fetcher: TemplateFetcher) {
 	const app = express();
 
-	// CORS: reflect request origin when unset/`*`; never send Access-Control-Allow-Origin: *
-	const corsOptions =
-		!CORS_ORIGIN || CORS_ORIGIN === '*'
-			? {
-					origin: true as const,
-					credentials: true,
-					methods: ['GET', 'POST', 'OPTIONS'],
-					allowedHeaders: ['Content-Type', 'Authorization'],
-				}
-			: {
-					origin: CORS_ORIGIN.includes(',')
-						? CORS_ORIGIN.split(',').map((o) => o.trim())
-						: CORS_ORIGIN,
-					credentials: true,
-					methods: ['GET', 'POST', 'OPTIONS'],
-					allowedHeaders: ['Content-Type', 'Authorization'],
-				};
-	app.use(cors(corsOptions));
+	// CORS: answer from an allow-list (MCP_ALLOWED_ORIGINS, the older
+	// CORS_ORIGIN, and the local development origins), deny anything else, and
+	// send credentials only to an origin that matched. Denying withholds the
+	// CORS headers; it does not reject the request, so /health stays reachable.
+	app.use(cors(createCorsOptionsDelegate()));
 
 	// Basic rate limiting for filesystem-backed routes (CodeQL js/missing-rate-limiting)
 	const fsRateLimit = rateLimit({
@@ -92,7 +80,7 @@ export async function startHttpServer(fetcher: TemplateFetcher) {
 			console.error(`[HTTP] MCP endpoint: http://${HOST}:${PORT}/mcp`);
 			console.error(`[HTTP] Health check: http://${HOST}:${PORT}/health`);
 			console.error(`[HTTP] Showcase app: http://${HOST}:${PORT}/`);
-			console.error(`[HTTP] CORS origin: ${CORS_ORIGIN}`);
+			console.error(`[HTTP] CORS allow-list: ${resolveAllowedOrigins().join(', ')}`);
 			console.error(`[HTTP] Templates dir: ${TEMPLATES_DIR} (exists: ${fs.existsSync(TEMPLATES_DIR)})`);
 			resolve();
 		});

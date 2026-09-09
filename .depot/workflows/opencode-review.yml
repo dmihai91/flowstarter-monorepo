@@ -255,6 +255,22 @@ jobs:
           else
             echo "present=true" >> "$GITHUB_OUTPUT"
           fi
+      # Checked out before the Netlify lookup below, which runs a script out
+      # of this repository. It used to sit after that lookup, so the lookup
+      # died on "bash: .github/scripts/wait-for-netlify-deploy.sh: No such
+      # file or directory"; `continue-on-error` hid the exit code and the
+      # reviewer was simply told there was no Deploy Preview, on pull requests
+      # where the visual-check lane resolved one from the same secrets.
+      - name: Check out the pull request
+        if: steps.creds.outputs.present == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # The action runs its own `git fetch` to work out the diff base, so
+          # the credentials have to survive the checkout step, and it needs
+          # real history rather than a depth-1 cone.
+          persist-credentials: true
+          fetch-depth: 0
       # Netlify builds a Deploy Preview per pull request. The `secrets`
       # context is not readable from a step-level `if`, so presence is turned
       # into an output here and gated on below.
@@ -268,7 +284,7 @@ jobs:
           if [ -n "$NETLIFY_AUTH_TOKEN" ] && [ -n "$NETLIFY_SITE_ID" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Netlify credentials are absent; the reviewer gets no live preview."
+            echo "::warning::NETLIFY_AUTH_TOKEN or NETLIFY_SITE_ID is not set (expected on dependabot/fork pull requests); the reviewer gets no live preview."
             echo "present=false" >> "$GITHUB_OUTPUT"
           fi
       # Reuses the same script the E2E smoke lane uses, on a shorter budget:
@@ -289,6 +305,16 @@ jobs:
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
           TIMEOUT_SECONDS: '600'
           POLL_INTERVAL: '15'
+      # The lookup runs with `continue-on-error`, so a script that fails for
+      # any reason leaves `url` empty and the reviewer silently loses the
+      # browser. Say so out loud instead.
+      - name: No Netlify Deploy Preview available
+        if: steps.netlify_creds.outputs.present == 'true' && steps.preview.outputs.url == ''
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          LOOKUP_OUTCOME: ${{ steps.preview.outcome }}
+        run: |
+          echo "::warning::No Netlify Deploy Preview resolved for ${HEAD_SHA} (lookup outcome: ${LOOKUP_OUTCOME}); the reviewer reviews the diff without a browser."
       # A URL alone only gives the reviewer curl. Pull a pinned, isolated
       # Chromium environment so the model can exercise the changed flow like a
       # user. The tag tracks @playwright/test in this repository (1.58.2); a
@@ -301,16 +327,6 @@ jobs:
         if: steps.creds.outputs.present == 'true' && steps.preview.outputs.url != ''
         continue-on-error: true
         run: docker pull mcr.microsoft.com/playwright:v1.58.2-noble
-      - name: Check out the pull request
-        if: steps.creds.outputs.present == 'true'
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          # The action runs its own `git fetch` to work out the diff base, so
-          # the credentials have to survive the checkout step, and it needs
-          # real history rather than a depth-1 cone.
-          persist-credentials: true
-          fetch-depth: 0
       # A reviewer reads; it has no reason to write a commit. But it explores
       # with real git, and some of what it reaches for refuses to run without
       # an identity, which turns an advisory lane red for a reason that has

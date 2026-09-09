@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import * as path from 'path';
 import * as fs from 'fs';
 import { getTemplateConfig } from '../framework-detection.js';
@@ -11,13 +12,37 @@ import {
 	UnsafePathError,
 } from '../utils/safe-path.js';
 
-export function createStaticRoutes() {
+/** Default per-IP budget for the file-serving handlers below.
+ *  Higher than the 120 http-server.ts gives /api/templates because a request
+ *  that falls through one handler is counted again by the next: an unknown
+ *  path can pass the slug routes on its way to the SPA fallback. */
+const FILE_SERVING_WINDOW_MS = 60_000;
+const FILE_SERVING_LIMIT = 300;
+
+export interface StaticRoutesOptions {
+	/** Override the file-serving rate limit. Tests use a tiny budget. */
+	rateLimit?: { windowMs?: number; limit?: number };
+}
+
+export function createStaticRoutes(options: StaticRoutesOptions = {}) {
 	const router = Router();
+
+	// Every handler in this router reads the filesystem and streams a file
+	// back, so each one sits behind a per-IP rate limit. http-server.ts puts
+	// the same shape of limiter in front of /api/templates and
+	// /api/scaffold-to-convex; these routes are mounted at the root and were
+	// left uncovered by that (CodeQL js/missing-rate-limiting).
+	const fileServingRateLimit = rateLimit({
+		windowMs: options.rateLimit?.windowMs ?? FILE_SERVING_WINDOW_MS,
+		limit: options.rateLimit?.limit ?? FILE_SERVING_LIMIT,
+		standardHeaders: true,
+		legacyHeaders: false,
+	});
 
 	// Serve template static assets (handle both /assets/* and root level files)
 	// Express 5 / path-to-regexp v8 requires named wildcards ("*splat" instead of bare "*").
-	router.all('/api/templates/:slug/*splat', (req, res, next) => {
-		const { slug } = req.params;
+	router.all('/api/templates/:slug/*splat', fileServingRateLimit, (req, res, next) => {
+		const slug = String(req.params.slug);
 
 		// Skip if it's a specific endpoint
 		if (
@@ -63,8 +88,8 @@ export function createStaticRoutes() {
 
 	// Direct template preview routes
 	// This allows templates to work with their client-side routing from root
-	router.get('/:slug', (req, res, next) => {
-		const { slug } = req.params;
+	router.get('/:slug', fileServingRateLimit, (req, res, next) => {
+		const slug = String(req.params.slug);
 		if (!isSafeSlug(slug)) {
 			return next();
 		}
@@ -121,8 +146,8 @@ export function createStaticRoutes() {
 		}
 	});
 
-	router.get('/:slug/*splat', (req, res, next) => {
-		const { slug } = req.params;
+	router.get('/:slug/*splat', fileServingRateLimit, (req, res, next) => {
+		const slug = String(req.params.slug);
 		if (!isSafeSlug(slug)) {
 			return next();
 		}
@@ -201,7 +226,7 @@ export function createStaticRoutes() {
 	});
 
 	// SPA fallback
-	router.get('/*splat', (req, res) => {
+	router.get('/*splat', fileServingRateLimit, (req, res) => {
 		// Skip API routes
 		if (
 			req.path.startsWith('/api/') ||

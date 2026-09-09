@@ -1075,6 +1075,9 @@ importers:
       typescript:
         specifier: ~5.7.2
         version: 5.7.3
+      vitest:
+        specifier: ^4.0.6
+        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@20.19.9)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(msw@2.12.11(@types/node@20.19.9)(typescript@5.7.3))(vite@8.2.2(@types/node@20.19.9)(esbuild@0.28.2)(jiti@2.7.0)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))
 
   apps/flowstarter-templates/creative-portfolio:
     dependencies:
@@ -26377,7 +26380,6 @@ snapshots:
     optionalDependencies:
       msw: 2.12.11(@types/node@20.19.9)(typescript@5.7.3)
       vite: 8.2.2(@types/node@20.19.9)(esbuild@0.28.2)(jiti@2.7.0)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)
-    optional: true
 
   '@vitest/mocker@4.1.11(msw@2.12.11(@types/node@24.12.2)(typescript@5.9.3))(vite@8.2.2(@types/node@24.12.2)(esbuild@0.28.2)(jiti@2.7.0)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0))':
     dependencies:
@@ -37143,7 +37145,6 @@ snapshots:
       terser: 5.46.0
       tsx: 4.21.0
       yaml: 2.9.0
-    optional: true
 
   vite@8.2.2(@types/node@24.12.2)(esbuild@0.28.2)(jiti@2.7.0)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0):
     dependencies:
@@ -37326,7 +37327,6 @@ snapshots:
       jsdom: 26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
     transitivePeerDependencies:
       - msw
-    optional: true
 
   vitest@4.1.11(@opentelemetry/api@1.9.0)(@types/node@24.12.2)(happy-dom@20.6.1(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jsdom@26.1.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(msw@2.12.11(@types/node@24.12.2)(typescript@5.9.3))(vite@8.2.2(@types/node@24.12.2)(esbuild@0.28.2)(jiti@2.7.0)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.9.0)):
     dependencies:

@@ -17,7 +17,7 @@
  *   - `onTransferToken`       → optional cross-domain session hand-off
  *     (main wires /api/auth/transfer-token; editor omits it).
  *
- * `isTrustedHost` / `isTeamEmail` come straight from
+ * `isSafeRedirectUrl` / `isTeamEmail` come straight from
  * `@flowstarter/platform-config` (already a design-system dep).
  *
  * Field chrome uses the brand tokens (--purple / --fs-* / --surface-2)
@@ -25,7 +25,7 @@
  */
 
 import { useEffect, useState, type ReactNode } from 'react';
-import { isTrustedHost, isTeamEmail } from '@flowstarter/platform-config';
+import { isTeamEmail, isSafeRedirectUrl } from '@flowstarter/platform-config';
 
 /* ── Structural Clerk types ───────────────────────────────────────────
    Only the surface we touch. Keeps this package SDK-free. */
@@ -117,9 +117,16 @@ const IconEyeOff = () => (
 );
 
 /* ── Inlined form primitives (exact platform classes) ─────────────── */
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export function isValidEmail(value: string): boolean {
-  return EMAIL_REGEX.test(value.trim());
+  const v = value.trim();
+  if (v.length < 3 || v.length > 254) return false;
+  const at = v.indexOf('@');
+  if (at <= 0 || at !== v.lastIndexOf('@')) return false;
+  const local = v.slice(0, at);
+  const domain = v.slice(at + 1);
+  if (!local || !domain || local.includes(' ') || domain.includes(' ')) return false;
+  const dot = domain.lastIndexOf('.');
+  return dot > 0 && dot < domain.length - 1;
 }
 
 function Label({
@@ -206,10 +213,10 @@ function resolveClerkError(
     message =
       context === 'signIn'
         ? t('auth.errors.signInInvalid')
-        : e.errors[0]?.message || t('auth.errors.somethingWentWrong');
+        : t('auth.errors.somethingWentWrong');
   } else if (e.message) {
     message =
-      context === 'signIn' ? t('auth.errors.signInInvalid') : e.message;
+      context === 'signIn' ? t('auth.errors.signInInvalid') : t('auth.errors.somethingWentWrong');
   }
   return message;
 }
@@ -229,13 +236,8 @@ function errorForCode(
   return fallback || t('auth.errors.somethingWentWrong');
 }
 
-function clerkErrorMessage(error: unknown, fallback: string): string {
-  if (error && typeof error === 'object' && 'errors' in error) {
-    const msg = (error as { errors?: Array<{ message?: string }> }).errors?.[0]
-      ?.message;
-    if (msg) return msg;
-  }
-  if (error instanceof Error) return error.message;
+function clerkErrorMessage(_error: unknown, fallback: string): string {
+  // Never surface raw Clerk/provider messages into the DOM (CodeQL js/xss).
   return fallback;
 }
 
@@ -308,23 +310,28 @@ export function LoginForm({
     userEmail?: string,
   ): { url: string; external: boolean } => {
     const redirectUrl = getSearchParam('redirect_url');
-    if (redirectUrl) {
+    if (redirectUrl && isSafeRedirectUrl(redirectUrl)) {
       try {
         const url = new URL(redirectUrl);
-        if (isTrustedHost(url.hostname)) {
-          const isCrossDomain =
-            typeof window !== 'undefined' &&
-            url.hostname !== window.location.hostname;
-          return { url: redirectUrl, external: isCrossDomain };
-        }
+        const isCrossDomain =
+          typeof window !== 'undefined' &&
+          url.hostname !== window.location.hostname;
+        // Use the parsed href so navigation never follows an unsanitized string
+        return { url: url.href, external: isCrossDomain };
       } catch {
         /* invalid URL */
       }
     }
     if (isTeam) {
       const nextUrl = getSearchParam('next');
-      if (nextUrl && nextUrl.startsWith('/'))
+      if (
+        nextUrl &&
+        nextUrl.startsWith('/') &&
+        !nextUrl.startsWith('//') &&
+        !nextUrl.startsWith('/\\')
+      ) {
         return { url: nextUrl, external: false };
+      }
       return { url: '/admin/dashboard', external: false };
     }
     if (userEmail && isTeamEmail(userEmail)) {

@@ -244,16 +244,19 @@ function applyCustomizations(
     }
 
     // Inject Google Fonts into index.html if fonts are specified
-    if (file.path.endsWith('index.html') && fonts && !content.includes('fonts.googleapis.com')) {
+    if (file.path.endsWith('index.html') && fonts) {
+      const fontsHost = 'https://fonts.googleapis.com';
+      if (!content.includes(`${fontsHost}/`)) {
       const headingFont = fonts.heading.family.replace(/ /g, '+');
       const bodyFont = fonts.body.family.replace(/ /g, '+');
-      const googleFontsLink = `<link rel="preconnect" href="https://fonts.googleapis.com">
+      const googleFontsLink = `<link rel="preconnect" href="${fontsHost}">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=${headingFont}:wght@500;600;700&family=${bodyFont}:wght@400;500;600;700&display=swap" rel="stylesheet">`;
+    <link href="${fontsHost}/css2?family=${headingFont}:wght@500;600;700&family=${bodyFont}:wght@400;500;600;700&display=swap" rel="stylesheet">`;
 
       // Inject before </head>
       content = content.replace('</head>', `${googleFontsLink}\n  </head>`);
       console.log('[applyCustomizations] Injected Google Fonts into index.html');
+      }
     }
 
     return { path: file.path, content };

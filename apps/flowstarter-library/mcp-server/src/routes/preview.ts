@@ -3,15 +3,40 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { getTemplateConfig } from '../framework-detection.js';
 import { TEMPLATES_DIR, CORS_ORIGIN } from '../config.js';
+import {
+	assertSafeSlug,
+	escapeHtml,
+	resolveUnder,
+	sanitizePreviewMode,
+	UnsafePathError,
+} from '../utils/safe-path.js';
 
 // Helper function to serve template HTML
 function serveTemplatePreview(
 	req: Request,
-	slug: string,
-	mode: string | undefined,
+	rawSlug: string,
+	rawMode: string | undefined,
 	res: Response
 ) {
-	const templateDir = path.join(TEMPLATES_DIR, slug);
+	let slug: string;
+	try {
+		slug = assertSafeSlug(rawSlug);
+	} catch {
+		return res.status(400).send('Invalid template slug');
+	}
+	const mode = sanitizePreviewMode(rawMode);
+	const escapedSlug = escapeHtml(slug);
+
+	let templateDir: string;
+	try {
+		templateDir = resolveUnder(TEMPLATES_DIR, slug);
+	} catch (err) {
+		if (err instanceof UnsafePathError) {
+			return res.status(400).send('Invalid template slug');
+		}
+		throw err;
+	}
+
 	const templateConfig = getTemplateConfig(templateDir);
 	const distDir = templateConfig.buildDir;
 	const indexPath = path.join(distDir, 'index.html');
@@ -44,8 +69,8 @@ function serveTemplatePreview(
 		  <body>
 			<div class="container">
 			  <h1>Template Not Built</h1>
-			  <p>The template <strong>${slug}</strong> needs to be built before preview.</p>
-			  <p>Run: <code>cd templates/${slug} && pnpm install && pnpm build</code></p>
+			  <p>The template <strong>${escapedSlug}</strong> needs to be built before preview.</p>
+			  <p>Run: <code>cd templates/${escapedSlug} &amp;&amp; pnpm install &amp;&amp; pnpm build</code></p>
 			</div>
 		  </body>
 		</html>
@@ -126,8 +151,8 @@ function serveTemplatePreview(
 	const navigationScript = `
 	<script>
 	(function() {
-		const BASE_PATH = '${basePath}';
-		const MODE_PARAM = '${modeParam}';
+		const BASE_PATH = ${JSON.stringify(basePath)};
+		const MODE_PARAM = ${JSON.stringify(modeParam)};
 		
 		// Build URL with proper query string and hash handling
 		function buildUrl(href) {
@@ -234,13 +259,13 @@ export function createPreviewRoutes() {
 	// Main live preview endpoint
 	router.get('/api/templates/:slug/live', (req, res) => {
 		console.error(`[HTTP] >>> Live preview request: ${req.params.slug}, mode=${req.query.mode}`);
-		const mode = req.query.mode as string | undefined;
+		const mode = typeof req.query.mode === 'string' ? req.query.mode : undefined;
 		serveTemplatePreview(req, req.params.slug, mode, res);
 	});
 
 	// Handle client-side routing - serve index.html for all subroutes under /live/*
 	router.get('/api/templates/:slug/live/*', (req, res) => {
-		const mode = req.query.mode as string | undefined;
+		const mode = typeof req.query.mode === 'string' ? req.query.mode : undefined;
 		serveTemplatePreview(req, req.params.slug, mode, res);
 	});
 

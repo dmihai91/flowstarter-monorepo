@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import * as path from 'path';
 import * as fs from 'fs';
 import { buildFileTree, getAllFiles } from '../utils/file-reader.js';
 import { TemplateFetcher } from '../utils/template-fetcher.js';
@@ -7,6 +6,11 @@ import { scaffoldToConvex, ScaffoldToConvexSchema } from '../tools/scaffold-to-c
 import { getTemplateConfig } from '../framework-detection.js';
 import { log, logRequestStart, logRequestEnd } from '../logging.js';
 import { TEMPLATES_DIR } from '../config.js';
+import {
+	assertSafeSlug,
+	resolveUnder,
+	UnsafePathError,
+} from '../utils/safe-path.js';
 
 export function createScaffoldRoutes() {
 	const router = Router();
@@ -60,10 +64,23 @@ export function createScaffoldRoutes() {
 	// Streaming Scaffold Endpoint
 	// Streams template files as NDJSON for faster, progressive loading
 	router.get('/api/templates/:slug/scaffold/stream', async (req, res) => {
-		const { slug } = req.params;
+		let slug: string;
+		try {
+			slug = assertSafeSlug(req.params.slug);
+		} catch {
+			return res.status(400).json({ error: 'Invalid template slug' });
+		}
 		console.error(`[HTTP] Streaming scaffold request for: ${slug}`);
 
-		const templatePath = path.join(TEMPLATES_DIR, slug);
+		let templatePath: string;
+		try {
+			templatePath = resolveUnder(TEMPLATES_DIR, slug);
+		} catch (err) {
+			if (err instanceof UnsafePathError) {
+				return res.status(400).json({ error: 'Invalid template slug' });
+			}
+			throw err;
+		}
 		const templateConfig = getTemplateConfig(templatePath);
 		const srcPath = templateConfig.srcDir;
 
@@ -71,7 +88,7 @@ export function createScaffoldRoutes() {
 
 		// Verify template exists
 		if (!fs.existsSync(srcPath)) {
-			return res.status(404).json({ error: `Template not found: ${slug}` });
+			return res.status(404).json({ error: 'Template not found' });
 		}
 
 		// Set up streaming response
@@ -144,17 +161,30 @@ export function createScaffoldRoutes() {
 
 	// Regular scaffold endpoint (non-streaming, for backwards compatibility)
 	router.get('/api/templates/:slug/scaffold', async (req, res) => {
-		const { slug } = req.params;
+		let slug: string;
+		try {
+			slug = assertSafeSlug(req.params.slug);
+		} catch {
+			return res.status(400).json({ error: 'Invalid template slug' });
+		}
 		console.error(`[HTTP] Regular scaffold request for: ${slug}`);
 
-		const templatePath = path.join(TEMPLATES_DIR, slug);
+		let templatePath: string;
+		try {
+			templatePath = resolveUnder(TEMPLATES_DIR, slug);
+		} catch (err) {
+			if (err instanceof UnsafePathError) {
+				return res.status(400).json({ error: 'Invalid template slug' });
+			}
+			throw err;
+		}
 		const templateConfig = getTemplateConfig(templatePath);
 		const srcPath = templateConfig.srcDir;
 
 		console.error(`[HTTP] Template framework: ${templateConfig.framework}, srcDir: ${srcPath}`);
 
 		if (!fs.existsSync(srcPath)) {
-			return res.status(404).json({ error: `Template not found: ${slug}` });
+			return res.status(404).json({ error: 'Template not found' });
 		}
 
 		try {
@@ -172,13 +202,18 @@ export function createScaffoldRoutes() {
 			const configFiles = [];
 			
 			for (const configFile of rootConfigFiles) {
-				const configFilePath = path.join(templatePath, configFile);
+				let configFilePath: string;
+				try {
+					configFilePath = resolveUnder(templatePath, configFile);
+				} catch {
+					continue;
+				}
 				if (fs.existsSync(configFilePath)) {
 					try {
 						let fileContent = fs.readFileSync(configFilePath, 'utf-8');
 						// Fix for Daytona preview: modify astro.config.mjs to use root base path
 						if (configFile === 'astro.config.mjs') {
-							fileContent = fileContent.replace(/base:\s*['"][^'"]*['"]/g, "base: '/'");
+							fileContent = fileContent.replace(/base:\s*['"][^'']*['"]/g, "base: '/'");
 						}
 						configFiles.push({ path: '/' + configFile, content: fileContent });
 					} catch { /* ignored */ }

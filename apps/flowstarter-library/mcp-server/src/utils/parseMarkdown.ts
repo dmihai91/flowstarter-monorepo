@@ -15,8 +15,22 @@ type ParsedArray = ParsedValue[];
 export function parseMarkdownContent(markdown: string): Record<string, ParsedObject> {
   const result: Record<string, ParsedObject> = {};
 
-  // Remove HTML comments
-  const cleanMarkdown = markdown.replace(/<!--[\s\S]*?-->/g, '');
+  // Remove HTML comments without a multi-character regex sanitizer
+  let cleanMarkdown = '';
+  {
+    let i = 0;
+    while (i < markdown.length) {
+      const start = markdown.indexOf('<!--', i);
+      if (start === -1) {
+        cleanMarkdown += markdown.slice(i);
+        break;
+      }
+      cleanMarkdown += markdown.slice(i, start);
+      const end = markdown.indexOf('-->', start + 4);
+      if (end === -1) break;
+      i = end + 3;
+    }
+  }
 
   // Split by ## headers (section boundaries)
   const sections = cleanMarkdown.split(/^## /m).filter(s => s.trim());

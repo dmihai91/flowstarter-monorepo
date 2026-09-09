@@ -4,13 +4,34 @@ import * as fs from 'fs';
 import { TemplateFetcher } from '../utils/template-fetcher.js';
 import { log } from '../logging.js';
 import { TEMPLATES_DIR } from '../config.js';
+import {
+	assertSafeSlug,
+	resolveUnder,
+	UnsafePathError,
+} from '../utils/safe-path.js';
+
+const THUMBNAIL_FILES = new Set([
+	'thumbnail.png',
+	'thumbnail-light.png',
+	'thumbnail-dark.png',
+]);
+const PREVIEW_FILES = new Set([
+	'preview.png',
+	'preview-light.png',
+	'preview-dark.png',
+]);
 
 export function createTemplatesRoutes() {
 	const router = Router();
 
 	// Template thumbnail endpoint
 	router.get('/api/templates/:slug/thumbnail', (req, res) => {
-		const { slug } = req.params;
+		let slug: string;
+		try {
+			slug = assertSafeSlug(req.params.slug);
+		} catch {
+			return res.status(400).json({ error: 'Invalid template slug' });
+		}
 		const theme = req.query.theme as string;
 
 		let filename = 'thumbnail.png';
@@ -19,25 +40,40 @@ export function createTemplatesRoutes() {
 		} else if (theme === 'dark') {
 			filename = 'thumbnail-dark.png';
 		}
-
-		// Try specific theme file first
-		let imagePath = nodePath.join(TEMPLATES_DIR, slug, filename);
-
-		if (!fs.existsSync(imagePath)) {
-			// Fallback to default thumbnail.png if specific theme not found
-			imagePath = nodePath.join(TEMPLATES_DIR, slug, 'thumbnail.png');
+		if (!THUMBNAIL_FILES.has(filename)) {
+			return res.status(400).json({ error: 'Invalid thumbnail theme' });
 		}
 
-		if (fs.existsSync(imagePath)) {
-			res.sendFile(imagePath);
-		} else {
-			res.status(404).json({ error: 'Thumbnail not found' });
+		try {
+			// Try specific theme file first
+			let imagePath = resolveUnder(TEMPLATES_DIR, slug, filename);
+
+			if (!fs.existsSync(imagePath)) {
+				// Fallback to default thumbnail.png if specific theme not found
+				imagePath = resolveUnder(TEMPLATES_DIR, slug, 'thumbnail.png');
+			}
+
+			if (fs.existsSync(imagePath)) {
+				res.sendFile(imagePath);
+			} else {
+				res.status(404).json({ error: 'Thumbnail not found' });
+			}
+		} catch (err) {
+			if (err instanceof UnsafePathError) {
+				return res.status(400).json({ error: 'Invalid path' });
+			}
+			throw err;
 		}
 	});
 
 	// Template preview endpoint
 	router.get('/api/templates/:slug/preview', (req, res) => {
-		const { slug } = req.params;
+		let slug: string;
+		try {
+			slug = assertSafeSlug(req.params.slug);
+		} catch {
+			return res.status(400).json({ error: 'Invalid template slug' });
+		}
 		const theme = req.query.theme as string;
 
 		console.error(`[HTTP] Preview request: slug=${slug}, theme=${theme}`);
@@ -49,24 +85,34 @@ export function createTemplatesRoutes() {
 		} else if (theme === 'dark') {
 			filename = 'preview-dark.png';
 		}
-
-		let imagePath = nodePath.join(TEMPLATES_DIR, slug, filename);
-		console.error(`[HTTP] Checking path: ${imagePath}`);
-		console.error(`[HTTP] Path exists: ${fs.existsSync(imagePath)}`);
-
-		if (!fs.existsSync(imagePath)) {
-			// Fallback
-			imagePath = nodePath.join(TEMPLATES_DIR, slug, 'preview.png');
-			console.error(`[HTTP] Fallback path: ${imagePath}`);
-			console.error(`[HTTP] Fallback exists: ${fs.existsSync(imagePath)}`);
+		if (!PREVIEW_FILES.has(filename)) {
+			return res.status(400).json({ error: 'Invalid preview theme' });
 		}
 
-		if (fs.existsSync(imagePath)) {
-			console.error(`[HTTP] Sending file: ${imagePath}`);
-			res.sendFile(imagePath);
-		} else {
-			console.error(`[HTTP] File not found: ${imagePath}`);
-			res.status(404).json({ error: 'Preview not found' });
+		try {
+			let imagePath = resolveUnder(TEMPLATES_DIR, slug, filename);
+			console.error(`[HTTP] Checking path: ${imagePath}`);
+			console.error(`[HTTP] Path exists: ${fs.existsSync(imagePath)}`);
+
+			if (!fs.existsSync(imagePath)) {
+				// Fallback
+				imagePath = resolveUnder(TEMPLATES_DIR, slug, 'preview.png');
+				console.error(`[HTTP] Fallback path: ${imagePath}`);
+				console.error(`[HTTP] Fallback exists: ${fs.existsSync(imagePath)}`);
+			}
+
+			if (fs.existsSync(imagePath)) {
+				console.error(`[HTTP] Sending file: ${imagePath}`);
+				res.sendFile(imagePath);
+			} else {
+				console.error(`[HTTP] File not found: ${imagePath}`);
+				res.status(404).json({ error: 'Preview not found' });
+			}
+		} catch (err) {
+			if (err instanceof UnsafePathError) {
+				return res.status(400).json({ error: 'Invalid path' });
+			}
+			throw err;
 		}
 	});
 

@@ -457,6 +457,10 @@ describe('POST /api/admin/projects/[id]/billing/portal-link', () => {
     });
     const arg = stripeMock.billingPortal.sessions.create.mock.calls[0]?.[0];
     // returnUrl should fall back to platform URL, not the attacker URL
-    expect(arg?.return_url.startsWith('https://flowstarter.dev')).toBe(true);
+    const returnHost = new URL(arg?.return_url).hostname;
+    expect(
+      returnHost === 'flowstarter.dev' ||
+        returnHost.endsWith('.flowstarter.dev')
+    ).toBe(true);
   });
 });

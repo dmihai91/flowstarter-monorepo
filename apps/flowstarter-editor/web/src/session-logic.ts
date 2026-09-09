@@ -754,7 +754,9 @@ function unwrapKnownShellCommandWrapper(value: string): string {
 }
 
 function formatCommandArrayPart(value: string): string {
-  return /[\s"'`]/.test(value) ? `"${value.replace(/"/g, '\\"')}"` : value;
+  return /[\s"'`]/.test(value)
+    ? `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`
+    : value;
 }
 
 function formatCommandValue(value: unknown): string | null {

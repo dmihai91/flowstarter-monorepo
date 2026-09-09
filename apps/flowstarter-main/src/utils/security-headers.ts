@@ -116,8 +116,14 @@ const ALLOWED_FRAME_DOMAINS = [
   'https://*.daytonaproxy01.net',
 ];
 
-// Create headers without CSP (we'll add it dynamically with nonce)
-const baseHeaders = createSecureHeaders({
+// Create headers without CSP (we'll add it dynamically with nonce).
+//
+// `createSecureHeaders` returns an ARRAY of `{ key, value }` pairs, not a
+// record. Walking it with `Object.entries` produced headers literally named
+// "0" through "5" whose value was the string "[object Object]", so neither
+// `Referrer-Policy` nor the 730-day HSTS below ever reached a browser. The
+// loop in `applySecurityHeaders` reads `entry.key` / `entry.value` instead.
+const baseHeaders: { key: string; value: string }[] = createSecureHeaders({
   forceHTTPSRedirect: [
     true,
     { maxAge: 60 * 60 * 24 * 730, includeSubDomains: true },
@@ -204,9 +210,10 @@ export function applySecurityHeaders(
   nonce?: string,
   frameable = false
 ) {
-  // Apply base headers
-  for (const [key, value] of Object.entries(baseHeaders)) {
-    if (value !== undefined && value !== null) {
+  // Apply base headers. `createSecureHeaders` hands back an array of
+  // `{ key, value }` pairs; iterate the pairs, never `Object.entries`.
+  for (const { key, value } of baseHeaders) {
+    if (key && value !== undefined && value !== null) {
       response.headers.set(key, String(value));
     }
   }

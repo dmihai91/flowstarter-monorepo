@@ -1,21 +1,33 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-// Mock next-secure-headers and next/server before importing
-vi.mock('next-secure-headers', () => ({
-  createSecureHeaders: () => ({
-    'Strict-Transport-Security': 'max-age=63072000; includeSubDomains',
-    'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'X-Frame-Options': 'DENY',
-  }),
-}));
-
+// `next-secure-headers` is deliberately NOT mocked. A mock that returned a
+// plain record is what hid the production bug: the real
+// `createSecureHeaders()` returns an ARRAY of `{ key, value }` pairs, and
+// `applySecurityHeaders` used to walk it with `Object.entries`, which shipped
+// headers named "0" through "5" with the value "[object Object]" and dropped
+// Referrer-Policy and HSTS entirely. The tests below run against the real
+// library so that regression fails here instead of on flowstarter.net.
+//
+// Only `next/server` is stubbed, with a real `Headers` so the case-insensitive
+// lookup and the key enumeration behave like a response on the wire.
 vi.mock('next/server', () => ({
   NextResponse: class {
-    headers = new Map<string, string>();
+    headers = new Headers();
   },
 }));
 
-import { buildCSPHeader, getStaticCSPHeader } from '../security-headers';
+import {
+  applySecurityHeaders,
+  buildCSPHeader,
+  getStaticCSPHeader,
+} from '../security-headers';
+import type { NextResponse } from 'next/server';
+
+function renderHeaders(nonce?: string, frameable = false): Headers {
+  const response = { headers: new Headers() } as unknown as NextResponse;
+  applySecurityHeaders(response, nonce, frameable);
+  return response.headers;
+}
 
 describe('security-headers', () => {
   describe('buildCSPHeader', () => {
@@ -149,6 +161,72 @@ describe('security-headers', () => {
         const csp = buildCSPHeader();
         expect(csp).not.toContain('upgrade-insecure-requests');
       });
+    });
+  });
+
+  describe('applySecurityHeaders', () => {
+    beforeEach(() => {
+      vi.stubEnv('NODE_ENV', 'production');
+      vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://flowstarter.net');
+    });
+
+    it('sets Referrer-Policy to the configured value', () => {
+      // `referrerPolicy: 'strict-origin-when-cross-origin'` in
+      // security-headers.ts. Absent in production until the iteration fix.
+      expect(renderHeaders().get('Referrer-Policy')).toBe(
+        'strict-origin-when-cross-origin'
+      );
+    });
+
+    it('sets Strict-Transport-Security to the configured 730-day max-age', () => {
+      // `forceHTTPSRedirect: [true, { maxAge: 60 * 60 * 24 * 730,
+      // includeSubDomains: true }]` — 63072000 seconds.
+      const hsts = renderHeaders().get('Strict-Transport-Security');
+      expect(hsts).toContain('max-age=63072000');
+      expect(hsts).toContain('includeSubDomains');
+    });
+
+    it('sets Content-Security-Policy to the built policy', () => {
+      expect(renderHeaders().get('Content-Security-Policy')).toBe(
+        buildCSPHeader()
+      );
+    });
+
+    it('sets the explicit hardening headers', () => {
+      const headers = renderHeaders();
+      expect(headers.get('X-Content-Type-Options')).toBe('nosniff');
+      expect(headers.get('X-Frame-Options')).toBe('DENY');
+      expect(headers.get('X-XSS-Protection')).toBe('1; mode=block');
+      expect(headers.get('Permissions-Policy')).toBe(
+        'camera=(), microphone=(), geolocation=()'
+      );
+    });
+
+    it('allows same-origin framing for the template previews', () => {
+      const headers = renderHeaders(undefined, true);
+      expect(headers.get('X-Frame-Options')).toBe('SAMEORIGIN');
+      expect(headers.get('Content-Security-Policy')).toContain(
+        "frame-ancestors 'self'"
+      );
+    });
+
+    it('emits no numeric header names', () => {
+      // The `Object.entries` bug produced "0".."5" with "[object Object]".
+      const names: string[] = [];
+      renderHeaders().forEach((_value, name) => names.push(name));
+      const numeric = names.filter((name) => /^\d+$/.test(name));
+      expect(
+        numeric,
+        `numeric header names leaked: ${numeric.join(', ')}`
+      ).toEqual([]);
+    });
+
+    it('emits no header whose value stringified an object', () => {
+      const broken: string[] = [];
+      renderHeaders().forEach((value, name) => {
+        if (value.includes('[object Object]')) broken.push(name);
+      });
+      expect(broken).toEqual([]);
     });
   });
 

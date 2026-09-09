@@ -58,6 +58,10 @@ export interface PipelineJobDetail extends PipelineJobSummary {
   runAfter: string;
   canRedispatch: boolean;
   canCancel: boolean;
+  /** The worker's last reported phase, in its own plain words. */
+  latestPhase: string | null;
+  /** The newest agent reply, trimmed to a headline. */
+  lastReply: string | null;
 }
 
 export interface PipelineEvent {
@@ -74,6 +78,31 @@ export interface PipelineDetail {
   jobs: PipelineJobDetail[];
   events: PipelineEvent[];
 }
+
+export type BuildJobEventKind = 'phase' | 'log' | 'note' | 'reply';
+
+export interface BuildJobEvent {
+  id: string;
+  kind: BuildJobEventKind;
+  actor: string;
+  body: string;
+  payload: unknown;
+  createdAt: string;
+}
+
+export interface BuildJobFeed {
+  job: PipelineJobSummary & {
+    errorDetail: string | null;
+    latestPhase: string | null;
+    acceptsNotes: boolean;
+  };
+  events: BuildJobEvent[];
+}
+
+export const buildJobFeedQueryKey = (
+  id: string | undefined,
+  jobId: string | undefined
+) => ['pipeline-job-feed', id, jobId] as const;
 
 export const pipelineBoardQueryKey = ['pipeline-board'] as const;
 export const pipelineDetailQueryKey = (id: string | undefined) =>
@@ -171,4 +200,136 @@ export function useCancelPipelineJob(id: string | undefined) {
     { jobId: string; reason: string },
     { job: { id: string; status: string } }
   >(id, 'cancel-job', 'Failed to cancel the job');
+}
+
+/** How often a live build's conversation is re-read. */
+export const BUILD_FEED_LIVE_INTERVAL_MS = 5_000;
+
+/**
+ * The conversation of one build. Polls while the job is queued or running;
+ * a finished job's feed is read once. Polling rather than SSE because the
+ * worker writes to Supabase from another host, and the board already polls.
+ */
+export function useBuildJobFeed(
+  id: string | undefined,
+  jobId: string | undefined,
+  options: { live: boolean }
+) {
+  return useQuery({
+    queryKey: buildJobFeedQueryKey(id, jobId),
+    enabled: Boolean(id && jobId),
+    queryFn: async (): Promise<BuildJobFeed> => {
+      const res = await fetch(
+        `/api/admin/projects/${id}/pipeline/jobs/${jobId}/events`,
+        { cache: 'no-store' }
+      );
+      if (!res.ok)
+        await readError(res, 'Failed to load the build conversation');
+      return res.json();
+    },
+    staleTime: 2_000,
+    refetchInterval: options.live ? BUILD_FEED_LIVE_INTERVAL_MS : false,
+    retry: 1,
+  });
+}
+
+/**
+ * The three streamed sources the log route promises for build output. The
+ * route also flattens in the build's other event kinds (phase, note, reply)
+ * tagged by their own kind, so a line's actual `source` is any string, not
+ * only these three — this type names the ones the filter chips group by.
+ */
+export type BuildLogSource = 'agent' | 'tool' | 'machine';
+
+export interface BuildLogLine {
+  at: string;
+  source: string;
+  text: string;
+}
+
+export interface BuildJobLog {
+  job: { id: string; kind: string; status: string };
+  lines: BuildLogLine[];
+}
+
+export const buildJobLogQueryKey = (
+  id: string | undefined,
+  jobId: string | undefined
+) => ['pipeline-job-log', id, jobId] as const;
+
+/** The same endpoint the query reads, switched to a plain-text download. */
+export function buildJobLogDownloadUrl(id: string, jobId: string): string {
+  return `/api/admin/projects/${id}/pipeline/jobs/${jobId}/log?format=text`;
+}
+
+/**
+ * The full build log: every line the agents and the machine wrote, not just
+ * the conversation's highlights. Polls while the job is live, same cadence as
+ * the conversation feed, so the two never drift out of sync with each other.
+ *
+ * The log route can lag the rest of this feature (it is being built
+ * alongside this hook), and even once it exists a build that predates it has
+ * nothing to serve — both a missing route and a dropped connection are read
+ * as "no log yet" rather than as an error, so the panel shows a calm empty
+ * state instead of a scary one.
+ */
+export function useBuildJobLog(
+  id: string | undefined,
+  jobId: string | undefined,
+  options: { live: boolean }
+) {
+  return useQuery({
+    queryKey: buildJobLogQueryKey(id, jobId),
+    enabled: Boolean(id && jobId),
+    queryFn: async (): Promise<BuildJobLog | null> => {
+      let res: Response;
+      try {
+        res = await fetch(
+          `/api/admin/projects/${id}/pipeline/jobs/${jobId}/log`,
+          { cache: 'no-store' }
+        );
+      } catch {
+        // Offline, DNS hiccup, the route not deployed yet — none of that is
+        // the operator's problem to read as a failure.
+        return null;
+      }
+      if (res.status === 404) return null;
+      if (!res.ok) await readError(res, 'Failed to load the build log');
+      return res.json();
+    },
+    staleTime: 2_000,
+    refetchInterval: options.live ? BUILD_FEED_LIVE_INTERVAL_MS : false,
+    retry: 1,
+  });
+}
+
+export function useSendBuildNote(
+  id: string | undefined,
+  jobId: string | undefined
+) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: {
+      message: string;
+    }): Promise<{
+      event: BuildJobEvent;
+      delivery: 'next_pass' | 'next_attempt' | 'build_start';
+    }> => {
+      if (!id || !jobId) throw new Error('Missing job id');
+      const res = await fetch(
+        `/api/admin/projects/${id}/pipeline/jobs/${jobId}/notes`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        }
+      );
+      if (!res.ok) await readError(res, 'Failed to send the note');
+      return res.json();
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: buildJobFeedQueryKey(id, jobId) });
+      qc.invalidateQueries({ queryKey: pipelineDetailQueryKey(id) });
+    },
+  });
 }

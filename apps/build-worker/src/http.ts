@@ -1,10 +1,14 @@
 /**
  * HTTP surface for the build worker.
  *
- * One caller, one contract: flowstarter-main's `dispatchBuildJob` POSTs
+ * One caller, one contract: flowstarter-main's `dispatchAgentJob` POSTs
  * `{ jobId }` to `/jobs/full-site` with `Authorization: Bearer <shared secret>`
- * and gives up after 8s. Every response here is immediate — the build runs on
+ * and gives up after 8s. Every response here is immediate: the build runs on
  * the queue behind it.
+ *
+ * The route carries no kind. A FULL_SITE_BUILD and a SITE_REBUILD arrive the
+ * same way and the ledger row says which is which, so the worker branches on
+ * what it claimed rather than on which URL somebody posted to.
  */
 
 import { timingSafeEqual } from 'node:crypto';

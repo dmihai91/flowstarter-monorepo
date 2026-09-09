@@ -215,7 +215,7 @@ describe('stall detection', () => {
         }),
         now: NOW,
       })[0]
-    ).toMatch(/failed \(template_missing\)/);
+    ).toMatch(/failed \(Template Missing\)/);
   });
 
   it('flags a project parked in one state past its budget', () => {
@@ -227,7 +227,7 @@ describe('stall detection', () => {
         job: null,
         now: NOW,
       })[0]
-    ).toMatch(/In DEPOSIT_PAID/);
+    ).toMatch(/In Deposit paid/);
   });
 
   it('never flags a live project for sitting still', () => {

@@ -73,12 +73,18 @@ function requireEnv(key: string): string {
 
 let failures = 0;
 function check(label: string, ok: boolean, detail?: string): void {
-  console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}${detail ? ` — ${detail}` : ''}`);
+  console.log(
+    `${ok ? 'PASS' : 'FAIL'}  ${label}${detail ? ` — ${detail}` : ''}`,
+  );
   if (!ok) failures += 1;
 }
 
 /** The manifest the funnel approved: blurred Cal tease, no cal.com request. */
-function previewFiles(): Array<{ path: string; content: string; type: 'file' }> {
+function previewFiles(): Array<{
+  path: string;
+  content: string;
+  type: 'file';
+}> {
   const pages = injectCalComPreviewDemo({
     'index.html': [
       '<!doctype html><html lang="en"><head><meta charset="utf-8">',
@@ -115,22 +121,31 @@ async function main(): Promise<void> {
     console.error(`Refusing to write to non-local Supabase: ${host}`);
     process.exit(2);
   }
-  const supabase = createClient(supabaseUrl, requireEnv('SUPABASE_SERVICE_ROLE_KEY'), {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-  const webhookSecret = requireEnv('STRIPE_WEBHOOK_SECRET');
-  const mainUrl = (process.env.FLOWSTARTER_MAIN_URL ?? 'http://localhost:3000').replace(/\/$/, '');
-  const siteBase = (process.env.FLOWSTARTER_LOCAL_SITE_BASE_URL ?? 'http://localhost:8788').replace(
-    /\/$/,
-    ''
+  const supabase = createClient(
+    supabaseUrl,
+    requireEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+    },
   );
-  const deployAgentUrl = process.env.DEPLOY_AGENT_URL?.trim() || 'http://127.0.0.1:8443';
+  const webhookSecret = requireEnv('STRIPE_WEBHOOK_SECRET');
+  const mainUrl = (
+    process.env.FLOWSTARTER_MAIN_URL ?? 'http://localhost:3000'
+  ).replace(/\/$/, '');
+  const siteBase = (
+    process.env.FLOWSTARTER_LOCAL_SITE_BASE_URL ?? 'http://localhost:8788'
+  ).replace(/\/$/, '');
+  const deployAgentUrl =
+    process.env.DEPLOY_AGENT_URL?.trim() || 'http://127.0.0.1:8443';
 
   // ── Preflight: say which process is missing rather than time out later ────
   for (const [label, url] of [
     // The Next app has no health route; its landing page is the liveness check.
     ['Next dev server', `${mainUrl}/`],
-    ['build worker', `${process.env.FLOWSTARTER_BUILD_WORKER_URL ?? 'http://127.0.0.1:8787'}/health`],
+    [
+      'build worker',
+      `${process.env.FLOWSTARTER_BUILD_WORKER_URL ?? 'http://127.0.0.1:8787'}/health`,
+    ],
     ['deploy-agent', `${deployAgentUrl}/health`],
   ] as const) {
     const reachable = await fetch(url, { signal: AbortSignal.timeout(4000) })
@@ -224,13 +239,16 @@ async function main(): Promise<void> {
           socialMedia: [],
           locale: 'en-RO',
           submittedAt: new Date().toISOString(),
-          consent: { publicProfileAnalysis: true, acceptedAt: new Date().toISOString() },
+          consent: {
+            publicProfileAnalysis: true,
+            acceptedAt: new Date().toISOString(),
+          },
         },
         brand_config: { schemaVersion: '1.0' },
         preview_manifest: { files: previewFiles() },
         template_slug: 'astro-service',
       },
-      { onConflict: 'workspace_id' }
+      { onConflict: 'workspace_id' },
     );
   if (artifactError) throw artifactError;
 
@@ -251,37 +269,58 @@ async function main(): Promise<void> {
       },
     },
   });
-  const signature = new Stripe('sk_test_verify_local').webhooks.generateTestHeaderString({
+  const signature = new Stripe(
+    'sk_test_verify_local',
+  ).webhooks.generateTestHeaderString({
     payload,
     secret: webhookSecret,
   });
   const webhookResponse = await fetch(`${mainUrl}/api/webhooks/stripe`, {
     method: 'POST',
-    headers: { 'stripe-signature': signature, 'content-type': 'application/json' },
+    headers: {
+      'stripe-signature': signature,
+      'content-type': 'application/json',
+    },
     body: payload,
   });
   check(
     'Stripe deposit webhook is accepted',
     webhookResponse.ok,
-    `status=${webhookResponse.status} ${(await webhookResponse.text()).slice(0, 160)}`
+    `status=${webhookResponse.status} ${(await webhookResponse.text()).slice(0, 160)}`,
   );
 
   // ── Wait for the worker to finish the job the webhook enqueued ────────────
   const deadline = Date.now() + 180_000;
   let job: Record<string, unknown> | null = null;
   for (;;) {
-    const { data } = await supabase
+    const { data, error: queryError } = await supabase
       .from('flowstarter_agent_jobs')
-      .select('id, status, error, pull_request_url, payload, attempt_count')
+      .select(
+        'id, status, error_code, error_detail, pull_request_url, payload, attempt_count',
+      )
       .eq('workspace_id', workspace.id)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle();
+    // A rejected query must not read as "the worker has not started": that
+    // is how a renamed column once hid a chain that had already succeeded.
+    if (queryError) {
+      check(
+        'build job settles',
+        false,
+        `job query failed: ${queryError.message}`,
+      );
+      break;
+    }
     job = data as Record<string, unknown> | null;
     const status = job?.['status'];
     if (status && status !== 'queued' && status !== 'running') break;
     if (Date.now() > deadline) {
-      check('build job settles', false, `stuck at ${String(status ?? 'no job')}`);
+      check(
+        'build job settles',
+        false,
+        `stuck at ${String(status ?? 'no job')}`,
+      );
       break;
     }
     await new Promise((r) => setTimeout(r, 1000));
@@ -289,12 +328,16 @@ async function main(): Promise<void> {
   check(
     'build job succeeds',
     job?.['status'] === 'succeeded',
-    `status=${String(job?.['status'])}${job?.['error'] ? ` error=${String(job['error'])}` : ''}`
+    `status=${String(job?.['status'])}${
+      job?.['error_code']
+        ? ` error=${String(job['error_code'])}: ${String(job['error_detail'] ?? '')}`
+        : ''
+    }`,
   );
   check(
     'the job records the artifact it produced',
     /\/artifacts\/.+\.tar\.gz$/.test(String(job?.['pull_request_url'] ?? '')),
-    String(job?.['pull_request_url'] ?? 'none')
+    String(job?.['pull_request_url'] ?? 'none'),
   );
 
   // ── The ledger the operator reads ─────────────────────────────────────────
@@ -303,9 +346,21 @@ async function main(): Promise<void> {
     .select('project_state, deposit_status, deploy_status, last_deploy_id')
     .eq('id', workspace.id)
     .single();
-  check('workspace reaches HUMAN_QA', after?.project_state === 'HUMAN_QA', String(after?.project_state));
-  check('deposit is recorded paid', after?.deposit_status === 'paid', String(after?.deposit_status));
-  check('deploy_status is live', after?.deploy_status === 'live', String(after?.deploy_status));
+  check(
+    'workspace reaches HUMAN_QA',
+    after?.project_state === 'HUMAN_QA',
+    String(after?.project_state),
+  );
+  check(
+    'deposit is recorded paid',
+    after?.deposit_status === 'paid',
+    String(after?.deposit_status),
+  );
+  check(
+    'deploy_status is live',
+    after?.deploy_status === 'live',
+    String(after?.deploy_status),
+  );
 
   const { data: deployment } = await supabase
     .from('deployments')
@@ -316,8 +371,9 @@ async function main(): Promise<void> {
     .maybeSingle();
   check(
     'a deployments row records the artifact',
-    deployment?.status === 'live' && /^[0-9a-f]{64}$/.test(String(deployment?.artifact_sha256)),
-    `v${deployment?.version} ${deployment?.artifact_bytes} bytes`
+    deployment?.status === 'live' &&
+      /^[0-9a-f]{64}$/.test(String(deployment?.artifact_sha256)),
+    `v${deployment?.version} ${deployment?.artifact_bytes} bytes`,
   );
 
   // ── The point of all of it: the site opens ────────────────────────────────
@@ -327,7 +383,7 @@ async function main(): Promise<void> {
   check(
     `the deployed site answers at ${siteUrl}`,
     home.ok && homeHtml.includes('Calm Path Therapy'),
-    `status=${home.status}`
+    `status=${home.status}`,
   );
 
   const bookingUrl = `${siteUrl}book/`;
@@ -337,12 +393,15 @@ async function main(): Promise<void> {
     'the booking page carries the tenant live Cal.com embed',
     bookingHtml.includes('data-flowstarter-cal-embed="true"') &&
       bookingHtml.includes('cal.com/flowstarter-demo/intro/embed'),
-    `status=${booking.status}`
+    `status=${booking.status}`,
   );
   check(
     'the blurred preview demo is gone from the paid build',
-    bookingHtml.length > 0 && !bookingHtml.includes('data-flowstarter-cal-preview'),
-    bookingHtml.includes('data-flowstarter-cal-preview') ? 'demo still present' : 'replaced'
+    bookingHtml.length > 0 &&
+      !bookingHtml.includes('data-flowstarter-cal-preview'),
+    bookingHtml.includes('data-flowstarter-cal-preview')
+      ? 'demo still present'
+      : 'replaced',
   );
 
   console.log(`\nOpen it:  ${siteUrl}\n          ${bookingUrl}`);

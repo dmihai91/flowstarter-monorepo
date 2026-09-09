@@ -733,6 +733,138 @@ export type Database = {
           },
         ]
       }
+      flowstarter_change_requests: {
+        Row: {
+          classification: string
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          currency: string
+          id: string
+          matched_rules: Json
+          message_id: string | null
+          paid_at: string | null
+          quote_minor: number | null
+          quote_note: string | null
+          quoted_at: string | null
+          quoted_by: string | null
+          request: string
+          responded_at: string | null
+          status: string
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          classification?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          currency?: string
+          id?: string
+          matched_rules?: Json
+          message_id?: string | null
+          paid_at?: string | null
+          quote_minor?: number | null
+          quote_note?: string | null
+          quoted_at?: string | null
+          quoted_by?: string | null
+          request: string
+          responded_at?: string | null
+          status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          classification?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          currency?: string
+          id?: string
+          matched_rules?: Json
+          message_id?: string | null
+          paid_at?: string | null
+          quote_minor?: number | null
+          quote_note?: string | null
+          quoted_at?: string | null
+          quoted_by?: string | null
+          request?: string
+          responded_at?: string | null
+          status?: string
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flowstarter_change_requests_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "project_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flowstarter_change_requests_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flowstarter_agent_job_events: {
+        Row: {
+          actor: string
+          body: string
+          created_at: string
+          id: string
+          job_id: string
+          kind: string
+          payload: Json
+          workspace_id: string
+        }
+        Insert: {
+          actor?: string
+          body: string
+          created_at?: string
+          id?: string
+          job_id: string
+          kind: string
+          payload?: Json
+          workspace_id: string
+        }
+        Update: {
+          actor?: string
+          body?: string
+          created_at?: string
+          id?: string
+          job_id?: string
+          kind?: string
+          payload?: Json
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flowstarter_agent_job_events_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "flowstarter_agent_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flowstarter_agent_job_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flowstarter_agent_jobs: {
         Row: {
           attempt_count: number

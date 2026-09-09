@@ -12,9 +12,11 @@ import {
   ProjectState,
   type BrandConfig,
   type BusinessIntakePayload,
+  type FullSiteBuildEvent,
   type FullSiteBuildJob,
   type FullSiteBuildJobStore,
   type GitWorktree,
+  type OperatorNote,
   type TemplateScaffoldFile,
 } from '@flowstarter/agentic-codegen';
 import { withTenant } from './tenancy';
@@ -24,6 +26,13 @@ const UUID =
 
 /** States a job may be claimed from. Anything else is a no-op. */
 const CLAIMABLE = new Set(['queued', 'failed']);
+
+/**
+ * Kinds this worker knows how to run. Both are dispatched to the same
+ * endpoint, because they are the same pipeline with different halves of it
+ * enabled; the worker branches on the kind, not on the route.
+ */
+const CLAIMABLE_KINDS = new Set(['FULL_SITE_BUILD', 'SITE_REBUILD']);
 
 export class JobArtifactError extends Error {}
 
@@ -48,7 +57,7 @@ export interface ProjectArtifactRow {
  * and duplicate dispatches collapse into a no-op rather than a second build.
  */
 export function isClaimable(row: JobLedgerRow, maxAttempts: number): boolean {
-  if (row.kind !== 'FULL_SITE_BUILD') return false;
+  if (!CLAIMABLE_KINDS.has(row.kind)) return false;
   if (!CLAIMABLE.has(row.status)) return false;
   return row.attempt_count < maxAttempts;
 }
@@ -104,7 +113,8 @@ export function parseRequiredIntegrations(
   manifest: unknown,
 ): string[] {
   for (const source of [payload, manifest]) {
-    if (!source || typeof source !== 'object' || Array.isArray(source)) continue;
+    if (!source || typeof source !== 'object' || Array.isArray(source))
+      continue;
     const raw = (source as Record<string, unknown>)['requiredIntegrations'];
     if (!Array.isArray(raw)) continue;
     const integrations = raw.filter(
@@ -132,7 +142,9 @@ export function buildJobFromRows(input: {
     'intake_payload',
   ) as unknown as BusinessIntakePayload;
   if (typeof intake.projectId !== 'string' || !UUID.test(intake.projectId)) {
-    throw new JobArtifactError('intake_payload.projectId is not a canonical UUID');
+    throw new JobArtifactError(
+      'intake_payload.projectId is not a canonical UUID',
+    );
   }
   if (intake.projectId.toLowerCase() !== input.job.workspace_id.toLowerCase()) {
     throw new JobArtifactError(
@@ -155,6 +167,8 @@ export function buildJobFromRows(input: {
   return {
     id: input.job.id,
     projectId: input.job.workspace_id,
+    kind:
+      input.job.kind === 'SITE_REBUILD' ? 'SITE_REBUILD' : 'FULL_SITE_BUILD',
     projectState: input.projectState as ProjectState,
     intake,
     brandConfig: asRecord(
@@ -173,11 +187,68 @@ export interface SupabaseJobStoreOptions {
   maxAttempts: number;
 }
 
+/** Notes read per pass; anything beyond waits for the next boundary. */
+const NOTES_PER_READ = 8;
+
 export class SupabaseFullSiteBuildJobStore implements FullSiteBuildJobStore {
+  /** Workspace per claimed job, so events do not re-read the ledger row. */
+  private readonly workspaceByJob = new Map<string, string>();
+
   constructor(
     private readonly client: SupabaseClient,
     private readonly options: SupabaseJobStoreOptions,
   ) {}
+
+  private async workspaceFor(jobId: string): Promise<string> {
+    const known = this.workspaceByJob.get(jobId);
+    if (known) return known;
+    const { data, error } = await this.client
+      .from('flowstarter_agent_jobs')
+      .select('workspace_id')
+      .eq('id', jobId)
+      .maybeSingle<{ workspace_id: string }>();
+    if (error) throw error;
+    if (!data) throw new JobArtifactError('Job does not exist');
+    this.workspaceByJob.set(jobId, data.workspace_id);
+    return data.workspace_id;
+  }
+
+  async appendEvent(jobId: string, event: FullSiteBuildEvent): Promise<void> {
+    const workspaceId = await this.workspaceFor(jobId);
+    const { error } = await this.client
+      .from('flowstarter_agent_job_events')
+      .insert({
+        job_id: jobId,
+        workspace_id: workspaceId,
+        kind: event.kind,
+        actor: 'system',
+        body: event.body.slice(0, 4_000),
+        payload: event.payload ?? {},
+      });
+    if (error) throw error;
+  }
+
+  async readOperatorNotes(
+    jobId: string,
+    after: string | null,
+  ): Promise<OperatorNote[]> {
+    let query = this.client
+      .from('flowstarter_agent_job_events')
+      .select('id, body, actor, created_at')
+      .eq('job_id', jobId)
+      .eq('kind', 'note');
+    if (after) query = query.gt('created_at', after);
+    const { data, error } = await query
+      .order('created_at', { ascending: true })
+      .limit(NOTES_PER_READ);
+    if (error) throw error;
+    return (data ?? []).map((row) => ({
+      id: String(row.id),
+      body: String(row.body),
+      actor: String(row.actor),
+      createdAt: String(row.created_at),
+    }));
+  }
 
   async claim(jobId: string): Promise<FullSiteBuildJob | null> {
     const { data: row, error } = await this.client
@@ -210,6 +281,7 @@ export class SupabaseFullSiteBuildJobStore implements FullSiteBuildJobStore {
       .maybeSingle();
     if (claimError) throw claimError;
     if (!claimed) return null;
+    this.workspaceByJob.set(jobId, row.workspace_id);
 
     // Past this point the row reads `running`. FullSiteBuildWorker only starts
     // its own error handling once claim() returns, so anything that throws
@@ -226,7 +298,8 @@ export class SupabaseFullSiteBuildJobStore implements FullSiteBuildJobStore {
           cal_com_url: string | null;
         }>();
       if (workspaceError) throw workspaceError;
-      if (!workspace) throw new JobArtifactError('Build workspace does not exist');
+      if (!workspace)
+        throw new JobArtifactError('Build workspace does not exist');
 
       // Obviously-equivalent to the manual `.eq('workspace_id', ...)` this
       // replaced: `withTenant` applies the same filter structurally instead
@@ -285,25 +358,33 @@ export class SupabaseFullSiteBuildJobStore implements FullSiteBuildJobStore {
     if (stateError) throw stateError;
   }
 
+  /**
+   * The job's payload as it stands. Results are merged into it rather than
+   * replacing it: the enqueue payload records what triggered this job and on
+   * what terms, and overwriting it would drop the only provenance linking a
+   * shipped site back to its payment or to the publish that asked for it.
+   */
+  private async currentPayload(
+    jobId: string,
+  ): Promise<Record<string, unknown>> {
+    const { data, error } = await this.client
+      .from('flowstarter_agent_jobs')
+      .select('payload')
+      .eq('id', jobId)
+      .maybeSingle<{ payload: unknown }>();
+    if (error) throw error;
+    const payload = data?.payload;
+    return payload && typeof payload === 'object' && !Array.isArray(payload)
+      ? (payload as Record<string, unknown>)
+      : {};
+  }
+
   async markHumanQa(
     jobId: string,
     result: { commitSha: string; pullRequestUrl: string; stagingUrl: string },
   ): Promise<void> {
     const now = new Date().toISOString();
-
-    // Merge rather than replace: the enqueue payload records which deposit
-    // path triggered this build and on what terms. Overwriting it would drop
-    // the only provenance linking a shipped site back to its payment.
-    const { data: current, error: readError } = await this.client
-      .from('flowstarter_agent_jobs')
-      .select('payload')
-      .eq('id', jobId)
-      .maybeSingle<{ payload: unknown }>();
-    if (readError) throw readError;
-    const existing =
-      current?.payload && typeof current.payload === 'object' && !Array.isArray(current.payload)
-        ? (current.payload as Record<string, unknown>)
-        : {};
+    const existing = await this.currentPayload(jobId);
 
     const { data, error } = await this.client
       .from('flowstarter_agent_jobs')
@@ -330,6 +411,51 @@ export class SupabaseFullSiteBuildJobStore implements FullSiteBuildJobStore {
       .eq('id', data.workspace_id)
       .eq('project_state', ProjectState.AGENTS_WORKING);
     if (stateError) throw stateError;
+  }
+
+  async markRebuildStarted(
+    jobId: string,
+    worktree: GitWorktree,
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    const { error } = await this.client
+      .from('flowstarter_agent_jobs')
+      .update({
+        worktree_branch: worktree.branch,
+        worktree_path: worktree.path,
+        updated_at: now,
+      })
+      .eq('id', jobId);
+    if (error) throw error;
+    // No project_state update, deliberately. A client publishing an edit is
+    // not a change in where the engagement stands, and moving a LIVE_SUBSCRIPTION
+    // project into AGENTS_WORKING would tell the operator board a story that
+    // never happened.
+  }
+
+  async markRebuilt(
+    jobId: string,
+    result: { commitSha: string; pullRequestUrl: string; stagingUrl: string },
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    const existing = await this.currentPayload(jobId);
+
+    const { error } = await this.client
+      .from('flowstarter_agent_jobs')
+      .update({
+        status: 'succeeded',
+        pull_request_url: result.pullRequestUrl,
+        payload: {
+          ...existing,
+          commitSha: result.commitSha,
+          stagingUrl: result.stagingUrl,
+          pullRequestUrl: result.pullRequestUrl,
+        },
+        finished_at: now,
+        updated_at: now,
+      })
+      .eq('id', jobId);
+    if (error) throw error;
   }
 
   async markFailed(

@@ -72,18 +72,20 @@ export function buildBrandConfigRepairPrompt(input: {
 
 export function buildBrandIntelligencePrompt(
   intake: BusinessIntakePayload,
-  corpus: ScrapeCorpus
+  corpus: ScrapeCorpus,
 ): string {
   const safeCorpus = {
     projectId: corpus.projectId,
     completedAt: corpus.completedAt,
-    documents: corpus.documents.map(({ sourceId, platform, kind, text, publishedAt }) => ({
-      sourceId,
-      platform,
-      kind,
-      text,
-      publishedAt,
-    })),
+    documents: corpus.documents.map(
+      ({ sourceId, platform, kind, text, publishedAt }) => ({
+        sourceId,
+        platform,
+        kind,
+        text,
+        publishedAt,
+      }),
+    ),
     images: corpus.images.map(({ sourceId, mediaType, altText }) => ({
       sourceId,
       mediaType,
@@ -125,6 +127,8 @@ export function buildFullSiteTask(input: {
   intake: BusinessIntakePayload;
   brandConfig: BrandConfig;
   requiredIntegrations: string[];
+  /** Build/validation output from a failed previous pass, for one repair. */
+  feedback?: string;
 }): string {
   return `Build the production-ready multi-page Flowstarter site in the current isolated worktree.\n\nBUILD_SPEC_JSON\n${JSON.stringify(input)}\nEND_BUILD_SPEC_JSON\n\nCompletion requirements: preserve the selected component system; implement accessible pages, SEO metadata, semantic sitemap, and only the listed integrations; format the repository; finish without requesting shell access.`;
 }
@@ -138,6 +142,8 @@ You may use only read_file, write_file, and edit_file. You do not have shell, ne
 Use the existing dependency set and component library. Expand the approved preview into a coherent multi-page site. Preserve truthful business facts and the BrandConfig voice. Implement semantic HTML, keyboard usability, reduced-motion behavior, descriptive alt text, WCAG 2.1 AA color pairings, canonical metadata, Open Graph metadata, robots directives, and an XML sitemap. Add only integrations named in requiredIntegrations and use environment-variable placeholders rather than secrets. Every client-editable human-readable block must retain or receive a stable unique data-flowstarter-id.
 
 Do not fabricate credentials, claims, testimonials, prices, addresses, integrations, or legal text. Do not redesign unrelated platform code. Do not create a pull request or deploy; the trusted orchestrator handles formatting, tests, commits, PRs, and deployment after your file changes finish.
+
+FEEDBACK: when BUILD_SPEC_JSON carries a non-empty feedback value, the previous pass's files are already in the worktree; do not start over. If the feedback quotes a failed trusted build, fix exactly the reported problems first (the file and line are named), touching as little else as possible, then complete anything still unfinished. If the feedback carries OPERATOR NOTES, they are trusted instructions from the Flowstarter team about this site: apply each numbered note to the existing files, keep everything else as it is, and account for each note in your summary. Every .astro file needs a frontmatter fence pair (--- at the top and --- before the template) or none at all.
 
 Stop after all authorized file edits are complete and provide a concise summary of changed files and any integration values the human reviewer must supply.`;
 
@@ -182,7 +188,7 @@ export function buildTemplateSelectionPrompt(input: {
     brandConfig: input.brandConfig,
   };
   return `Select the best approved template for this project.\n\nSELECTION_INPUT_JSON\n${JSON.stringify(
-    safeInput
+    safeInput,
   )}\nEND_SELECTION_INPUT_JSON`;
 }
 
@@ -256,7 +262,7 @@ export function buildPreviewTask(input: {
   feedback?: string;
 }): string {
   return `Personalize the approved template into the client preview.\n\nPREVIEW_SPEC_JSON\n${JSON.stringify(
-    input
+    input,
   )}\nEND_PREVIEW_SPEC_JSON`;
 }
 
@@ -312,7 +318,7 @@ export function buildBusinessNamingPrompt(input: {
   avoid?: readonly string[];
 }): string {
   return `Propose names for this business.\n\nNAMING_INPUT_JSON\n${JSON.stringify(
-    input
+    input,
   )}\nEND_NAMING_INPUT_JSON`;
 }
 
@@ -323,6 +329,6 @@ export function buildIntakeInterviewPrompt(input: {
   locale: string;
 }): string {
   return `Continue this intake conversation.\n\nINTERVIEW_INPUT_JSON\n${JSON.stringify(
-    input
+    input,
   )}\nEND_INTERVIEW_INPUT_JSON`;
 }

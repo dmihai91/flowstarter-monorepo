@@ -21,6 +21,12 @@ import {
   usePipelineBoard,
   type PipelineCard as PipelineCardData,
 } from '@/hooks/usePipeline';
+import {
+  BOARD_COLUMNS,
+  boardColumnFor,
+  jobKindLabel,
+  jobStatusLabel,
+} from '@/lib/flowstarter/pipeline/job-labels';
 
 const STATE_LABEL: Record<ProjectState, string> = {
   [ProjectState.INTAKE]: 'Intake',
@@ -54,6 +60,12 @@ const DEPOSIT_TONE: Record<string, string> = {
 const STALLED_TONE =
   'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300';
 
+/** The build-board column a job is in, by name. This board has no phase data, so a running job reads as its first stage. */
+function buildStageLabel(status: string): string {
+  const id = boardColumnFor({ status, latestPhase: null });
+  return BOARD_COLUMNS.find((column) => column.id === id)?.title ?? '';
+}
+
 /** Mirrors `formatDuration` in the board lib, for values computed client-side. */
 function humanDuration(ms: number): string {
   const minutes = Math.floor(ms / 60_000);
@@ -83,7 +95,7 @@ function Pill({
   children,
 }: {
   tone: string;
-  /** Job chips carry a raw enum; mono makes it read as an identifier. */
+  /** Counts read better as tabular figures; prose never does. */
   mono?: boolean;
   children: React.ReactNode;
 }) {
@@ -128,8 +140,13 @@ function PipelineCard({ card }: { card: PipelineCardData }) {
           {card.depositStatus === 'paid' ? 'Deposit paid' : 'No deposit'}
         </Pill>
         {card.latestJob && (
-          <Pill mono tone={JOB_TONE[card.latestJob.status] ?? NEUTRAL_TONE}>
-            {card.latestJob.kind} · {card.latestJob.status}
+          <Pill tone={JOB_TONE[card.latestJob.status] ?? NEUTRAL_TONE}>
+            {jobKindLabel(card.latestJob.kind)} ·{' '}
+            {jobStatusLabel(card.latestJob.status)}
+            {/* A running job says which stage it is at, the same word the
+                project's own build board uses. */}
+            {card.latestJob.status === 'running' &&
+              ` · ${buildStageLabel(card.latestJob.status)}`}
           </Pill>
         )}
       </div>

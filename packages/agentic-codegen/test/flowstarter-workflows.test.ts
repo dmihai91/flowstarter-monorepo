@@ -11,6 +11,8 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   FullSiteBuildWorker,
+  operatorNotesFeedback,
+  replyExcerpt,
   PreviewGenerationPipeline,
   ProjectState,
   type BrandConfig,
@@ -150,7 +152,9 @@ describe('Flowstarter preview-to-build orchestration', () => {
 
     expect(result.template.slug).toBe('wellness-therapy');
     expect(result.previewUrl).toBe('https://preview.flowstarter.net/calm-path');
-    expect(result.files[0]?.content).toBe('Calm Path Therapy preview /assets/portrait.webp');
+    expect(result.files[0]?.content).toBe(
+      'Calm Path Therapy preview /assets/portrait.webp',
+    );
     expect(calls).toEqual([
       'agent:brand-intelligence',
       'agent:template-selector',
@@ -277,7 +281,9 @@ describe('Flowstarter preview-to-build orchestration', () => {
         corpus: validCorpus(intake.projectId),
         cachedAssets: [],
       }),
-    ).resolves.toMatchObject({ previewUrl: 'https://preview.flowstarter.net/static' });
+    ).resolves.toMatchObject({
+      previewUrl: 'https://preview.flowstarter.net/static',
+    });
     expect(passes).toBe(2);
   });
 
@@ -401,7 +407,9 @@ describe('Flowstarter preview-to-build orchestration', () => {
       ],
     });
 
-    const heroFeedback = feedbacks.find((f) => f?.includes('hero image is empty'));
+    const heroFeedback = feedbacks.find((f) =>
+      f?.includes('hero image is empty'),
+    );
     expect(heroFeedback).toBeDefined();
     expect(heroFeedback).toContain('/flowstarter-assets/portrait.png');
   });
@@ -538,7 +546,8 @@ describe('Flowstarter preview-to-build orchestration', () => {
     const validator: SiteValidator = {
       validate: async () => {
         validations++;
-        if (validations === 1) throw new Error('Astro check failed: bad frontmatter');
+        if (validations === 1)
+          throw new Error('Astro check failed: bad frontmatter');
       },
     };
 
@@ -574,6 +583,7 @@ describe('Flowstarter preview-to-build orchestration', () => {
         return {
           id: jobId,
           projectId,
+          kind: 'FULL_SITE_BUILD',
           projectState: ProjectState.DEPOSIT_PAID,
           intake: validIntake(),
           brandConfig: validBrandConfig(),
@@ -590,6 +600,12 @@ describe('Flowstarter preview-to-build orchestration', () => {
       markAgentWorking: async (_jobId, worktree) => {
         calls.push('store:agents-working');
         expect(worktree.branch).toBe(`client/flowstarter-${projectId}`);
+      },
+      markRebuildStarted: async () => {
+        calls.push('store:rebuild-started');
+      },
+      markRebuilt: async () => {
+        calls.push('store:rebuilt');
       },
       markHumanQa: async (_jobId, result) => {
         calls.push('store:human-qa');
@@ -706,12 +722,156 @@ describe('Flowstarter preview-to-build orchestration', () => {
     ]);
   });
 
+  it("keeps the operator board informed and folds the team's notes into the next pass", async () => {
+    const projectId = validIntake().projectId;
+    const worktreeRoot = await mkdtemp(
+      join(tmpdir(), 'flowstarter-worker-notes-'),
+    );
+    temporaryDirectories.push(worktreeRoot);
+
+    const events: Array<{ kind: string; body: string }> = [];
+    const feedbacks: Array<string | undefined> = [];
+    // One note waiting before the build starts, one that arrives while the
+    // agents are busy with the first pass.
+    const notes = [
+      {
+        id: 'n1',
+        body: 'Use the client logo in every header.',
+        actor: 'user_1',
+        createdAt: '2026-09-08T10:00:00.000Z',
+      },
+      {
+        id: 'n2',
+        body: 'Add the Saturday opening hours to the contact page.',
+        actor: 'user_2',
+        createdAt: '2026-09-08T10:05:00.000Z',
+      },
+    ];
+    let released = 1;
+
+    const store: FullSiteBuildJobStore = {
+      claim: async (jobId) => ({
+        id: jobId,
+        projectId,
+        kind: 'FULL_SITE_BUILD',
+        projectState: ProjectState.DEPOSIT_PAID,
+        intake: validIntake(),
+        brandConfig: validBrandConfig(),
+        approvedPreviewFiles: [
+          {
+            path: 'src/content/site.md',
+            content: 'Approved preview',
+            type: 'file',
+          },
+        ],
+        requiredIntegrations: [],
+      }),
+      markAgentWorking: async () => undefined,
+      markRebuildStarted: async () => undefined,
+      markRebuilt: async () => undefined,
+      markHumanQa: async () => undefined,
+      markFailed: async () => undefined,
+      appendEvent: async (_jobId, event) => {
+        events.push({ kind: event.kind, body: event.body });
+      },
+      readOperatorNotes: async (_jobId, after) =>
+        notes
+          .slice(0, released)
+          .filter((note) => !after || note.createdAt > after),
+    };
+    const worktrees = {
+      create: async () => ({
+        branch: `client/flowstarter-${projectId}`,
+        path: worktreeRoot,
+      }),
+      commit: async () => 'abc123',
+    } as unknown as SafeGitWorktreeManager;
+    const agents = {
+      buildFullSite: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        feedbacks.push(input.feedback);
+        // The second note lands while this pass runs.
+        released = 2;
+        await mkdir(join(input.workspaceRoot, 'src/pages'), {
+          recursive: true,
+        });
+        await writeFile(
+          join(input.workspaceRoot, 'src/pages/index.astro'),
+          '<main />',
+          'utf8',
+        );
+        return {
+          summary: `Done: applied ${input.feedback ? 'the notes' : 'the brief'}.`,
+          changedPaths: ['src/pages/index.astro'],
+        };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+    const validator: SiteValidator = { validate: async () => undefined };
+    const pullRequests: PullRequestPublisher = {
+      create: async () => ({
+        pullRequestUrl: 'https://example.test/pr/1',
+        stagingUrl: 'https://staging.test',
+      }),
+    };
+
+    await new FullSiteBuildWorker(
+      store,
+      worktrees,
+      agents,
+      validator,
+      pullRequests,
+    ).run('job-3');
+
+    // The first pass carried the waiting note, the dedicated pass the late one.
+    expect(feedbacks).toHaveLength(2);
+    expect(feedbacks[0]).toContain('OPERATOR NOTES');
+    expect(feedbacks[0]).toContain('1. Use the client logo in every header.');
+    expect(feedbacks[0]).not.toContain('Saturday');
+    expect(feedbacks[1]).toContain('1. Add the Saturday opening hours');
+    expect(feedbacks[1]).not.toContain('logo');
+
+    const phases = events.filter((e) => e.kind === 'phase').map((e) => e.body);
+    expect(phases).toEqual([
+      'Preparing a clean worktree',
+      'Materializing the approved preview',
+      'Agents expanding the site, with 1 note from the team',
+      'Checking the build',
+      'Applying 1 note from the team',
+      'Checking the build',
+      'Committing the site',
+      'Publishing for review',
+      'Handed to human QA',
+    ]);
+    // Each pass ends with the agents' own words on the board.
+    expect(events.filter((e) => e.kind === 'reply').map((e) => e.body)).toEqual(
+      ['Done: applied the notes.', 'Done: applied the notes.'],
+    );
+  });
+
+  it('builds silently, and unchanged, for a store without the conversation channel', async () => {
+    // Covered by the first test in this block: its store has neither
+    // appendEvent nor readOperatorNotes and the call order is asserted exactly.
+    expect(
+      operatorNotesFeedback([
+        {
+          id: 'a',
+          body: '  Make   the hero  warmer ',
+          actor: 'u',
+          createdAt: 't',
+        },
+      ]),
+    ).toContain('1. Make the hero warmer');
+  });
+
   it('refuses to build when the 20% deposit gate has not been reached', async () => {
     const calls: string[] = [];
     const store: FullSiteBuildJobStore = {
       claim: async () => ({
         id: 'job-2',
         projectId: validIntake().projectId,
+        kind: 'FULL_SITE_BUILD',
         projectState: ProjectState.PREVIEW_READY,
         intake: validIntake(),
         brandConfig: validBrandConfig(),
@@ -719,6 +879,8 @@ describe('Flowstarter preview-to-build orchestration', () => {
         requiredIntegrations: [],
       }),
       markAgentWorking: async () => undefined,
+      markRebuildStarted: async () => undefined,
+      markRebuilt: async () => undefined,
       markHumanQa: async () => undefined,
       markFailed: async (_jobId, error) => {
         calls.push(error.code);
@@ -741,6 +903,224 @@ describe('Flowstarter preview-to-build orchestration', () => {
     await worker.run('job-2');
 
     expect(calls).toEqual(['INVALID_PROJECT_STATE']);
+  });
+
+  it("puts a client's published edit live without an agent and without moving the project", async () => {
+    const calls: string[] = [];
+    const events: Array<{ kind: string; body: string }> = [];
+    const projectId = validIntake().projectId;
+    const worktreeRoot = await mkdtemp(
+      join(tmpdir(), 'flowstarter-rebuild-test-'),
+    );
+    temporaryDirectories.push(worktreeRoot);
+
+    const store: FullSiteBuildJobStore = {
+      claim: async (jobId) => ({
+        id: jobId,
+        projectId,
+        kind: 'SITE_REBUILD',
+        // A rebuild happens long after the deposit build finished, so the
+        // project is live, not waiting to be built.
+        projectState: ProjectState.LIVE_SUBSCRIPTION,
+        intake: validIntake(),
+        brandConfig: validBrandConfig(),
+        approvedPreviewFiles: [
+          {
+            path: 'src/content/site.md',
+            content: 'The edit the client published',
+            type: 'file',
+          },
+        ],
+        requiredIntegrations: [],
+      }),
+      markAgentWorking: async () => {
+        calls.push('store:agents-working');
+      },
+      markHumanQa: async () => {
+        calls.push('store:human-qa');
+      },
+      markRebuildStarted: async (_jobId, worktree) => {
+        calls.push('store:rebuild-started');
+        expect(worktree.path).toBe(worktreeRoot);
+      },
+      markRebuilt: async (_jobId, result) => {
+        calls.push('store:rebuilt');
+        expect(result).toEqual({
+          commitSha: 'reb1u1ld',
+          pullRequestUrl: 'https://example.test/deploy/9',
+          stagingUrl: 'https://calm-path.flowstarter.net',
+        });
+      },
+      markFailed: async (_jobId, error) => {
+        calls.push(`store:failed:${error.code}`);
+      },
+      appendEvent: async (_jobId, event) => {
+        events.push({ kind: event.kind, body: event.body });
+      },
+    };
+
+    const worktrees = {
+      discard: async () => {
+        calls.push('git:discard');
+      },
+      create: async () => {
+        calls.push('git:create-worktree');
+        return {
+          branch: `client/flowstarter-${projectId}`,
+          path: worktreeRoot,
+        };
+      },
+      commit: async (_worktree: unknown, message: string) => {
+        calls.push('git:commit');
+        expect(message).toContain('publish client edit');
+        return 'reb1u1ld';
+      },
+    } as unknown as SafeGitWorktreeManager;
+
+    // Calling this at all would be the bug: a rebuild is the client's own
+    // words, and an agent pass could only disagree with them.
+    const agents = {
+      buildFullSite: async () => {
+        calls.push('agent:full-site-builder');
+        throw new Error('the rebuild must not call an agent');
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+
+    const validator: SiteValidator = {
+      validate: async (workspaceRoot, phase) => {
+        calls.push(`validator:${phase}`);
+        expect(
+          await readFile(join(workspaceRoot, 'src/content/site.md'), 'utf8'),
+        ).toBe('The edit the client published');
+      },
+    };
+
+    const pullRequests: PullRequestPublisher = {
+      create: async (input) => {
+        calls.push('publisher:deploy');
+        expect(input.commitSha).toBe('reb1u1ld');
+        expect(input.siteRoot).toBe(
+          join(worktreeRoot, 'generated-sites', projectId),
+        );
+        return {
+          pullRequestUrl: 'https://example.test/deploy/9',
+          stagingUrl: 'https://calm-path.flowstarter.net',
+        };
+      },
+    };
+
+    await new FullSiteBuildWorker(
+      store,
+      worktrees,
+      agents,
+      validator,
+      pullRequests,
+    ).run('job-rebuild');
+
+    expect(calls).toEqual([
+      'git:discard',
+      'git:create-worktree',
+      'store:rebuild-started',
+      'validator:full',
+      'git:commit',
+      'publisher:deploy',
+      'store:rebuilt',
+    ]);
+    // Neither of the two state-moving store methods was touched.
+    expect(calls).not.toContain('store:agents-working');
+    expect(calls).not.toContain('store:human-qa');
+    expect(calls).not.toContain('agent:full-site-builder');
+
+    expect(events.filter((e) => e.kind === 'phase').map((e) => e.body)).toEqual(
+      [
+        'Preparing a clean worktree',
+        'Materializing the published edit',
+        'Checking the build',
+        'Committing the site',
+        'Publishing',
+        'Live',
+      ],
+    );
+  });
+
+  it('leaves the live site alone when the published edit does not build', async () => {
+    const calls: string[] = [];
+    const events: Array<{ kind: string; body: string }> = [];
+    const projectId = validIntake().projectId;
+    const worktreeRoot = await mkdtemp(
+      join(tmpdir(), 'flowstarter-rebuild-fail-'),
+    );
+    temporaryDirectories.push(worktreeRoot);
+
+    const store: FullSiteBuildJobStore = {
+      claim: async (jobId) => ({
+        id: jobId,
+        projectId,
+        kind: 'SITE_REBUILD',
+        projectState: ProjectState.HUMAN_QA,
+        intake: validIntake(),
+        brandConfig: validBrandConfig(),
+        approvedPreviewFiles: [
+          { path: 'src/content/site.md', content: 'Broken', type: 'file' },
+        ],
+        requiredIntegrations: [],
+      }),
+      markAgentWorking: async () => undefined,
+      markHumanQa: async () => undefined,
+      markRebuildStarted: async () => undefined,
+      markRebuilt: async () => {
+        calls.push('store:rebuilt');
+      },
+      markFailed: async (_jobId, error) => {
+        calls.push(`store:failed:${error.code}`);
+        expect(error.detail).toContain('astro check: 1 error');
+      },
+      appendEvent: async (_jobId, event) => {
+        events.push({ kind: event.kind, body: event.body });
+      },
+    };
+    const worktrees = {
+      create: async () => ({
+        branch: `client/flowstarter-${projectId}`,
+        path: worktreeRoot,
+      }),
+      commit: async () => {
+        calls.push('git:commit');
+        return 'nope';
+      },
+    } as unknown as SafeGitWorktreeManager;
+    const validator: SiteValidator = {
+      validate: async () => {
+        calls.push('validator:full');
+        throw new Error('astro check: 1 error in src/content/site.md');
+      },
+    };
+    const pullRequests: PullRequestPublisher = {
+      create: async () => {
+        calls.push('publisher:deploy');
+        throw new Error('must not publish a build that failed');
+      },
+    };
+
+    await expect(
+      new FullSiteBuildWorker(
+        store,
+        worktrees,
+        {} as PiSdkFlowstarterAgents,
+        validator,
+        pullRequests,
+      ).run('job-rebuild-fail'),
+    ).rejects.toThrow(/astro check/);
+
+    // Nothing was committed and nothing was deployed: the site that is live
+    // stays live.
+    expect(calls).toEqual([
+      'validator:full',
+      'store:failed:SITE_REBUILD_FAILED',
+    ]);
+    expect(events.filter((e) => e.kind === 'log').map((e) => e.body)).toEqual([
+      'Rebuild failed: astro check: 1 error in src/content/site.md',
+    ]);
   });
 });
 
@@ -888,8 +1268,12 @@ function validBrandConfig(): BrandConfig {
 
 describe('preview teaser injection', () => {
   it('injects assets and patches layouts idempotently', async () => {
-    const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
-    const { mkdtemp, mkdir, writeFile, readFile } = await import('node:fs/promises');
+    const { injectPreviewTeaser } = await import(
+      '../src/flowstarter/preview-teaser'
+    );
+    const { mkdtemp, mkdir, writeFile, readFile } = await import(
+      'node:fs/promises'
+    );
     const { tmpdir } = await import('node:os');
     const { join } = await import('node:path');
     const root = await mkdtemp(join(tmpdir(), 'fs-teaser-'));
@@ -906,8 +1290,11 @@ describe('preview teaser injection', () => {
     const layout = await readFile(join(root, 'src/layouts/Base.astro'), 'utf8');
     expect(layout).toContain('flowstarter-preview-teaser.css');
     expect(layout).toContain('flowstarter-preview-teaser.js');
-    const js = await readFile(join(root, 'public/flowstarter-preview-teaser.js'), 'utf8');
-    expect(js).toContain('location.pathname === \'/\' ? 2 : 1');
+    const js = await readFile(
+      join(root, 'public/flowstarter-preview-teaser.js'),
+      'utf8',
+    );
+    expect(js).toContain("location.pathname === '/' ? 2 : 1");
 
     // Second run must not double-inject.
     const second = await injectPreviewTeaser(root, { keepHomeSections: 2 });
@@ -916,9 +1303,63 @@ describe('preview teaser injection', () => {
     expect(again.split('flowstarter-preview-teaser.css').length).toBe(2);
   });
 
+  it('leaves the top of each locked section readable and always holds the last sections back', async () => {
+    const { injectPreviewTeaser } = await import(
+      '../src/flowstarter/preview-teaser'
+    );
+    const { mkdtemp, mkdir, writeFile, readFile } = await import(
+      'node:fs/promises'
+    );
+    const { tmpdir } = await import('node:os');
+    const { join } = await import('node:path');
+    const root = await mkdtemp(join(tmpdir(), 'fs-teaser-'));
+    temporaryDirectories.push(root);
+    await mkdir(join(root, 'src/layouts'), { recursive: true });
+    await writeFile(
+      join(root, 'src/layouts/Base.astro'),
+      '<html><head></head><body><slot /></body></html>',
+      'utf8',
+    );
+
+    await injectPreviewTeaser(root, {
+      keepHomeSections: 6,
+      minLockedSections: 2,
+      revealTop: 0.35,
+    });
+
+    const css = await readFile(
+      join(root, 'public/flowstarter-preview-teaser.css'),
+      'utf8',
+    );
+    // The veil is masked: clear for the top 35%, fully blurred from 55% down.
+    expect(css).toContain('transparent 35%, #000 55%');
+    // The chip and button sit in the blurred part, not over the readable top.
+    expect(css).toMatch(/\.fs-teaser-gate \{[^}]*top: 55%/);
+
+    const js = await readFile(
+      join(root, 'public/flowstarter-preview-teaser.js'),
+      'utf8',
+    );
+    expect(js).toContain('sections.length - 2');
+    expect(js).not.toContain('__MIN_LOCKED__');
+    expect(js).toContain("gate.className = 'fs-teaser-gate'");
+
+    // Out-of-range reveals are clamped rather than producing a broken mask.
+    await injectPreviewTeaser(root, { revealTop: 2 });
+    const clamped = await readFile(
+      join(root, 'public/flowstarter-preview-teaser.css'),
+      'utf8',
+    );
+    expect(clamped).toContain('transparent 70%, #000 90%');
+  });
+
   it('turns the locked overlay into a checkout link that escapes the frame', async () => {
-    const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
-    const { mkdtemp, mkdir, writeFile, readFile } = await import('node:fs/promises');
+    const { injectPreviewTeaser } = await import(
+      '../src/flowstarter/preview-teaser'
+    );
+    const { mkdtemp, mkdir, writeFile, readFile } = await import(
+      'node:fs/promises'
+    );
     const { tmpdir } = await import('node:os');
     const { join } = await import('node:path');
     const root = await mkdtemp(join(tmpdir(), 'fs-teaser-'));
@@ -939,7 +1380,9 @@ describe('preview teaser injection', () => {
       join(root, 'public/flowstarter-preview-teaser.js'),
       'utf8',
     );
-    expect(js).toContain('var UNLOCK_URL = "https://app.flowstarter.dev/unlock/9ab5"');
+    expect(js).toContain(
+      'var UNLOCK_URL = "https://app.flowstarter.dev/unlock/9ab5"',
+    );
     expect(js).toContain('var UNLOCK_LABEL = "Unlock the full site"');
     // Anchor, not a div, and it must break out of the funnel's iframe.
     expect(js).toContain("createElement(UNLOCK_URL ? 'a' : 'div')");
@@ -948,8 +1391,12 @@ describe('preview teaser injection', () => {
   });
 
   it('keeps the overlay inert when no unlock destination is configured', async () => {
-    const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
-    const { mkdtemp, mkdir, writeFile, readFile } = await import('node:fs/promises');
+    const { injectPreviewTeaser } = await import(
+      '../src/flowstarter/preview-teaser'
+    );
+    const { mkdtemp, mkdir, writeFile, readFile } = await import(
+      'node:fs/promises'
+    );
     const { tmpdir } = await import('node:os');
     const { join } = await import('node:path');
     const root = await mkdtemp(join(tmpdir(), 'fs-teaser-'));
@@ -970,7 +1417,9 @@ describe('preview teaser injection', () => {
   });
 
   it('refuses an unlock destination that is not a navigable https origin', async () => {
-    const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
+    const { injectPreviewTeaser } = await import(
+      '../src/flowstarter/preview-teaser'
+    );
     const { mkdtemp } = await import('node:fs/promises');
     const { tmpdir } = await import('node:os');
     const { join } = await import('node:path');
@@ -988,12 +1437,16 @@ describe('preview teaser injection', () => {
     ).rejects.toThrow(/must be absolute/);
     // Loopback stays usable for local development.
     await expect(
-      injectPreviewTeaser(root, { unlockUrl: 'http://localhost:3000/unlock/x' }),
+      injectPreviewTeaser(root, {
+        unlockUrl: 'http://localhost:3000/unlock/x',
+      }),
     ).resolves.toBeTruthy();
   });
 
   it('leaves the agent boundary intact — teaser is operator code on layouts', async () => {
-    const { injectPreviewTeaser } = await import('../src/flowstarter/preview-teaser');
+    const { injectPreviewTeaser } = await import(
+      '../src/flowstarter/preview-teaser'
+    );
     const { mkdtemp } = await import('node:fs/promises');
     const { tmpdir } = await import('node:os');
     const { join } = await import('node:path');
@@ -1007,8 +1460,12 @@ describe('preview teaser injection', () => {
 
 describe('rendered-audit repair loop', () => {
   it('repairs and republishes once when the audit reports a defect', async () => {
-    const { PreviewGenerationPipeline } = await import('../src/flowstarter/workflows');
-    const { mkdir: mkdirP, writeFile: writeF } = await import('node:fs/promises');
+    const { PreviewGenerationPipeline } = await import(
+      '../src/flowstarter/workflows'
+    );
+    const { mkdir: mkdirP, writeFile: writeF } = await import(
+      'node:fs/promises'
+    );
     const { join: joinP } = await import('node:path');
 
     const calls: string[] = [];
@@ -1016,12 +1473,24 @@ describe('rendered-audit repair loop', () => {
     const agents = {
       analyzeBrand: async () => validBrandConfig(),
       selectTemplate: async () => ({
-        slug: 'wellness-therapy', reason: 'r', matchedSignals: [], confidence: 0.9,
+        slug: 'wellness-therapy',
+        reason: 'r',
+        matchedSignals: [],
+        confidence: 0.9,
       }),
-      buildPreview: async (input: { workspaceRoot: string; feedback?: string }) => {
-        calls.push(input.feedback ? `personalize:${input.feedback.slice(0, 30)}` : 'personalize:first');
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        calls.push(
+          input.feedback
+            ? `personalize:${input.feedback.slice(0, 30)}`
+            : 'personalize:first',
+        );
         const target = joinP(input.workspaceRoot, 'src/content/site.md');
-        await mkdirP(joinP(input.workspaceRoot, 'src/content'), { recursive: true });
+        await mkdirP(joinP(input.workspaceRoot, 'src/content'), {
+          recursive: true,
+        });
         await writeF(target, `# ${validIntake().business.name}`, 'utf8');
         return { summary: 'ok', changedPaths: ['src/content/site.md'] };
       },
@@ -1030,7 +1499,18 @@ describe('rendered-audit repair loop', () => {
       search: async () => [],
       getDetails: async () => ({}),
       scaffold: async () => ({
-        template: { metadata: { slug: 'wellness-therapy', displayName: 'x', description: 'x', category: 'services', useCase: [], fileCount: 1, totalLOC: 1 }, config: {} },
+        template: {
+          metadata: {
+            slug: 'wellness-therapy',
+            displayName: 'x',
+            description: 'x',
+            category: 'services',
+            useCase: [],
+            fileCount: 1,
+            totalLOC: 1,
+          },
+          config: {},
+        },
         files: [{ path: 'src/content/site.md', content: 'seed', type: 'file' }],
       }),
       close: async () => undefined,
@@ -1043,21 +1523,36 @@ describe('rendered-audit repair loop', () => {
           previewUrl: `http://preview/${calls.filter((c) => c === 'publish').length}`,
           artifactUrl: 'local://x',
           files: [],
-          teardown: async () => { teardowns++; },
+          teardown: async () => {
+            teardowns++;
+          },
         };
       },
     } as never;
 
     let audits = 0;
-    const pipeline = new PreviewGenerationPipeline(agents, library, validator, publisher, undefined, {
-      renderedAudit: async (url: string) => {
-        audits++;
-        calls.push(`audit:${url}`);
-        return audits === 1 ? 'hero heading renders dark-on-dark in the dark scheme' : undefined;
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      library,
+      validator,
+      publisher,
+      undefined,
+      {
+        renderedAudit: async (url: string) => {
+          audits++;
+          calls.push(`audit:${url}`);
+          return audits === 1
+            ? 'hero heading renders dark-on-dark in the dark scheme'
+            : undefined;
+        },
       },
-    });
+    );
 
-    const result = await pipeline.run({ intake: validIntake(), corpus: validCorpus(validIntake().projectId), cachedAssets: [] });
+    const result = await pipeline.run({
+      intake: validIntake(),
+      corpus: validCorpus(validIntake().projectId),
+      cachedAssets: [],
+    });
 
     expect(calls).toEqual([
       'personalize:first',
@@ -1068,5 +1563,671 @@ describe('rendered-audit repair loop', () => {
     ]);
     expect(teardowns).toBe(1);
     expect(result.previewUrl).toBe('http://preview/2');
+  });
+});
+
+describe('the quality sweep is decided by a residue check, not run by habit', () => {
+  const SAMPLE =
+    'I work with people carrying anxiety, burnout, or the weight of a life that no longer quite fits.';
+  const scaffoldFiles = [
+    {
+      path: 'src/content/site.md',
+      content: [
+        '---',
+        'header:',
+        '  logo: "Marsh & Fern"',
+        '  navLinks:',
+        '    - label: "Home"',
+        '      href: "/"',
+        'hero:',
+        '  title: "FOR ADULTS WHO ARE TIRED OF JUST HOLDING IT TOGETHER"',
+        '  image: "/images/blog-3.jpg"',
+        '  text: |',
+        `    ${SAMPLE}`,
+        '---',
+      ].join('\n'),
+      type: 'file' as const,
+    },
+    {
+      path: 'src/pages/index.astro',
+      content: `<p>${SAMPLE}</p>`,
+      type: 'file' as const,
+    },
+  ];
+
+  it('lists the sentence-like sample copy of the content files only', async () => {
+    const { templateSampleStrings } = await import(
+      '../src/flowstarter/workflows'
+    );
+    const samples = templateSampleStrings(scaffoldFiles);
+    expect([...samples.keys()]).toEqual(['src/content/site.md']);
+    expect(samples.get('src/content/site.md')).toEqual([
+      'FOR ADULTS WHO ARE TIRED OF JUST HOLDING IT TOGETHER',
+      SAMPLE,
+    ]);
+  });
+
+  async function workspaceWith(content: string): Promise<string> {
+    const root = await mkdtemp(join(tmpdir(), 'residue-'));
+    temporaryDirectories.push(root);
+    await mkdir(join(root, 'src/content'), { recursive: true });
+    await writeFile(join(root, 'src/content/site.md'), content, 'utf8');
+    return root;
+  }
+
+  it('names a surviving template sentence, and a collective voice', async () => {
+    const { findTemplateResidue } = await import(
+      '../src/flowstarter/workflows'
+    );
+    const kept = await workspaceWith(
+      `title: "Ionescu Dental"\ntext: |\n  ${SAMPLE}\n`,
+    );
+    const residue = await findTemplateResidue(kept, scaffoldFiles);
+    expect(residue).toContain('still present verbatim');
+    expect(residue).toContain(SAMPLE);
+
+    const studio = await workspaceWith(
+      'text: "We are a studio. Our team, our craft, our promise to us and ours: we deliver."',
+    );
+    expect(await findTemplateResidue(studio, scaffoldFiles)).toMatch(
+      /we\/our\/us \d+ times/,
+    );
+
+    const clean = await workspaceWith(
+      'title: "Ionescu Dental"\ntext: "I do cosmetic dentistry in Cluj, one patient at a time."',
+    );
+    expect(await findTemplateResidue(clean, scaffoldFiles)).toBeUndefined();
+  });
+
+  function libraryWith(files: typeof scaffoldFiles): TemplateLibrary {
+    return {
+      search: async () => [],
+      getDetails: async () => ({}),
+      scaffold: async (slug) => ({
+        template: {
+          metadata: {
+            slug,
+            displayName: 'Wellness & Therapy',
+            description: 'Trust-led service template.',
+            category: 'services',
+            useCase: ['therapy'],
+            fileCount: files.length,
+            totalLOC: 1,
+          },
+          config: {},
+        },
+        files,
+      }),
+      close: async () => undefined,
+    };
+  }
+
+  async function runWith(firstPassContent: string, sweep: boolean | 'always') {
+    const feedbacks: Array<string | undefined> = [];
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        feedbacks.push(input.feedback);
+        await writeFile(
+          join(input.workspaceRoot, 'src/content/site.md'),
+          input.feedback
+            ? 'title: "Calm Path Therapy"\ntext: "I rewrote it."'
+            : firstPassContent,
+          'utf8',
+        );
+        return { summary: 'done', changedPaths: ['src/content/site.md'] };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+    const intake = validIntake();
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      libraryWith(scaffoldFiles),
+      { validate: async () => undefined },
+      staticPublisher(),
+      undefined,
+      { qualitySweep: sweep },
+    );
+    await pipeline.run({
+      intake,
+      corpus: validCorpus(intake.projectId),
+      cachedAssets: [],
+    });
+    return feedbacks;
+  }
+
+  it('skips the sweep when the first pass left nothing behind', async () => {
+    const feedbacks = await runWith(
+      'title: "Calm Path Therapy"\ntext: "I help adults in Bristol through anxiety."',
+      true,
+    );
+    expect(feedbacks).toEqual([undefined]);
+  });
+
+  it('runs the sweep with the exact findings when sample copy survived', async () => {
+    const feedbacks = await runWith(
+      `title: "Calm Path Therapy"\ntext: |\n  ${SAMPLE}\n`,
+      true,
+    );
+    expect(feedbacks).toHaveLength(2);
+    expect(feedbacks[1]).toContain('Quality sweep');
+    expect(feedbacks[1]).toContain(SAMPLE);
+  });
+
+  it("still runs unconditionally when asked to 'always'", async () => {
+    const feedbacks = await runWith(
+      'title: "Calm Path Therapy"\ntext: "I help adults in Bristol through anxiety."',
+      'always',
+    );
+    expect(feedbacks).toHaveLength(2);
+    expect(feedbacks[1]).toContain('Quality sweep');
+  });
+});
+
+describe('the integrity gate on the files the agent edits', () => {
+  const CSS = [
+    '/* tokens */',
+    ':root {',
+    '  --brand: #123456;',
+    '  --font-body: "Inter", sans-serif;',
+    '}',
+    'body { color: var(--brand); }',
+  ].join('\n');
+  const styleScaffold = [
+    { path: 'src/styles/global.css', content: CSS, type: 'file' as const },
+    {
+      path: 'src/data/site.json',
+      content: '{"name":"Marsh & Fern"}',
+      type: 'file' as const,
+    },
+  ];
+
+  it('reduces a stylesheet to a structure that ignores values, not syntax', async () => {
+    const { cssSkeleton } = await import('../src/flowstarter/workflows');
+    const recoloured = CSS.replace('#123456', 'hsl(210 40% 30%)').replace(
+      '"Inter"',
+      '"Fraunces"',
+    );
+    expect(cssSkeleton(recoloured)).toBe(cssSkeleton(CSS));
+    // A missing semicolon is a different structure.
+    expect(cssSkeleton(CSS.replace('#123456;', '#123456'))).not.toBe(
+      cssSkeleton(CSS),
+    );
+    // So is a new declaration, or a lost brace.
+    expect(cssSkeleton(CSS.replace('}', '  --extra: 1;\n}'))).not.toBe(
+      cssSkeleton(CSS),
+    );
+    expect(cssSkeleton(CSS.replace('body {', 'body '))).not.toBe(
+      cssSkeleton(CSS),
+    );
+  });
+
+  async function workspaceWith(
+    css: string,
+    json = '{"name":"Ionescu Dental"}',
+  ) {
+    const root = await mkdtemp(join(tmpdir(), 'integrity-'));
+    temporaryDirectories.push(root);
+    await mkdir(join(root, 'src/styles'), { recursive: true });
+    await mkdir(join(root, 'src/data'), { recursive: true });
+    await writeFile(join(root, 'src/styles/global.css'), css, 'utf8');
+    await writeFile(join(root, 'src/data/site.json'), json, 'utf8');
+    return root;
+  }
+
+  it('passes value-only edits and flags broken CSS or JSON by path', async () => {
+    const { findWorkspaceIntegrityIssue } = await import(
+      '../src/flowstarter/workflows'
+    );
+    const fine = await workspaceWith(CSS.replace('#123456', '#0a2540'));
+    expect(
+      await findWorkspaceIntegrityIssue(fine, styleScaffold),
+    ).toBeUndefined();
+
+    const broken = await workspaceWith(
+      CSS.replace('#123456;', '#0a2540'),
+      '{"name": }',
+    );
+    const issue = await findWorkspaceIntegrityIssue(broken, styleScaffold);
+    expect(issue?.paths).toEqual([
+      'src/styles/global.css',
+      'src/data/site.json',
+    ]);
+    expect(issue?.feedback).toContain('would not build');
+    expect(issue?.feedback).toContain('not valid JSON');
+    // The agent is told which declaration, not just which file.
+    expect(issue?.feedback).toContain('malformed');
+    expect(issue?.feedback).toContain('--brand: #0a2540');
+  });
+
+  it('lets a file that parses through even when its structure drifted', async () => {
+    const { findWorkspaceIntegrityIssue } = await import(
+      '../src/flowstarter/workflows'
+    );
+    // A new token the prompt forbids, but Astro builds it: no restore.
+    const drifted = await workspaceWith(
+      CSS.replace('}', '  --signal: #f00;\n}'),
+    );
+    expect(
+      await findWorkspaceIntegrityIssue(drifted, styleScaffold),
+    ).toBeUndefined();
+  });
+
+  it('tells sound CSS from the two ways a model breaks it', async () => {
+    const { cssSyntaxIssue } = await import('../src/flowstarter/workflows');
+    const sound = [
+      '@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600");',
+      ':root { --shadow: 0 1px 2px rgb(0 0 0 / 0.1); --ratio: 16 / 9; }',
+      '@media (min-width: 600px) { .hero { background: url(x.png) center / cover; color: red } }',
+      'a::before { content: "a: b"; }',
+    ].join('\n');
+    expect(cssSyntaxIssue(sound)).toBeUndefined();
+    expect(cssSyntaxIssue(':root { --a: 1; --b: 2;')).toMatch(/unclosed/);
+    expect(cssSyntaxIssue(':root { --a: 1 --b: 2; }')).toMatch(/malformed/);
+    expect(cssSyntaxIssue(':root { --a: 1; } }')).toMatch(/stray/);
+  });
+
+  it('gives the agent one repair pass, then restores the template file rather than failing the preview', async () => {
+    const feedbacks: Array<string | undefined> = [];
+    let styleAfterPublish = '';
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        feedbacks.push(input.feedback);
+        // Every pass writes the client's content but breaks the stylesheet,
+        // including the repair pass: the agent cannot fix it.
+        await writeFile(
+          join(input.workspaceRoot, 'src/content/site.md'),
+          'Calm Path Therapy preview',
+          'utf8',
+        );
+        await writeFile(
+          join(input.workspaceRoot, 'src/styles/global.css'),
+          CSS.replace('#123456;', '#0a2540'),
+          'utf8',
+        );
+        return {
+          summary: 'done',
+          changedPaths: ['src/content/site.md', 'src/styles/global.css'],
+        };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+    const library: TemplateLibrary = {
+      search: async () => [],
+      getDetails: async () => ({}),
+      scaffold: async (slug) => ({
+        template: {
+          metadata: {
+            slug,
+            displayName: 'Wellness & Therapy',
+            description: 'Trust-led service template.',
+            category: 'services',
+            useCase: ['therapy'],
+            fileCount: 2,
+            totalLOC: 1,
+          },
+          config: {},
+        },
+        files: [
+          {
+            path: 'src/content/site.md',
+            content: 'Template copy',
+            type: 'file',
+          },
+          { path: 'src/styles/global.css', content: CSS, type: 'file' },
+        ],
+      }),
+      close: async () => undefined,
+    };
+    const publisher: PreviewPublisher = {
+      publish: async (input) => {
+        styleAfterPublish = await readFile(
+          join(input.workspaceRoot, 'src/styles/global.css'),
+          'utf8',
+        );
+        return {
+          previewUrl: 'https://preview.flowstarter.net/x',
+          artifactUrl: 's3://x',
+          files: [],
+        };
+      },
+    };
+    const intake = validIntake();
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      library,
+      { validate: async () => undefined },
+      publisher,
+    );
+    await pipeline.run({
+      intake,
+      corpus: validCorpus(intake.projectId),
+      cachedAssets: [],
+    });
+
+    expect(feedbacks).toHaveLength(2);
+    expect(feedbacks[1]).toContain('would not build');
+    expect(feedbacks[1]).toContain('src/styles/global.css');
+    // The template's own stylesheet shipped, so the preview still builds.
+    expect(styleAfterPublish).toBe(CSS);
+  });
+});
+
+describe('a run that is out of time ships what it has', () => {
+  it('skips the optional passes when the deadline leaves no room, and still publishes', async () => {
+    const feedbacks: Array<string | undefined> = [];
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        feedbacks.push(input.feedback);
+        // Leaves the sample copy in place, which would normally earn a
+        // sweep; the deadline says there is no time for one.
+        await writeFile(
+          join(input.workspaceRoot, 'src/content/site.md'),
+          'Calm Path Therapy preview. Template copy that is long enough to count.',
+          'utf8',
+        );
+        return {
+          summary: 'partial',
+          changedPaths: ['src/content/site.md'],
+          timedOut: true,
+        };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+    const intake = validIntake();
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      {
+        ...staticLibrary(),
+        scaffold: async (slug) => ({
+          ...(await staticLibrary().scaffold(slug)),
+          files: [
+            {
+              path: 'src/content/site.md',
+              content: 'Template copy that is long enough to count.',
+              type: 'file',
+            },
+          ],
+        }),
+      },
+      { validate: async () => undefined },
+      staticPublisher(),
+      undefined,
+      { qualitySweep: true },
+    );
+    const result = await pipeline.run({
+      intake,
+      corpus: validCorpus(intake.projectId),
+      cachedAssets: [],
+      deadlineAt: Date.now() + 60_000,
+    });
+    expect(result.previewUrl).toBe('https://preview.flowstarter.net/static');
+    expect(feedbacks).toEqual([undefined]);
+  });
+});
+
+describe('an optional pass that runs out of clock is abandoned, not fatal', () => {
+  it('ships the first pass when the sweep is refused by the deadline', async () => {
+    const { PiRunDeadlineExceededError } = await import(
+      '../src/flowstarter/pi-sdk'
+    );
+    let passes = 0;
+    const agents = {
+      analyzeBrand: async () => validBrandConfig(),
+      selectTemplate: async () => ({
+        slug: 'wellness-therapy',
+        reason: 'Fits.',
+        matchedSignals: ['therapy'],
+        confidence: 0.9,
+      }),
+      buildPreview: async (input: {
+        workspaceRoot: string;
+        feedback?: string;
+      }) => {
+        passes += 1;
+        if (input.feedback)
+          throw new PiRunDeadlineExceededError('preview_generate');
+        await writeFile(
+          join(input.workspaceRoot, 'src/content/site.md'),
+          'Calm Path Therapy preview. Template copy that is long enough to count.',
+          'utf8',
+        );
+        return { summary: 'first', changedPaths: ['src/content/site.md'] };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+    const intake = validIntake();
+    const pipeline = new PreviewGenerationPipeline(
+      agents,
+      {
+        ...staticLibrary(),
+        scaffold: async (slug) => ({
+          ...(await staticLibrary().scaffold(slug)),
+          files: [
+            {
+              path: 'src/content/site.md',
+              content: 'Template copy that is long enough to count.',
+              type: 'file',
+            },
+          ],
+        }),
+      },
+      { validate: async () => undefined },
+      staticPublisher(),
+      undefined,
+      { qualitySweep: true },
+    );
+    const result = await pipeline.run({
+      intake,
+      corpus: validCorpus(intake.projectId),
+      cachedAssets: [],
+    });
+    expect(passes).toBe(2);
+    expect(result.previewUrl).toBe('https://preview.flowstarter.net/static');
+  });
+
+  it('does not count alt text as template residue', async () => {
+    const { templateSampleStrings } = await import(
+      '../src/flowstarter/workflows'
+    );
+    const samples = templateSampleStrings([
+      {
+        path: 'src/content/site.md',
+        content: [
+          'hero:',
+          '  imageAlt: "An abstract editorial cover for an article on clarity"',
+          '  alt: "A calm room with a plant and two chairs by the window"',
+          '  text: "I work with people carrying anxiety and burnout."',
+        ].join('\n'),
+        type: 'file',
+      },
+    ]);
+    expect(samples.get('src/content/site.md')).toEqual([
+      'I work with people carrying anxiety and burnout.',
+    ]);
+  });
+});
+
+describe('the full-site build repairs a failed build once before giving up', () => {
+  function workerFor(
+    agents: PiSdkFlowstarterAgents,
+    validator: SiteValidator,
+    calls: string[],
+  ) {
+    const projectId = '0f4e1088-8d8f-4f18-83b1-406cc292b23c';
+    const store: FullSiteBuildJobStore = {
+      claim: async (jobId) => ({
+        id: jobId,
+        projectId,
+        kind: 'FULL_SITE_BUILD',
+        projectState: ProjectState.DEPOSIT_PAID,
+        intake: validIntake(),
+        brandConfig: validBrandConfig(),
+        approvedPreviewFiles: [
+          {
+            path: 'src/content/site.md',
+            content: 'Approved preview',
+            type: 'file',
+          },
+        ],
+        requiredIntegrations: [],
+      }),
+      markAgentWorking: async () => {
+        calls.push('store:agents-working');
+      },
+      markRebuildStarted: async () => {
+        calls.push('store:rebuild-started');
+      },
+      markRebuilt: async () => {
+        calls.push('store:rebuilt');
+      },
+      markHumanQa: async () => {
+        calls.push('store:human-qa');
+      },
+      markFailed: async (_jobId, error) => {
+        calls.push(`store:failed:${error.detail.slice(0, 40)}`);
+      },
+    };
+    const worktrees = {
+      create: async () => {
+        const root = await mkdtemp(
+          join(tmpdir(), 'flowstarter-worker-repair-'),
+        );
+        temporaryDirectories.push(root);
+        return { branch: `client/flowstarter-${projectId}`, path: root };
+      },
+      commit: async () => 'abc123def456',
+    } as unknown as SafeGitWorktreeManager;
+    const pullRequests: PullRequestPublisher = {
+      create: async () => ({
+        pullRequestUrl: 'https://example.com/pr',
+        stagingUrl: 'https://example.com/site',
+      }),
+    };
+    return new FullSiteBuildWorker(
+      store,
+      worktrees,
+      agents,
+      validator,
+      pullRequests,
+    );
+  }
+
+  it('hands the build output to the agent and ships when the repair passes', async () => {
+    const calls: string[] = [];
+    const feedbacks: Array<string | undefined> = [];
+    const agents = {
+      buildFullSite: async (input: { feedback?: string }) => {
+        feedbacks.push(input.feedback);
+        return { summary: 'ok', changedPaths: ['src/pages/about.astro'] };
+      },
+    } as unknown as PiSdkFlowstarterAgents;
+    let validations = 0;
+    const validator: SiteValidator = {
+      validate: async () => {
+        validations += 1;
+        if (validations === 1) {
+          throw new Error(
+            'Validation command "pnpm run build" failed: PhoneField.astro:22:1 The closing frontmatter fence (---) is missing an opening fence',
+          );
+        }
+      },
+    };
+    await workerFor(agents, validator, calls).run('job-1');
+    expect(feedbacks).toHaveLength(2);
+    expect(feedbacks[0]).toBeUndefined();
+    expect(feedbacks[1]).toContain('PhoneField.astro:22:1');
+    expect(calls).toContain('store:human-qa');
+  });
+
+  it('fails the attempt when the repair does not fix the build', async () => {
+    const calls: string[] = [];
+    const agents = {
+      buildFullSite: async () => ({
+        summary: 'ok',
+        changedPaths: ['src/pages/about.astro'],
+      }),
+    } as unknown as PiSdkFlowstarterAgents;
+    const validator: SiteValidator = {
+      validate: async () => {
+        throw new Error(
+          'Validation command "pnpm run build" failed: still broken',
+        );
+      },
+    };
+    await expect(
+      workerFor(agents, validator, calls).run('job-1'),
+    ).rejects.toThrow(/still broken/);
+    expect(calls.some((call) => call.startsWith('store:failed'))).toBe(true);
+    expect(calls).not.toContain('store:human-qa');
+  });
+});
+
+describe('a retried build starts clean', () => {
+  it("discards the previous attempt's worktree and branch before creating", async () => {
+    const { SafeGitWorktreeManager: Manager } = await import(
+      '../src/flowstarter/worktree'
+    );
+    const { execFileSync } = await import('node:child_process');
+    const repositoryRoot = await mkdtemp(join(tmpdir(), 'fs-repo-'));
+    const worktreesRoot = await mkdtemp(join(tmpdir(), 'fs-worktrees-'));
+    temporaryDirectories.push(repositoryRoot, worktreesRoot);
+    execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: repositoryRoot });
+    execFileSync(
+      'git',
+      [
+        '-c',
+        'user.email=t@t',
+        '-c',
+        'user.name=t',
+        'commit',
+        '-q',
+        '--allow-empty',
+        '-m',
+        'init',
+      ],
+      { cwd: repositoryRoot },
+    );
+    const manager = new Manager({
+      repositoryRoot,
+      worktreesRoot,
+      baseRef: 'main',
+    });
+    const projectId = '0f4e1088-8d8f-4f18-83b1-406cc292b23c';
+
+    const first = await manager.create(projectId);
+    await expect(manager.create(projectId)).rejects.toThrow(/already exists/);
+
+    await manager.discard(projectId);
+    await expect(access(first.path)).rejects.toThrow();
+    const second = await manager.create(projectId);
+    expect(second.branch).toBe(first.branch);
+    // Discarding when nothing is there is a no-op, not an error.
+    await manager.discard('11111111-2222-4333-8444-555555555555');
   });
 });

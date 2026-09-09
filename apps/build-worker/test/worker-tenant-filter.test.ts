@@ -39,6 +39,7 @@ const SRC_DIR = join(__dirname, '..', 'src');
 const TENANT_TABLES = new Set([
   'workspaces',
   'flowstarter_agent_jobs',
+  'flowstarter_agent_job_events',
   'flowstarter_project_artifacts',
   'assets',
   'project_events',
@@ -73,37 +74,68 @@ const ALLOW_LIST: AllowListEntry[] = [
     file: 'job-store.ts',
     table: 'flowstarter_agent_jobs',
     match: `.select('id, workspace_id, kind, status, attempt_count, payload')`,
-    reason: "claim(): initial read, keyed by the job's own id; this is the read that discovers workspace_id.",
+    reason:
+      "claim(): initial read, keyed by the job's own id; this is the read that discovers workspace_id.",
   },
   {
     file: 'job-store.ts',
     table: 'flowstarter_agent_jobs',
     match: `.eq('attempt_count', row.attempt_count)`,
-    reason: 'claim(): compare-and-set update keyed by (id, status, attempt_count), all already known from the read above.',
+    reason:
+      'claim(): compare-and-set update keyed by (id, status, attempt_count), all already known from the read above.',
   },
   {
     file: 'job-store.ts',
     table: 'flowstarter_agent_jobs',
     match: 'worktree_branch: worktree.branch,',
-    reason: "markAgentWorking(): update keyed by the job id the caller already holds.",
+    reason:
+      'markAgentWorking() and markRebuildStarted(): updates keyed by the job id the caller already holds.',
+  },
+  {
+    file: 'job-store.ts',
+    table: 'flowstarter_agent_jobs',
+    match: `.maybeSingle<{ workspace_id: string }>()`,
+    reason:
+      "workspaceFor(): the lookup that discovers a job's workspace so events can be stamped with it; requiring the filter would be circular.",
   },
   {
     file: 'job-store.ts',
     table: 'flowstarter_agent_jobs',
     match: `.maybeSingle<{ payload: unknown }>()`,
-    reason: "markHumanQa(): payload read keyed by the job id the caller already holds.",
+    reason:
+      'currentPayload(): payload read keyed by the job id the caller already holds, shared by markHumanQa() and markRebuilt().',
   },
   {
     file: 'job-store.ts',
     table: 'flowstarter_agent_jobs',
     match: 'pull_request_url: result.pullRequestUrl,',
-    reason: "markHumanQa(): update keyed by the job id the caller already holds.",
+    reason:
+      'markHumanQa() and markRebuilt(): updates keyed by the job id the caller already holds.',
   },
   {
     file: 'job-store.ts',
     table: 'flowstarter_agent_jobs',
     match: 'error_code: failure.code,',
-    reason: "markFailed(): update keyed by the job id the caller already holds.",
+    reason:
+      'markFailed(): update keyed by the job id the caller already holds.',
+  },
+  // -- flowstarter_agent_job_events: both call sites are keyed by a job id
+  // the worker obtained from its own claim() read, not from user input, so
+  // there is nothing a caller could supply to point either query at another
+  // tenant's job.
+  {
+    file: 'job-store.ts',
+    table: 'flowstarter_agent_job_events',
+    match: 'body: event.body.slice(0, 4_000),',
+    reason:
+      'appendEvent(): insert keyed by the job id the worker obtained from its own claim; workspace_id is stamped from workspaceFor(jobId) in the same call.',
+  },
+  {
+    file: 'job-store.ts',
+    table: 'flowstarter_agent_job_events',
+    match: `.eq('kind', 'note')`,
+    reason:
+      'readOperatorNotes(): select keyed by the job id the worker obtained from its own claim.',
   },
   // -- workspaces: this table IS the tenant, not tenant-owned data. It has
   // no `workspace_id` column -- its own primary key `id` *is* the workspace
@@ -113,25 +145,29 @@ const ALLOW_LIST: AllowListEntry[] = [
     file: 'job-store.ts',
     table: 'workspaces',
     match: `.select('id, project_state, cal_com_url')`,
-    reason: "claim(): filtered on workspaces.id, which is the workspace's own id.",
+    reason:
+      "claim(): filtered on workspaces.id, which is the workspace's own id.",
   },
   {
     file: 'job-store.ts',
     table: 'workspaces',
     match: `.update({ project_state: ProjectState.AGENTS_WORKING })`,
-    reason: "markAgentWorking(): filtered on workspaces.id, which is the workspace's own id.",
+    reason:
+      "markAgentWorking(): filtered on workspaces.id, which is the workspace's own id.",
   },
   {
     file: 'job-store.ts',
     table: 'workspaces',
     match: `.update({ project_state: ProjectState.HUMAN_QA })`,
-    reason: "markHumanQa(): filtered on workspaces.id, which is the workspace's own id.",
+    reason:
+      "markHumanQa(): filtered on workspaces.id, which is the workspace's own id.",
   },
   {
     file: 'job-store.ts',
     table: 'workspaces',
     match: `.update({ project_state: ProjectState.DEPOSIT_PAID })`,
-    reason: "markFailed(): filtered on workspaces.id, which is the workspace's own id.",
+    reason:
+      "markFailed(): filtered on workspaces.id, which is the workspace's own id.",
   },
 ];
 
@@ -198,12 +234,18 @@ function findViolations(): Violation[] {
 
       const statement = extractStatement(content, match.index);
 
-      if (statement.includes(`.eq('workspace_id'`) || statement.includes('withTenant(')) {
+      if (
+        statement.includes(`.eq('workspace_id'`) ||
+        statement.includes('withTenant(')
+      ) {
         continue;
       }
 
       const allowed = ALLOW_LIST.some(
-        (entry) => entry.file === relFile && entry.table === table && statement.includes(entry.match),
+        (entry) =>
+          entry.file === relFile &&
+          entry.table === table &&
+          statement.includes(entry.match),
       );
       if (allowed) continue;
 
@@ -225,7 +267,9 @@ describe('worker tenant filter guard', () => {
             `  - ${v.file}: .from('${v.table}') without a workspace_id filter\n    ${v.statement.slice(0, 240).replace(/\s+/g, ' ')}`,
         )
         .join('\n');
-      throw new Error(`Found ${violations.length} unfiltered tenant-table quer${violations.length === 1 ? 'y' : 'ies'}:\n${details}`);
+      throw new Error(
+        `Found ${violations.length} unfiltered tenant-table quer${violations.length === 1 ? 'y' : 'ies'}:\n${details}`,
+      );
     }
 
     expect(violations).toEqual([]);

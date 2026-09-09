@@ -15,6 +15,7 @@
  */
 import { quoteMinorFrom } from '@/lib/flowstarter/quote';
 import { ProjectState } from '@flowstarter/agentic-codegen/src/flowstarter/types';
+import { errorCodeLabel, jobKindLabel, projectStateLabel } from './job-labels';
 import { PROJECT_STATE_ORDER, asProjectState } from './state-transitions';
 
 /** Event kinds that mark the moment a project entered its current state. */
@@ -216,7 +217,7 @@ export function stallReasonsFor(input: {
       const waiting = now - due;
       if (waiting > QUEUED_JOB_STALL_MS) {
         reasons.push(
-          `${job.kind} has been queued for ${formatDuration(
+          `${jobKindLabel(job.kind)} has been queued for ${formatDuration(
             waiting
           )} without ` +
             'being picked up: dispatch to the worker may have been dropped'
@@ -227,13 +228,16 @@ export function stallReasonsFor(input: {
       const runningFor = now - started;
       if (runningFor > RUNNING_JOB_STALL_MS) {
         reasons.push(
-          `${job.kind} has been running for ${formatDuration(runningFor)}`
+          `${jobKindLabel(job.kind)} has been running for ${formatDuration(
+            runningFor
+          )}`
         );
       }
     } else if (job.status === 'failed') {
       reasons.push(
-        `${job.kind} failed${job.error_code ? ` (${job.error_code})` : ''} ` +
-          `after ${job.attempt_count}/${job.max_attempts} attempts`
+        `${jobKindLabel(job.kind)} failed${
+          job.error_code ? ` (${errorCodeLabel(job.error_code)})` : ''
+        } after ${job.attempt_count}/${job.max_attempts} attempts`
       );
     }
   }
@@ -241,7 +245,9 @@ export function stallReasonsFor(input: {
   const budget = STATE_STALL_MS[input.state];
   if (budget !== null && input.timeInStateMs > budget) {
     reasons.push(
-      `In ${input.state} for ${formatDuration(input.timeInStateMs)}`
+      `In ${projectStateLabel(input.state)} for ${formatDuration(
+        input.timeInStateMs
+      )}`
     );
   }
 

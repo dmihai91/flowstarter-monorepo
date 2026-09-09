@@ -25,7 +25,10 @@ function ledgerRow(overrides: Partial<JobLedgerRow> = {}): JobLedgerRow {
 
 function artifacts(overrides: Record<string, unknown> = {}) {
   return {
-    intake_payload: { projectId: WORKSPACE_ID, business: { name: 'Calm Path' } },
+    intake_payload: {
+      projectId: WORKSPACE_ID,
+      business: { name: 'Calm Path' },
+    },
     brand_config: { schemaVersion: '1.0' },
     preview_manifest: {
       files: [{ path: 'src/content/site.md', content: 'Approved preview' }],
@@ -49,16 +52,23 @@ describe('claim eligibility', () => {
   });
 
   it('retries a failed job until the attempt budget is spent', () => {
-    expect(isClaimable(ledgerRow({ status: 'failed', attempt_count: 2 }), 3)).toBe(
-      true,
-    );
-    expect(isClaimable(ledgerRow({ status: 'failed', attempt_count: 3 }), 3)).toBe(
-      false,
-    );
+    expect(
+      isClaimable(ledgerRow({ status: 'failed', attempt_count: 2 }), 3),
+    ).toBe(true);
+    expect(
+      isClaimable(ledgerRow({ status: 'failed', attempt_count: 3 }), 3),
+    ).toBe(false);
   });
 
   it('ignores an inline-edit job dispatched to the full-site endpoint', () => {
     expect(isClaimable(ledgerRow({ kind: 'INLINE_EDIT' }), 3)).toBe(false);
+  });
+
+  it('claims a site rebuild, which rides the same endpoint as a full build', () => {
+    expect(isClaimable(ledgerRow({ kind: 'SITE_REBUILD' }), 3)).toBe(true);
+    expect(
+      isClaimable(ledgerRow({ kind: 'SITE_REBUILD', status: 'running' }), 3),
+    ).toBe(false);
   });
 });
 
@@ -74,7 +84,45 @@ describe('artifact parsing', () => {
     expect(job.projectState).toBe(ProjectState.DEPOSIT_PAID);
     expect(job.requiredIntegrations).toEqual(['cal.com']);
     expect(job.approvedPreviewFiles).toEqual([
-      { path: 'src/content/site.md', content: 'Approved preview', type: 'file' },
+      {
+        path: 'src/content/site.md',
+        content: 'Approved preview',
+        type: 'file',
+      },
+    ]);
+  });
+
+  it('carries the kind through, so the worker knows which half to run', () => {
+    expect(
+      buildJobFromRows({
+        job: ledgerRow(),
+        projectState: ProjectState.DEPOSIT_PAID,
+        artifacts: artifacts(),
+      }).kind,
+    ).toBe('FULL_SITE_BUILD');
+  });
+
+  it('builds a rebuild job from a live project, with no deposit gate', () => {
+    // The deposit gate belongs to the full build. A client publishing an edit
+    // does so months later, from LIVE_SUBSCRIPTION, and mapping the rows must
+    // not quietly require the state that build already passed through.
+    const job = buildJobFromRows({
+      job: ledgerRow({
+        kind: 'SITE_REBUILD',
+        payload: { trigger: 'client_publish', version: 4 },
+      }),
+      projectState: ProjectState.LIVE_SUBSCRIPTION,
+      artifacts: artifacts({
+        preview_manifest: {
+          files: [{ path: 'src/content/site.md', content: 'The edit' }],
+        },
+      }),
+    });
+
+    expect(job.kind).toBe('SITE_REBUILD');
+    expect(job.projectState).toBe(ProjectState.LIVE_SUBSCRIPTION);
+    expect(job.approvedPreviewFiles).toEqual([
+      { path: 'src/content/site.md', content: 'The edit', type: 'file' },
     ]);
   });
 
@@ -92,14 +140,16 @@ describe('artifact parsing', () => {
 
   it('refuses to build from an empty or missing preview manifest', () => {
     expect(() => parseApprovedPreviewFiles({})).toThrow(JobArtifactError);
-    expect(() => parseApprovedPreviewFiles({ files: [] })).toThrow(JobArtifactError);
+    expect(() => parseApprovedPreviewFiles({ files: [] })).toThrow(
+      JobArtifactError,
+    );
     expect(() => parseApprovedPreviewFiles(null)).toThrow(JobArtifactError);
   });
 
   it('refuses a manifest entry without a usable path or content', () => {
-    expect(() => parseApprovedPreviewFiles({ files: [{ content: 'x' }] })).toThrow(
-      JobArtifactError,
-    );
+    expect(() =>
+      parseApprovedPreviewFiles({ files: [{ content: 'x' }] }),
+    ).toThrow(JobArtifactError);
     expect(() =>
       parseApprovedPreviewFiles({ files: [{ path: 'a.md', content: 3 }] }),
     ).toThrow(JobArtifactError);
@@ -114,7 +164,10 @@ describe('artifact parsing', () => {
 
   it('rejects an integration name that is not a plain slug', () => {
     expect(() =>
-      parseRequiredIntegrations({ requiredIntegrations: ['../etc/passwd'] }, {}),
+      parseRequiredIntegrations(
+        { requiredIntegrations: ['../etc/passwd'] },
+        {},
+      ),
     ).toThrow(JobArtifactError);
   });
 });

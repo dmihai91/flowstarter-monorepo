@@ -61,7 +61,44 @@ const TIMELINE_EVENT_LIMIT = 200;
 const REDISPATCHABLE_STATUSES = ['queued', 'failed', 'canceled'] as const;
 const CANCELLABLE_STATUSES = ['queued', 'running'] as const;
 
+/**
+ * Kinds the build worker runs, and therefore the only kinds a re-dispatch can
+ * mean anything for. Both go to the same worker endpoint.
+ */
+const REDISPATCHABLE_KINDS = ['FULL_SITE_BUILD', 'SITE_REBUILD'] as const;
+
 type Ctx = { params: Promise<{ id: string }> };
+type JobCtx = { params: Promise<{ id: string; jobId: string }> };
+
+/** Job statuses an operator note can still reach: the worker reads notes at pass boundaries, and a failed job is re-read on its next attempt. */
+const NOTEABLE_STATUSES = ['queued', 'running', 'failed'] as const;
+const JOB_EVENT_COLUMNS = 'id, job_id, kind, actor, body, payload, created_at';
+const JOB_EVENT_LIMIT = 2_000;
+
+/**
+ * The conversation is phases, replies and notes. The agents' running work and
+ * the machine's output are written to the same table as batched `log` events
+ * marked `payload.stream`, and there are hundreds of them per build: they are
+ * the log view's material, not the chat feed's. `?kinds=` opts back in.
+ */
+function isStreamLog(payload: unknown): boolean {
+  return (
+    typeof payload === 'object' &&
+    payload !== null &&
+    (payload as { stream?: unknown }).stream === true
+  );
+}
+
+/**
+ * How far back the detail view scans job events to find each job's current
+ * phase and last agent line. One bounded query for the whole workspace beats
+ * one query per job, and 500 newest lines covers every build a workspace has
+ * had many times over.
+ */
+const JOB_HEADLINE_SCAN_LIMIT = 500;
+
+/** An agent's line is a headline on a card, not the whole reply. */
+const LAST_REPLY_MAX_CHARS = 200;
 
 function badRequest(message: string, code = 'BAD_REQUEST', status = 400) {
   return NextResponse.json({ error: message, code }, { status });
@@ -213,6 +250,33 @@ export async function pipelineBoardHandler(): Promise<NextResponse> {
 
 // ─── GET /projects/[id]/pipeline — timeline + jobs ──────────────────────────
 
+/**
+ * The two lines a job card shows from its conversation: where the worker is
+ * now, and the last thing the agents said. Rows must arrive newest first, so
+ * the first of each kind seen for a job is the one to keep.
+ */
+function jobHeadlines(
+  rows: readonly JobEventRow[]
+): Map<string, { latestPhase: string | null; lastReply: string | null }> {
+  const byJob = new Map<
+    string,
+    { latestPhase: string | null; lastReply: string | null }
+  >();
+  for (const row of rows) {
+    let entry = byJob.get(row.job_id);
+    if (!entry) {
+      entry = { latestPhase: null, lastReply: null };
+      byJob.set(row.job_id, entry);
+    }
+    if (row.kind === 'phase' && entry.latestPhase === null) {
+      entry.latestPhase = row.body;
+    } else if (row.kind === 'reply' && entry.lastReply === null) {
+      entry.lastReply = row.body.trim().slice(0, LAST_REPLY_MAX_CHARS);
+    }
+  }
+  return byJob;
+}
+
 export async function pipelineDetailHandler(
   _req: NextRequest,
   ctx: Ctx
@@ -221,7 +285,7 @@ export async function pipelineDetailHandler(
   if (!resolved.ok) return resolved.response;
   const { db, workspace } = resolved;
 
-  const [jobsRes, eventsRes] = await Promise.all([
+  const [jobsRes, eventsRes, headlinesRes] = await Promise.all([
     db
       .from('flowstarter_agent_jobs')
       .select(JOB_COLUMNS)
@@ -233,6 +297,14 @@ export async function pipelineDetailHandler(
       .eq('workspace_id', workspace.id)
       .order('created_at', { ascending: false })
       .limit(TIMELINE_EVENT_LIMIT),
+    // Newest first, so the first row seen for a job is that job's latest.
+    db
+      .from('flowstarter_agent_job_events')
+      .select(JOB_EVENT_COLUMNS)
+      .eq('workspace_id', workspace.id)
+      .in('kind', ['phase', 'reply'])
+      .order('created_at', { ascending: false })
+      .limit(JOB_HEADLINE_SCAN_LIMIT),
   ]);
 
   if (jobsRes.error || eventsRes.error) {
@@ -246,9 +318,18 @@ export async function pipelineDetailHandler(
     );
   }
 
+  // The headline lines only decorate the cards. Losing them costs a card its
+  // "what is it doing now" line, not the page.
+  if (headlinesRes.error) {
+    console.warn('[pipeline] job headline query failed:', headlinesRes.error);
+  }
+
   const now = Date.now();
   const jobs = (jobsRes.data ?? []) as unknown as PipelineJobRow[];
   const events = (eventsRes.data ?? []) as unknown as PipelineEventRow[];
+  const headlines = jobHeadlines(
+    (headlinesRes.data ?? []) as unknown as JobEventRow[]
+  );
   const state = asProjectState(workspace.project_state) ?? ProjectState.INTAKE;
   const stateSince =
     stateChangedAtByWorkspace(events).get(workspace.id) ??
@@ -270,8 +351,10 @@ export async function pipelineDetailHandler(
         ...summarizeJob(job, now),
         errorDetail: job.error_detail,
         runAfter: job.run_after,
+        latestPhase: headlines.get(job.id)?.latestPhase ?? null,
+        lastReply: headlines.get(job.id)?.lastReply ?? null,
         canRedispatch:
-          job.kind === 'FULL_SITE_BUILD' &&
+          (REDISPATCHABLE_KINDS as readonly string[]).includes(job.kind) &&
           (REDISPATCHABLE_STATUSES as readonly string[]).includes(job.status),
         canCancel: (CANCELLABLE_STATUSES as readonly string[]).includes(
           job.status
@@ -667,4 +750,217 @@ export async function cancelJobHandler(
       reason: parsed.data.reason,
     },
   });
+}
+
+// ─── GET /projects/[id]/pipeline/jobs/[jobId]/events — the build conversation ─
+
+interface JobEventRow {
+  id: string;
+  job_id: string;
+  kind: string;
+  actor: string;
+  body: string;
+  payload: unknown;
+  created_at: string;
+}
+
+async function resolveJob(
+  db: ReturnType<typeof createSupabaseServiceRoleClient>,
+  workspaceId: string,
+  jobId: string
+): Promise<
+  { ok: true; job: PipelineJobRow } | { ok: false; response: NextResponse }
+> {
+  if (!UUID.test(jobId)) {
+    return { ok: false, response: badRequest('Invalid job id') };
+  }
+  const { data, error } = await db
+    .from('flowstarter_agent_jobs')
+    .select(JOB_COLUMNS)
+    .eq('id', jobId)
+    .eq('workspace_id', workspaceId)
+    .maybeSingle();
+  if (error) {
+    console.error('[pipeline] job lookup failed:', error);
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: 'Could not load the job', code: 'DB_ERROR' },
+        { status: 500 }
+      ),
+    };
+  }
+  if (!data) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { error: 'Job not found', code: 'NOT_FOUND' },
+        { status: 404 }
+      ),
+    };
+  }
+  return { ok: true, job: data as unknown as PipelineJobRow };
+}
+
+/**
+ * Everything said about one build, oldest first: the worker's phases and
+ * logs, the agents' replies, the operators' notes. `?after=<iso>` returns
+ * only what is newer, so a live panel can poll cheaply.
+ */
+export async function jobEventsHandler(
+  req: NextRequest,
+  ctx: JobCtx
+): Promise<NextResponse> {
+  const resolved = await resolveWorkspace(ctx);
+  if (!resolved.ok) return resolved.response;
+  const { db, workspace } = resolved;
+  const { jobId } = await ctx.params;
+  const found = await resolveJob(db, workspace.id, jobId);
+  if (!found.ok) return found.response;
+
+  const after = req.nextUrl?.searchParams.get('after') ?? null;
+  if (after && Number.isNaN(Date.parse(after))) {
+    return badRequest('after must be an ISO timestamp');
+  }
+  const kinds = (req.nextUrl?.searchParams.get('kinds') ?? '')
+    .split(',')
+    .map((kind) => kind.trim())
+    .filter((kind) => kind.length > 0);
+
+  let query = db
+    .from('flowstarter_agent_job_events')
+    .select(JOB_EVENT_COLUMNS)
+    .eq('job_id', found.job.id);
+  if (after) query = query.gt('created_at', after);
+  const { data, error } = await query
+    .order('created_at', { ascending: true })
+    .limit(JOB_EVENT_LIMIT);
+  if (error) {
+    console.error('[pipeline] job events query failed:', error);
+    return NextResponse.json(
+      { error: 'Could not load the build conversation', code: 'DB_ERROR' },
+      { status: 500 }
+    );
+  }
+
+  // Filtered here rather than in the query: the feed is capped either way,
+  // and the fact a log row is a stream batch lives in its jsonb payload.
+  const events = ((data ?? []) as unknown as JobEventRow[]).filter((event) =>
+    kinds.length > 0 ? kinds.includes(event.kind) : !isStreamLog(event.payload)
+  );
+  const latestPhase = [...events]
+    .reverse()
+    .find((event) => event.kind === 'phase');
+  return NextResponse.json(
+    {
+      job: {
+        ...summarizeJob(found.job, Date.now()),
+        errorDetail: found.job.error_detail,
+        latestPhase: latestPhase?.body ?? null,
+        acceptsNotes: (NOTEABLE_STATUSES as readonly string[]).includes(
+          found.job.status
+        ),
+      },
+      events: events.map((event) => ({
+        id: event.id,
+        kind: event.kind,
+        actor: event.actor,
+        body: event.body,
+        payload: event.payload,
+        createdAt: event.created_at,
+      })),
+    },
+    { headers: { 'Cache-Control': 'private, no-store' } }
+  );
+}
+
+// ─── POST /projects/[id]/pipeline/jobs/[jobId]/notes — talk to the agents ───
+
+const noteSchema = z.object({
+  message: z.string().trim().min(3).max(2_000),
+});
+
+/**
+ * Leaves a note for the agents building this site. The worker folds notes
+ * into its next pass: before the build starts, after the first pass has been
+ * checked, or on the next attempt of a failed job. A finished build has no
+ * next pass, so it refuses rather than pretending.
+ */
+export async function jobNoteHandler(
+  req: NextRequest,
+  ctx: JobCtx
+): Promise<NextResponse> {
+  const resolved = await resolveWorkspace(ctx);
+  if (!resolved.ok) return resolved.response;
+  const { db, workspace, userId } = resolved;
+  const { jobId } = await ctx.params;
+  const found = await resolveJob(db, workspace.id, jobId);
+  if (!found.ok) return found.response;
+
+  const parsed = noteSchema.safeParse((await readJson(req)) ?? {});
+  if (!parsed.success)
+    return badRequest(zodMessage(parsed.error), 'INVALID_BODY');
+
+  if (!(NOTEABLE_STATUSES as readonly string[]).includes(found.job.status)) {
+    return NextResponse.json(
+      {
+        error:
+          'This build has finished. Notes reach the agents only while a ' +
+          'build is queued, running, or waiting for another attempt.',
+        code: 'JOB_FINISHED',
+        job: { id: found.job.id, status: found.job.status },
+      },
+      { status: 409 }
+    );
+  }
+
+  const { data, error } = await db
+    .from('flowstarter_agent_job_events')
+    .insert({
+      job_id: found.job.id,
+      workspace_id: workspace.id,
+      kind: 'note',
+      actor: userId,
+      body: parsed.data.message,
+      payload: {},
+    })
+    .select(JOB_EVENT_COLUMNS)
+    .single();
+  if (error) {
+    console.error('[pipeline] note insert failed:', error);
+    return NextResponse.json(
+      { error: 'Could not record the note', code: 'DB_ERROR' },
+      { status: 500 }
+    );
+  }
+
+  await recordEvent(db, {
+    workspaceId: workspace.id,
+    kind: 'build_note_sent',
+    actor: userId,
+    payload: { jobId: found.job.id, chars: parsed.data.message.length },
+  });
+
+  const row = data as unknown as JobEventRow;
+  return NextResponse.json(
+    {
+      event: {
+        id: row.id,
+        kind: row.kind,
+        actor: row.actor,
+        body: row.body,
+        payload: row.payload,
+        createdAt: row.created_at,
+      },
+      // Honest about the delivery model: the agents see this at their next
+      // pass boundary, not the instant it is sent.
+      delivery:
+        found.job.status === 'running'
+          ? 'next_pass'
+          : found.job.status === 'failed'
+          ? 'next_attempt'
+          : 'build_start',
+    },
+    { status: 201 }
+  );
 }

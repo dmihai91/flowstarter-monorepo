@@ -55,7 +55,11 @@ export {
   normalizeCalLink,
   applyIntegrationsToWorkspace,
 } from './integrations';
-export type { FileMap, CalComOptions, IntegrationsConfig } from './integrations';
+export type {
+  FileMap,
+  CalComOptions,
+  IntegrationsConfig,
+} from './integrations';
 
 export * from './flowstarter/types';
 export * from './flowstarter/state-machine';
@@ -67,6 +71,7 @@ export * from './flowstarter/template-library-mcp';
 export * from './flowstarter/pi-sdk';
 export * from './flowstarter/worktree';
 export * from './flowstarter/workflows';
+export * from './flowstarter/job-log';
 export * from './flowstarter/template-classifier';
 export * from './flowstarter/preview-teaser';
 export * from './flowstarter/site-media';

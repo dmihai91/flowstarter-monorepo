@@ -48,6 +48,7 @@ type Row = Record<string, unknown>;
 const tables: Record<string, Row[]> = {
   workspaces: [],
   flowstarter_agent_jobs: [],
+  flowstarter_agent_job_events: [],
   project_events: [],
 };
 
@@ -84,6 +85,10 @@ class FakeBuilder implements PromiseLike<{ data: Row[]; error: null }> {
     this.predicates.push((row) => values.includes(row[column]));
     return this;
   }
+  gt(column: string, value: unknown) {
+    this.predicates.push((row) => String(row[column]) > String(value));
+    return this;
+  }
   order(column: string, options?: { ascending?: boolean }) {
     this.orderKey = column;
     this.orderAsc = options?.ascending !== false;
@@ -97,7 +102,14 @@ class FakeBuilder implements PromiseLike<{ data: Row[]; error: null }> {
   private run(): Row[] {
     const rows = tables[this.table] ?? [];
     if (this.op === 'insert') {
-      const inserted = { id: `generated-${++idCounter}`, ...this.values };
+      const inserted = {
+        id: `generated-${++idCounter}`,
+        created_at: `2026-09-08T10:00:${String(idCounter).padStart(
+          2,
+          '0'
+        )}.000Z`,
+        ...this.values,
+      };
       rows.push(inserted);
       return [inserted];
     }
@@ -148,11 +160,14 @@ vi.mock('@/supabase-clients/server', () => ({
 // Static imports: vi.mock is hoisted, and this tsconfig forbids top-level await.
 import {
   cancelJobHandler,
+  jobEventsHandler,
+  jobNoteHandler,
   overrideStateHandler,
   pipelineBoardHandler,
   pipelineDetailHandler,
   redispatchBuildHandler,
 } from '../api';
+import { jobLogHandler } from '../job-log-api';
 
 const WORKSPACE_ID = '0f4e1088-8d8f-4f18-83b1-406cc292b23c';
 const OTHER_WORKSPACE_ID = '7c2a91b4-3d5e-4a17-9f88-1b2c3d4e5f60';
@@ -160,6 +175,30 @@ const JOB_ID = '2b6f1d4a-9c3e-4b21-8f77-5a1c2d3e4f61';
 
 function ctx(id = WORKSPACE_ID) {
   return { params: Promise.resolve({ id }) };
+}
+
+function jobCtx(jobId = JOB_ID, id = WORKSPACE_ID) {
+  return { params: Promise.resolve({ id, jobId }) };
+}
+
+function get(url = 'http://test.local/x'): NextRequest {
+  return { nextUrl: new URL(url) } as unknown as NextRequest;
+}
+
+function seedJobEvent(overrides: Row = {}) {
+  const row: Row = {
+    id: `evt-${++idCounter}`,
+    job_id: JOB_ID,
+    workspace_id: WORKSPACE_ID,
+    kind: 'phase',
+    actor: 'system',
+    body: 'Checking the build',
+    payload: {},
+    created_at: `2026-09-08T09:00:${String(idCounter).padStart(2, '0')}.000Z`,
+    ...overrides,
+  };
+  tables.flowstarter_agent_job_events.push(row);
+  return row;
 }
 
 function post(body: unknown): NextRequest {
@@ -213,6 +252,7 @@ beforeEach(() => {
   authState.role = 'team';
   tables.workspaces = [];
   tables.flowstarter_agent_jobs = [];
+  tables.flowstarter_agent_job_events = [];
   tables.project_events = [];
   idCounter = 0;
   vi.unstubAllEnvs();
@@ -623,9 +663,188 @@ describe('the project timeline', () => {
     expect(body.events).toHaveLength(1);
   });
 
+  it("carries each job the phase it is on and the agents' last line", async () => {
+    seedWorkspace();
+    seedJob({ status: 'running' });
+    seedJobEvent({ body: 'Preparing a clean worktree' });
+    seedJobEvent({
+      kind: 'reply',
+      body: '  Built five pages and a contact form.  ',
+    });
+    seedJobEvent({ body: 'Checking the build' });
+    // Another workspace's job must not leak into this one's cards.
+    seedJobEvent({
+      job_id: '9d8c7b6a-5e4f-4a3b-8c2d-1e0f9a8b7c6d',
+      workspace_id: OTHER_WORKSPACE_ID,
+      body: 'Publishing',
+    });
+
+    const res = await pipelineDetailHandler(post({}), ctx());
+    const body = await res.json();
+    expect(body.jobs[0]).toMatchObject({
+      id: JOB_ID,
+      latestPhase: 'Checking the build',
+      lastReply: 'Built five pages and a contact form.',
+    });
+  });
+
+  it('leaves the phase null for a job that has said nothing', async () => {
+    seedWorkspace();
+    seedJob({ status: 'queued' });
+
+    const res = await pipelineDetailHandler(post({}), ctx());
+    const body = await res.json();
+    expect(body.jobs[0].latestPhase).toBeNull();
+    expect(body.jobs[0].lastReply).toBeNull();
+  });
+
+  it('offers a re-dispatch on a stuck site rebuild, which the same worker runs', async () => {
+    seedWorkspace({ project_state: ProjectState.LIVE_SUBSCRIPTION });
+    seedJob({ kind: 'SITE_REBUILD', status: 'failed' });
+
+    const res = await pipelineDetailHandler(post({}), ctx());
+    const body = await res.json();
+    expect(body.jobs[0]).toMatchObject({
+      kind: 'SITE_REBUILD',
+      canRedispatch: true,
+    });
+  });
+
+  it('offers no re-dispatch on a kind this worker does not run', async () => {
+    seedWorkspace();
+    seedJob({ kind: 'ASSET_INGEST', status: 'failed' });
+
+    const res = await pipelineDetailHandler(post({}), ctx());
+    const body = await res.json();
+    expect(body.jobs[0].canRedispatch).toBe(false);
+  });
+
   it('rejects a workspace id that is not a uuid before touching the database', async () => {
     const res = await pipelineDetailHandler(post({}), ctx('not-a-uuid'));
     expect(res.status).toBe(400);
+  });
+});
+
+describe('the build conversation', () => {
+  it('returns what was said about a build, oldest first, with where it is now', async () => {
+    seedWorkspace();
+    seedJob({ status: 'running' });
+    seedJobEvent({ body: 'Agents expanding the site' });
+    seedJobEvent({ kind: 'reply', body: 'Done: built five pages.' });
+    seedJobEvent({ body: 'Checking the build' });
+
+    const res = await jobEventsHandler(get(), jobCtx());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.events.map((e: { body: string }) => e.body)).toEqual([
+      'Agents expanding the site',
+      'Done: built five pages.',
+      'Checking the build',
+    ]);
+    expect(body.job.latestPhase).toBe('Checking the build');
+    expect(body.job.acceptsNotes).toBe(true);
+  });
+
+  it('only returns lines newer than the cursor a live panel hands back', async () => {
+    seedWorkspace();
+    seedJob({ status: 'running' });
+    const first = seedJobEvent({ body: 'Preparing a clean worktree' });
+    seedJobEvent({ body: 'Checking the build' });
+
+    const res = await jobEventsHandler(
+      get(`http://test.local/x?after=${first.created_at}`),
+      jobCtx()
+    );
+    const body = await res.json();
+    expect(body.events.map((e: { body: string }) => e.body)).toEqual([
+      'Checking the build',
+    ]);
+  });
+
+  it('will not show a job that belongs to another workspace', async () => {
+    seedWorkspace();
+    seedWorkspace({ id: OTHER_WORKSPACE_ID });
+    seedJob({ workspace_id: OTHER_WORKSPACE_ID });
+
+    const res = await jobEventsHandler(get(), jobCtx());
+    expect(res.status).toBe(404);
+  });
+
+  it('records a note for the agents, says when it lands, and leaves an audit row', async () => {
+    seedWorkspace();
+    seedJob({ status: 'running' });
+
+    const res = await jobNoteHandler(
+      post({ message: 'Use the client logo in every header.' }),
+      jobCtx()
+    );
+    expect(res.status).toBe(201);
+    const body = await res.json();
+    expect(body.delivery).toBe('next_pass');
+    expect(body.event.kind).toBe('note');
+    expect(body.event.actor).toBe('user_operator');
+
+    expect(tables.flowstarter_agent_job_events).toHaveLength(1);
+    expect(tables.flowstarter_agent_job_events[0]).toMatchObject({
+      job_id: JOB_ID,
+      workspace_id: WORKSPACE_ID,
+      kind: 'note',
+      actor: 'user_operator',
+      body: 'Use the client logo in every header.',
+    });
+    expect(tables.project_events).toHaveLength(1);
+    expect(tables.project_events[0]).toMatchObject({
+      kind: 'build_note_sent',
+      actor: 'user_operator',
+    });
+  });
+
+  it("tells a queued job's note it lands at build start, and a failed job's on the next attempt", async () => {
+    seedWorkspace();
+    seedJob({ status: 'queued' });
+    const queued = await (
+      await jobNoteHandler(post({ message: 'Keep the palette.' }), jobCtx())
+    ).json();
+    expect(queued.delivery).toBe('build_start');
+
+    tables.flowstarter_agent_jobs[0].status = 'failed';
+    const failed = await (
+      await jobNoteHandler(
+        post({ message: 'Try again with fewer pages.' }),
+        jobCtx()
+      )
+    ).json();
+    expect(failed.delivery).toBe('next_attempt');
+  });
+
+  it('refuses a note to a build that has finished, and writes nothing', async () => {
+    seedWorkspace();
+    seedJob({ status: 'succeeded' });
+
+    const res = await jobNoteHandler(post({ message: 'Too late?' }), jobCtx());
+    expect(res.status).toBe(409);
+    expect((await res.json()).code).toBe('JOB_FINISHED');
+    expect(tables.flowstarter_agent_job_events).toHaveLength(0);
+    expect(tables.project_events).toHaveLength(0);
+  });
+
+  it('requires a real message', async () => {
+    seedWorkspace();
+    seedJob({ status: 'running' });
+    const res = await jobNoteHandler(post({ message: 'ok' }), jobCtx());
+    expect(res.status).toBe(400);
+  });
+
+  it('is operator-only like everything else here', async () => {
+    authState.role = undefined;
+    seedWorkspace();
+    seedJob({ status: 'running' });
+    const res = await jobNoteHandler(
+      post({ message: 'Hello agents' }),
+      jobCtx()
+    );
+    expect(res.status).toBe(403);
+    expect(tables.flowstarter_agent_job_events).toHaveLength(0);
   });
 });
 
@@ -642,6 +861,12 @@ describe('the /admin and /team mirrors', () => {
       teamState,
       adminCancel,
       teamCancel,
+      adminEvents,
+      teamEvents,
+      adminNotes,
+      teamNotes,
+      adminLog,
+      teamLog,
     ] = await Promise.all([
       import('@/app/api/admin/projects/pipeline/route'),
       import('@/app/api/team/projects/pipeline/route'),
@@ -653,6 +878,14 @@ describe('the /admin and /team mirrors', () => {
       import('@/app/api/team/projects/[id]/pipeline/state/route'),
       import('@/app/api/admin/projects/[id]/pipeline/cancel-job/route'),
       import('@/app/api/team/projects/[id]/pipeline/cancel-job/route'),
+      import(
+        '@/app/api/admin/projects/[id]/pipeline/jobs/[jobId]/events/route'
+      ),
+      import('@/app/api/team/projects/[id]/pipeline/jobs/[jobId]/events/route'),
+      import('@/app/api/admin/projects/[id]/pipeline/jobs/[jobId]/notes/route'),
+      import('@/app/api/team/projects/[id]/pipeline/jobs/[jobId]/notes/route'),
+      import('@/app/api/admin/projects/[id]/pipeline/jobs/[jobId]/log/route'),
+      import('@/app/api/team/projects/[id]/pipeline/jobs/[jobId]/log/route'),
     ]);
 
     expect(adminBoard.GET).toBe(teamBoard.GET);
@@ -665,5 +898,127 @@ describe('the /admin and /team mirrors', () => {
     expect(adminState.POST).toBe(overrideStateHandler);
     expect(adminCancel.POST).toBe(teamCancel.POST);
     expect(adminCancel.POST).toBe(cancelJobHandler);
+    expect(adminEvents.GET).toBe(teamEvents.GET);
+    expect(adminEvents.GET).toBe(jobEventsHandler);
+    expect(adminNotes.POST).toBe(teamNotes.POST);
+    expect(adminNotes.POST).toBe(jobNoteHandler);
+    expect(adminLog.GET).toBe(teamLog.GET);
+    expect(adminLog.GET).toBe(jobLogHandler);
+  });
+});
+
+// ─── The full build log ─────────────────────────────────────────────────────
+// The chat feed above is the readable summary of a build. This is everything
+// underneath it: the agents' narration, their tool calls, and the machine's
+// own output, written by the worker in batches and read back as lines.
+
+describe('the full build log', () => {
+  function seedStreamLog(
+    source: 'agent' | 'machine' | 'tool',
+    body: string,
+    overrides: Row = {}
+  ) {
+    return seedJobEvent({
+      kind: 'log',
+      body,
+      payload: { source, lines: body.split('\n').length, stream: true },
+      ...overrides,
+    });
+  }
+
+  it('keeps the stream out of the chat feed unless it is asked for', async () => {
+    seedWorkspace();
+    seedJob({ status: 'running' });
+    seedJobEvent({ kind: 'phase', body: 'Agents expanding the site' });
+    seedStreamLog('agent', 'Reading the approved preview.');
+    seedStreamLog('tool', 'write_file src/pages/index.astro');
+    seedJobEvent({ kind: 'reply', body: 'Built the site.' });
+
+    const feed = await jobEventsHandler(get(), jobCtx());
+    const feedBody = await feed.json();
+    expect(feedBody.events.map((e: { kind: string }) => e.kind)).toEqual([
+      'phase',
+      'reply',
+    ]);
+
+    // An explicit kinds filter opts back in, and can narrow further.
+    const withLogs = await jobEventsHandler(
+      get('http://test.local/x?kinds=log'),
+      jobCtx()
+    );
+    const logBody = await withLogs.json();
+    expect(logBody.events.map((e: { body: string }) => e.body)).toEqual([
+      'Reading the approved preview.',
+      'write_file src/pages/index.astro',
+    ]);
+  });
+
+  it('flattens the batches into lines, oldest first, carrying the source', async () => {
+    seedWorkspace();
+    seedJob({ status: 'succeeded' });
+    seedJobEvent({ kind: 'phase', body: 'Checking the build' });
+    seedStreamLog('machine', 'Running pnpm run build\n\nbuilt in 4.2s');
+    seedStreamLog('tool', 'write_file src/pages/index.astro');
+
+    const res = await jobLogHandler(get(), jobCtx());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+
+    expect(body.job).toEqual({
+      id: JOB_ID,
+      kind: 'FULL_SITE_BUILD',
+      status: 'succeeded',
+    });
+    expect(
+      body.lines.map((line: { source: string; text: string }) => [
+        line.source,
+        line.text,
+      ])
+    ).toEqual([
+      ['phase', 'Checking the build'],
+      ['machine', 'Running pnpm run build'],
+      ['machine', 'built in 4.2s'],
+      ['tool', 'write_file src/pages/index.astro'],
+    ]);
+    expect(body.lines[0].at).toBeTruthy();
+  });
+
+  it('serves a downloadable text file on ?format=text', async () => {
+    seedWorkspace();
+    seedJob();
+    seedStreamLog('machine', 'Running pnpm run build', {
+      created_at: '2026-09-08T09:14:07.000Z',
+    });
+
+    const res = await jobLogHandler(
+      get('http://test.local/x?format=text'),
+      jobCtx()
+    );
+    expect(res.headers.get('Content-Type')).toContain('text/plain');
+    expect(res.headers.get('Content-Disposition')).toContain(
+      `build-${JOB_ID}.log`
+    );
+    expect(await res.text()).toBe(
+      '09:14:07 [machine] Running pnpm run build\n'
+    );
+  });
+
+  it('refuses a job that belongs to another workspace', async () => {
+    seedWorkspace();
+    seedWorkspace({ id: OTHER_WORKSPACE_ID, slug: 'other' });
+    seedJob({ workspace_id: OTHER_WORKSPACE_ID });
+    seedStreamLog('machine', 'not yours', { workspace_id: OTHER_WORKSPACE_ID });
+
+    const res = await jobLogHandler(get(), jobCtx(JOB_ID, WORKSPACE_ID));
+    expect(res.status).toBe(404);
+  });
+
+  it('refuses a client who is not an operator', async () => {
+    authState.role = 'client';
+    seedWorkspace();
+    seedJob();
+
+    const res = await jobLogHandler(get(), jobCtx());
+    expect(res.status).toBe(403);
   });
 });

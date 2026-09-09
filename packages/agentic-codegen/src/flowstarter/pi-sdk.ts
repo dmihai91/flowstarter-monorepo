@@ -67,8 +67,21 @@ import type {
 const MAX_AGENT_FILE_BYTES = 1024 * 1024;
 /** Read-only template source inlining for large-context preview models. */
 const TEMPLATE_CONTEXT_EXTENSIONS = new Set([
-  '.astro', '.ts', '.tsx', '.js', '.jsx', '.css', '.scss', '.md', '.mdx',
-  '.json', '.html', '.svg', '.txt', '.yml', '.yaml',
+  '.astro',
+  '.ts',
+  '.tsx',
+  '.js',
+  '.jsx',
+  '.css',
+  '.scss',
+  '.md',
+  '.mdx',
+  '.json',
+  '.html',
+  '.svg',
+  '.txt',
+  '.yml',
+  '.yaml',
 ]);
 const MAX_TEMPLATE_CONTEXT_FILE_CHARS = 40_000;
 const MAX_TEMPLATE_CONTEXT_FILES = 160;
@@ -105,6 +118,130 @@ export interface AgentBuildResult {
   summary: string;
   /** Workspace-relative paths the agent actually wrote or edited. */
   changedPaths: string[];
+  /**
+   * The session hit its timeout after writing these files. What is on disk
+   * is a candidate for the trusted checks, not a finished job: the
+   * orchestrator's residue and integrity gates decide whether it ships.
+   */
+  timedOut?: boolean;
+}
+
+/**
+ * One line of a session's running work, as it happens.
+ *
+ * The summary a build returns is the agent's conclusion; this is the work.
+ * Callers that want a live log subscribe with `onTrace` and get the model's
+ * narration at paragraph boundaries plus every tool call and its outcome.
+ */
+export interface AgentTraceEntry {
+  kind: 'text' | 'tool_call' | 'tool_result' | 'thinking';
+  /** A complete, human-readable line. Never partial words. */
+  text: string;
+  tool?: string;
+  /** The `path` argument of a file tool call, when it had one. */
+  path?: string;
+}
+
+/** Receives trace entries. Must not throw; failures are swallowed. */
+export type AgentTraceSink = (entry: AgentTraceEntry) => void;
+
+/**
+ * Narration is buffered until a newline so a log line is a thought rather
+ * than a token, and cut here when a model writes a very long paragraph.
+ */
+const TRACE_TEXT_FLUSH_CHARS = 600;
+
+/** Longest tool-result line kept in the trace. */
+const TRACE_RESULT_MAX_CHARS = 200;
+
+function formatTraceBytes(bytes: number): string {
+  if (bytes < 1_024) return `${bytes} B`;
+  if (bytes < 1_024 * 1_024) return `${(bytes / 1_024).toFixed(1)} KB`;
+  return `${(bytes / (1_024 * 1_024)).toFixed(1)} MB`;
+}
+
+/** The first text content of a tool result, which is what the model saw. */
+function toolResultText(result: unknown): string {
+  const content = (result as { content?: unknown })?.content;
+  if (!Array.isArray(content)) return '';
+  for (const part of content) {
+    const text = (part as { type?: string; text?: unknown })?.text;
+    if (typeof text === 'string' && text.length > 0) return text;
+  }
+  return '';
+}
+
+/**
+ * A tool result as one line. A write reports the size it wrote; a read
+ * reports how much came back rather than pasting the file into the log; an
+ * error reports what went wrong.
+ */
+function traceResultLine(result: unknown, isError: boolean): string {
+  const text = toolResultText(result).trim();
+  if (isError) {
+    return `error: ${text.split('\n')[0]?.slice(0, TRACE_RESULT_MAX_CHARS) ?? 'failed'}`;
+  }
+  const wrote = /^wrote\s+(\d+)\s+bytes/i.exec(text);
+  if (wrote) return `wrote ${formatTraceBytes(Number(wrote[1]))}`;
+  if (text.length > TRACE_RESULT_MAX_CHARS) {
+    return `${formatTraceBytes(Buffer.byteLength(text, 'utf8'))} returned`;
+  }
+  return text.split('\n')[0] || 'ok';
+}
+
+/**
+ * Turns the session's event stream into whole trace lines. Deltas arrive a
+ * few characters at a time; a tool call interleaves with them. Buffering here
+ * is what keeps one log line from being one token.
+ */
+function createTraceEmitter(onTrace: AgentTraceSink) {
+  let buffer = '';
+  let bufferKind: 'text' | 'thinking' = 'text';
+  const emit = (entry: AgentTraceEntry) => {
+    try {
+      onTrace(entry);
+    } catch {
+      /* tracing never breaks a build */
+    }
+  };
+  const flush = () => {
+    const text = buffer.trim();
+    buffer = '';
+    if (text) emit({ kind: bufferKind, text });
+  };
+  const push = (kind: 'text' | 'thinking', delta: string) => {
+    if (kind !== bufferKind) {
+      flush();
+      bufferKind = kind;
+    }
+    buffer += delta;
+    if (delta.includes('\n') || buffer.length >= TRACE_TEXT_FLUSH_CHARS) {
+      flush();
+    }
+  };
+  return {
+    flush,
+    pushText: (delta: string) => push('text', delta),
+    pushThinking: (delta: string) => push('thinking', delta),
+    toolCall: (tool: string, args: unknown) => {
+      flush();
+      const path = (args as { path?: unknown })?.path;
+      const hasPath = typeof path === 'string' && path.length > 0;
+      emit({
+        kind: 'tool_call',
+        text: hasPath ? `${tool} ${path}` : tool,
+        tool,
+        ...(hasPath ? { path: path as string } : {}),
+      });
+    },
+    toolResult: (tool: string, result: unknown, isError: boolean) => {
+      emit({
+        kind: 'tool_result',
+        text: `${tool} -> ${traceResultLine(result, isError)}`,
+        tool,
+      });
+    },
+  };
 }
 
 /**
@@ -198,6 +335,84 @@ export interface PiSdkOptions {
    * {@link DEFAULT_PI_MAX_RUN_TOKENS}; set to 0 to disable.
    */
   maxRunTokens?: number;
+  /**
+   * How many times one session may be started before its failure is the
+   * caller's problem. Pi retries the HTTP-level errors it recognises inside a
+   * session; this covers what it does not: a provider that answers with
+   * `finish_reason: error`, a hung stream that hits the timeout, a text-only
+   * turn that comes back empty. Defaults to {@link DEFAULT_PI_SESSION_ATTEMPTS};
+   * 1 disables.
+   */
+  maxSessionAttempts?: number;
+  /** Backoff before attempt n is 2^(n-2) times this. Tests set it to 0. */
+  retryBaseDelayMs?: number;
+  /**
+   * A second model to run the LAST attempt on when the first ones failed for
+   * a transient reason. A provider outage rarely hits two model families at
+   * once, so this turns "the preview failed" into "the preview took longer".
+   */
+  fallbackModelId?: string;
+  fallbackModelOverride?: Record<string, unknown>;
+  /**
+   * Epoch milliseconds by which every session of this instance must be
+   * finished. Each attempt's timeout is capped at what is left, and no
+   * attempt starts with less than {@link MIN_SESSION_WINDOW_MS} remaining.
+   * This is what keeps retries from stacking past the caller's watchdog:
+   * the retry budget is counted in attempts, the run budget in minutes.
+   */
+  deadlineAt?: number;
+}
+
+/** Sessions started per call before the failure propagates. */
+export const DEFAULT_PI_SESSION_ATTEMPTS = 3;
+
+/**
+ * Provider errors that a retry cannot fix: the account, not the network, is
+ * the problem. Everything else a session dies of is treated as transient.
+ */
+const NON_RETRYABLE_SESSION_ERROR =
+  /insufficient[_ ]quota|out of budget|available balance|usage limit|billing|payment required|\b402\b|\b401\b|\b403\b|invalid[_ ]api[_ ]key|unauthori[sz]ed|forbidden|context[_ ]length|maximum context|too many tokens|prompt is too long/i;
+
+/** Why one session attempt failed, so the next one can be decided by rule. */
+export class PiSessionAttemptError extends Error {
+  readonly name = 'PiSessionAttemptError';
+  constructor(
+    message: string,
+    readonly kind: 'provider' | 'timeout' | 'empty',
+  ) {
+    super(message);
+  }
+}
+
+/**
+ * A timeout is only worth retrying when the session was short: restarting a
+ * ten-minute personalization pass that hung is how a preview reaches the
+ * watchdog instead of the visitor. Above this the timeout propagates and the
+ * route decides.
+ */
+export const MAX_RETRYABLE_TIMEOUT_MS = 300_000;
+
+/** Below this much remaining run time a session is not worth starting. */
+export const MIN_SESSION_WINDOW_MS = 30_000;
+
+/** The run's deadline passed: the operator's clock, never retried. */
+export class PiRunDeadlineExceededError extends Error {
+  readonly name = 'PiRunDeadlineExceededError';
+  constructor(readonly action: PiUsageAction) {
+    super(`Pi run deadline passed before "${action}" could finish`);
+  }
+}
+
+export function isTransientSessionError(
+  error: unknown,
+  sessionTimeoutMs?: number,
+): boolean {
+  if (!(error instanceof PiSessionAttemptError)) return false;
+  if (error.kind === 'timeout') {
+    return (sessionTimeoutMs ?? 0) <= MAX_RETRYABLE_TIMEOUT_MS;
+  }
+  if (error.kind !== 'provider') return true;
+  return !NON_RETRYABLE_SESSION_ERROR.test(error.message);
 }
 
 export type PiAgentRole =
@@ -216,7 +431,23 @@ export interface PiRoleModelChoice {
   timeoutMs?: number;
   maxOutputTokens?: number;
   modelOverride?: Record<string, unknown>;
+  /** Per-role fallback for the last attempt; see `PiSdkOptions.fallbackModelId`. */
+  fallbackModelId?: string;
+  fallbackModelOverride?: Record<string, unknown>;
 }
+
+/** One session's effective settings after role and fallback resolution. */
+type ResolvedSessionConfig = Pick<
+  PiSdkOptions,
+  | 'provider'
+  | 'modelId'
+  | 'thinkingLevel'
+  | 'timeoutMs'
+  | 'maxOutputTokens'
+  | 'modelOverride'
+  | 'fallbackModelId'
+  | 'fallbackModelOverride'
+>;
 
 export class PiSdkFlowstarterAgents {
   constructor(private readonly options: PiSdkOptions = {}) {}
@@ -382,12 +613,13 @@ export class PiSdkFlowstarterAgents {
         return {
           slug: highestRankedCandidate.slug,
           reason:
-            'Highest-ranked approved library result for the Pi agent\'s evidence-based search query.',
+            "Highest-ranked approved library result for the Pi agent's evidence-based search query.",
           matchedSignals: [
             highestRankedCandidate.category,
             ...highestRankedCandidate.useCase.slice(0, 5),
-          ].filter((signal, index, signals) =>
-            Boolean(signal) && signals.indexOf(signal) === index
+          ].filter(
+            (signal, index, signals) =>
+              Boolean(signal) && signals.indexOf(signal) === index,
           ),
           confidence: 0.5,
         };
@@ -463,16 +695,19 @@ export class PiSdkFlowstarterAgents {
     | { status: 'complete'; documents: Array<{ topic: string; text: string }> }
   > {
     const maxQuestions = Math.min(Math.max(input.maxQuestions ?? 6, 1), 12);
-    const asked = input.transcript.filter((turn) => turn.role === 'agent').length;
+    const asked = input.transcript.filter(
+      (turn) => turn.role === 'agent',
+    ).length;
     const raw = await this.runTextSession({
       cwd: tmpdir(),
       tools: [],
       systemPrompt: INTAKE_INTERVIEW_SYSTEM_PROMPT,
       prompt: buildIntakeInterviewPrompt({
         known: input.known,
-        transcript: input.transcript
-          .slice(-24)
-          .map((turn) => ({ role: turn.role, text: turn.text.slice(0, 2_000) })),
+        transcript: input.transcript.slice(-24).map((turn) => ({
+          role: turn.role,
+          text: turn.text.slice(0, 2_000),
+        })),
         maxQuestions,
         locale: input.locale ?? 'en',
       }),
@@ -499,7 +734,9 @@ export class PiSdkFlowstarterAgents {
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-+|-+$/g, '')
           .slice(0, 60),
-        text: String(entry.text ?? '').trim().slice(0, 1_200),
+        text: String(entry.text ?? '')
+          .trim()
+          .slice(0, 1_200),
       }))
       .filter((entry) => entry.topic.length > 0 && entry.text.length > 0)
       .slice(0, 8);
@@ -535,7 +772,9 @@ export class PiSdkFlowstarterAgents {
       CONTENT_SOURCE_CANDIDATES,
     );
     if (editablePaths.length === 0) {
-      throw new Error('Selected template has no documented editable content source');
+      throw new Error(
+        'Selected template has no documented editable content source',
+      );
     }
     const styleTokenPaths = await probeWorkspaceFiles(
       input.workspaceRoot,
@@ -562,32 +801,54 @@ export class PiSdkFlowstarterAgents {
               .map((path) => inlineWorkspaceFile(input.workspaceRoot, path)),
           )
         )
-          .filter((file) => file.content.length <= MAX_TEMPLATE_CONTEXT_FILE_CHARS)
+          .filter(
+            (file) => file.content.length <= MAX_TEMPLATE_CONTEXT_FILE_CHARS,
+          )
           .slice(0, MAX_TEMPLATE_CONTEXT_FILES)
       : undefined;
-    const summary = await this.runTextSession({
-      cwd: input.workspaceRoot,
-      systemPrompt: PREVIEW_CODING_SYSTEM_PROMPT,
-      prompt: buildPreviewTask({
-        intake: input.intake,
-        brandConfig: input.brandConfig,
-        templateSlug: input.templateSlug,
-        cachedAssets: input.cachedAssets,
-        generatedAssets: input.generatedAssets,
-        editablePaths,
-        styleTokenPaths,
-        fileTree,
-        editableFiles,
-        templateFiles,
-        designOptions: extractDesignOptions(input.templateConfig),
-        assetLibrary: extractAssetLibrary(input.templateConfig),
-        feedback: input.feedback,
-      }),
-      customTools: tools,
-      tools: tools.map((tool) => tool.name),
-      role: 'preview',
-      action: 'preview_generate',
-    });
+    let summary: string;
+    try {
+      summary = await this.runTextSession({
+        cwd: input.workspaceRoot,
+        systemPrompt: PREVIEW_CODING_SYSTEM_PROMPT,
+        prompt: buildPreviewTask({
+          intake: input.intake,
+          brandConfig: input.brandConfig,
+          templateSlug: input.templateSlug,
+          cachedAssets: input.cachedAssets,
+          generatedAssets: input.generatedAssets,
+          editablePaths,
+          styleTokenPaths,
+          fileTree,
+          editableFiles,
+          templateFiles,
+          designOptions: extractDesignOptions(input.templateConfig),
+          assetLibrary: extractAssetLibrary(input.templateConfig),
+          feedback: input.feedback,
+        }),
+        customTools: tools,
+        tools: tools.map((tool) => tool.name),
+        role: 'preview',
+        action: 'preview_generate',
+      });
+    } catch (error) {
+      // A personalization pass that ran out of clock after rewriting the
+      // content file has done most of the work. Throwing it away costs the
+      // client the preview; handing it to the trusted checks costs nothing,
+      // and they are what decide whether it is good enough.
+      if (
+        error instanceof PiSessionAttemptError &&
+        error.kind === 'timeout' &&
+        changedPaths.size > 0
+      ) {
+        return {
+          summary: `Session timed out after writing ${changedPaths.size} file(s)`,
+          changedPaths: Array.from(changedPaths),
+          timedOut: true,
+        };
+      }
+      throw error;
+    }
     return { summary, changedPaths: Array.from(changedPaths) };
   }
 
@@ -597,6 +858,13 @@ export class PiSdkFlowstarterAgents {
     intake: BusinessIntakePayload;
     brandConfig: BrandConfig;
     requiredIntegrations: string[];
+    /** Trusted orchestrator build/validation output for a bounded repair pass. */
+    feedback?: string;
+    /**
+     * Live work log. Receives the agent's narration and every tool call while
+     * the pass runs; the returned summary is unaffected either way.
+     */
+    onTrace?: AgentTraceSink;
   }): Promise<AgentBuildResult> {
     const changedPaths = new Set<string>();
     const tools = await createBoundedFileTools(
@@ -607,11 +875,18 @@ export class PiSdkFlowstarterAgents {
     const summary = await this.runTextSession({
       cwd: input.workspaceRoot,
       systemPrompt: FULL_SITE_CODING_SYSTEM_PROMPT,
-      prompt: buildFullSiteTask(input),
+      prompt: buildFullSiteTask({
+        projectId: input.projectId,
+        intake: input.intake,
+        brandConfig: input.brandConfig,
+        requiredIntegrations: input.requiredIntegrations,
+        ...(input.feedback ? { feedback: input.feedback } : {}),
+      }),
       customTools: tools,
       tools: tools.map((tool) => tool.name),
       role: 'fullSite',
       action: 'preview_generate',
+      ...(input.onTrace ? { onTrace: input.onTrace } : {}),
     });
     return { summary, changedPaths: Array.from(changedPaths) };
   }
@@ -668,8 +943,7 @@ export class PiSdkFlowstarterAgents {
     return result;
   }
 
-  private resolveRole(role: PiAgentRole): Required<Pick<PiSdkOptions, never>> &
-    Pick<PiSdkOptions, 'provider' | 'modelId' | 'thinkingLevel' | 'timeoutMs' | 'maxOutputTokens' | 'modelOverride'> {
+  private resolveRole(role: PiAgentRole): ResolvedSessionConfig {
     const base = this.options;
     const override = base.roles?.[role] ?? {};
     return {
@@ -683,9 +957,20 @@ export class PiSdkFlowstarterAgents {
       modelOverride:
         override.modelOverride ??
         (override.modelId ? undefined : base.modelOverride),
+      fallbackModelId: override.fallbackModelId ?? base.fallbackModelId,
+      fallbackModelOverride:
+        override.fallbackModelOverride ??
+        (override.fallbackModelId ? undefined : base.fallbackModelOverride),
     };
   }
 
+  /**
+   * Runs one session to completion, restarting it by rule when it dies of
+   * something a fresh start can fix. Attempts 1..n-1 use the role's model;
+   * the last one switches to the fallback model when one is configured. A
+   * run-budget breach or an oversized output is never retried: those are the
+   * operator's ceilings, not the provider's weather.
+   */
   private async runTextSession(input: {
     cwd: string;
     systemPrompt: string;
@@ -696,8 +981,84 @@ export class PiSdkFlowstarterAgents {
     role?: PiAgentRole;
     /** Ledger action for this session's usage. */
     action: PiUsageAction;
+    /** Live work log for this call. Every attempt reports into it. */
+    onTrace?: AgentTraceSink;
   }): Promise<string> {
-    const cfg = input.role ? this.resolveRole(input.role) : this.options;
+    const cfg: ResolvedSessionConfig = input.role
+      ? this.resolveRole(input.role)
+      : { ...this.options };
+    const attempts = Math.max(
+      1,
+      this.options.maxSessionAttempts ?? DEFAULT_PI_SESSION_ATTEMPTS,
+    );
+    const baseDelay = this.options.retryBaseDelayMs ?? 1_500;
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      const useFallback =
+        attempt === attempts && attempt > 1 && Boolean(cfg.fallbackModelId);
+      const attemptCfg: ResolvedSessionConfig = useFallback
+        ? {
+            ...cfg,
+            modelId: cfg.fallbackModelId,
+            modelOverride: cfg.fallbackModelOverride,
+          }
+        : cfg;
+      const remaining =
+        this.options.deadlineAt === undefined
+          ? Number.POSITIVE_INFINITY
+          : this.options.deadlineAt - Date.now();
+      if (remaining < MIN_SESSION_WINDOW_MS) {
+        throw new PiRunDeadlineExceededError(input.action);
+      }
+      const windowed: ResolvedSessionConfig = Number.isFinite(remaining)
+        ? {
+            ...attemptCfg,
+            timeoutMs: Math.min(attemptCfg.timeoutMs ?? 180_000, remaining),
+          }
+        : attemptCfg;
+      try {
+        return await this.runTextSessionOnce(input, windowed);
+      } catch (error) {
+        if (
+          attempt === attempts ||
+          // Judged on the role's own timeout, not the deadline-capped one: a
+          // pass cut short by the run clock is not a short session that hung.
+          !isTransientSessionError(error, attemptCfg.timeoutMs ?? 180_000)
+        )
+          throw error;
+        lastError = error;
+        const delay = baseDelay * 2 ** (attempt - 1);
+        console.warn(
+          `[pi-sdk] ${input.action}${input.role ? `/${input.role}` : ''} attempt ${attempt} of ${attempts} failed (${
+            error instanceof Error ? error.message.slice(0, 200) : 'unknown'
+          }); retrying in ${delay}ms${
+            attempt + 1 === attempts && cfg.fallbackModelId
+              ? ` on ${cfg.fallbackModelId}`
+              : ''
+          }`,
+        );
+        if (delay > 0) await new Promise((r) => setTimeout(r, delay));
+      }
+    }
+    throw lastError instanceof Error
+      ? lastError
+      : new Error('Pi session failed');
+  }
+
+  private async runTextSessionOnce(
+    input: {
+      cwd: string;
+      systemPrompt: string;
+      prompt: string;
+      images?: ImageContent[];
+      customTools?: ToolDefinition[];
+      tools: string[];
+      role?: PiAgentRole;
+      action: PiUsageAction;
+      onTrace?: AgentTraceSink;
+    },
+    cfg: ResolvedSessionConfig,
+  ): Promise<string> {
     const agentDir =
       this.options.isolatedAgentDir ??
       resolve(tmpdir(), 'flowstarter-pi-isolated');
@@ -746,9 +1107,7 @@ export class PiSdkFlowstarterAgents {
           }
         : resolvedModel;
     if (cfg.provider && cfg.modelId && !model && !cfg.modelOverride) {
-      throw new Error(
-        `Unknown Pi model ${cfg.provider}/${cfg.modelId}`,
-      );
+      throw new Error(`Unknown Pi model ${cfg.provider}/${cfg.modelId}`);
     }
 
     const { session } = await createAgentSession({
@@ -772,18 +1131,32 @@ export class PiSdkFlowstarterAgents {
     let sessionError: string | undefined;
     let budgetExceeded = false;
     const maxRunTokens = this.maxRunTokens;
+    const trace = input.onTrace ? createTraceEmitter(input.onTrace) : null;
     const unsubscribe = session.subscribe((event) => {
-      if (
-        event.type === 'message_update' &&
-        event.assistantMessageEvent.type === 'text_delta'
-      ) {
-        output += event.assistantMessageEvent.delta;
-        if (output.length > MAX_AGENT_OUTPUT_CHARS) void session.abort();
+      if (event.type === 'message_update') {
+        const delta = event.assistantMessageEvent;
+        if (delta.type === 'text_delta') {
+          output += delta.delta;
+          trace?.pushText(delta.delta);
+          if (output.length > MAX_AGENT_OUTPUT_CHARS) void session.abort();
+        } else if (delta.type === 'thinking_delta') {
+          trace?.pushThinking(delta.delta);
+        }
+      }
+      // The tool events are the machine-visible half of the work: what the
+      // agent asked for, and what it got back. `args.path` is what the file
+      // tools are keyed on, so the log names the file, not just the tool.
+      if (event.type === 'tool_execution_start') {
+        trace?.toolCall(event.toolName, event.args);
+      }
+      if (event.type === 'tool_execution_end') {
+        trace?.toolResult(event.toolName, event.result, event.isError);
       }
       // Providers report failures (quota, auth, model errors) as an assistant
       // message with stopReason 'error'. Without capturing it here the caller
       // receives an empty string and a misleading downstream parse failure.
       if (event.type === 'message_end') {
+        trace?.flush();
         const message = event.message as {
           role?: string;
           stopReason?: string;
@@ -842,7 +1215,12 @@ export class PiSdkFlowstarterAgents {
         new Promise<never>((_, reject) => {
           timer = setTimeout(() => {
             void session.abort();
-            reject(new Error(`Pi agent timed out after ${timeoutMs}ms`));
+            reject(
+              new PiSessionAttemptError(
+                `Pi agent timed out after ${timeoutMs}ms`,
+                'timeout',
+              ),
+            );
           }, timeoutMs);
         }),
       ]);
@@ -854,13 +1232,27 @@ export class PiSdkFlowstarterAgents {
         );
       }
       if (sessionError) {
-        throw new Error(`Pi session failed: ${sessionError.slice(0, 500)}`);
+        throw new PiSessionAttemptError(
+          `Pi session failed: ${sessionError.slice(0, 500)}`,
+          'provider',
+        );
       }
       if (output.length > MAX_AGENT_OUTPUT_CHARS)
         throw new Error('Pi agent output exceeded limit');
+      // A text-only session exists to return text: nothing back is a failed
+      // turn, not an answer, and the JSON parse downstream would only say so
+      // less usefully.
+      if (input.tools.length === 0 && output.trim().length === 0) {
+        throw new PiSessionAttemptError(
+          'Pi session returned no output',
+          'empty',
+        );
+      }
       return output.trim();
     } finally {
       if (timer) clearTimeout(timer);
+      // A session that timed out or aborted still narrated up to that point.
+      trace?.flush();
       unsubscribe();
       session.dispose();
     }
@@ -1153,7 +1545,8 @@ function extractDesignOptions(
 function extractAssetLibrary(
   config: Record<string, unknown> | undefined,
 ): Array<Record<string, unknown>> | undefined {
-  if (!isRecord(config) || !Array.isArray(config.assetLibrary)) return undefined;
+  if (!isRecord(config) || !Array.isArray(config.assetLibrary))
+    return undefined;
   const entries = config.assetLibrary.filter(
     (entry): entry is Record<string, unknown> =>
       isRecord(entry) &&
@@ -1161,7 +1554,8 @@ function extractAssetLibrary(
       typeof entry.description === 'string',
   );
   if (entries.length === 0) return undefined;
-  if (JSON.stringify(entries).length > MAX_DESIGN_OPTIONS_CHARS) return undefined;
+  if (JSON.stringify(entries).length > MAX_DESIGN_OPTIONS_CHARS)
+    return undefined;
   return entries;
 }
 
@@ -1243,7 +1637,6 @@ function isMissingPathError(error: unknown): boolean {
   );
 }
 
-
 /**
  * Parses one JSON object from a model turn. Providers still wrap JSON in a
  * fence now and then; anything else is a contract violation worth naming.
@@ -1255,7 +1648,8 @@ function parseJsonObject(raw: string, label: string): Record<string, unknown> {
   } catch {
     throw new Error(`${label} agent did not return JSON`);
   }
-  if (!isRecord(value)) throw new Error(`${label} agent did not return an object`);
+  if (!isRecord(value))
+    throw new Error(`${label} agent did not return an object`);
   return value;
 }
 

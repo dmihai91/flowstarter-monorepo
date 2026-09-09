@@ -21,8 +21,17 @@ export class SiteValidationError extends Error {}
  * validator would reject it before LocalSitePublisher can pack the site root.
  */
 export class NoopSiteValidator implements SiteValidator {
-  async validate(_workspaceRoot: string, _phase: 'preview' | 'full'): Promise<void> {}
+  async validate(
+    _workspaceRoot: string,
+    _phase: 'preview' | 'full',
+  ): Promise<void> {}
 }
+
+/**
+ * Output lines kept per command. The tail is the useful half of a build log:
+ * the summary of what was emitted, or the error that stopped it.
+ */
+export const VALIDATOR_OUTPUT_LINES = 200;
 
 export interface CommandSiteValidatorOptions {
   commands: ValidatorCommand[];
@@ -30,6 +39,21 @@ export interface CommandSiteValidatorOptions {
   /** Build output that must exist once the commands have run. */
   outputDir?: string;
   onProgress?: (message: string) => void;
+  /**
+   * The last {@link VALIDATOR_OUTPUT_LINES} lines a command printed, once it
+   * has finished either way. Trusted machine text: this runs outside Pi, so
+   * nothing an agent wrote can reach it except as build output.
+   */
+  onOutput?: (command: string, lines: string[]) => void;
+}
+
+/** The tail of a command's combined output, blank lines dropped. */
+function tailLines(stdout: string, stderr: string): string[] {
+  return `${stdout ?? ''}\n${stderr ?? ''}`
+    .split('\n')
+    .map((line) => line.replace(/\s+$/, ''))
+    .filter((line) => line.trim().length > 0)
+    .slice(-VALIDATOR_OUTPUT_LINES);
 }
 
 async function isFile(path: string): Promise<boolean> {
@@ -55,7 +79,10 @@ export class CommandSiteValidator implements SiteValidator {
     this.outputDir = options.outputDir ?? 'dist';
   }
 
-  async validate(workspaceRoot: string, phase: 'preview' | 'full'): Promise<void> {
+  async validate(
+    workspaceRoot: string,
+    phase: 'preview' | 'full',
+  ): Promise<void> {
     if (phase !== 'full') {
       throw new SiteValidationError(
         `CommandSiteValidator only runs the full-build phase, received ${phase}`,
@@ -73,28 +100,39 @@ export class CommandSiteValidator implements SiteValidator {
       const label = [command.bin, ...command.args].join(' ');
       this.options.onProgress?.(`Running ${label}`);
       try {
-        await execFileAsync(command.bin, command.args, {
-          cwd: workspaceRoot,
-          encoding: 'utf8',
-          timeout: this.options.timeoutMs,
-          maxBuffer: 8 * 1024 * 1024,
-          windowsHide: true,
-          env: {
-            ...process.env,
-            CI: '1',
-            // Keep a template's postinstall/telemetry from opening network
-            // prompts or writing outside the worktree.
-            npm_config_ignore_scripts: 'true',
-            ASTRO_TELEMETRY_DISABLED: '1',
-            NEXT_TELEMETRY_DISABLED: '1',
+        const { stdout, stderr } = await execFileAsync(
+          command.bin,
+          command.args,
+          {
+            cwd: workspaceRoot,
+            encoding: 'utf8',
+            timeout: this.options.timeoutMs,
+            maxBuffer: 8 * 1024 * 1024,
+            windowsHide: true,
+            env: {
+              ...process.env,
+              CI: '1',
+              // Keep a template's postinstall/telemetry from opening network
+              // prompts or writing outside the worktree.
+              npm_config_ignore_scripts: 'true',
+              ASTRO_TELEMETRY_DISABLED: '1',
+              NEXT_TELEMETRY_DISABLED: '1',
+            },
           },
-        });
+        );
+        this.options.onOutput?.(label, tailLines(stdout, stderr));
       } catch (error) {
         const failure = error as NodeJS.ErrnoException & {
           stdout?: string;
           stderr?: string;
           killed?: boolean;
         };
+        // The output of the command that failed is the whole point of a build
+        // log, so it is reported before the error that hides it in a message.
+        this.options.onOutput?.(
+          label,
+          tailLines(failure.stdout ?? '', failure.stderr ?? failure.message),
+        );
         if (failure.killed) {
           throw new SiteValidationError(
             `Validation command "${label}" timed out after ${this.options.timeoutMs}ms`,

@@ -18,7 +18,11 @@
  * secret flowstarter-main signs its dispatch with.
  */
 
-import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import {
+  createServer,
+  type IncomingMessage,
+  type ServerResponse,
+} from 'node:http';
 import { createClient } from '@supabase/supabase-js';
 import {
   FullSiteBuildWorker,
@@ -29,6 +33,13 @@ import {
 import { ArtifactStore, artifactTokenFromPath } from './artifacts';
 import { ConfigError, loadConfig } from './config';
 import { handleRequest, VERSION } from './http';
+import {
+  attachMachineLog,
+  detachMachineLog,
+  machineLog,
+  machineLogWriter,
+  runWithJob,
+} from './job-context';
 import { SupabaseFullSiteBuildJobStore } from './job-store';
 import { LocalSitePublisher } from './local-publisher';
 import { ensureLocalSitesRepository } from './local-repo';
@@ -85,12 +96,25 @@ const agents = config.local?.stubAgent
       thinkingLevel: config.pi.thinkingLevel,
       timeoutMs: config.pi.timeoutMs,
     });
+/**
+ * Every machine line goes to both places: the console an operator tails, and
+ * the build's own record, which is the only one a client-facing board can read.
+ */
+function report(message: string): void {
+  console.info(`[build-worker] ${message}`);
+  machineLog(message);
+}
+
 const validator = config.local?.stubAgent
   ? new NoopSiteValidator()
   : new CommandSiteValidator({
       commands: config.validateCommands,
       timeoutMs: config.buildTimeoutMs,
-      onProgress: (message) => console.info(`[build-worker] ${message}`),
+      onProgress: report,
+      onOutput: (command, lines) => {
+        report(`Output of ${command}:`);
+        for (const line of lines) report(`  ${line}`);
+      },
     });
 
 const artifacts = config.local
@@ -108,7 +132,7 @@ const pullRequests: PullRequestPublisher =
         sharedSecret: config.sharedSecret,
         outputDir: config.local.outputDir,
         stagingUrlTemplate: config.stagingUrlTemplate,
-        onProgress: (message) => console.info(`[build-worker] ${message}`),
+        onProgress: report,
       })
     : new GitHubPullRequestPublisher({
         // Non-null by construction: config.github is only null in local mode,
@@ -128,16 +152,34 @@ const worker = new FullSiteBuildWorker(
   agents,
   validator,
   pullRequests,
+  // The worker owns the sink; this process owns its registration, so the
+  // lifecycle lines it writes after `run()` returns still reach the record.
+  { onJobLog: (jobId, log) => attachMachineLog(jobId, log) },
 );
 
 const queue = new BuildQueue({
   concurrency: config.concurrency,
   queueLimit: config.queueLimit,
-  run: async (jobId) => {
-    console.info(`[build-worker] job ${jobId} started`);
-    await worker.run(jobId);
-    console.info(`[build-worker] job ${jobId} finished`);
-  },
+  run: (jobId) =>
+    runWithJob(jobId, async () => {
+      report(`job ${jobId} started`);
+      try {
+        await worker.run(jobId);
+        report(`job ${jobId} finished`);
+      } catch (error) {
+        // Recorded here, where the job's log is still attached. The console
+        // half of this line is `onError` below, which the queue always calls.
+        machineLog(
+          `job ${jobId} failed: ${
+            error instanceof Error ? error.message : 'unknown'
+          }`,
+        );
+        throw error;
+      } finally {
+        await machineLogWriter(jobId)?.flush();
+        detachMachineLog(jobId);
+      }
+    }),
   // FullSiteBuildWorker has already recorded the failure on the ledger and
   // rethrown; this is the operator-facing log, not the client-facing state.
   onError: (jobId, error) =>
@@ -204,7 +246,8 @@ const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     res.end(payload);
   })().catch((error: unknown) => {
     console.error('[build-worker] request failed:', error);
-    if (!res.headersSent) res.writeHead(500, { 'content-type': 'application/json' });
+    if (!res.headersSent)
+      res.writeHead(500, { 'content-type': 'application/json' });
     res.end(JSON.stringify({ error: 'internal error' }));
   });
 });
@@ -244,7 +287,9 @@ void start().catch((error: unknown) => {
 
 for (const signal of ['SIGTERM', 'SIGINT'] as const) {
   process.on(signal, () => {
-    console.info(`[build-worker] ${signal} received; finishing in-flight builds`);
+    console.info(
+      `[build-worker] ${signal} received; finishing in-flight builds`,
+    );
     server.close();
     void queue.drain().then(() => process.exit(0));
   });

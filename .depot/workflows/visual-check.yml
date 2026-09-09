@@ -340,12 +340,17 @@ jobs:
           set -euo pipefail
           existing_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
             --jq "[.[] | select(.body | startswith(\"$MARKER\"))][0].id // empty")
+          # `gh api -f name=@file` does NOT read the file: -f is --raw-field,
+          # which sends the value verbatim, so the comment body arrived as the
+          # literal text "@comment-body.md". Build the JSON here instead and
+          # feed it on stdin, which also keeps a long body off the argument
+          # list.
           if [ -n "$existing_id" ]; then
-            gh api --method PATCH "repos/$REPO/issues/comments/$existing_id" \
-              -f body=@comment-body.md
+            jq -n --rawfile body comment-body.md '{body: $body}' \
+              | gh api --method PATCH "repos/$REPO/issues/comments/$existing_id" --input -
           else
-            gh api --method POST "repos/$REPO/issues/$PR_NUMBER/comments" \
-              -f body=@comment-body.md
+            jq -n --rawfile body comment-body.md '{body: $body}' \
+              | gh api --method POST "repos/$REPO/issues/$PR_NUMBER/comments" --input -
           fi
       # ── Final conclusion ─────────────────────────────────────────────────
       # A first-run seed (reason=missing) or a dispatched refresh

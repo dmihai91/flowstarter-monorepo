@@ -299,7 +299,7 @@ export function renderTemplate(fill: TemplateFill): string {
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="${fontHref}" rel="stylesheet" />
-<!--FILL${JSON.stringify(fill)}FILL-->
+${FILL_OPEN_MARKER}${JSON.stringify(fill)}${FILL_CLOSE_MARKER}
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -598,12 +598,29 @@ ${sectionsHtml}
 </html>`;
 }
 
-/** Recover the fill from a rendered page (for refinement turns). */
+/** Opening and closing markers around the JSON fill embedded in a rendered page. */
+export const FILL_OPEN_MARKER = '<!--FILL';
+export const FILL_CLOSE_MARKER = 'FILL-->';
+
+/** Recover the fill from a rendered page (for refinement turns).
+ *
+ *  Scanned with indexOf rather than matched with `/<!--FILL([\s\S]*?)FILL-->/`.
+ *  That pattern is ambiguous: on input that opens the marker many times and
+ *  never closes it, the engine restarts the lazy scan at every opening and the
+ *  match takes time quadratic in the input length (CodeQL js/polynomial-redos).
+ *  The scan below is linear and returns exactly what the pattern returned: the
+ *  text between the first opening marker and the first closing marker after it,
+ *  and null when either marker is absent. Later openings never produce a match
+ *  the first opening cannot, because the closing marker is searched forward
+ *  from an ever later index. */
 export function parseFillFromHtml(html: string): TemplateFill | null {
-  const m = html.match(/<!--FILL([\s\S]*?)FILL-->/);
-  if (!m) return null;
+  const open = html.indexOf(FILL_OPEN_MARKER);
+  if (open === -1) return null;
+  const contentStart = open + FILL_OPEN_MARKER.length;
+  const close = html.indexOf(FILL_CLOSE_MARKER, contentStart);
+  if (close === -1) return null;
   try {
-    return JSON.parse(m[1]) as TemplateFill;
+    return JSON.parse(html.slice(contentStart, close)) as TemplateFill;
   } catch {
     return null;
   }

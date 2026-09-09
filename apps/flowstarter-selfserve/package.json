@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start -p 3200",
     "tsc": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -36,6 +38,7 @@
     "@types/react-dom": "19.1.2",
     "tailwindcss": "^4.1.13",
     "@tailwindcss/postcss": "^4.1.13",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "vitest": "^4.0.6"
   }
 }

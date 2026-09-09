@@ -14,6 +14,15 @@
 #      commit_ref matches GITHUB_SHA, waiting until state=ready.
 #   2. Runs Playwright smoke tests against that preview URL.
 #
+# What runs: every spec in the `chromium` project, which since this commit
+# includes `e2e/contract.spec.ts` (tier 1, the keyless contract checks). The
+# run command below takes no --project flag, so a new spec file needs no
+# change here; confirm with `pnpm exec playwright test --list --project
+# chromium`. The contract spec needs no Clerk session, no Stripe key and no
+# database, which is exactly why it can run against a keyless Deploy Preview.
+# The production synthetic is deliberately NOT here: it lives in the opt-in
+# `prod-synthetic` project and runs from .depot/workflows/prod-synthetic.yml.
+#
 # This lane is advisory when no preview exists, and blocking only on a real
 # failure against a preview that did resolve. The wait step runs with
 # continue-on-error and a 10-minute budget (TIMEOUT_SECONDS=600); if no

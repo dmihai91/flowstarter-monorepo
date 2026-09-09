@@ -1,0 +1,123 @@
+##############################################################################
+# prod-synthetic.yml
+#
+# Tier 4: the production synthetic. It asks one question after every deploy,
+# and on a timer in between: is the live site actually serving?
+#
+# It reads production and writes nothing. No account, no lead, no canary row,
+# no deposit. The one POST it makes is an unsigned Stripe webhook, which the
+# route has to reject before it touches anything.
+#
+# This lane is blocking by design. Unlike the advisory preview lanes, a red
+# here means the site people pay for is not answering correctly, so the job
+# fails loudly instead of warning and going green.
+#
+# Triggers
+#   workflow_dispatch     run it by hand, optionally against another origin
+#   schedule              every 6 hours, so a silent outage is found within 6h
+#   repository_dispatch   event type `netlify-deploy-succeeded`, fired by
+#                         Netlify once a production deploy finishes
+#
+# Wiring the Netlify hook (a human does this once, in the Netlify UI; this
+# workflow does not configure it):
+#   1. Create a GitHub fine-grained personal access token with
+#      "Contents: read and write" on DMPResearch/flowstarter. That scope is
+#      what the repository_dispatch API requires.
+#   2. Netlify -> Site settings -> Build & deploy -> Deploy notifications ->
+#      Add notification -> Outgoing webhook.
+#        Event:       Deploy succeeded
+#        URL:         https://api.github.com/repos/DMPResearch/flowstarter/dispatches
+#        JSON payload:
+#          {"event_type":"netlify-deploy-succeeded",
+#           "client_payload":{"base_url":"$DEPLOY_PRIME_URL"}}
+#      Netlify's outgoing webhooks cannot set an Authorization header, so put
+#      the token in the URL's userinfo, or route the hook through a small
+#      proxy (a Cloudflare Worker) that adds
+#      `Authorization: Bearer <token>` and `Accept: application/vnd.github+json`.
+#      Keep the token in Netlify's environment, never in this file.
+#   3. Confirm with a manual dispatch first:
+#        gh api repos/DMPResearch/flowstarter/dispatches \
+#          -f event_type=netlify-deploy-succeeded
+#
+# The base URL is resolved in this order: the dispatch input, then the
+# repository_dispatch client_payload, then the PROD_URL repository variable,
+# then https://flowstarter.net.
+#
+# Secrets: none. Everything checked here is reachable without a credential,
+# which is what makes it safe to run on a schedule.
+##############################################################################
+
+name: Production Synthetic
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Origin to check (no trailing slash)'
+        required: false
+        default: 'https://flowstarter.net'
+  schedule:
+    # Every 6 hours, on the hour.
+    - cron: '0 */6 * * *'
+  repository_dispatch:
+    types: [netlify-deploy-succeeded]
+concurrency:
+  group: prod-synthetic-depot
+  cancel-in-progress: true
+env:
+  NODE_VERSION: '22'
+# Reads the repository to check it out and nothing else. It posts no comment,
+# no status and no commit.
+permissions:
+  contents: read
+jobs:
+  synthetic:
+    name: Synthetic - live site
+    runs-on: depot-ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install chromium --with-deps
+      - name: Resolve the target origin
+        id: target
+        env:
+          DISPATCH_URL: ${{ github.event.inputs.base_url }}
+          PAYLOAD_URL: ${{ github.event.client_payload.base_url }}
+          VAR_URL: ${{ vars.PROD_URL }}
+        run: |
+          url="${DISPATCH_URL:-}"
+          [ -n "$url" ] || url="${PAYLOAD_URL:-}"
+          [ -n "$url" ] || url="${VAR_URL:-}"
+          [ -n "$url" ] || url="https://flowstarter.net"
+          url="${url%/}"
+          echo "url=${url}" >> "$GITHUB_OUTPUT"
+          echo "Checking ${url}" >> "$GITHUB_STEP_SUMMARY"
+      # No continue-on-error anywhere below: this lane is the alarm, so it has
+      # to be able to go red.
+      - name: E2E - production synthetic
+        run: pnpm exec playwright test --project prod-synthetic
+        env:
+          CI: true
+          PROD_SYNTHETIC: '1'
+          PLAYWRIGHT_BASE_URL: ${{ steps.target.outputs.url }}
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-prod-synthetic
+          path: playwright-report/
+          retention-days: 30
+      - name: Say what broke
+        if: failure()
+        env:
+          TARGET: ${{ steps.target.outputs.url }}
+        run: |
+          echo "::error title=Production synthetic failed::${TARGET} did not pass the post-deploy checks. Download the playwright-report-prod-synthetic artifact for the failing assertion."
+          echo "Production synthetic failed against ${TARGET}." >> "$GITHUB_STEP_SUMMARY"

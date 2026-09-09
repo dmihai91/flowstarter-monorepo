@@ -28,5 +28,5 @@ function resolveTemplatesDir(): string {
 export const TEMPLATES_DIR = resolveTemplatesDir();
 export const PORT = process.env.HTTP_PORT || 3001;
 export const HOST = process.env.HTTP_HOST || '0.0.0.0';
-export const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
+export const CORS_ORIGIN = process.env.CORS_ORIGIN || '';
 export const PUBLIC_DIR = path.join(__dirname, '../public');

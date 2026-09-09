@@ -216,7 +216,18 @@ async function waitForJobToSettle(
     const job = db.find('flowstarter_agent_jobs', {
       workspace_id: WORKSPACE_ID,
     });
-    if (job && job['status'] !== 'queued' && job['status'] !== 'running')
+    const settled =
+      job && job['status'] !== 'queued' && job['status'] !== 'running';
+    // The worker marks the job row succeeded and *then* moves the workspace
+    // out of AGENTS_WORKING in a second round trip (JobStore.markHumanQa --
+    // PostgREST gives it no cross-table transaction). Returning on the job
+    // row alone lets a caller read the workspace inside that window, which is
+    // how this suite failed on CI with project_state still AGENTS_WORKING.
+    // Wait for both writes, the way any real consumer of the ledger has to.
+    const workspaceMoved =
+      db.find('workspaces', { id: WORKSPACE_ID })?.['project_state'] !==
+      ProjectState.AGENTS_WORKING;
+    if (settled && (job['status'] !== 'succeeded' || workspaceMoved))
       return job;
     if (Date.now() > deadline) {
       throw new Error(

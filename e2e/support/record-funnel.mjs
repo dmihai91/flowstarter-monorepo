@@ -12,15 +12,19 @@
  * sessionStorage and restores it on mount, so resuming mid-wizard is the app's
  * own behaviour, not a harness trick.
  *
- * Steps 1–6 are no longer six form screens: they are one scripted conversation
- * (`intake-script.ts` + `IntakeConversation.tsx`). So clip 01 is driven the way
- * a visitor drives it — typing into the composer and pressing Enter, tapping a
- * quick reply, tapping "Skip this one" — and each turn is synchronised against
- * the wizard's own cursor (the `answered` array in its autosaved draft) rather
- * than against a guess at how long React needs. Nothing here decides the order
- * of the questions; the script does, and this only answers them.
+ * Steps 1–6 are no longer six form screens: they are one conversation
+ * (`intake-script.ts` + either `IntakeConversation` or the LangGraph-backed
+ * `IntakeGraphConversation` when `NEXT_PUBLIC_FLOWSTARTER_INTAKE_GRAPH=true`).
+ * So clip 01 is driven the way a visitor drives it — typing into the composer
+ * and pressing Enter, tapping a quick reply, tapping "Skip this one" — and each
+ * turn is synchronised against the wizard's own cursor (the `answered` array in
+ * its autosaved draft) rather than against a guess at how long React needs.
+ * Nothing here decides the order of the questions; the script does, and this
+ * only answers them. Graph mode adds model phrasing latency — settle waits are
+ * longer, and a turn already filed by multi-extract is skipped.
  *
  *   node e2e/support/record-funnel.mjs
+ *   INTAKE_GRAPH=1 APP_ORIGIN=https://www.flowstarter.dev node e2e/support/record-funnel.mjs
  *   node e2e/support/record-funnel.mjs --resume-draft   # 03/04/05 only
  *   node e2e/support/record-funnel.mjs --only-02        # the info agent only
  *
@@ -41,6 +45,12 @@ import {
 
 ensureDirs();
 const U = users();
+const GRAPH =
+  process.env.INTAKE_GRAPH === '1' ||
+  process.env.NEXT_PUBLIC_FLOWSTARTER_INTAKE_GRAPH === 'true';
+/** Graph phrasing + extract need a longer settle than the scripted path. */
+const SETTLE_MS = GRAPH ? 90_000 : 30_000;
+const COMPOSER_MS = GRAPH ? 90_000 : 30_000;
 
 // ── The brief ───────────────────────────────────────────────────────────────
 // Marsh & Fern from e2e/support/briefs.mjs. The description typed into the
@@ -167,7 +177,7 @@ async function replied(page, turns, timeout = 90000) {
   }
 }
 
-async function settled(page, id, timeout = 30000) {
+async function settled(page, id, timeout = SETTLE_MS) {
   const deadline = Date.now() + timeout;
   for (;;) {
     if ((await answeredIds(page)).includes(id)) return;
@@ -176,49 +186,107 @@ async function settled(page, id, timeout = 30000) {
   }
 }
 
+/** Already filed (e.g. graph multi-extract) — do not re-ask on camera. */
+async function already(page, id) {
+  return (await answeredIds(page)).includes(id);
+}
+
+/** Wait until the graph is not mid-flight and a turn control is on screen. */
+async function readyForTurn(page, d) {
+  await d
+    .getByText('Loading your experience')
+    .waitFor({ state: 'hidden', timeout: COMPOSER_MS })
+    .catch(() => {});
+  // Choice / multi turns have chips (and maybe "That's it") but no composer.
+  // Panels have the confirm button. Text turns have the labelled box.
+  await composer(d)
+    .or(d.getByRole('button', { name: 'Skip this one', exact: true }))
+    .or(d.getByRole('button', { name: "That's it", exact: true }))
+    .or(confirmBtn(d))
+    .or(d.locator('button').filter({ hasText: /.+/ }).nth(0))
+    .first()
+    .waitFor({ state: 'visible', timeout: COMPOSER_MS });
+}
+
 /** A typed turn: the visitor writes in the composer and presses Send. */
 async function say(page, d, id, text) {
+  if (await already(page, id)) return;
+  await readyForTurn(page, d);
   const box = composer(d);
-  await box.waitFor({ state: 'visible', timeout: 30000 });
+  await box.waitFor({ state: 'visible', timeout: COMPOSER_MS });
   await box.click();
   await box.type(text, { delay: 18 });   // typing is part of the picture
   await pause(page, 800);
+  const waitGraph = GRAPH
+    ? page.waitForResponse(
+        (r) => r.url().includes('/api/discovery/intake-graph') && r.ok(),
+        { timeout: SETTLE_MS }
+      ).catch(() => null)
+    : Promise.resolve(null);
   await sendBtn(d).click();
+  await waitGraph;
   await settled(page, id);
-  await pause(page, 700);
+  await pause(page, GRAPH ? 1100 : 700);
 }
 
 /** A quick reply: one tap sends it as a message. */
 async function tap(page, d, id, label) {
+  if (await already(page, id)) return;
+  await readyForTurn(page, d);
   const chip = d.getByRole('button', { name: label, exact: true }).first();
-  await chip.waitFor({ state: 'visible', timeout: 30000 });
+  await chip.waitFor({ state: 'visible', timeout: COMPOSER_MS });
   await pause(page, 600);              // a beat to read the options
+  const waitGraph = GRAPH
+    ? page.waitForResponse(
+        (r) => r.url().includes('/api/discovery/intake-graph') && r.ok(),
+        { timeout: SETTLE_MS }
+      ).catch(() => null)
+    : Promise.resolve(null);
   await chip.click();
+  await waitGraph;
   await settled(page, id);
-  await pause(page, 700);
+  await pause(page, GRAPH ? 1100 : 700);
 }
 
 /** The optional questions really are optional, and the clip should show it. */
 async function skip(page, d, id) {
-  await skipBtn(d).waitFor({ state: 'visible', timeout: 30000 });
+  if (await already(page, id)) return;
+  await readyForTurn(page, d);
+  await skipBtn(d).waitFor({ state: 'visible', timeout: COMPOSER_MS });
   await pause(page, 900);
+  const waitGraph = GRAPH
+    ? page.waitForResponse(
+        (r) => r.url().includes('/api/discovery/intake-graph') && r.ok(),
+        { timeout: SETTLE_MS }
+      ).catch(() => null)
+    : Promise.resolve(null);
   await skipBtn(d).click();
+  await waitGraph;
   await settled(page, id);
-  await pause(page, 700);
+  await pause(page, GRAPH ? 1100 : 700);
 }
 
 /** Several chips at once, then "That's it" to send the lot. */
 async function pick(page, d, id, labels) {
+  if (await already(page, id)) return;
+  await readyForTurn(page, d);
   for (const label of labels) {
     const chip = d.getByRole('button', { name: label, exact: true }).first();
-    await chip.waitFor({ state: 'visible', timeout: 30000 });
+    await chip.waitFor({ state: 'visible', timeout: COMPOSER_MS });
     await chip.click();
     await pause(page, 550);
   }
   await pause(page, 500);
+  const waitGraph = GRAPH
+    ? page.waitForResponse(
+        (r) => r.url().includes('/api/discovery/intake-graph') && r.ok(),
+        { timeout: SETTLE_MS }
+      ).catch(() => null)
+    : Promise.resolve(null);
   await doneBtn(d).click();
+  await waitGraph;
   await settled(page, id);
-  await pause(page, 700);
+  await pause(page, GRAPH ? 1100 : 700);
 }
 
 /**
@@ -230,6 +298,8 @@ async function pick(page, d, id, labels) {
  */
 async function talkThroughIntake(page, d) {
   await pause(page, 2200);             // the agent's opening line, read
+  // Graph mode boots with a start turn; wait for the first ask to land.
+  if (GRAPH) await readyForTurn(page, d);
 
   // 1 — who they are
   await say(page, d, 'fullName', BRIEF.fullName);
@@ -262,18 +332,34 @@ async function talkThroughIntake(page, d) {
 
   // 5 — the build package, as a panel inside the conversation. Rules pick it
   // first (RecommendationStep auto-selects); the visitor confirms or overrides.
+  await readyForTurn(page, d);
   await d.getByRole('heading', { level: 3 }).first()
-    .waitFor({ state: 'visible', timeout: 30000 });
+    .waitFor({ state: 'visible', timeout: COMPOSER_MS });
   await pause(page, 5200);             // long enough to read the reasons
-  await confirmBtn(d).waitFor({ state: 'visible', timeout: 30000 });
+  await confirmBtn(d).waitFor({ state: 'visible', timeout: COMPOSER_MS });
+  const waitTier = GRAPH
+    ? page.waitForResponse(
+        (r) => r.url().includes('/api/discovery/intake-graph') && r.ok(),
+        { timeout: SETTLE_MS }
+      ).catch(() => null)
+    : Promise.resolve(null);
   await confirmBtn(d).click();
+  await waitTier;
   await settled(page, 'selectedTier');
   await pause(page, 1000);
 
   // 6 — the monthly plan, the same way.
+  await readyForTurn(page, d);
   await choice(d, BRIEF.plan).click();
   await pause(page, 1600);
+  const waitPlan = GRAPH
+    ? page.waitForResponse(
+        (r) => r.url().includes('/api/discovery/intake-graph') && r.ok(),
+        { timeout: SETTLE_MS }
+      ).catch(() => null)
+    : Promise.resolve(null);
   await confirmBtn(d).click();
+  await waitPlan;
   await settled(page, 'subscription');
   await pause(page, 1200);
 }
@@ -289,6 +375,7 @@ if (FROM_DRAFT) {
   console.log(`${ONLY_02 ? '01 skipped' : '01/02 skipped'} — resuming from the draft in ${DRAFT_FILE}`);
 } else {
   console.log('01-intake');
+  if (GRAPH) console.log('  (LangGraph intake — longer settle waits)');
   results.push(await clip(browser, '01-intake', {}, async (page) => {
     await page.goto(APP, { waitUntil: 'domcontentloaded' });
     await pause(page, 2600);

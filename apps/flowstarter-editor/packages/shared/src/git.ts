@@ -12,19 +12,28 @@ import type {
  * Strips quotes, collapses separators, limits to 64 chars.
  */
 export function sanitizeBranchFragment(raw: string): string {
-  const normalized = raw
-    .trim()
-    .toLowerCase()
-    .replace(/['"`]/g, "")
-    .replace(/^[./\s_-]+|[./\s_-]+$/g, "");
+  let normalized = raw.trim().toLowerCase();
+  // Strip quotes without overlapping quantifiers (avoids polynomial ReDoS)
+  normalized = normalized.split(/['"`]/).join("");
+  while (/^[./\s_-]/.test(normalized)) normalized = normalized.slice(1);
+  while (/[./\s_-]$/.test(normalized)) normalized = normalized.slice(0, -1);
 
-  const branchFragment = normalized
-    .replace(/[^a-z0-9/_-]+/g, "-")
-    .replace(/\/+/g, "/")
-    .replace(/-+/g, "-")
-    .replace(/^[./_-]+|[./_-]+$/g, "")
-    .slice(0, 64)
-    .replace(/[./_-]+$/g, "");
+  let branchFragment = "";
+  for (const ch of normalized) {
+    if (/[a-z0-9/_-]/.test(ch)) {
+      const last = branchFragment.at(-1);
+      if (ch === "/" && last === "/") continue;
+      if (ch === "-" && last === "-") continue;
+      branchFragment += ch;
+    } else if (branchFragment.at(-1) !== "-") {
+      branchFragment += "-";
+    }
+  }
+
+  while (/^[./_-]/.test(branchFragment)) branchFragment = branchFragment.slice(1);
+  while (/[./_-]$/.test(branchFragment)) branchFragment = branchFragment.slice(0, -1);
+  branchFragment = branchFragment.slice(0, 64);
+  while (/[./_-]$/.test(branchFragment)) branchFragment = branchFragment.slice(0, -1);
 
   return branchFragment.length > 0 ? branchFragment : "update";
 }
@@ -84,11 +93,9 @@ export function deriveLocalBranchNameFromRemoteRef(branchName: string): string {
  * Normalize a git remote URL into a stable comparison key.
  */
 export function normalizeGitRemoteUrl(value: string): string {
-  const normalized = value
-    .trim()
-    .replace(/\/+$/g, "")
-    .replace(/\.git$/i, "")
-    .toLowerCase();
+  let normalized = value.trim().toLowerCase();
+  while (normalized.endsWith("/")) normalized = normalized.slice(0, -1);
+  if (normalized.endsWith(".git")) normalized = normalized.slice(0, -4);
 
   if (/^(?:ssh|https?|git):\/\//i.test(normalized)) {
     try {

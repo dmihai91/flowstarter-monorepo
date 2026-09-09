@@ -24,6 +24,19 @@ const PREVIEW_DEFAULT_URL =
     .toString()
     .trim() || "http://localhost:4322";
 
+/** Only allow http(s) preview URLs — blocks javascript:/data: XSS via iframe/href. */
+function sanitizePreviewUrl(raw: string | undefined | null): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  try {
+    const parsed = new URL(trimmed, PREVIEW_DEFAULT_URL);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
+    return parsed.href;
+  } catch {
+    return null;
+  }
+}
+
 const PREVIEW_WIDTH_STORAGE_KEY = "fs-editor-preview-width";
 /** Same-tab header sync (Preview vs Files toggle). */
 const PANELS_STATE_EVENT = "flowstarter:panels-state";
@@ -75,6 +88,7 @@ export function PreviewPanel() {
   const [open, setOpen] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [url, setUrl] = useState(PREVIEW_DEFAULT_URL);
+  const safeUrl = sanitizePreviewUrl(url) ?? PREVIEW_DEFAULT_URL;
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const [panelWidth, setPanelWidth] = useState(resolveInitialPanelWidth);
@@ -99,7 +113,10 @@ export function PreviewPanel() {
       const detail = (event as CustomEvent).detail as
         | { open?: boolean; url?: string }
         | undefined;
-      if (detail?.url) setUrl(detail.url);
+      if (detail?.url) {
+        const safe = sanitizePreviewUrl(detail.url);
+        if (safe) setUrl(safe);
+      }
       if (typeof detail?.open === "boolean") setOpen(detail.open);
       else setOpen((prev) => !prev);
     };
@@ -311,7 +328,11 @@ export function PreviewPanel() {
         </span>
         <input
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={(e) => {
+            const next = e.target.value;
+            // Allow typing freely; only commit http(s) URLs to the live sinks
+            setUrl(next);
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") setReloadKey((k) => k + 1);
           }}
@@ -335,7 +356,7 @@ export function PreviewPanel() {
           <RefreshCwIcon className="size-3.5" />
         </button>
         <a
-          href={url}
+          href={safeUrl}
           target="_blank"
           rel="noopener"
           className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors hover:bg-[var(--fs-accent-bg)]"
@@ -362,7 +383,7 @@ export function PreviewPanel() {
         <iframe
           key={reloadKey}
           ref={iframeRef}
-          src={url}
+          src={safeUrl}
           title="Live preview"
           className="min-h-0 w-full flex-1 border-0"
           style={{ background: "var(--fs-bg-base)" }}

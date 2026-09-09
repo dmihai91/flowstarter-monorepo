@@ -118,3 +118,6 @@ apps/flowstarter-library/templates/*/package-lock.json
 artifacts/darius-portfolio/
 workflow-showcase-static/
 artifacts/showcase/
+
+# Design-bundle phone screenshots: reference material, 27 MB, nothing in the repo reads them.
+flowstarter/project/uploads/

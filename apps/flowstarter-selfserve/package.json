@@ -1,0 +1,44 @@
+{
+  "name": "flowstarter-selfserve",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Flowstarter self-serve v1 — describe your business, agents build your site (€50 start / €149 delivery / €39mo hosting)",
+  "scripts": {
+    "dev": "next dev -p 3200",
+    "build": "next build",
+    "start": "next start -p 3200",
+    "tsc": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^7.0.5",
+    "convex": "^1.27.0",
+    "@flowstarter/build-engine": "workspace:*",
+    "@flowstarter/build-orchestrator": "workspace:*",
+    "@flowstarter/platform-config": "workspace:*",
+    "@flowstarter/supabase-utils": "workspace:*",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@supabase/supabase-js": "^2.49.4",
+    "next": "16.2.0",
+    "pdf-lib": "^1.17.1",
+    "posthog-js": "^1.260.1",
+    "posthog-node": "^4.18.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "server-only": "^0.0.1",
+    "stripe": "^20.4.1",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.9",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.2",
+    "tailwindcss": "^4.1.13",
+    "@tailwindcss/postcss": "^4.1.13",
+    "typescript": "~5.7.2",
+    "vitest": "^4.0.6"
+  }
+}

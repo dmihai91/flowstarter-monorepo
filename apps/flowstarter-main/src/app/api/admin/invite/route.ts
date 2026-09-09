@@ -42,9 +42,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // Validate email format without polynomial-time regex
+    const at = email.indexOf('@');
+    const domain = at > 0 ? email.slice(at + 1) : '';
+    const dot = domain.lastIndexOf('.');
+    if (
+      at <= 0 ||
+      at !== email.lastIndexOf('@') ||
+      email.length > 254 ||
+      dot <= 0 ||
+      dot >= domain.length - 1 ||
+      /\s/.test(email)
+    ) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }

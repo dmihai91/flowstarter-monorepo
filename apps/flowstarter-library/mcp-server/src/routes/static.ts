@@ -15,7 +15,8 @@ export function createStaticRoutes() {
 	const router = Router();
 
 	// Serve template static assets (handle both /assets/* and root level files)
-	router.all('/api/templates/:slug/*', (req, res, next) => {
+	// Express 5 / path-to-regexp v8 requires named wildcards ("*splat" instead of bare "*").
+	router.all('/api/templates/:slug/*splat', (req, res, next) => {
 		const { slug } = req.params;
 
 		// Skip if it's a specific endpoint
@@ -120,7 +121,7 @@ export function createStaticRoutes() {
 		}
 	});
 
-	router.get('/:slug/*', (req, res, next) => {
+	router.get('/:slug/*splat', (req, res, next) => {
 		const { slug } = req.params;
 		if (!isSafeSlug(slug)) {
 			return next();
@@ -147,7 +148,12 @@ export function createStaticRoutes() {
 		const escapedSlug = escapeHtml(safeSlug);
 
 		// For any route under /{slug}, try to serve assets
-		const requestPath = (req.params as { 0?: string })[0] || '';
+		// Express 5 exposes named wildcards ("*splat") as an array of path segments,
+		// where Express 4 exposed the unnamed wildcard as a single joined string.
+		const splat = req.params.splat;
+		const requestPath = Array.isArray(splat)
+			? splat.join('/')
+			: (splat as string | undefined) || '';
 
 		if (requestPath) {
 			try {
@@ -195,7 +201,7 @@ export function createStaticRoutes() {
 	});
 
 	// SPA fallback
-	router.get('*', (req, res) => {
+	router.get('/*splat', (req, res) => {
 		// Skip API routes
 		if (
 			req.path.startsWith('/api/') ||

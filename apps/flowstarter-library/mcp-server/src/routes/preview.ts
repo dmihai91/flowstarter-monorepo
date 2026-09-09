@@ -264,7 +264,8 @@ export function createPreviewRoutes() {
 	});
 
 	// Handle client-side routing - serve index.html for all subroutes under /live/*
-	router.get('/api/templates/:slug/live/*', (req, res) => {
+	// Express 5 / path-to-regexp v8 requires named wildcards ("*splat" instead of bare "*").
+	router.get('/api/templates/:slug/live/*splat', (req, res) => {
 		const mode = typeof req.query.mode === 'string' ? req.query.mode : undefined;
 		serveTemplatePreview(req, req.params.slug, mode, res);
 	});

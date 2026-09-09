@@ -19,30 +19,20 @@ import { ExternalNavigation, ExternalNavigationWithAuth } from './Navbar';
 // the shell may render before Clerk finishes loading). Prefix-matched like
 // the middleware's `(.*)` entries. The lists drifting apart is exactly how
 // /unlock spent a day behind an infinite "Loading your experience" loader.
+// The source of truth is PUBLIC_ROUTES in @/lib/route-manifest.
 const publicRoutePrefixes = [
   '/workflow-showcase',
   '/about',
   '/login',
   '/sign-up',
-  '/forgot-password',
-  '/reset-password',
-  '/verify',
   '/assistant',
   '/unlock',
-  '/gdpr',
   '/contact',
   '/help',
   '/privacy',
   '/terms',
   '/pricing',
   '/cookies',
-  '/guides',
-  '/blogs',
-  '/cookie-policy',
-  '/term-of-service',
-  '/privacy-policy',
-  '/sitemap',
-  '/accessibility',
   '/relaunch',
   '/faq',
   '/library',

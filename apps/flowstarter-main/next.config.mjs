@@ -3,6 +3,9 @@ const CONFIG_FILE = new URL('', import.meta.url).pathname;
 
 export default {
   typescript: { ignoreBuildErrors: true },
+  // Next.js advertises itself with `X-Powered-By: Next.js` on every response
+  // otherwise. It tells an attacker which stack to aim at and buys us nothing.
+  poweredByHeader: false,
   // Allow LAN access during dev (IDE browser MCP, mobile testing, etc.)
   // (see the merged allowedDevOrigins below, near turbopack config)
   async headers() {

@@ -80,14 +80,12 @@ worker or agentic-codegen suites, so run those yourself when you change them.
 
 ## CI
 
-The four lanes below now run on Depot (`depot-ubuntu-latest`) from
+All four lanes below run on Depot (`depot-ubuntu-latest`) from
 `.depot/workflows/`, the way DMPResearch/ereno runs its CI. Depot's Code
 Access GitHub App (`depot-code-access`) posts the checks on the pull
-request. The `.github/workflows/` copies of the same four files are kept
-only until the Depot-posted contexts are green on a pull request; once that
-is confirmed, the GitHub Actions copies are deleted and Depot is the only
-place these lanes run. Until then, both copies exist and both may run on a
-push or pull request.
+request. The `.github/workflows/` copies of the same four files were removed
+on 2026-09-09, once the Depot-posted contexts were confirmed green on a pull
+request; Depot is now the only place these lanes run.
 
 Depot secrets and variables are separate from GitHub repository secrets:
 Depot does not read GitHub's secret store, so anything a workflow needs has
@@ -110,6 +108,11 @@ add`), scoped to this repo. The names in use:
   changes on GLM 5.2, big ones (more than 8 changed files or more than 300
   changed lines) on Kimi K3, both on the flat-rate Ollama Cloud subscription.
   The tier is posted on the head commit as a `Review classification` status.
+  The `Review` step runs with `continue-on-error`, so a model provider error
+  never turns the check red; when that happens the lane posts a "no verdict"
+  comment naming the model and the reason instead of staying silent, and a
+  rerun of the workflow replaces it with either a real review or a fresh
+  no-verdict comment.
 - Greptile (`greptile.json`): `skipReview` is `AUTOMATIC`, so Greptile does
   not review on its own and no pull request spends a credit by default. To
   request the paid reviewer, mention the bot in a comment on the pull

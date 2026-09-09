@@ -12,6 +12,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   FullSiteBuildWorker,
   operatorNotesFeedback,
+  blankStringLiterals,
+  collapseDeclarationValues,
   replyExcerpt,
   stripBlockComments,
   PreviewGenerationPipeline,
@@ -1775,6 +1777,86 @@ describe('block comments are stripped by scanning, not by pattern', () => {
     expect(cssSyntaxIssue(commented)).toBeUndefined();
     // A brace inside a comment is not a brace.
     expect(cssSyntaxIssue(':root { --a: 1; /* } */ }')).toBeUndefined();
+  });
+});
+
+async function cssSyntaxIssueOf(css: string): Promise<string | undefined> {
+  const { cssSyntaxIssue } = await import('../src/flowstarter/workflows');
+  return cssSyntaxIssue(css);
+}
+
+describe('declaration values are folded away by scanning, not by pattern', () => {
+  it('keeps the property name and drops the value', () => {
+    expect(collapseDeclarationValues('a { color: red; }')).toBe(
+      'a { color:_; }',
+    );
+    expect(collapseDeclarationValues('--brand : #123456 ;')).toBe('--brand:_;');
+  });
+
+  it('folds every declaration in a block, not just the first', () => {
+    expect(collapseDeclarationValues(':root{--a:1;--b:2;}')).toBe(
+      ':root{--a:_;--b:_;}',
+    );
+  });
+
+  it('leaves a declaration alone when a brace arrives before the semicolon', () => {
+    // `a:hover {` is a selector, not a property that lost its value.
+    expect(collapseDeclarationValues('a:hover { color: red; }')).toBe(
+      'a:hover { color:_; }',
+    );
+    expect(collapseDeclarationValues('--a: 1 }')).toBe('--a: 1 }');
+    expect(collapseDeclarationValues('--a: 1')).toBe('--a: 1');
+  });
+
+  it('reads a name that is nothing but dashes without walking it back', () => {
+    // The shape CodeQL called out: the name run and the value class overlap,
+    // so the old pattern retried from every dash in here.
+    expect(collapseDeclarationValues('-'.repeat(64))).toBe('-'.repeat(64));
+    expect(collapseDeclarationValues(`${'-'.repeat(64)}: 1;`)).toBe(
+      `${'-'.repeat(64)}:_;`,
+    );
+  });
+
+  it('does not start a name in the middle of one', () => {
+    expect(collapseDeclarationValues('a b: 1;')).toBe('a b:_;');
+  });
+});
+
+describe('quoted strings are blanked by scanning, not by pattern', () => {
+  it('blanks a string and keeps what surrounds it', () => {
+    expect(blankStringLiterals('content: "a: b";')).toBe('content: "";');
+    expect(blankStringLiterals("content: 'a: b';")).toBe('content: "";');
+  });
+
+  it('reads a backslash escape, so an escaped quote does not close the string', () => {
+    expect(blankStringLiterals('a "one \\" still one" b')).toBe('a "" b');
+    expect(blankStringLiterals('a "trailing \\\\" b')).toBe('a "" b');
+  });
+
+  it('treats the other quote as ordinary text inside a string', () => {
+    expect(blankStringLiterals(`a "it's fine" b`)).toBe('a "" b');
+  });
+
+  it('leaves an unterminated string alone', () => {
+    expect(blankStringLiterals('a "never closed')).toBe('a "never closed');
+    // A backslash is not an escape when a newline follows it, so this one
+    // never closes either.
+    expect(blankStringLiterals('a "x\\\ny"')).toBe('a "x\\\ny"');
+  });
+
+  it('reads a row of escaped quotes without retrying from each one', () => {
+    const row = '\\"'.repeat(64);
+    expect(blankStringLiterals(`"${row}`)).toBe(`"${row}`);
+    expect(blankStringLiterals(`"${row}"`)).toBe('""');
+  });
+
+  it('cssSyntaxIssue still ignores syntax that only appears inside a string', async () => {
+    expect(
+      await cssSyntaxIssueOf('a::before { content: "a: b"; }'),
+    ).toBeUndefined();
+    expect(
+      await cssSyntaxIssueOf('a::before { content: "}"; }'),
+    ).toBeUndefined();
   });
 });
 

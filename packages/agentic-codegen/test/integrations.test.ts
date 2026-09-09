@@ -194,6 +194,79 @@ describe('injectCalCom — no existing calendar placeholder (wellness-therapy sh
   });
 });
 
+describe('the booking block is located by scanning, not by pattern', () => {
+  const page = (body: string): FileMap => ({ 'src/pages/book.astro': body });
+  const embedded = (files: FileMap) => files['src/pages/book.astro']!;
+
+  it('does not mistake another element whose name starts with "div"', () => {
+    const before =
+      '<main><divider data-flowstarter-cal-embed="true">x</divider></main>';
+    const after = embedded(injectCalCom(page(before), 'acme/intro'));
+    // The divider is untouched and the embed went before </main> instead.
+    expect(after).toContain('<divider data-flowstarter-cal-embed="true">');
+    expect(after.indexOf('<iframe')).toBeLessThan(after.indexOf('</main>'));
+  });
+
+  it('wants the marker on an attribute boundary, not glued to another word', () => {
+    const before =
+      '<main><div xdata-flowstarter-cal-embed="true">stale</div></main>';
+    const after = embedded(injectCalCom(page(before), 'acme/intro'));
+    // Not recognised as a managed block, so the stale div survives.
+    expect(after).toContain('>stale</div>');
+    expect(after.match(/<iframe/g)).toHaveLength(1);
+  });
+
+  it('finds a real marker further along the same tag', () => {
+    const before = [
+      '<main>',
+      '<div xdata-flowstarter-cal-embed="true" data-flowstarter-cal-embed="true">old</div>',
+      '</main>',
+    ].join('\n');
+    const after = embedded(injectCalCom(page(before), 'acme/intro'));
+    expect(after).not.toContain('>old</div>');
+    expect(after.match(/<iframe/g)).toHaveLength(1);
+  });
+
+  it('ignores an opening tag that never closes, rather than hanging on it', () => {
+    const before = '<main><div class="book-page__calendar">no close</main>';
+    const after = embedded(injectCalCom(page(before), 'acme/intro'));
+    // Nothing to replace and no </main> left after the unclosed div's start,
+    // so the block lands on the last </main>.
+    expect(after).toContain('no close');
+    expect(after.match(/<iframe/g)).toHaveLength(1);
+    expect(after.indexOf('<iframe')).toBeLessThan(after.lastIndexOf('</main>'));
+  });
+
+  it('hangs the block off the last </main>, not the first', () => {
+    const before = '<main>one</main>\n<main>two</main>';
+    const after = embedded(injectCalCom(page(before), 'acme/intro'));
+    expect(after.indexOf('one')).toBeLessThan(after.indexOf('<iframe'));
+    expect(after.indexOf('two')).toBeLessThan(after.indexOf('<iframe'));
+    expect(after.match(/<\/main>/g)).toHaveLength(2);
+  });
+
+  it('upgrades a preview tease to the live embed, and only that block', () => {
+    const teased = injectCalComPreviewDemo(
+      page('<main><div class="book-page__calendar">placeholder</div></main>'),
+    );
+    expect(embedded(teased)).toContain('data-flowstarter-cal-preview="true"');
+    const live = injectCalCom(teased, 'acme/intro');
+    expect(embedded(live)).not.toContain('data-flowstarter-cal-preview');
+    expect(embedded(live)).toContain('data-flowstarter-cal-embed="true"');
+    expect(embedded(live).match(/<iframe/g)).toHaveLength(1);
+  });
+
+  it('takes the replacement literally, so a $& in the block is not a backreference', () => {
+    const after = embedded(
+      injectCalCom(
+        page('<main><div class="book-page__calendar">x</div></main>'),
+        'acme/$&intro',
+      ),
+    );
+    expect(after).toContain('cal.com/acme/$&intro/embed');
+  });
+});
+
 describe('injectCalCom — real template fixtures under apps/flowstarter-templates', () => {
   for (const template of ALL_TEMPLATES) {
     it(`injects cleanly into ${template}'s book.astro`, () => {

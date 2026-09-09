@@ -24,25 +24,106 @@
 export type FileMap = Record<string, string>;
 
 /**
- * "Everything up to the first `</div>`", written as an unrolled loop rather
- * than `[\s\S]*?<\/div>`. The lazy form has to retry from every offset when
- * the closing tag is missing, which is quadratic in the size of the page, and
- * these run over model-written and already-built HTML.
+ * A `<div>` block located by scanning, from its `<` to the `>` of the first
+ * `</div>` after it.
+ *
+ * No regex does this any more. Every pattern that tried ended up quadratic on
+ * a page whose `</div>` is missing, because the engine has to start again
+ * from the next offset each time it runs off the end, and these read
+ * model-written and already-built HTML where a missing close is normal.
  */
-const UNTIL_DIV_CLOSE = String.raw`[^<]*(?:<(?!\/div>)[^<]*)*<\/div>`;
+interface HtmlBlock {
+  /** Index of the block's opening `<`. */
+  start: number;
+  /** Index just past the block's `</div>`. */
+  end: number;
+  /** The block itself, opening tag through `</div>`. */
+  text: string;
+}
 
-const MANAGED_BLOCK_RE = new RegExp(
-  String.raw`<div\b[^>]*\bdata-flowstarter-cal-embed="true"[^>]*>` +
-    UNTIL_DIV_CLOSE,
-);
-const PREVIEW_DEMO_BLOCK_RE = new RegExp(
-  String.raw`<div\b[^>]*\bdata-flowstarter-cal-preview="true"[^>]*>` +
-    UNTIL_DIV_CLOSE,
-);
-const PLACEHOLDER_CALENDAR_RE = new RegExp(
-  String.raw`<div class="book-page__calendar">` + UNTIL_DIV_CLOSE,
-);
-const LAST_MAIN_CLOSE_RE = /<\/main>(?![\s\S]*<\/main>)/;
+/** `\w`, for the word boundary in front of a marker attribute. */
+function isWordCharacter(char: string | undefined): boolean {
+  return (
+    char !== undefined &&
+    ((char >= 'a' && char <= 'z') ||
+      (char >= 'A' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      char === '_')
+  );
+}
+
+/** Everything from `openStart` to the first `</div>`, or null when there is none. */
+function closeBlockAt(
+  html: string,
+  openStart: number,
+  openEnd: number,
+): HtmlBlock | null {
+  const close = html.indexOf('</div>', openEnd);
+  if (close === -1) return null;
+  const end = close + 6;
+  return { start: openStart, end, text: html.slice(openStart, end) };
+}
+
+/**
+ * The first `<div …>` whose attributes carry `marker`, with its block.
+ *
+ * The marker has to sit on an attribute boundary (the character in front of
+ * it is not a word character) and inside the tag, which is why the search
+ * stops at the tag's own `>`.
+ */
+function findMarkedDiv(html: string, marker: string): HtmlBlock | null {
+  for (
+    let at = html.indexOf('<div');
+    at !== -1;
+    at = html.indexOf('<div', at + 1)
+  ) {
+    // `<div\b`: `<divider` is a different element.
+    if (isWordCharacter(html[at + 4])) continue;
+    const tagEnd = html.indexOf('>', at + 4);
+    if (tagEnd === -1) continue;
+    // Any occurrence inside the tag will do, not just the first: the pattern
+    // could walk past one that failed the boundary (`xdata-…`) to a later one.
+    for (
+      let marked = html.indexOf(marker, at + 4);
+      marked !== -1 && marked < tagEnd;
+      marked = html.indexOf(marker, marked + 1)
+    ) {
+      if (isWordCharacter(html[marked - 1])) continue;
+      const block = closeBlockAt(html, at, tagEnd + 1);
+      if (block) return block;
+      break;
+    }
+  }
+  return null;
+}
+
+/** The first `<div class="book-page__calendar">` block. The opening tag is literal. */
+function findPlaceholderCalendar(html: string): HtmlBlock | null {
+  const OPEN = '<div class="book-page__calendar">';
+  for (
+    let at = html.indexOf(OPEN);
+    at !== -1;
+    at = html.indexOf(OPEN, at + 1)
+  ) {
+    const block = closeBlockAt(html, at, at + OPEN.length);
+    if (block) return block;
+  }
+  return null;
+}
+
+const findManagedBlock = (html: string) =>
+  findMarkedDiv(html, 'data-flowstarter-cal-embed="true"');
+const findPreviewDemoBlock = (html: string) =>
+  findMarkedDiv(html, 'data-flowstarter-cal-preview="true"');
+
+/** Replaces `block.text` with `replacement`, taking the string literally. */
+function spliceBlock(
+  html: string,
+  block: HtmlBlock,
+  replacement: string,
+): string {
+  return html.slice(0, block.start) + replacement + html.slice(block.end);
+}
 
 /**
  * Files the injector will consider, in preference order — first hit wins.
@@ -183,33 +264,30 @@ function renderPreviewDemoBlock(standalone: boolean): string {
 }
 
 function spliceBookingBlock(before: string, block: string): string | null {
-  if (MANAGED_BLOCK_RE.test(before)) {
-    return before.replace(MANAGED_BLOCK_RE, block);
-  }
-  if (PREVIEW_DEMO_BLOCK_RE.test(before)) {
-    return before.replace(PREVIEW_DEMO_BLOCK_RE, block);
-  }
-  if (PLACEHOLDER_CALENDAR_RE.test(before)) {
-    return before.replace(PLACEHOLDER_CALENDAR_RE, block);
-  }
-  if (LAST_MAIN_CLOSE_RE.test(before)) {
-    return before.replace(LAST_MAIN_CLOSE_RE, `${block}\n</main>`);
+  const found =
+    findManagedBlock(before) ??
+    findPreviewDemoBlock(before) ??
+    findPlaceholderCalendar(before);
+  if (found) return spliceBlock(before, found, block);
+
+  // No calendar of any kind: hang the block off the last `</main>`.
+  const lastMain = before.lastIndexOf('</main>');
+  if (lastMain !== -1) {
+    return `${before.slice(0, lastMain)}${block}\n</main>${before.slice(lastMain + 7)}`;
   }
   return null;
 }
 
 function wantsStandalone(before: string): boolean {
-  if (/class="flowstarter-cal-embed"/.test(before.match(MANAGED_BLOCK_RE)?.[0] ?? '')) {
-    return true;
-  }
-  if (/class="flowstarter-cal-preview"/.test(before.match(PREVIEW_DEMO_BLOCK_RE)?.[0] ?? '')) {
-    return true;
-  }
+  const managed = findManagedBlock(before);
+  if (managed?.text.includes('class="flowstarter-cal-embed"')) return true;
+  const preview = findPreviewDemoBlock(before);
+  if (preview?.text.includes('class="flowstarter-cal-preview"')) return true;
   return (
-    !PLACEHOLDER_CALENDAR_RE.test(before) &&
-    !/class="book-page__calendar"/.test(before) &&
-    !MANAGED_BLOCK_RE.test(before) &&
-    !PREVIEW_DEMO_BLOCK_RE.test(before)
+    findPlaceholderCalendar(before) === null &&
+    !before.includes('class="book-page__calendar"') &&
+    managed === null &&
+    preview === null
   );
 }
 

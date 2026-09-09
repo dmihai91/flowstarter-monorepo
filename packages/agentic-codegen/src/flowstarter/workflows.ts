@@ -556,6 +556,130 @@ export function stripBlockComments(source: string, replacement = ''): string {
   return out + source.slice(cursor);
 }
 
+/** Every character JavaScript's `\s` matches, as a set. */
+const WHITESPACE = new Set(
+  ' \t\n\r\f\v\u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff',
+);
+
+/** The characters JavaScript's `.` refuses to match. */
+const LINE_TERMINATORS = new Set('\n\r\u2028\u2029');
+
+/** `\w`, for a word boundary. */
+function isWordCharacter(char: string | undefined): boolean {
+  return (
+    char !== undefined &&
+    ((char >= 'a' && char <= 'z') ||
+      (char >= 'A' && char <= 'Z') ||
+      (char >= '0' && char <= '9') ||
+      char === '_')
+  );
+}
+
+/** `[\w-]`: what a CSS property name is made of. */
+function isPropertyNameCharacter(char: string | undefined): boolean {
+  return char === '-' || isWordCharacter(char);
+}
+
+/**
+ * Every `property: value;` in a stylesheet reduced to `property:_;`.
+ *
+ * Scanned, not matched. `/([\w-]+)\s*:\s*[^;{}]*;/g` says the same thing,
+ * but the name run, the blanks after the colon and the value class all
+ * overlap, so a property name that is a long row of `-` made the engine
+ * retry from every character in it. The rules are that pattern's: a name of
+ * word characters and dashes, blanks, a colon, blanks, then everything up to
+ * the first `;`, and no rewrite at all when a `{` or `}` arrives first.
+ */
+export function collapseDeclarationValues(css: string): string {
+  let out = '';
+  let kept = 0;
+  let index = 0;
+  while (index < css.length) {
+    if (!isPropertyNameCharacter(css[index])) {
+      index += 1;
+      continue;
+    }
+    // The name is the whole run. Starting anywhere inside it would put a name
+    // character where the colon has to be, so those starts cannot match and
+    // the scan skips past them rather than retrying each one.
+    let nameEnd = index;
+    while (isPropertyNameCharacter(css[nameEnd])) nameEnd += 1;
+
+    let cursor = nameEnd;
+    while (cursor < css.length && WHITESPACE.has(css[cursor]!)) cursor += 1;
+    if (css[cursor] !== ':') {
+      index = nameEnd;
+      continue;
+    }
+    cursor += 1;
+    while (
+      cursor < css.length &&
+      css[cursor] !== ';' &&
+      css[cursor] !== '{' &&
+      css[cursor] !== '}'
+    ) {
+      cursor += 1;
+    }
+    if (css[cursor] !== ';') {
+      index = nameEnd;
+      continue;
+    }
+    out += `${css.slice(kept, nameEnd)}:_;`;
+    kept = cursor + 1;
+    index = cursor + 1;
+  }
+  return out + css.slice(kept);
+}
+
+/**
+ * Every quoted string in a stylesheet replaced by an empty one, so a brace or
+ * a colon inside `content: "{"` is not read as syntax.
+ *
+ * Scanned, not matched. The pattern was
+ * `/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g`, and an unclosed quote sent it
+ * back to try again from every escape inside, which is quadratic on a file
+ * full of `\"`. One pass finds the same strings: a run of plain characters
+ * and backslash escapes, ending at the matching quote. A backslash before a
+ * line terminator is not an escape, because `.` does not match one, so a
+ * string that reaches one is unterminated and is left alone.
+ */
+export function blankStringLiterals(css: string): string {
+  let out = '';
+  let kept = 0;
+  let index = 0;
+  while (index < css.length) {
+    const quote = css[index];
+    if (quote !== '"' && quote !== "'") {
+      index += 1;
+      continue;
+    }
+    let cursor = index + 1;
+    let closed = false;
+    while (cursor < css.length) {
+      const char = css[cursor]!;
+      if (char === quote) {
+        closed = true;
+        break;
+      }
+      if (char !== '\\') {
+        cursor += 1;
+        continue;
+      }
+      const escaped = css[cursor + 1];
+      if (escaped === undefined || LINE_TERMINATORS.has(escaped)) break;
+      cursor += 2;
+    }
+    if (!closed) {
+      index += 1;
+      continue;
+    }
+    out += `${css.slice(kept, index)}""`;
+    kept = cursor + 1;
+    index = cursor + 1;
+  }
+  return out + css.slice(kept);
+}
+
 /**
  * A stylesheet reduced to its structure: comments gone, whitespace folded,
  * every declaration value replaced by a placeholder. Two files with the same
@@ -564,8 +688,7 @@ export function stripBlockComments(source: string, replacement = ''): string {
  * selector all change the skeleton.
  */
 export function cssSkeleton(css: string): string {
-  return stripBlockComments(css)
-    .replace(/([\w-]+)\s*:\s*[^;{}]*;/g, '$1:_;')
+  return collapseDeclarationValues(stripBlockComments(css))
     .replace(/\s+/g, ' ')
     .replace(/\s*([{};,>+~])\s*/g, '$1')
     .trim();
@@ -604,9 +727,10 @@ export function firstSkeletonDifference(
  * way). Returns a one-line reason, or undefined when the file is sound.
  */
 export function cssSyntaxIssue(css: string): string | undefined {
-  const cleaned = stripBlockComments(css, ' ')
-    .replace(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g, '""')
-    .replace(/url\([^)]*\)/gi, 'url()');
+  const cleaned = blankStringLiterals(stripBlockComments(css, ' ')).replace(
+    /url\([^)]*\)/gi,
+    'url()',
+  );
   const opens: number[] = [];
   for (let index = 0; index < cleaned.length; index += 1) {
     const char = cleaned[index];
@@ -1113,22 +1237,6 @@ const BUILD_EVENT_BODY_MAX = 4_000;
 
 /** How much of the agent's closing words the board shows. */
 const REPLY_EXCERPT_MAX = 1_500;
-
-/** Every character JavaScript's `\s` matches, as a set. */
-const WHITESPACE = new Set(
-  ' \t\n\r\f\v\u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff',
-);
-
-/** `\w`, for the word boundary after the heading. */
-function isWordCharacter(char: string | undefined): boolean {
-  return (
-    char !== undefined &&
-    ((char >= 'a' && char <= 'z') ||
-      (char >= 'A' && char <= 'Z') ||
-      (char >= '0' && char <= '9') ||
-      char === '_')
-  );
-}
 
 /**
  * Does a "Summary" heading begin at `from`? Returns the index just past the

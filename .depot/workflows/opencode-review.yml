@@ -1,13 +1,18 @@
 # Depot CI Migration
 # Source: .github/workflows/opencode-review.yml
 #
+# This lane now runs on Depot only. The GitHub Actions copy under
+# .github/workflows/ was retired on 2026-09-09 once the Depot-posted checks
+# were confirmed green on a pull request.
+#
 # Changes made:
 # - Changed GitHub runs-on labels to their Depot equivalents
 
 ##############################################################################
 # opencode-review.yml
 #
-# An advisory AI code review of every pull request, run by OpenCode.
+# An advisory AI code review of every pull request, run by OpenCode. Runs on
+# Depot only (see the migration note above).
 #
 # ADVISORY, ALWAYS. This job posts a comment and nothing else. It is not in
 # any other workflow's `needs`, and its check must never be made required on
@@ -15,6 +20,15 @@
 # whenever its model provider has an outage, and that trade is not worth the
 # small amount of gatekeeping it would buy. Quality Gate is the blocking lane;
 # this one only informs the human who merges.
+#
+# The `Review` step runs with `continue-on-error: true`, so a model provider
+# error (a 429, a timeout, anything short of a completed verdict) never turns
+# this check red. It also must not leave the pull request looking reviewed
+# by silence: when the step's outcome is not `success`, the "Report a
+# missing review verdict" step right after it posts a "no verdict" comment
+# naming the model and the reason instead. Re-running the workflow replaces
+# that comment with either a real review or a fresh no-verdict comment, so
+# stale ones never pile up.
 #
 # Model, two tiers, same as ereno. Small and medium changes review on GLM 5.2
 # and big ones on Kimi K3, both served by the flat-rate Ollama Cloud
@@ -43,6 +57,14 @@
 # `openrouter/anthropic/claude-sonnet-5` (that id was checked against the
 # OpenRouter models endpoint on 2026-09-09) and the big tier moves over with
 # no code change.
+#
+# Ollama Cloud's flat-rate subscription enforces a session usage limit. A
+# large pull request reviewed on the big tier is the likeliest way to hit
+# it, and the provider then returns HTTP 429 mid-run; that is one of the
+# cases the "no verdict" comment described above exists for. The fallback is
+# the `openrouter/*` path above: point `vars.AI_REVIEW_BIG_MODEL` at an
+# `openrouter/*` id with `OPENROUTER_API_KEY` set, and the big tier stops
+# depending on Ollama Cloud's limit.
 #
 # Secrets and variables an operator sets:
 #   OLLAMA_API_KEY      required while either tier holds an `ollama-cloud/*`
@@ -301,7 +323,12 @@ jobs:
           git config --global user.email "review@flowstarter.invalid"
           git config --global user.name "Flowstarter review runner"
       - name: Review
+        id: review
         if: steps.creds.outputs.present == 'true'
+        # Advisory means a provider error is an ordinary outcome, not a
+        # reason to turn this check red. The step right after this one
+        # covers the gap left when `outcome` is not `success`.
+        continue-on-error: true
         # A ceiling BELOW the job's 30, so a hung model is an ordinary step
         # failure with the run still alive around it rather than a job-level
         # kill that takes every remaining step with it.
@@ -402,11 +429,50 @@ jobs:
             request look reviewed when nothing was read. The trailing
             `Browser check:` line is how automation tells a real verdict from
             that, so it has to be there in every reply.
+      # `continue-on-error` on the Review step above keeps this check green
+      # through a provider error, but green-and-silent is indistinguishable
+      # from reviewed. This step closes that gap: when the Review step did
+      # not finish with a verdict, post an explicit "no verdict" comment
+      # instead, so the pull request never looks reviewed when it was not.
+      - name: Report a missing review verdict
+        if: steps.creds.outputs.present == 'true' && steps.review.outcome != 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GH_REVIEW_TOKEN || github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REVIEW_MODEL: ${{ steps.pick.outputs.model }}
+          ATTRIB_MARKER: '<!-- ai-agent-comment -->'
+          NO_VERDICT_MARKER: '<!-- no-review-verdict -->'
+        run: |
+          set -u
+          MESSAGE="OpenCode produced no verdict (provider error or timeout); the lane is advisory and stays green."
+          echo "::warning::${MESSAGE}"
+          echo "${MESSAGE}" >> "$GITHUB_STEP_SUMMARY"
+
+          # Delete any earlier no-verdict comment on this pull request first,
+          # so reruns replace it instead of piling up beside it.
+          # shellcheck disable=SC2016  # jq reads $ENV itself; do not expand here.
+          ids=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+            --jq '.[] | select(.body | contains($ENV.NO_VERDICT_MARKER)) | .id' 2>/dev/null || true)
+          for id in $ids; do
+            [ -n "$id" ] || continue
+            gh api --method DELETE "repos/$REPO/issues/comments/$id" >/dev/null 2>&1 || true
+          done
+
+          BANNER="**AI agent** · OpenCode (\`${REVIEW_MODEL}\`) · on behalf of @dmihai91 · not a human reply"
+          NOTE="No verdict was produced for head \`${HEAD_SHA}\` because the provider returned an error while running \`${REVIEW_MODEL}\`. Re-running this workflow re-requests the review."
+          body=$(printf '%s\n%s\n\n%s\n%s\n' "$ATTRIB_MARKER" "$BANNER" "$NO_VERDICT_MARKER" "$NOTE")
+          gh api --method POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
       # The action posts under GH_REVIEW_TOKEN (today @dmihai91), including
       # raw provider errors like a quota death. The model is told to lead with
       # the AI-agent banner, but an APIError comment never goes through the
       # prompt. Stamp every agent-shaped comment from THIS run that is still
       # missing the marker, so the thread cannot be mistaken for human replies.
+      # Runs with `always()` so it still fires when Review failed outright.
+      # The no-verdict comment above already carries ATTRIB_MARKER and never
+      # matches the "Browser check:|APIError" body test below, so this step
+      # leaves it alone rather than stamping it twice.
       - name: Stamp AI-agent attribution on this run's comments
         if: always() && steps.creds.outputs.present == 'true'
         env:
